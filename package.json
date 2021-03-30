@@ -1,0 +1,9 @@
+{
+  "name": "ecomanda-delivery",
+  "version": "0.0.0",
+  "private": true,
+  "author": "Alan Costa Facchini",
+  "scripts": {
+    "start": "node app.js"
+  }
+}
