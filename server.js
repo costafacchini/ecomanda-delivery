@@ -1,4 +1,4 @@
-const app = require('./app')
+const app = require('./config/app')
 const http = require('http')
 const debug = require('debug')('ecomanda-delivery:server')
 

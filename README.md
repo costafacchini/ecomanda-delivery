@@ -16,11 +16,15 @@ $ asdf install nodejs 14.16.0
 $ asdf local nodejs 14.16.0
 ```
 
+In the project directory, you should run docker to prepare database: 
+
+## `docker-compose up --build`
+
 # Available Scripts
 
 In the project directory, you can run:
 
-## `yarn start`
+## `yarn dev`
 
 Runs the app in the development mode.\
 
