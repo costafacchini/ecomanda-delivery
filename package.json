@@ -4,7 +4,7 @@
   "private": true,
   "author": "Alan Costa Facchini",
   "scripts": {
-    "start": "node app.js",
+    "start": "node server.js",
     "test": "jest",
     "watch": "jest --no-coverage --verbose --watch --runInBand --notify --notifyMode always",
     "linter": "eslint"
@@ -18,7 +18,9 @@
     "jest": "^26.6.3"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "debug": "^4.3.1",
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
   }
 }
