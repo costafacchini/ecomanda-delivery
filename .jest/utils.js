@@ -1,6 +1,6 @@
 const { MongoServerTest } = require('../config/mongo')
 
-// jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000
 
 const mongoServer = new MongoServerTest()
 

@@ -27,4 +27,14 @@ describe('#createDefaultUser', () => {
     await createDefaultUser()
     expect(await User.countDocuments()).toEqual(1)
   })
+
+  it('throw exception if some error occurs', async () => {
+    jest.spyOn(User, 'countDocuments').mockImplementation(() => {
+      throw new Error('Erro')
+    })
+
+    await expect(createDefaultUser()).rejects.toThrowError(
+      'Não foi possível criar o usuário padrão. Erro: Error: Erro'
+    )
+  })
 })

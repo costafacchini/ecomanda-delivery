@@ -8,21 +8,21 @@ async function login(req, res) {
   if (email && password) {
     try {
       const user = await User.findOne({ email })
-      const validPassword = await user.validPassword(password)
+      const validPassword = user ? await user.validPassword(password) : null
       if (!user || !validPassword) {
-        res.status(500).json({ message: 'Email ou senha do usuário inválidos!' })
+        return res.status(401).json({ message: 'Email ou senha inválidos!' })
       } else {
         const token = jwt.sign({ id: user._id }, SECRET, {
           expiresIn: '7d',
         })
-        return res.status(200).json({ auth: true, token: token })
+        return res.status(200).json({ token: token })
       }
     } catch (err) {
-      res.status(500).json({ message: `Erro ao tentar fazer login. ${err}` })
+      return res.status(500).json({ message: `Erro ao tentar fazer login. ${err}` })
     }
   }
 
-  res.status(500).json({ message: 'Login inválido!' })
+  res.status(401).json({ message: 'Login inválido!' })
 }
 
 module.exports = { login }

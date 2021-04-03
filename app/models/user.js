@@ -9,6 +9,7 @@ const userSchema = new Schema({
   username: String,
   email: { type: String, unique: true },
   password: String,
+  active: { type: Boolean, default: true},
 })
 
 userSchema.pre('save', function (next) {
@@ -20,11 +21,8 @@ userSchema.pre('save', function (next) {
 
   if (!user.isModified('password')) return next()
 
-  bcrypt.genSalt(saltRounds, function (err, salt) {
-    if (err) return next(err)
-    bcrypt.hash(user.password, salt, function (err, hash) {
-      if (err) return next(err)
-
+  bcrypt.genSalt(saltRounds, (err, salt) => {
+    bcrypt.hash(user.password, salt, (err, hash) => {
       user.password = hash
       next()
     })
