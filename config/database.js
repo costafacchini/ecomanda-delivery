@@ -1,44 +1,26 @@
-const mongoose = require('mongoose')
-const { setup } = require('../setup/database')
+const { MongoServer } = require('../config/mongo')
 
 async function connect() {
   const config = {
     development: {
-      username: 'root',
-      password: 'pwk372ew',
-      host: 'localhost',
-      db: 'ecomanda-delivery'
+      username: process.env.MONGODB_USERNAME,
+      password: process.env.MONGODB_PASSWORD,
+      host: process.env.MONGODB_HOST,
+      db: process.env.MONGODB_DB,
     },
     test: {
-      username: 'root',
-      password: 'pwk372ew',
-      host: 'localhost',
-      db: 'ecomanda-delivery'
+      username: process.env.MONGODB_USERNAME,
+      password: process.env.MONGODB_PASSWORD,
+      host: process.env.MONGODB_HOST,
+      db: process.env.MONGODB_DB,
     },
-    production: {
-      uri: process.env.MONGODB_URI
-    }
+    production: { uri: process.env.MONGODB_URI },
   }
 
   const { username, password, host, db, uri } = config[process.env.NODE_ENV || 'development']
 
-  try {
-    mongoose.connection
-      .on('error', console.error.bind(console, 'connection error:'))
-      .once('open', () => {
-        console.log('conectou')
-        // setup()
-      })
-
-    await mongoose.connect(uri || `mongodb://${username}:${password}@${host}/${db}`, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useFindAndModify: false,
-      useCreateIndex: true
-    })
-  } catch (error) {
-    console.error(error)
-  }
+  const mongoServer = new MongoServer(uri || `mongodb://${username}:${password}@${host}/${db}`)
+  await mongoServer.connect()
 }
 
 module.exports = connect

@@ -6,6 +6,10 @@ db.createUser(
       {
         role: "readWrite",
         db: "ecomanda-delivery"
+      },
+      {
+        role: "readWrite",
+        db: "ecomanda-delivery-test"
       }
     ]
   }

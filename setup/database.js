@@ -1,13 +1,17 @@
-// const User = require('@models/user')
+const User = require('@models/user')
+const DEFAULT_USER = process.env.DEFAULT_USER
+const DEFAULT_PASSWORD = process.env.DEFAULT_PASSWORD
 
-function setup() {
-  // User.find({}).then(users => {
-  //   if (users.length === 0)
-  //     User.create({ email: 'admin@example.com', password: '12345678' }).then(user => {
-  //       user.save()
-  //       return user
-  //     })
-  // })
+async function createDefaultUser() {
+  try {
+    const count = await User.countDocuments()
+    if (count === 0) {
+      const user = await new User({ email: DEFAULT_USER, password: DEFAULT_PASSWORD })
+      await user.save()
+    }
+  } catch (err) {
+    throw new Error(`Não foi possível criar o usuário padrão. Erro: ${err}`)
+  }
 }
 
-module.exports = { setup }
+module.exports = { createDefaultUser }
