@@ -2,6 +2,8 @@ const express = require('express')
 const router = express.Router()
 const jwt = require('jsonwebtoken')
 const SECRET = process.env.SECRET
+const { check } = require('express-validator')
+const usersController = require('@controllers/users-controller')
 
 router.route('*').all(authenticate, (req, res, next) => {
   next()
@@ -19,8 +21,9 @@ function authenticate(req, res, next) {
   })
 }
 
-router.post('/teste', (req, res) => {
-  res.json({ message: `Certo ${req.userId}` })
-})
+router.post('/users/', usersController.validate('create'), usersController.create)
+// router.post('/users/:id', editValidator, usersController.edit)
+// router.get('/users/:id', usersController.get)
+// router.get('/users/', usersController.list)
 
 module.exports = router
