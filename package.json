@@ -5,26 +5,44 @@
   "author": "Alan Costa Facchini",
   "scripts": {
     "start": "node server.js",
-    "dev": "bash -c 'docker-compose up -d && trap \"docker-compose stop\" SIGINT && node server.js'",
+    "dev": "bash -c 'docker-compose up -d && trap \"docker-compose stop\" SIGINT && nodemon server.js'",
     "test": "jest",
     "watch": "jest --no-coverage --verbose --watch --runInBand --notify --notifyMode always",
-    "linter": "eslint"
+    "linter": "yarn eslint 'app/**/*.{js,ts,tsx}' 'config/**/*.{js,ts,tsx}' 'setup/**/*.{js,ts,tsx}'"
   },
   "devDependencies": {
     "eslint": "^7.23.0",
+    "eslint-config-prettier": "^8.1.0",
     "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-eslint-comments": "^3.2.0",
     "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.3.3",
+    "eslint-plugin-jest-dom": "^3.7.0",
     "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-promise": "^4.3.1",
-    "jest": "^26.6.3"
+    "jest": "^26.6.3",
+    "mongodb-memory-server": "^6.9.6",
+    "mongodb-memory-server-core": "^6.9.6",
+    "prettier": "^2.2.1"
   },
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "debug": "^4.3.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "http-errors": "^1.8.0",
+    "jsonwebtoken": "^8.5.1",
+    "module-alias": "^2.2.2",
     "mongoose": "^5.12.2",
     "morgan": "^1.10.0",
+    "nodemon": "^2.0.7",
     "rollbar": "^2.21.1"
+  },
+  "_moduleAliases": {
+    "@models": "./app/models",
+    "@controllers": "./app/controllers",
+    "@routes": "./app/routes"
   }
 }

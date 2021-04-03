@@ -1,46 +1,43 @@
 {
-  "env": {
-    "commonjs": true,
-    "es2021": true,
-    "node": true,
-    "jest": true
-  },
-  "extends": [
-    "standard",
-    "plugin:eslint-comments/recommended",
-    "plugin:prettier/recommended"
-  ],
-  "parserOptions": {
-    "ecmaVersion": 12
-  },
-  "plugins": ["jest"],
-  "rules": {
-    "require-await": "error",
-    "no-console": "error",
-    "no-warning-comments": "warn",
-    "no-nested-ternary": "error",
-    "jest/no-focused-tests": "error",
-    "jest/no-disabled-tests": "error",
-    "jest/no-if": "error",
-    "standard/no-callback-literal": "off",
-    "import/no-anonymous-default-export": "error",
-    "default-param-last": "off",
-    "camelcase": "off"
-  },
-  "overrides": [
-    {
-      "files": ["app/**/*.spec.js"],
-      "extends": [
-        "plugin:jest-dom/recommended",
-        "plugin:testing-library/react",
-        "plugin:jest/recommended"
-      ],
-      "rules": {
-        "testing-library/prefer-explicit-assert": "error",
-        "testing-library/no-wait-for-empty-callback": "error",
-        "testing-library/prefer-wait-for": "error",
-        "jest/no-standalone-expect": "off"
-      }
-    }
-  ]
+    "env": {
+        "commonjs": true,
+        "es2021": true,
+        "node": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:eslint-comments/recommended",
+        "plugin:prettier/recommended"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 12
+    },
+    "plugins": [
+        "jest"
+    ],
+    "rules": {
+        "require-await": "error",
+        "no-console": "error",
+        "no-warning-comments": "warn",
+        "no-nested-ternary": "error",
+        "jest/no-focused-tests": "error",
+        "jest/no-disabled-tests": "error",
+        "jest/no-if": "error",
+        "standard/no-callback-literal": "off",
+        "default-param-last": "off",
+        "camelcase": "off",
+        "space-before-function-paren": 0
+    },
+    "overrides": [
+        {
+            "files": ["app/**/*.spec.js", "config/**/*.spec.js", "setup/**/*.spec.js"],
+            "extends": [
+                "plugin:jest-dom/recommended",
+                "plugin:jest/recommended"
+            ],
+            "rules": {
+                "jest/no-standalone-expect": "off"
+            }
+        }
+    ]
 }
