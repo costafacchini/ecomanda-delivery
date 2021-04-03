@@ -6,7 +6,7 @@ const saltRounds = 14
 
 const userSchema = new Schema({
   _id: ObjectId,
-  username: String,
+  name: String,
   email: { type: String, unique: true },
   password: String,
   active: { type: Boolean, default: true},

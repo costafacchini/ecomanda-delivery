@@ -30,7 +30,9 @@ describe('login controller', () => {
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .then(response => {
-                  expect(response.body.email).not.toEqual(null)
+                  expect(response.body.token).toBeDefined()
+                  expect(response.body.token).not.toBe('')
+                  expect(response.body.token).not.toBe(null)
                 })
       })
 
@@ -72,6 +74,18 @@ describe('login controller', () => {
                 .expect(401, {
                   message: 'Login inválido!'
                 })
+      })
+
+      it('returns status 401 and message if is not active', async () => {
+        await User.create({ email: 'mary@doe.com', password: '123456', active: false })
+
+        await request(app)
+        .post('/login')
+        .send({ email: 'mary@doe.com', password: '123456' })
+        .expect('Content-Type', /json/)
+        .expect(401, {
+          message: 'Email ou senha inválidos!'
+        })
       })
 
       it('returns status 500 and message if exception occurs', async () => {

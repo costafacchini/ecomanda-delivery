@@ -7,7 +7,7 @@ async function login(req, res) {
 
   if (email && password) {
     try {
-      const user = await User.findOne({ email })
+      const user = await User.findOne({ email, active: true })
       const validPassword = user ? await user.validPassword(password) : null
       if (!user || !validPassword) {
         return res.status(401).json({ message: 'Email ou senha inválidos!' })
