@@ -209,17 +209,17 @@ describe('user controller', () => {
           .get(`/resources/users/${user._id}`)
           .set('x-access-token', token)
           .expect('Content-Type', /json/)
-        .expect(200)
-        .then((response) => {
-          expect(response.body.email).toEqual('jonny@walker.com')
-          expect(response.body.name).toEqual('Jonny Walker')
-          expect(response.body.active).toEqual(true)
-          expect(response.body._id).toMatch(user._id.toString())
-          expect(response.body._id).toBeDefined()
-          expect(response.body._id).not.toBe('')
-          expect(response.body._id).not.toBe(null)
-          expect(response.body.password).not.toBeDefined()
-        })
+          .expect(200)
+          .then((response) => {
+            expect(response.body.email).toEqual('jonny@walker.com')
+            expect(response.body.name).toEqual('Jonny Walker')
+            expect(response.body.active).toEqual(true)
+            expect(response.body._id).toMatch(user._id.toString())
+            expect(response.body._id).toBeDefined()
+            expect(response.body._id).not.toBe('')
+            expect(response.body._id).not.toBe(null)
+            expect(response.body.password).not.toBeDefined()
+          })
       })
 
       it('returns status 404 and message if user does not exists', async () => {
@@ -242,7 +242,45 @@ describe('user controller', () => {
           .set('x-access-token', token)
           .expect('Content-Type', /json/)
           .expect(500, {
-          errors: { mensagem: 'Error: some error' },
+            errors: { mensagem: 'Error: some error' },
+          })
+
+        mockFunction.mockRestore()
+      })
+    })
+  })
+
+  describe('index', () => {
+    describe('response', () => {
+      it('returns status 200 and message if user exists', async () => {
+        await request(expressServer)
+          .get('/resources/users/')
+          .set('x-access-token', token)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .then((response) => {
+            expect(Array.isArray(response.body)).toEqual(true)
+            expect(response.body.length).toEqual(4)
+            expect(response.body[3].name).toEqual('Jonny Walker')
+            expect(response.body[3].email).toEqual('jonny@walker.com')
+            expect(response.body[3].active).toEqual(true)
+            expect(response.body[3]._id).toBeDefined()
+            expect(response.body[3]._id).toBeDefined()
+            expect(response.body[3].password).not.toBeDefined()
+          })
+      })
+
+      it('returns status 500 and message if occurs another error', async () => {
+        const mockFunction = jest.spyOn(User, 'find').mockImplementation(() => {
+          throw new Error('some error')
+        })
+
+        await request(expressServer)
+          .get('/resources/users/')
+          .set('x-access-token', token)
+          .expect('Content-Type', /json/)
+          .expect(500, {
+            errors: { mensagem: 'Error: some error' },
           })
 
         mockFunction.mockRestore()

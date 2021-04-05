@@ -90,7 +90,11 @@ async function show(req, res) {
 }
 
 async function index(req, res) {
-
+  try {
+    res.status(200).send(await User.find({}, { password: 0 }))
+  } catch (err) {
+    res.status(500).send({ errors: { mensagem: err.toString() } })
+  }
 }
 
 function permit(fields) {
