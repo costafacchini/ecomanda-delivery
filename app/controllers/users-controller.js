@@ -75,7 +75,18 @@ async function update(req, res) {
 }
 
 async function show(req, res) {
+  try {
+    const user = await User.findOne({ _id: req.params.id })
+    const { _id, name, email, active } = user
 
+    res.status(200).send({ _id, name, email, active })
+  } catch (err) {
+    if (err.toString().includes('Cast to ObjectId failed for value')) {
+      return res.status(404).send({ errors: { mensagem: 'Usuário 12312 não encontrado' } })
+    } else {
+      return res.status(500).send({ errors: { mensagem: err.toString() } })
+    }
+  }
 }
 
 async function index(req, res) {

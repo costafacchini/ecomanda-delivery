@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const jwt = require('jsonwebtoken')
 const SECRET = process.env.SECRET
-const { create, update, validations } = require('@controllers/users-controller')
+const { create, update, show, validations } = require('@controllers/users-controller')
 
 router.route('*').all(authenticate, (req, res, next) => {
   next()
@@ -22,7 +22,7 @@ function authenticate(req, res, next) {
 
 router.post('/users/', validations('create'), create)
 router.post('/users/:id', validations('update'), update)
-// router.get('/users/:id', usersController.get)
+router.get('/users/:id', show)
 // router.get('/users/', usersController.list)
 
 module.exports = router

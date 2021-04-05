@@ -26,10 +26,6 @@ describe('user controller', () => {
   })
 
   describe('create', () => {
-    beforeEach(() => {
-      jest.clearAllMocks()
-    })
-
     describe('response', () => {
       it('returns status 201 and the user data if the create is successful', async () => {
         await request(expressServer)
@@ -50,7 +46,7 @@ describe('user controller', () => {
       })
 
       it('returns status 422 and message if the some error ocurre when create the user', async () => {
-        const fn = jest.spyOn(User, 'create').mockImplementation(() => {
+        const mockFunction = jest.spyOn(User, 'create').mockImplementation(() => {
           throw new Error('some error')
         })
 
@@ -63,7 +59,7 @@ describe('user controller', () => {
             errors: { mensagem: 'Error: some error' },
           })
 
-        fn.mockRestore()
+        mockFunction.mockRestore()
       })
 
       describe('validations', () => {
@@ -151,7 +147,7 @@ describe('user controller', () => {
       })
 
       it('returns status 422 and message if the some error ocurre when update the user', async () => {
-        const fn = jest.spyOn(User, 'updateOne').mockImplementation(() => {
+        const mockFunction = jest.spyOn(User, 'updateOne').mockImplementation(() => {
           throw new Error('some error')
         })
 
@@ -166,7 +162,7 @@ describe('user controller', () => {
             errors: { mensagem: 'Error: some error' },
           })
 
-        fn.mockRestore()
+        mockFunction.mockRestore()
       })
 
       describe('validations', () => {
@@ -195,6 +191,61 @@ describe('user controller', () => {
               errors: [{ mensagem: 'Nome deve ter no mínimo 4 caracteres' }],
             })
         })
+      })
+    })
+  })
+
+  describe('show', () => {
+    describe('response', () => {
+      it('returns status 200 and message if user exists', async () => {
+        const user = await User.create({
+          name: 'Jonny Walker',
+          email: 'jonny@walker.com',
+          password: '12345678',
+          active: true,
+        })
+
+        await request(expressServer)
+          .get(`/resources/users/${user._id}`)
+          .set('x-access-token', token)
+          .expect('Content-Type', /json/)
+        .expect(200)
+        .then((response) => {
+          expect(response.body.email).toEqual('jonny@walker.com')
+          expect(response.body.name).toEqual('Jonny Walker')
+          expect(response.body.active).toEqual(true)
+          expect(response.body._id).toMatch(user._id.toString())
+          expect(response.body._id).toBeDefined()
+          expect(response.body._id).not.toBe('')
+          expect(response.body._id).not.toBe(null)
+          expect(response.body.password).not.toBeDefined()
+        })
+      })
+
+      it('returns status 404 and message if user does not exists', async () => {
+        await request(expressServer)
+          .get('/resources/users/12312')
+          .set('x-access-token', token)
+          .expect('Content-Type', /json/)
+          .expect(404, {
+            errors: { mensagem: 'Usuário 12312 não encontrado' },
+          })
+      })
+
+      it('returns status 500 and message if occurs another error', async () => {
+        const mockFunction = jest.spyOn(User, 'findOne').mockImplementation(() => {
+          throw new Error('some error')
+        })
+
+        await request(expressServer)
+          .get('/resources/users/12312')
+          .set('x-access-token', token)
+          .expect('Content-Type', /json/)
+          .expect(500, {
+          errors: { mensagem: 'Error: some error' },
+          })
+
+        mockFunction.mockRestore()
       })
     })
   })
