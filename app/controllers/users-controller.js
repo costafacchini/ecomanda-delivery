@@ -99,7 +99,6 @@ async function index(req, res) {
 
 function permit(fields) {
   const permitedFields = ['name', 'active', 'password']
-  if (permitedFields.password && permitedFields.password.trim().length > 8) permitedFields.push('password')
 
   return _.pick(fields, permitedFields)
 }

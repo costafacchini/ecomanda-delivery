@@ -25,6 +25,29 @@ describe('user controller', () => {
     await mongoServer.disconnect()
   })
 
+  describe('about auth', () => {
+    it('returns status 401 and message if x-access-token in not inform in header', async () => {
+      await request(expressServer)
+        .post('/resources/users/')
+        .send({ name: 'Mary Jane', email: 'mary@jane.com', password: '12345678', active: true })
+        .expect('Content-Type', /json/)
+        .expect(401, {
+          auth: false, message: 'Token não informado.'
+        })
+    })
+
+    it('returns status 500 and message if x-access-token in not inform in header', async () => {
+      await request(expressServer)
+        .post('/resources/users/')
+        .set('x-access-token', 'dasadasdasd')
+        .send({ name: 'Mary Jane', email: 'mary@jane.com', password: '12345678', active: true })
+        .expect('Content-Type', /json/)
+        .expect(500, {
+          auth: false, message: 'Falha na autenticação com token.'
+        })
+    })
+  })
+
   describe('create', () => {
     describe('response', () => {
       it('returns status 201 and the user data if the create is successful', async () => {
