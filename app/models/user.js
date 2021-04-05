@@ -9,7 +9,7 @@ const userSchema = new Schema({
   name: String,
   email: { type: String, unique: true },
   password: String,
-  active: { type: Boolean, default: true},
+  active: { type: Boolean, default: true },
 })
 
 userSchema.pre('save', function (next) {

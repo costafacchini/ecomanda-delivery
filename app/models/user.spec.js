@@ -1,6 +1,5 @@
 const User = require('@models/user')
 const mongoServer = require('.jest/utils')
-const bcrypt = require('bcrypt')
 
 describe('User', () => {
   beforeEach(async () => {

@@ -26,7 +26,13 @@
         "standard/no-callback-literal": "off",
         "default-param-last": "off",
         "camelcase": "off",
-        "space-before-function-paren": 0
+        "space-before-function-paren": 0,
+        "jest/expect-expect": [
+            "error",
+            {
+                "assertFunctionNames": ["expect", "request.*.expect", "request.**.expect"]
+            }
+        ]
     },
     "overrides": [
         {
