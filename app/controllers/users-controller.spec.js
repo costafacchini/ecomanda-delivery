@@ -9,6 +9,7 @@ describe('user controller', () => {
   beforeAll(async () => {
     await mongoServer.connect()
     await User.create({
+      name: 'John Doe',
       email: 'john@doe.com',
       password: '12345678',
     })
@@ -68,8 +69,19 @@ describe('user controller', () => {
           })
       })
 
-      it('returns status 422 and message if the some error ocurre when create the user', async () => {
-        const mockFunction = jest.spyOn(User, 'create').mockImplementation(() => {
+      it('returns status 422 and message if the user is not valid', async () => {
+        await request(expressServer)
+          .post('/resources/users/')
+          .set('x-access-token', token)
+          .send({ name: 'Sil', email: 'silfer@tape.com', password: '123456' })
+          .expect('Content-Type', /json/)
+          .expect(422, {
+            errors: [{ message: 'Nome: Informe um valor com mais que 4 caracteres! Atual: Sil' }, { 'message': 'Senha: Informe um valor com mais que 8 caracteres!' }],
+          })
+      })
+
+      it('returns status 500 and message if the some error ocurred when create the user', async () => {
+        const mockFunction = jest.spyOn(User.prototype, 'save').mockImplementation(() => {
           throw new Error('some error')
         })
 
@@ -79,24 +91,13 @@ describe('user controller', () => {
           .send({ name: 'Silfer', email: 'silfer@tape.com', password: '12345678' })
           .expect('Content-Type', /json/)
           .expect(500, {
-            errors: { mensagem: 'Error: some error' },
+            errors: { message: 'Error: some error' },
           })
 
         mockFunction.mockRestore()
       })
 
       describe('validations', () => {
-        it('returns status 422 and message if the email is not filled', async () => {
-          await request(expressServer)
-            .post('/resources/users/')
-            .set('x-access-token', token)
-            .send({ name: 'Mary Jane', password: '12345678' })
-            .expect('Content-Type', /json/)
-            .expect(422, {
-              errors: [{ mensagem: 'Email deve ser preenchido com um valor válido' }],
-            })
-        })
-
         it('returns status 422 and message if the email is invalid', async () => {
           await request(expressServer)
             .post('/resources/users/')
@@ -104,40 +105,7 @@ describe('user controller', () => {
             .send({ name: 'Mary Jane', email: 'maryjane.com', password: '12345678' })
             .expect('Content-Type', /json/)
             .expect(422, {
-              errors: [{ mensagem: 'Email deve ser preenchido com um valor válido' }],
-            })
-        })
-
-        it('returns status 422 and message if the email already exists', async () => {
-          await request(expressServer)
-            .post('/resources/users/')
-            .set('x-access-token', token)
-            .send({ name: 'Mary Jane', email: 'john@doe.com', password: '12345678' })
-            .expect('Content-Type', /json/)
-            .expect(422, {
-              errors: [{ mensagem: 'E-mail já cadastrado' }],
-            })
-        })
-
-        it('returns status 422 and message if the password is less than 8 chars', async () => {
-          await request(expressServer)
-            .post('/resources/users/')
-            .set('x-access-token', token)
-            .send({ name: 'Silfer Tape', email: 'silfer@tape.com', password: '1234567' })
-            .expect('Content-Type', /json/)
-            .expect(422, {
-              errors: [{ mensagem: 'Senha deve ter no mínimo 8 caracteres' }],
-            })
-        })
-
-        it('returns status 422 and message if the name is less than 4 chars', async () => {
-          await request(expressServer)
-            .post('/resources/users/')
-            .set('x-access-token', token)
-            .send({ name: 'Sil', email: 'silfer@tape.com', password: '12345678' })
-            .expect('Content-Type', /json/)
-            .expect(422, {
-              errors: [{ mensagem: 'Nome deve ter no mínimo 4 caracteres' }],
+              errors: [{ message: 'Email deve ser preenchido com um valor válido' }],
             })
         })
       })
@@ -182,38 +150,10 @@ describe('user controller', () => {
           .send({ name: 'Silfer', email: 'silfer@tape.com', password: '12345678' })
           .expect('Content-Type', /json/)
           .expect(500, {
-            errors: { mensagem: 'Error: some error' },
+            errors: { message: 'Error: some error' },
           })
 
         mockFunction.mockRestore()
-      })
-
-      describe('validations', () => {
-        it('returns status 422 and message if the password is less than 8 chars', async () => {
-          const user = await User.findOne({ email: 'john@doe.com' })
-
-          await request(expressServer)
-            .post(`/resources/users/${user._id}`)
-            .set('x-access-token', token)
-            .send({ password: '1234567' })
-            .expect('Content-Type', /json/)
-            .expect(422, {
-              errors: [{ mensagem: 'Senha deve ter no mínimo 8 caracteres' }],
-            })
-        })
-
-        it('returns status 422 and message if the name is less than 4 chars', async () => {
-          const user = await User.findOne({ email: 'john@doe.com' })
-
-          await request(expressServer)
-            .post(`/resources/users/${user._id}`)
-            .set('x-access-token', token)
-            .send({ name: 'Sil' })
-            .expect('Content-Type', /json/)
-            .expect(422, {
-              errors: [{ mensagem: 'Nome deve ter no mínimo 4 caracteres' }],
-            })
-        })
       })
     })
   })
@@ -251,7 +191,7 @@ describe('user controller', () => {
           .set('x-access-token', token)
           .expect('Content-Type', /json/)
           .expect(404, {
-            errors: { mensagem: 'Usuário 12312 não encontrado' },
+            errors: { message: 'Usuário 12312 não encontrado' },
           })
       })
 
@@ -265,7 +205,7 @@ describe('user controller', () => {
           .set('x-access-token', token)
           .expect('Content-Type', /json/)
           .expect(500, {
-            errors: { mensagem: 'Error: some error' },
+            errors: { message: 'Error: some error' },
           })
 
         mockFunction.mockRestore()
@@ -303,7 +243,7 @@ describe('user controller', () => {
           .set('x-access-token', token)
           .expect('Content-Type', /json/)
           .expect(500, {
-            errors: { mensagem: 'Error: some error' },
+            errors: { message: 'Error: some error' },
           })
 
         mockFunction.mockRestore()

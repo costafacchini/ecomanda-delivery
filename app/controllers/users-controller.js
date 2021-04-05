@@ -2,55 +2,48 @@ const User = require('@models/user')
 const { check, validationResult } = require('express-validator')
 const _ = require('lodash')
 
-function sanitizeErrors(errorsList) {
+function sanitizeExpressErrors(errorsList) {
   return _.uniqWith(errorsList, _.isEqual).map((item) => {
     return {
-      mensagem: item.msg,
+      message: item.msg,
     }
   })
 }
 
-function validations(method) {
-  switch (method) {
-    case 'create': {
-      return [
-        check('email', 'Email deve ser preenchido com um valor válido')
-          .exists()
-          .isEmail()
-          .custom(async (value) => {
-            const user = await User.findOne({ email: value })
-            if (user) {
-              return Promise.reject(new Error('E-mail já cadastrado'))
-            }
-          }),
-        check('password', 'Senha deve ter no mínimo 8 caracteres').exists().isLength({ min: 8 }),
-        check('name', 'Nome deve ter no mínimo 4 caracteres').exists().isLength({ min: 4 }),
-      ]
-    }
+function sanitizeModelErrors(errors) {
+  return Object.keys(errors).map((key) => {
+    return { message: errors[key].message }
+  })
+}
 
-    case 'update': {
-      return [
-        check('password', 'Senha deve ter no mínimo 8 caracteres').optional().isLength({ min: 8 }),
-        check('name', 'Nome deve ter no mínimo 4 caracteres').optional().isLength({ min: 4 }),
-      ]
-    }
-  }
+function validations() {
+  return [
+    check('email', 'Email deve ser preenchido com um valor válido').optional().isEmail(),
+  ]
 }
 
 async function create(req, res) {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: sanitizeErrors(errors.array()) })
+    return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
   }
 
   const { name, email, password, active } = req.body
 
+  const user = new User({ name, email, password, active })
+  const validation = user.validateSync()
+
   try {
-    const user = await User.create({ name, email, password, active })
+    if (validation) {
+
+      return res.status(422).json({ errors: sanitizeModelErrors(validation.errors) })
+    } else {
+      await user.save()
+    }
 
     res.status(201).send({ _id: user._id, name, email, active })
   } catch (err) {
-    res.status(500).send({ errors: { mensagem: err.toString() } })
+    res.status(500).send({ errors: { message: err.toString() } })
   }
 }
 
@@ -70,7 +63,7 @@ async function update(req, res) {
 
     res.status(200).send({ _id, name, email, active })
   } catch (err) {
-    res.status(500).send({ errors: { mensagem: err.toString() } })
+    res.status(500).send({ errors: { message: err.toString() } })
   }
 }
 
@@ -82,9 +75,9 @@ async function show(req, res) {
     res.status(200).send({ _id, name, email, active })
   } catch (err) {
     if (err.toString().includes('Cast to ObjectId failed for value')) {
-      return res.status(404).send({ errors: { mensagem: 'Usuário 12312 não encontrado' } })
+      return res.status(404).send({ errors: { message: 'Usuário 12312 não encontrado' } })
     } else {
-      return res.status(500).send({ errors: { mensagem: err.toString() } })
+      return res.status(500).send({ errors: { message: err.toString() } })
     }
   }
 }
@@ -93,7 +86,7 @@ async function index(req, res) {
   try {
     res.status(200).send(await User.find({}, { password: 0 }))
   } catch (err) {
-    res.status(500).send({ errors: { mensagem: err.toString() } })
+    res.status(500).send({ errors: { message: err.toString() } })
   }
 }
 

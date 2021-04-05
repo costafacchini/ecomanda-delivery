@@ -19,7 +19,7 @@ describe('#createDefaultUser', () => {
   })
 
   it('does not create the default user if has users', async () => {
-    const user = await new User({ email: 'teste', password: 'teste' })
+    const user = await new User({ name: 'Default user', email: 'teste', password: 'testeteste' })
     await user.save()
 
     expect(await User.countDocuments()).toEqual(1)

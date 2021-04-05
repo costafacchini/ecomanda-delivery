@@ -7,7 +7,7 @@ const { expressServer } = require('.jest/server-express')
 describe('login controller', () => {
   beforeAll(async () => {
     await mongoServer.connect()
-    await User.create({ email: 'john@doe.com', password: '123456' })
+    await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678' })
   })
 
   afterAll(async () => {
@@ -19,7 +19,7 @@ describe('login controller', () => {
       it('returns status 200 and the token if the login is successful', async () => {
         await request(expressServer)
           .post('/login')
-          .send({ email: 'john@doe.com', password: '123456' })
+          .send({ email: 'john@doe.com', password: '12345678' })
           .expect('Content-Type', /json/)
           .expect(200)
           .then((response) => {
@@ -32,7 +32,7 @@ describe('login controller', () => {
       it('returns status 401 and message if the user not exists', async () => {
         await request(expressServer)
           .post('/login')
-          .send({ email: 'mary@doe.com', password: '123456' })
+          .send({ email: 'mary@doe.com', password: '12345678' })
           .expect('Content-Type', /json/)
           .expect(401, {
             message: 'Email ou senha inválidos!',
@@ -42,7 +42,7 @@ describe('login controller', () => {
       it('returns status 401 and message if the password is invalid', async () => {
         await request(expressServer)
           .post('/login')
-          .send({ email: 'john@doe.com', password: '9875343' })
+          .send({ email: 'john@doe.com', password: '987534378' })
           .expect('Content-Type', /json/)
           .expect(401, {
             message: 'Email ou senha inválidos!',
@@ -70,11 +70,11 @@ describe('login controller', () => {
       })
 
       it('returns status 401 and message if is not active', async () => {
-        await User.create({ email: 'mary@doe.com', password: '123456', active: false })
+        await User.create({ name: 'John Doe', email: 'mary@doe.com', password: '12345678', active: false })
 
         await request(expressServer)
           .post('/login')
-          .send({ email: 'mary@doe.com', password: '123456' })
+          .send({ email: 'mary@doe.com', password: '12345678' })
           .expect('Content-Type', /json/)
           .expect(401, {
             message: 'Email ou senha inválidos!',
@@ -88,7 +88,7 @@ describe('login controller', () => {
 
         await request(expressServer)
           .post('/login')
-          .send({ email: 'john@doe.com', password: '123456' })
+          .send({ email: 'john@doe.com', password: '12345678' })
           .expect('Content-Type', /json/)
           .expect(500, {
             message: 'Erro ao tentar fazer login. Error: Erro',

@@ -6,9 +6,36 @@ const saltRounds = 14
 
 const userSchema = new Schema({
   _id: ObjectId,
-  name: String,
-  email: { type: String, unique: true },
-  password: String,
+  name: {
+    type: String,
+    required: [
+      true,
+      'Nome: Você deve preencher o campo'
+    ],
+    validate: {
+      validator: (value) => {
+        return value.length >= 4
+      },
+      message: props => `Nome: Informe um valor com mais que 4 caracteres! Atual: ${props.value}`
+    },
+  },
+  email: {
+    type: String,
+    unique: true,
+    required: [
+      true,
+      'Email: Você deve preencher o campo'
+    ],
+  },
+  password: {
+    type: String,
+    validate: {
+      validator: (value) => {
+        return value.length >= 8
+      },
+      message: 'Senha: Informe um valor com mais que 8 caracteres!'
+    },
+  },
   active: { type: Boolean, default: true },
 })
 
