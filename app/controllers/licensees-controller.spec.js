@@ -249,8 +249,28 @@ describe('licensee controller', () => {
       })
 
       it('returns status 422 and message if the licensee is not valid', async () => {
+        const licensee = await Licensee.create({
+          name: 'Alcateia Ltds',
+          email: 'alcateia@alcateia.com',
+          phone: '11098538273',
+          active: true,
+          licenseKind: 'demo',
+          useChatbot: true,
+          chatbotDefault: 'landbot',
+          whatsappDefault: 'winzap',
+          chatDefault: 'rocketchat',
+          chatbotUrl: 'https://chatbot.url',
+          chatbotAuthorizationToken: 'chat-bot-token',
+          whatsappToken: 'whatsapp-token',
+          whatsappUrl: 'https://whatsapp.url',
+          chatUrl: 'https://chat.url',
+          awsId: 'aws-id',
+          awsSecret: 'aws-secret',
+          bucketName: 'bocket-name',
+        })
+
         await request(expressServer)
-          .post('/resources/licensees/')
+          .post(`/resources/licensees/${licensee._id}`)
           .set('x-access-token', token)
           .send({ name: '', email: 'modified@alcateia.com', licenseKind: '' })
           .expect('Content-Type', /json/)
@@ -297,6 +317,39 @@ describe('licensee controller', () => {
           })
 
         mockFunction.mockRestore()
+      })
+
+      describe('validations', () => {
+        it('returns status 422 and message if the email is invalid', async () => {
+          const licensee = await Licensee.create({
+            name: 'Alcateia Ltds',
+            email: 'alcateia@alcateia.com',
+            phone: '11098538273',
+            active: true,
+            licenseKind: 'demo',
+            useChatbot: true,
+            chatbotDefault: 'landbot',
+            whatsappDefault: 'winzap',
+            chatDefault: 'rocketchat',
+            chatbotUrl: 'https://chatbot.url',
+            chatbotAuthorizationToken: 'chat-bot-token',
+            whatsappToken: 'whatsapp-token',
+            whatsappUrl: 'https://whatsapp.url',
+            chatUrl: 'https://chat.url',
+            awsId: 'aws-id',
+            awsSecret: 'aws-secret',
+            bucketName: 'bocket-name',
+          })
+
+          await request(expressServer)
+            .post(`/resources/licensees/${licensee._id}`)
+            .set('x-access-token', token)
+            .send({ email: 'modifiedalcateia.com' })
+            .expect('Content-Type', /json/)
+            .expect(422, {
+              errors: [ { message: 'Email deve ser preenchido com um valor válido' } ],
+            })
+        })
       })
     })
   })
@@ -392,27 +445,27 @@ describe('licensee controller', () => {
           .expect(200)
           .then((response) => {
             expect(Array.isArray(response.body)).toEqual(true)
-            expect(response.body.length).toEqual(4)
-            expect(response.body[3].name).toEqual('Alcateia Ltds')
-            expect(response.body[3].email).toEqual('alcateia@alcateia.com')
-            expect(response.body[3].phone).toEqual('11098538273')
-            expect(response.body[3].active).toEqual(true)
-            expect(response.body[3].licenseKind).toEqual('demo')
-            expect(response.body[3].useChatbot).toEqual(true)
-            expect(response.body[3].chatbotDefault).toEqual('landbot')
-            expect(response.body[3].whatsappDefault).toEqual('winzap')
-            expect(response.body[3].chatDefault).toEqual('rocketchat')
-            expect(response.body[3].chatbotUrl).toEqual('https://chatbot.url')
-            expect(response.body[3].chatbotAuthorizationToken).toEqual('chat-bot-token')
-            expect(response.body[3].whatsappToken).toEqual('whatsapp-token')
-            expect(response.body[3].whatsappUrl).toEqual('https://whatsapp.url')
-            expect(response.body[3].chatUrl).toEqual('https://chat.url')
-            expect(response.body[3].awsId).toEqual('aws-id')
-            expect(response.body[3].awsSecret).toEqual('aws-secret')
-            expect(response.body[3].bucketName).toEqual('bocket-name')
-            expect(response.body[3]._id).toBeDefined()
-            expect(response.body[3]._id).not.toBe('')
-            expect(response.body[3]._id).not.toBe(null)
+            expect(response.body.length).toEqual(6)
+            expect(response.body[5].name).toEqual('Alcateia Ltds')
+            expect(response.body[5].email).toEqual('alcateia@alcateia.com')
+            expect(response.body[5].phone).toEqual('11098538273')
+            expect(response.body[5].active).toEqual(true)
+            expect(response.body[5].licenseKind).toEqual('demo')
+            expect(response.body[5].useChatbot).toEqual(true)
+            expect(response.body[5].chatbotDefault).toEqual('landbot')
+            expect(response.body[5].whatsappDefault).toEqual('winzap')
+            expect(response.body[5].chatDefault).toEqual('rocketchat')
+            expect(response.body[5].chatbotUrl).toEqual('https://chatbot.url')
+            expect(response.body[5].chatbotAuthorizationToken).toEqual('chat-bot-token')
+            expect(response.body[5].whatsappToken).toEqual('whatsapp-token')
+            expect(response.body[5].whatsappUrl).toEqual('https://whatsapp.url')
+            expect(response.body[5].chatUrl).toEqual('https://chat.url')
+            expect(response.body[5].awsId).toEqual('aws-id')
+            expect(response.body[5].awsSecret).toEqual('aws-secret')
+            expect(response.body[5].bucketName).toEqual('bocket-name')
+            expect(response.body[5]._id).toBeDefined()
+            expect(response.body[5]._id).not.toBe('')
+            expect(response.body[5]._id).not.toBe(null)
           })
       })
 

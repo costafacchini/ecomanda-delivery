@@ -2,20 +2,11 @@ const express = require('express')
 const router = express.Router()
 const jwt = require('jsonwebtoken')
 const SECRET = process.env.SECRET
-const {
-  create: usersCreate,
-  update: usersUpdate,
-  show: usersShow,
-  index: userIndex,
-  validations: userValidations,
-} = require('@controllers/users-controller')
-const {
-  create: licenseesCreate,
-  update: licenseesUpdate,
-  show: licenseesShow,
-  index: licenseesIndex,
-  validations: licenseesValidations,
-} = require('@controllers/licensees-controller')
+const UsersController = require('@controllers/users-controller')
+const LicenseesController = require('@controllers/licensees-controller')
+
+const usersController = new UsersController()
+const licenseesController = new LicenseesController()
 
 router.route('*').all(authenticate, (req, res, next) => {
   next()
@@ -33,14 +24,14 @@ function authenticate(req, res, next) {
   })
 }
 
-router.post('/users/', userValidations(), usersCreate)
-router.post('/users/:id', userValidations(), usersUpdate)
-router.get('/users/:id', usersShow)
-router.get('/users/', userIndex)
+router.post('/users/', usersController.validations(), usersController.create)
+router.post('/users/:id', usersController.validations(), usersController.update)
+router.get('/users/:id', usersController.show)
+router.get('/users/', usersController.index)
 
-router.post('/licensees/', licenseesValidations(), licenseesCreate)
-router.post('/licensees/:id', licenseesValidations(), licenseesUpdate)
-router.get('/licensees/:id', licenseesShow)
-router.get('/licensees/', licenseesIndex)
+router.post('/licensees/', licenseesController.validations(), licenseesController.create)
+router.post('/licensees/:id', licenseesController.validations(), licenseesController.update)
+router.get('/licensees/:id', licenseesController.show)
+router.get('/licensees/', licenseesController.index)
 
 module.exports = router

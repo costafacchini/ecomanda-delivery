@@ -176,6 +176,21 @@ describe('user controller', () => {
 
         mockFunction.mockRestore()
       })
+
+      describe('validations', () => {
+        it('returns status 422 and message if the email is invalid', async () => {
+          const user = await User.findOne({ email: 'john@doe.com' })
+
+          await request(expressServer)
+            .post(`/resources/users/${user._id}`)
+            .set('x-access-token', token)
+            .send({ email: 'silfertape.com' })
+            .expect('Content-Type', /json/)
+            .expect(422, {
+            errors: [ { message: 'Email deve ser preenchido com um valor válido' } ],
+          })
+        })
+      })
     })
   })
 
