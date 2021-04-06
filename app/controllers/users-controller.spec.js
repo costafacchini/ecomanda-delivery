@@ -33,7 +33,8 @@ describe('user controller', () => {
         .send({ name: 'Mary Jane', email: 'mary@jane.com', password: '12345678', active: true })
         .expect('Content-Type', /json/)
         .expect(401, {
-          auth: false, message: 'Token não informado.'
+          auth: false,
+          message: 'Token não informado.',
         })
     })
 
@@ -44,7 +45,8 @@ describe('user controller', () => {
         .send({ name: 'Mary Jane', email: 'mary@jane.com', password: '12345678', active: true })
         .expect('Content-Type', /json/)
         .expect(500, {
-          auth: false, message: 'Falha na autenticação com token.'
+          auth: false,
+          message: 'Falha na autenticação com token.',
         })
     })
   })
@@ -76,7 +78,10 @@ describe('user controller', () => {
           .send({ name: 'Sil', email: 'silfer@tape.com', password: '123456' })
           .expect('Content-Type', /json/)
           .expect(422, {
-            errors: [{ message: 'Nome: Informe um valor com mais que 4 caracteres! Atual: Sil' }, { 'message': 'Senha: Informe um valor com mais que 8 caracteres!' }],
+            errors: [
+              { message: 'Nome: Informe um valor com mais que 4 caracteres! Atual: Sil' },
+              { message: 'Senha: Informe um valor com mais que 8 caracteres!' },
+            ],
           })
       })
 
@@ -138,14 +143,30 @@ describe('user controller', () => {
       })
 
       it('returns status 422 and message if the some error ocurre when update the user', async () => {
-        const mockFunction = jest.spyOn(User, 'updateOne').mockImplementation(() => {
-          throw new Error('some error')
-        })
-
         const user = await User.findOne({ email: 'john@doe.com' })
 
         await request(expressServer)
           .post(`/resources/users/${user._id}`)
+          .set('x-access-token', token)
+          .send({ name: '', email: 'silfer@tape.com', password: '' })
+          .expect('Content-Type', /json/)
+          .expect(422, {
+            errors: [
+              { message: 'Nome: Você deve preencher o campo' },
+              { message: 'Senha: Informe um valor com mais que 8 caracteres!' },
+            ],
+          })
+      })
+
+      it('returns status 500 and message if the some error ocurre when update the user', async () => {
+        const mockFunction = jest.spyOn(User, 'findOne').mockImplementation(() => {
+          throw new Error('some error')
+        })
+
+        const user = await User.find({ email: 'john@doe.com' })
+
+        await request(expressServer)
+          .post(`/resources/users/${user[0]._id}`)
           .set('x-access-token', token)
           .send({ name: 'Silfer', email: 'silfer@tape.com', password: '12345678' })
           .expect('Content-Type', /json/)

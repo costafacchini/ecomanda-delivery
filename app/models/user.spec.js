@@ -10,16 +10,6 @@ describe('User', () => {
     await mongoServer.disconnect()
   })
 
-  describe('email', () => {
-    it('is unique', async () => {
-      await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678' })
-
-      await expect(User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678' })).rejects.toThrowError(
-        'E11000 duplicate key error dup key: { : "john@doe.com" }'
-      )
-    })
-  })
-
   describe('before save', () => {
     it('generates _id', async () => {
       const user = await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678' })
@@ -41,6 +31,12 @@ describe('User', () => {
       await user.save()
 
       expect(user.password).toEqual(originalPassword)
+    })
+
+    it('fills the fields that have a default value', () => {
+      const user = new User()
+
+      expect(user.active).toEqual(true)
     })
   })
 
@@ -66,7 +62,9 @@ describe('User', () => {
         const user = new User({ name: 'abc', email: 'john@doe.com', password: '12345678' })
         const validation = user.validateSync()
 
-        expect(validation.errors['name'].message).toEqual('Nome: Informe um valor com mais que 4 caracteres! Atual: abc')
+        expect(validation.errors['name'].message).toEqual(
+          'Nome: Informe um valor com mais que 4 caracteres! Atual: abc'
+        )
       })
     })
 
