@@ -1,5 +1,5 @@
 const { Worker } = require('bullmq')
-const redis = require('./config/redis')
+const redis = require('@config/redis')
 
 const worker = new Worker('job', async job => {
   console.log(`Processando o job: ${JSON.stringify(job.data)}`)
