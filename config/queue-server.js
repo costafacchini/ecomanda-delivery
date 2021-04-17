@@ -1,5 +1,5 @@
 const { Queue } = require('bullmq')
-const redis = require('@config/redis')
+const redisConnection = require('@config/redis')
 
 class QueueServer {
   constructor() {
@@ -31,11 +31,11 @@ class QueueServer {
         removeOnComplete: true,
         removeOnFail: true,
       },
-      redis,
+      redisConnection,
     })
   }
 }
 
-const queueServer = new QueueServer()
+const queue = new QueueServer()
 
-module.exports = { queueServer }
+module.exports = { queue }
