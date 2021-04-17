@@ -24,5 +24,13 @@ services:
     links:
       - "mongo"
 
+  redis:
+    image: redis:5
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/var/lib/redis/data
+
 volumes:
   mongo_data:
+  redis_data:

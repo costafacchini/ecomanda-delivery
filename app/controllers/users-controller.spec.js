@@ -187,8 +187,8 @@ describe('user controller', () => {
             .send({ email: 'silfertape.com' })
             .expect('Content-Type', /json/)
             .expect(422, {
-            errors: [ { message: 'Email deve ser preenchido com um valor válido' } ],
-          })
+              errors: [{ message: 'Email deve ser preenchido com um valor válido' }],
+            })
         })
       })
     })

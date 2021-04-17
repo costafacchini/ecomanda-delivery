@@ -3,7 +3,7 @@ const { check, validationResult } = require('express-validator')
 const { sanitizeExpressErrors, sanitizeModelErrors } = require('../helpers/sanitize-errors')
 const _ = require('lodash')
 
-function permit (fields) {
+function permit(fields) {
   const permitedFields = [
     'name',
     'email',
@@ -28,19 +28,14 @@ function permit (fields) {
 }
 
 class LicenseesController {
-  validations () {
-    return [
-      check('email', 'Email deve ser preenchido com um valor válido').
-        optional().
-        isEmail()
-    ]
+  validations() {
+    return [check('email', 'Email deve ser preenchido com um valor válido').optional().isEmail()]
   }
 
-  async create (req, res) {
+  async create(req, res) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
-      return res.status(422).
-        json({errors: sanitizeExpressErrors(errors.array())})
+      return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
     }
 
     const {
@@ -87,72 +82,59 @@ class LicenseesController {
 
     try {
       if (validation) {
-        return res.status(422).
-          json({errors: sanitizeModelErrors(validation.errors)})
+        return res.status(422).json({ errors: sanitizeModelErrors(validation.errors) })
       } else {
         await licensee.save()
       }
 
-      res.status(201).
-        send(licensee)
+      res.status(201).send(licensee)
     } catch (err) {
-      res.status(500).
-        send({errors: {message: err.toString()}})
+      res.status(500).send({ errors: { message: err.toString() } })
     }
   }
 
-  async update (req, res) {
+  async update(req, res) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
-      return res.status(422).
-        json({errors: sanitizeExpressErrors(errors.array())})
+      return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
     }
 
     const fields = permit(req.body)
 
     try {
-      await Licensee.updateOne({_id: req.params.id}, {$set: fields}, {runValidators: true})
+      await Licensee.updateOne({ _id: req.params.id }, { $set: fields }, { runValidators: true })
     } catch (err) {
-      return res.status(422).
-        json({errors: sanitizeModelErrors(err.errors)})
+      return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
     }
 
     try {
-      const licensee = await Licensee.findOne({_id: req.params.id})
+      const licensee = await Licensee.findOne({ _id: req.params.id })
 
-      res.status(200).
-        send(licensee)
+      res.status(200).send(licensee)
     } catch (err) {
-      res.status(500).
-        send({errors: {message: err.toString()}})
+      res.status(500).send({ errors: { message: err.toString() } })
     }
   }
 
-  async show (req, res) {
+  async show(req, res) {
     try {
-      const licensee = await Licensee.findOne({_id: req.params.id})
+      const licensee = await Licensee.findOne({ _id: req.params.id })
 
-      res.status(200).
-        send(licensee)
+      res.status(200).send(licensee)
     } catch (err) {
-      if (err.toString().
-        includes('Cast to ObjectId failed for value')) {
-        return res.status(404).
-          send({errors: {message: 'Licenciado 12312 não encontrado'}})
+      if (err.toString().includes('Cast to ObjectId failed for value')) {
+        return res.status(404).send({ errors: { message: 'Licenciado 12312 não encontrado' } })
       } else {
-        return res.status(500).
-          send({errors: {message: err.toString()}})
+        return res.status(500).send({ errors: { message: err.toString() } })
       }
     }
   }
 
-  async index (req, res) {
+  async index(req, res) {
     try {
-      res.status(200).
-        send(await Licensee.find({}))
+      res.status(200).send(await Licensee.find({}))
     } catch (err) {
-      res.status(500).
-        send({errors: {message: err.toString()}})
+      res.status(500).send({ errors: { message: err.toString() } })
     }
   }
 }

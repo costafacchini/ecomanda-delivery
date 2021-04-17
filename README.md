@@ -49,3 +49,7 @@ Launches the test runner for all files with coverage report.
 ## `linter`
 
 Run linter to show the code that is out of patters
+
+## `docker-compose run redis redis-cli -h ecomanda-delivery_redis_1`
+
+Run to connect on redis. (List all keys  KEYS * )
