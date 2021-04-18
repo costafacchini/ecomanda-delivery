@@ -8,16 +8,16 @@ class QueueServer {
     this.queueDispatcher = this._newQueue('dispatcher')
   }
 
-  async addJobRequest(body, token) {
-    await this.queueRequest.add('request', { body, token }, { attempts: 3 })
+  async addJobRequest(action, body, licensee) {
+    await this.queueRequest.add('request', { action, body, licensee }, { attempts: 3 })
   }
 
-  async addJobResolver(body, token) {
-    await this.queueResolver.add('resolver', { body, token }, { attempts: 3 })
+  async addJobResolver(body, licensee) {
+    await this.queueResolver.add('resolver', { body, licensee }, { attempts: 3 })
   }
 
-  async addJobDispatcher(body, token) {
-    await this.queueDispatcher.add('dispatcher', { body, token }, { attempts: 3 })
+  async addJobDispatcher(body, licensee) {
+    await this.queueDispatcher.add('dispatcher', { body, licensee }, { attempts: 3 })
   }
 
   _newQueue(name) {

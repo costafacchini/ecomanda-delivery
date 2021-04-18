@@ -12,7 +12,7 @@ router.use(async (req, res, next) => {
     }
   }
 
-  res.sendStatus(401)
+  res.status(401).json({ message: 'Token não informado ou inválido.' })
 })
 
 router.use('/v1', v1Routes)
