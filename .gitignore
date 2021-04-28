@@ -5,3 +5,4 @@ dist
 .tool-versions
 /coverage
 yarn-error.log
+/tmp

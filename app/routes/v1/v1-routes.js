@@ -9,11 +9,11 @@ const messengersController = new MessengersController()
 
 const router = express.Router()
 
-router.post('/chat/webhook', chatsController.create)
+router.post('/chat/message', chatsController.message)
 
-router.post('/chatbot/webhook', chatbotsController.create)
-router.post('/chatbot/transfer', chatbotsController.change)
+router.post('/chatbot/message', chatbotsController.message)
+router.post('/chatbot/transfer', chatbotsController.transfer)
 
-router.post('/messenger/webhook', messengersController.create)
+router.post('/messenger/message', messengersController.message)
 
 module.exports = router
