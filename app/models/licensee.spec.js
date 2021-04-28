@@ -17,6 +17,16 @@ describe('Licensee', () => {
       expect(licensee._id).not.toEqual(null)
     })
 
+    it('does not changes _id if licensee is changed', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
+
+      licensee.name = 'Changed'
+      const alteredLicensee = await licensee.save()
+
+      expect(licensee._id).toEqual(alteredLicensee._id)
+      expect(alteredLicensee.name).toEqual('Changed')
+    })
+
     it('fills the fields that have a default value', () => {
       const licensee = new Licensee()
 
