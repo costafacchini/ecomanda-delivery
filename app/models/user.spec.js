@@ -17,13 +17,23 @@ describe('User', () => {
       expect(user._id).not.toEqual(null)
     })
 
+    it('does not changes _id if user is changed', async () => {
+      const user = await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678' })
+
+      user.name = 'Changed'
+      const alteredUser = await user.save()
+
+      expect(user._id).toEqual(alteredUser._id)
+      expect(alteredUser.name).toEqual('Changed')
+    })
+
     it('encripts password if the password is modified', async () => {
       const user = await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678' })
 
       expect(user.password).not.toEqual('12345678')
     })
 
-    it('does not encripts pawword if the password is not modified', async () => {
+    it('does not encripts pasword if the password is not modified', async () => {
       const user = await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678' })
       const originalPassword = user.password
 
