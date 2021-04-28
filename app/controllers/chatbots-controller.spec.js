@@ -22,11 +22,11 @@ describe('chatbots controller', () => {
     await mongoServer.disconnect()
   })
 
-  describe('create', () => {
+  describe('message', () => {
     describe('about auth', () => {
       it('returns status 401 and message if query param token is not valid', async () => {
         await request(expressServer).
-          post('/api/v1/chatbot/webhook/?token=627365264').
+          post('/api/v1/chatbot/message/?token=627365264').
           send({
             field: 'test'
           }).
@@ -36,7 +36,7 @@ describe('chatbots controller', () => {
 
       it('returns status 401 and message if query param token is informed', async () => {
         await request(expressServer).
-          post('/api/v1/chatbot/webhook').
+          post('/api/v1/chatbot/message').
           send({
             field: 'test'
           }).
@@ -47,11 +47,11 @@ describe('chatbots controller', () => {
 
     describe('response', () => {
       it('returns status 201 and schedule job to process chatbot message', async () => {
-        const mockFunction = jest.spyOn(queue, 'addJobRequest')
+        const mockFunction = jest.spyOn(queue, 'addJobResolver')
         const licensee = await Licensee.findOne({ apiToken })
 
         await request(expressServer)
-          .post(`/api/v1/chatbot/webhook/?token=${apiToken}`)
+          .post(`/api/v1/chatbot/message/?token=${apiToken}`)
           .send({
             field: 'test',
           })
@@ -68,7 +68,7 @@ describe('chatbots controller', () => {
     })
   })
 
-  describe('change', () => {
+  describe('transfer', () => {
     describe('about auth', () => {
       it('returns status 401 and message if query param token is not valid', async () => {
         await request(expressServer).
@@ -93,7 +93,7 @@ describe('chatbots controller', () => {
 
     describe('response', () => {
       it('returns status 201 and schedule job to transfer chatbot to chat', async () => {
-        const mockFunction = jest.spyOn(queue, 'addJobRequest')
+        const mockFunction = jest.spyOn(queue, 'addJobResolver')
         const licensee = await Licensee.findOne({ apiToken })
 
         await request(expressServer)

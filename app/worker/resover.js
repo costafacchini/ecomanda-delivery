@@ -6,7 +6,7 @@ const transformChatbotBody = require('../services/chatbot-message')
 const transformTransferBody = require('../services/chatbot-transfer')
 
 class WorkerResolver {
-  async constructor(queueName) {
+  constructor(queueName) {
     this.worker = new Worker(queueName, async job => {
       switch (job.data.action) {
         case 'chat-message':

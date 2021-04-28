@@ -25,7 +25,7 @@ describe('chats controller', () => {
   describe('about auth', () => {
     it('returns status 401 and message if query param token is not valid', async () => {
       await request(expressServer)
-      .post('/api/v1/chat/webhook/?token=627365264')
+      .post('/api/v1/chat/message/?token=627365264')
       .send({
         field: 'test'
       })
@@ -35,7 +35,7 @@ describe('chats controller', () => {
 
     it('returns status 401 and message if query param token is informed', async () => {
       await request(expressServer)
-      .post('/api/v1/chat/webhook')
+      .post('/api/v1/chat/message')
       .send({
         field: 'test'
       })
@@ -47,11 +47,11 @@ describe('chats controller', () => {
   describe('create', () => {
     describe('response', () => {
       it('returns status 201 and schedule job to process chat message', async () => {
-        const mockFunction = jest.spyOn(queue, 'addJobRequest')
+        const mockFunction = jest.spyOn(queue, 'addJobResolver')
         const licensee = await Licensee.findOne({ apiToken })
 
         await request(expressServer)
-        .post(`/api/v1/chat/webhook/?token=${apiToken}`)
+        .post(`/api/v1/chat/message/?token=${apiToken}`)
         .send({
           field: 'test',
         })

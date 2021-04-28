@@ -6,7 +6,7 @@ const sendMessageToChat = require('../services/send-message-to-chat')
 const sendMessageToChatbot = require('../services/send-message-to-chatbot')
 
 class WorkerDispatcher {
-  async constructor(queueName) {
+  constructor(queueName) {
     this.worker = new Worker(queueName, async job => {
       switch (job.data.action) {
         case 'send-message-to-messenger':
