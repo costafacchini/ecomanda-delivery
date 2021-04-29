@@ -42,7 +42,7 @@ contactSchema.pre('save', function (next) {
   const normalizedPhone = new NormalizePhone(contact.number)
   contact.number = normalizedPhone.number
   contact.type = normalizedPhone.type
-  
+
   next()
 })
 

@@ -1,16 +1,27 @@
 class Rocketchat {
   constructor(requestBody) {
-    this.requestBody = requestBody
-    this.action = this._defineAction(requestBody)
+    this.action = this.#defineAction(requestBody)
+    this.transformdedBody = this.#transformaBody(requestBody)
   }
 
-  transformdedBody() {
+  #defineAction(requestBody) {
+    let action = ''
+    if (requestBody.type.toLowerCase() === 'message') {
+      action = 'send-message-to-messenger'
+    } else if (requestBody.type.toLowerCase() === 'livechatsession') {
+      action = 'close-chat'
+    }
+
+    return action
+  }
+
+  #transformaBody(requestBody) {
     if (this.action === 'close-chat') {
-      return this.requestBody._id
+      return requestBody._id
     } else {
       //_id é o id da sala da conversa
 
-      return this.requestBody
+      return requestBody
     }
   }
 
@@ -28,17 +39,6 @@ class Rocketchat {
 
   closeChat() {
     // modificar no licenciado o roomId para nulo e também o talkingWithChatBot caso o licenciado use chatBot
-  }
-
-  _defineAction(requestBody) {
-    let action = ''
-    if (requestBody.type.toLowerCase() === 'message') {
-      action = 'send-message-to-messenger'
-    } else if (requestBody.type.toLowerCase() === 'livechatsession') {
-      action = 'close-chat'
-    }
-
-    return action
   }
 }
 

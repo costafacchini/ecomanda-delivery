@@ -1,7 +1,7 @@
-const createPlugin = require('../plugins/chats/factory')
+const createChatPlugin = require('../plugins/chats/factory')
 
 async function closeChat(body, licensee) {
-  const chatPlugin = createPlugin(licensee, body)
+  const chatPlugin = createChatPlugin(licensee, body)
 
   await chatPlugin.closeChat()
 }

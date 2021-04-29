@@ -1,15 +1,22 @@
 class Jivochat {
   constructor(requestBody) {
     this.requestBody = requestBody
-    this.action = this._defineAction(requestBody)
+    this.action = this.#defineAction()
+    this.transformdedBody = this.#transformBody()
   }
 
-  transformdedBody() {
-    return this.requestBody
+  #defineAction() {
+    let action = ''
+    if (this.requestBody.message.type !== 'typein' && this.requestBody.message.type !== 'typeout') {
+      action = 'send-message'
+    }
+
+    return action
   }
 
-  action() {
-    return this.action
+  #transformBody() {
+    this.requestBody
+    return ''
   }
 
   sendMessage() {
@@ -19,15 +26,6 @@ class Jivochat {
 
   closeChat() {
     // modificar no licenciado o roomId para nulo e também o talkingWithChatBot caso o licenciado use chatBot
-  }
-
-  _defineAction(requestBody) {
-    let action = ''
-    if (requestBody.message.type !== 'typein' && requestBody.message.type !== 'typeout') {
-      action = 'send-message'
-    }
-
-    return action
   }
 }
 

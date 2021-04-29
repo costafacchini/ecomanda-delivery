@@ -1,9 +1,9 @@
-const createChatPlugin = require('../plugins/chat/factory')
+const createChatPlugin = require('../plugins/chats/factory')
 
 async function sendMessageToChat(body, licensee) {
-  const messegnerPlugin = createChatPlugin(body, licensee)
+  const chatPlugin = createChatPlugin(licensee, body)
 
-  await messegnerPlugin.sendMessage()
+  await chatPlugin.sendMessage()
 }
 
 module.exports = sendMessageToChat
