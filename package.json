@@ -5,9 +5,11 @@
   "author": "Alan Costa Facchini",
   "scripts": {
     "start": "node server.js",
-    "dev": "bash -c 'docker-compose up -d && trap \"docker-compose stop\" SIGINT && nodemon server.js'",
-    "worker": "node worker.js",
+    "dev": "npm-run-all -p dev:*",
+    "dev:server": "bash -c 'docker-compose up -d && trap \"docker-compose stop\" SIGINT && nodemon server.js'",
+    "dev:worker": "nodemon worker.js",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "watch": "jest --no-coverage --verbose --watch --runInBand --notify --notifyMode always",
     "linter": "yarn eslint 'app/**/*.{js,ts,tsx}' 'config/**/*.{js,ts,tsx}' 'setup/**/*.{js,ts,tsx}'"
   },
@@ -25,6 +27,7 @@
     "jest": "^26.6.3",
     "mongodb-memory-server": "^6.9.6",
     "mongodb-memory-server-core": "^6.9.6",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.2.1",
     "supertest": "^6.1.3"
   },
