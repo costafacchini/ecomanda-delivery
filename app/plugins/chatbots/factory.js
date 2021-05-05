@@ -1,4 +1,4 @@
-const Landbot = require('./landbot')
+const Landbot = require('./Landbot')
 
 function createChatbotPlugin(option, licensee, body) {
   switch (licensee.chatbotDefault) {

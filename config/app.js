@@ -5,7 +5,7 @@ const createError = require('http-errors')
 const express = require('express')
 const logger = require('morgan')
 const connect = require('./database.js')
-const enableCors = require('./enable-cors')
+const enableCors = require('./cors')
 const routes = require('./routes')
 
 const app = express()

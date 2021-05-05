@@ -1,7 +1,7 @@
 const createChatPlugin = require('./factory')
-const Licensee = require('@models/licensee')
-const Rocketchat = require('./rocketchat')
-const Jivochat = require('./jivochat')
+const Licensee = require('@models/Licensee')
+const Rocketchat = require('./Rocketchat')
+const Jivochat = require('./Jivochat')
 
 describe('createChatPlugin', () => {
   it('returns the jivochat plugin if it is configured on licensee', () => {

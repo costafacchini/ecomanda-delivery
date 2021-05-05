@@ -1,6 +1,6 @@
-const Chatapi = require('../messengers/chatapi')
-const Utalk = require('../messengers/utalk')
-const Winzap = require('../messengers/winzap')
+const Chatapi = require('./Chatapi')
+const Utalk = require('./Utalk')
+const Winzap = require('./Winzap')
 
 function createMessengerPlugin(licensee, body) {
   switch (licensee.whatsappDefault) {

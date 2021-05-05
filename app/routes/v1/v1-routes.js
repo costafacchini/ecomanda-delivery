@@ -1,7 +1,7 @@
 const express = require('express')
-const ChatsController = require('@controllers/chats-controller')
-const ChatbotsController = require('@controllers/chatbots-controller')
-const MessengersController = require('@controllers/messengers-controller')
+const ChatsController = require('@controllers/ChatsController')
+const ChatbotsController = require('@controllers/ChatbotsController')
+const MessengersController = require('@controllers/MessengersController')
 
 const chatsController = new ChatsController()
 const chatbotsController = new ChatbotsController()

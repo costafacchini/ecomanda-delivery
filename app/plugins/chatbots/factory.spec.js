@@ -1,6 +1,6 @@
 const createChatbotPlugin = require('./factory')
-const Licensee = require('@models/licensee')
-const Landbot = require('./landbot')
+const Licensee = require('@models/Licensee')
+const Landbot = require('./Landbot')
 
 describe('createChatbotPlugin', () => {
   it('returns the landbot plugin if it is configured on licensee', () => {

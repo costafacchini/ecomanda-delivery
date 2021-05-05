@@ -1,5 +1,5 @@
-const Jivochat = require('./jivochat')
-const Rocketchat = require('./rocketchat')
+const Jivochat = require('./Jivochat')
+const Rocketchat = require('./Rocketchat')
 
 function createChatPlugin(licensee, body) {
   switch (licensee.chatDefault) {

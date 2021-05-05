@@ -1,11 +1,11 @@
-const chatMessage = require('./chat-message')
-const chatbotMessage = require('./chatbot-message')
-const chatbotTransferToChat = require('./chatbot-transfer-to-chat')
-const closeChat = require('./close-chat')
-const messengerMessage = require('./messenger-message')
-const sendMessageToChat = require('./send-message-to-chat')
-const sendMessageToChatbot = require('./send-message-to-chatbot')
-const sendMessageToMessenger = require('./send-message-to-messenger')
+const chatMessage = require('./ChatMessage')
+const chatbotMessage = require('./ChatbotMessage')
+const chatbotTransferToChat = require('./ChatbotTransferToChat')
+const closeChat = require('./CloseChat')
+const messengerMessage = require('./MessengerMessage')
+const sendMessageToChat = require('./SendMessageToChat')
+const sendMessageToChatbot = require('./SendMessageToChatbot')
+const sendMessageToMessenger = require('./SendMessageToMessenger')
 
 const jobs = [
   chatMessage,

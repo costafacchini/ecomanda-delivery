@@ -1,8 +1,8 @@
 const createMessengerPlugin = require('./factory')
-const Licensee = require('@models/licensee')
-const Chatapi = require('./chatapi')
-const Utalk = require('./utalk')
-const Winzap = require('./winzap')
+const Licensee = require('@models/Licensee')
+const Chatapi = require('./Chatapi')
+const Utalk = require('./Utalk')
+const Winzap = require('./Winzap')
 
 describe('createMessengerPlugin', () => {
   it('returns the chatapi plugin if it is configured on licensee', () => {

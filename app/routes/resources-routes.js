@@ -2,8 +2,8 @@ const express = require('express')
 const router = express.Router()
 const jwt = require('jsonwebtoken')
 const SECRET = process.env.SECRET
-const UsersController = require('@controllers/users-controller')
-const LicenseesController = require('@controllers/licensees-controller')
+const UsersController = require('@controllers/UsersController')
+const LicenseesController = require('@controllers/LicenseesController')
 
 const usersController = new UsersController()
 const licenseesController = new LicenseesController()
