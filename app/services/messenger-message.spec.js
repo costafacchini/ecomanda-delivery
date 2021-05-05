@@ -1,15 +1,15 @@
 const transformMessengerBody = require('./messenger-message')
 const Licensee = require('@models/licensee')
-const { queue } = require('@config/queue-server')
+const queueServer = require('@config/queue')
 
 describe('transformMessengerBody', () => {
-  const mockFunction = jest.spyOn(queue, 'addJobDispatcher')
+  const mockFunction = jest.spyOn(queueServer, 'addJob')
 
   afterEach(() => {
     mockFunction.mockRestore()
   })
 
-  it('enqueues job to dispatcher action of plugin', () => {
+  it('enqueues job to dispatcher action of plugin', async () => {
     const licensee = new Licensee({
       whatsappDefault: 'chatapi',
       whatsappUrl: 'https://whatsapp.url',
@@ -22,7 +22,7 @@ describe('transformMessengerBody', () => {
       }
     }
 
-    transformMessengerBody(body, licensee)
+    await transformMessengerBody(body, licensee)
 
     expect(mockFunction).toHaveBeenCalledWith(
       'send-message-to-chat',

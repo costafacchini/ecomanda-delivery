@@ -8,7 +8,7 @@ class Jivochat {
   #defineAction() {
     let action = ''
     if (this.requestBody.message.type !== 'typein' && this.requestBody.message.type !== 'typeout') {
-      action = 'send-message'
+      action = 'send-message-to-messenger'
     }
 
     return action

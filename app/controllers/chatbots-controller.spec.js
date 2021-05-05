@@ -2,7 +2,7 @@ const Licensee = require('@models/licensee')
 const request = require('supertest')
 const mongoServer = require('.jest/utils')
 const { expressServer } = require('.jest/server-express')
-const { queue } = require('@config/queue-server')
+const queueServer = require('@config/queue')
 
 describe('chatbots controller', () => {
   let apiToken
@@ -47,7 +47,7 @@ describe('chatbots controller', () => {
 
     describe('response', () => {
       it('returns status 201 and schedule job to process chatbot message', async () => {
-        const mockFunction = jest.spyOn(queue, 'addJobResolver')
+        const mockFunction = jest.spyOn(queueServer, 'addJob')
         const licensee = await Licensee.findOne({ apiToken })
 
         await request(expressServer)
@@ -93,7 +93,7 @@ describe('chatbots controller', () => {
 
     describe('response', () => {
       it('returns status 201 and schedule job to transfer chatbot to chat', async () => {
-        const mockFunction = jest.spyOn(queue, 'addJobResolver')
+        const mockFunction = jest.spyOn(queueServer, 'addJob')
         const licensee = await Licensee.findOne({ apiToken })
 
         await request(expressServer)

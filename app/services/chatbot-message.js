@@ -1,5 +1,5 @@
 const createChatbotPlugin = require('../plugins/chatbots/factory')
-const { queue } = require('@config/queue-server')
+const queueServer = require('@config/queue')
 
 async function transformChatbotBody(body, licensee) {
   const chatbotPlugin = createChatbotPlugin('send-message', licensee, body)
@@ -10,7 +10,7 @@ async function transformChatbotBody(body, licensee) {
     token: licensee.chatbotAuthorizationToken,
   }
 
-  await queue.addJobDispatcher(chatbotPlugin.action, chatData, licensee)
+  await queueServer.addJob(chatbotPlugin.action, chatData, licensee)
 }
 
 module.exports = transformChatbotBody

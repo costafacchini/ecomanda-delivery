@@ -1,5 +1,5 @@
 const createMessengerPlugin = require('../plugins/messengers/factory')
-const { queue } = require('@config/queue-server')
+const queueServer = require('@config/queue')
 
 async function transformMessengerBody(body, licensee) {
   const messengerPlugin = createMessengerPlugin(licensee, body)
@@ -10,7 +10,7 @@ async function transformMessengerBody(body, licensee) {
     token: licensee.whatsappToken,
   }
 
-  await queue.addJobDispatcher(messengerPlugin.action, chatData, licensee)
+  await queueServer.addJob(messengerPlugin.action, chatData, licensee)
 }
 
 module.exports = transformMessengerBody

@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "bull-board": "^2.0.1",
     "bullmq": "^1.16.2",
     "cors": "^2.8.5",
     "debug": "^4.3.1",

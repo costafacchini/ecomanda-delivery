@@ -1,8 +1,8 @@
-const { queue } = require('@config/queue-server')
+const queueServer = require('@config/queue')
 
 class MessengersController {
   async message(req, res) {
-    await queue.addJobResolver('messenger-message', req.body, req.licensee)
+    await queueServer.addJob('messenger-message', req.body, req.licensee)
 
     res.status(201).send({ body: 'Solicitação de de mensagem para a plataforma de messenger agendado' })
   }
