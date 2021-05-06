@@ -20,22 +20,6 @@ function createQueue(name) {
   return new Queue(name, queueOptions)
 }
 
-// const queues = Object.values(jobs).map(job => ({
-//   bull: createQueue(job.key),
-//   name: job.key,
-//   handle: job.handle,
-// }))
-//
-// async function addJob(name, body, licensee) {
-//   const queue = queues.find(queue => queue.name === name)
-//   return await queue.bull.add(name, { body, licensee }, { attempts: 3 })
-// }
-
-// const queueServer = {
-//   queues,
-//   addJob
-// }
-
 class QueueServer {
     constructor() {
       this.queues = Object.values(jobs).map(job => ({
@@ -46,11 +30,10 @@ class QueueServer {
     }
 
   async addJob(name, body, licensee) {
+    console.log('chamou')
     const queue = this.queues.find(queue => queue.name === name)
     return await queue.bull.add(name, { body, licensee }, { attempts: 3 })
   }
 }
 
-const queueServer = new QueueServer()
-
-module.exports = queueServer
+module.exports = new QueueServer()

@@ -1,4 +1,4 @@
-const express = require('express')
+const router = require('express').Router()
 const ChatsController = require('@controllers/ChatsController')
 const ChatbotsController = require('@controllers/ChatbotsController')
 const MessengersController = require('@controllers/MessengersController')
@@ -6,8 +6,6 @@ const MessengersController = require('@controllers/MessengersController')
 const chatsController = new ChatsController()
 const chatbotsController = new ChatbotsController()
 const messengersController = new MessengersController()
-
-const router = express.Router()
 
 router.post('/chat/message', chatsController.message)
 

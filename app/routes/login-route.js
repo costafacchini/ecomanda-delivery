@@ -1,7 +1,5 @@
-const express = require('express')
+const router = require('express').Router()
 const controller = require('@controllers/LoginController')
-
-const router = express.Router()
 
 router.post('', controller.login)
 

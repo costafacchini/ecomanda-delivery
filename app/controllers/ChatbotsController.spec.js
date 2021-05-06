@@ -47,7 +47,7 @@ describe('chatbots controller', () => {
 
     describe('response', () => {
       it('returns status 201 and schedule job to process chatbot message', async () => {
-        const mockFunction = jest.spyOn(queueServer, 'addJob')
+        const mockFunction = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
         const licensee = await Licensee.findOne({ apiToken })
 
         await request(expressServer)
@@ -93,7 +93,7 @@ describe('chatbots controller', () => {
 
     describe('response', () => {
       it('returns status 201 and schedule job to transfer chatbot to chat', async () => {
-        const mockFunction = jest.spyOn(queueServer, 'addJob')
+        const mockFunction = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
         const licensee = await Licensee.findOne({ apiToken })
 
         await request(expressServer)

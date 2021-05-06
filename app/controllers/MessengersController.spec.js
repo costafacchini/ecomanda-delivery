@@ -47,7 +47,7 @@ describe('messengers controller', () => {
   describe('create', () => {
     describe('response', () => {
       it('returns status 201 and schedule job to process chat message', async () => {
-        const mockFunction = jest.spyOn(queueServer, 'addJob')
+        const mockFunction = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
         const licensee = await Licensee.findOne({ apiToken })
 
         await request(expressServer)

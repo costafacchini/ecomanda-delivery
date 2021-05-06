@@ -3,7 +3,7 @@ const Licensee = require('@models/Licensee')
 const queueServer = require('@config/queue')
 
 describe('transformChatBody', () => {
-  const mockFunction = jest.spyOn(queueServer, 'addJob')
+  const mockFunction = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
 
   afterEach(() => {
     mockFunction.mockRestore()
