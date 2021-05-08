@@ -15,10 +15,45 @@ const messageSchema = new Schema({
   text: {
     type: String,
     required: [
-      true,
-      'Text: Você deve preencher o campo',
+      function () {
+        return this.kind === 'text'
+      },
+      'Texto: deve ser preenchido quando o tipo de mensahem é texto',
     ]
   },
+  url: {
+    type: String,
+    required: [
+      function () {
+        return this.kind === 'file'
+      },
+      'URL do arquivo: deve ser preenchido quando o tipo de mensagem é arquivo',
+    ],
+  },
+  fileName: {
+    type: String,
+    required: [
+      function () {
+        return this.kind === 'file'
+      },
+      'Nome do arquivo: deve ser preenchido quando o tipo de mensagem é arquivo',
+    ],
+  },
+  kind: {
+    type: String,
+    enum: ['text', 'file', 'location'],
+    default: 'text',
+  },
+  destination: {
+    type: String,
+    enum: ['to-chatbot', 'to-chat', 'to-messenger'],
+    required: [
+      true,
+      'Destino: Você deve informar qual o destino da mensagem (to-chatbot | to-chat | to-messenger)',
+    ]
+  },
+  latitude: Number,
+  longitude: Number,
   sended: { type: Boolean, default: false },
   receivedAt: Date,
   reededAt: Date,

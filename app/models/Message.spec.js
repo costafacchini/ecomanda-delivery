@@ -21,7 +21,8 @@ describe('Message', () => {
         text: 'Text',
         number: 'Abc012',
         contact: contact,
-        licensee: licensee
+        licensee: licensee,
+        destination: 'to-chat'
       })
 
       expect(message._id).
@@ -37,7 +38,8 @@ describe('Message', () => {
         text: 'Text',
         number: 'Abc012',
         contact: contact,
-        licensee: licensee
+        licensee: licensee,
+        destination: 'to-chat'
       })
 
       message.text = 'Changed'
@@ -52,6 +54,7 @@ describe('Message', () => {
 
       expect(message.fromMe).toEqual(false)
       expect(message.sended).toEqual(false)
+      expect(message.kind).toEqual('text')
     })
   })
 
@@ -66,11 +69,50 @@ describe('Message', () => {
     })
 
     describe('text', () => {
-      it('is required', () => {
-        const message = new Message({ number: '87216' })
+      it('is required if kind is text', () => {
+        const message = new Message({ number: '87216', kind: 'text' })
         const validation = message.validateSync()
 
-        expect(validation.errors['text'].message).toEqual('Text: Você deve preencher o campo')
+        expect(validation.errors['text'].message).toEqual('Texto: deve ser preenchido quando o tipo de mensahem é texto')
+      })
+
+      it('is not required if kind is not text', () => {
+        const message = new Message({ number: '87216', kind: 'file' })
+        const validation = message.validateSync()
+
+        expect(validation.errors['text']).not.toBeDefined()
+      })
+    })
+
+    describe('url', () => {
+      it('is required if kind is file', () => {
+        const message = new Message({ number: '87216', kind: 'file' })
+        const validation = message.validateSync()
+
+        expect(validation.errors['url'].message).toEqual('URL do arquivo: deve ser preenchido quando o tipo de mensagem é arquivo')
+      })
+
+      it('is not required if kind is not file', () => {
+        const message = new Message({ number: '87216', kind: 'text' })
+        const validation = message.validateSync()
+
+        expect(validation.errors['url']).not.toBeDefined()
+      })
+    })
+
+    describe('fileName', () => {
+      it('is required if kind is file', () => {
+        const message = new Message({ number: '87216', kind: 'file' })
+        const validation = message.validateSync()
+
+        expect(validation.errors['fileName'].message).toEqual('Nome do arquivo: deve ser preenchido quando o tipo de mensagem é arquivo')
+      })
+
+      it('is not required if kind is not file', () => {
+        const message = new Message({ number: '87216', kind: 'text' })
+        const validation = message.validateSync()
+
+        expect(validation.errors['fileName']).not.toBeDefined()
       })
     })
 
@@ -89,6 +131,77 @@ describe('Message', () => {
         const validation = message.validateSync()
 
         expect(validation.errors['licensee'].message).toEqual('Licensee: Você deve preencher o campo')
+      })
+    })
+
+    describe('kink', () => {
+      it('accepts "text", "file" and "location" values', () => {
+        let validation
+        const message = new Message()
+
+        message.kind = 'text'
+        validation = message.validateSync()
+
+        expect(validation.errors['kind']).not.toBeDefined()
+
+        message.kind = 'file'
+        validation = message.validateSync()
+
+        expect(validation.errors['kind']).not.toBeDefined()
+
+        message.licenseKind = 'location'
+        validation = message.validateSync()
+
+        expect(validation.errors['kind']).not.toBeDefined()
+      })
+
+      it('does not accepts another values', () => {
+        const message = new Message({ kind: 'some' })
+        const validation = message.validateSync()
+
+        expect(validation.errors['kind'].message).toEqual(
+          '`some` is not a valid enum value for path `kind`.'
+        )
+      })
+    })
+
+    describe('destination', () => {
+      it('is required', () => {
+        const message = new Message()
+        const validation = message.validateSync()
+
+        expect(validation.errors['destination'].message).toEqual(
+          'Destino: Você deve informar qual o destino da mensagem (to-chatbot | to-chat | to-messenger)'
+        )
+      })
+
+      it('accepts "to-chatbot", "to-chat" and "to-messenger" values', () => {
+        let validation
+        const message = new Message()
+
+        message.destination = 'to-chatbot'
+        validation = message.validateSync()
+
+        expect(validation.errors['destination']).not.toBeDefined()
+
+        message.destination = 'to-chat'
+        validation = message.validateSync()
+
+        expect(validation.errors['destination']).not.toBeDefined()
+
+        message.destination = 'to-messenger'
+        validation = message.validateSync()
+
+        expect(validation.errors['destination']).not.toBeDefined()
+      })
+
+      it('does not accepts another values', () => {
+        const message = new Message({ destination: 'some' })
+        const validation = message.validateSync()
+
+        expect(validation.errors['destination'].message).toEqual(
+          '`some` is not a valid enum value for path `destination`.'
+        )
       })
     })
   })
