@@ -62,7 +62,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['licenseKind'].message).toEqual(
-          'Tipo de Licennça: Você deve informar um valor ( demo | free | paid)'
+          'Tipo de Licença: Você deve informar um valor ( demo | free | paid)'
         )
       })
 

@@ -22,7 +22,7 @@ const userSchema = new Schema({
   licenseKind: {
     type: String,
     enum: ['demo', 'free', 'paid'],
-    required: [true, 'Tipo de Licennça: Você deve informar um valor ( demo | free | paid)'],
+    required: [true, 'Tipo de Licença: Você deve informar um valor ( demo | free | paid)'],
   },
   useChatbot: { type: Boolean, default: false },
   chatbotDefault: {
