@@ -3,23 +3,25 @@ const Licensee = require('@models/Licensee')
 const Landbot = require('../plugins/chatbots/Landbot')
 
 describe('sendMessageToChatbot', () => {
-  const mockFunction = jest.spyOn(Landbot.prototype, 'sendMessage')
+  const landbotSendMessageSpy = jest.spyOn(Landbot.prototype, 'sendMessage').mockImplementation(() => {})
 
-  afterEach(() => {
-    mockFunction.mockRestore()
+  beforeEach(() => {
+    jest.clearAllMocks()
   })
 
   it('asks the plugin to send message to chatbot', async () => {
     const licensee = new Licensee({
-      chatbotDefault: 'landbot'
+      chatbotDefault: 'landbot',
     })
 
     const body = {
-      message: 'message'
+      messageId: 'NSO25PA04GST830HS',
+      url: 'https://messenger.url',
+      token: 'token',
     }
 
     await sendMessageToChatbot(body, licensee)
 
-    expect(mockFunction).toHaveBeenCalled()
+    expect(landbotSendMessageSpy).toHaveBeenCalledWith('NSO25PA04GST830HS', 'https://messenger.url', 'token')
   })
 })

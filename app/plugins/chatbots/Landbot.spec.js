@@ -30,7 +30,7 @@ describe('Landbot plugin', () => {
         number: '5593165392832@c.us',
         type: '@c.us',
         talkingWithChatBot: true,
-        licensee: licensee
+        licensee: licensee,
       })
 
       const responseBody = {
@@ -38,55 +38,55 @@ describe('Landbot plugin', () => {
           {
             type: 'text',
             timestamp: '1234567890',
-            message: 'Hello world'
+            message: 'Hello world',
           },
           {
             type: 'image',
             timestamp: '1234567890',
             url: 'https://octodex.github.com/images/dojocat.jpg',
-            message: 'Text with image'
+            message: 'Text with image',
           },
           {
             type: 'multiple_images',
             timestamp: '1234567890',
             urls: [
               'https://octodex.github.com/images/dojocat.jpg',
-              'https://www.helloumi.com/wp-content/uploads/2016/07/logo-helloumi-web.png'
+              'https://www.helloumi.com/wp-content/uploads/2016/07/logo-helloumi-web.png',
             ],
-            message: 'Hello'
+            message: 'Hello',
           },
           {
             type: 'location',
             timestamp: '1234567890',
             latitude: 3.15,
             longitude: 101.75,
-            message: 'It is here'
+            message: 'It is here',
           },
           {
             type: 'dialog',
             timestamp: '1234567890',
             title: 'Hi there',
             buttons: ['Hey', 'Bye'],
-            payloads: ['$0', '$1']
-          }
+            payloads: ['$0', '$1'],
+          },
         ],
         customer: {
           id: 2000,
           name: 'John',
-          number: '5593165392832'
+          number: '5593165392832',
         },
         agent: {
           id: 1,
-          type: 'human'
+          type: 'human',
         },
         channel: {
           id: 100,
-          name: 'Android App'
-        }
+          name: 'Android App',
+        },
       }
 
-      const landbot = new Landbot('')
-      const messages = await landbot.responseToMessages(responseBody, licensee)
+      const landbot = new Landbot(licensee)
+      const messages = await landbot.responseToMessages(responseBody)
 
       expect(messages[0]).toBeInstanceOf(Message)
       expect(messages[0].licensee).toEqual(licensee._id)
@@ -99,6 +99,7 @@ describe('Landbot plugin', () => {
       expect(messages[0].fileName).toEqual(undefined)
       expect(messages[0].latitude).toEqual(undefined)
       expect(messages[0].longitude).toEqual(undefined)
+      expect(messages[0].departament).toEqual(undefined)
 
       expect(messages[1]).toBeInstanceOf(Message)
       expect(messages[1].licensee).toEqual(licensee._id)
@@ -111,6 +112,7 @@ describe('Landbot plugin', () => {
       expect(messages[1].fileName).toEqual('dojocat.jpg')
       expect(messages[1].latitude).toEqual(undefined)
       expect(messages[1].longitude).toEqual(undefined)
+      expect(messages[1].departament).toEqual(undefined)
 
       expect(messages[2]).toBeInstanceOf(Message)
       expect(messages[2].licensee).toEqual(licensee._id)
@@ -123,12 +125,108 @@ describe('Landbot plugin', () => {
       expect(messages[2].fileName).toEqual(undefined)
       expect(messages[2].latitude).toEqual(3.15)
       expect(messages[2].longitude).toEqual(101.75)
+      expect(messages[2].departament).toEqual(undefined)
 
       expect(consoleInfoSpy).toHaveBeenCalledTimes(2)
-      expect(consoleInfoSpy).toHaveBeenCalledWith('Tipo de mensagem retornado pela Landbot não reconhecido: multiple_images')
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
+        'Tipo de mensagem retornado pela Landbot não reconhecido: multiple_images'
+      )
       expect(consoleInfoSpy).toHaveBeenCalledWith('Tipo de mensagem retornado pela Landbot não reconhecido: dialog')
 
       expect(messages.length).toEqual(3)
+    })
+
+    it('return the empty array if body is blank', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const responseBody = {}
+
+      const landbot = new Landbot(licensee)
+      const messages = await landbot.responseToMessages(responseBody)
+
+      expect(messages.length).toEqual(0)
+    })
+
+    it('return the empty array if body does not have a customer', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const responseBody = {
+        messages: [
+          {
+            message: 'text',
+          },
+        ],
+      }
+
+      const landbot = new Landbot(licensee)
+      const messages = await landbot.responseToMessages(responseBody)
+
+      expect(messages.length).toEqual(0)
+    })
+
+    it('return the empty array if body does not have messages', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const responseBody = {
+        customer: {
+          name: 'John Doe',
+        },
+      }
+
+      const landbot = new Landbot(licensee)
+      const messages = await landbot.responseToMessages(responseBody)
+
+      expect(messages.length).toEqual(0)
+    })
+  })
+
+  describe('#responseTransferToMessage', () => {
+    it('returns the response body transformed in message', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const contact = await Contact.create({
+        name: 'John Doe',
+        number: '5593165392832@c.us',
+        type: '@c.us',
+        talkingWithChatBot: true,
+        licensee: licensee,
+      })
+
+      const responseBody = {
+        number: '5593165392832@c.us',
+        observacao: 'Message to send chat',
+        id_departamento_rocketchat: '100',
+      }
+
+      const landbot = new Landbot(licensee)
+      const message = await landbot.responseTransferToMessage(responseBody)
+
+      expect(message).toBeInstanceOf(Message)
+      expect(message.licensee).toEqual(licensee._id)
+      expect(message.contact).toEqual(contact._id)
+      expect(message.kind).toEqual('text')
+      expect(message.number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+      expect(message.destination).toEqual('to-transfer')
+      expect(message.text).toEqual('Message to send chat')
+      expect(message.departament).toEqual('100')
+      expect(message.url).toEqual(undefined)
+      expect(message.fileName).toEqual(undefined)
+      expect(message.latitude).toEqual(undefined)
+      expect(message.longitude).toEqual(undefined)
+    })
+
+    it('return the empty message if number is blank', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const responseBody = {
+        observacao: 'Message to send chat',
+        id_departamento_rocketchat: '100',
+      }
+
+      const landbot = new Landbot(licensee)
+      const message = await landbot.responseTransferToMessage(responseBody)
+
+      expect(message).toEqual(undefined)
     })
   })
 
@@ -164,13 +262,17 @@ describe('Landbot plugin', () => {
           message: {
             type: 'text',
             message: 'Message to send',
-            payload: '$1'
-          }
+            payload: '$1',
+          },
         }
 
         fetchMock.postOnce(
           (url, { body, headers }) => {
-            return url === 'https://url.com.br/5593165392832/' && body === JSON.stringify(expectedBody) && headers['Authorization'] === 'Token token'
+            return (
+              url === 'https://url.com.br/5593165392832/' &&
+              body === JSON.stringify(expectedBody) &&
+              headers['Authorization'] === 'Token token'
+            )
           },
           {
             status: 201,
@@ -180,15 +282,15 @@ describe('Landbot plugin', () => {
                 id: 42,
                 name: 'John Doe',
                 phone: '5593165392832@c.us',
-                token: 'token'
-              }
-            }
+                token: 'token',
+              },
+            },
           }
         )
 
         expect(message.sended).toEqual(false)
 
-        const landbot = new Landbot('')
+        const landbot = new Landbot(licensee)
         await landbot.sendMessage(message, 'https://url.com.br', 'token')
         await fetchMock.flush(true)
 
@@ -228,13 +330,17 @@ describe('Landbot plugin', () => {
           message: {
             type: 'text',
             message: 'Message to send',
-            payload: '$1'
-          }
+            payload: '$1',
+          },
         }
 
         fetchMock.postOnce(
           (url, { body, headers }) => {
-            return url === 'https://url.com.br/5593165392832/' && body === JSON.stringify(expectedBody) && headers['Authorization'] === 'Token token'
+            return (
+              url === 'https://url.com.br/5593165392832/' &&
+              body === JSON.stringify(expectedBody) &&
+              headers['Authorization'] === 'Token token'
+            )
           },
           {
             status: 201,
@@ -244,13 +350,13 @@ describe('Landbot plugin', () => {
                 id: 42,
                 name: 'John Doe',
                 phone: '5593165392832@c.us',
-                token: 'token'
-              }
-            }
+                token: 'token',
+              },
+            },
           }
         )
 
-        const landbot = new Landbot('')
+        const landbot = new Landbot(licensee)
         await landbot.sendMessage(message, 'https://url.com.br', 'token')
         await fetchMock.flush(true)
 
@@ -260,17 +366,15 @@ describe('Landbot plugin', () => {
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           `Mensagem 60958703f415ed4008748637 enviada para Landbot com sucesso!
            status: 201
-           body: ${
-            JSON.stringify({
-              success: true,
-              customer: {
-                id: 42,
-                name: 'John Doe',
-                phone: '5593165392832@c.us',
-                token: 'token'
-              }
-            })
-          }`
+           body: ${JSON.stringify({
+             success: true,
+             customer: {
+               id: 42,
+               name: 'John Doe',
+               phone: '5593165392832@c.us',
+               token: 'token',
+             },
+           })}`
         )
       })
     })
@@ -305,25 +409,29 @@ describe('Landbot plugin', () => {
           message: {
             type: 'text',
             message: 'Message to send',
-            payload: '$1'
-          }
+            payload: '$1',
+          },
         }
 
         fetchMock.postOnce(
           (url, { body, headers }) => {
-            return url === 'https://url.com.br/5593165392832/' && body === JSON.stringify(expectedBody) && headers['Authorization'] === 'Token token'
+            return (
+              url === 'https://url.com.br/5593165392832/' &&
+              body === JSON.stringify(expectedBody) &&
+              headers['Authorization'] === 'Token token'
+            )
           },
           {
             status: 403,
             body: {
               detail: 'invalid token',
-            }
+            },
           }
         )
 
         expect(message.sended).toEqual(false)
 
-        const landbot = new Landbot('')
+        const landbot = new Landbot(licensee)
         await landbot.sendMessage(message, 'https://url.com.br', 'token')
         await fetchMock.flush(true)
 
@@ -333,11 +441,7 @@ describe('Landbot plugin', () => {
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Mensagem 60958703f415ed4008748637 não enviada para Landbot.
            status: 403
-           mensagem: ${
-            JSON.stringify({
-              detail: 'invalid token',
-            })
-          }`
+           mensagem: ${JSON.stringify({ detail: 'invalid token' })}`
         )
       })
     })

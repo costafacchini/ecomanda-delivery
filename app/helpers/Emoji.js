@@ -1,6 +1,6 @@
 const { emojiList } = require('./EmojiList')
 
-function replace (message) {
+function replace(message) {
   const regex = /(:[^:]*:)/gm
   const rocketEmojis = []
 
@@ -18,7 +18,7 @@ function replace (message) {
   }
 
   return rocketEmojis.reduce((accMessage, rocketEmoji) => {
-    const emoji = emojiList.find(emoji => emoji.rocket === rocketEmoji)
+    const emoji = emojiList.find((emoji) => emoji.rocket === rocketEmoji)
 
     return accMessage.replace(rocketEmoji, emoji ? emoji.wpp : rocketEmoji)
   }, message)

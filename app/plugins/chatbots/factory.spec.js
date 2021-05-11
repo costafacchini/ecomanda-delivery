@@ -8,26 +8,18 @@ describe('createChatbotPlugin', () => {
       chatbotDefault: 'landbot',
     })
 
-    const body = {
-      field: 'test'
-    }
-
-    const plugin = createChatbotPlugin('option', licensee, body)
+    const plugin = createChatbotPlugin(licensee)
 
     expect(plugin).toBeInstanceOf(Landbot)
   })
 
   it('throws if option plugin is unknow', () => {
     const licensee = new Licensee({
-      chatbotDefault: 'something'
+      chatbotDefault: 'something',
     })
 
-    const body = {
-      field: 'test'
-    }
-
     expect(() => {
-      createChatbotPlugin('option', licensee, body)
+      createChatbotPlugin(licensee)
     }).toThrow('Plugin de chatbot não configurado: something')
   })
 })

@@ -9,6 +9,7 @@ describe('licensee controller', () => {
 
   beforeAll(async () => {
     await mongoServer.connect()
+
     await User.create({
       name: 'John Doe',
       email: 'john@doe.com',
@@ -129,13 +130,13 @@ describe('licensee controller', () => {
           .expect(422, {
             errors: [
               { message: 'Nome: Você deve preencher o campo' },
-              { message: 'Tipo de Licennça: Você deve informar um valor ( demo | free | paid)' },
+              { message: 'Tipo de Licença: Você deve informar um valor ( demo | free | paid)' },
             ],
           })
       })
 
-      it('returns status 500 and message if the some error ocurre when create the licensee', async () => {
-        const mockFunction = jest.spyOn(Licensee.prototype, 'save').mockImplementation(() => {
+      it('returns status 500 and message if the some error ocurred when create the licensee', async () => {
+        const licenseeSaveSpy = jest.spyOn(Licensee.prototype, 'save').mockImplementation(() => {
           throw new Error('some error')
         })
 
@@ -154,7 +155,7 @@ describe('licensee controller', () => {
             errors: { message: 'Error: some error' },
           })
 
-        mockFunction.mockRestore()
+        licenseeSaveSpy.mockRestore()
       })
 
       describe('validations', () => {
@@ -277,13 +278,13 @@ describe('licensee controller', () => {
           .expect(422, {
             errors: [
               { message: 'Nome: Você deve preencher o campo' },
-              { message: 'Tipo de Licennça: Você deve informar um valor ( demo | free | paid)' },
+              { message: 'Tipo de Licença: Você deve informar um valor ( demo | free | paid)' },
             ],
           })
       })
 
       it('returns status 500 and message if the some error ocurre when update the licensee', async () => {
-        const mockFunction = jest.spyOn(Licensee, 'findOne').mockImplementation(() => {
+        const licenseeFindOneSpy = jest.spyOn(Licensee, 'findOne').mockImplementation(() => {
           throw new Error('some error')
         })
 
@@ -316,7 +317,7 @@ describe('licensee controller', () => {
             errors: { message: 'Error: some error' },
           })
 
-        mockFunction.mockRestore()
+        licenseeFindOneSpy.mockRestore()
       })
 
       describe('validations', () => {
@@ -418,7 +419,7 @@ describe('licensee controller', () => {
       })
 
       it('returns status 500 and message if occurs another error', async () => {
-        const mockFunction = jest.spyOn(Licensee, 'findOne').mockImplementation(() => {
+        const licenseeFindOneSpy = jest.spyOn(Licensee, 'findOne').mockImplementation(() => {
           throw new Error('some error')
         })
 
@@ -430,7 +431,7 @@ describe('licensee controller', () => {
             errors: { message: 'Error: some error' },
           })
 
-        mockFunction.mockRestore()
+        licenseeFindOneSpy.mockRestore()
       })
     })
   })
@@ -470,7 +471,7 @@ describe('licensee controller', () => {
       })
 
       it('returns status 500 and message if occurs another error', async () => {
-        const mockFunction = jest.spyOn(Licensee, 'find').mockImplementation(() => {
+        const licenseeFindSpy = jest.spyOn(Licensee, 'find').mockImplementation(() => {
           throw new Error('some error')
         })
 
@@ -482,7 +483,7 @@ describe('licensee controller', () => {
             errors: { message: 'Error: some error' },
           })
 
-        mockFunction.mockRestore()
+        licenseeFindSpy.mockRestore()
       })
     })
   })

@@ -1,6280 +1,6280 @@
 const emojiList = [
   {
     rocket: ':grinning:',
-    wpp: '😀'
+    wpp: '😀',
   },
   {
     rocket: ':smiley:',
-    wpp: '😃'
+    wpp: '😃',
   },
   {
     rocket: ':smile:',
-    wpp: '😄'
+    wpp: '😄',
   },
   {
     rocket: ':grin:',
-    wpp: '😁'
+    wpp: '😁',
   },
   {
     rocket: ':laughing:',
-    wpp: '😆'
+    wpp: '😆',
   },
   {
     rocket: ':sweat_smile:',
-    wpp: '😅'
+    wpp: '😅',
   },
   {
     rocket: ':joy:',
-    wpp: '😂'
+    wpp: '😂',
   },
   {
     rocket: ':Rofl:',
-    wpp: '🤣'
+    wpp: '🤣',
   },
   {
     rocket: ':relaxed:',
-    wpp: '☺'
+    wpp: '☺',
   },
   {
     rocket: ':blush:',
-    wpp: '😊'
+    wpp: '😊',
   },
   {
     rocket: ':innocent:',
-    wpp: '😇'
+    wpp: '😇',
   },
   {
     rocket: ':slight_smile:',
-    wpp: '🙂'
+    wpp: '🙂',
   },
   {
     rocket: ':upside_down:',
-    wpp: '🙃'
+    wpp: '🙃',
   },
   {
     rocket: ':wink:',
-    wpp: '😉'
+    wpp: '😉',
   },
   {
     rocket: ':relieved:',
-    wpp: '😌'
+    wpp: '😌',
   },
   {
     rocket: ':heart_eyes:',
-    wpp: '😍'
+    wpp: '😍',
   },
   {
     rocket: ':kissing_heart:',
-    wpp: '😘'
+    wpp: '😘',
   },
   {
     rocket: ':smiling_face_with_3_hearts:',
-    wpp: '🥰'
+    wpp: '🥰',
   },
   {
     rocket: ':kissing:',
-    wpp: '😗'
+    wpp: '😗',
   },
   {
     rocket: ':kissing_smiling_eyes:',
-    wpp: '😙'
+    wpp: '😙',
   },
   {
     rocket: ':kissing_closed_eyes:',
-    wpp: '😚'
+    wpp: '😚',
   },
   {
     rocket: ':yum:',
-    wpp: '😋'
+    wpp: '😋',
   },
   {
     rocket: ':stuck_out_tongue:',
-    wpp: '😛'
+    wpp: '😛',
   },
   {
     rocket: ':stuck_out_tongue_closed_eyes:',
-    wpp: '😝'
+    wpp: '😝',
   },
   {
     rocket: ':stuck_out_tongue_winking_eye:',
-    wpp: '😜'
+    wpp: '😜',
   },
   {
     rocket: ':zany_face:',
-    wpp: '🤪'
+    wpp: '🤪',
   },
   {
     rocket: ':face_with_raised_eyebrow:',
-    wpp: '🤨'
+    wpp: '🤨',
   },
   {
     rocket: ':face_with_monocle:',
-    wpp: '🧐'
+    wpp: '🧐',
   },
   {
     rocket: ':nerd:',
-    wpp: '🤓'
+    wpp: '🤓',
   },
   {
     rocket: ':sunglasses:',
-    wpp: '😎'
+    wpp: '😎',
   },
   {
     rocket: ':star_struck:',
-    wpp: '🤩'
+    wpp: '🤩',
   },
   {
     rocket: ':partying_face:',
-    wpp: '🥳'
+    wpp: '🥳',
   },
   {
     rocket: ':smirk:',
-    wpp: '😏'
+    wpp: '😏',
   },
   {
     rocket: ':unamused:',
-    wpp: '😒'
+    wpp: '😒',
   },
   {
     rocket: ':disappointed:',
-    wpp: '😞'
+    wpp: '😞',
   },
   {
     rocket: ':pensive:',
-    wpp: '😔'
+    wpp: '😔',
   },
   {
     rocket: ':worried:',
-    wpp: '😟'
+    wpp: '😟',
   },
   {
     rocket: ':confused:',
-    wpp: '😕'
+    wpp: '😕',
   },
   {
     rocket: ':slight_frown:',
-    wpp: '🙁'
+    wpp: '🙁',
   },
   {
     rocket: ':frowning2:',
-    wpp: '☹'
+    wpp: '☹',
   },
   {
     rocket: ':persevere:',
-    wpp: '😣'
+    wpp: '😣',
   },
   {
     rocket: ':confounded:',
-    wpp: '😖'
+    wpp: '😖',
   },
   {
     rocket: ':tired_face:',
-    wpp: '😫'
+    wpp: '😫',
   },
   {
     rocket: ':weary:',
-    wpp: '😩'
+    wpp: '😩',
   },
   {
     rocket: ':cry:',
-    wpp: '😢'
+    wpp: '😢',
   },
   {
     rocket: ':sob:',
-    wpp: '😭'
+    wpp: '😭',
   },
   {
     rocket: ':triumph:',
-    wpp: '😤'
+    wpp: '😤',
   },
   {
     rocket: ':angry:',
-    wpp: '😠'
+    wpp: '😠',
   },
   {
     rocket: ':rage:',
-    wpp: '😡'
+    wpp: '😡',
   },
   {
     rocket: ':face_with_symbols_over_mouth:',
-    wpp: '🤬'
+    wpp: '🤬',
   },
   {
     rocket: ':exploding_head:',
-    wpp: '🤯'
+    wpp: '🤯',
   },
   {
     rocket: ':flushed:',
-    wpp: '😳'
+    wpp: '😳',
   },
   {
     rocket: ':scream:',
-    wpp: '😱'
+    wpp: '😱',
   },
   {
     rocket: ':fearful:',
-    wpp: '😨'
+    wpp: '😨',
   },
   {
     rocket: ':cold_sweat:',
-    wpp: '😰'
+    wpp: '😰',
   },
   {
     rocket: ':hot_face:',
-    wpp: '🥵'
+    wpp: '🥵',
   },
   {
     rocket: ':cold_face:',
-    wpp: '🥶'
+    wpp: '🥶',
   },
   {
     rocket: ':pleading_face:',
-    wpp: '🥺'
+    wpp: '🥺',
   },
   {
     rocket: ':disappointed_relieved:',
-    wpp: '😥'
+    wpp: '😥',
   },
   {
     rocket: ':sweat:',
-    wpp: '😓'
+    wpp: '😓',
   },
   {
     rocket: ':hugging:',
-    wpp: '🤗'
+    wpp: '🤗',
   },
   {
     rocket: ':thinking:',
-    wpp: '🤔'
+    wpp: '🤔',
   },
   {
     rocket: ':face_with_hand_over_mouth:',
-    wpp: '🤭'
+    wpp: '🤭',
   },
   {
     rocket: ':shushing_face:',
-    wpp: '🤫'
+    wpp: '🤫',
   },
   {
     rocket: ':lying_face:',
-    wpp: '🤥'
+    wpp: '🤥',
   },
   {
     rocket: ':no_mouth:',
-    wpp: '😶'
+    wpp: '😶',
   },
   {
     rocket: ':neutral_face:',
-    wpp: '😐'
+    wpp: '😐',
   },
   {
     rocket: ':expressionless:',
-    wpp: '😑'
+    wpp: '😑',
   },
   {
     rocket: ':grimacing:',
-    wpp: '😬'
+    wpp: '😬',
   },
   {
     rocket: ':rolling_eyes:',
-    wpp: '🙄'
+    wpp: '🙄',
   },
   {
     rocket: ':hushed:',
-    wpp: '😯'
+    wpp: '😯',
   },
   {
     rocket: ':frowning:',
-    wpp: '😦'
+    wpp: '😦',
   },
   {
     rocket: ':anguished:',
-    wpp: '😧'
+    wpp: '😧',
   },
   {
     rocket: ':open_mouth:',
-    wpp: '😮'
+    wpp: '😮',
   },
   {
     rocket: ':astonished:',
-    wpp: '😲'
+    wpp: '😲',
   },
   {
     rocket: ':sleeping:',
-    wpp: '😴'
+    wpp: '😴',
   },
   {
     rocket: ':drooling_face:',
-    wpp: '🤤'
+    wpp: '🤤',
   },
   {
     rocket: ':sleepy:',
-    wpp: '😪'
+    wpp: '😪',
   },
   {
     rocket: ':dizzy_face:',
-    wpp: '😵'
+    wpp: '😵',
   },
   {
     rocket: ':zipper_mouth:',
-    wpp: '🤐'
+    wpp: '🤐',
   },
   {
     rocket: ':woozy_face:',
-    wpp: '🥴'
+    wpp: '🥴',
   },
   {
     rocket: ':nauseated_face:',
-    wpp: '🤢'
+    wpp: '🤢',
   },
   {
     rocket: ':face_vomiting:',
-    wpp: '🤮'
+    wpp: '🤮',
   },
   {
     rocket: ':sneezing_face:',
-    wpp: '🤧'
+    wpp: '🤧',
   },
   {
     rocket: ':mask:',
-    wpp: '😷'
+    wpp: '😷',
   },
   {
     rocket: ':thermometer_face:',
-    wpp: '🤒'
+    wpp: '🤒',
   },
   {
     rocket: ':head_bandage:',
-    wpp: '🤕'
+    wpp: '🤕',
   },
   {
     rocket: ':money_mouth:',
-    wpp: '🤑'
+    wpp: '🤑',
   },
   {
     rocket: ':cowboy:',
-    wpp: '🤠'
+    wpp: '🤠',
   },
   {
     rocket: ':smiling_imp:',
-    wpp: '😈'
+    wpp: '😈',
   },
   {
     rocket: ':imp:',
-    wpp: '👿'
+    wpp: '👿',
   },
   {
     rocket: ':japanese_ogre:',
-    wpp: '👹'
+    wpp: '👹',
   },
   {
     rocket: ':japanese_goblin:',
-    wpp: '👺'
+    wpp: '👺',
   },
   {
     rocket: ':clown:',
-    wpp: '🤡'
+    wpp: '🤡',
   },
   {
     rocket: ':poop:',
-    wpp: '💩'
+    wpp: '💩',
   },
   {
     rocket: ':ghost:',
-    wpp: '👻'
+    wpp: '👻',
   },
   {
     rocket: ':skull:',
-    wpp: '💀'
+    wpp: '💀',
   },
   {
     rocket: ':skull_crossbones:',
-    wpp: '☠'
+    wpp: '☠',
   },
   {
     rocket: ':alien:',
-    wpp: '👽'
+    wpp: '👽',
   },
   {
     rocket: ':space_invader:',
-    wpp: '👾'
+    wpp: '👾',
   },
   {
     rocket: ':robot:',
-    wpp: '🤖'
+    wpp: '🤖',
   },
   {
     rocket: ':jack_o_lantern:',
-    wpp: '🎃'
+    wpp: '🎃',
   },
   {
     rocket: ':smiley_cat:',
-    wpp: '😺'
+    wpp: '😺',
   },
   {
     rocket: ':smile_cat:',
-    wpp: '😸'
+    wpp: '😸',
   },
   {
     rocket: ':joy_cat:',
-    wpp: '😹'
+    wpp: '😹',
   },
   {
     rocket: ':heart_eyes_cat:',
-    wpp: '😻'
+    wpp: '😻',
   },
   {
     rocket: ':smirk_cat:',
-    wpp: '😼'
+    wpp: '😼',
   },
   {
     rocket: ':kissing_cat:',
-    wpp: '😽'
+    wpp: '😽',
   },
   {
     rocket: ':scream_cat:',
-    wpp: '🙀'
+    wpp: '🙀',
   },
   {
     rocket: ':crying_cat_face:',
-    wpp: '😿'
+    wpp: '😿',
   },
   {
     rocket: ':pouting_cat:',
-    wpp: '😾'
+    wpp: '😾',
   },
   {
     rocket: ':palms_up_together:',
-    wpp: '🤲'
+    wpp: '🤲',
   },
   {
     rocket: ':open_hands:',
-    wpp: '👐'
+    wpp: '👐',
   },
   {
     rocket: ':raised_hands:',
-    wpp: '🙌'
+    wpp: '🙌',
   },
   {
     rocket: ':clap:',
-    wpp: '👏'
+    wpp: '👏',
   },
   {
     rocket: ':handshake:',
-    wpp: '🤝'
+    wpp: '🤝',
   },
   {
     rocket: ':thumbsup:',
-    wpp: '👍'
+    wpp: '👍',
   },
   {
     rocket: ':thumbsdown:',
-    wpp: '👎'
+    wpp: '👎',
   },
   {
     rocket: ':punch:',
-    wpp: '👊'
+    wpp: '👊',
   },
   {
     rocket: ':fist:',
-    wpp: '✊'
+    wpp: '✊',
   },
   {
     rocket: ':left_facing_fist:',
-    wpp: '🤛'
+    wpp: '🤛',
   },
   {
     rocket: ':right_facing_fist:',
-    wpp: '🤜'
+    wpp: '🤜',
   },
   {
     rocket: ':fingers_crossed:',
-    wpp: '🤞'
+    wpp: '🤞',
   },
   {
     rocket: ':v:',
-    wpp: '✌'
+    wpp: '✌',
   },
   {
     rocket: ':love_you_gesture:',
-    wpp: '🤟'
+    wpp: '🤟',
   },
   {
     rocket: ':metal:',
-    wpp: '🤘'
+    wpp: '🤘',
   },
   {
     rocket: ':ok_hand:',
-    wpp: '👌'
+    wpp: '👌',
   },
   {
     rocket: ':point_left:',
-    wpp: '👈'
+    wpp: '👈',
   },
   {
     rocket: ':point_right:',
-    wpp: '👉'
+    wpp: '👉',
   },
   {
     rocket: ':point_up_2:',
-    wpp: '👆'
+    wpp: '👆',
   },
   {
     rocket: ':point_down:',
-    wpp: '👇'
+    wpp: '👇',
   },
   {
     rocket: ':point_up:',
-    wpp: '☝'
+    wpp: '☝',
   },
   {
     rocket: ':raised_hand:',
-    wpp: '✋'
+    wpp: '✋',
   },
   {
     rocket: ':raised_back_of_hand:',
-    wpp: '🤚'
+    wpp: '🤚',
   },
   {
     rocket: ':hand_splayed:',
-    wpp: '🖐'
+    wpp: '🖐',
   },
   {
     rocket: ':vulcan:',
-    wpp: '🖖'
+    wpp: '🖖',
   },
   {
     rocket: ':wave:',
-    wpp: '👋'
+    wpp: '👋',
   },
   {
     rocket: ':call_me:',
-    wpp: '🤙'
+    wpp: '🤙',
   },
   {
     rocket: ':muscle:',
-    wpp: '💪'
+    wpp: '💪',
   },
   {
     rocket: ':leg:',
-    wpp: '🦵'
+    wpp: '🦵',
   },
   {
     rocket: ':foot:',
-    wpp: '🦶'
+    wpp: '🦶',
   },
   {
     rocket: ':middle_finger:',
-    wpp: '🖕'
+    wpp: '🖕',
   },
   {
     rocket: ':writing_hand:',
-    wpp: '✍'
+    wpp: '✍',
   },
   {
     rocket: ':pray:',
-    wpp: '🙏'
+    wpp: '🙏',
   },
   {
     rocket: ':ring:',
-    wpp: '💍'
+    wpp: '💍',
   },
   {
     rocket: ':lipstick:',
-    wpp: '💄'
+    wpp: '💄',
   },
   {
     rocket: ':kiss:',
-    wpp: '💋'
+    wpp: '💋',
   },
   {
     rocket: ':lips:',
-    wpp: '👄'
+    wpp: '👄',
   },
   {
     rocket: ':tongue:',
-    wpp: '👅'
+    wpp: '👅',
   },
   {
     rocket: ':ear:',
-    wpp: '👂'
+    wpp: '👂',
   },
   {
     rocket: ':nose:',
-    wpp: '👃'
+    wpp: '👃',
   },
   {
     rocket: ':footprints:',
-    wpp: '👣'
+    wpp: '👣',
   },
   {
     rocket: ':eye:',
-    wpp: '👁'
+    wpp: '👁',
   },
   {
     rocket: ':eyes:',
-    wpp: '👀'
+    wpp: '👀',
   },
   {
     rocket: ':brain:',
-    wpp: '🧠'
+    wpp: '🧠',
   },
   {
     rocket: ':bone:',
-    wpp: '🦴'
+    wpp: '🦴',
   },
   {
     rocket: ':tooth:',
-    wpp: '🦷'
+    wpp: '🦷',
   },
   {
     rocket: ':speaking_head:',
-    wpp: '🗣'
+    wpp: '🗣',
   },
   {
     rocket: ':bust_in_silhouette:',
-    wpp: '👤'
+    wpp: '👤',
   },
   {
     rocket: ':busts_in_silhouette:',
-    wpp: '👥'
+    wpp: '👥',
   },
   {
     rocket: ':baby:',
-    wpp: '👶'
+    wpp: '👶',
   },
   {
     rocket: ':girl:',
-    wpp: '👧'
+    wpp: '👧',
   },
   {
     rocket: ':child:',
-    wpp: '🧒'
+    wpp: '🧒',
   },
   {
     rocket: ':boy:',
-    wpp: '👦'
+    wpp: '👦',
   },
   {
     rocket: ':woman:',
-    wpp: '👩'
+    wpp: '👩',
   },
   {
     rocket: ':adult:',
-    wpp: '🧑'
+    wpp: '🧑',
   },
   {
     rocket: ':man:',
-    wpp: '👨'
+    wpp: '👨',
   },
   {
     rocket: ':blond_haired_person:',
-    wpp: '👱'
+    wpp: '👱',
   },
   {
     rocket: ':blond-haired_woman:',
-    wpp: '👱\u200d♀️'
+    wpp: '👱\u200d♀️',
   },
   {
     rocket: ':blond-haired_man:',
-    wpp: '👱\u200d♂️'
+    wpp: '👱\u200d♂️',
   },
   {
     rocket: ':woman_red_haired:',
-    wpp: '👩\u200d🦰'
+    wpp: '👩\u200d🦰',
   },
   {
     rocket: ':man_red_haired:',
-    wpp: '👨\u200d🦰'
+    wpp: '👨\u200d🦰',
   },
   {
     rocket: ':woman_curly_haired:',
-    wpp: '👩\u200d🦱'
+    wpp: '👩\u200d🦱',
   },
   {
     rocket: ':man_curly_haired:',
-    wpp: '👨\u200d🦱'
+    wpp: '👨\u200d🦱',
   },
   {
     rocket: ':woman_white_haired:',
-    wpp: '👩\u200d🦳'
+    wpp: '👩\u200d🦳',
   },
   {
     rocket: ':man_white_haired:',
-    wpp: '👨\u200d🦳'
+    wpp: '👨\u200d🦳',
   },
   {
     rocket: ':woman_bald:',
-    wpp: '👩\u200d🦲'
+    wpp: '👩\u200d🦲',
   },
   {
     rocket: ':man_bald:',
-    wpp: '👨\u200d🦲'
+    wpp: '👨\u200d🦲',
   },
   {
     rocket: ':bearded_person:',
-    wpp: '🧔'
+    wpp: '🧔',
   },
   {
     rocket: ':older_woman:',
-    wpp: '👵'
+    wpp: '👵',
   },
   {
     rocket: ':older_adult:',
-    wpp: '🧓'
+    wpp: '🧓',
   },
   {
     rocket: ':older_man:',
-    wpp: '👴'
+    wpp: '👴',
   },
   {
     rocket: ':man_with_chinese_cap:',
-    wpp: '👲'
+    wpp: '👲',
   },
   {
     rocket: ':person_wearing_turban:',
-    wpp: '👳'
+    wpp: '👳',
   },
   {
     rocket: ':woman_wearing_turban:',
-    wpp: '👳\u200d♀️'
+    wpp: '👳\u200d♀️',
   },
   {
     rocket: ':man_wearing_turban:',
-    wpp: '👳\u200d♂️'
+    wpp: '👳\u200d♂️',
   },
   {
     rocket: ':woman_with_headscarf:',
-    wpp: '🧕'
+    wpp: '🧕',
   },
   {
     rocket: ':police_officer:',
-    wpp: '👮'
+    wpp: '👮',
   },
   {
     rocket: ':woman_police_officer:',
-    wpp: '👮\u200d♀️'
+    wpp: '👮\u200d♀️',
   },
   {
     rocket: ':man_police_officer:',
-    wpp: '👮\u200d♂️'
+    wpp: '👮\u200d♂️',
   },
   {
     rocket: ':construction_worker:',
-    wpp: '👷'
+    wpp: '👷',
   },
   {
     rocket: ':woman_construction_worker:',
-    wpp: '👷\u200d♀️'
+    wpp: '👷\u200d♀️',
   },
   {
     rocket: ':man_construction_worker:',
-    wpp: '👷\u200d♂️'
+    wpp: '👷\u200d♂️',
   },
   {
     rocket: ':guard:',
-    wpp: '💂'
+    wpp: '💂',
   },
   {
     rocket: ':woman_guard:',
-    wpp: '💂\u200d♀️'
+    wpp: '💂\u200d♀️',
   },
   {
     rocket: ':man_guard:',
-    wpp: '💂\u200d♂️'
+    wpp: '💂\u200d♂️',
   },
   {
     rocket: ':detective:',
-    wpp: '🕵'
+    wpp: '🕵',
   },
   {
     rocket: ':woman_detective:',
-    wpp: '🕵️\u200d♀️'
+    wpp: '🕵️\u200d♀️',
   },
   {
     rocket: ':man_detective:',
-    wpp: '🕵️\u200d♂️'
+    wpp: '🕵️\u200d♂️',
   },
   {
     rocket: ':woman_health_worker:',
-    wpp: '👩\u200d⚕️'
+    wpp: '👩\u200d⚕️',
   },
   {
     rocket: ':man_health_worker:',
-    wpp: '👨\u200d⚕️'
+    wpp: '👨\u200d⚕️',
   },
   {
     rocket: ':woman_farmer:',
-    wpp: '👩\u200d🌾'
+    wpp: '👩\u200d🌾',
   },
   {
     rocket: ':man_farmer:',
-    wpp: '👨\u200d🌾'
+    wpp: '👨\u200d🌾',
   },
   {
     rocket: ':woman_cook:',
-    wpp: '👩\u200d🍳'
+    wpp: '👩\u200d🍳',
   },
   {
     rocket: ':man_cook:',
-    wpp: '👨\u200d🍳'
+    wpp: '👨\u200d🍳',
   },
   {
     rocket: ':woman_student:',
-    wpp: '👩\u200d🎓'
+    wpp: '👩\u200d🎓',
   },
   {
     rocket: ':man_student:',
-    wpp: '👨\u200d🎓'
+    wpp: '👨\u200d🎓',
   },
   {
     rocket: ':woman_singer:',
-    wpp: '👩\u200d🎤'
+    wpp: '👩\u200d🎤',
   },
   {
     rocket: ':man_singer:',
-    wpp: '👨\u200d🎤'
+    wpp: '👨\u200d🎤',
   },
   {
     rocket: ':woman_teacher:',
-    wpp: '👩\u200d🏫'
+    wpp: '👩\u200d🏫',
   },
   {
     rocket: ':man_teacher:',
-    wpp: '👨\u200d🏫'
+    wpp: '👨\u200d🏫',
   },
   {
     rocket: ':woman_factory_worker:',
-    wpp: '👩\u200d🏭'
+    wpp: '👩\u200d🏭',
   },
   {
     rocket: ':man_factory_worker:',
-    wpp: '👨\u200d🏭'
+    wpp: '👨\u200d🏭',
   },
   {
     rocket: ':woman_technologist:',
-    wpp: '👩\u200d💻'
+    wpp: '👩\u200d💻',
   },
   {
     rocket: ':man_technologist:',
-    wpp: '👨\u200d💻'
+    wpp: '👨\u200d💻',
   },
   {
     rocket: ':woman_office_worker:',
-    wpp: '👩\u200d💼'
+    wpp: '👩\u200d💼',
   },
   {
     rocket: ':man_office_worker:',
-    wpp: '👨\u200d💼'
+    wpp: '👨\u200d💼',
   },
   {
     rocket: ':woman_mechanic:',
-    wpp: '👩\u200d🔧'
+    wpp: '👩\u200d🔧',
   },
   {
     rocket: ':man_mechanic:',
-    wpp: '👨\u200d🔧'
+    wpp: '👨\u200d🔧',
   },
   {
     rocket: ':woman_scientist:',
-    wpp: '👩\u200d🔬'
+    wpp: '👩\u200d🔬',
   },
   {
     rocket: ':man_scientist:',
-    wpp: '👨\u200d🔬'
+    wpp: '👨\u200d🔬',
   },
   {
     rocket: ':woman_artist:',
-    wpp: '👩\u200d🎨'
+    wpp: '👩\u200d🎨',
   },
   {
     rocket: ':man_artist:',
-    wpp: '👨\u200d🎨'
+    wpp: '👨\u200d🎨',
   },
   {
     rocket: ':woman_firefighter:',
-    wpp: '👩\u200d🚒'
+    wpp: '👩\u200d🚒',
   },
   {
     rocket: ':man_firefighter:',
-    wpp: '👨\u200d🚒'
+    wpp: '👨\u200d🚒',
   },
   {
     rocket: ':woman_pilot:',
-    wpp: '👩\u200d✈️'
+    wpp: '👩\u200d✈️',
   },
   {
     rocket: ':man_pilot:',
-    wpp: '👨\u200d✈️'
+    wpp: '👨\u200d✈️',
   },
   {
     rocket: ':woman_astronaut:',
-    wpp: '👩\u200d🚀'
+    wpp: '👩\u200d🚀',
   },
   {
     rocket: ':man_astronaut:',
-    wpp: '👨\u200d🚀'
+    wpp: '👨\u200d🚀',
   },
   {
     rocket: ':woman_judge:',
-    wpp: '👩\u200d⚖️'
+    wpp: '👩\u200d⚖️',
   },
   {
     rocket: ':man_judge:',
-    wpp: '👨\u200d⚖️'
+    wpp: '👨\u200d⚖️',
   },
   {
     rocket: ':bride_with_veil:',
-    wpp: '👰'
+    wpp: '👰',
   },
   {
     rocket: ':man_in_tuxedo:',
-    wpp: '🤵'
+    wpp: '🤵',
   },
   {
     rocket: ':princess:',
-    wpp: '👸'
+    wpp: '👸',
   },
   {
     rocket: ':prince:',
-    wpp: '🤴'
+    wpp: '🤴',
   },
   {
     rocket: ':mrs_claus:',
-    wpp: '🤶'
+    wpp: '🤶',
   },
   {
     rocket: ':santa:',
-    wpp: '🎅'
+    wpp: '🎅',
   },
   {
     rocket: ':superhero:',
-    wpp: '🦸'
+    wpp: '🦸',
   },
   {
     rocket: ':woman_superhero:',
-    wpp: '🦸\u200d♀️'
+    wpp: '🦸\u200d♀️',
   },
   {
     rocket: ':man_superhero:',
-    wpp: '🦸\u200d♂️'
+    wpp: '🦸\u200d♂️',
   },
   {
     rocket: ':supervillain:',
-    wpp: '🦹'
+    wpp: '🦹',
   },
   {
     rocket: ':woman_supervillain:',
-    wpp: '🦹\u200d♀️'
+    wpp: '🦹\u200d♀️',
   },
   {
     rocket: ':man_supervillain:',
-    wpp: '🦹\u200d♂️'
+    wpp: '🦹\u200d♂️',
   },
   {
     rocket: ':mage:',
-    wpp: '🧙'
+    wpp: '🧙',
   },
   {
     rocket: ':woman_mage:',
-    wpp: '🧙\u200d♀️'
+    wpp: '🧙\u200d♀️',
   },
   {
     rocket: ':man_mage:',
-    wpp: '🧙\u200d♂️'
+    wpp: '🧙\u200d♂️',
   },
   {
     rocket: ':elf:',
-    wpp: '🧝'
+    wpp: '🧝',
   },
   {
     rocket: ':woman_elf:',
-    wpp: '🧝\u200d♀️'
+    wpp: '🧝\u200d♀️',
   },
   {
     rocket: ':man_elf:',
-    wpp: '🧝\u200d♂️'
+    wpp: '🧝\u200d♂️',
   },
   {
     rocket: ':vampire:',
-    wpp: '🧛'
+    wpp: '🧛',
   },
   {
     rocket: ':woman_vampire:',
-    wpp: '🧛\u200d♀️'
+    wpp: '🧛\u200d♀️',
   },
   {
     rocket: ':man_vampire:',
-    wpp: '🧛\u200d♂️'
+    wpp: '🧛\u200d♂️',
   },
   {
     rocket: ':zombie:',
-    wpp: '🧟'
+    wpp: '🧟',
   },
   {
     rocket: ':woman_zombie:',
-    wpp: '🧟\u200d♀️'
+    wpp: '🧟\u200d♀️',
   },
   {
     rocket: ':man_zombie:',
-    wpp: '🧟\u200d♂️'
+    wpp: '🧟\u200d♂️',
   },
   {
     rocket: ':woman_genie:',
-    wpp: '🧞\u200d♀️'
+    wpp: '🧞\u200d♀️',
   },
   {
     rocket: ':man_genie:',
-    wpp: '🧞\u200d♂️'
+    wpp: '🧞\u200d♂️',
   },
   {
     rocket: ':merperson:',
-    wpp: '🧜\u200d♀️'
+    wpp: '🧜\u200d♀️',
   },
   {
     rocket: ':merman:',
-    wpp: '🧜\u200d♂️'
+    wpp: '🧜\u200d♂️',
   },
   {
     rocket: ':woman_fairy:',
-    wpp: '🧚\u200d♀️'
+    wpp: '🧚\u200d♀️',
   },
   {
     rocket: ':man_fairy:',
-    wpp: '🧚\u200d♂️'
+    wpp: '🧚\u200d♂️',
   },
   {
     rocket: ':angel:',
-    wpp: '👼'
+    wpp: '👼',
   },
   {
     rocket: ':pregnant_woman:',
-    wpp: '🤰'
+    wpp: '🤰',
   },
   {
     rocket: ':breast_feeding:',
-    wpp: '🤱'
+    wpp: '🤱',
   },
   {
     rocket: ':man_bowing:',
-    wpp: '🙇'
+    wpp: '🙇',
   },
   {
     rocket: ':woman_bowing:',
-    wpp: '🙇\u200d♀️'
+    wpp: '🙇\u200d♀️',
   },
   {
     rocket: ':woman_tipping_hand:',
-    wpp: '💁\u200d♀️'
+    wpp: '💁\u200d♀️',
   },
   {
     rocket: ':man_tipping_hand:',
-    wpp: '💁\u200d♂️'
+    wpp: '💁\u200d♂️',
   },
   {
     rocket: ':woman_gesturing_no:',
-    wpp: '🙅\u200d♀️'
+    wpp: '🙅\u200d♀️',
   },
   {
     rocket: ':man_gesturing_no:',
-    wpp: '🙅\u200d♂️'
+    wpp: '🙅\u200d♂️',
   },
   {
     rocket: ':woman_gesturing_ok:',
-    wpp: '🙆\u200d♀️'
+    wpp: '🙆\u200d♀️',
   },
   {
     rocket: ':man_gesturing_ok:',
-    wpp: '🙆\u200d♂️'
+    wpp: '🙆\u200d♂️',
   },
   {
     rocket: ':woman_raising_hand:',
-    wpp: '🙋\u200d♀️'
+    wpp: '🙋\u200d♀️',
   },
   {
     rocket: ':man_raising_hand:',
-    wpp: '🙋\u200d♂️'
+    wpp: '🙋\u200d♂️',
   },
   {
     rocket: ':woman_facepalming:',
-    wpp: '🤦\u200d♀️'
+    wpp: '🤦\u200d♀️',
   },
   {
     rocket: ':man_facepalming:',
-    wpp: '🤦\u200d♂️'
+    wpp: '🤦\u200d♂️',
   },
   {
     rocket: ':woman_shrugging:',
-    wpp: '🤷\u200d♀️'
+    wpp: '🤷\u200d♀️',
   },
   {
     rocket: ':man_shrugging:',
-    wpp: '🤷\u200d♂️'
+    wpp: '🤷\u200d♂️',
   },
   {
     rocket: ':woman_pouting:',
-    wpp: '🙎\u200d♀️'
+    wpp: '🙎\u200d♀️',
   },
   {
     rocket: ':man_pouting:',
-    wpp: '🙎\u200d♂️'
+    wpp: '🙎\u200d♂️',
   },
   {
     rocket: ':woman_frowning:',
-    wpp: '🙍\u200d♀️'
+    wpp: '🙍\u200d♀️',
   },
   {
     rocket: ':man_frowning:',
-    wpp: '🙍\u200d♂️'
+    wpp: '🙍\u200d♂️',
   },
   {
     rocket: ':woman_getting_haircut:',
-    wpp: '💇\u200d♀️'
+    wpp: '💇\u200d♀️',
   },
   {
     rocket: ':man_getting_haircut:',
-    wpp: '💇\u200d♂️'
+    wpp: '💇\u200d♂️',
   },
   {
     rocket: ':woman_getting_face_massage:',
-    wpp: '💆\u200d♀️'
+    wpp: '💆\u200d♀️',
   },
   {
     rocket: ':man_getting_face_massage:',
-    wpp: '💆\u200d♂️'
+    wpp: '💆\u200d♂️',
   },
   {
     rocket: ':woman_in_steamy_room:',
-    wpp: '🧖\u200d♀️'
+    wpp: '🧖\u200d♀️',
   },
   {
     rocket: ':man_in_steamy_room:',
-    wpp: '🧖\u200d♂️'
+    wpp: '🧖\u200d♂️',
   },
   {
     rocket: ':nail_care:',
-    wpp: '💅'
+    wpp: '💅',
   },
   {
     rocket: ':selfie:',
-    wpp: '🤳'
+    wpp: '🤳',
   },
   {
     rocket: ':dancer:',
-    wpp: '💃'
+    wpp: '💃',
   },
   {
     rocket: ':man_dancing:',
-    wpp: '🕺'
+    wpp: '🕺',
   },
   {
     rocket: ':women_with_bunny_ears_partying:',
-    wpp: '👯\u200d♀️'
+    wpp: '👯\u200d♀️',
   },
   {
     rocket: ':men_with_bunny_ears_partying:',
-    wpp: '👯\u200d♂️'
+    wpp: '👯\u200d♂️',
   },
   {
     rocket: ':levitate:',
-    wpp: '🕴'
+    wpp: '🕴',
   },
   {
     rocket: ':woman_walking:',
-    wpp: '🚶\u200d♀️'
+    wpp: '🚶\u200d♀️',
   },
   {
     rocket: ':man_walking:',
-    wpp: '🚶\u200d♂️'
+    wpp: '🚶\u200d♂️',
   },
   {
     rocket: ':woman_running:',
-    wpp: '🏃\u200d♀️'
+    wpp: '🏃\u200d♀️',
   },
   {
     rocket: ':man_running:',
-    wpp: '🏃\u200d♂️'
+    wpp: '🏃\u200d♂️',
   },
   {
     rocket: ':couple:',
-    wpp: '👫'
+    wpp: '👫',
   },
   {
     rocket: ':two_women_holding_hands:',
-    wpp: '👭'
+    wpp: '👭',
   },
   {
     rocket: ':two_men_holding_hands:',
-    wpp: '👬'
+    wpp: '👬',
   },
   {
     rocket: ':couple_with_heart:',
-    wpp: '💑'
+    wpp: '💑',
   },
   {
     rocket: ':couple_with_heart_woman_man:',
-    wpp: '👩\u200d❤️\u200d👨'
+    wpp: '👩\u200d❤️\u200d👨',
   },
   {
     rocket: ':couple_ww:',
-    wpp: '👩\u200d❤️\u200d👩'
+    wpp: '👩\u200d❤️\u200d👩',
   },
   {
     rocket: ':couple_mm:',
-    wpp: '👨\u200d❤️\u200d👨'
+    wpp: '👨\u200d❤️\u200d👨',
   },
   {
     rocket: ':kiss_woman_man:',
-    wpp: '👩\u200d❤️\u200d💋\u200d👨'
+    wpp: '👩\u200d❤️\u200d💋\u200d👨',
   },
   {
     rocket: ':kiss_ww:',
-    wpp: '👩\u200d❤️\u200d💋\u200d👩'
+    wpp: '👩\u200d❤️\u200d💋\u200d👩',
   },
   {
     rocket: ':kiss_mm:',
-    wpp: '👨\u200d❤️\u200d💋\u200d👨'
+    wpp: '👨\u200d❤️\u200d💋\u200d👨',
   },
   {
     rocket: ':family_man_woman_boy:',
-    wpp: '👨\u200d👩\u200d👦'
+    wpp: '👨\u200d👩\u200d👦',
   },
   {
     rocket: ':family_mwg:',
-    wpp: '👨\u200d👩\u200d👧'
+    wpp: '👨\u200d👩\u200d👧',
   },
   {
     rocket: ':family_mwgb:',
-    wpp: '👨\u200d👩\u200d👧\u200d👦'
+    wpp: '👨\u200d👩\u200d👧\u200d👦',
   },
   {
     rocket: ':family_mwbb:',
-    wpp: '👨\u200d👩\u200d👦\u200d👦'
+    wpp: '👨\u200d👩\u200d👦\u200d👦',
   },
   {
     rocket: ':family_mwgg:',
-    wpp: '👨\u200d👩\u200d👧\u200d👧'
+    wpp: '👨\u200d👩\u200d👧\u200d👧',
   },
   {
     rocket: ':family_wwb:',
-    wpp: '👩\u200d👩\u200d👦'
+    wpp: '👩\u200d👩\u200d👦',
   },
   {
     rocket: ':family_wwg:',
-    wpp: '👩\u200d👩\u200d👧'
+    wpp: '👩\u200d👩\u200d👧',
   },
   {
     rocket: ':family_wwgb:',
-    wpp: '👩\u200d👩\u200d👧\u200d👦'
+    wpp: '👩\u200d👩\u200d👧\u200d👦',
   },
   {
     rocket: ':family_wwbb:',
-    wpp: '👩\u200d👩\u200d👦\u200d👦'
+    wpp: '👩\u200d👩\u200d👦\u200d👦',
   },
   {
     rocket: ':family_wwgg:',
-    wpp: '👩\u200d👩\u200d👧\u200d👧'
+    wpp: '👩\u200d👩\u200d👧\u200d👧',
   },
   {
     rocket: ':family_mmb:',
-    wpp: '👨\u200d👨\u200d👦'
+    wpp: '👨\u200d👨\u200d👦',
   },
   {
     rocket: ':family_mmg:',
-    wpp: '👨\u200d👨\u200d👧'
+    wpp: '👨\u200d👨\u200d👧',
   },
   {
     rocket: ':family_mmgb:',
-    wpp: '👨\u200d👨\u200d👧\u200d👦'
+    wpp: '👨\u200d👨\u200d👧\u200d👦',
   },
   {
     rocket: ':family_mmbb:',
-    wpp: '👨\u200d👨\u200d👦\u200d👦'
+    wpp: '👨\u200d👨\u200d👦\u200d👦',
   },
   {
     rocket: ':family_mmgg:',
-    wpp: '👨\u200d👨\u200d👧\u200d👧'
+    wpp: '👨\u200d👨\u200d👧\u200d👧',
   },
   {
     rocket: ':family_woman_boy:',
-    wpp: '👩\u200d👦'
+    wpp: '👩\u200d👦',
   },
   {
     rocket: ':family_woman_girl:',
-    wpp: '👩\u200d👧'
+    wpp: '👩\u200d👧',
   },
   {
     rocket: ':family_woman_girl_boy:',
-    wpp: '👩\u200d👧\u200d👦'
+    wpp: '👩\u200d👧\u200d👦',
   },
   {
     rocket: ':family_woman_boy_boy:',
-    wpp: '👩\u200d👦\u200d👦'
+    wpp: '👩\u200d👦\u200d👦',
   },
   {
     rocket: ':family_woman_girl_girl:',
-    wpp: '👩\u200d👧\u200d👧'
+    wpp: '👩\u200d👧\u200d👧',
   },
   {
     rocket: ':family_man_boy:',
-    wpp: '👨\u200d👦'
+    wpp: '👨\u200d👦',
   },
   {
     rocket: ':family_man_girl:',
-    wpp: '👨\u200d👧'
+    wpp: '👨\u200d👧',
   },
   {
     rocket: ':family_man_girl_boy:',
-    wpp: '👨\u200d👧\u200d👦'
+    wpp: '👨\u200d👧\u200d👦',
   },
   {
     rocket: ':family_man_boy_boy:',
-    wpp: '👨\u200d👦\u200d👦'
+    wpp: '👨\u200d👦\u200d👦',
   },
   {
     rocket: ':family_man_girl_girl:',
-    wpp: '👨\u200d👧\u200d👧'
+    wpp: '👨\u200d👧\u200d👧',
   },
   {
     rocket: ':dog:',
-    wpp: '🐶'
+    wpp: '🐶',
   },
   {
     rocket: ':cat:',
-    wpp: '🐱'
+    wpp: '🐱',
   },
   {
     rocket: ':mouse:',
-    wpp: '🐭'
+    wpp: '🐭',
   },
   {
     rocket: ':hamster:',
-    wpp: '🐹'
+    wpp: '🐹',
   },
   {
     rocket: ':rabbit:',
-    wpp: '🐰'
+    wpp: '🐰',
   },
   {
     rocket: ':fox:',
-    wpp: '🦊'
+    wpp: '🦊',
   },
   {
     rocket: ':raccoon:',
-    wpp: '🦝'
+    wpp: '🦝',
   },
   {
     rocket: ':bear:',
-    wpp: '🐻'
+    wpp: '🐻',
   },
   {
     rocket: ':panda_face:',
-    wpp: '🐼'
+    wpp: '🐼',
   },
   {
     rocket: ':kangaroo:',
-    wpp: '🦘'
+    wpp: '🦘',
   },
   {
     rocket: ':badger:',
-    wpp: '🦡'
+    wpp: '🦡',
   },
   {
     rocket: ':koala:',
-    wpp: '🐨'
+    wpp: '🐨',
   },
   {
     rocket: ':tiger:',
-    wpp: '🐯'
+    wpp: '🐯',
   },
   {
     rocket: ':lion_face:',
-    wpp: '🦁'
+    wpp: '🦁',
   },
   {
     rocket: ':cow:',
-    wpp: '🐮'
+    wpp: '🐮',
   },
   {
     rocket: ':pig:',
-    wpp: '🐷'
+    wpp: '🐷',
   },
   {
     rocket: ':pig_nose:',
-    wpp: '🐽'
+    wpp: '🐽',
   },
   {
     rocket: ':frog:',
-    wpp: '🐸'
+    wpp: '🐸',
   },
   {
     rocket: ':monkey_face:',
-    wpp: '🐵'
+    wpp: '🐵',
   },
   {
     rocket: ':see_no_evil:',
-    wpp: '🙈'
+    wpp: '🙈',
   },
   {
     rocket: ':hear_no_evil:',
-    wpp: '🙉'
+    wpp: '🙉',
   },
   {
     rocket: ':speak_no_evil:',
-    wpp: '🙊'
+    wpp: '🙊',
   },
   {
     rocket: ':monkey:',
-    wpp: '🐒'
+    wpp: '🐒',
   },
   {
     rocket: ':chicken:',
-    wpp: '🐔'
+    wpp: '🐔',
   },
   {
     rocket: ':penguin:',
-    wpp: '🐧'
+    wpp: '🐧',
   },
   {
     rocket: ':bird:',
-    wpp: '🐦'
+    wpp: '🐦',
   },
   {
     rocket: ':baby_chick:',
-    wpp: '🐤'
+    wpp: '🐤',
   },
   {
     rocket: ':hatching_chick:',
-    wpp: '🐣'
+    wpp: '🐣',
   },
   {
     rocket: ':hatched_chick:',
-    wpp: '🐥'
+    wpp: '🐥',
   },
   {
     rocket: ':duck:',
-    wpp: '🦆'
+    wpp: '🦆',
   },
   {
     rocket: ':swan:',
-    wpp: '🦢'
+    wpp: '🦢',
   },
   {
     rocket: ':eagle:',
-    wpp: '🦅'
+    wpp: '🦅',
   },
   {
     rocket: ':owl:',
-    wpp: '🦉'
+    wpp: '🦉',
   },
   {
     rocket: ':parrot:',
-    wpp: '🦜'
+    wpp: '🦜',
   },
   {
     rocket: ':peacock:',
-    wpp: '🦚'
+    wpp: '🦚',
   },
   {
     rocket: ':bat:',
-    wpp: '🦇'
+    wpp: '🦇',
   },
   {
     rocket: ':wolf:',
-    wpp: '🐺'
+    wpp: '🐺',
   },
   {
     rocket: ':boar:',
-    wpp: '🐗'
+    wpp: '🐗',
   },
   {
     rocket: ':horse:',
-    wpp: '🐴'
+    wpp: '🐴',
   },
   {
     rocket: ':unicorn:',
-    wpp: '🦄'
+    wpp: '🦄',
   },
   {
     rocket: ':bee:',
-    wpp: '🐝'
+    wpp: '🐝',
   },
   {
     rocket: ':bug:',
-    wpp: '🐛'
+    wpp: '🐛',
   },
   {
     rocket: ':butterfly:',
-    wpp: '🦋'
+    wpp: '🦋',
   },
   {
     rocket: ':snail:',
-    wpp: '🐌'
+    wpp: '🐌',
   },
   {
     rocket: ':shell:',
-    wpp: '🐚'
+    wpp: '🐚',
   },
   {
     rocket: ':beetle:',
-    wpp: '🐞'
+    wpp: '🐞',
   },
   {
     rocket: ':ant:',
-    wpp: '🐜'
+    wpp: '🐜',
   },
   {
     rocket: ':cricket:',
-    wpp: '🦗'
+    wpp: '🦗',
   },
   {
     rocket: ':spider:',
-    wpp: '🕷'
+    wpp: '🕷',
   },
   {
     rocket: ':spider_web:',
-    wpp: '🕸'
+    wpp: '🕸',
   },
   {
     rocket: ':scorpion:',
-    wpp: '🦂'
+    wpp: '🦂',
   },
   {
     rocket: ':mosquito:',
-    wpp: '🦟'
+    wpp: '🦟',
   },
   {
     rocket: ':microbe:',
-    wpp: '🦠'
+    wpp: '🦠',
   },
   {
     rocket: ':turtle:',
-    wpp: '🐢'
+    wpp: '🐢',
   },
   {
     rocket: ':snake:',
-    wpp: '🐍'
+    wpp: '🐍',
   },
   {
     rocket: ':lizard:',
-    wpp: '🦎'
+    wpp: '🦎',
   },
   {
     rocket: ':t_rex:',
-    wpp: '🦖'
+    wpp: '🦖',
   },
   {
     rocket: ':sauropod:',
-    wpp: '🦕'
+    wpp: '🦕',
   },
   {
     rocket: ':octopus:',
-    wpp: '🐙'
+    wpp: '🐙',
   },
   {
     rocket: ':squid:',
-    wpp: '🦑'
+    wpp: '🦑',
   },
   {
     rocket: ':shrimp:',
-    wpp: '🦐'
+    wpp: '🦐',
   },
   {
     rocket: ':crab:',
-    wpp: '🦀'
+    wpp: '🦀',
   },
   {
     rocket: ':lobster:',
-    wpp: '🦞'
+    wpp: '🦞',
   },
   {
     rocket: ':blowfish:',
-    wpp: '🐡'
+    wpp: '🐡',
   },
   {
     rocket: ':tropical_fish:',
-    wpp: '🐠'
+    wpp: '🐠',
   },
   {
     rocket: ':fish:',
-    wpp: '🐟'
+    wpp: '🐟',
   },
   {
     rocket: ':dolphin:',
-    wpp: '🐬'
+    wpp: '🐬',
   },
   {
     rocket: ':whale:',
-    wpp: '🐳'
+    wpp: '🐳',
   },
   {
     rocket: ':whale2:',
-    wpp: '🐋'
+    wpp: '🐋',
   },
   {
     rocket: ':shark:',
-    wpp: '🦈'
+    wpp: '🦈',
   },
   {
     rocket: ':crocodile:',
-    wpp: '🐊'
+    wpp: '🐊',
   },
   {
     rocket: ':tiger2:',
-    wpp: '🐅'
+    wpp: '🐅',
   },
   {
     rocket: ':leopard:',
-    wpp: '🐆'
+    wpp: '🐆',
   },
   {
     rocket: ':zebra:',
-    wpp: '🦓'
+    wpp: '🦓',
   },
   {
     rocket: ':gorilla:',
-    wpp: '🦍'
+    wpp: '🦍',
   },
   {
     rocket: ':elephant:',
-    wpp: '🐘'
+    wpp: '🐘',
   },
   {
     rocket: ':rhino:',
-    wpp: '🦏'
+    wpp: '🦏',
   },
   {
     rocket: ':hippopotamus:',
-    wpp: '🦛'
+    wpp: '🦛',
   },
   {
     rocket: ':dromedary_camel:',
-    wpp: '🐪'
+    wpp: '🐪',
   },
   {
     rocket: ':camel:',
-    wpp: '🐫'
+    wpp: '🐫',
   },
   {
     rocket: ':giraffe:',
-    wpp: '🦒'
+    wpp: '🦒',
   },
   {
     rocket: ':llama:',
-    wpp: '🦙'
+    wpp: '🦙',
   },
   {
     rocket: ':water_buffalo:',
-    wpp: '🐃'
+    wpp: '🐃',
   },
   {
     rocket: ':ox:',
-    wpp: '🐂'
+    wpp: '🐂',
   },
   {
     rocket: ':cow2:',
-    wpp: '🐄'
+    wpp: '🐄',
   },
   {
     rocket: ':racehorse:',
-    wpp: '🐎'
+    wpp: '🐎',
   },
   {
     rocket: ':pig2:',
-    wpp: '🐖'
+    wpp: '🐖',
   },
   {
     rocket: ':ram:',
-    wpp: '🐏'
+    wpp: '🐏',
   },
   {
     rocket: ':sheep:',
-    wpp: '🐑'
+    wpp: '🐑',
   },
   {
     rocket: ':goat:',
-    wpp: '🐐'
+    wpp: '🐐',
   },
   {
     rocket: ':deer:',
-    wpp: '🦌'
+    wpp: '🦌',
   },
   {
     rocket: ':dog2:',
-    wpp: '🐕'
+    wpp: '🐕',
   },
   {
     rocket: ':poodle:',
-    wpp: '🐩'
+    wpp: '🐩',
   },
   {
     rocket: ':cat2:',
-    wpp: '🐈'
+    wpp: '🐈',
   },
   {
     rocket: ':rooster:',
-    wpp: '🐓'
+    wpp: '🐓',
   },
   {
     rocket: ':turkey:',
-    wpp: '🦃'
+    wpp: '🦃',
   },
   {
     rocket: ':dove:',
-    wpp: '🕊'
+    wpp: '🕊',
   },
   {
     rocket: ':rabbit2:',
-    wpp: '🐇'
+    wpp: '🐇',
   },
   {
     rocket: ':mouse2:',
-    wpp: '🐁'
+    wpp: '🐁',
   },
   {
     rocket: ':rat:',
-    wpp: '🐀'
+    wpp: '🐀',
   },
   {
     rocket: ':chipmunk:',
-    wpp: '🐿'
+    wpp: '🐿',
   },
   {
     rocket: ':hedgehog:',
-    wpp: '🦔'
+    wpp: '🦔',
   },
   {
     rocket: ':feet:',
-    wpp: '🐾'
+    wpp: '🐾',
   },
   {
     rocket: ':dragon:',
-    wpp: '🐉'
+    wpp: '🐉',
   },
   {
     rocket: ':dragon_face:',
-    wpp: '🐲'
+    wpp: '🐲',
   },
   {
     rocket: ':cactus:',
-    wpp: '🌵'
+    wpp: '🌵',
   },
   {
     rocket: ':christmas_tree:',
-    wpp: '🎄'
+    wpp: '🎄',
   },
   {
     rocket: ':evergreen_tree:',
-    wpp: '🌲'
+    wpp: '🌲',
   },
   {
     rocket: ':deciduous_tree:',
-    wpp: '🌳'
+    wpp: '🌳',
   },
   {
     rocket: ':palm_tree:',
-    wpp: '🌴'
+    wpp: '🌴',
   },
   {
     rocket: ':seedling:',
-    wpp: '🌱'
+    wpp: '🌱',
   },
   {
     rocket: ':herb:',
-    wpp: '🌿'
+    wpp: '🌿',
   },
   {
     rocket: ':shamrock:',
-    wpp: '☘'
+    wpp: '☘',
   },
   {
     rocket: ':four_leaf_clover:',
-    wpp: '🍀'
+    wpp: '🍀',
   },
   {
     rocket: ':bamboo:',
-    wpp: '🎍'
+    wpp: '🎍',
   },
   {
     rocket: ':tanabata_tree:',
-    wpp: '🎋'
+    wpp: '🎋',
   },
   {
     rocket: ':leaves:',
-    wpp: '🍃'
+    wpp: '🍃',
   },
   {
     rocket: ':fallen_leaf:',
-    wpp: '🍂'
+    wpp: '🍂',
   },
   {
     rocket: ':maple_leaf:',
-    wpp: '🍁'
+    wpp: '🍁',
   },
   {
     rocket: ':mushroom:',
-    wpp: '🍄'
+    wpp: '🍄',
   },
   {
     rocket: ':ear_of_rice:',
-    wpp: '🌾'
+    wpp: '🌾',
   },
   {
     rocket: ':bouquet:',
-    wpp: '💐'
+    wpp: '💐',
   },
   {
     rocket: ':tulip:',
-    wpp: '🌷'
+    wpp: '🌷',
   },
   {
     rocket: ':rose:',
-    wpp: '🌹'
+    wpp: '🌹',
   },
   {
     rocket: ':wilted_rose:',
-    wpp: '🥀'
+    wpp: '🥀',
   },
   {
     rocket: ':hibiscus:',
-    wpp: '🌺'
+    wpp: '🌺',
   },
   {
     rocket: ':cherry_blossom:',
-    wpp: '🌸'
+    wpp: '🌸',
   },
   {
     rocket: ':blossom:',
-    wpp: '🌼'
+    wpp: '🌼',
   },
   {
     rocket: ':sunflower:',
-    wpp: '🌻'
+    wpp: '🌻',
   },
   {
     rocket: ':sun_with_face:',
-    wpp: '🌞'
+    wpp: '🌞',
   },
   {
     rocket: ':full_moon_with_face:',
-    wpp: '🌝'
+    wpp: '🌝',
   },
   {
     rocket: ':first_quarter_moon_with_face:',
-    wpp: '🌛'
+    wpp: '🌛',
   },
   {
     rocket: ':last_quarter_moon_with_face:',
-    wpp: '🌜'
+    wpp: '🌜',
   },
   {
     rocket: ':new_moon_with_face:',
-    wpp: '🌚'
+    wpp: '🌚',
   },
   {
     rocket: ':full_moon:',
-    wpp: '🌕'
+    wpp: '🌕',
   },
   {
     rocket: ':waning_gibbous_moon:',
-    wpp: '🌖'
+    wpp: '🌖',
   },
   {
     rocket: ':last_quarter_moon:',
-    wpp: '🌗'
+    wpp: '🌗',
   },
   {
     rocket: ':waning_crescent_moon:',
-    wpp: '🌘'
+    wpp: '🌘',
   },
   {
     rocket: ':new_moon:',
-    wpp: '🌑'
+    wpp: '🌑',
   },
   {
     rocket: ':waxing_crescent_moon:',
-    wpp: '🌒'
+    wpp: '🌒',
   },
   {
     rocket: ':first_quarter_moon:',
-    wpp: '🌓'
+    wpp: '🌓',
   },
   {
     rocket: ':waxing_gibbous_moon:',
-    wpp: '🌔'
+    wpp: '🌔',
   },
   {
     rocket: ':crescent_moon:',
-    wpp: '🌙'
+    wpp: '🌙',
   },
   {
     rocket: ':earth_americas:',
-    wpp: '🌎'
+    wpp: '🌎',
   },
   {
     rocket: ':earth_africa:',
-    wpp: '🌍'
+    wpp: '🌍',
   },
   {
     rocket: ':earth_asia:',
-    wpp: '🌏'
+    wpp: '🌏',
   },
   {
     rocket: ':dizzy:',
-    wpp: '💫'
+    wpp: '💫',
   },
   {
     rocket: ':star:',
-    wpp: '⭐'
+    wpp: '⭐',
   },
   {
     rocket: ':star2:',
-    wpp: '🌟'
+    wpp: '🌟',
   },
   {
     rocket: ':sparkles:',
-    wpp: '✨'
+    wpp: '✨',
   },
   {
     rocket: ':zap:',
-    wpp: '⚡'
+    wpp: '⚡',
   },
   {
     rocket: ':comet:',
-    wpp: '☄'
+    wpp: '☄',
   },
   {
     rocket: ':boom:',
-    wpp: '💥'
+    wpp: '💥',
   },
   {
     rocket: ':fire:',
-    wpp: '🔥'
+    wpp: '🔥',
   },
   {
     rocket: ':cloud_tornado:',
-    wpp: '🌪'
+    wpp: '🌪',
   },
   {
     rocket: ':rainbow:',
-    wpp: '🌈'
+    wpp: '🌈',
   },
   {
     rocket: ':sunny:',
-    wpp: '☀'
+    wpp: '☀',
   },
   {
     rocket: ':white_sun_small_cloud:',
-    wpp: '🌤'
+    wpp: '🌤',
   },
   {
     rocket: ':partly_sunny:',
-    wpp: '⛅'
+    wpp: '⛅',
   },
   {
     rocket: ':white_sun_cloud:',
-    wpp: '🌥'
+    wpp: '🌥',
   },
   {
     rocket: ':cloud:',
-    wpp: '☁'
+    wpp: '☁',
   },
   {
     rocket: ':white_sun_rain_cloud:',
-    wpp: '🌦'
+    wpp: '🌦',
   },
   {
     rocket: ':cloud_rain:',
-    wpp: '🌧'
+    wpp: '🌧',
   },
   {
     rocket: ':thunder_cloud_rain:',
-    wpp: '⛈'
+    wpp: '⛈',
   },
   {
     rocket: ':cloud_lightning:',
-    wpp: '🌩'
+    wpp: '🌩',
   },
   {
     rocket: ':cloud_snow:',
-    wpp: '🌨'
+    wpp: '🌨',
   },
   {
     rocket: ':snowflake:',
-    wpp: '❄'
+    wpp: '❄',
   },
   {
     rocket: ':snowman2:',
-    wpp: '☃'
+    wpp: '☃',
   },
   {
     rocket: ':snowman:',
-    wpp: '⛄'
+    wpp: '⛄',
   },
   {
     rocket: ':wind_blowing_face:',
-    wpp: '🌬'
+    wpp: '🌬',
   },
   {
     rocket: ':dash:',
-    wpp: '💨'
+    wpp: '💨',
   },
   {
     rocket: ':droplet:',
-    wpp: '💧'
+    wpp: '💧',
   },
   {
     rocket: ':sweat_drops:',
-    wpp: '💦'
+    wpp: '💦',
   },
   {
     rocket: ':umbrella:',
-    wpp: '☔'
+    wpp: '☔',
   },
   {
     rocket: ':umbrella2:',
-    wpp: '☂'
+    wpp: '☂',
   },
   {
     rocket: ':ocean:',
-    wpp: '🌊'
+    wpp: '🌊',
   },
   {
     rocket: ':fog:',
-    wpp: '🌫'
+    wpp: '🌫',
   },
   {
     rocket: ':green_apple:',
-    wpp: '🍏'
+    wpp: '🍏',
   },
   {
     rocket: ':apple:',
-    wpp: '🍎'
+    wpp: '🍎',
   },
   {
     rocket: ':pear:',
-    wpp: '🍐'
+    wpp: '🍐',
   },
   {
     rocket: ':tangerine:',
-    wpp: '🍊'
+    wpp: '🍊',
   },
   {
     rocket: ':lemon:',
-    wpp: '🍋'
+    wpp: '🍋',
   },
   {
     rocket: ':banana:',
-    wpp: '🍌'
+    wpp: '🍌',
   },
   {
     rocket: ':watermelon:',
-    wpp: '🍉'
+    wpp: '🍉',
   },
   {
     rocket: ':grapes:',
-    wpp: '🍇'
+    wpp: '🍇',
   },
   {
     rocket: ':strawberry:',
-    wpp: '🍓'
+    wpp: '🍓',
   },
   {
     rocket: ':melon:',
-    wpp: '🍈'
+    wpp: '🍈',
   },
   {
     rocket: ':cherries:',
-    wpp: '🍒'
+    wpp: '🍒',
   },
   {
     rocket: ':peach:',
-    wpp: '🍑'
+    wpp: '🍑',
   },
   {
     rocket: ':mango:',
-    wpp: '🥭'
+    wpp: '🥭',
   },
   {
     rocket: ':pineapple:',
-    wpp: '🍍'
+    wpp: '🍍',
   },
   {
     rocket: ':coconut:',
-    wpp: '🥥'
+    wpp: '🥥',
   },
   {
     rocket: ':kiwi:',
-    wpp: '🥝'
+    wpp: '🥝',
   },
   {
     rocket: ':tomato:',
-    wpp: '🍅'
+    wpp: '🍅',
   },
   {
     rocket: ':eggplant:',
-    wpp: '🍆'
+    wpp: '🍆',
   },
   {
     rocket: ':avocado:',
-    wpp: '🥑'
+    wpp: '🥑',
   },
   {
     rocket: ':broccoli:',
-    wpp: '🥦'
+    wpp: '🥦',
   },
   {
     rocket: ':leafy_green:',
-    wpp: '🥬'
+    wpp: '🥬',
   },
   {
     rocket: ':cucumber:',
-    wpp: '🥒'
+    wpp: '🥒',
   },
   {
     rocket: ':hot_pepper:',
-    wpp: '🌶'
+    wpp: '🌶',
   },
   {
     rocket: ':corn:',
-    wpp: '🌽'
+    wpp: '🌽',
   },
   {
     rocket: ':carrot:',
-    wpp: '🥕'
+    wpp: '🥕',
   },
   {
     rocket: ':potato:',
-    wpp: '🥔'
+    wpp: '🥔',
   },
   {
     rocket: ':sweet_potato:',
-    wpp: '🍠'
+    wpp: '🍠',
   },
   {
     rocket: ':croissant:',
-    wpp: '🥐'
+    wpp: '🥐',
   },
   {
     rocket: ':bread:',
-    wpp: '🍞'
+    wpp: '🍞',
   },
   {
     rocket: ':french_bread:',
-    wpp: '🥖'
+    wpp: '🥖',
   },
   {
     rocket: ':pretzel:',
-    wpp: '🥨'
+    wpp: '🥨',
   },
   {
     rocket: ':bagel:',
-    wpp: '🥯'
+    wpp: '🥯',
   },
   {
     rocket: ':cheese:',
-    wpp: '🧀'
+    wpp: '🧀',
   },
   {
     rocket: ':egg:',
-    wpp: '🥚'
+    wpp: '🥚',
   },
   {
     rocket: ':cooking:',
-    wpp: '🍳'
+    wpp: '🍳',
   },
   {
     rocket: ':pancakes:',
-    wpp: '🥞'
+    wpp: '🥞',
   },
   {
     rocket: ':bacon:',
-    wpp: '🥓'
+    wpp: '🥓',
   },
   {
     rocket: ':cut_of_meat:',
-    wpp: '🥩'
+    wpp: '🥩',
   },
   {
     rocket: ':poultry_leg:',
-    wpp: '🍗'
+    wpp: '🍗',
   },
   {
     rocket: ':meat_on_bone:',
-    wpp: '🍖'
+    wpp: '🍖',
   },
   {
     rocket: ':hotdog:',
-    wpp: '🌭'
+    wpp: '🌭',
   },
   {
     rocket: ':hamburger:',
-    wpp: '🍔'
+    wpp: '🍔',
   },
   {
     rocket: ':fries:',
-    wpp: '🍟'
+    wpp: '🍟',
   },
   {
     rocket: ':pizza:',
-    wpp: '🍕'
+    wpp: '🍕',
   },
   {
     rocket: ':sandwich:',
-    wpp: '🥪'
+    wpp: '🥪',
   },
   {
     rocket: ':stuffed_flatbread:',
-    wpp: '🥙'
+    wpp: '🥙',
   },
   {
     rocket: ':taco:',
-    wpp: '🌮'
+    wpp: '🌮',
   },
   {
     rocket: ':burrito:',
-    wpp: '🌯'
+    wpp: '🌯',
   },
   {
     rocket: ':salad:',
-    wpp: '🥗'
+    wpp: '🥗',
   },
   {
     rocket: ':shallow_pan_of_food:',
-    wpp: '🥘'
+    wpp: '🥘',
   },
   {
     rocket: ':canned_food:',
-    wpp: '🥫'
+    wpp: '🥫',
   },
   {
     rocket: ':spaghetti:',
-    wpp: '🍝'
+    wpp: '🍝',
   },
   {
     rocket: ':ramen:',
-    wpp: '🍜'
+    wpp: '🍜',
   },
   {
     rocket: ':stew:',
-    wpp: '🍲'
+    wpp: '🍲',
   },
   {
     rocket: ':curry:',
-    wpp: '🍛'
+    wpp: '🍛',
   },
   {
     rocket: ':sushi:',
-    wpp: '🍣'
+    wpp: '🍣',
   },
   {
     rocket: ':bento:',
-    wpp: '🍱'
+    wpp: '🍱',
   },
   {
     rocket: ':fried_shrimp:',
-    wpp: '🍤'
+    wpp: '🍤',
   },
   {
     rocket: ':rice_ball:',
-    wpp: '🍙'
+    wpp: '🍙',
   },
   {
     rocket: ':rice:',
-    wpp: '🍚'
+    wpp: '🍚',
   },
   {
     rocket: ':rice_cracker:',
-    wpp: '🍘'
+    wpp: '🍘',
   },
   {
     rocket: ':fish_cake:',
-    wpp: '🍥'
+    wpp: '🍥',
   },
   {
     rocket: ':fortune_cookie:',
-    wpp: '🥠'
+    wpp: '🥠',
   },
   {
     rocket: ':oden:',
-    wpp: '🍢'
+    wpp: '🍢',
   },
   {
     rocket: ':dango:',
-    wpp: '🍡'
+    wpp: '🍡',
   },
   {
     rocket: ':shaved_ice:',
-    wpp: '🍧'
+    wpp: '🍧',
   },
   {
     rocket: ':ice_cream:',
-    wpp: '🍨'
+    wpp: '🍨',
   },
   {
     rocket: ':icecream:',
-    wpp: '🍦'
+    wpp: '🍦',
   },
   {
     rocket: ':pie:',
-    wpp: '🥧'
+    wpp: '🥧',
   },
   {
     rocket: ':cake:',
-    wpp: '🍰'
+    wpp: '🍰',
   },
   {
     rocket: ':birthday:',
-    wpp: '🎂'
+    wpp: '🎂',
   },
   {
     rocket: ':moon_cake:',
-    wpp: '🥮'
+    wpp: '🥮',
   },
   {
     rocket: ':cupcake:',
-    wpp: '🧁'
+    wpp: '🧁',
   },
   {
     rocket: ':custard:',
-    wpp: '🍮'
+    wpp: '🍮',
   },
   {
     rocket: ':lollipop:',
-    wpp: '🍭'
+    wpp: '🍭',
   },
   {
     rocket: ':candy:',
-    wpp: '🍬'
+    wpp: '🍬',
   },
   {
     rocket: ':chocolate_bar:',
-    wpp: '🍫'
+    wpp: '🍫',
   },
   {
     rocket: ':popcorn:',
-    wpp: '🍿'
+    wpp: '🍿',
   },
   {
     rocket: ':salt:',
-    wpp: '🧂'
+    wpp: '🧂',
   },
   {
     rocket: ':doughnut:',
-    wpp: '🍩'
+    wpp: '🍩',
   },
   {
     rocket: ':dumpling:',
-    wpp: '🥟'
+    wpp: '🥟',
   },
   {
     rocket: ':cookie:',
-    wpp: '🍪'
+    wpp: '🍪',
   },
   {
     rocket: ':chestnut:',
-    wpp: '🌰'
+    wpp: '🌰',
   },
   {
     rocket: ':peanuts:',
-    wpp: '🥜'
+    wpp: '🥜',
   },
   {
     rocket: ':honey_pot:',
-    wpp: '🍯'
+    wpp: '🍯',
   },
   {
     rocket: ':milk:',
-    wpp: '🥛'
+    wpp: '🥛',
   },
   {
     rocket: ':baby_bottle:',
-    wpp: '🍼'
+    wpp: '🍼',
   },
   {
     rocket: ':coffee:',
-    wpp: '☕'
+    wpp: '☕',
   },
   {
     rocket: ':tea:',
-    wpp: '🍵'
+    wpp: '🍵',
   },
   {
     rocket: ':cup_with_straw:',
-    wpp: '🥤'
+    wpp: '🥤',
   },
   {
     rocket: ':sake:',
-    wpp: '🍶'
+    wpp: '🍶',
   },
   {
     rocket: ':beer:',
-    wpp: '🍺'
+    wpp: '🍺',
   },
   {
     rocket: ':beers:',
-    wpp: '🍻'
+    wpp: '🍻',
   },
   {
     rocket: ':champagne_glass:',
-    wpp: '🥂'
+    wpp: '🥂',
   },
   {
     rocket: ':wine_glass:',
-    wpp: '🍷'
+    wpp: '🍷',
   },
   {
     rocket: ':tumbler_glass:',
-    wpp: '🥃'
+    wpp: '🥃',
   },
   {
     rocket: ':cocktail:',
-    wpp: '🍸'
+    wpp: '🍸',
   },
   {
     rocket: ':tropical_drink:',
-    wpp: '🍹'
+    wpp: '🍹',
   },
   {
     rocket: ':champagne:',
-    wpp: '🍾'
+    wpp: '🍾',
   },
   {
     rocket: ':spoon:',
-    wpp: '🥄'
+    wpp: '🥄',
   },
   {
     rocket: ':fork_and_knife:',
-    wpp: '🍴'
+    wpp: '🍴',
   },
   {
     rocket: ':fork_knife_plate:',
-    wpp: '🍽'
+    wpp: '🍽',
   },
   {
     rocket: ':bowl_with_spoon:',
-    wpp: '🥣'
+    wpp: '🥣',
   },
   {
     rocket: ':takeout_box:',
-    wpp: '🥡'
+    wpp: '🥡',
   },
   {
     rocket: ':chopsticks:',
-    wpp: '🥢'
+    wpp: '🥢',
   },
   {
     rocket: ':soccer:',
-    wpp: '⚽'
+    wpp: '⚽',
   },
   {
     rocket: ':basketball:',
-    wpp: '🏀'
+    wpp: '🏀',
   },
   {
     rocket: ':football:',
-    wpp: '🏈'
+    wpp: '🏈',
   },
   {
     rocket: ':baseball:',
-    wpp: '⚾'
+    wpp: '⚾',
   },
   {
     rocket: ':softball:',
-    wpp: '🥎'
+    wpp: '🥎',
   },
   {
     rocket: ':tennis:',
-    wpp: '🎾'
+    wpp: '🎾',
   },
   {
     rocket: ':volleyball:',
-    wpp: '🏐'
+    wpp: '🏐',
   },
   {
     rocket: ':rugby_football:',
-    wpp: '🏉'
+    wpp: '🏉',
   },
   {
     rocket: ':8ball:',
-    wpp: '🎱'
+    wpp: '🎱',
   },
   {
     rocket: ':ping_pong:',
-    wpp: '🏓'
+    wpp: '🏓',
   },
   {
     rocket: ':badminton:',
-    wpp: '🏸'
+    wpp: '🏸',
   },
   {
     rocket: ':goal:',
-    wpp: '🥅'
+    wpp: '🥅',
   },
   {
     rocket: ':hockey:',
-    wpp: '🏒'
+    wpp: '🏒',
   },
   {
     rocket: ':field_hockey:',
-    wpp: '🏑'
+    wpp: '🏑',
   },
   {
     rocket: ':cricket_game:',
-    wpp: '🏏'
+    wpp: '🏏',
   },
   {
     rocket: ':lacrosse:',
-    wpp: '🥍'
+    wpp: '🥍',
   },
   {
     rocket: ':golf:',
-    wpp: '⛳'
+    wpp: '⛳',
   },
   {
     rocket: ':flying_disc:',
-    wpp: '🥏'
+    wpp: '🥏',
   },
   {
     rocket: ':bow_and_arrow:',
-    wpp: '🏹'
+    wpp: '🏹',
   },
   {
     rocket: ':fishing_pole_and_fish:',
-    wpp: '🎣'
+    wpp: '🎣',
   },
   {
     rocket: ':boxing_glove:',
-    wpp: '🥊'
+    wpp: '🥊',
   },
   {
     rocket: ':martial_arts_uniform:',
-    wpp: '🥋'
+    wpp: '🥋',
   },
   {
     rocket: ':running_shirt_with_sash:',
-    wpp: '🎽'
+    wpp: '🎽',
   },
   {
     rocket: ':skateboard:',
-    wpp: '🛹'
+    wpp: '🛹',
   },
   {
     rocket: ':ice_skate:',
-    wpp: '⛸'
+    wpp: '⛸',
   },
   {
     rocket: ':curling_stone:',
-    wpp: '🥌'
+    wpp: '🥌',
   },
   {
     rocket: ':sled:',
-    wpp: '🛷'
+    wpp: '🛷',
   },
   {
     rocket: ':ski:',
-    wpp: '🎿'
+    wpp: '🎿',
   },
   {
     rocket: ':skier:',
-    wpp: '⛷'
+    wpp: '⛷',
   },
   {
     rocket: ':snowboarder:',
-    wpp: '🏂'
+    wpp: '🏂',
   },
   {
     rocket: ':woman_lifting_weights:',
-    wpp: '🏋️\u200d♀️'
+    wpp: '🏋️\u200d♀️',
   },
   {
     rocket: ':man_lifting_weights:',
-    wpp: '🏋️\u200d♂️'
+    wpp: '🏋️\u200d♂️',
   },
   {
     rocket: ':women_wrestling:',
-    wpp: '🤼\u200d♀️'
+    wpp: '🤼\u200d♀️',
   },
   {
     rocket: ':men_wrestling:',
-    wpp: '🤼\u200d♂️'
+    wpp: '🤼\u200d♂️',
   },
   {
     rocket: ':woman_cartwheeling:',
-    wpp: '🤸\u200d♀️'
+    wpp: '🤸\u200d♀️',
   },
   {
     rocket: ':man_cartwheeling:',
-    wpp: '🤸\u200d♂️'
+    wpp: '🤸\u200d♂️',
   },
   {
     rocket: ':woman_bouncing_ball:',
-    wpp: '⛹️\u200d♀️'
+    wpp: '⛹️\u200d♀️',
   },
   {
     rocket: ':man_bouncing_ball:',
-    wpp: '⛹️\u200d♂️'
+    wpp: '⛹️\u200d♂️',
   },
   {
     rocket: ':person_fencing:',
-    wpp: '🤺'
+    wpp: '🤺',
   },
   {
     rocket: ':woman_playing_handball:',
-    wpp: '🤾\u200d♀️'
+    wpp: '🤾\u200d♀️',
   },
   {
     rocket: ':man_playing_handball:',
-    wpp: '🤾\u200d♂️'
+    wpp: '🤾\u200d♂️',
   },
   {
     rocket: ':woman_golfing:',
-    wpp: '🏌️\u200d♀️'
+    wpp: '🏌️\u200d♀️',
   },
   {
     rocket: ':man_golfing:',
-    wpp: '🏌️\u200d♂️'
+    wpp: '🏌️\u200d♂️',
   },
   {
     rocket: ':horse_racing:',
-    wpp: '🏇'
+    wpp: '🏇',
   },
   {
     rocket: ':woman_in_lotus_position:',
-    wpp: '🧘\u200d♀️'
+    wpp: '🧘\u200d♀️',
   },
   {
     rocket: ':man_in_lotus_position:',
-    wpp: '🧘\u200d♂️'
+    wpp: '🧘\u200d♂️',
   },
   {
     rocket: ':woman_surfing:',
-    wpp: '🏄\u200d♀️'
+    wpp: '🏄\u200d♀️',
   },
   {
     rocket: ':man_surfing:',
-    wpp: '🏄\u200d♂️'
+    wpp: '🏄\u200d♂️',
   },
   {
     rocket: ':woman_swimming:',
-    wpp: '🏊\u200d♀️'
+    wpp: '🏊\u200d♀️',
   },
   {
     rocket: ':man_swimming:',
-    wpp: '🏊\u200d♂️'
+    wpp: '🏊\u200d♂️',
   },
   {
     rocket: ':woman_playing_water_polo:',
-    wpp: '🤽\u200d♀️'
+    wpp: '🤽\u200d♀️',
   },
   {
     rocket: ':man_playing_water_polo:',
-    wpp: '🤽\u200d♂️'
+    wpp: '🤽\u200d♂️',
   },
   {
     rocket: ':woman_rowing_boat:',
-    wpp: '🚣\u200d♀️'
+    wpp: '🚣\u200d♀️',
   },
   {
     rocket: ':man_rowing_boat:',
-    wpp: '🚣\u200d♂️'
+    wpp: '🚣\u200d♂️',
   },
   {
     rocket: ':woman_climbing:',
-    wpp: '🧗\u200d♀️'
+    wpp: '🧗\u200d♀️',
   },
   {
     rocket: ':man_climbing:',
-    wpp: '🧗\u200d♂️'
+    wpp: '🧗\u200d♂️',
   },
   {
     rocket: ':woman_mountain_biking:',
-    wpp: '🚵\u200d♀️'
+    wpp: '🚵\u200d♀️',
   },
   {
     rocket: ':man_mountain_biking:',
-    wpp: '🚵\u200d♂️'
+    wpp: '🚵\u200d♂️',
   },
   {
     rocket: ':woman_biking:',
-    wpp: '🚴\u200d♀️'
+    wpp: '🚴\u200d♀️',
   },
   {
     rocket: ':man_biking:',
-    wpp: '🚴\u200d♂️'
+    wpp: '🚴\u200d♂️',
   },
   {
     rocket: ':trophy:',
-    wpp: '🏆'
+    wpp: '🏆',
   },
   {
     rocket: ':first_place:',
-    wpp: '🥇'
+    wpp: '🥇',
   },
   {
     rocket: ':second_place:',
-    wpp: '🥈'
+    wpp: '🥈',
   },
   {
     rocket: ':third_place:',
-    wpp: '🥉'
+    wpp: '🥉',
   },
   {
     rocket: ':medal:',
-    wpp: '🏅'
+    wpp: '🏅',
   },
   {
     rocket: ':military_medal:',
-    wpp: '🎖'
+    wpp: '🎖',
   },
   {
     rocket: ':rosette:',
-    wpp: '🏵'
+    wpp: '🏵',
   },
   {
     rocket: ':reminder_ribbon:',
-    wpp: '🎗'
+    wpp: '🎗',
   },
   {
     rocket: ':ticket:',
-    wpp: '🎫'
+    wpp: '🎫',
   },
   {
     rocket: ':tickets:',
-    wpp: '🎟'
+    wpp: '🎟',
   },
   {
     rocket: ':circus_tent:',
-    wpp: '🎪'
+    wpp: '🎪',
   },
   {
     rocket: ':woman_juggling:',
-    wpp: '🤹\u200d♀️'
+    wpp: '🤹\u200d♀️',
   },
   {
     rocket: ':man_juggling:',
-    wpp: '🤹\u200d♂️'
+    wpp: '🤹\u200d♂️',
   },
   {
     rocket: ':performing_arts:',
-    wpp: '🎭'
+    wpp: '🎭',
   },
   {
     rocket: ':art:',
-    wpp: '🎨'
+    wpp: '🎨',
   },
   {
     rocket: ':clapper:',
-    wpp: '🎬'
+    wpp: '🎬',
   },
   {
     rocket: ':microphone:',
-    wpp: '🎤'
+    wpp: '🎤',
   },
   {
     rocket: ':headphones:',
-    wpp: '🎧'
+    wpp: '🎧',
   },
   {
     rocket: ':musical_score:',
-    wpp: '🎼'
+    wpp: '🎼',
   },
   {
     rocket: ':musical_keyboard:',
-    wpp: '🎹'
+    wpp: '🎹',
   },
   {
     rocket: ':drum:',
-    wpp: '🥁'
+    wpp: '🥁',
   },
   {
     rocket: ':saxophone:',
-    wpp: '🎷'
+    wpp: '🎷',
   },
   {
     rocket: ':trumpet:',
-    wpp: '🎺'
+    wpp: '🎺',
   },
   {
     rocket: ':guitar:',
-    wpp: '🎸'
+    wpp: '🎸',
   },
   {
     rocket: ':violin:',
-    wpp: '🎻'
+    wpp: '🎻',
   },
   {
     rocket: ':game_die:',
-    wpp: '🎲'
+    wpp: '🎲',
   },
   {
     rocket: ':dart:',
-    wpp: '🎯'
+    wpp: '🎯',
   },
   {
     rocket: ':bowling:',
-    wpp: '🎳'
+    wpp: '🎳',
   },
   {
     rocket: ':video_game:',
-    wpp: '🎮'
+    wpp: '🎮',
   },
   {
     rocket: ':slot_machine:',
-    wpp: '🎰'
+    wpp: '🎰',
   },
   {
     rocket: ':red_car:',
-    wpp: '🚗'
+    wpp: '🚗',
   },
   {
     rocket: ':taxi:',
-    wpp: '🚕'
+    wpp: '🚕',
   },
   {
     rocket: ':blue_car:',
-    wpp: '🚙'
+    wpp: '🚙',
   },
   {
     rocket: ':bus:',
-    wpp: '🚌'
+    wpp: '🚌',
   },
   {
     rocket: ':trolleybus:',
-    wpp: '🚎'
+    wpp: '🚎',
   },
   {
     rocket: ':race_car:',
-    wpp: '🏎'
+    wpp: '🏎',
   },
   {
     rocket: ':police_car:',
-    wpp: '🚓'
+    wpp: '🚓',
   },
   {
     rocket: ':ambulance:',
-    wpp: '🚑'
+    wpp: '🚑',
   },
   {
     rocket: ':fire_engine:',
-    wpp: '🚒'
+    wpp: '🚒',
   },
   {
     rocket: ':minibus:',
-    wpp: '🚐'
+    wpp: '🚐',
   },
   {
     rocket: ':truck:',
-    wpp: '🚚'
+    wpp: '🚚',
   },
   {
     rocket: ':articulated_lorry:',
-    wpp: '🚛'
+    wpp: '🚛',
   },
   {
     rocket: ':tractor:',
-    wpp: '🚜'
+    wpp: '🚜',
   },
   {
     rocket: ':scooter:',
-    wpp: '🛴'
+    wpp: '🛴',
   },
   {
     rocket: ':bike:',
-    wpp: '🚲'
+    wpp: '🚲',
   },
   {
     rocket: ':motor_scooter:',
-    wpp: '🛵'
+    wpp: '🛵',
   },
   {
     rocket: ':motorcycle:',
-    wpp: '🏍'
+    wpp: '🏍',
   },
   {
     rocket: ':rotating_light:',
-    wpp: '🚨'
+    wpp: '🚨',
   },
   {
     rocket: ':oncoming_police_car:',
-    wpp: '🚔'
+    wpp: '🚔',
   },
   {
     rocket: ':oncoming_bus:',
-    wpp: '🚍'
+    wpp: '🚍',
   },
   {
     rocket: ':oncoming_automobile:',
-    wpp: '🚘'
+    wpp: '🚘',
   },
   {
     rocket: ':oncoming_taxi:',
-    wpp: '🚖'
+    wpp: '🚖',
   },
   {
     rocket: ':aerial_tramway:',
-    wpp: '🚡'
+    wpp: '🚡',
   },
   {
     rocket: ':mountain_cableway:',
-    wpp: '🚠'
+    wpp: '🚠',
   },
   {
     rocket: ':suspension_railway:',
-    wpp: '🚟'
+    wpp: '🚟',
   },
   {
     rocket: ':railway_car:',
-    wpp: '🚃'
+    wpp: '🚃',
   },
   {
     rocket: ':train:',
-    wpp: '🚋'
+    wpp: '🚋',
   },
   {
     rocket: ':mountain_railway:',
-    wpp: '🚞'
+    wpp: '🚞',
   },
   {
     rocket: ':monorail:',
-    wpp: '🚝'
+    wpp: '🚝',
   },
   {
     rocket: ':bullettrain_side:',
-    wpp: '🚄'
+    wpp: '🚄',
   },
   {
     rocket: ':bullettrain_front:',
-    wpp: '🚅'
+    wpp: '🚅',
   },
   {
     rocket: ':light_rail:',
-    wpp: '🚈'
+    wpp: '🚈',
   },
   {
     rocket: ':steam_locomotive:',
-    wpp: '🚂'
+    wpp: '🚂',
   },
   {
     rocket: ':train2:',
-    wpp: '🚆'
+    wpp: '🚆',
   },
   {
     rocket: ':metro:',
-    wpp: '🚇'
+    wpp: '🚇',
   },
   {
     rocket: ':tram:',
-    wpp: '🚊'
+    wpp: '🚊',
   },
   {
     rocket: ':station:',
-    wpp: '🚉'
+    wpp: '🚉',
   },
   {
     rocket: ':airplane:',
-    wpp: '✈'
+    wpp: '✈',
   },
   {
     rocket: ':airplane_departure:',
-    wpp: '🛫'
+    wpp: '🛫',
   },
   {
     rocket: ':airplane_arriving:',
-    wpp: '🛬'
+    wpp: '🛬',
   },
   {
     rocket: ':airplane_small:',
-    wpp: '🛩'
+    wpp: '🛩',
   },
   {
     rocket: ':seat:',
-    wpp: '💺'
+    wpp: '💺',
   },
   {
     rocket: ':luggage:',
-    wpp: '🧳'
+    wpp: '🧳',
   },
   {
     rocket: ':satellite_orbital:',
-    wpp: '🛰'
+    wpp: '🛰',
   },
   {
     rocket: ':rocket:',
-    wpp: '🚀'
+    wpp: '🚀',
   },
   {
     rocket: ':flying_saucer:',
-    wpp: '🛸'
+    wpp: '🛸',
   },
   {
     rocket: ':helicopter:',
-    wpp: '🚁'
+    wpp: '🚁',
   },
   {
     rocket: ':canoe:',
-    wpp: '🛶'
+    wpp: '🛶',
   },
   {
     rocket: ':sailboat:',
-    wpp: '⛵'
+    wpp: '⛵',
   },
   {
     rocket: ':speedboat:',
-    wpp: '🚤'
+    wpp: '🚤',
   },
   {
     rocket: ':motorboat:',
-    wpp: '🛥'
+    wpp: '🛥',
   },
   {
     rocket: ':cruise_ship:',
-    wpp: '🛳'
+    wpp: '🛳',
   },
   {
     rocket: ':ferry:',
-    wpp: '⛴'
+    wpp: '⛴',
   },
   {
     rocket: ':ship:',
-    wpp: '🚢'
+    wpp: '🚢',
   },
   {
     rocket: ':anchor:',
-    wpp: '⚓'
+    wpp: '⚓',
   },
   {
     rocket: ':fuelpump:',
-    wpp: '⛽'
+    wpp: '⛽',
   },
   {
     rocket: ':construction:',
-    wpp: '🚧'
+    wpp: '🚧',
   },
   {
     rocket: ':vertical_traffic_light:',
-    wpp: '🚦'
+    wpp: '🚦',
   },
   {
     rocket: ':traffic_light:',
-    wpp: '🚥'
+    wpp: '🚥',
   },
   {
     rocket: ':busstop:',
-    wpp: '🚏'
+    wpp: '🚏',
   },
   {
     rocket: ':map:',
-    wpp: '🗺'
+    wpp: '🗺',
   },
   {
     rocket: ':moyai:',
-    wpp: '🗿'
+    wpp: '🗿',
   },
   {
     rocket: ':statue_of_liberty:',
-    wpp: '🗽'
+    wpp: '🗽',
   },
   {
     rocket: ':tokyo_tower:',
-    wpp: '🗼'
+    wpp: '🗼',
   },
   {
     rocket: ':european_castle:',
-    wpp: '🏰'
+    wpp: '🏰',
   },
   {
     rocket: ':japanese_castle:',
-    wpp: '🏯'
+    wpp: '🏯',
   },
   {
     rocket: ':stadium:',
-    wpp: '🏟'
+    wpp: '🏟',
   },
   {
     rocket: ':ferris_wheel:',
-    wpp: '🎡'
+    wpp: '🎡',
   },
   {
     rocket: ':roller_coaster:',
-    wpp: '🎢'
+    wpp: '🎢',
   },
   {
     rocket: ':carousel_horse:',
-    wpp: '🎠'
+    wpp: '🎠',
   },
   {
     rocket: ':fountain:',
-    wpp: '⛲'
+    wpp: '⛲',
   },
   {
     rocket: ':beach_umbrella:',
-    wpp: '⛱'
+    wpp: '⛱',
   },
   {
     rocket: ':beach:',
-    wpp: '🏖'
+    wpp: '🏖',
   },
   {
     rocket: ':island:',
-    wpp: '🏝'
+    wpp: '🏝',
   },
   {
     rocket: ':desert:',
-    wpp: '🏜'
+    wpp: '🏜',
   },
   {
     rocket: ':volcano:',
-    wpp: '🌋'
+    wpp: '🌋',
   },
   {
     rocket: ':mountain:',
-    wpp: '⛰'
+    wpp: '⛰',
   },
   {
     rocket: ':mountain_snow:',
-    wpp: '🏔'
+    wpp: '🏔',
   },
   {
     rocket: ':mount_fuji:',
-    wpp: '🗻'
+    wpp: '🗻',
   },
   {
     rocket: ':camping:',
-    wpp: '🏕'
+    wpp: '🏕',
   },
   {
     rocket: ':tent:',
-    wpp: '⛺'
+    wpp: '⛺',
   },
   {
     rocket: ':house:',
-    wpp: '🏠'
+    wpp: '🏠',
   },
   {
     rocket: ':house_with_garden:',
-    wpp: '🏡'
+    wpp: '🏡',
   },
   {
     rocket: ':homes:',
-    wpp: '🏘'
+    wpp: '🏘',
   },
   {
     rocket: ':house_abandoned:',
-    wpp: '🏚'
+    wpp: '🏚',
   },
   {
     rocket: ':construction_site:',
-    wpp: '🏗'
+    wpp: '🏗',
   },
   {
     rocket: ':factory:',
-    wpp: '🏭'
+    wpp: '🏭',
   },
   {
     rocket: ':office:',
-    wpp: '🏢'
+    wpp: '🏢',
   },
   {
     rocket: ':department_store:',
-    wpp: '🏬'
+    wpp: '🏬',
   },
   {
     rocket: ':post_office:',
-    wpp: '🏣'
+    wpp: '🏣',
   },
   {
     rocket: ':european_post_office:',
-    wpp: '🏤'
+    wpp: '🏤',
   },
   {
     rocket: ':hospital:',
-    wpp: '🏥'
+    wpp: '🏥',
   },
   {
     rocket: ':bank:',
-    wpp: '🏦'
+    wpp: '🏦',
   },
   {
     rocket: ':hotel:',
-    wpp: '🏨'
+    wpp: '🏨',
   },
   {
     rocket: ':convenience_store:',
-    wpp: '🏪'
+    wpp: '🏪',
   },
   {
     rocket: ':school:',
-    wpp: '🏫'
+    wpp: '🏫',
   },
   {
     rocket: ':love_hotel:',
-    wpp: '🏩'
+    wpp: '🏩',
   },
   {
     rocket: ':wedding:',
-    wpp: '💒'
+    wpp: '💒',
   },
   {
     rocket: ':classical_building:',
-    wpp: '🏛'
+    wpp: '🏛',
   },
   {
     rocket: ':church:',
-    wpp: '⛪'
+    wpp: '⛪',
   },
   {
     rocket: ':mosque:',
-    wpp: '🕌'
+    wpp: '🕌',
   },
   {
     rocket: ':synagogue:',
-    wpp: '🕍'
+    wpp: '🕍',
   },
   {
     rocket: ':kaaba:',
-    wpp: '🕋'
+    wpp: '🕋',
   },
   {
     rocket: ':shinto_shrine:',
-    wpp: '⛩'
+    wpp: '⛩',
   },
   {
     rocket: ':railway_track:',
-    wpp: '🛤'
+    wpp: '🛤',
   },
   {
     rocket: ':motorway:',
-    wpp: '🛣'
+    wpp: '🛣',
   },
   {
     rocket: ':japan:',
-    wpp: '🗾'
+    wpp: '🗾',
   },
   {
     rocket: ':rice_scene:',
-    wpp: '🎑'
+    wpp: '🎑',
   },
   {
     rocket: ':park:',
-    wpp: '🏞'
+    wpp: '🏞',
   },
   {
     rocket: ':sunrise:',
-    wpp: '🌅'
+    wpp: '🌅',
   },
   {
     rocket: ':sunrise_over_mountains:',
-    wpp: '🌄'
+    wpp: '🌄',
   },
   {
     rocket: ':stars:',
-    wpp: '🌠'
+    wpp: '🌠',
   },
   {
     rocket: ':sparkler:',
-    wpp: '🎇'
+    wpp: '🎇',
   },
   {
     rocket: ':firecracker:',
-    wpp: '🧨'
+    wpp: '🧨',
   },
   {
     rocket: ':city_sunset:',
-    wpp: '🌇'
+    wpp: '🌇',
   },
   {
     rocket: ':city_dusk:',
-    wpp: '🌆'
+    wpp: '🌆',
   },
   {
     rocket: ':cityscape:',
-    wpp: '🏙'
+    wpp: '🏙',
   },
   {
     rocket: ':night_with_stars:',
-    wpp: '🌃'
+    wpp: '🌃',
   },
   {
     rocket: ':milky_way:',
-    wpp: '🌌'
+    wpp: '🌌',
   },
   {
     rocket: ':bridge_at_night:',
-    wpp: '🌉'
+    wpp: '🌉',
   },
   {
     rocket: ':foggy:',
-    wpp: '🌁'
+    wpp: '🌁',
   },
   {
     rocket: ':watch:',
-    wpp: '⌚'
+    wpp: '⌚',
   },
   {
     rocket: ':iphone:',
-    wpp: '📱'
+    wpp: '📱',
   },
   {
     rocket: ':calling:',
-    wpp: '📲'
+    wpp: '📲',
   },
   {
     rocket: ':computer:',
-    wpp: '💻'
+    wpp: '💻',
   },
   {
     rocket: ':keyboard:',
-    wpp: '⌨'
+    wpp: '⌨',
   },
   {
     rocket: ':desktop:',
-    wpp: '🖥'
+    wpp: '🖥',
   },
   {
     rocket: ':printer:',
-    wpp: '🖨'
+    wpp: '🖨',
   },
   {
     rocket: ':mouse_three_button:',
-    wpp: '🖱'
+    wpp: '🖱',
   },
   {
     rocket: ':trackball:',
-    wpp: '🖲'
+    wpp: '🖲',
   },
   {
     rocket: ':joystick:',
-    wpp: '🕹'
+    wpp: '🕹',
   },
   {
     rocket: ':chess_pawn:',
-    wpp: '♟️'
+    wpp: '♟️',
   },
   {
     rocket: ':jigsaw:',
-    wpp: '🧩'
+    wpp: '🧩',
   },
   {
     rocket: ':compression:',
-    wpp: '🗜'
+    wpp: '🗜',
   },
   {
     rocket: ':minidisc:',
-    wpp: '💽'
+    wpp: '💽',
   },
   {
     rocket: ':floppy_disk:',
-    wpp: '💾'
+    wpp: '💾',
   },
   {
     rocket: ':cd:',
-    wpp: '💿'
+    wpp: '💿',
   },
   {
     rocket: ':dvd:',
-    wpp: '📀'
+    wpp: '📀',
   },
   {
     rocket: ':vhs:',
-    wpp: '📼'
+    wpp: '📼',
   },
   {
     rocket: ':camera:',
-    wpp: '📷'
+    wpp: '📷',
   },
   {
     rocket: ':camera_with_flash:',
-    wpp: '📸'
+    wpp: '📸',
   },
   {
     rocket: ':video_camera:',
-    wpp: '📹'
+    wpp: '📹',
   },
   {
     rocket: ':movie_camera:',
-    wpp: '🎥'
+    wpp: '🎥',
   },
   {
     rocket: ':projector:',
-    wpp: '📽'
+    wpp: '📽',
   },
   {
     rocket: ':film_frames:',
-    wpp: '🎞'
+    wpp: '🎞',
   },
   {
     rocket: ':telephone_receiver:',
-    wpp: '📞'
+    wpp: '📞',
   },
   {
     rocket: ':telephone:',
-    wpp: '☎'
+    wpp: '☎',
   },
   {
     rocket: ':pager:',
-    wpp: '📟'
+    wpp: '📟',
   },
   {
     rocket: ':fax:',
-    wpp: '📠'
+    wpp: '📠',
   },
   {
     rocket: ':tv:',
-    wpp: '📺'
+    wpp: '📺',
   },
   {
     rocket: ':radio:',
-    wpp: '📻'
+    wpp: '📻',
   },
   {
     rocket: ':microphone2:',
-    wpp: '🎙'
+    wpp: '🎙',
   },
   {
     rocket: ':level_slider:',
-    wpp: '🎚'
+    wpp: '🎚',
   },
   {
     rocket: ':control_knobs:',
-    wpp: '🎛'
+    wpp: '🎛',
   },
   {
     rocket: ':stopwatch:',
-    wpp: '⏱'
+    wpp: '⏱',
   },
   {
     rocket: ':timer:',
-    wpp: '⏲'
+    wpp: '⏲',
   },
   {
     rocket: ':alarm_clock:',
-    wpp: '⏰'
+    wpp: '⏰',
   },
   {
     rocket: ':clock:',
-    wpp: '🕰'
+    wpp: '🕰',
   },
   {
     rocket: ':hourglass:',
-    wpp: '⌛'
+    wpp: '⌛',
   },
   {
     rocket: ':hourglass_flowing_sand:',
-    wpp: '⏳'
+    wpp: '⏳',
   },
   {
     rocket: ':satellite:',
-    wpp: '📡'
+    wpp: '📡',
   },
   {
     rocket: ':compass:',
-    wpp: '🧭'
+    wpp: '🧭',
   },
   {
     rocket: ':battery:',
-    wpp: '🔋'
+    wpp: '🔋',
   },
   {
     rocket: ':electric_plug:',
-    wpp: '🔌'
+    wpp: '🔌',
   },
   {
     rocket: ':magnet:',
-    wpp: '🧲'
+    wpp: '🧲',
   },
   {
     rocket: ':bulb:',
-    wpp: '💡'
+    wpp: '💡',
   },
   {
     rocket: ':flashlight:',
-    wpp: '🔦'
+    wpp: '🔦',
   },
   {
     rocket: ':candle:',
-    wpp: '🕯'
+    wpp: '🕯',
   },
   {
     rocket: ':fire_extinguisher:',
-    wpp: '🧯'
+    wpp: '🧯',
   },
   {
     rocket: ':wastebasket:',
-    wpp: '🗑'
+    wpp: '🗑',
   },
   {
     rocket: ':oil:',
-    wpp: '🛢'
+    wpp: '🛢',
   },
   {
     rocket: ':money_with_wings:',
-    wpp: '💸'
+    wpp: '💸',
   },
   {
     rocket: ':dollar:',
-    wpp: '💵'
+    wpp: '💵',
   },
   {
     rocket: ':yen:',
-    wpp: '💴'
+    wpp: '💴',
   },
   {
     rocket: ':euro:',
-    wpp: '💶'
+    wpp: '💶',
   },
   {
     rocket: ':pound:',
-    wpp: '💷'
+    wpp: '💷',
   },
   {
     rocket: ':moneybag:',
-    wpp: '💰'
+    wpp: '💰',
   },
   {
     rocket: ':credit_card:',
-    wpp: '💳'
+    wpp: '💳',
   },
   {
     rocket: ':gem:',
-    wpp: '💎'
+    wpp: '💎',
   },
   {
     rocket: ':nazar_amulet:',
-    wpp: '🧿'
+    wpp: '🧿',
   },
   {
     rocket: ':bricks:',
-    wpp: '🧱'
+    wpp: '🧱',
   },
   {
     rocket: ':scales:',
-    wpp: '⚖'
+    wpp: '⚖',
   },
   {
     rocket: ':toolbox:',
-    wpp: '🧰'
+    wpp: '🧰',
   },
   {
     rocket: ':wrench:',
-    wpp: '🔧'
+    wpp: '🔧',
   },
   {
     rocket: ':hammer:',
-    wpp: '🔨'
+    wpp: '🔨',
   },
   {
     rocket: ':hammer_pick:',
-    wpp: '⚒'
+    wpp: '⚒',
   },
   {
     rocket: ':tools:',
-    wpp: '🛠'
+    wpp: '🛠',
   },
   {
     rocket: ':pick:',
-    wpp: '⛏'
+    wpp: '⛏',
   },
   {
     rocket: ':nut_and_bolt:',
-    wpp: '🔩'
+    wpp: '🔩',
   },
   {
     rocket: ':gear:',
-    wpp: '⚙'
+    wpp: '⚙',
   },
   {
     rocket: ':chains:',
-    wpp: '⛓'
+    wpp: '⛓',
   },
   {
     rocket: ':gun:',
-    wpp: '🔫'
+    wpp: '🔫',
   },
   {
     rocket: ':bomb:',
-    wpp: '💣'
+    wpp: '💣',
   },
   {
     rocket: ':knife:',
-    wpp: '🔪'
+    wpp: '🔪',
   },
   {
     rocket: ':dagger:',
-    wpp: '🗡'
+    wpp: '🗡',
   },
   {
     rocket: ':crossed_swords:',
-    wpp: '⚔'
+    wpp: '⚔',
   },
   {
     rocket: ':shield:',
-    wpp: '🛡'
+    wpp: '🛡',
   },
   {
     rocket: ':smoking:',
-    wpp: '🚬'
+    wpp: '🚬',
   },
   {
     rocket: ':coffin:',
-    wpp: '⚰'
+    wpp: '⚰',
   },
   {
     rocket: ':urn:',
-    wpp: '⚱'
+    wpp: '⚱',
   },
   {
     rocket: ':amphora:',
-    wpp: '🏺'
+    wpp: '🏺',
   },
   {
     rocket: ':crystal_ball:',
-    wpp: '🔮'
+    wpp: '🔮',
   },
   {
     rocket: ':prayer_beads:',
-    wpp: '📿'
+    wpp: '📿',
   },
   {
     rocket: ':barber:',
-    wpp: '💈'
+    wpp: '💈',
   },
   {
     rocket: ':alembic:',
-    wpp: '⚗'
+    wpp: '⚗',
   },
   {
     rocket: ':test_tube:',
-    wpp: '🧪'
+    wpp: '🧪',
   },
   {
     rocket: ':petri_dish:',
-    wpp: '🧫'
+    wpp: '🧫',
   },
   {
     rocket: ':dna:',
-    wpp: '🧬'
+    wpp: '🧬',
   },
   {
     rocket: ':abacus:',
-    wpp: '🧮'
+    wpp: '🧮',
   },
   {
     rocket: ':telescope:',
-    wpp: '🔭'
+    wpp: '🔭',
   },
   {
     rocket: ':microscope:',
-    wpp: '🔬'
+    wpp: '🔬',
   },
   {
     rocket: ':hole:',
-    wpp: '🕳'
+    wpp: '🕳',
   },
   {
     rocket: ':pill:',
-    wpp: '💊'
+    wpp: '💊',
   },
   {
     rocket: ':syringe:',
-    wpp: '💉'
+    wpp: '💉',
   },
   {
     rocket: ':thermometer:',
-    wpp: '🌡'
+    wpp: '🌡',
   },
   {
     rocket: ':toilet:',
-    wpp: '🚽'
+    wpp: '🚽',
   },
   {
     rocket: ':potable_water:',
-    wpp: '🚰'
+    wpp: '🚰',
   },
   {
     rocket: ':shower:',
-    wpp: '🚿'
+    wpp: '🚿',
   },
   {
     rocket: ':bathtub:',
-    wpp: '🛁'
+    wpp: '🛁',
   },
   {
     rocket: ':bath:',
-    wpp: '🛀'
+    wpp: '🛀',
   },
   {
     rocket: ':broom:',
-    wpp: '🧹'
+    wpp: '🧹',
   },
   {
     rocket: ':basket:',
-    wpp: '🧺'
+    wpp: '🧺',
   },
   {
     rocket: ':roll_of_paper:',
-    wpp: '🧻'
+    wpp: '🧻',
   },
   {
     rocket: ':soap:',
-    wpp: '🧼'
+    wpp: '🧼',
   },
   {
     rocket: ':sponge:',
-    wpp: '🧽'
+    wpp: '🧽',
   },
   {
     rocket: ':squeeze_bottle:',
-    wpp: '🧴'
+    wpp: '🧴',
   },
   {
     rocket: ':thread:',
-    wpp: '🧵'
+    wpp: '🧵',
   },
   {
     rocket: ':yarn:',
-    wpp: '🧶'
+    wpp: '🧶',
   },
   {
     rocket: ':bellhop:',
-    wpp: '🛎'
+    wpp: '🛎',
   },
   {
     rocket: ':key:',
-    wpp: '🔑'
+    wpp: '🔑',
   },
   {
     rocket: ':key2:',
-    wpp: '🗝'
+    wpp: '🗝',
   },
   {
     rocket: ':door:',
-    wpp: '🚪'
+    wpp: '🚪',
   },
   {
     rocket: ':couch:',
-    wpp: '🛋'
+    wpp: '🛋',
   },
   {
     rocket: ':bed:',
-    wpp: '🛏'
+    wpp: '🛏',
   },
   {
     rocket: ':sleeping_accommodation:',
-    wpp: '🛌'
+    wpp: '🛌',
   },
   {
     rocket: ':teddy_bear:',
-    wpp: '🧸'
+    wpp: '🧸',
   },
   {
     rocket: ':frame_photo:',
-    wpp: '🖼'
+    wpp: '🖼',
   },
   {
     rocket: ':shopping_bags:',
-    wpp: '🛍'
+    wpp: '🛍',
   },
   {
     rocket: ':wind_chime:',
-    wpp: '🎐'
+    wpp: '🎐',
   },
   {
     rocket: ':red_envelope:',
-    wpp: '🧧'
+    wpp: '🧧',
   },
   {
     rocket: ':envelope:',
-    wpp: '✉'
+    wpp: '✉',
   },
   {
     rocket: ':envelope_with_arrow:',
-    wpp: '📩'
+    wpp: '📩',
   },
   {
     rocket: ':incoming_envelope:',
-    wpp: '📨'
+    wpp: '📨',
   },
   {
     rocket: ':e-mail:',
-    wpp: '📧'
+    wpp: '📧',
   },
   {
     rocket: ':love_letter:',
-    wpp: '💌'
+    wpp: '💌',
   },
   {
     rocket: ':inbox_tray:',
-    wpp: '📥'
+    wpp: '📥',
   },
   {
     rocket: ':outbox_tray:',
-    wpp: '📤'
+    wpp: '📤',
   },
   {
     rocket: ':package:',
-    wpp: '📦'
+    wpp: '📦',
   },
   {
     rocket: ':label:',
-    wpp: '🏷'
+    wpp: '🏷',
   },
   {
     rocket: ':mailbox_closed:',
-    wpp: '📪'
+    wpp: '📪',
   },
   {
     rocket: ':mailbox:',
-    wpp: '📫'
+    wpp: '📫',
   },
   {
     rocket: ':mailbox_with_mail:',
-    wpp: '📬'
+    wpp: '📬',
   },
   {
     rocket: ':mailbox_with_no_mail:',
-    wpp: '📭'
+    wpp: '📭',
   },
   {
     rocket: ':postbox:',
-    wpp: '📮'
+    wpp: '📮',
   },
   {
     rocket: ':postal_horn:',
-    wpp: '📯'
+    wpp: '📯',
   },
   {
     rocket: ':scroll:',
-    wpp: '📜'
+    wpp: '📜',
   },
   {
     rocket: ':page_with_curl:',
-    wpp: '📃'
+    wpp: '📃',
   },
   {
     rocket: ':page_facing_up:',
-    wpp: '📄'
+    wpp: '📄',
   },
   {
     rocket: ':receipt:',
-    wpp: '🧾'
+    wpp: '🧾',
   },
   {
     rocket: ':bookmark_tabs:',
-    wpp: '📑'
+    wpp: '📑',
   },
   {
     rocket: ':bar_chart:',
-    wpp: '📊'
+    wpp: '📊',
   },
   {
     rocket: ':chart_with_upwards_trend:',
-    wpp: '📈'
+    wpp: '📈',
   },
   {
     rocket: ':chart_with_downwards_trend:',
-    wpp: '📉'
+    wpp: '📉',
   },
   {
     rocket: ':notepad_spiral:',
-    wpp: '🗒'
+    wpp: '🗒',
   },
   {
     rocket: ':calendar_spiral:',
-    wpp: '🗓'
+    wpp: '🗓',
   },
   {
     rocket: ':calendar:',
-    wpp: '📆'
+    wpp: '📆',
   },
   {
     rocket: ':date:',
-    wpp: '📅'
+    wpp: '📅',
   },
   {
     rocket: ':card_index:',
-    wpp: '📇'
+    wpp: '📇',
   },
   {
     rocket: ':card_box:',
-    wpp: '🗃'
+    wpp: '🗃',
   },
   {
     rocket: ':ballot_box:',
-    wpp: '🗳'
+    wpp: '🗳',
   },
   {
     rocket: ':file_cabinet:',
-    wpp: '🗄'
+    wpp: '🗄',
   },
   {
     rocket: ':clipboard:',
-    wpp: '📋'
+    wpp: '📋',
   },
   {
     rocket: ':file_folder:',
-    wpp: '📁'
+    wpp: '📁',
   },
   {
     rocket: ':open_file_folder:',
-    wpp: '📂'
+    wpp: '📂',
   },
   {
     rocket: ':dividers:',
-    wpp: '🗂'
+    wpp: '🗂',
   },
   {
     rocket: ':newspaper2:',
-    wpp: '🗞'
+    wpp: '🗞',
   },
   {
     rocket: ':newspaper:',
-    wpp: '📰'
+    wpp: '📰',
   },
   {
     rocket: ':notebook:',
-    wpp: '📓'
+    wpp: '📓',
   },
   {
     rocket: ':notebook_with_decorative_cover:',
-    wpp: '📔'
+    wpp: '📔',
   },
   {
     rocket: ':ledger:',
-    wpp: '📒'
+    wpp: '📒',
   },
   {
     rocket: ':closed_book:',
-    wpp: '📕'
+    wpp: '📕',
   },
   {
     rocket: ':green_book:',
-    wpp: '📗'
+    wpp: '📗',
   },
   {
     rocket: ':blue_book:',
-    wpp: '📘'
+    wpp: '📘',
   },
   {
     rocket: ':orange_book:',
-    wpp: '📙'
+    wpp: '📙',
   },
   {
     rocket: ':books:',
-    wpp: '📚'
+    wpp: '📚',
   },
   {
     rocket: ':book:',
-    wpp: '📖'
+    wpp: '📖',
   },
   {
     rocket: ':bookmark:',
-    wpp: '🔖'
+    wpp: '🔖',
   },
   {
     rocket: ':link:',
-    wpp: '🔗'
+    wpp: '🔗',
   },
   {
     rocket: ':paperclip:',
-    wpp: '📎'
+    wpp: '📎',
   },
   {
     rocket: ':paperclips:',
-    wpp: '🖇'
+    wpp: '🖇',
   },
   {
     rocket: ':triangular_ruler:',
-    wpp: '📐'
+    wpp: '📐',
   },
   {
     rocket: ':straight_ruler:',
-    wpp: '📏'
+    wpp: '📏',
   },
   {
     rocket: ':safety_pin:',
-    wpp: '🧷'
+    wpp: '🧷',
   },
   {
     rocket: ':pushpin:',
-    wpp: '📌'
+    wpp: '📌',
   },
   {
     rocket: ':round_pushpin:',
-    wpp: '📍'
+    wpp: '📍',
   },
   {
     rocket: ':scissors:',
-    wpp: '✂'
+    wpp: '✂',
   },
   {
     rocket: ':pen_ballpoint:',
-    wpp: '🖊'
+    wpp: '🖊',
   },
   {
     rocket: ':pen_fountain:',
-    wpp: '🖋'
+    wpp: '🖋',
   },
   {
     rocket: ':black_nib:',
-    wpp: '✒'
+    wpp: '✒',
   },
   {
     rocket: ':paintbrush:',
-    wpp: '🖌'
+    wpp: '🖌',
   },
   {
     rocket: ':crayon:',
-    wpp: '🖍'
+    wpp: '🖍',
   },
   {
     rocket: ':pencil:',
-    wpp: '📝'
+    wpp: '📝',
   },
   {
     rocket: ':pencil2:',
-    wpp: '✏'
+    wpp: '✏',
   },
   {
     rocket: ':mag:',
-    wpp: '🔍'
+    wpp: '🔍',
   },
   {
     rocket: ':mag_right:',
-    wpp: '🔎'
+    wpp: '🔎',
   },
   {
     rocket: ':lock_with_ink_pen:',
-    wpp: '🔏'
+    wpp: '🔏',
   },
   {
     rocket: ':closed_lock_with_key:',
-    wpp: '🔐'
+    wpp: '🔐',
   },
   {
     rocket: ':lock:',
-    wpp: '🔒'
+    wpp: '🔒',
   },
   {
     rocket: ':unlock:',
-    wpp: '🔓'
+    wpp: '🔓',
   },
   {
     rocket: ':heart:',
-    wpp: '❤'
+    wpp: '❤',
   },
   {
     rocket: ':orange_heart:',
-    wpp: '🧡'
+    wpp: '🧡',
   },
   {
     rocket: ':yellow_heart:',
-    wpp: '💛'
+    wpp: '💛',
   },
   {
     rocket: ':green_heart:',
-    wpp: '💚'
+    wpp: '💚',
   },
   {
     rocket: ':blue_heart:',
-    wpp: '💙'
+    wpp: '💙',
   },
   {
     rocket: ':purple_heart:',
-    wpp: '💜'
+    wpp: '💜',
   },
   {
     rocket: ':black_heart:',
-    wpp: '🖤'
+    wpp: '🖤',
   },
   {
     rocket: ':broken_heart:',
-    wpp: '💔'
+    wpp: '💔',
   },
   {
     rocket: ':heart_exclamation:',
-    wpp: '❣'
+    wpp: '❣',
   },
   {
     rocket: ':two_hearts:',
-    wpp: '💕'
+    wpp: '💕',
   },
   {
     rocket: ':revolving_hearts:',
-    wpp: '💞'
+    wpp: '💞',
   },
   {
     rocket: ':heartbeat:',
-    wpp: '💓'
+    wpp: '💓',
   },
   {
     rocket: ':heartpulse:',
-    wpp: '💗'
+    wpp: '💗',
   },
   {
     rocket: ':sparkling_heart:',
-    wpp: '💖'
+    wpp: '💖',
   },
   {
     rocket: ':cupid:',
-    wpp: '💘'
+    wpp: '💘',
   },
   {
     rocket: ':gift_heart:',
-    wpp: '💝'
+    wpp: '💝',
   },
   {
     rocket: ':heart_decoration:',
-    wpp: '💟'
+    wpp: '💟',
   },
   {
     rocket: ':peace:',
-    wpp: '☮'
+    wpp: '☮',
   },
   {
     rocket: ':cross:',
-    wpp: '✝'
+    wpp: '✝',
   },
   {
     rocket: ':star_and_crescent:',
-    wpp: '☪'
+    wpp: '☪',
   },
   {
     rocket: ':om_symbol:',
-    wpp: '🕉'
+    wpp: '🕉',
   },
   {
     rocket: ':wheel_of_dharma:',
-    wpp: '☸'
+    wpp: '☸',
   },
   {
     rocket: ':star_of_david:',
-    wpp: '✡'
+    wpp: '✡',
   },
   {
     rocket: ':six_pointed_star:',
-    wpp: '🔯'
+    wpp: '🔯',
   },
   {
     rocket: ':menorah:',
-    wpp: '🕎'
+    wpp: '🕎',
   },
   {
     rocket: ':yin_yang:',
-    wpp: '☯'
+    wpp: '☯',
   },
   {
     rocket: ':orthodox_cross:',
-    wpp: '☦'
+    wpp: '☦',
   },
   {
     rocket: ':place_of_worship:',
-    wpp: '🛐'
+    wpp: '🛐',
   },
   {
     rocket: ':ophiuchus:',
-    wpp: '⛎'
+    wpp: '⛎',
   },
   {
     rocket: ':aries:',
-    wpp: '♈'
+    wpp: '♈',
   },
   {
     rocket: ':taurus:',
-    wpp: '♉'
+    wpp: '♉',
   },
   {
     rocket: ':gemini:',
-    wpp: '♊'
+    wpp: '♊',
   },
   {
     rocket: ':cancer:',
-    wpp: '♋'
+    wpp: '♋',
   },
   {
     rocket: ':leo:',
-    wpp: '♌'
+    wpp: '♌',
   },
   {
     rocket: ':virgo:',
-    wpp: '♍'
+    wpp: '♍',
   },
   {
     rocket: ':libra:',
-    wpp: '♎'
+    wpp: '♎',
   },
   {
     rocket: ':scorpius:',
-    wpp: '♏'
+    wpp: '♏',
   },
   {
     rocket: ':sagittarius:',
-    wpp: '♐'
+    wpp: '♐',
   },
   {
     rocket: ':capricorn:',
-    wpp: '♑'
+    wpp: '♑',
   },
   {
     rocket: ':aquarius:',
-    wpp: '♒'
+    wpp: '♒',
   },
   {
     rocket: ':pisces:',
-    wpp: '♓'
+    wpp: '♓',
   },
   {
     rocket: ':id:',
-    wpp: '🆔'
+    wpp: '🆔',
   },
   {
     rocket: ':atom:',
-    wpp: '⚛'
+    wpp: '⚛',
   },
   {
     rocket: ':infinity:',
-    wpp: '♾️'
+    wpp: '♾️',
   },
   {
     rocket: ':accept:',
-    wpp: '🉑'
+    wpp: '🉑',
   },
   {
     rocket: ':radioactive:',
-    wpp: '☢'
+    wpp: '☢',
   },
   {
     rocket: ':biohazard:',
-    wpp: '☣'
+    wpp: '☣',
   },
   {
     rocket: ':mobile_phone_off:',
-    wpp: '📴'
+    wpp: '📴',
   },
   {
     rocket: ':vibration_mode:',
-    wpp: '📳'
+    wpp: '📳',
   },
   {
     rocket: ':u6709:',
-    wpp: '🈶'
+    wpp: '🈶',
   },
   {
     rocket: ':u7121:',
-    wpp: '🈚'
+    wpp: '🈚',
   },
   {
     rocket: ':u7533:',
-    wpp: '🈸'
+    wpp: '🈸',
   },
   {
     rocket: ':u55b6:',
-    wpp: '🈺'
+    wpp: '🈺',
   },
   {
     rocket: ':u6708:',
-    wpp: '🈷'
+    wpp: '🈷',
   },
   {
     rocket: ':eight_pointed_black_star:',
-    wpp: '✴'
+    wpp: '✴',
   },
   {
     rocket: ':vs:',
-    wpp: '🆚'
+    wpp: '🆚',
   },
   {
     rocket: ':white_flower:',
-    wpp: '💮'
+    wpp: '💮',
   },
   {
     rocket: ':ideograph_advantage:',
-    wpp: '🉐'
+    wpp: '🉐',
   },
   {
     rocket: ':secret:',
-    wpp: '㊙'
+    wpp: '㊙',
   },
   {
     rocket: ':congratulations:',
-    wpp: '㊗'
+    wpp: '㊗',
   },
   {
     rocket: ':u5408:',
-    wpp: '🈴'
+    wpp: '🈴',
   },
   {
     rocket: ':u6e80:',
-    wpp: '🈵'
+    wpp: '🈵',
   },
   {
     rocket: ':u5272:',
-    wpp: '🈹'
+    wpp: '🈹',
   },
   {
     rocket: ':u7981:',
-    wpp: '🈲'
+    wpp: '🈲',
   },
   {
     rocket: ':a:',
-    wpp: '🅰'
+    wpp: '🅰',
   },
   {
     rocket: ':b:',
-    wpp: '🅱'
+    wpp: '🅱',
   },
   {
     rocket: ':ab:',
-    wpp: '🆎'
+    wpp: '🆎',
   },
   {
     rocket: ':cl:',
-    wpp: '🆑'
+    wpp: '🆑',
   },
   {
     rocket: ':o2:',
-    wpp: '🅾'
+    wpp: '🅾',
   },
   {
     rocket: ':sos:',
-    wpp: '🆘'
+    wpp: '🆘',
   },
   {
     rocket: ':x:',
-    wpp: '❌'
+    wpp: '❌',
   },
   {
     rocket: ':o:',
-    wpp: '⭕'
+    wpp: '⭕',
   },
   {
     rocket: ':octagonal_sign:',
-    wpp: '🛑'
+    wpp: '🛑',
   },
   {
     rocket: ':no_entry:',
-    wpp: '⛔'
+    wpp: '⛔',
   },
   {
     rocket: ':name_badge:',
-    wpp: '📛'
+    wpp: '📛',
   },
   {
     rocket: ':no_entry_sign:',
-    wpp: '🚫'
+    wpp: '🚫',
   },
   {
     rocket: ':100:',
-    wpp: '💯'
+    wpp: '💯',
   },
   {
     rocket: ':anger:',
-    wpp: '💢'
+    wpp: '💢',
   },
   {
     rocket: ':hotsprings:',
-    wpp: '♨'
+    wpp: '♨',
   },
   {
     rocket: ':no_pedestrians:',
-    wpp: '🚷'
+    wpp: '🚷',
   },
   {
     rocket: ':do_not_litter:',
-    wpp: '🚯'
+    wpp: '🚯',
   },
   {
     rocket: ':no_bicycles:',
-    wpp: '🚳'
+    wpp: '🚳',
   },
   {
     rocket: ':non-potable_water:',
-    wpp: '🚱'
+    wpp: '🚱',
   },
   {
     rocket: ':underage:',
-    wpp: '🔞'
+    wpp: '🔞',
   },
   {
     rocket: ':no_mobile_phones:',
-    wpp: '📵'
+    wpp: '📵',
   },
   {
     rocket: ':no_smoking:',
-    wpp: '🚭'
+    wpp: '🚭',
   },
   {
     rocket: ':exclamation:',
-    wpp: '❗'
+    wpp: '❗',
   },
   {
     rocket: ':grey_exclamation:',
-    wpp: '❕'
+    wpp: '❕',
   },
   {
     rocket: ':question:',
-    wpp: '❓'
+    wpp: '❓',
   },
   {
     rocket: ':grey_question:',
-    wpp: '❔'
+    wpp: '❔',
   },
   {
     rocket: ':bangbang:',
-    wpp: '‼'
+    wpp: '‼',
   },
   {
     rocket: ':interrobang:',
-    wpp: '⁉'
+    wpp: '⁉',
   },
   {
     rocket: ':low_brightness:',
-    wpp: '🔅'
+    wpp: '🔅',
   },
   {
     rocket: ':high_brightness:',
-    wpp: '🔆'
+    wpp: '🔆',
   },
   {
     rocket: ':part_alternation_mark:',
-    wpp: '〽'
+    wpp: '〽',
   },
   {
     rocket: ':warning:',
-    wpp: '⚠'
+    wpp: '⚠',
   },
   {
     rocket: ':children_crossing:',
-    wpp: '🚸'
+    wpp: '🚸',
   },
   {
     rocket: ':trident:',
-    wpp: '🔱'
+    wpp: '🔱',
   },
   {
     rocket: ':fleur-de-lis:',
-    wpp: '⚜'
+    wpp: '⚜',
   },
   {
     rocket: ':beginner:',
-    wpp: '🔰'
+    wpp: '🔰',
   },
   {
     rocket: ':recycle:',
-    wpp: '♻'
+    wpp: '♻',
   },
   {
     rocket: ':white_check_mark:',
-    wpp: '✅'
+    wpp: '✅',
   },
   {
     rocket: ':u6307:',
-    wpp: '🈯'
+    wpp: '🈯',
   },
   {
     rocket: ':chart:',
-    wpp: '💹'
+    wpp: '💹',
   },
   {
     rocket: ':sparkle:',
-    wpp: '❇'
+    wpp: '❇',
   },
   {
     rocket: ':eight_spoked_asterisk:',
-    wpp: '✳'
+    wpp: '✳',
   },
   {
     rocket: ':negative_squared_cross_mark:',
-    wpp: '❎'
+    wpp: '❎',
   },
   {
     rocket: ':globe_with_meridians:',
-    wpp: '🌐'
+    wpp: '🌐',
   },
   {
     rocket: ':diamond_shape_with_a_dot_inside:',
-    wpp: '💠'
+    wpp: '💠',
   },
   {
     rocket: ':m:',
-    wpp: 'Ⓜ'
+    wpp: 'Ⓜ',
   },
   {
     rocket: ':cyclone:',
-    wpp: '🌀'
+    wpp: '🌀',
   },
   {
     rocket: ':zzz:',
-    wpp: '💤'
+    wpp: '💤',
   },
   {
     rocket: ':atm:',
-    wpp: '🏧'
+    wpp: '🏧',
   },
   {
     rocket: ':wc:',
-    wpp: '🚾'
+    wpp: '🚾',
   },
   {
     rocket: ':wheelchair:',
-    wpp: '♿'
+    wpp: '♿',
   },
   {
     rocket: ':parking:',
-    wpp: '🅿'
+    wpp: '🅿',
   },
   {
     rocket: ':u7a7a:',
-    wpp: '🈳'
+    wpp: '🈳',
   },
   {
     rocket: ':sa:',
-    wpp: '🈂'
+    wpp: '🈂',
   },
   {
     rocket: ':passport_control:',
-    wpp: '🛂'
+    wpp: '🛂',
   },
   {
     rocket: ':customs:',
-    wpp: '🛃'
+    wpp: '🛃',
   },
   {
     rocket: ':baggage_claim:',
-    wpp: '🛄'
+    wpp: '🛄',
   },
   {
     rocket: ':left_luggage:',
-    wpp: '🛅'
+    wpp: '🛅',
   },
   {
     rocket: ':mens:',
-    wpp: '🚹'
+    wpp: '🚹',
   },
   {
     rocket: ':womens:',
-    wpp: '🚺'
+    wpp: '🚺',
   },
   {
     rocket: ':baby_symbol:',
-    wpp: '🚼'
+    wpp: '🚼',
   },
   {
     rocket: ':restroom:',
-    wpp: '🚻'
+    wpp: '🚻',
   },
   {
     rocket: ':put_litter_in_its_place:',
-    wpp: '🚮'
+    wpp: '🚮',
   },
   {
     rocket: ':cinema:',
-    wpp: '🎦'
+    wpp: '🎦',
   },
   {
     rocket: ':signal_strength:',
-    wpp: '📶'
+    wpp: '📶',
   },
   {
     rocket: ':koko:',
-    wpp: '🈁'
+    wpp: '🈁',
   },
   {
     rocket: ':symbols:',
-    wpp: '🔣'
+    wpp: '🔣',
   },
   {
     rocket: ':information_source:',
-    wpp: 'ℹ'
+    wpp: 'ℹ',
   },
   {
     rocket: ':abc:',
-    wpp: '🔤'
+    wpp: '🔤',
   },
   {
     rocket: ':abcd:',
-    wpp: '🔡'
+    wpp: '🔡',
   },
   {
     rocket: ':capital_abcd:',
-    wpp: '🔠'
+    wpp: '🔠',
   },
   {
     rocket: ':ng:',
-    wpp: '🆖'
+    wpp: '🆖',
   },
   {
     rocket: ':ok:',
-    wpp: '🆗'
+    wpp: '🆗',
   },
   {
     rocket: ':up:',
-    wpp: '🆙'
+    wpp: '🆙',
   },
   {
     rocket: ':cool:',
-    wpp: '🆒'
+    wpp: '🆒',
   },
   {
     rocket: ':new:',
-    wpp: '🆕'
+    wpp: '🆕',
   },
   {
     rocket: ':free:',
-    wpp: '🆓'
+    wpp: '🆓',
   },
   {
     rocket: ':zero:',
-    wpp: '0️⃣'
+    wpp: '0️⃣',
   },
   {
     rocket: ':one:',
-    wpp: '1️⃣'
+    wpp: '1️⃣',
   },
   {
     rocket: ':two:',
-    wpp: '2️⃣'
+    wpp: '2️⃣',
   },
   {
     rocket: ':three:',
-    wpp: '3️⃣'
+    wpp: '3️⃣',
   },
   {
     rocket: ':four:',
-    wpp: '4️⃣'
+    wpp: '4️⃣',
   },
   {
     rocket: ':five:',
-    wpp: '5️⃣'
+    wpp: '5️⃣',
   },
   {
     rocket: ':six:',
-    wpp: '6️⃣'
+    wpp: '6️⃣',
   },
   {
     rocket: ':seven:',
-    wpp: '7️⃣'
+    wpp: '7️⃣',
   },
   {
     rocket: ':eight:',
-    wpp: '8️⃣'
+    wpp: '8️⃣',
   },
   {
     rocket: ':nine:',
-    wpp: '9️⃣'
+    wpp: '9️⃣',
   },
   {
     rocket: ':keycap_ten:',
-    wpp: '🔟'
+    wpp: '🔟',
   },
   {
     rocket: ':1234:',
-    wpp: '🔢'
+    wpp: '🔢',
   },
   {
     rocket: ':hash:',
-    wpp: '#️⃣'
+    wpp: '#️⃣',
   },
   {
     rocket: ':asterisk:',
-    wpp: '*️⃣'
+    wpp: '*️⃣',
   },
   {
     rocket: ':eject:',
-    wpp: '⏏'
+    wpp: '⏏',
   },
   {
     rocket: ':arrow_forward:',
-    wpp: '▶'
+    wpp: '▶',
   },
   {
     rocket: ':pause_button:',
-    wpp: '⏸'
+    wpp: '⏸',
   },
   {
     rocket: ':play_pause:',
-    wpp: '⏯'
+    wpp: '⏯',
   },
   {
     rocket: ':stop_button:',
-    wpp: '⏹'
+    wpp: '⏹',
   },
   {
     rocket: ':record_button:',
-    wpp: '⏺'
+    wpp: '⏺',
   },
   {
     rocket: ':track_next:',
-    wpp: '⏭'
+    wpp: '⏭',
   },
   {
     rocket: ':track_previous:',
-    wpp: '⏮'
+    wpp: '⏮',
   },
   {
     rocket: ':fast_forward:',
-    wpp: '⏩'
+    wpp: '⏩',
   },
   {
     rocket: ':rewind:',
-    wpp: '⏪'
+    wpp: '⏪',
   },
   {
     rocket: ':arrow_double_up:',
-    wpp: '⏫'
+    wpp: '⏫',
   },
   {
     rocket: ':arrow_double_down:',
-    wpp: '⏬'
+    wpp: '⏬',
   },
   {
     rocket: ':arrow_backward:',
-    wpp: '◀'
+    wpp: '◀',
   },
   {
     rocket: ':arrow_up_small:',
-    wpp: '🔼'
+    wpp: '🔼',
   },
   {
     rocket: ':arrow_down_small:',
-    wpp: '🔽'
+    wpp: '🔽',
   },
   {
     rocket: ':arrow_right:',
-    wpp: '➡'
+    wpp: '➡',
   },
   {
     rocket: ':arrow_left:',
-    wpp: '⬅'
+    wpp: '⬅',
   },
   {
     rocket: ':arrow_up:',
-    wpp: '⬆'
+    wpp: '⬆',
   },
   {
     rocket: ':arrow_down:',
-    wpp: '⬇'
+    wpp: '⬇',
   },
   {
     rocket: ':arrow_upper_right:',
-    wpp: '↗'
+    wpp: '↗',
   },
   {
     rocket: ':arrow_lower_right:',
-    wpp: '↘'
+    wpp: '↘',
   },
   {
     rocket: ':arrow_lower_left:',
-    wpp: '↙'
+    wpp: '↙',
   },
   {
     rocket: ':arrow_upper_left:',
-    wpp: '↖'
+    wpp: '↖',
   },
   {
     rocket: ':arrow_up_down:',
-    wpp: '↕'
+    wpp: '↕',
   },
   {
     rocket: ':left_right_arrow:',
-    wpp: '↔'
+    wpp: '↔',
   },
   {
     rocket: ':arrow_right_hook:',
-    wpp: '↪'
+    wpp: '↪',
   },
   {
     rocket: ':leftwards_arrow_with_hook:',
-    wpp: '↩'
+    wpp: '↩',
   },
   {
     rocket: ':arrow_heading_up:',
-    wpp: '⤴'
+    wpp: '⤴',
   },
   {
     rocket: ':arrow_heading_down:',
-    wpp: '⤵'
+    wpp: '⤵',
   },
   {
     rocket: ':twisted_rightwards_arrows:',
-    wpp: '🔀'
+    wpp: '🔀',
   },
   {
     rocket: ':repeat:',
-    wpp: '🔁'
+    wpp: '🔁',
   },
   {
     rocket: ':repeat_one:',
-    wpp: '🔂'
+    wpp: '🔂',
   },
   {
     rocket: ':arrows_counterclockwise:',
-    wpp: '🔄'
+    wpp: '🔄',
   },
   {
     rocket: ':arrows_clockwise:',
-    wpp: '🔃'
+    wpp: '🔃',
   },
   {
     rocket: ':musical_note:',
-    wpp: '🎵'
+    wpp: '🎵',
   },
   {
     rocket: ':notes:',
-    wpp: '🎶'
+    wpp: '🎶',
   },
   {
     rocket: ':heavy_plus_sign:',
-    wpp: '➕'
+    wpp: '➕',
   },
   {
     rocket: ':heavy_minus_sign:',
-    wpp: '➖'
+    wpp: '➖',
   },
   {
     rocket: ':heavy_division_sign:',
-    wpp: '➗'
+    wpp: '➗',
   },
   {
     rocket: ':heavy_multiplication_x:',
-    wpp: '✖'
+    wpp: '✖',
   },
   {
     rocket: ':heavy_dollar_sign:',
-    wpp: '💲'
+    wpp: '💲',
   },
   {
     rocket: ':currency_exchange:',
-    wpp: '💱'
+    wpp: '💱',
   },
   {
     rocket: ':tm:',
-    wpp: '™️'
+    wpp: '™️',
   },
   {
     rocket: ':copyright:',
-    wpp: '©'
+    wpp: '©',
   },
   {
     rocket: ':registered:',
-    wpp: '®️'
+    wpp: '®️',
   },
   {
     rocket: ':wavy_dash:',
-    wpp: '〰'
+    wpp: '〰',
   },
   {
     rocket: ':curly_loop:',
-    wpp: '➰'
+    wpp: '➰',
   },
   {
     rocket: ':loop:',
-    wpp: '➿'
+    wpp: '➿',
   },
   {
     rocket: ':end:',
-    wpp: '🔚'
+    wpp: '🔚',
   },
   {
     rocket: ':back:',
-    wpp: '🔙'
+    wpp: '🔙',
   },
   {
     rocket: ':on:',
-    wpp: '🔛'
+    wpp: '🔛',
   },
   {
     rocket: ':top:',
-    wpp: '🔝'
+    wpp: '🔝',
   },
   {
     rocket: ':soon:',
-    wpp: '🔜'
+    wpp: '🔜',
   },
   {
     rocket: ':heavy_check_mark:',
-    wpp: '✔'
+    wpp: '✔',
   },
   {
     rocket: ':ballot_box_with_check:',
-    wpp: '☑'
+    wpp: '☑',
   },
   {
     rocket: ':radio_button:',
-    wpp: '🔘'
+    wpp: '🔘',
   },
   {
     rocket: ':white_circle:',
-    wpp: '⚪'
+    wpp: '⚪',
   },
   {
     rocket: ':black_circle:',
-    wpp: '⚫'
+    wpp: '⚫',
   },
   {
     rocket: ':red_circle:',
-    wpp: '🔴'
+    wpp: '🔴',
   },
   {
     rocket: ':blue_circle:',
-    wpp: '🔵'
+    wpp: '🔵',
   },
   {
     rocket: ':small_red_triangle:',
-    wpp: '🔺'
+    wpp: '🔺',
   },
   {
     rocket: ':small_red_triangle_down:',
-    wpp: '🔻'
+    wpp: '🔻',
   },
   {
     rocket: ':small_orange_diamond:',
-    wpp: '🔸'
+    wpp: '🔸',
   },
   {
     rocket: ':small_blue_diamond:',
-    wpp: '🔹'
+    wpp: '🔹',
   },
   {
     rocket: ':white_square_button:',
-    wpp: '🔳'
+    wpp: '🔳',
   },
   {
     rocket: ':black_square_button:',
-    wpp: '🔲'
+    wpp: '🔲',
   },
   {
     rocket: ':black_small_square:',
-    wpp: '▪'
+    wpp: '▪',
   },
   {
     rocket: ':white_small_square:',
-    wpp: '▫'
+    wpp: '▫',
   },
   {
     rocket: ':black_medium_small_square:',
-    wpp: '◾'
+    wpp: '◾',
   },
   {
     rocket: ':white_medium_small_square:',
-    wpp: '◽'
+    wpp: '◽',
   },
   {
     rocket: ':black_medium_square:',
-    wpp: '◼'
+    wpp: '◼',
   },
   {
     rocket: ':white_medium_square:',
-    wpp: '◻'
+    wpp: '◻',
   },
   {
     rocket: ':black_large_square:',
-    wpp: '⬛'
+    wpp: '⬛',
   },
   {
     rocket: ':white_large_square:',
-    wpp: '⬜'
+    wpp: '⬜',
   },
   {
     rocket: ':speaker:',
-    wpp: '🔈'
+    wpp: '🔈',
   },
   {
     rocket: ':mute:',
-    wpp: '🔇'
+    wpp: '🔇',
   },
   {
     rocket: ':sound:',
-    wpp: '🔉'
+    wpp: '🔉',
   },
   {
     rocket: ':loud_sound:',
-    wpp: '🔊'
+    wpp: '🔊',
   },
   {
     rocket: ':bell:',
-    wpp: '🔔'
+    wpp: '🔔',
   },
   {
     rocket: ':no_bell:',
-    wpp: '🔕'
+    wpp: '🔕',
   },
   {
     rocket: ':mega:',
-    wpp: '📣'
+    wpp: '📣',
   },
   {
     rocket: ':loudspeaker:',
-    wpp: '📢'
+    wpp: '📢',
   },
   {
     rocket: ':speech_left:',
-    wpp: '🗨'
+    wpp: '🗨',
   },
   {
     rocket: ':eye_in_speech_bubble:',
-    wpp: '👁️\u200d🗨️'
+    wpp: '👁️\u200d🗨️',
   },
   {
     rocket: ':speech_balloon:',
-    wpp: '💬'
+    wpp: '💬',
   },
   {
     rocket: ':thought_balloon:',
-    wpp: '💭'
+    wpp: '💭',
   },
   {
     rocket: ':anger_right:',
-    wpp: '🗯'
+    wpp: '🗯',
   },
   {
     rocket: ':spades:',
-    wpp: '♠'
+    wpp: '♠',
   },
   {
     rocket: ':clubs:',
-    wpp: '♣'
+    wpp: '♣',
   },
   {
     rocket: ':hearts:',
-    wpp: '♥'
+    wpp: '♥',
   },
   {
     rocket: ':diamonds:',
-    wpp: '♦'
+    wpp: '♦',
   },
   {
     rocket: ':black_joker:',
-    wpp: '🃏'
+    wpp: '🃏',
   },
   {
     rocket: ':flower_playing_cards:',
-    wpp: '🎴'
+    wpp: '🎴',
   },
   {
     rocket: ':mahjong:',
-    wpp: '🀄'
+    wpp: '🀄',
   },
   {
     rocket: ':clock1:',
-    wpp: '🕐'
+    wpp: '🕐',
   },
   {
     rocket: ':clock2:',
-    wpp: '🕑'
+    wpp: '🕑',
   },
   {
     rocket: ':clock3:',
-    wpp: '🕒'
+    wpp: '🕒',
   },
   {
     rocket: ':clock4:',
-    wpp: '🕓'
+    wpp: '🕓',
   },
   {
     rocket: ':clock5:',
-    wpp: '🕔'
+    wpp: '🕔',
   },
   {
     rocket: ':clock6:',
-    wpp: '🕕'
+    wpp: '🕕',
   },
   {
     rocket: ':clock7:',
-    wpp: '🕖'
+    wpp: '🕖',
   },
   {
     rocket: ':clock8:',
-    wpp: '🕗'
+    wpp: '🕗',
   },
   {
     rocket: ':clock9:',
-    wpp: '🕘'
+    wpp: '🕘',
   },
   {
     rocket: ':clock10:',
-    wpp: '🕙'
+    wpp: '🕙',
   },
   {
     rocket: ':clock11:',
-    wpp: '🕚'
+    wpp: '🕚',
   },
   {
     rocket: ':clock12:',
-    wpp: '🕛'
+    wpp: '🕛',
   },
   {
     rocket: ':clock130:',
-    wpp: '🕜'
+    wpp: '🕜',
   },
   {
     rocket: ':clock230:',
-    wpp: '🕝'
+    wpp: '🕝',
   },
   {
     rocket: ':clock330:',
-    wpp: '🕞'
+    wpp: '🕞',
   },
   {
     rocket: ':clock430:',
-    wpp: '🕟'
+    wpp: '🕟',
   },
   {
     rocket: ':clock530:',
-    wpp: '🕠'
+    wpp: '🕠',
   },
   {
     rocket: ':clock630:',
-    wpp: '🕡'
+    wpp: '🕡',
   },
   {
     rocket: ':clock730:',
-    wpp: '🕢'
+    wpp: '🕢',
   },
   {
     rocket: ':clock830:',
-    wpp: '🕣'
+    wpp: '🕣',
   },
   {
     rocket: ':clock930:',
-    wpp: '🕤'
+    wpp: '🕤',
   },
   {
     rocket: ':clock1030:',
-    wpp: '🕥'
+    wpp: '🕥',
   },
   {
     rocket: ':clock1130:',
-    wpp: '🕦'
+    wpp: '🕦',
   },
   {
     rocket: ':clock1230:',
-    wpp: '🕧'
+    wpp: '🕧',
   },
   {
     rocket: ':digit_zero:',
-    wpp: '0️'
+    wpp: '0️',
   },
   {
     rocket: ':digit_one:',
-    wpp: '1️'
+    wpp: '1️',
   },
   {
     rocket: ':digit_two:',
-    wpp: '2️'
+    wpp: '2️',
   },
   {
     rocket: ':digit_three:',
-    wpp: '3️'
+    wpp: '3️',
   },
   {
     rocket: ':digit_four:',
-    wpp: '4️'
+    wpp: '4️',
   },
   {
     rocket: ':digit_five:',
-    wpp: '5️'
+    wpp: '5️',
   },
   {
     rocket: ':digit_six:',
-    wpp: '6️'
+    wpp: '6️',
   },
   {
     rocket: ':digit_seven:',
-    wpp: '7️'
+    wpp: '7️',
   },
   {
     rocket: ':digit_eight:',
-    wpp: '8️'
+    wpp: '8️',
   },
   {
     rocket: ':digit_nine:',
-    wpp: '9️'
+    wpp: '9️',
   },
   {
     rocket: ':pound_symbol:',
-    wpp: '#️⃣'
+    wpp: '#️⃣',
   },
   {
     rocket: ':asterisk_symbol:',
-    wpp: '*️⃣'
+    wpp: '*️⃣',
   },
   {
     rocket: ':female_sign:',
-    wpp: '♀'
+    wpp: '♀',
   },
   {
     rocket: ':male_sign:',
-    wpp: '♂'
+    wpp: '♂',
   },
   {
     rocket: ':medical_symbol:',
-    wpp: '⚕'
+    wpp: '⚕',
   },
   {
     rocket: ':flag_white:',
-    wpp: '🏳'
+    wpp: '🏳',
   },
   {
     rocket: ':flag_black:',
-    wpp: '🏴'
+    wpp: '🏴',
   },
   {
     rocket: ':checkered_flag:',
-    wpp: '🏁'
+    wpp: '🏁',
   },
   {
     rocket: ':triangular_flag_on_post:',
-    wpp: '🚩'
+    wpp: '🚩',
   },
   {
     rocket: ':rainbow_flag:',
-    wpp: '🏳️\u200d🌈'
+    wpp: '🏳️\u200d🌈',
   },
   {
     rocket: ':pirate_flag:',
-    wpp: '🏴\u200d☠️'
+    wpp: '🏴\u200d☠️',
   },
   {
     rocket: ':flag_af:',
-    wpp: '🇦🇫'
+    wpp: '🇦🇫',
   },
   {
     rocket: ':flag_ax:',
-    wpp: '🇦🇽'
+    wpp: '🇦🇽',
   },
   {
     rocket: ':flag_al:',
-    wpp: '🇦🇱'
+    wpp: '🇦🇱',
   },
   {
     rocket: ':flag_dz:',
-    wpp: '🇩🇿'
+    wpp: '🇩🇿',
   },
   {
     rocket: ':flag_as:',
-    wpp: '🇦🇸'
+    wpp: '🇦🇸',
   },
   {
     rocket: ':flag_ad:',
-    wpp: '🇦🇩'
+    wpp: '🇦🇩',
   },
   {
     rocket: ':flag_ao:',
-    wpp: '🇦🇴'
+    wpp: '🇦🇴',
   },
   {
     rocket: ':flag_ai:',
-    wpp: '🇦🇮'
+    wpp: '🇦🇮',
   },
   {
     rocket: ':flag_aq:',
-    wpp: '🇦🇶'
+    wpp: '🇦🇶',
   },
   {
     rocket: ':flag_ag:',
-    wpp: '🇦🇬'
+    wpp: '🇦🇬',
   },
   {
     rocket: ':flag_ar:',
-    wpp: '🇦🇷'
+    wpp: '🇦🇷',
   },
   {
     rocket: ':flag_am:',
-    wpp: '🇦🇲'
+    wpp: '🇦🇲',
   },
   {
     rocket: ':flag_aw:',
-    wpp: '🇦🇼'
+    wpp: '🇦🇼',
   },
   {
     rocket: ':flag_au:',
-    wpp: '🇦🇺'
+    wpp: '🇦🇺',
   },
   {
     rocket: ':flag_at:',
-    wpp: '🇦🇹'
+    wpp: '🇦🇹',
   },
   {
     rocket: ':flag_az:',
-    wpp: '🇦🇿'
+    wpp: '🇦🇿',
   },
   {
     rocket: ':flag_bs:',
-    wpp: '🇧🇸'
+    wpp: '🇧🇸',
   },
   {
     rocket: ':flag_bh:',
-    wpp: '🇧🇭'
+    wpp: '🇧🇭',
   },
   {
     rocket: ':flag_bd:',
-    wpp: '🇧🇩'
+    wpp: '🇧🇩',
   },
   {
     rocket: ':flag_bb:',
-    wpp: '🇧🇧'
+    wpp: '🇧🇧',
   },
   {
     rocket: ':flag_by:',
-    wpp: '🇧🇾'
+    wpp: '🇧🇾',
   },
   {
     rocket: ':flag_be:',
-    wpp: '🇧🇪'
+    wpp: '🇧🇪',
   },
   {
     rocket: ':flag_bz:',
-    wpp: '🇧🇿'
+    wpp: '🇧🇿',
   },
   {
     rocket: ':flag_bj:',
-    wpp: '🇧🇯'
+    wpp: '🇧🇯',
   },
   {
     rocket: ':flag_bm:',
-    wpp: '🇧🇲'
+    wpp: '🇧🇲',
   },
   {
     rocket: ':flag_bt:',
-    wpp: '🇧🇹'
+    wpp: '🇧🇹',
   },
   {
     rocket: ':flag_bo:',
-    wpp: '🇧🇴'
+    wpp: '🇧🇴',
   },
   {
     rocket: ':flag_ba:',
-    wpp: '🇧🇦'
+    wpp: '🇧🇦',
   },
   {
     rocket: ':flag_bw:',
-    wpp: '🇧🇼'
+    wpp: '🇧🇼',
   },
   {
     rocket: ':flag_br:',
-    wpp: '🇧🇷'
+    wpp: '🇧🇷',
   },
   {
     rocket: ':flag_io:',
-    wpp: '🇮🇴'
+    wpp: '🇮🇴',
   },
   {
     rocket: ':flag_vg:',
-    wpp: '🇻🇬'
+    wpp: '🇻🇬',
   },
   {
     rocket: ':flag_bn:',
-    wpp: '🇧🇳'
+    wpp: '🇧🇳',
   },
   {
     rocket: ':flag_bg:',
-    wpp: '🇧🇬'
+    wpp: '🇧🇬',
   },
   {
     rocket: ':flag_bf:',
-    wpp: '🇧🇫'
+    wpp: '🇧🇫',
   },
   {
     rocket: ':flag_bi:',
-    wpp: '🇧🇮'
+    wpp: '🇧🇮',
   },
   {
     rocket: ':flag_kh:',
-    wpp: '🇰🇭'
+    wpp: '🇰🇭',
   },
   {
     rocket: ':flag_cm:',
-    wpp: '🇨🇲'
+    wpp: '🇨🇲',
   },
   {
     rocket: ':flag_ca:',
-    wpp: '🇨🇦'
+    wpp: '🇨🇦',
   },
   {
     rocket: ':flag_ic:',
-    wpp: '🇮🇨'
+    wpp: '🇮🇨',
   },
   {
     rocket: ':flag_cv:',
-    wpp: '🇨🇻'
+    wpp: '🇨🇻',
   },
   {
     rocket: ':flag_bq:',
-    wpp: '🇧🇶'
+    wpp: '🇧🇶',
   },
   {
     rocket: ':flag_ky:',
-    wpp: '🇰🇾'
+    wpp: '🇰🇾',
   },
   {
     rocket: ':flag_cf:',
-    wpp: '🇨🇫'
+    wpp: '🇨🇫',
   },
   {
     rocket: ':flag_td:',
-    wpp: '🇹🇩'
+    wpp: '🇹🇩',
   },
   {
     rocket: ':flag_cl:',
-    wpp: '🇨🇱'
+    wpp: '🇨🇱',
   },
   {
     rocket: ':flag_cn:',
-    wpp: '🇨🇳'
+    wpp: '🇨🇳',
   },
   {
     rocket: ':flag_cx:',
-    wpp: '🇨🇽'
+    wpp: '🇨🇽',
   },
   {
     rocket: ':flag_cc:',
-    wpp: '🇨🇨'
+    wpp: '🇨🇨',
   },
   {
     rocket: ':flag_co:',
-    wpp: '🇨🇴'
+    wpp: '🇨🇴',
   },
   {
     rocket: ':flag_km:',
-    wpp: '🇰🇲'
+    wpp: '🇰🇲',
   },
   {
     rocket: ':flag_cg:',
-    wpp: '🇨🇬'
+    wpp: '🇨🇬',
   },
   {
     rocket: ':flag_cd:',
-    wpp: '🇨🇩'
+    wpp: '🇨🇩',
   },
   {
     rocket: ':flag_ck:',
-    wpp: '🇨🇰'
+    wpp: '🇨🇰',
   },
   {
     rocket: ':flag_cr:',
-    wpp: '🇨🇷'
+    wpp: '🇨🇷',
   },
   {
     rocket: ':flag_ci:',
-    wpp: '🇨🇮'
+    wpp: '🇨🇮',
   },
   {
     rocket: ':flag_hr:',
-    wpp: '🇭🇷'
+    wpp: '🇭🇷',
   },
   {
     rocket: ':flag_cu:',
-    wpp: '🇨🇺'
+    wpp: '🇨🇺',
   },
   {
     rocket: ':flag_cw:',
-    wpp: '🇨🇼'
+    wpp: '🇨🇼',
   },
   {
     rocket: ':flag_cy:',
-    wpp: '🇨🇾'
+    wpp: '🇨🇾',
   },
   {
     rocket: ':flag_cz:',
-    wpp: '🇨🇿'
+    wpp: '🇨🇿',
   },
   {
     rocket: ':flag_dk:',
-    wpp: '🇩🇰'
+    wpp: '🇩🇰',
   },
   {
     rocket: ':flag_dj:',
-    wpp: '🇩🇯'
+    wpp: '🇩🇯',
   },
   {
     rocket: ':flag_dm:',
-    wpp: '🇩🇲'
+    wpp: '🇩🇲',
   },
   {
     rocket: ':flag_do:',
-    wpp: '🇩🇴'
+    wpp: '🇩🇴',
   },
   {
     rocket: ':flag_ec:',
-    wpp: '🇪🇨'
+    wpp: '🇪🇨',
   },
   {
     rocket: ':flag_eg:',
-    wpp: '🇪🇬'
+    wpp: '🇪🇬',
   },
   {
     rocket: ':flag_sv:',
-    wpp: '🇸🇻'
+    wpp: '🇸🇻',
   },
   {
     rocket: ':flag_gq:',
-    wpp: '🇬🇶'
+    wpp: '🇬🇶',
   },
   {
     rocket: ':flag_er:',
-    wpp: '🇪🇷'
+    wpp: '🇪🇷',
   },
   {
     rocket: ':flag_ee:',
-    wpp: '🇪🇪'
+    wpp: '🇪🇪',
   },
   {
     rocket: ':flag_et:',
-    wpp: '🇪🇹'
+    wpp: '🇪🇹',
   },
   {
     rocket: ':flag_eu:',
-    wpp: '🇪🇺'
+    wpp: '🇪🇺',
   },
   {
     rocket: ':flag_fk:',
-    wpp: '🇫🇰'
+    wpp: '🇫🇰',
   },
   {
     rocket: ':flag_fo:',
-    wpp: '🇫🇴'
+    wpp: '🇫🇴',
   },
   {
     rocket: ':flag_fj:',
-    wpp: '🇫🇯'
+    wpp: '🇫🇯',
   },
   {
     rocket: ':flag_fi:',
-    wpp: '🇫🇮'
+    wpp: '🇫🇮',
   },
   {
     rocket: ':flag_gf:',
-    wpp: '🇬🇫'
+    wpp: '🇬🇫',
   },
   {
     rocket: ':flag_pf:',
-    wpp: '🇵🇫'
+    wpp: '🇵🇫',
   },
   {
     rocket: ':flag_tf:',
-    wpp: '🇹🇫'
+    wpp: '🇹🇫',
   },
   {
     rocket: ':flag_ga:',
-    wpp: '🇬🇦'
+    wpp: '🇬🇦',
   },
   {
     rocket: ':flag_gm:',
-    wpp: '🇬🇲'
+    wpp: '🇬🇲',
   },
   {
     rocket: ':flag_ge:',
-    wpp: '🇬🇪'
+    wpp: '🇬🇪',
   },
   {
     rocket: ':flag_de:',
-    wpp: '🇩🇪'
+    wpp: '🇩🇪',
   },
   {
     rocket: ':flag_gh:',
-    wpp: '🇬🇭'
+    wpp: '🇬🇭',
   },
   {
     rocket: ':flag_gi:',
-    wpp: '🇬🇮'
+    wpp: '🇬🇮',
   },
   {
     rocket: ':flag_gr:',
-    wpp: '🇬🇷'
+    wpp: '🇬🇷',
   },
   {
     rocket: ':flag_gl:',
-    wpp: '🇬🇱'
+    wpp: '🇬🇱',
   },
   {
     rocket: ':flag_gd:',
-    wpp: '🇬🇩'
+    wpp: '🇬🇩',
   },
   {
     rocket: ':flag_gp:',
-    wpp: '🇬🇵'
+    wpp: '🇬🇵',
   },
   {
     rocket: ':flag_gu:',
-    wpp: '🇬🇺'
+    wpp: '🇬🇺',
   },
   {
     rocket: ':flag_gt:',
-    wpp: '🇬🇹'
+    wpp: '🇬🇹',
   },
   {
     rocket: ':flag_gg:',
-    wpp: '🇬🇬'
+    wpp: '🇬🇬',
   },
   {
     rocket: ':flag_gn:',
-    wpp: '🇬🇳'
+    wpp: '🇬🇳',
   },
   {
     rocket: ':flag_gw:',
-    wpp: '🇬🇼'
+    wpp: '🇬🇼',
   },
   {
     rocket: ':flag_gy:',
-    wpp: '🇬🇾'
+    wpp: '🇬🇾',
   },
   {
     rocket: ':flag_ht:',
-    wpp: '🇭🇹'
+    wpp: '🇭🇹',
   },
   {
     rocket: ':flag_hn:',
-    wpp: '🇭🇳'
+    wpp: '🇭🇳',
   },
   {
     rocket: ':flag_hk:',
-    wpp: '🇭🇰'
+    wpp: '🇭🇰',
   },
   {
     rocket: ':flag_hu:',
-    wpp: '🇭🇺'
+    wpp: '🇭🇺',
   },
   {
     rocket: ':flag_is:',
-    wpp: '🇮🇸'
+    wpp: '🇮🇸',
   },
   {
     rocket: ':flag_in:',
-    wpp: '🇮🇳'
+    wpp: '🇮🇳',
   },
   {
     rocket: ':flag_id:',
-    wpp: '🇮🇩'
+    wpp: '🇮🇩',
   },
   {
     rocket: ':flag_ir:',
-    wpp: '🇮🇷'
+    wpp: '🇮🇷',
   },
   {
     rocket: ':flag_iq:',
-    wpp: '🇮🇶'
+    wpp: '🇮🇶',
   },
   {
     rocket: ':flag_ie:',
-    wpp: '🇮🇪'
+    wpp: '🇮🇪',
   },
   {
     rocket: ':flag_im:',
-    wpp: '🇮🇲'
+    wpp: '🇮🇲',
   },
   {
     rocket: ':flag_il:',
-    wpp: '🇮🇱'
+    wpp: '🇮🇱',
   },
   {
     rocket: ':flag_it:',
-    wpp: '🇮🇹'
+    wpp: '🇮🇹',
   },
   {
     rocket: ':flag_jm:',
-    wpp: '🇯🇲'
+    wpp: '🇯🇲',
   },
   {
     rocket: ':flag_jp:',
-    wpp: '🇯🇵'
+    wpp: '🇯🇵',
   },
   {
     rocket: ':crossed_flags:',
-    wpp: '🎌'
+    wpp: '🎌',
   },
   {
     rocket: ':flag_je:',
-    wpp: '🇯🇪'
+    wpp: '🇯🇪',
   },
   {
     rocket: ':flag_jo:',
-    wpp: '🇯🇴'
+    wpp: '🇯🇴',
   },
   {
     rocket: ':flag_kz:',
-    wpp: '🇰🇿'
+    wpp: '🇰🇿',
   },
   {
     rocket: ':flag_ke:',
-    wpp: '🇰🇪'
+    wpp: '🇰🇪',
   },
   {
     rocket: ':flag_ki:',
-    wpp: '🇰🇮'
+    wpp: '🇰🇮',
   },
   {
     rocket: ':flag_xk:',
-    wpp: '🇽🇰'
+    wpp: '🇽🇰',
   },
   {
     rocket: ':flag_kw:',
-    wpp: '🇰🇼'
+    wpp: '🇰🇼',
   },
   {
     rocket: ':flag_kg:',
-    wpp: '🇰🇬'
+    wpp: '🇰🇬',
   },
   {
     rocket: ':flag_la:',
-    wpp: '🇱🇦'
+    wpp: '🇱🇦',
   },
   {
     rocket: ':flag_lv:',
-    wpp: '🇱🇻'
+    wpp: '🇱🇻',
   },
   {
     rocket: ':flag_lb:',
-    wpp: '🇱🇧'
+    wpp: '🇱🇧',
   },
   {
     rocket: ':flag_ls:',
-    wpp: '🇱🇸'
+    wpp: '🇱🇸',
   },
   {
     rocket: ':flag_lr:',
-    wpp: '🇱🇷'
+    wpp: '🇱🇷',
   },
   {
     rocket: ':flag_ly:',
-    wpp: '🇱🇾'
+    wpp: '🇱🇾',
   },
   {
     rocket: ':flag_li:',
-    wpp: '🇱🇮'
+    wpp: '🇱🇮',
   },
   {
     rocket: ':flag_lt:',
-    wpp: '🇱🇹'
+    wpp: '🇱🇹',
   },
   {
     rocket: ':flag_lu:',
-    wpp: '🇱🇺'
+    wpp: '🇱🇺',
   },
   {
     rocket: ':flag_mo:',
-    wpp: '🇲🇴'
+    wpp: '🇲🇴',
   },
   {
     rocket: ':flag_mk:',
-    wpp: '🇲🇰'
+    wpp: '🇲🇰',
   },
   {
     rocket: ':flag_mg:',
-    wpp: '🇲🇬'
+    wpp: '🇲🇬',
   },
   {
     rocket: ':flag_mw:',
-    wpp: '🇲🇼'
+    wpp: '🇲🇼',
   },
   {
     rocket: ':flag_my:',
-    wpp: '🇲🇾'
+    wpp: '🇲🇾',
   },
   {
     rocket: ':flag_mv:',
-    wpp: '🇲🇻'
+    wpp: '🇲🇻',
   },
   {
     rocket: ':flag_ml:',
-    wpp: '🇲🇱'
+    wpp: '🇲🇱',
   },
   {
     rocket: ':flag_mt:',
-    wpp: '🇲🇹'
+    wpp: '🇲🇹',
   },
   {
     rocket: ':flag_mh:',
-    wpp: '🇲🇭'
+    wpp: '🇲🇭',
   },
   {
     rocket: ':flag_mq:',
-    wpp: '🇲🇶'
+    wpp: '🇲🇶',
   },
   {
     rocket: ':flag_mr:',
-    wpp: '🇲🇷'
+    wpp: '🇲🇷',
   },
   {
     rocket: ':flag_mu:',
-    wpp: '🇲🇺'
+    wpp: '🇲🇺',
   },
   {
     rocket: ':flag_yt:',
-    wpp: '🇾🇹'
+    wpp: '🇾🇹',
   },
   {
     rocket: ':flag_mx:',
-    wpp: '🇲🇽'
+    wpp: '🇲🇽',
   },
   {
     rocket: ':flag_fm:',
-    wpp: '🇫🇲'
+    wpp: '🇫🇲',
   },
   {
     rocket: ':flag_md:',
-    wpp: '🇲🇩'
+    wpp: '🇲🇩',
   },
   {
     rocket: ':flag_mc:',
-    wpp: '🇲🇨'
+    wpp: '🇲🇨',
   },
   {
     rocket: ':flag_mn:',
-    wpp: '🇲🇳'
+    wpp: '🇲🇳',
   },
   {
     rocket: ':flag_me:',
-    wpp: '🇲🇪'
+    wpp: '🇲🇪',
   },
   {
     rocket: ':flag_ms:',
-    wpp: '🇲🇸'
+    wpp: '🇲🇸',
   },
   {
     rocket: ':flag_ma:',
-    wpp: '🇲🇦'
+    wpp: '🇲🇦',
   },
   {
     rocket: ':flag_mz:',
-    wpp: '🇲🇿'
+    wpp: '🇲🇿',
   },
   {
     rocket: ':flag_mm:',
-    wpp: '🇲🇲'
+    wpp: '🇲🇲',
   },
   {
     rocket: ':flag_na:',
-    wpp: '🇳🇦'
+    wpp: '🇳🇦',
   },
   {
     rocket: ':flag_nr:',
-    wpp: '🇳🇷'
+    wpp: '🇳🇷',
   },
   {
     rocket: ':flag_np:',
-    wpp: '🇳🇵'
+    wpp: '🇳🇵',
   },
   {
     rocket: ':flag_nl:',
-    wpp: '🇳🇱'
+    wpp: '🇳🇱',
   },
   {
     rocket: ':flag_nc:',
-    wpp: '🇳🇨'
+    wpp: '🇳🇨',
   },
   {
     rocket: ':flag_nz:',
-    wpp: '🇳🇿'
+    wpp: '🇳🇿',
   },
   {
     rocket: ':flag_ni:',
-    wpp: '🇳🇮'
+    wpp: '🇳🇮',
   },
   {
     rocket: ':flag_ne:',
-    wpp: '🇳🇪'
+    wpp: '🇳🇪',
   },
   {
     rocket: ':flag_ng:',
-    wpp: '🇳🇬'
+    wpp: '🇳🇬',
   },
   {
     rocket: ':flag_nu:',
-    wpp: '🇳🇺'
+    wpp: '🇳🇺',
   },
   {
     rocket: ':flag_nf:',
-    wpp: '🇳🇫'
+    wpp: '🇳🇫',
   },
   {
     rocket: ':flag_kp:',
-    wpp: '🇰🇵'
+    wpp: '🇰🇵',
   },
   {
     rocket: ':flag_mp:',
-    wpp: '🇲🇵'
+    wpp: '🇲🇵',
   },
   {
     rocket: ':flag_no:',
-    wpp: '🇳🇴'
+    wpp: '🇳🇴',
   },
   {
     rocket: ':flag_om:',
-    wpp: '🇴🇲'
+    wpp: '🇴🇲',
   },
   {
     rocket: ':flag_pk:',
-    wpp: '🇵🇰'
+    wpp: '🇵🇰',
   },
   {
     rocket: ':flag_pw:',
-    wpp: '🇵🇼'
+    wpp: '🇵🇼',
   },
   {
     rocket: ':flag_ps:',
-    wpp: '🇵🇸'
+    wpp: '🇵🇸',
   },
   {
     rocket: ':flag_pa:',
-    wpp: '🇵🇦'
+    wpp: '🇵🇦',
   },
   {
     rocket: ':flag_pg:',
-    wpp: '🇵🇬'
+    wpp: '🇵🇬',
   },
   {
     rocket: ':flag_py:',
-    wpp: '🇵🇾'
+    wpp: '🇵🇾',
   },
   {
     rocket: ':flag_pe:',
-    wpp: '🇵🇪'
+    wpp: '🇵🇪',
   },
   {
     rocket: ':flag_ph:',
-    wpp: '🇵🇭'
+    wpp: '🇵🇭',
   },
   {
     rocket: ':flag_pn:',
-    wpp: '🇵🇳'
+    wpp: '🇵🇳',
   },
   {
     rocket: ':flag_pl:',
-    wpp: '🇵🇱'
+    wpp: '🇵🇱',
   },
   {
     rocket: ':flag_pt:',
-    wpp: '🇵🇹'
+    wpp: '🇵🇹',
   },
   {
     rocket: ':flag_pr:',
-    wpp: '🇵🇷'
+    wpp: '🇵🇷',
   },
   {
     rocket: ':flag_qa:',
-    wpp: '🇶🇦'
+    wpp: '🇶🇦',
   },
   {
     rocket: ':flag_re:',
-    wpp: '🇷🇪'
+    wpp: '🇷🇪',
   },
   {
     rocket: ':flag_ro:',
-    wpp: '🇷🇴'
+    wpp: '🇷🇴',
   },
   {
     rocket: ':flag_ru:',
-    wpp: '🇷🇺'
+    wpp: '🇷🇺',
   },
   {
     rocket: ':flag_rw:',
-    wpp: '🇷🇼'
+    wpp: '🇷🇼',
   },
   {
     rocket: ':flag_ws:',
-    wpp: '🇼🇸'
+    wpp: '🇼🇸',
   },
   {
     rocket: ':flag_sm:',
-    wpp: '🇸🇲'
+    wpp: '🇸🇲',
   },
   {
     rocket: ':flag_st:',
-    wpp: '🇸🇹'
+    wpp: '🇸🇹',
   },
   {
     rocket: ':flag_sa:',
-    wpp: '🇸🇦'
+    wpp: '🇸🇦',
   },
   {
     rocket: ':flag_sn:',
-    wpp: '🇸🇳'
+    wpp: '🇸🇳',
   },
   {
     rocket: ':flag_rs:',
-    wpp: '🇷🇸'
+    wpp: '🇷🇸',
   },
   {
     rocket: ':flag_sc:',
-    wpp: '🇸🇨'
+    wpp: '🇸🇨',
   },
   {
     rocket: ':flag_sl:',
-    wpp: '🇸🇱'
+    wpp: '🇸🇱',
   },
   {
     rocket: ':flag_sg:',
-    wpp: '🇸🇬'
+    wpp: '🇸🇬',
   },
   {
     rocket: ':flag_sx:',
-    wpp: '🇸🇽'
+    wpp: '🇸🇽',
   },
   {
     rocket: ':flag_sk:',
-    wpp: '🇸🇰'
+    wpp: '🇸🇰',
   },
   {
     rocket: ':flag_si:',
-    wpp: '🇸🇮'
+    wpp: '🇸🇮',
   },
   {
     rocket: ':flag_gs:',
-    wpp: '🇬🇸'
+    wpp: '🇬🇸',
   },
   {
     rocket: ':flag_sb:',
-    wpp: '🇸🇧'
+    wpp: '🇸🇧',
   },
   {
     rocket: ':flag_so:',
-    wpp: '🇸🇴'
+    wpp: '🇸🇴',
   },
   {
     rocket: ':flag_za:',
-    wpp: '🇿🇦'
+    wpp: '🇿🇦',
   },
   {
     rocket: ':flag_kr:',
-    wpp: '🇰🇷'
+    wpp: '🇰🇷',
   },
   {
     rocket: ':flag_ss:',
-    wpp: '🇸🇸'
+    wpp: '🇸🇸',
   },
   {
     rocket: ':flag_es:',
-    wpp: '🇪🇸'
+    wpp: '🇪🇸',
   },
   {
     rocket: ':flag_bl:',
-    wpp: '🇧🇱'
+    wpp: '🇧🇱',
   },
   {
     rocket: ':flag_sh:',
-    wpp: '🇸🇭'
+    wpp: '🇸🇭',
   },
   {
     rocket: ':flag_kn:',
-    wpp: '🇰🇳'
+    wpp: '🇰🇳',
   },
   {
     rocket: ':flag_lc:',
-    wpp: '🇱🇨'
+    wpp: '🇱🇨',
   },
   {
     rocket: ':flag_pm:',
-    wpp: '🇵🇲'
+    wpp: '🇵🇲',
   },
   {
     rocket: ':flag_vc:',
-    wpp: '🇻🇨'
+    wpp: '🇻🇨',
   },
   {
     rocket: ':flag_sd:',
-    wpp: '🇸🇩'
+    wpp: '🇸🇩',
   },
   {
     rocket: ':flag_sr:',
-    wpp: '🇸🇷'
+    wpp: '🇸🇷',
   },
   {
     rocket: ':flag_sz:',
-    wpp: '🇸🇿'
+    wpp: '🇸🇿',
   },
   {
     rocket: ':flag_se:',
-    wpp: '🇸🇪'
+    wpp: '🇸🇪',
   },
   {
     rocket: ':flag_ch:',
-    wpp: '🇨🇭'
+    wpp: '🇨🇭',
   },
   {
     rocket: ':flag_sy:',
-    wpp: '🇸🇾'
+    wpp: '🇸🇾',
   },
   {
     rocket: ':flag_tw:',
-    wpp: '🇹🇼'
+    wpp: '🇹🇼',
   },
   {
     rocket: ':flag_tj:',
-    wpp: '🇹🇯'
+    wpp: '🇹🇯',
   },
   {
     rocket: ':flag_tz:',
-    wpp: '🇹🇿'
+    wpp: '🇹🇿',
   },
   {
     rocket: ':flag_th:',
-    wpp: '🇹🇭'
+    wpp: '🇹🇭',
   },
   {
     rocket: ':flag_tl:',
-    wpp: '🇹🇱'
+    wpp: '🇹🇱',
   },
   {
     rocket: ':flag_tg:',
-    wpp: '🇹🇬'
+    wpp: '🇹🇬',
   },
   {
     rocket: ':flag_tk:',
-    wpp: '🇹🇰'
+    wpp: '🇹🇰',
   },
   {
     rocket: ':flag_to:',
-    wpp: '🇹🇴'
+    wpp: '🇹🇴',
   },
   {
     rocket: ':flag_tt:',
-    wpp: '🇹🇹'
+    wpp: '🇹🇹',
   },
   {
     rocket: ':flag_tn:',
-    wpp: '🇹🇳'
+    wpp: '🇹🇳',
   },
   {
     rocket: ':flag_tr:',
-    wpp: '🇹🇷'
+    wpp: '🇹🇷',
   },
   {
     rocket: ':flag_tm:',
-    wpp: '🇹🇲'
+    wpp: '🇹🇲',
   },
   {
     rocket: ':flag_tc:',
-    wpp: '🇹🇨'
+    wpp: '🇹🇨',
   },
   {
     rocket: ':flag_vi:',
-    wpp: '🇻🇮'
+    wpp: '🇻🇮',
   },
   {
     rocket: ':flag_tv:',
-    wpp: '🇹🇻'
+    wpp: '🇹🇻',
   },
   {
     rocket: ':flag_ug:',
-    wpp: '🇺🇬'
+    wpp: '🇺🇬',
   },
   {
     rocket: ':flag_ua:',
-    wpp: '🇺🇦'
+    wpp: '🇺🇦',
   },
   {
     rocket: ':flag_ae:',
-    wpp: '🇦🇪'
+    wpp: '🇦🇪',
   },
   {
     rocket: ':flag_gb:',
-    wpp: '🇬🇧'
+    wpp: '🇬🇧',
   },
   {
     rocket: ':england:',
-    wpp: '🏴󠁧󠁢󠁥󠁮󠁧󠁿'
+    wpp: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
   },
   {
     rocket: ':scotland:',
-    wpp: '🏴󠁧󠁢󠁳󠁣󠁴󠁿'
+    wpp: '🏴󠁧󠁢󠁳󠁣󠁴󠁿',
   },
   {
     rocket: ':wales:',
-    wpp: '🏴󠁧󠁢󠁷󠁬󠁳󠁿'
+    wpp: '🏴󠁧󠁢󠁷󠁬󠁳󠁿',
   },
   {
     rocket: ':flag_us:',
-    wpp: '🇺🇸'
+    wpp: '🇺🇸',
   },
   {
     rocket: ':flag_uy:',
-    wpp: '🇺🇾'
+    wpp: '🇺🇾',
   },
   {
     rocket: ':flag_uz:',
-    wpp: '🇺🇿'
+    wpp: '🇺🇿',
   },
   {
     rocket: ':flag_vu:',
-    wpp: '🇻🇺'
+    wpp: '🇻🇺',
   },
   {
     rocket: ':flag_va:',
-    wpp: '🇻🇦'
+    wpp: '🇻🇦',
   },
   {
     rocket: ':flag_ve:',
-    wpp: '🇻🇪'
+    wpp: '🇻🇪',
   },
   {
     rocket: ':flag_vn:',
-    wpp: '🇻🇳'
+    wpp: '🇻🇳',
   },
   {
     rocket: ':flag_wf:',
-    wpp: '🇼🇫'
+    wpp: '🇼🇫',
   },
   {
     rocket: ':flag_eh:',
-    wpp: '🇪🇭'
+    wpp: '🇪🇭',
   },
   {
     rocket: ':flag_ye:',
-    wpp: '🇾🇪'
+    wpp: '🇾🇪',
   },
   {
     rocket: ':flag_zm:',
-    wpp: '🇿🇲'
+    wpp: '🇿🇲',
   },
   {
     rocket: ':flag_zw:',
-    wpp: '🇿🇼'
+    wpp: '🇿🇼',
   },
   {
     rocket: ':flag_ac:',
-    wpp: '🇦🇨'
+    wpp: '🇦🇨',
   },
   {
     rocket: ':flag_bv:',
-    wpp: '🇧🇻'
+    wpp: '🇧🇻',
   },
   {
     rocket: ':flag_cp:',
-    wpp: '🇨🇵'
+    wpp: '🇨🇵',
   },
   {
     rocket: ':flag_ea:',
-    wpp: '🇪🇦'
+    wpp: '🇪🇦',
   },
   {
     rocket: ':flag_dg:',
-    wpp: '🇩🇬'
+    wpp: '🇩🇬',
   },
   {
     rocket: ':flag_hm:',
-    wpp: '🇭🇲'
+    wpp: '🇭🇲',
   },
   {
     rocket: ':flag_mf:',
-    wpp: '🇲🇫'
+    wpp: '🇲🇫',
   },
   {
     rocket: ':flag_sj:',
-    wpp: '🇸🇯'
+    wpp: '🇸🇯',
   },
   {
     rocket: ':flag_ta:',
-    wpp: '🇹🇦'
+    wpp: '🇹🇦',
   },
   {
     rocket: ':flag_um:',
-    wpp: '🇺🇲'
+    wpp: '🇺🇲',
   },
   {
     rocket: ':united_nations:',
-    wpp: '🇺🇳'
-  }
+    wpp: '🇺🇳',
+  },
 ]
 
 module.exports.emojiList = emojiList

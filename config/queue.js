@@ -21,16 +21,17 @@ function createQueue(name) {
 }
 
 class QueueServer {
-    constructor() {
-      this.queues = Object.values(jobs).map(job => ({
-        bull: createQueue(job.key),
-        name: job.key,
-        handle: job.handle,
-      }))
-    }
+  constructor() {
+    this.queues = Object.values(jobs).map((job) => ({
+      bull: createQueue(job.key),
+      name: job.key,
+      handle: job.handle,
+    }))
+  }
 
   async addJob(name, body, licensee) {
-    const queue = this.queues.find(queue => queue.name === name)
+    const queue = this.queues.find((queue) => queue.name === name)
+
     return await queue.bull.add(name, { body, licensee }, { attempts: 3 })
   }
 }

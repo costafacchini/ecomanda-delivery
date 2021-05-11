@@ -3,23 +3,23 @@ const Licensee = require('@models/Licensee')
 const Jivochat = require('../plugins/chats/Jivochat')
 
 describe('sendMessageToChat', () => {
-  const mockFunction = jest.spyOn(Jivochat.prototype, 'sendMessage')
+  const jivochatSendMessageSpy = jest.spyOn(Jivochat.prototype, 'sendMessage')
 
-  afterEach(() => {
-    mockFunction.mockRestore()
+  beforeEach(() => {
+    jest.clearAllMocks()
   })
 
   it('asks the plugin to send message to chat', async () => {
     const licensee = new Licensee({
-      chatDefault: 'jivochat'
+      chatDefault: 'jivochat',
     })
 
     const body = {
-      message: 'message'
+      message: 'message',
     }
 
     await sendMessageToChat(body, licensee)
 
-    expect(mockFunction).toHaveBeenCalled()
+    expect(jivochatSendMessageSpy).toHaveBeenCalled()
   })
 })

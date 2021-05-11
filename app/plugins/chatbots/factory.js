@@ -1,9 +1,9 @@
 const Landbot = require('./Landbot')
 
-function createChatbotPlugin(option, licensee, body) {
+function createChatbotPlugin(licensee) {
   switch (licensee.chatbotDefault) {
     case 'landbot':
-      return new Landbot(option, body)
+      return new Landbot(licensee)
     default:
       throw `Plugin de chatbot não configurado: ${licensee.chatbotDefault}`
   }

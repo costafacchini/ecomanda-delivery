@@ -8,27 +8,18 @@ const contactSchema = new Schema({
   name: String,
   number: {
     type: String,
-    required: [
-      true,
-      'Numero: Você deve preencher o campo'
-    ]
+    required: [true, 'Numero: Você deve preencher o campo'],
   },
   type: String,
   talkingWithChatBot: {
     type: Boolean,
-    required: [
-      true,
-      'Talking with chatbot: Você deve preencher o campo'
-    ]
+    required: [true, 'Talking with chatbot: Você deve preencher o campo'],
   },
   roomId: String,
   licensee: {
     type: ObjectId,
     ref: 'Licensee',
-    required: [
-      true,
-      'Licensee: Você deve preencher o campo'
-    ]
+    required: [true, 'Licensee: Você deve preencher o campo'],
   },
 })
 

@@ -1,9 +1,9 @@
 const createChatbotPlugin = require('../plugins/chatbots/factory')
 
 async function sendMessageToChatbot(body, licensee) {
-  const chatbotPlugin = createChatbotPlugin('send-message', licensee, body)
+  const chatbotPlugin = createChatbotPlugin(licensee)
 
-  await chatbotPlugin.sendMessage()
+  await chatbotPlugin.sendMessage(body.messageId, body.url, body.token)
 }
 
 module.exports = sendMessageToChatbot

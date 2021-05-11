@@ -1,31 +1,63 @@
 const transformChatbotTransferBody = require('./ChatbotTransfer')
 const Licensee = require('@models/Licensee')
 const queueServer = require('@config/queue')
+const Landbot = require('../plugins/chatbots/Landbot')
 
 describe('transformChatbotTransferBody', () => {
-  const mockFunction = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
+  const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
 
-  afterEach(() => {
-    mockFunction.mockRestore()
+  beforeEach(() => {
+    jest.clearAllMocks()
   })
 
-  it('enqueues job to dispatcher action of plugin', async () => {
+  it('enqueues job to transfer message to chat', async () => {
+    const chatbotPluginResponseToMessages = jest
+      .spyOn(Landbot.prototype, 'responseTransferToMessage')
+      .mockImplementation(() => {
+        return { _id: 'KSDF656DSD91NSE' }
+      })
+
     const licensee = new Licensee({
       chatbotDefault: 'landbot',
-      whatsappUrl: 'https://chatbot.url',
-      whatsappToken: 'zjkdhf7'
+      chatUrl: 'https://chat.url',
     })
 
     const body = {
-      message: 'text'
+      message: 'text',
     }
 
     await transformChatbotTransferBody(body, licensee)
 
-    expect(mockFunction).toHaveBeenCalledWith(
-      'send-message-to-chat',
-      { body: '', url: 'https://chatbot.url', token: 'zjkdhf7' },
-      expect.objectContaining({ chatbotDefault: 'landbot', whatsappUrl: 'https://chatbot.url', whatsappToken: 'zjkdhf7' })
+    expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body)
+
+    expect(queueServerAddJobSpy).toHaveBeenCalledWith(
+      'transfer-to-chat',
+      { messageId: 'KSDF656DSD91NSE', url: 'https://chat.url' },
+      expect.objectContaining({
+        chatbotDefault: 'landbot',
+        chatUrl: 'https://chat.url',
+      })
     )
+  })
+
+  it('does not enqueue job if body is invalid', async () => {
+    const chatbotPluginResponseToMessages = jest
+      .spyOn(Landbot.prototype, 'responseTransferToMessage')
+      .mockImplementation(() => {
+        return null
+      })
+
+    const licensee = new Licensee({
+      chatbotDefault: 'landbot',
+      chatUrl: 'https://chat.url',
+    })
+
+    const body = {}
+
+    await transformChatbotTransferBody(body, licensee)
+
+    expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body)
+
+    expect(queueServerAddJobSpy).not.toBeCalled()
   })
 })

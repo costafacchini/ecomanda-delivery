@@ -7,7 +7,7 @@ async function transformChatBody(body, licensee) {
   if (chatPlugin.action !== '') {
     const chatData = {
       body: chatPlugin.transformdedBody,
-      url: licensee.chatUrl
+      url: licensee.chatUrl,
     }
 
     await queueServer.addJob(chatPlugin.action, chatData, licensee)

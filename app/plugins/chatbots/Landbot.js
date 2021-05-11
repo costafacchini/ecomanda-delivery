@@ -6,25 +6,26 @@ const Contact = require('@models/Contact')
 const request = require('../../services/request')
 
 class Landbot {
-  constructor(option) {
-    this.option = option
-    this.action = this.#defineAction()
+  constructor(licensee) {
+    this.licensee = licensee
   }
 
-  async responseToMessages(responseBody, licensee) {
+  async responseToMessages(responseBody) {
     const { customer, messages } = responseBody
+
+    if (!customer || !messages) return []
 
     const normalizePhone = new NormalizePhone(customer.number)
 
     const contact = await Contact.findOne({
       number: normalizePhone.number,
       type: normalizePhone.type,
-      licensee: licensee,
+      licensee: this.licensee,
     })
 
     const processedMessages = []
     for (const message of messages) {
-      const kind = this.#kindToMessageKind(message.type)
+      const kind = Landbot.kindToMessageKind(message.type)
 
       if (!kind) {
         console.info(`Tipo de mensagem retornado pela Landbot não reconhecido: ${message.type}`)
@@ -38,7 +39,7 @@ class Landbot {
         number: uuidv4(),
         text,
         kind,
-        licensee: licensee._id,
+        licensee: this.licensee._id,
         contact: contact._id,
         destination: 'to-messenger',
       })
@@ -59,7 +60,7 @@ class Landbot {
     return processedMessages
   }
 
-  #kindToMessageKind(kind) {
+  static kindToMessageKind(kind) {
     switch (kind) {
       case 'text':
         return 'text'
@@ -72,12 +73,28 @@ class Landbot {
     }
   }
 
-  #defineAction() {
-    if (this.option === 'transfer') {
-      return 'send-message-to-chat'
-    } else {
-      return 'send-message-to-messenger'
-    }
+  async responseTransferToMessage(responseBody) {
+    const { number, observacao, id_departamento_rocketchat } = responseBody
+
+    if (!number) return
+
+    const normalizePhone = new NormalizePhone(number)
+
+    const contact = await Contact.findOne({
+      number: normalizePhone.number,
+      type: normalizePhone.type,
+      licensee: this.licensee,
+    })
+
+    return new Message({
+      number: uuidv4(),
+      text: observacao,
+      kind: 'text',
+      licensee: this.licensee._id,
+      contact: contact._id,
+      destination: 'to-transfer',
+      departament: id_departamento_rocketchat,
+    })
   }
 
   async sendMessage(message, url, token) {
@@ -95,12 +112,12 @@ class Landbot {
       message: {
         type: 'text',
         message: message.text,
-        payload: '$1'
-      }
+        payload: '$1',
+      },
     }
 
     const headers = {
-      'Authorization': `Token ${token}`
+      Authorization: `Token ${token}`,
     }
 
     const response = await request.post(`${url}/${customer.number}/`, { headers, body })

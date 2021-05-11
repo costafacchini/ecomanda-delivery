@@ -18,12 +18,10 @@ describe('Contact', () => {
       const contact = await Contact.create({
         number: '551190283745',
         talkingWithChatBot: false,
-        licensee: licensee
+        licensee: licensee,
       })
 
-      expect(contact._id).
-        not.
-        toEqual(null)
+      expect(contact._id).not.toEqual(null)
     })
 
     it('does not changes _id if contact is changed', async () => {
@@ -32,7 +30,7 @@ describe('Contact', () => {
       const contact = await Contact.create({
         number: '551190283745',
         talkingWithChatBot: false,
-        licensee: licensee
+        licensee: licensee,
       })
 
       contact.talkingWithChatBot = true
@@ -55,7 +53,11 @@ describe('Contact', () => {
       it('normalizes the number and type', async () => {
         const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
 
-        const contact = await Contact.create({ number: '5538209234582@c.us', licensee: licensee, talkingWithChatBot: true })
+        const contact = await Contact.create({
+          number: '5538209234582@c.us',
+          licensee: licensee,
+          talkingWithChatBot: true,
+        })
 
         expect(contact.number).toEqual('5538209234582')
         expect(contact.type).toEqual('@c.us')
@@ -76,7 +78,9 @@ describe('Contact', () => {
         const contact = new Contact({ number: '7849342387' })
         const validation = contact.validateSync()
 
-        expect(validation.errors['talkingWithChatBot'].message).toEqual('Talking with chatbot: Você deve preencher o campo')
+        expect(validation.errors['talkingWithChatBot'].message).toEqual(
+          'Talking with chatbot: Você deve preencher o campo'
+        )
       })
     })
   })

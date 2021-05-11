@@ -1,4 +1,3 @@
-// const fetch = require('node-fetch')
 require('isomorphic-fetch')
 
 async function request(url, method, { headers, body }) {
@@ -6,9 +5,9 @@ async function request(url, method, { headers, body }) {
     method: method,
     headers: {
       'Content-Type': 'application/json',
-      ...headers
+      ...headers,
     },
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
   }
 
   let result
@@ -19,12 +18,14 @@ async function request(url, method, { headers, body }) {
 
     result = {
       status: response.status,
-      data: data.length > 0 && isJSON(response) ? JSON.parse(data) : data
+      data: data.length > 0 && isJSON(response) ? JSON.parse(data) : data,
     }
-  } catch(e) {
+  } catch (e) {
     result = {
       status: 500,
-      data: `Ocorreu um erro ao tentar dar um post na url ${url} com o body ${JSON.stringify(body)} e resultou na mensagem ${e}`
+      data: `Ocorreu um erro ao tentar dar um post na url ${url} com o body ${JSON.stringify(
+        body
+      )} e resultou na mensagem ${e}`,
     }
   }
 
@@ -35,12 +36,11 @@ function isJSON(response) {
   return response.headers.get('content-type') && response.headers.get('content-type').includes('application/json')
 }
 
-
 module.exports = {
   get(url, requestOpts = {}) {
     return request(url, 'get', requestOpts)
   },
   post(url, requestOpts = {}) {
     return request(url, 'post', requestOpts)
-  }
+  },
 }

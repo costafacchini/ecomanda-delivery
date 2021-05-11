@@ -7,11 +7,11 @@ const Winzap = require('./Winzap')
 describe('createMessengerPlugin', () => {
   it('returns the chatapi plugin if it is configured on licensee', () => {
     const licensee = new Licensee({
-      whatsappDefault: 'chatapi'
+      whatsappDefault: 'chatapi',
     })
 
     const body = {
-      message: 'test'
+      message: 'test',
     }
 
     const plugin = createMessengerPlugin(licensee, body)
@@ -21,11 +21,11 @@ describe('createMessengerPlugin', () => {
 
   it('returns the utalk plugin if it is configured on licensee', () => {
     const licensee = new Licensee({
-      whatsappDefault: 'utalk'
+      whatsappDefault: 'utalk',
     })
 
     const body = {
-      type: 'test'
+      type: 'test',
     }
 
     const plugin = createMessengerPlugin(licensee, body)
@@ -35,11 +35,11 @@ describe('createMessengerPlugin', () => {
 
   it('returns the winzap plugin if it is configured on licensee', () => {
     const licensee = new Licensee({
-      whatsappDefault: 'winzap'
+      whatsappDefault: 'winzap',
     })
 
     const body = {
-      type: 'test'
+      type: 'test',
     }
 
     const plugin = createMessengerPlugin(licensee, body)
@@ -49,11 +49,11 @@ describe('createMessengerPlugin', () => {
 
   it('throws if option plugin is unknow', () => {
     const licensee = new Licensee({
-      whatsappDefault: 'something'
+      whatsappDefault: 'something',
     })
 
     const body = {
-      field: 'test'
+      field: 'test',
     }
 
     expect(() => {

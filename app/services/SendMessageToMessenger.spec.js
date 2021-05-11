@@ -3,23 +3,23 @@ const Licensee = require('@models/Licensee')
 const Chatapi = require('../plugins/messengers/Chatapi')
 
 describe('sendMessageToMessenger', () => {
-  const mockFunction = jest.spyOn(Chatapi.prototype, 'sendMessage')
+  const chatapiSendMessageSpy = jest.spyOn(Chatapi.prototype, 'sendMessage')
 
-  afterEach(() => {
-    mockFunction.mockRestore()
+  beforeEach(() => {
+    jest.clearAllMocks()
   })
 
   it('asks the plugin to send message to messenger', async () => {
     const licensee = new Licensee({
-      whatsappDefault: 'chatapi'
+      whatsappDefault: 'chatapi',
     })
 
     const body = {
-      message: 'message'
+      message: 'message',
     }
 
     await sendMessageToMessenger(body, licensee)
 
-    expect(mockFunction).toHaveBeenCalled()
+    expect(chatapiSendMessageSpy).toHaveBeenCalled()
   })
 })

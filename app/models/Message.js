@@ -6,10 +6,7 @@ const messageSchema = new Schema({
   _id: ObjectId,
   number: {
     type: String,
-    required: [
-      true,
-      'Number: Você deve preencher o campo',
-    ]
+    required: [true, 'Number: Você deve preencher o campo'],
   },
   fromMe: { type: Boolean, default: false },
   text: {
@@ -19,7 +16,7 @@ const messageSchema = new Schema({
         return this.kind === 'text'
       },
       'Texto: deve ser preenchido quando o tipo de mensahem é texto',
-    ]
+    ],
   },
   url: {
     type: String,
@@ -46,14 +43,12 @@ const messageSchema = new Schema({
   },
   destination: {
     type: String,
-    enum: ['to-chatbot', 'to-chat', 'to-messenger'],
-    required: [
-      true,
-      'Destino: Você deve informar qual o destino da mensagem (to-chatbot | to-chat | to-messenger)',
-    ]
+    enum: ['to-chatbot', 'to-chat', 'to-messenger', 'to-transfer'],
+    required: [true, 'Destino: Você deve informar qual o destino da mensagem (to-chatbot | to-chat | to-messenger | to-transfer)'],
   },
   latitude: Number,
   longitude: Number,
+  departament: String,
   sended: { type: Boolean, default: false },
   receivedAt: Date,
   reededAt: Date,
@@ -61,18 +56,12 @@ const messageSchema = new Schema({
   licensee: {
     type: ObjectId,
     ref: 'Licensee',
-    required: [
-      true,
-      'Licensee: Você deve preencher o campo',
-    ]
+    required: [true, 'Licensee: Você deve preencher o campo'],
   },
   contact: {
     type: ObjectId,
     ref: 'Contact',
-    required: [
-      true,
-      'Contact: Você deve preencher o campo',
-    ]
+    required: [true, 'Contact: Você deve preencher o campo'],
   },
 })
 

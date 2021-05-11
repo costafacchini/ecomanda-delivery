@@ -6,11 +6,11 @@ const Jivochat = require('./Jivochat')
 describe('createChatPlugin', () => {
   it('returns the jivochat plugin if it is configured on licensee', () => {
     const licensee = new Licensee({
-      chatDefault: 'jivochat'
+      chatDefault: 'jivochat',
     })
 
     const body = {
-      message: 'test'
+      message: 'test',
     }
 
     const plugin = createChatPlugin(licensee, body)
@@ -20,11 +20,11 @@ describe('createChatPlugin', () => {
 
   it('returns the rocketchat plugin if it is configured on licensee', () => {
     const licensee = new Licensee({
-      chatDefault: 'rocketchat'
+      chatDefault: 'rocketchat',
     })
 
     const body = {
-      type: 'test'
+      type: 'test',
     }
 
     const plugin = createChatPlugin(licensee, body)
@@ -34,11 +34,11 @@ describe('createChatPlugin', () => {
 
   it('throws if option plugin is unknow', () => {
     const licensee = new Licensee({
-      chatDefault: 'something'
+      chatDefault: 'something',
     })
 
     const body = {
-      field: 'test'
+      field: 'test',
     }
 
     expect(() => {
