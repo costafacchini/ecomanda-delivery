@@ -19,8 +19,9 @@ describe('transformChatbotBody', () => {
 
     const licensee = new Licensee({
       chatbotDefault: 'landbot',
-      chatbotUrl: 'https://chatbot.url',
-      chatbotAuthorizationToken: 'zjkdhf7',
+      whatsappDefault: 'chatapi',
+      whatsappUrl: 'https://chat.url',
+      whatsappToken: 'token'
     })
 
     const body = {
@@ -34,21 +35,23 @@ describe('transformChatbotBody', () => {
     expect(queueServerAddJobSpy).toHaveBeenCalledTimes(2)
     expect(queueServerAddJobSpy).toHaveBeenCalledWith(
       'send-message-to-messenger',
-      { messageId: 'KSDF656DSD91NSE', url: 'https://chatbot.url', token: 'zjkdhf7' },
+      { messageId: 'KSDF656DSD91NSE', url: 'https://chat.url', token: 'token' },
       expect.objectContaining({
         chatbotDefault: 'landbot',
-        chatbotUrl: 'https://chatbot.url',
-        chatbotAuthorizationToken: 'zjkdhf7',
+        whatsappDefault: 'chatapi',
+        whatsappUrl: 'https://chat.url',
+        whatsappToken: 'token'
       })
     )
 
     expect(queueServerAddJobSpy).toHaveBeenCalledWith(
       'send-message-to-messenger',
-      { messageId: 'OAR8Q54LDN02T', url: 'https://chatbot.url', token: 'zjkdhf7' },
+      { messageId: 'OAR8Q54LDN02T', url: 'https://chat.url', token: 'token' },
       expect.objectContaining({
         chatbotDefault: 'landbot',
-        chatbotUrl: 'https://chatbot.url',
-        chatbotAuthorizationToken: 'zjkdhf7',
+        whatsappDefault: 'chatapi',
+        whatsappUrl: 'https://chat.url',
+        whatsappToken: 'token'
       })
     )
   })
@@ -62,8 +65,9 @@ describe('transformChatbotBody', () => {
 
     const licensee = new Licensee({
       chatbotDefault: 'landbot',
-      chatbotUrl: 'https://chatbot.url',
-      chatbotAuthorizationToken: 'zjkdhf7',
+      whatsappDefault: 'chatapi',
+      whatsappUrl: 'https://chat.url',
+      whatsappToken: 'token'
     })
 
     const body = {}

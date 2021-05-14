@@ -8,9 +8,9 @@
     "dev": "npm-run-all -p dev:*",
     "dev:server": "bash -c 'docker-compose up -d && trap \"docker-compose stop\" SIGINT && nodemon server.js'",
     "dev:worker": "nodemon worker.js",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
-    "watch": "jest --no-coverage --verbose --watch --runInBand --notify --notifyMode always",
+    "test": "NODE_ENV=test jest",
+    "test:coverage": "NODE_ENV=test jest --coverage",
+    "watch": "NODE_ENV=test jest --no-coverage --verbose --watch --runInBand --notify --notifyMode always",
     "linter": "yarn eslint 'app/**/*.{js,ts,tsx}' 'config/**/*.{js,ts,tsx}' 'setup/**/*.{js,ts,tsx}'"
   },
   "devDependencies": {

@@ -2,15 +2,18 @@ const createChatPlugin = require('../plugins/chats/factory')
 const queueServer = require('@config/queue')
 
 async function transformChatBody(body, licensee) {
-  const chatPlugin = createChatPlugin(licensee, body)
+  const chatPlugin = createChatPlugin(licensee)
 
-  if (chatPlugin.action !== '') {
-    const chatData = {
-      body: chatPlugin.transformdedBody,
-      url: licensee.chatUrl,
+  const message = chatPlugin.responseToMessage(body)
+
+  if (message) {
+    const bodyToSend = {
+      messageId: message._id,
+      url: licensee.whatsappUrl,
+      token: licensee.whatsappToken,
     }
 
-    await queueServer.addJob(chatPlugin.action, chatData, licensee)
+    await queueServer.addJob(chatPlugin.action(body), bodyToSend, licensee)
   }
 }
 

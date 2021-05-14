@@ -3,7 +3,7 @@ const createChatPlugin = require('../plugins/chats/factory')
 async function sendMessageToChat(body, licensee) {
   const chatPlugin = createChatPlugin(licensee, body)
 
-  await chatPlugin.sendMessage()
+  await chatPlugin.sendMessage(body.messageId, body.url, body.token)
 }
 
 module.exports = sendMessageToChat

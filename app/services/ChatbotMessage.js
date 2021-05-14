@@ -8,8 +8,8 @@ async function transformChatbotBody(body, licensee) {
   for (const message of messages) {
     const bodyToSend = {
       messageId: message._id,
-      url: licensee.chatbotUrl,
-      token: licensee.chatbotAuthorizationToken,
+      url: licensee.whatsappUrl,
+      token: licensee.whatsappToken,
     }
 
     await queueServer.addJob('send-message-to-messenger', bodyToSend, licensee)

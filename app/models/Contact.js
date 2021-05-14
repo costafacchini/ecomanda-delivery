@@ -15,6 +15,7 @@ const contactSchema = new Schema({
     type: Boolean,
     required: [true, 'Talking with chatbot: Você deve preencher o campo'],
   },
+  email: String,
   roomId: String,
   licensee: {
     type: ObjectId,

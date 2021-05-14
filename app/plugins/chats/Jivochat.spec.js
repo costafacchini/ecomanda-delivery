@@ -1,0 +1,769 @@
+const Jivochat = require('./Jivochat')
+const Message = require('@models/Message')
+const Contact = require('@models/Contact')
+const Licensee = require('@models/Licensee')
+const fetchMock = require('fetch-mock')
+const mongoServer = require('.jest/utils')
+const emoji = require('../../helpers/Emoji')
+
+jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
+
+describe('Jivochat plugin', () => {
+  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
+  const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
+  const emojiReplaceSpy = jest.spyOn(emoji, 'replace')
+
+  beforeEach(async () => {
+    jest.clearAllMocks()
+    fetchMock.reset()
+    await mongoServer.connect()
+  })
+
+  afterEach(async () => {
+    await mongoServer.disconnect()
+  })
+
+  describe('#responseToMessage', () => {
+    it('returns the response body transformed in message', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const contact = await Contact.create({
+        name: 'John Doe',
+        number: '5593165392832@c.us',
+        type: '@c.us',
+        talkingWithChatBot: true,
+        licensee: licensee,
+      })
+
+      const responseBody = {
+        sender: {
+          name: 'Mary Jane',
+        },
+        recipient: {
+          id: '5593165392832@c.us',
+        },
+        message: {
+          type: 'text',
+          id: 'jivo_message_id',
+          text: 'Hello world',
+        },
+      }
+
+      const jivochat = new Jivochat(licensee)
+      const message = await jivochat.responseToMessage(responseBody)
+
+      expect(message).toBeInstanceOf(Message)
+      expect(message.licensee).toEqual(licensee._id)
+      expect(message.contact).toEqual(contact._id)
+      expect(message.kind).toEqual('text')
+      expect(message.number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+      expect(message.destination).toEqual('to-messenger')
+      expect(message.text).toEqual('Hello world')
+      expect(message.url).toEqual(undefined)
+      expect(message.fileName).toEqual(undefined)
+      expect(message.latitude).toEqual(undefined)
+      expect(message.longitude).toEqual(undefined)
+      expect(message.departament).toEqual(undefined)
+
+      expect(emojiReplaceSpy).toHaveBeenCalled()
+      expect(emojiReplaceSpy).toHaveBeenCalledWith('Hello world')
+    })
+
+    it('return the empty data if body is blank', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const responseBody = {}
+
+      const jivochat = new Jivochat(licensee)
+      const message = await jivochat.responseToMessage(responseBody)
+
+      expect(message).toEqual(undefined)
+    })
+
+    it('return the empty data if body does not have a message', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const responseBody = {
+        sender: {
+          name: 'Mary Jane',
+        },
+        recipient: {
+          id: '5593165392832@c.us',
+        },
+      }
+
+      const jivochat = new Jivochat(licensee)
+      const message = await jivochat.responseToMessage(responseBody)
+
+      expect(message).toEqual(undefined)
+    })
+
+    it('return the empty data if body does not have a recipient', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const responseBody = {
+        sender: {
+          name: 'Mary Jane',
+        },
+        message: {
+          type: 'text',
+          id: 'jivo_message_id',
+          text: 'Hello world',
+        },
+      }
+
+      const jivochat = new Jivochat(licensee)
+      const message = await jivochat.responseToMessage(responseBody)
+
+      expect(message).toEqual(undefined)
+    })
+
+    it('return the empty data if type is typein', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const responseBody = {
+        sender: {
+          name: 'Mary Jane',
+        },
+        recipient: {
+          id: '5593165392832@c.us',
+        },
+        message: {
+          type: 'typein',
+          id: 'jivo_message_id',
+          text: 'Hello world',
+        },
+      }
+
+      const jivochat = new Jivochat(licensee)
+      const message = await jivochat.responseToMessage(responseBody)
+
+      expect(message).toEqual(undefined)
+    })
+
+    it('return the empty data if type is typeout', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const responseBody = {
+        sender: {
+          name: 'Mary Jane',
+        },
+        recipient: {
+          id: '5593165392832@c.us',
+        },
+        message: {
+          type: 'typeout',
+          id: 'jivo_message_id',
+          text: 'Hello world',
+        },
+      }
+
+      const jivochat = new Jivochat(licensee)
+      const message = await jivochat.responseToMessage(responseBody)
+
+      expect(message).toEqual(undefined)
+    })
+
+    describe('message types', () => {
+      it('returns message with file data if it is file', async () => {
+        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+        await Contact.create({
+          name: 'John Doe',
+          number: '5593165392832@c.us',
+          type: '@c.us',
+          talkingWithChatBot: true,
+          licensee: licensee,
+        })
+
+        const responseBody = {
+          sender: {
+            name: 'Mary Jane',
+          },
+          recipient: {
+            id: '5593165392832@c.us',
+          },
+          message: {
+            type: 'video',
+            id: 'jivo_message_id',
+            file: 'https://octodex.github.com/images/dojocat.jpg',
+            file_name: 'dojocat.jpg',
+          },
+        }
+
+        const jivochat = new Jivochat(licensee)
+        const message = await jivochat.responseToMessage(responseBody)
+
+        expect(message).toBeInstanceOf(Message)
+        expect(message.kind).toEqual('file')
+        expect(message.text).toEqual('')
+        expect(message.url).toEqual('https://octodex.github.com/images/dojocat.jpg')
+        expect(message.fileName).toEqual('dojocat.jpg')
+      })
+
+      it('returns message with coordinates data if it is location', async () => {
+        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+        await Contact.create({
+          name: 'John Doe',
+          number: '5593165392832@c.us',
+          type: '@c.us',
+          talkingWithChatBot: true,
+          licensee: licensee,
+        })
+
+        const responseBody = {
+          sender: {
+            name: 'Mary Jane',
+          },
+          recipient: {
+            id: '5593165392832@c.us',
+          },
+          message: {
+            type: 'location',
+            id: 'jivo_message_id',
+            latitude: 123.93,
+            longitude: 12.0,
+          },
+        }
+
+        const jivochat = new Jivochat(licensee)
+        const message = await jivochat.responseToMessage(responseBody)
+
+        expect(message).toBeInstanceOf(Message)
+        expect(message.kind).toEqual('location')
+        expect(message.text).toEqual('')
+        expect(message.latitude).toEqual(123.93)
+        expect(message.longitude).toEqual(12.0)
+      })
+
+      it('logs the info and return empty data if kind is unknown', async () => {
+        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+        const responseBody = {
+          sender: {
+            name: 'Mary Jane',
+          },
+          recipient: {
+            id: '5593165392832@c.us',
+          },
+          message: {
+            type: 'any',
+            id: 'jivo_message_id',
+            text: 'Hello world',
+          },
+        }
+
+        const jivochat = new Jivochat(licensee)
+        const message = await jivochat.responseToMessage(responseBody)
+
+        expect(consoleInfoSpy).toHaveBeenCalledWith('Tipo de mensagem retornado pela Jivochat não reconhecido: any')
+
+        expect(message).toEqual(undefined)
+      })
+    })
+  })
+
+  describe('.kindToMessageKind', () => {
+    it('returns text if kind is text', () => {
+      expect(Jivochat.kindToMessageKind('text')).toEqual('text')
+    })
+
+    it('returns file if kind is video', () => {
+      expect(Jivochat.kindToMessageKind('video')).toEqual('file')
+    })
+
+    it('returns file if kind is audio', () => {
+      expect(Jivochat.kindToMessageKind('audio')).toEqual('file')
+    })
+
+    it('returns file if kind is voice', () => {
+      expect(Jivochat.kindToMessageKind('voice')).toEqual('file')
+    })
+
+    it('returns file if kind is photo', () => {
+      expect(Jivochat.kindToMessageKind('photo')).toEqual('file')
+    })
+
+    it('returns file if kind is document', () => {
+      expect(Jivochat.kindToMessageKind('document')).toEqual('file')
+    })
+
+    it('returns file if kind is sticker', () => {
+      expect(Jivochat.kindToMessageKind('sticker')).toEqual('file')
+    })
+
+    it('returns location if kind is location', () => {
+      expect(Jivochat.kindToMessageKind('location')).toEqual('location')
+    })
+  })
+
+  describe('#sendMessage', () => {
+    describe('when response status is 200', () => {
+      it('marks the message with sended', async () => {
+        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+        const contact = await Contact.create({
+          name: 'John Doe',
+          number: '5593165392832',
+          type: '@c.us',
+          email: 'john@doe.com',
+          talkingWithChatBot: true,
+          licensee: licensee,
+        })
+
+        const message = await Message.create({
+          text: 'Message to send',
+          number: 'jhd7879a7d9',
+          contact: contact,
+          licensee: licensee,
+          destination: 'to-chatbot',
+          sended: false,
+        })
+
+        const expectedBody = {
+          sender: {
+            id: '5593165392832@c.us',
+            name: 'John Doe',
+            email: 'john@doe.com',
+            phone: '5593165392832',
+          },
+          message: {
+            id: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
+            type: 'text',
+            text: 'Message to send',
+          },
+        }
+
+        fetchMock.postOnce((url, { body }) => {
+          return url === 'https://url.com.br/jkJGs5a4ea/pAOqw2340' && body === JSON.stringify(expectedBody)
+        }, 200)
+
+        expect(message.sended).toEqual(false)
+
+        const jivochat = new Jivochat(licensee)
+        await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea', 'pAOqw2340')
+        await fetchMock.flush(true)
+
+        expect(fetchMock.done()).toBe(true)
+        expect(fetchMock.calls()).toHaveLength(1)
+
+        const messageUpdated = await Message.findById(message._id)
+        expect(messageUpdated.sended).toEqual(true)
+      })
+
+      it('logs the success message', async () => {
+        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+        const contact = await Contact.create({
+          name: 'John Doe',
+          number: '5593165392832',
+          type: '@c.us',
+          talkingWithChatBot: true,
+          email: 'john@doe.com',
+          licensee: licensee,
+        })
+
+        const message = await Message.create({
+          _id: '60958703f415ed4008748637',
+          text: 'Message to send',
+          number: 'jhd7879a7d9',
+          contact: contact,
+          licensee: licensee,
+          destination: 'to-chatbot',
+          sended: false,
+        })
+
+        const expectedBody = {
+          sender: {
+            id: '5593165392832@c.us',
+            name: 'John Doe',
+            email: 'john@doe.com',
+            phone: '5593165392832',
+          },
+          message: {
+            id: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
+            type: 'text',
+            text: 'Message to send',
+          },
+        }
+
+        fetchMock.postOnce((url, { body }) => {
+          return url === 'https://url.com.br/jkJGs5a4ea/pAOqw2340' && body === JSON.stringify(expectedBody)
+        }, 200)
+
+        expect(message.sended).toEqual(false)
+
+        const jivochat = new Jivochat(licensee)
+        await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea', 'pAOqw2340')
+        await fetchMock.flush(true)
+
+        expect(fetchMock.done()).toBe(true)
+        expect(fetchMock.calls()).toHaveLength(1)
+
+        expect(consoleInfoSpy).toHaveBeenCalledWith(
+          'Mensagem 60958703f415ed4008748637 enviada para Jivochat com sucesso!'
+        )
+      })
+    })
+
+    describe('when response is not 200', () => {
+      it('logs the error message', async () => {
+        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+        const contact = await Contact.create({
+          name: 'John Doe',
+          number: '5593165392832',
+          type: '@c.us',
+          email: 'john@doe.com',
+          talkingWithChatBot: true,
+          licensee: licensee,
+        })
+
+        const message = await Message.create({
+          _id: '60958703f415ed4008748637',
+          text: 'Message to send',
+          number: 'jhd7879a7d9',
+          contact: contact,
+          licensee: licensee,
+          destination: 'to-chatbot',
+          sended: false,
+        })
+
+        const expectedBody = {
+          sender: {
+            id: '5593165392832@c.us',
+            name: 'John Doe',
+            email: 'john@doe.com',
+            phone: '5593165392832',
+          },
+          message: {
+            id: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
+            type: 'text',
+            text: 'Message to send',
+          },
+        }
+
+        fetchMock.postOnce((url, { body }) => {
+          return url === 'https://url.com.br/jkJGs5a4ea/pAOqw2340' && body === JSON.stringify(expectedBody)
+        }, 404)
+
+        expect(message.sended).toEqual(false)
+
+        const jivochat = new Jivochat(licensee)
+        await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea', 'pAOqw2340')
+        await fetchMock.flush(true)
+
+        expect(fetchMock.done()).toBe(true)
+        expect(fetchMock.calls()).toHaveLength(1)
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          `Mensagem 60958703f415ed4008748637 não enviada para Landbot.
+           status: 404
+           mensagem: ${JSON.stringify('')}`
+        )
+      })
+    })
+
+    describe('message types', () => {
+      describe('when message is location', () => {
+        it('sends the message with location', async () => {
+          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+          const contact = await Contact.create({
+            name: 'John Doe',
+            number: '5593165392832',
+            type: '@c.us',
+            email: 'john@doe.com',
+            talkingWithChatBot: true,
+            licensee: licensee,
+          })
+
+          const message = await Message.create({
+            text: 'Message to send',
+            number: 'jhd7879a7d9',
+            contact: contact,
+            licensee: licensee,
+            destination: 'to-chatbot',
+            kind: 'location',
+            latitude: 10.2,
+            longitude: 123.45,
+            sended: false,
+          })
+
+          const expectedBody = {
+            sender: {
+              id: '5593165392832@c.us',
+              name: 'John Doe',
+              email: 'john@doe.com',
+              phone: '5593165392832',
+            },
+            message: {
+              id: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
+              type: 'location',
+              latitude: 10.2,
+              longitude: 123.45,
+            },
+          }
+
+          fetchMock.postOnce((url, { body }) => {
+            return url === 'https://url.com.br/jkJGs5a4ea/pAOqw2340' && body === JSON.stringify(expectedBody)
+          }, 200)
+
+          const jivochat = new Jivochat(licensee)
+          await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea', 'pAOqw2340')
+          await fetchMock.flush(true)
+
+          expect(fetchMock.done()).toBe(true)
+          expect(fetchMock.calls()).toHaveLength(1)
+        })
+      })
+
+      describe('when message is text', () => {
+        it('sends the message with text', async () => {
+          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+          const contact = await Contact.create({
+            name: 'John Doe',
+            number: '5593165392832',
+            type: '@c.us',
+            email: 'john@doe.com',
+            talkingWithChatBot: true,
+            licensee: licensee,
+          })
+
+          const message = await Message.create({
+            text: 'Message to send',
+            number: 'jhd7879a7d9',
+            contact: contact,
+            licensee: licensee,
+            destination: 'to-chatbot',
+            sended: false,
+          })
+
+          const expectedBody = {
+            sender: {
+              id: '5593165392832@c.us',
+              name: 'John Doe',
+              email: 'john@doe.com',
+              phone: '5593165392832',
+            },
+            message: {
+              id: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
+              type: 'text',
+              text: 'Message to send',
+            },
+          }
+
+          fetchMock.postOnce((url, { body }) => {
+            return url === 'https://url.com.br/jkJGs5a4ea/pAOqw2340' && body === JSON.stringify(expectedBody)
+          }, 200)
+
+          expect(message.sended).toEqual(false)
+
+          const jivochat = new Jivochat(licensee)
+          await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea', 'pAOqw2340')
+          await fetchMock.flush(true)
+
+          expect(fetchMock.done()).toBe(true)
+          expect(fetchMock.calls()).toHaveLength(1)
+        })
+      })
+
+      describe('when message is file', () => {
+        it('sends the message with file', async () => {
+          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+          const contact = await Contact.create({
+            name: 'John Doe',
+            number: '5593165392832',
+            type: '@c.us',
+            email: 'john@doe.com',
+            talkingWithChatBot: true,
+            licensee: licensee,
+          })
+
+          const message = await Message.create({
+            text: 'Message to send',
+            number: 'jhd7879a7d9',
+            contact: contact,
+            licensee: licensee,
+            destination: 'to-chatbot',
+            kind: 'file',
+            url: 'https://message.with.file.com/file.txt',
+            fileName: 'file.txt',
+            sended: false,
+          })
+
+          const expectedBody = {
+            sender: {
+              id: '5593165392832@c.us',
+              name: 'John Doe',
+              email: 'john@doe.com',
+              phone: '5593165392832',
+            },
+            message: {
+              id: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
+              type: 'document',
+              file: 'https://message.with.file.com/file.txt',
+              file_name: 'file.txt',
+              file_size: '0',
+            },
+          }
+
+          fetchMock.postOnce((url, { body }) => {
+            return url === 'https://url.com.br/jkJGs5a4ea/pAOqw2340' && body === JSON.stringify(expectedBody)
+          }, 200)
+
+          expect(message.sended).toEqual(false)
+
+          const jivochat = new Jivochat(licensee)
+          await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea', 'pAOqw2340')
+          await fetchMock.flush(true)
+
+          expect(fetchMock.done()).toBe(true)
+          expect(fetchMock.calls()).toHaveLength(1)
+        })
+      })
+    })
+  })
+
+  describe('#transfer', () => {
+    it('changes the talking with chatbot in contact to false', async () => {
+      jest.spyOn(Jivochat.prototype, 'sendMessage').mockImplementation()
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const contact = await Contact.create({
+        name: 'John Doe',
+        number: '5593165392832@c.us',
+        type: '@c.us',
+        talkingWithChatBot: true,
+        licensee: licensee,
+      })
+
+      const message = await Message.create({
+        _id: '60958703f415ed4008748637',
+        text: 'Message to send',
+        number: 'jhd7879a7d9',
+        contact: contact,
+        licensee: licensee,
+        destination: 'to-chatbot',
+        sended: false,
+      })
+
+      expect(contact.talkingWithChatBot).toEqual(true)
+
+      const jivochat = new Jivochat(licensee)
+      await jivochat.transfer(message._id, 'url', 'token')
+
+      const modifiedContact = await Contact.findOne(contact._id)
+      expect(modifiedContact.talkingWithChatBot).toEqual(false)
+    })
+
+    it('sends message to chat', async () => {
+      const sendMessageSpy = jest.spyOn(Jivochat.prototype, 'sendMessage').mockImplementation()
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const contact = await Contact.create({
+        name: 'John Doe',
+        number: '5593165392832@c.us',
+        type: '@c.us',
+        talkingWithChatBot: true,
+        licensee: licensee,
+      })
+
+      const message = await Message.create({
+        _id: '60958703f415ed4008748637',
+        text: 'Message to send',
+        number: 'jhd7879a7d9',
+        contact: contact,
+        licensee: licensee,
+        destination: 'to-chatbot',
+        sended: false,
+      })
+
+      const jivochat = new Jivochat(licensee)
+      await jivochat.transfer(message._id.toString(), 'url', 'token')
+
+      expect(sendMessageSpy).toHaveBeenCalledTimes(1)
+      expect(sendMessageSpy).toHaveBeenCalledWith('60958703f415ed4008748637', 'url', 'token')
+    })
+  })
+
+  describe('#closeChat', () => {
+    it('resets the room id in contact', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const contact = await Contact.create({
+        name: 'John Doe',
+        number: '5593165392832@c.us',
+        type: '@c.us',
+        talkingWithChatBot: false,
+        licensee: licensee,
+        roomId: 'ka3DiV9CuHD765',
+      })
+
+      const message = await Message.create({
+        _id: '60958703f415ed4008748637',
+        text: 'Message to send',
+        number: 'jhd7879a7d9',
+        contact: contact,
+        licensee: licensee,
+        destination: 'to-chatbot',
+        sended: false,
+      })
+
+      expect(contact.talkingWithChatBot).toEqual(false)
+      expect(contact.roomId).toEqual('ka3DiV9CuHD765')
+
+      const jivochat = new Jivochat(licensee)
+      await jivochat.closeChat(message._id, licensee)
+
+      const modifiedContact = await Contact.findOne(contact._id)
+      expect(modifiedContact.roomId).toEqual('')
+    })
+
+    describe('when the licensee use chatbot', () => {
+      it('changes the talking with chatbot in contact to true', async () => {
+        const licensee = await Licensee.create({
+          name: 'Alcateia Ltds',
+          active: true,
+          licenseKind: 'demo',
+          useChatbot: true,
+          chatbotDefault: 'landbot',
+          chatbotUrl: 'https://url.com',
+          chatbotAuthorizationToken: 'token',
+        })
+
+        const contact = await Contact.create({
+          name: 'John Doe',
+          number: '5593165392832@c.us',
+          type: '@c.us',
+          talkingWithChatBot: false,
+          licensee: licensee,
+          roomId: 'ka3DiV9CuHD765',
+        })
+
+        const message = await Message.create({
+          _id: '60958703f415ed4008748637',
+          text: 'Message to send',
+          number: 'jhd7879a7d9',
+          contact: contact,
+          licensee: licensee,
+          destination: 'to-chatbot',
+          sended: false,
+        })
+
+        expect(contact.talkingWithChatBot).toEqual(false)
+        expect(contact.roomId).toEqual('ka3DiV9CuHD765')
+
+        const jivochat = new Jivochat(licensee)
+        await jivochat.closeChat(message._id, licensee)
+
+        const modifiedContact = await Contact.findOne(contact._id)
+        expect(modifiedContact.talkingWithChatBot).toEqual(true)
+        expect(modifiedContact.roomId).toEqual('')
+      })
+    })
+  })
+})

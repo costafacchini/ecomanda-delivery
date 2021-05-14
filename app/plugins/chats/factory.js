@@ -1,12 +1,12 @@
 const Jivochat = require('./Jivochat')
 const Rocketchat = require('./Rocketchat')
 
-function createChatPlugin(licensee, body) {
+function createChatPlugin(licensee) {
   switch (licensee.chatDefault) {
     case 'jivochat':
-      return new Jivochat(body)
+      return new Jivochat(licensee)
     case 'rocketchat':
-      return new Rocketchat(body)
+      return new Rocketchat(licensee)
     default:
       throw `Plugin de chat não configurado: ${licensee.chatDefault}`
   }

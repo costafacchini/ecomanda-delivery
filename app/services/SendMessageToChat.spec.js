@@ -3,7 +3,7 @@ const Licensee = require('@models/Licensee')
 const Jivochat = require('../plugins/chats/Jivochat')
 
 describe('sendMessageToChat', () => {
-  const jivochatSendMessageSpy = jest.spyOn(Jivochat.prototype, 'sendMessage')
+  const jivochatSendMessageSpy = jest.spyOn(Jivochat.prototype, 'sendMessage').mockImplementation(() => {})
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -15,11 +15,13 @@ describe('sendMessageToChat', () => {
     })
 
     const body = {
-      message: 'message',
+      messageId: 'NSO25PA04GST830HS',
+      url: 'https://messenger.url',
+      token: 'token',
     }
 
     await sendMessageToChat(body, licensee)
 
-    expect(jivochatSendMessageSpy).toHaveBeenCalled()
+    expect(jivochatSendMessageSpy).toHaveBeenCalledWith('NSO25PA04GST830HS', 'https://messenger.url', 'token')
   })
 })

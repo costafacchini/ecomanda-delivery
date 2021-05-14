@@ -1,31 +1,184 @@
+const emoji = require('../../helpers/Emoji')
+const files = require('../../helpers/Files')
+const NormalizePhone = require('../../helpers/NormalizePhone')
+const { v4: uuidv4 } = require('uuid')
+const Message = require('@models/Message')
+const Contact = require('@models/Contact')
+const request = require('../../services/request')
+
 class Jivochat {
-  constructor(requestBody) {
-    this.requestBody = requestBody
-    this.action = this.#defineAction()
-    this.transformdedBody = this.#transformBody()
+  constructor(licensee) {
+    this.licensee = licensee
   }
 
-  #defineAction() {
-    let action = ''
-    if (this.requestBody.message.type !== 'typein' && this.requestBody.message.type !== 'typeout') {
-      action = 'send-message-to-messenger'
+  action(responseBody) {
+    const { message } = responseBody
+
+    if (message.text === 'Chat encerrado pelo agente' || message.text === 'Chat closed by agent') {
+      return 'close-chat'
+    } else {
+      return 'send-message-to-messenger'
+    }
+  }
+
+  async responseToMessage(responseBody) {
+    const { recipient, message } = responseBody
+
+    if (!message || !recipient) return
+    if (message.type === 'typein' || message.type === 'typeout') return
+
+    const normalizePhone = new NormalizePhone(recipient.id)
+
+    const contact = await Contact.findOne({
+      number: normalizePhone.number,
+      type: normalizePhone.type,
+      licensee: this.licensee,
+    })
+
+    const kind = Jivochat.kindToMessageKind(message.type)
+
+    if (!kind) {
+      console.info(`Tipo de mensagem retornado pela Jivochat não reconhecido: ${message.type}`)
+      return
     }
 
-    return action
+    const text = message.type === 'text' ? emoji.replace(message.text) : ''
+
+    const messageToSend = new Message({
+      number: uuidv4(),
+      text,
+      kind,
+      licensee: this.licensee._id,
+      contact: contact._id,
+      destination: 'to-messenger',
+    })
+
+    if (kind === 'file') {
+      messageToSend.url = message.file
+      messageToSend.fileName = message.file_name
+    }
+
+    if (kind === 'location') {
+      messageToSend.latitude = message.latitude
+      messageToSend.longitude = message.longitude
+    }
+
+    await messageToSend.save()
+
+    return messageToSend
   }
 
-  #transformBody() {
-    this.requestBody
-    return ''
+  static kindToMessageKind(kind) {
+    switch (kind) {
+      case 'text':
+        return 'text'
+      case 'video':
+        return 'file'
+      case 'audio':
+        return 'file'
+      case 'voice':
+        return 'file'
+      case 'photo':
+        return 'file'
+      case 'document':
+        return 'file'
+      case 'sticker':
+        return 'file'
+      case 'location':
+        return 'location'
+      default:
+        return undefined
+    }
   }
 
-  sendMessage() {
-    //Detectar o tipo do arquivo
-    //Enviar arquivo
+  async transfer(messageId, url, token) {
+    const messageToSend = await Message.findById(messageId).populate('contact')
+    const contact = await Contact.findById(messageToSend.contact._id)
+
+    contact.talkingWithChatBot = false
+    await contact.save()
+
+    await this.sendMessage(messageId, url, token)
   }
 
-  closeChat() {
-    // modificar no licenciado o roomId para nulo e também o talkingWithChatBot caso o licenciado use chatBot
+  async sendMessage(messageId, url, token) {
+    const messageToSend = await Message.findById(messageId).populate('contact')
+
+    const body = {
+      sender: {
+        id: messageToSend.contact.number + messageToSend.contact.type,
+        name: messageToSend.contact.name,
+        email: messageToSend.contact.email,
+        phone: messageToSend.contact.number,
+      },
+      message: {
+        id: uuidv4(),
+      },
+    }
+
+    if (messageToSend.kind === 'text') {
+      body.message.type = 'text'
+      body.message.text = messageToSend.text
+    }
+
+    if (messageToSend.kind === 'location') {
+      body.message.type = 'location'
+      body.message.latitude = messageToSend.latitude
+      body.message.longitude = messageToSend.longitude
+    }
+
+    if (messageToSend.kind === 'file') {
+      body.message.type = Jivochat.messageType(messageToSend.url)
+      body.message.file = messageToSend.url
+      body.message.file_name = messageToSend.fileName
+      body.message.file_size = '0'
+    }
+
+    const response = await request.post(`${url}/${token}`, { body })
+
+    if (response.status === 200) {
+      messageToSend.sended = true
+      await messageToSend.save()
+      console.info(`Mensagem ${messageToSend._id} enviada para Jivochat com sucesso!`)
+    } else {
+      console.error(
+        `Mensagem ${messageToSend._id} não enviada para Landbot.
+           status: ${response.status}
+           mensagem: ${JSON.stringify(response.data)}`
+      )
+    }
+  }
+
+  static messageType(fileUrl) {
+    let type
+    if (files.isPhoto(fileUrl)) {
+      type = 'photo'
+    }
+    if (files.isVideo(fileUrl)) {
+      type = 'video'
+    }
+    if (files.isMidia(fileUrl)) {
+      type = 'audio'
+    }
+    if (files.isVoice(fileUrl)) {
+      type = 'voice'
+    }
+    if (!type) {
+      type = 'document'
+    }
+
+    return type
+  }
+
+  async closeChat(messageId, licensee) {
+    const message = await Message.findById(messageId).populate('contact')
+    const contact = await Contact.findById(message.contact._id)
+
+    contact.roomId = ''
+    if (licensee.useChatbot) {
+      contact.talkingWithChatBot = true
+    }
+    await contact.save()
   }
 }
 

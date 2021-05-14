@@ -44,7 +44,10 @@ const messageSchema = new Schema({
   destination: {
     type: String,
     enum: ['to-chatbot', 'to-chat', 'to-messenger', 'to-transfer'],
-    required: [true, 'Destino: Você deve informar qual o destino da mensagem (to-chatbot | to-chat | to-messenger | to-transfer)'],
+    required: [
+      true,
+      'Destino: Você deve informar qual o destino da mensagem (to-chatbot | to-chat | to-messenger | to-transfer)',
+    ],
   },
   latitude: Number,
   longitude: Number,

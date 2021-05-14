@@ -9,11 +9,7 @@ describe('createChatPlugin', () => {
       chatDefault: 'jivochat',
     })
 
-    const body = {
-      message: 'test',
-    }
-
-    const plugin = createChatPlugin(licensee, body)
+    const plugin = createChatPlugin(licensee)
 
     expect(plugin).toBeInstanceOf(Jivochat)
   })
@@ -23,11 +19,7 @@ describe('createChatPlugin', () => {
       chatDefault: 'rocketchat',
     })
 
-    const body = {
-      type: 'test',
-    }
-
-    const plugin = createChatPlugin(licensee, body)
+    const plugin = createChatPlugin(licensee)
 
     expect(plugin).toBeInstanceOf(Rocketchat)
   })
@@ -37,12 +29,8 @@ describe('createChatPlugin', () => {
       chatDefault: 'something',
     })
 
-    const body = {
-      field: 'test',
-    }
-
     expect(() => {
-      createChatPlugin(licensee, body)
+      createChatPlugin(licensee)
     }).toThrow('Plugin de chat não configurado: something')
   })
 })

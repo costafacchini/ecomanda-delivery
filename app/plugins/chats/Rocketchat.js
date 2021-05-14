@@ -1,35 +1,34 @@
 class Rocketchat {
-  constructor(requestBody) {
-    this.action = this.#defineAction(requestBody)
-    this.transformdedBody = this.#transformaBody(requestBody)
+  constructor(licensee) {
+    this.licensee = licensee
   }
 
-  #defineAction(requestBody) {
+  action(responseBody) {
     let action = ''
-    if (requestBody.type.toLowerCase() === 'message') {
+    if (responseBody.type.toLowerCase() === 'message') {
       action = 'send-message-to-messenger'
-    } else if (requestBody.type.toLowerCase() === 'livechatsession') {
+    } else if (responseBody.type.toLowerCase() === 'livechatsession') {
       action = 'close-chat'
     }
 
     return action
   }
 
-  #transformaBody(requestBody) {
-    if (this.action === 'close-chat') {
-      return requestBody._id
+  async responseToMessage(responseBody) {
+    if (this.action(responseBody) === 'close-chat') {
+      return responseBody._id
     } else {
       //_id é o id da sala da conversa
 
-      return requestBody
+      return responseBody
     }
   }
 
-  action() {
-    return this.action
+  async transfer(messageId, url, token) {
+
   }
 
-  sendMessage() {
+  async sendMessage(messageId, url, token) {
     //Verificar se já tem roomId no contact
     //Se não tiver, criar o visitante no livechat
     //  buscar o roomId utilizando o chatRef como token
@@ -37,7 +36,7 @@ class Rocketchat {
     //Enviar mensagem
   }
 
-  closeChat() {
+  async closeChat(contactId, licensee) {
     // modificar no licenciado o roomId para nulo e também o talkingWithChatBot caso o licenciado use chatBot
   }
 }

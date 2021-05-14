@@ -97,12 +97,13 @@ class Landbot {
     })
   }
 
-  async sendMessage(message, url, token) {
-    const messageToSend = await Message.findById(message._id).populate('contact')
+  async sendMessage(messageId, url, token) {
+    const messageToSend = await Message.findById(messageId).populate('contact')
 
     const customer = {
       name: messageToSend.contact.name,
       number: messageToSend.contact.number,
+      email: messageToSend.contact.email,
       type: messageToSend.contact.type,
       licensee: messageToSend.licensee._id,
     }
@@ -111,7 +112,7 @@ class Landbot {
       customer,
       message: {
         type: 'text',
-        message: message.text,
+        message: messageToSend.text,
         payload: '$1',
       },
     }

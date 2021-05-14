@@ -3,7 +3,7 @@ const Licensee = require('@models/Licensee')
 const Chatapi = require('../plugins/messengers/Chatapi')
 
 describe('sendMessageToMessenger', () => {
-  const chatapiSendMessageSpy = jest.spyOn(Chatapi.prototype, 'sendMessage')
+  const chatapiSendMessageSpy = jest.spyOn(Chatapi.prototype, 'sendMessage').mockImplementation(() => {})
 
   beforeEach(() => {
     jest.clearAllMocks()

@@ -4,12 +4,14 @@ const Contact = require('@models/Contact')
 const Licensee = require('@models/Licensee')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('.jest/utils')
+const emoji = require('../../helpers/Emoji')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
 describe('Landbot plugin', () => {
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
+  const emojiReplaceSpy = jest.spyOn(emoji, 'replace')
 
   beforeEach(async () => {
     jest.clearAllMocks()
@@ -126,6 +128,11 @@ describe('Landbot plugin', () => {
       expect(messages[2].latitude).toEqual(3.15)
       expect(messages[2].longitude).toEqual(101.75)
       expect(messages[2].departament).toEqual(undefined)
+
+      expect(emojiReplaceSpy).toHaveBeenCalledTimes(3)
+      expect(emojiReplaceSpy).toHaveBeenCalledWith('Hello world')
+      expect(emojiReplaceSpy).toHaveBeenCalledWith('Text with image')
+      expect(emojiReplaceSpy).toHaveBeenCalledWith('It is here')
 
       expect(consoleInfoSpy).toHaveBeenCalledTimes(2)
       expect(consoleInfoSpy).toHaveBeenCalledWith(
@@ -291,7 +298,7 @@ describe('Landbot plugin', () => {
         expect(message.sended).toEqual(false)
 
         const landbot = new Landbot(licensee)
-        await landbot.sendMessage(message, 'https://url.com.br', 'token')
+        await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
@@ -303,13 +310,16 @@ describe('Landbot plugin', () => {
 
       it('logs the success message', async () => {
         const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
         const contact = await Contact.create({
           name: 'John Doe',
           number: '5593165392832',
           type: '@c.us',
           talkingWithChatBot: true,
+          email: 'john@doe.com',
           licensee: licensee,
         })
+
         const message = await Message.create({
           _id: '60958703f415ed4008748637',
           text: 'Message to send',
@@ -324,6 +334,7 @@ describe('Landbot plugin', () => {
           customer: {
             name: 'John Doe',
             number: '5593165392832',
+            email: 'john@doe.com',
             type: '@c.us',
             licensee: licensee._id,
           },
@@ -350,6 +361,7 @@ describe('Landbot plugin', () => {
                 id: 42,
                 name: 'John Doe',
                 phone: '5593165392832@c.us',
+                email: 'john@doe.com',
                 token: 'token',
               },
             },
@@ -357,7 +369,7 @@ describe('Landbot plugin', () => {
         )
 
         const landbot = new Landbot(licensee)
-        await landbot.sendMessage(message, 'https://url.com.br', 'token')
+        await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
@@ -372,6 +384,7 @@ describe('Landbot plugin', () => {
                id: 42,
                name: 'John Doe',
                phone: '5593165392832@c.us',
+               email: 'john@doe.com',
                token: 'token',
              },
            })}`
@@ -382,13 +395,16 @@ describe('Landbot plugin', () => {
     describe('when response is not 201', () => {
       it('logs the error message', async () => {
         const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
         const contact = await Contact.create({
           name: 'John Doe',
           number: '5593165392832',
           type: '@c.us',
+          email: 'john@doe.com',
           talkingWithChatBot: true,
           licensee: licensee,
         })
+
         const message = await Message.create({
           _id: '60958703f415ed4008748637',
           text: 'Message to send',
@@ -403,6 +419,7 @@ describe('Landbot plugin', () => {
           customer: {
             name: 'John Doe',
             number: '5593165392832',
+            email: 'john@doe.com',
             type: '@c.us',
             licensee: licensee._id,
           },
@@ -432,7 +449,7 @@ describe('Landbot plugin', () => {
         expect(message.sended).toEqual(false)
 
         const landbot = new Landbot(licensee)
-        await landbot.sendMessage(message, 'https://url.com.br', 'token')
+        await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
@@ -444,6 +461,20 @@ describe('Landbot plugin', () => {
            mensagem: ${JSON.stringify({ detail: 'invalid token' })}`
         )
       })
+    })
+  })
+
+  describe('.kindToMessageKind', () => {
+    it('returns text if kind is text', () => {
+      expect(Landbot.kindToMessageKind('text')).toEqual('text')
+    })
+
+    it('returns file if kind is image', () => {
+      expect(Landbot.kindToMessageKind('image')).toEqual('file')
+    })
+
+    it('returns location if kind is location', () => {
+      expect(Landbot.kindToMessageKind('location')).toEqual('location')
     })
   })
 })

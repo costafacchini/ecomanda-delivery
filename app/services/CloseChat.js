@@ -1,9 +1,9 @@
 const createChatPlugin = require('../plugins/chats/factory')
 
-async function closeChat(body, licensee) {
-  const chatPlugin = createChatPlugin(licensee, body)
+async function closeChat(messageId, licensee) {
+  const chatPlugin = createChatPlugin(licensee)
 
-  await chatPlugin.closeChat()
+  await chatPlugin.closeChat(messageId, licensee)
 }
 
 module.exports = closeChat
