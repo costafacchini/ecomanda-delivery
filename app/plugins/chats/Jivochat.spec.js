@@ -264,40 +264,6 @@ describe('Jivochat plugin', () => {
     })
   })
 
-  describe('.kindToMessageKind', () => {
-    it('returns text if kind is text', () => {
-      expect(Jivochat.kindToMessageKind('text')).toEqual('text')
-    })
-
-    it('returns file if kind is video', () => {
-      expect(Jivochat.kindToMessageKind('video')).toEqual('file')
-    })
-
-    it('returns file if kind is audio', () => {
-      expect(Jivochat.kindToMessageKind('audio')).toEqual('file')
-    })
-
-    it('returns file if kind is voice', () => {
-      expect(Jivochat.kindToMessageKind('voice')).toEqual('file')
-    })
-
-    it('returns file if kind is photo', () => {
-      expect(Jivochat.kindToMessageKind('photo')).toEqual('file')
-    })
-
-    it('returns file if kind is document', () => {
-      expect(Jivochat.kindToMessageKind('document')).toEqual('file')
-    })
-
-    it('returns file if kind is sticker', () => {
-      expect(Jivochat.kindToMessageKind('sticker')).toEqual('file')
-    })
-
-    it('returns location if kind is location', () => {
-      expect(Jivochat.kindToMessageKind('location')).toEqual('location')
-    })
-  })
-
   describe('#sendMessage', () => {
     describe('when response status is 200', () => {
       it('marks the message with sended', async () => {
@@ -764,6 +730,103 @@ describe('Jivochat plugin', () => {
         expect(modifiedContact.talkingWithChatBot).toEqual(true)
         expect(modifiedContact.roomId).toEqual('')
       })
+    })
+  })
+
+  describe('#action', () => {
+    it('returns "close-chat" if message is "Chat encerrado pelo agente"', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const responseBody = {
+        message: {
+          text: 'Chat encerrado pelo agente'
+        }
+      }
+
+      const jivochat = new Jivochat(licensee)
+      expect(jivochat.action(responseBody)).toEqual('close-chat')
+    })
+
+    it('returns "close-chat" if message is "Chat closed by agent"', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const responseBody = {
+        message: {
+          text: 'Chat closed by agent'
+        }
+      }
+
+      const jivochat = new Jivochat(licensee)
+      expect(jivochat.action(responseBody)).toEqual('close-chat')
+    })
+
+    it('returns "send-message-to-messenger" if message is not "Chat closed by agent" and "Chat closed by agent"', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const responseBody = {
+        message: {
+          text: 'Message'
+        }
+      }
+
+      const jivochat = new Jivochat(licensee)
+      expect(jivochat.action(responseBody)).toEqual('send-message-to-messenger')
+    })
+  })
+
+  describe('.kindToMessageKind', () => {
+    it('returns text if kind is text', () => {
+      expect(Jivochat.kindToMessageKind('text')).toEqual('text')
+    })
+
+    it('returns file if kind is video', () => {
+      expect(Jivochat.kindToMessageKind('video')).toEqual('file')
+    })
+
+    it('returns file if kind is audio', () => {
+      expect(Jivochat.kindToMessageKind('audio')).toEqual('file')
+    })
+
+    it('returns file if kind is voice', () => {
+      expect(Jivochat.kindToMessageKind('voice')).toEqual('file')
+    })
+
+    it('returns file if kind is photo', () => {
+      expect(Jivochat.kindToMessageKind('photo')).toEqual('file')
+    })
+
+    it('returns file if kind is document', () => {
+      expect(Jivochat.kindToMessageKind('document')).toEqual('file')
+    })
+
+    it('returns file if kind is sticker', () => {
+      expect(Jivochat.kindToMessageKind('sticker')).toEqual('file')
+    })
+
+    it('returns location if kind is location', () => {
+      expect(Jivochat.kindToMessageKind('location')).toEqual('location')
+    })
+  })
+
+  describe('.messageType', () => {
+    it('returns "photo" if fileUrl is photo', () => {
+      expect(Jivochat.messageType('file.jpg')).toEqual('photo')
+    })
+
+    it('returns "video" if fileUrl is video', () => {
+      expect(Jivochat.messageType('file.mpg')).toEqual('video')
+    })
+
+    it('returns "audio" if fileUrl is audio', () => {
+      expect(Jivochat.messageType('file.ogg')).toEqual('audio')
+    })
+
+    it('returns "voice" if fileUrl is voice', () => {
+      expect(Jivochat.messageType('file.opus')).toEqual('voice')
+    })
+
+    it('returns "document" if fileUrl is another extension', () => {
+      expect(Jivochat.messageType('file.txt')).toEqual('document')
     })
   })
 })
