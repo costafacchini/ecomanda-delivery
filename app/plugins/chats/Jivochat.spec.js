@@ -424,7 +424,7 @@ describe('Jivochat plugin', () => {
         expect(fetchMock.calls()).toHaveLength(1)
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          `Mensagem 60958703f415ed4008748637 não enviada para Landbot.
+          `Mensagem 60958703f415ed4008748637 não enviada para Jivochat.
            status: 404
            mensagem: ${JSON.stringify('')}`
         )

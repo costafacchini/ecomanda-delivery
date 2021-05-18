@@ -142,7 +142,7 @@ class Jivochat {
       console.info(`Mensagem ${messageToSend._id} enviada para Jivochat com sucesso!`)
     } else {
       console.error(
-        `Mensagem ${messageToSend._id} não enviada para Landbot.
+        `Mensagem ${messageToSend._id} não enviada para Jivochat.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}`
       )
