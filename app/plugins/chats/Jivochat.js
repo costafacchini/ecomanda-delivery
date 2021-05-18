@@ -21,7 +21,7 @@ class Jivochat {
     }
   }
 
-  async responseToMessage(responseBody) {
+  async responseToMessages(responseBody) {
     const { recipient, message } = responseBody
 
     if (!message || !recipient) return
@@ -65,7 +65,7 @@ class Jivochat {
 
     await messageToSend.save()
 
-    return messageToSend
+    return [messageToSend]
   }
 
   static kindToMessageKind(kind) {

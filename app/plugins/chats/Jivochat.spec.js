@@ -23,8 +23,8 @@ describe('Jivochat plugin', () => {
     await mongoServer.disconnect()
   })
 
-  describe('#responseToMessage', () => {
-    it('returns the response body transformed in message', async () => {
+  describe('#responseToMessages', () => {
+    it('returns the response body transformed in messages', async () => {
       const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
 
       const contact = await Contact.create({
@@ -50,23 +50,25 @@ describe('Jivochat plugin', () => {
       }
 
       const jivochat = new Jivochat(licensee)
-      const message = await jivochat.responseToMessage(responseBody)
+      const messages = await jivochat.responseToMessages(responseBody)
 
-      expect(message).toBeInstanceOf(Message)
-      expect(message.licensee).toEqual(licensee._id)
-      expect(message.contact).toEqual(contact._id)
-      expect(message.kind).toEqual('text')
-      expect(message.number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
-      expect(message.destination).toEqual('to-messenger')
-      expect(message.text).toEqual('Hello world')
-      expect(message.url).toEqual(undefined)
-      expect(message.fileName).toEqual(undefined)
-      expect(message.latitude).toEqual(undefined)
-      expect(message.longitude).toEqual(undefined)
-      expect(message.departament).toEqual(undefined)
+      expect(messages[0]).toBeInstanceOf(Message)
+      expect(messages[0].licensee).toEqual(licensee._id)
+      expect(messages[0].contact).toEqual(contact._id)
+      expect(messages[0].kind).toEqual('text')
+      expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+      expect(messages[0].destination).toEqual('to-messenger')
+      expect(messages[0].text).toEqual('Hello world')
+      expect(messages[0].url).toEqual(undefined)
+      expect(messages[0].fileName).toEqual(undefined)
+      expect(messages[0].latitude).toEqual(undefined)
+      expect(messages[0].longitude).toEqual(undefined)
+      expect(messages[0].departament).toEqual(undefined)
 
       expect(emojiReplaceSpy).toHaveBeenCalled()
       expect(emojiReplaceSpy).toHaveBeenCalledWith('Hello world')
+
+      expect(messages.length).toEqual(1)
     })
 
     it('return the empty data if body is blank', async () => {
@@ -75,7 +77,7 @@ describe('Jivochat plugin', () => {
       const responseBody = {}
 
       const jivochat = new Jivochat(licensee)
-      const message = await jivochat.responseToMessage(responseBody)
+      const message = await jivochat.responseToMessages(responseBody)
 
       expect(message).toEqual(undefined)
     })
@@ -93,7 +95,7 @@ describe('Jivochat plugin', () => {
       }
 
       const jivochat = new Jivochat(licensee)
-      const message = await jivochat.responseToMessage(responseBody)
+      const message = await jivochat.responseToMessages(responseBody)
 
       expect(message).toEqual(undefined)
     })
@@ -113,7 +115,7 @@ describe('Jivochat plugin', () => {
       }
 
       const jivochat = new Jivochat(licensee)
-      const message = await jivochat.responseToMessage(responseBody)
+      const message = await jivochat.responseToMessages(responseBody)
 
       expect(message).toEqual(undefined)
     })
@@ -136,7 +138,7 @@ describe('Jivochat plugin', () => {
       }
 
       const jivochat = new Jivochat(licensee)
-      const message = await jivochat.responseToMessage(responseBody)
+      const message = await jivochat.responseToMessages(responseBody)
 
       expect(message).toEqual(undefined)
     })
@@ -159,13 +161,13 @@ describe('Jivochat plugin', () => {
       }
 
       const jivochat = new Jivochat(licensee)
-      const message = await jivochat.responseToMessage(responseBody)
+      const message = await jivochat.responseToMessages(responseBody)
 
       expect(message).toEqual(undefined)
     })
 
     describe('message types', () => {
-      it('returns message with file data if it is file', async () => {
+      it('returns messages with file data if it is file', async () => {
         const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
 
         await Contact.create({
@@ -192,16 +194,16 @@ describe('Jivochat plugin', () => {
         }
 
         const jivochat = new Jivochat(licensee)
-        const message = await jivochat.responseToMessage(responseBody)
+        const messages = await jivochat.responseToMessages(responseBody)
 
-        expect(message).toBeInstanceOf(Message)
-        expect(message.kind).toEqual('file')
-        expect(message.text).toEqual('')
-        expect(message.url).toEqual('https://octodex.github.com/images/dojocat.jpg')
-        expect(message.fileName).toEqual('dojocat.jpg')
+        expect(messages[0]).toBeInstanceOf(Message)
+        expect(messages[0].kind).toEqual('file')
+        expect(messages[0].text).toEqual('')
+        expect(messages[0].url).toEqual('https://octodex.github.com/images/dojocat.jpg')
+        expect(messages[0].fileName).toEqual('dojocat.jpg')
       })
 
-      it('returns message with coordinates data if it is location', async () => {
+      it('returns messages with coordinates data if it is location', async () => {
         const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
 
         await Contact.create({
@@ -228,13 +230,13 @@ describe('Jivochat plugin', () => {
         }
 
         const jivochat = new Jivochat(licensee)
-        const message = await jivochat.responseToMessage(responseBody)
+        const messages = await jivochat.responseToMessages(responseBody)
 
-        expect(message).toBeInstanceOf(Message)
-        expect(message.kind).toEqual('location')
-        expect(message.text).toEqual('')
-        expect(message.latitude).toEqual(123.93)
-        expect(message.longitude).toEqual(12.0)
+        expect(messages[0]).toBeInstanceOf(Message)
+        expect(messages[0].kind).toEqual('location')
+        expect(messages[0].text).toEqual('')
+        expect(messages[0].latitude).toEqual(123.93)
+        expect(messages[0].longitude).toEqual(12.0)
       })
 
       it('logs the info and return empty data if kind is unknown', async () => {
@@ -255,7 +257,7 @@ describe('Jivochat plugin', () => {
         }
 
         const jivochat = new Jivochat(licensee)
-        const message = await jivochat.responseToMessage(responseBody)
+        const message = await jivochat.responseToMessages(responseBody)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith('Tipo de mensagem retornado pela Jivochat não reconhecido: any')
 
