@@ -21,7 +21,7 @@ describe('transformChatbotBody', () => {
       chatbotDefault: 'landbot',
       whatsappDefault: 'chatapi',
       whatsappUrl: 'https://chat.url',
-      whatsappToken: 'token'
+      whatsappToken: 'token',
     })
 
     const body = {
@@ -40,7 +40,7 @@ describe('transformChatbotBody', () => {
         chatbotDefault: 'landbot',
         whatsappDefault: 'chatapi',
         whatsappUrl: 'https://chat.url',
-        whatsappToken: 'token'
+        whatsappToken: 'token',
       })
     )
 
@@ -51,7 +51,7 @@ describe('transformChatbotBody', () => {
         chatbotDefault: 'landbot',
         whatsappDefault: 'chatapi',
         whatsappUrl: 'https://chat.url',
-        whatsappToken: 'token'
+        whatsappToken: 'token',
       })
     )
   })
@@ -67,7 +67,7 @@ describe('transformChatbotBody', () => {
       chatbotDefault: 'landbot',
       whatsappDefault: 'chatapi',
       whatsappUrl: 'https://chat.url',
-      whatsappToken: 'token'
+      whatsappToken: 'token',
     })
 
     const body = {}

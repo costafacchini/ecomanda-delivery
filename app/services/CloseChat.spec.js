@@ -43,7 +43,7 @@ describe('closeChat', () => {
       destination: 'to-chat',
       kind: 'text',
       sended: false,
-      _id: '609dcb059f560046cde64748'
+      _id: '609dcb059f560046cde64748',
     })
 
     await closeChat(message._id.toString(), licensee)

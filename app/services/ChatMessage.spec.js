@@ -11,17 +11,15 @@ describe('transformChatBody', () => {
   })
 
   it('enqueues job to dispatcher action of plugin', async () => {
-    const chatPluginResponseToMessages = jest
-      .spyOn(Jivochat.prototype, 'responseToMessage')
-      .mockImplementation(() => {
-        return { _id: 'KSDF656DSD91NSE' }
-      })
+    const chatPluginResponseToMessages = jest.spyOn(Jivochat.prototype, 'responseToMessage').mockImplementation(() => {
+      return { _id: 'KSDF656DSD91NSE' }
+    })
 
     const licensee = new Licensee({
       chatDefault: 'jivochat',
       whatsappDefault: 'chatapi',
       whatsappUrl: 'https://chat.url',
-      whatsappToken: 'token'
+      whatsappToken: 'token',
     })
 
     const body = {
@@ -41,23 +39,21 @@ describe('transformChatBody', () => {
         chatDefault: 'jivochat',
         whatsappDefault: 'chatapi',
         whatsappUrl: 'https://chat.url',
-        whatsappToken: 'token'
+        whatsappToken: 'token',
       })
     )
   })
 
   it('does not enqueue job if body is invalid', async () => {
-    const chatPluginResponseToMessages = jest
-      .spyOn(Jivochat.prototype, 'responseToMessage')
-      .mockImplementation(() => {
-        return undefined
-      })
+    const chatPluginResponseToMessages = jest.spyOn(Jivochat.prototype, 'responseToMessage').mockImplementation(() => {
+      return undefined
+    })
 
     const licensee = new Licensee({
       chatDefault: 'jivochat',
       whatsappDefault: 'chatapi',
       whatsappUrl: 'https://chat.url',
-      whatsappToken: 'token'
+      whatsappToken: 'token',
     })
 
     const body = {

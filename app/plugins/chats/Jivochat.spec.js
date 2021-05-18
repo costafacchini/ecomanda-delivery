@@ -739,8 +739,8 @@ describe('Jivochat plugin', () => {
 
       const responseBody = {
         message: {
-          text: 'Chat encerrado pelo agente'
-        }
+          text: 'Chat encerrado pelo agente',
+        },
       }
 
       const jivochat = new Jivochat(licensee)
@@ -752,8 +752,8 @@ describe('Jivochat plugin', () => {
 
       const responseBody = {
         message: {
-          text: 'Chat closed by agent'
-        }
+          text: 'Chat closed by agent',
+        },
       }
 
       const jivochat = new Jivochat(licensee)
@@ -765,8 +765,8 @@ describe('Jivochat plugin', () => {
 
       const responseBody = {
         message: {
-          text: 'Message'
-        }
+          text: 'Message',
+        },
       }
 
       const jivochat = new Jivochat(licensee)
