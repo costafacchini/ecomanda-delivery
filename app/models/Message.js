@@ -53,9 +53,6 @@ const messageSchema = new Schema({
   longitude: Number,
   departament: String,
   sended: { type: Boolean, default: false },
-  receivedAt: Date,
-  reededAt: Date,
-  sentAt: Date,
   licensee: {
     type: ObjectId,
     ref: 'Licensee',
