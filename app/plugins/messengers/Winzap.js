@@ -46,6 +46,11 @@ class Winzap {
       })
 
       await contact.save()
+    } else {
+      if (contact.name !== bodyParsed.name && bodyParsed.type !== 'file') {
+        contact.name = bodyParsed.name
+        await contact.save()
+      }
     }
 
     const messageToSend = new Message({

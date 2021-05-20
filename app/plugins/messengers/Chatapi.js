@@ -39,6 +39,11 @@ class Chatapi {
           })
 
           await contact.save()
+        } else {
+          if (contact.name !== message.senderName) {
+            contact.name = message.senderName
+            await contact.save()
+          }
         }
 
         const kind = Chatapi.kindToMessageKind(message.type)

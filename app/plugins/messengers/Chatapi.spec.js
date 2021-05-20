@@ -196,6 +196,53 @@ describe('Chatapi plugin', () => {
       })
     })
 
+    it('updates the contact if contact exists and name is different', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      await Contact.create({
+        name: 'John Doe',
+        number: '5593165392832@c.us',
+        type: '@c.us',
+        talkingWithChatBot: false,
+        licensee: licensee,
+      })
+
+      const responseBody = {
+        messages: [
+          {
+            id: 'false_5593165392832@c.us_3EB066E484BABD9F3C69',
+            body: 'Message to send',
+            fromMe: false,
+            self: 1,
+            isForwarded: 0,
+            author: '5593165392832@c.us',
+            time: 1616708028,
+            chatId: '5593165392832@c.us',
+            messageNumber: 111,
+            type: 'chat',
+            senderName: 'Jonny Cash',
+            caption: null,
+            quotedMsgBody: null,
+            quotedMsgId: null,
+            quotedMsgType: null,
+            chatName: 'Jonny Cash',
+          },
+        ],
+        instanceId: '244959',
+      }
+
+      const chatapi = new Chatapi(licensee)
+      await chatapi.responseToMessages(responseBody)
+
+      const contactUpdated = await Contact.findOne({
+        number: '5593165392832',
+        type: '@c.us',
+        licensee: licensee,
+      })
+
+      expect(contactUpdated.name).toEqual('Jonny Cash')
+    })
+
     describe('when the contact does not exists', () => {
       it('registers the contact and return the response body transformed in messages', async () => {
         const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
