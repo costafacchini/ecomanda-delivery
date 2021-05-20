@@ -2,14 +2,14 @@ const Chatapi = require('./Chatapi')
 const Utalk = require('./Utalk')
 const Winzap = require('./Winzap')
 
-function createMessengerPlugin(licensee, body) {
+function createMessengerPlugin(licensee) {
   switch (licensee.whatsappDefault) {
     case 'chatapi':
-      return new Chatapi(body)
+      return new Chatapi(licensee)
     case 'utalk':
-      return new Utalk(body)
+      return new Utalk(licensee)
     case 'winzap':
-      return new Winzap(body)
+      return new Winzap(licensee)
     default:
       throw `Plugin de messenger não configurado: ${licensee.whatsappDefault}`
   }
