@@ -363,8 +363,8 @@ describe('Chatapi plugin', () => {
   })
 
   describe('#sendMessage', () => {
-    describe('when the message sended', () => {
-      it('marks the message with sended', async () => {
+    describe('when the message was sent', () => {
+      it('marks the message with was sent', async () => {
         const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
 
         const contact = await Contact.create({
