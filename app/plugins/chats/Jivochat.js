@@ -101,7 +101,7 @@ class Jivochat {
     await this.sendMessage(messageId, url, token)
   }
 
-  async sendMessage(messageId, url, token) {
+  async sendMessage(messageId, url) {
     const messageToSend = await Message.findById(messageId).populate('contact')
 
     const body = {
@@ -134,7 +134,7 @@ class Jivochat {
       body.message.file_size = '0'
     }
 
-    const response = await request.post(`${url}/${token}`, { body })
+    const response = await request.post(`${url}`, { body })
 
     if (response.status === 200) {
       messageToSend.sended = true

@@ -310,7 +310,7 @@ describe('Jivochat plugin', () => {
         expect(message.sended).toEqual(false)
 
         const jivochat = new Jivochat(licensee)
-        await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea', 'pAOqw2340')
+        await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
@@ -363,7 +363,7 @@ describe('Jivochat plugin', () => {
         expect(message.sended).toEqual(false)
 
         const jivochat = new Jivochat(licensee)
-        await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea', 'pAOqw2340')
+        await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
@@ -419,7 +419,7 @@ describe('Jivochat plugin', () => {
         expect(message.sended).toEqual(false)
 
         const jivochat = new Jivochat(licensee)
-        await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea', 'pAOqw2340')
+        await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
@@ -479,7 +479,7 @@ describe('Jivochat plugin', () => {
           }, 200)
 
           const jivochat = new Jivochat(licensee)
-          await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea', 'pAOqw2340')
+          await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
           await fetchMock.flush(true)
 
           expect(fetchMock.done()).toBe(true)
@@ -530,7 +530,7 @@ describe('Jivochat plugin', () => {
           expect(message.sended).toEqual(false)
 
           const jivochat = new Jivochat(licensee)
-          await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea', 'pAOqw2340')
+          await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
           await fetchMock.flush(true)
 
           expect(fetchMock.done()).toBe(true)
@@ -586,7 +586,7 @@ describe('Jivochat plugin', () => {
           expect(message.sended).toEqual(false)
 
           const jivochat = new Jivochat(licensee)
-          await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea', 'pAOqw2340')
+          await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
           await fetchMock.flush(true)
 
           expect(fetchMock.done()).toBe(true)
