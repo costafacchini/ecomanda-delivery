@@ -874,12 +874,18 @@ describe('Chatapi plugin', () => {
   })
 
   describe('.action', () => {
-    it('returns send-message-to-chat if message destination is to chat', () => {
-      expect(Chatapi.action('to_chat')).toEqual('send-message-to-chat')
+    it('returns send-message-to-chat if message destination is to chat', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+      const chatapi = new Chatapi(licensee)
+
+      expect(chatapi.action('to-chat')).toEqual('send-message-to-chat')
     })
 
-    it('returns send-message-to-chatbot if message destination is to chatbot', () => {
-      expect(Chatapi.action('to_chatbot')).toEqual('send-message-to-chatbot')
+    it('returns send-message-to-chatbot if message destination is to chatbot', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+      const chatapi = new Chatapi(licensee)
+
+      expect(chatapi.action('to-chatbot')).toEqual('send-message-to-chatbot')
     })
   })
 })

@@ -94,8 +94,8 @@ class Chatapi {
     }
   }
 
-  static action(messageDestination) {
-    if (messageDestination === 'to_chat') {
+  action(messageDestination) {
+    if (messageDestination === 'to-chat') {
       return 'send-message-to-chat'
     } else {
       return  'send-message-to-chatbot'

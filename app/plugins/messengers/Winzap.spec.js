@@ -667,13 +667,19 @@ describe('Winzap plugin', () => {
     })
   })
 
-  describe('.action', () => {
-    it('returns send-message-to-chat if message destination is to chat', () => {
-      expect(Winzap.action('to_chat')).toEqual('send-message-to-chat')
+  describe('#action', () => {
+    it('returns send-message-to-chat if message destination is to chat', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+      const winzap = new Winzap(licensee)
+
+      expect(winzap.action('to-chat')).toEqual('send-message-to-chat')
     })
 
-    it('returns send-message-to-chatbot if message destination is to chatbot', () => {
-      expect(Winzap.action('to_chatbot')).toEqual('send-message-to-chatbot')
+    it('returns send-message-to-chatbot if message destination is to chatbot', async() => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+      const winzap = new Winzap(licensee)
+
+      expect(winzap.action('to-chatbot')).toEqual('send-message-to-chatbot')
     })
   })
 })
