@@ -4,9 +4,8 @@ const queueServer = require('@config/queue')
 async function transformChatBody(body, licensee) {
   const chatPlugin = createChatPlugin(licensee)
 
-  const message = chatPlugin.responseToMessage(body)
-
-  if (message) {
+  const messages = chatPlugin.responseToMessages(body)
+  for (const message of messages) {
     const bodyToSend = {
       messageId: message._id,
       url: licensee.whatsappUrl,
