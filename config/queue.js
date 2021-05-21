@@ -1,5 +1,5 @@
 const { Queue } = require('bullmq')
-const redisConnection = require('@config/redis')
+const { redisConnection } = require('@config/redis')
 
 const jobs = require('../app/jobs/index')
 
@@ -13,7 +13,7 @@ const queueOptions = {
     removeOnComplete: true,
     removeOnFail: true,
   },
-  redisConnection,
+  connection: redisConnection,
 }
 
 function createQueue(name) {
