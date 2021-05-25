@@ -10,6 +10,8 @@ queueServer.queues.forEach(queue => {
     await queue.handle(job.data)
   }, { connection: redisConnection })
 
+  redisConnection.setMaxListeners(redisConnection.getMaxListeners() + 1)
+
   worker.on('completed', (job) => {
     console.log(`Complete process job ${JSON.stringify(job)}`)
   })
