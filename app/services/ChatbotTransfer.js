@@ -4,7 +4,7 @@ async function transformChatbotTransferBody(body, licensee) {
   const chatbotPlugin = createChatbotPlugin(licensee)
 
   const actions = []
-  const message = chatbotPlugin.responseTransferToMessage(body)
+  const message = await chatbotPlugin.responseTransferToMessage(body)
 
   if (message) {
     const bodyToSend = {

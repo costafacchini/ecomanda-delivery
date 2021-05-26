@@ -4,7 +4,7 @@ async function transformChatBody(body, licensee) {
   const chatPlugin = createChatPlugin(licensee)
 
   const actions = []
-  const messages = chatPlugin.responseToMessages(body)
+  const messages = await chatPlugin.responseToMessages(body)
 
   for (const message of messages) {
     const bodyToSend = {
