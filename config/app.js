@@ -3,7 +3,7 @@ require('module-alias/register')
 const createError = require('http-errors')
 const express = require('express')
 const logger = require('morgan')
-const connect = require('./database.js')
+const connect = require('./database')
 const enableCors = require('./cors')
 const routes = require('./routes')
 

@@ -60,7 +60,7 @@ describe('messengers controller', () => {
           .expect(201)
           .then((response) => {
             expect(response.body).toEqual({
-              body: 'Solicitação de de mensagem para a plataforma de messenger agendado',
+              body: 'Solicitação de mensagem para a plataforma de messenger agendado',
             })
             expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
             expect(queueServerAddJobSpy).toHaveBeenCalledWith('messenger-message', { field: 'test' }, licensee)
