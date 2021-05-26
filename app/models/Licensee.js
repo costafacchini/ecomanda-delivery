@@ -117,6 +117,14 @@ const userSchema = new Schema({
 userSchema.pre('save', function (next) {
   const licensee = this
 
+  if (licensee.whatsappDefault === 'utalk') {
+    licensee.whatsappUrl = 'https://v1.utalk.chat/send/'
+  }
+
+  if (licensee.whatsappDefault === 'winzap') {
+    licensee.whatsappUrl = 'https://api.winzap.com.br/send/'
+  }
+
   if (!licensee._id) {
     licensee._id = new mongoose.Types.ObjectId()
   }
@@ -125,6 +133,18 @@ userSchema.pre('save', function (next) {
 
 userSchema.set('toJSON', {
   virtuals: true,
+})
+
+userSchema.virtual('urlChatWebhook').get(function() {
+  return `https://ecomanda-delivery.herokuapp.com/api/v1/chat/message/?token=${this.apiToken}`
+})
+
+userSchema.virtual('urlChatbotWebhook').get(function() {
+  return `https://ecomanda-delivery.herokuapp.com/api/v1/chatbot/message/?token=${this.apiToken}`
+})
+
+userSchema.virtual('urlWhatsappWebhook').get(function() {
+  return `https://ecomanda-delivery.herokuapp.com/api/v1/messenger/message/?token=${this.apiToken}`
 })
 
 const Licensee = mongoose.model('Licensee', userSchema)
