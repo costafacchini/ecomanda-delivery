@@ -9,9 +9,8 @@ const queueOptions = {
       type: 'exponential',
       delay: 100,
     },
-    attempts: 3,
+    attempts: 2,
     removeOnComplete: true,
-    removeOnFail: true,
   },
   connection: redisConnection,
 }
