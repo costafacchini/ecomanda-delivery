@@ -7,14 +7,17 @@ const { Worker } = require('bullmq')
 
 queueServer.queues.forEach(queue => {
   const worker = new Worker(queue.name, async job => {
-    await queue.handle(job.data)
+    const handleResult = await queue.handle(job.data)
+    if (handleResult) {
+      for (const actionJob of handleResult) {
+        const { action, body, licensee } = actionJob
+
+        await queueServer.addJob(action, body, licensee)
+      }
+    }
   }, { connection: redisConnection })
 
   redisConnection.setMaxListeners(redisConnection.getMaxListeners() + 1)
-
-  worker.on('completed', (job) => {
-    console.log(`Complete process job ${JSON.stringify(job)}`)
-  })
 
   worker.on('failed', (job, failedReason) => {
     console.error(`Complete process job ${job} `, failedReason)

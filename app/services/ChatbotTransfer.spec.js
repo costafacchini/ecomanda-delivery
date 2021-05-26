@@ -1,16 +1,13 @@
 const transformChatbotTransferBody = require('./ChatbotTransfer')
 const Licensee = require('@models/Licensee')
-const queueServer = require('@config/queue')
 const Landbot = require('../plugins/chatbots/Landbot')
 
 describe('transformChatbotTransferBody', () => {
-  const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
-
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  it('enqueues job to transfer message to chat', async () => {
+  it('responds with action to transfer message to chat', async () => {
     const chatbotPluginResponseToMessages = jest
       .spyOn(Landbot.prototype, 'responseTransferToMessage')
       .mockImplementation(() => {
@@ -26,21 +23,23 @@ describe('transformChatbotTransferBody', () => {
       message: 'text',
     }
 
-    await transformChatbotTransferBody(body, licensee)
+    const actions = await transformChatbotTransferBody(body, licensee)
 
     expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body)
 
-    expect(queueServerAddJobSpy).toHaveBeenCalledWith(
-      'transfer-to-chat',
-      { messageId: 'KSDF656DSD91NSE', url: 'https://chat.url' },
+    expect(actions[0].action).toEqual('transfer-to-chat')
+    expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://chat.url' })
+    expect(actions[0].licensee).toEqual(
       expect.objectContaining({
         chatbotDefault: 'landbot',
         chatUrl: 'https://chat.url',
       })
     )
+
+    expect(actions.length).toEqual(1)
   })
 
-  it('does not enqueue job if body is invalid', async () => {
+  it('responds with blank actions if body is invalid', async () => {
     const chatbotPluginResponseToMessages = jest
       .spyOn(Landbot.prototype, 'responseTransferToMessage')
       .mockImplementation(() => {
@@ -54,10 +53,10 @@ describe('transformChatbotTransferBody', () => {
 
     const body = {}
 
-    await transformChatbotTransferBody(body, licensee)
+    const actions = await transformChatbotTransferBody(body, licensee)
 
     expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body)
 
-    expect(queueServerAddJobSpy).not.toBeCalled()
+    expect(actions.length).toEqual(0)
   })
 })

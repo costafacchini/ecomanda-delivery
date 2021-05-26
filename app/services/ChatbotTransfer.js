@@ -1,9 +1,9 @@
 const createChatbotPlugin = require('../plugins/chatbots/factory')
-const queueServer = require('@config/queue')
 
 async function transformChatbotTransferBody(body, licensee) {
   const chatbotPlugin = createChatbotPlugin(licensee)
 
+  const actions = []
   const message = chatbotPlugin.responseTransferToMessage(body)
 
   if (message) {
@@ -12,8 +12,14 @@ async function transformChatbotTransferBody(body, licensee) {
       url: licensee.chatUrl,
     }
 
-    await queueServer.addJob('transfer-to-chat', bodyToSend, licensee)
+    actions.push({
+      action: 'transfer-to-chat',
+      body: bodyToSend,
+      licensee
+    })
   }
+
+  return actions
 }
 
 module.exports = transformChatbotTransferBody

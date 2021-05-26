@@ -1,16 +1,13 @@
 const transformChatBody = require('./ChatMessage')
 const Licensee = require('@models/Licensee')
-const queueServer = require('@config/queue')
 const Jivochat = require('../plugins/chats/Jivochat')
 
 describe('transformChatBody', () => {
-  const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
-
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  it('enqueues job to dispatcher action of plugin', async () => {
+  it('responds with action to dispatcher action of plugin', async () => {
     const chatPluginResponseToMessages = jest.spyOn(Jivochat.prototype, 'responseToMessages').mockImplementation(() => {
       return [{ _id: 'KSDF656DSD91NSE' }, { _id: 'OAR8Q54LDN02T' }]
     })
@@ -28,14 +25,13 @@ describe('transformChatBody', () => {
       },
     }
 
-    await transformChatBody(body, licensee)
+    const actions = await transformChatBody(body, licensee)
 
     expect(chatPluginResponseToMessages).toHaveBeenCalledWith(body)
 
-    expect(queueServerAddJobSpy).toHaveBeenCalledTimes(2)
-    expect(queueServerAddJobSpy).toHaveBeenCalledWith(
-      'send-message-to-messenger',
-      { messageId: 'KSDF656DSD91NSE', url: 'https://chat.url', token: 'token' },
+    expect(actions[0].action).toEqual('send-message-to-messenger')
+    expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://chat.url', token: 'token' })
+    expect(actions[0].licensee).toEqual(
       expect.objectContaining({
         chatDefault: 'jivochat',
         whatsappDefault: 'chatapi',
@@ -44,9 +40,9 @@ describe('transformChatBody', () => {
       })
     )
 
-    expect(queueServerAddJobSpy).toHaveBeenCalledWith(
-      'send-message-to-messenger',
-      { messageId: 'OAR8Q54LDN02T', url: 'https://chat.url', token: 'token' },
+    expect(actions[1].action).toEqual('send-message-to-messenger')
+    expect(actions[1].body).toEqual({ messageId: 'OAR8Q54LDN02T', url: 'https://chat.url', token: 'token' },)
+    expect(actions[1].licensee).toEqual(
       expect.objectContaining({
         chatDefault: 'jivochat',
         whatsappDefault: 'chatapi',
@@ -54,9 +50,11 @@ describe('transformChatBody', () => {
         whatsappToken: 'token',
       })
     )
+
+    expect(actions.length).toEqual(2)
   })
 
-  it('does not enqueue job if body is invalid', async () => {
+  it('responds with blank actions if body is invalid', async () => {
     const chatPluginResponseToMessages = jest.spyOn(Jivochat.prototype, 'responseToMessages').mockImplementation(() => {
       return []
     })
@@ -74,10 +72,10 @@ describe('transformChatBody', () => {
       },
     }
 
-    await transformChatBody(body, licensee)
+    const actions = await transformChatBody(body, licensee)
 
     expect(chatPluginResponseToMessages).toHaveBeenCalledWith(body)
 
-    expect(queueServerAddJobSpy).not.toBeCalled()
+    expect(actions.length).toEqual(0)
   })
 })

@@ -1,16 +1,13 @@
 const transformChatbotBody = require('./ChatbotMessage')
 const Licensee = require('@models/Licensee')
-const queueServer = require('@config/queue')
 const Landbot = require('../plugins/chatbots/Landbot')
 
 describe('transformChatbotBody', () => {
-  const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
-
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  it('enqueues job to send message to messenger', async () => {
+  it('responds with action to send message to messenger', async () => {
     const chatbotPluginResponseToMessages = jest
       .spyOn(Landbot.prototype, 'responseToMessages')
       .mockImplementation(() => {
@@ -28,14 +25,13 @@ describe('transformChatbotBody', () => {
       message: 'text',
     }
 
-    await transformChatbotBody(body, licensee)
+    const actions = await transformChatbotBody(body, licensee)
 
     expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body)
 
-    expect(queueServerAddJobSpy).toHaveBeenCalledTimes(2)
-    expect(queueServerAddJobSpy).toHaveBeenCalledWith(
-      'send-message-to-messenger',
-      { messageId: 'KSDF656DSD91NSE', url: 'https://chat.url', token: 'token' },
+    expect(actions[0].action).toEqual('send-message-to-messenger')
+    expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://chat.url', token: 'token' })
+    expect(actions[0].licensee).toEqual(
       expect.objectContaining({
         chatbotDefault: 'landbot',
         whatsappDefault: 'chatapi',
@@ -44,9 +40,9 @@ describe('transformChatbotBody', () => {
       })
     )
 
-    expect(queueServerAddJobSpy).toHaveBeenCalledWith(
-      'send-message-to-messenger',
-      { messageId: 'OAR8Q54LDN02T', url: 'https://chat.url', token: 'token' },
+    expect(actions[1].action).toEqual('send-message-to-messenger')
+    expect(actions[1].body).toEqual({ messageId: 'OAR8Q54LDN02T', url: 'https://chat.url', token: 'token' })
+    expect(actions[1].licensee).toEqual(
       expect.objectContaining({
         chatbotDefault: 'landbot',
         whatsappDefault: 'chatapi',
@@ -54,9 +50,11 @@ describe('transformChatbotBody', () => {
         whatsappToken: 'token',
       })
     )
+
+    expect(actions.length).toEqual(2)
   })
 
-  it('does not enqueue job if body is invalid', async () => {
+  it('responds with blank actions if body is invalid', async () => {
     const chatbotPluginResponseToMessages = jest
       .spyOn(Landbot.prototype, 'responseToMessages')
       .mockImplementation(() => {
@@ -72,10 +70,10 @@ describe('transformChatbotBody', () => {
 
     const body = {}
 
-    await transformChatbotBody(body, licensee)
+    const actions = await transformChatbotBody(body, licensee)
 
     expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body)
 
-    expect(queueServerAddJobSpy).not.toBeCalled()
+    expect(actions.length).toEqual(0)
   })
 })

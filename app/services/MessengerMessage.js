@@ -1,10 +1,11 @@
 const createMessengerPlugin = require('../plugins/messengers/factory')
-const queueServer = require('@config/queue')
 
 async function transformMessengerBody(body, licensee) {
   const messengerPlugin = createMessengerPlugin(licensee)
 
-  const messages = messengerPlugin.responseToMessages(body)
+  const actions = []
+  const messages = await messengerPlugin.responseToMessages(body)
+
   for (const message of messages) {
     const action = messengerPlugin.action(message.destination)
     const url = message.destination === 'to-chat' ? licensee.chatUrl : licensee.chatbotUrl
@@ -16,8 +17,14 @@ async function transformMessengerBody(body, licensee) {
       token
     }
 
-    await queueServer.addJob(action, bodyToSend, licensee)
+    actions.push({
+      action,
+      body: bodyToSend,
+      licensee
+    })
   }
+
+  return actions
 }
 
 module.exports = transformMessengerBody

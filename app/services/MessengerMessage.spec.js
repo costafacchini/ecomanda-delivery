@@ -1,16 +1,13 @@
 const transformMessengerBody = require('./MessengerMessage')
 const Licensee = require('@models/Licensee')
-const queueServer = require('@config/queue')
 const Chatapi = require('../plugins/messengers/Chatapi')
 
 describe('transformMessengerBody', () => {
-  const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
-
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  it('enqueues job to dispatcher send-message-to-chatbot if message destination is to-chatbot', async () => {
+  it('responds with action to send message to chat and chatbot', async () => {
     const messengerPluginResponseToMessages = jest.spyOn(Chatapi.prototype, 'responseToMessages').mockImplementation(() => {
       return [{ _id: 'KSDF656DSD91NSE', destination: 'to-chatbot' }, { _id: 'OAR8Q54LDN02T', destination: 'to-chat' }]
     })
@@ -28,14 +25,13 @@ describe('transformMessengerBody', () => {
       },
     }
 
-    await transformMessengerBody(body, licensee)
+    const actions = await transformMessengerBody(body, licensee)
 
     expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body)
 
-    expect(queueServerAddJobSpy).toHaveBeenCalledTimes(2)
-    expect(queueServerAddJobSpy).toHaveBeenCalledWith(
-      'send-message-to-chatbot',
-      { messageId: 'KSDF656DSD91NSE', url: 'https://whatsapp.url', token: 'ljsdf12g' },
+    expect(actions[0].action).toEqual('send-message-to-chatbot')
+    expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://whatsapp.url', token: 'ljsdf12g' })
+    expect(actions[0].licensee).toEqual(
       expect.objectContaining({
         whatsappDefault: 'chatapi',
         chatbotUrl: 'https://whatsapp.url',
@@ -44,9 +40,9 @@ describe('transformMessengerBody', () => {
       })
     )
 
-    expect(queueServerAddJobSpy).toHaveBeenCalledWith(
-      'send-message-to-chat',
-      { messageId: 'OAR8Q54LDN02T', url: 'https://chat.url', token: '' },
+    expect(actions[1].action).toEqual('send-message-to-chat')
+    expect(actions[1].body).toEqual({ messageId: 'OAR8Q54LDN02T', url: 'https://chat.url', token: '' })
+    expect(actions[1].licensee).toEqual(
       expect.objectContaining({
         whatsappDefault: 'chatapi',
         chatbotUrl: 'https://whatsapp.url',
@@ -54,9 +50,11 @@ describe('transformMessengerBody', () => {
         chatUrl: 'https://chat.url',
       })
     )
+
+    expect(actions.length).toEqual(2)
   })
 
-  it('does not enqueue job if body is invalid', async () => {
+  it('responds with blank actions if body is invalid', async () => {
     const messengerPluginResponseToMessages = jest.spyOn(Chatapi.prototype, 'responseToMessages').mockImplementation(() => {
       return []
     })
@@ -74,10 +72,10 @@ describe('transformMessengerBody', () => {
       },
     }
 
-    await transformMessengerBody(body, licensee)
+    const actions = await transformMessengerBody(body, licensee)
 
     expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body)
 
-    expect(queueServerAddJobSpy).not.toBeCalled()
+    expect(actions.length).toEqual(0)
   })
 })

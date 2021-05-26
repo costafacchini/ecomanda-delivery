@@ -1,10 +1,11 @@
 const createChatbotPlugin = require('../plugins/chatbots/factory')
-const queueServer = require('@config/queue')
 
 async function transformChatbotBody(body, licensee) {
   const chatbotPlugin = createChatbotPlugin(licensee)
 
-  const messages = chatbotPlugin.responseToMessages(body)
+  const actions = []
+  const messages = await chatbotPlugin.responseToMessages(body)
+
   for (const message of messages) {
     const bodyToSend = {
       messageId: message._id,
@@ -12,8 +13,14 @@ async function transformChatbotBody(body, licensee) {
       token: licensee.whatsappToken,
     }
 
-    await queueServer.addJob('send-message-to-messenger', bodyToSend, licensee)
+    actions.push({
+      action: 'send-message-to-messenger',
+      body: bodyToSend,
+      licensee
+    })
   }
+
+  return actions
 }
 
 module.exports = transformChatbotBody
