@@ -166,6 +166,29 @@ describe('Jivochat plugin', () => {
       expect(message).toEqual(undefined)
     })
 
+    it('return the empty data if type is stop', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const responseBody = {
+        sender: {
+          name: 'Mary Jane',
+        },
+        recipient: {
+          id: '5593165392832@c.us',
+        },
+        message: {
+          type: 'stop',
+          id: 'jivo_message_id',
+          text: 'Hello world',
+        },
+      }
+
+      const jivochat = new Jivochat(licensee)
+      const message = await jivochat.responseToMessages(responseBody)
+
+      expect(message).toEqual(undefined)
+    })
+
     describe('message types', () => {
       it('returns messages with file data if it is file', async () => {
         const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })

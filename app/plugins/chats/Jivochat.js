@@ -25,7 +25,7 @@ class Jivochat {
     const { recipient, message } = responseBody
 
     if (!message || !recipient) return
-    if (message.type === 'typein' || message.type === 'typeout') return
+    if (message.type === 'typein' || message.type === 'typeout' || message.type === 'stop') return
 
     const normalizePhone = new NormalizePhone(recipient.id)
 
