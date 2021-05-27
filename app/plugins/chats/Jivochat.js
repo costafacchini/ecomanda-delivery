@@ -24,8 +24,8 @@ class Jivochat {
   async responseToMessages(responseBody) {
     const { recipient, message } = responseBody
 
-    if (!message || !recipient) return
-    if (message.type === 'typein' || message.type === 'typeout' || message.type === 'stop') return
+    if (!message || !recipient) return []
+    if (message.type === 'typein' || message.type === 'typeout' || message.type === 'stop') return []
 
     const normalizePhone = new NormalizePhone(recipient.id)
 
@@ -39,7 +39,7 @@ class Jivochat {
 
     if (!kind) {
       console.info(`Tipo de mensagem retornado pela Jivochat não reconhecido: ${message.type}`)
-      return
+      return []
     }
 
     const text = message.type === 'text' ? emoji.replace(message.text) : ''

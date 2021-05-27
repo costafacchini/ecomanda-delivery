@@ -79,7 +79,7 @@ describe('Jivochat plugin', () => {
       const jivochat = new Jivochat(licensee)
       const message = await jivochat.responseToMessages(responseBody)
 
-      expect(message).toEqual(undefined)
+      expect(message).toEqual([])
     })
 
     it('return the empty data if body does not have a message', async () => {
@@ -97,7 +97,7 @@ describe('Jivochat plugin', () => {
       const jivochat = new Jivochat(licensee)
       const message = await jivochat.responseToMessages(responseBody)
 
-      expect(message).toEqual(undefined)
+      expect(message).toEqual([])
     })
 
     it('return the empty data if body does not have a recipient', async () => {
@@ -117,7 +117,7 @@ describe('Jivochat plugin', () => {
       const jivochat = new Jivochat(licensee)
       const message = await jivochat.responseToMessages(responseBody)
 
-      expect(message).toEqual(undefined)
+      expect(message).toEqual([])
     })
 
     it('return the empty data if type is typein', async () => {
@@ -140,7 +140,7 @@ describe('Jivochat plugin', () => {
       const jivochat = new Jivochat(licensee)
       const message = await jivochat.responseToMessages(responseBody)
 
-      expect(message).toEqual(undefined)
+      expect(message).toEqual([])
     })
 
     it('return the empty data if type is typeout', async () => {
@@ -163,7 +163,7 @@ describe('Jivochat plugin', () => {
       const jivochat = new Jivochat(licensee)
       const message = await jivochat.responseToMessages(responseBody)
 
-      expect(message).toEqual(undefined)
+      expect(message).toEqual([])
     })
 
     it('return the empty data if type is stop', async () => {
@@ -186,7 +186,7 @@ describe('Jivochat plugin', () => {
       const jivochat = new Jivochat(licensee)
       const message = await jivochat.responseToMessages(responseBody)
 
-      expect(message).toEqual(undefined)
+      expect(message).toEqual([])
     })
 
     describe('message types', () => {
@@ -284,7 +284,7 @@ describe('Jivochat plugin', () => {
 
         expect(consoleInfoSpy).toHaveBeenCalledWith('Tipo de mensagem retornado pela Jivochat não reconhecido: any')
 
-        expect(message).toEqual(undefined)
+        expect(message).toEqual([])
       })
     })
   })
