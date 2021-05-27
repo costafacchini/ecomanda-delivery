@@ -99,6 +99,12 @@ class Utalk {
         blob: responseBody['blob']
       }
     }
+
+    if (responseBody.event === 'ack') {
+      return {
+        dir: 'o'
+      }
+    }
   }
 
   #uploadFile(contact, fileName, fileBase64) {

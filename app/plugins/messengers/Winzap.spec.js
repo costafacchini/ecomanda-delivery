@@ -168,6 +168,22 @@ describe('Winzap plugin', () => {
       })
     })
 
+    describe('ack', () => {
+      it('returns the response body transformed in message ignoring the message from me', async () => {
+        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+        const responseBody = {
+          event: 'ack',
+          token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT'
+        }
+
+        const winzap = new Winzap(licensee)
+        const messages = await winzap.responseToMessages(responseBody)
+
+        expect(messages.length).toEqual(0)
+      })
+    })
+
     it('updates the contact if contact exists, name is different and message is not file', async () => {
       const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
 
