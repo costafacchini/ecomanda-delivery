@@ -598,7 +598,6 @@ describe('Jivochat plugin', () => {
               type: 'document',
               file: 'https://message.with.file.com/file.txt',
               file_name: 'file.txt',
-              file_size: '0',
             },
           }
 

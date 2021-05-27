@@ -131,7 +131,6 @@ class Jivochat {
       body.message.type = Jivochat.messageType(messageToSend.url)
       body.message.file = messageToSend.url
       body.message.file_name = messageToSend.fileName
-      body.message.file_size = '0'
     }
 
     const response = await request.post(`${url}`, { body })
