@@ -48,7 +48,7 @@ describe('messengers controller', () => {
 
   describe('create', () => {
     describe('response', () => {
-      it('returns status 201 and schedule job to process chat message', async () => {
+      it('returns status 200 and schedule job to process chat message', async () => {
         const licensee = await Licensee.findOne({ apiToken })
 
         await request(expressServer)
@@ -57,7 +57,7 @@ describe('messengers controller', () => {
             field: 'test',
           })
           .expect('Content-Type', /json/)
-          .expect(201)
+          .expect(200)
           .then((response) => {
             expect(response.body).toEqual({
               body: 'Solicitação de mensagem para a plataforma de messenger agendado',

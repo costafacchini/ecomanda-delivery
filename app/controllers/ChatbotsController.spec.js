@@ -48,7 +48,7 @@ describe('chatbots controller', () => {
     })
 
     describe('response', () => {
-      it('returns status 201 and schedule job to process chatbot message', async () => {
+      it('returns status 200 and schedule job to process chatbot message', async () => {
         const licensee = await Licensee.findOne({ apiToken })
 
         await request(expressServer)
@@ -57,7 +57,7 @@ describe('chatbots controller', () => {
             field: 'test',
           })
           .expect('Content-Type', /json/)
-          .expect(201)
+          .expect(200)
           .then((response) => {
             expect(response.body).toEqual({ body: 'Solicitação de mensagem para a plataforma de chatbot agendado' })
             expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
@@ -91,7 +91,7 @@ describe('chatbots controller', () => {
     })
 
     describe('response', () => {
-      it('returns status 201 and schedule job to transfer chatbot to chat', async () => {
+      it('returns status 200 and schedule job to transfer chatbot to chat', async () => {
         const licensee = await Licensee.findOne({ apiToken })
 
         await request(expressServer)
@@ -100,7 +100,7 @@ describe('chatbots controller', () => {
             field: 'test',
           })
           .expect('Content-Type', /json/)
-          .expect(201)
+          .expect(200)
           .then((response) => {
             expect(response.body).toEqual({
               body: 'Solicitação de transferência do chatbot para a plataforma de chat agendado',
