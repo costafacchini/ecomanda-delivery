@@ -149,7 +149,7 @@ class Rocketchat {
   }
 
   #formatMessage(message, contact) {
-    return contact.type === '@c.us' ? message.text : `*${contact.name}:*\n${message.text}`
+    return contact.type === '@c.us' ? message.text : `*${message.senderName}:*\n${message.text}`
   }
 
   async closeChat(messageId, licensee) {

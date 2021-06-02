@@ -396,6 +396,60 @@ describe('Jivochat plugin', () => {
           'Mensagem 60958703f415ed4008748637 enviada para Jivochat com sucesso!'
         )
       })
+
+      describe('when message is for group', () => {
+        it('send message formatted to group', async () => {
+          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+          const contact = await Contact.create({
+            name: 'Grupo Teste',
+            number: '5511989187726-1622497000@g.us',
+            type: '@g.us',
+            email: 'john@doe.com',
+            talkingWithChatBot: true,
+            licensee: licensee,
+          })
+
+          const message = await Message.create({
+            text: 'Message to send',
+            number: 'jhd7879a7d9',
+            contact: contact,
+            licensee: licensee,
+            destination: 'to-chatbot',
+            senderName: 'John Doe',
+            sended: false,
+          })
+
+          const expectedBody = {
+            sender: {
+              id: '5511989187726-1622497000@g.us',
+              name: 'Grupo Teste',
+              email: 'john@doe.com',
+            },
+            message: {
+              id: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
+              type: 'text',
+              text: 'John Doe:\\nMessage to send\\n',
+            },
+          }
+
+          fetchMock.postOnce((url, { body }) => {
+            return url === 'https://url.com.br/jkJGs5a4ea/pAOqw2340' && body === JSON.stringify(expectedBody)
+          }, 200)
+
+          expect(message.sended).toEqual(false)
+
+          const jivochat = new Jivochat(licensee)
+          await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
+          await fetchMock.flush(true)
+
+          expect(fetchMock.done()).toBe(true)
+          expect(fetchMock.calls()).toHaveLength(1)
+
+          const messageUpdated = await Message.findById(message._id)
+          expect(messageUpdated.sended).toEqual(true)
+        })
+      })
     })
 
     describe('when response is not 200', () => {

@@ -104,13 +104,16 @@ class Jivochat {
   async sendMessage(messageId, url) {
     const messageToSend = await Message.findById(messageId).populate('contact')
 
+    const sender = {
+      id: messageToSend.contact.number + messageToSend.contact.type,
+      name: messageToSend.contact.name,
+      email: messageToSend.contact.email,
+    }
+
+    if (messageToSend.contact.type === '@c.us') sender.phone = messageToSend.contact.number
+
     const body = {
-      sender: {
-        id: messageToSend.contact.number + messageToSend.contact.type,
-        name: messageToSend.contact.name,
-        email: messageToSend.contact.email,
-        phone: messageToSend.contact.number,
-      },
+      sender,
       message: {
         id: uuidv4(),
       },
@@ -118,7 +121,11 @@ class Jivochat {
 
     if (messageToSend.kind === 'text') {
       body.message.type = 'text'
-      body.message.text = messageToSend.text
+      if (messageToSend.contact.type === '@g.us') {
+        body.message.text = `${messageToSend.senderName}:\\n${messageToSend.text}\\n`
+      } else {
+        body.message.text = messageToSend.text
+      }
     }
 
     if (messageToSend.kind === 'location') {
