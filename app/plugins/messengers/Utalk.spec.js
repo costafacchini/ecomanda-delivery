@@ -66,6 +66,7 @@ describe('Utalk plugin', () => {
         expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
         expect(messages[0].destination).toEqual('to-chat')
         expect(messages[0].text).toEqual('Message to send')
+        expect(messages[0].senderName).toEqual(undefined)
         expect(messages[0].url).toEqual(undefined)
         expect(messages[0].fileName).toEqual(undefined)
         expect(messages[0].latitude).toEqual(undefined)
@@ -109,6 +110,7 @@ describe('Utalk plugin', () => {
         expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
         expect(messages[0].destination).toEqual('to-chat')
         expect(messages[0].text).toEqual(undefined)
+        expect(messages[0].senderName).toEqual(undefined)
         expect(messages[0].url).toEqual('https://s3.url.com/1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg')
         expect(messages[0].fileName).toEqual('1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg')
         expect(messages[0].latitude).toEqual(undefined)
@@ -158,6 +160,57 @@ describe('Utalk plugin', () => {
         expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
         expect(messages[0].destination).toEqual('to-chat')
         expect(messages[0].text).toEqual('Message to send')
+        expect(messages[0].senderName).toEqual(undefined)
+        expect(messages[0].url).toEqual(undefined)
+        expect(messages[0].fileName).toEqual(undefined)
+        expect(messages[0].latitude).toEqual(undefined)
+        expect(messages[0].longitude).toEqual(undefined)
+        expect(messages[0].departament).toEqual(undefined)
+
+        expect(messages.length).toEqual(1)
+      })
+    })
+
+    describe('group', () => {
+      it('returns the response body transformed in messages', async () => {
+        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+        const contact = await Contact.create({
+          name: 'Grupo Teste',
+          number: '5511989187726-1622497000@g.us',
+          type: '@g.us',
+          talkingWithChatBot: false,
+          licensee: licensee,
+        })
+
+        const responseBody = {
+          event: 'chat',
+          token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
+          user: '5511940650658',
+          'contact[number]': '5593165392832',
+          'contact[name]': 'John Doe',
+          'contact[server]': 'g.us',
+          'contact[groupName]': 'Grupo Teste',
+          'contact[groupNumber]': '5511989187726-1622497000',
+          'chat[dtm]': '1603582444',
+          'chat[uid]': '3EB016638A2AD49A9ECE',
+          'chat[dir]': 'i',
+          'chat[type]': 'chat',
+          'chat[body]': 'Message to send',
+          ack: '-1',
+        }
+
+        const utalk = new Utalk(licensee)
+        const messages = await utalk.responseToMessages(responseBody)
+
+        expect(messages[0]).toBeInstanceOf(Message)
+        expect(messages[0].licensee).toEqual(licensee._id)
+        expect(messages[0].contact).toEqual(contact._id)
+        expect(messages[0].kind).toEqual('text')
+        expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+        expect(messages[0].destination).toEqual('to-chat')
+        expect(messages[0].text).toEqual('Message to send')
+        expect(messages[0].senderName).toEqual('John Doe')
         expect(messages[0].url).toEqual(undefined)
         expect(messages[0].fileName).toEqual(undefined)
         expect(messages[0].latitude).toEqual(undefined)
@@ -297,6 +350,7 @@ describe('Utalk plugin', () => {
         expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
         expect(messages[0].destination).toEqual('to-chat')
         expect(messages[0].text).toEqual('Message to send')
+        expect(messages[0].senderName).toEqual(undefined)
         expect(messages[0].url).toEqual(undefined)
         expect(messages[0].fileName).toEqual(undefined)
         expect(messages[0].latitude).toEqual(undefined)
@@ -342,6 +396,7 @@ describe('Utalk plugin', () => {
         expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
         expect(messages[0].destination).toEqual('to-chat')
         expect(messages[0].text).toEqual(undefined)
+        expect(messages[0].senderName).toEqual(undefined)
         expect(messages[0].url).toEqual('https://s3.url.com/1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg')
         expect(messages[0].fileName).toEqual('1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg')
         expect(messages[0].latitude).toEqual(undefined)

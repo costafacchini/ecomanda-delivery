@@ -1,6 +1,6 @@
 class NormalizePhone {
   constructor(number) {
-    this.number = number.replace(/[^0-9.]/g, '')
+    this.number = number.replace(/[^0-9.-]/g, '')
     this.type = number.includes('@g.us') ? '@g.us' : '@c.us'
     this.#normalize()
   }

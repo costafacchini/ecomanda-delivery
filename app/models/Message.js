@@ -52,6 +52,7 @@ const messageSchema = new Schema({
   latitude: Number,
   longitude: Number,
   departament: String,
+  senderName: String,
   sended: { type: Boolean, default: false },
   licensee: {
     type: ObjectId,

@@ -62,6 +62,8 @@ class Winzap {
       destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
     })
 
+    if (bodyParsed.sender) messageToSend.senderName = bodyParsed.sender
+
     if (messageToSend.kind === 'file') {
       messageToSend.fileName = bodyParsed.fileName
       messageToSend.url = this.#uploadFile(contact, messageToSend.fileName, bodyParsed.blob)
@@ -78,13 +80,17 @@ class Winzap {
     }
 
     if (responseBody.event === 'chat') {
+      const chatNumber = responseBody['contact[server]'] === 'g.us' ? responseBody['contact[groupNumber]'] : responseBody['contact[number]']
+      const chatName = responseBody['contact[server]'] === 'g.us' ? responseBody['contact[groupName]'] : responseBody['contact[name]']
+
       return {
-        name: responseBody['contact[name]'],
+        name: chatName,
         type: 'text',
         server: responseBody['contact[server]'],
-        number: responseBody['contact[number]'],
+        number: chatNumber,
         dir: responseBody['chat[dir]'],
         text: responseBody['chat[type]'] === 'chat' ? responseBody['chat[body]'] : responseBody['caption'],
+        sender: responseBody['contact[server]'] === 'g.us' ? responseBody['contact[name]'] : '',
       }
     }
 

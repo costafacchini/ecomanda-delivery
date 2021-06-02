@@ -56,6 +56,8 @@ class Chatapi {
           destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
         })
 
+        if (normalizePhone.type === '@g.us') messageToSend.senderName = message.chatName
+
         if (kind === 'text' || kind === 'location') {
           messageToSend.text = message.body
         }

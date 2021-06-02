@@ -69,6 +69,7 @@ describe('Chatapi plugin', () => {
         expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
         expect(messages[0].destination).toEqual('to-chat')
         expect(messages[0].text).toEqual('Image and text')
+        expect(messages[0].senderName).toEqual(undefined)
         expect(messages[0].url).toEqual(
           'https://s3.eu-central-1.wasabisys.com/incoming-chat-api/2021/3/25/244959/1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg'
         )
@@ -128,6 +129,7 @@ describe('Chatapi plugin', () => {
         expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
         expect(messages[0].destination).toEqual('to-chat')
         expect(messages[0].text).toEqual(null)
+        expect(messages[0].senderName).toEqual(undefined)
         expect(messages[0].url).toEqual(
           'https://s3.eu-central-1.wasabisys.com/incoming-chat-api/2021/3/25/244959/1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg'
         )
@@ -186,6 +188,64 @@ describe('Chatapi plugin', () => {
         expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
         expect(messages[0].destination).toEqual('to-chat')
         expect(messages[0].text).toEqual('Message to send')
+        expect(messages[0].senderName).toEqual(undefined)
+        expect(messages[0].url).toEqual(undefined)
+        expect(messages[0].fileName).toEqual(undefined)
+        expect(messages[0].latitude).toEqual(undefined)
+        expect(messages[0].longitude).toEqual(undefined)
+        expect(messages[0].departament).toEqual(undefined)
+
+        expect(messages.length).toEqual(1)
+      })
+    })
+
+    describe('group', () => {
+      it('returns the response body transformed in messages', async () => {
+        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+        const contact = await Contact.create({
+          name: 'Grupo Teste',
+          number: '5511989187726-1622497000@g.us',
+          type: '@g.us',
+          talkingWithChatBot: false,
+          licensee: licensee,
+        })
+
+        const responseBody = {
+          messages: [
+            {
+              id: 'false_5593165392832@c.us_3EB066E484BABD9F3C69',
+              body: 'Message to send',
+              fromMe: false,
+              self: 1,
+              isForwarded: 0,
+              author: '5593165392832@c.us',
+              time: 1616708028,
+              chatId: '5511989187726-1622497000@g.us',
+              messageNumber: 111,
+              type: 'chat',
+              senderName: 'Grupo Teste',
+              caption: null,
+              quotedMsgBody: null,
+              quotedMsgId: null,
+              quotedMsgType: null,
+              chatName: 'John Doe',
+            },
+          ],
+          instanceId: '244959',
+        }
+
+        const chatapi = new Chatapi(licensee)
+        const messages = await chatapi.responseToMessages(responseBody)
+
+        expect(messages[0]).toBeInstanceOf(Message)
+        expect(messages[0].licensee).toEqual(licensee._id)
+        expect(messages[0].contact).toEqual(contact._id)
+        expect(messages[0].kind).toEqual('text')
+        expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+        expect(messages[0].destination).toEqual('to-chat')
+        expect(messages[0].text).toEqual('Message to send')
+        expect(messages[0].senderName).toEqual('John Doe')
         expect(messages[0].url).toEqual(undefined)
         expect(messages[0].fileName).toEqual(undefined)
         expect(messages[0].latitude).toEqual(undefined)
@@ -293,6 +353,7 @@ describe('Chatapi plugin', () => {
         expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
         expect(messages[0].destination).toEqual('to-chat')
         expect(messages[0].text).toEqual('Message to send')
+        expect(messages[0].senderName).toEqual(undefined)
         expect(messages[0].url).toEqual(undefined)
         expect(messages[0].fileName).toEqual(undefined)
         expect(messages[0].latitude).toEqual(undefined)

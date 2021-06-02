@@ -57,9 +57,13 @@ describe('NormalizePhone', () => {
     })
 
     it('does not normalize phone if length greather than 14 numbers', () => {
-      const shortPhone = new NormalizePhone('87628172617..123213123123@g.us')
+      const groupPhoneType1 = new NormalizePhone('87628172617..123213123123@g.us')
 
-      expect(shortPhone.number).toEqual('87628172617..123213123123')
+      expect(groupPhoneType1.number).toEqual('87628172617..123213123123')
+
+      const groupPhoneType2 = new NormalizePhone('5511989187726-1622497000@g.us')
+
+      expect(groupPhoneType2.number).toEqual('5511989187726-1622497000')
     })
 
     it('does not remove . char if it is no last char', () => {
