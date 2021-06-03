@@ -49,6 +49,7 @@ class Utalk {
     } else {
       if (contact.name !== bodyParsed.name && bodyParsed.type !== 'file') {
         contact.name = bodyParsed.name
+        contact.talkingWithChatBot = this.licensee.useChatbot
         await contact.save()
       }
     }
