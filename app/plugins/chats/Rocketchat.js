@@ -149,7 +149,12 @@ class Rocketchat {
   }
 
   #formatMessage(message, contact) {
-    return contact.type === '@c.us' ? message.text : `*${message.senderName}:*\n${message.text}`
+    let text = message.text
+    if (message.kind === 'file') {
+      text = message.url
+    }
+
+    return contact.type === '@c.us' ? text : `*${message.senderName}:*\n${text}`
   }
 
   async closeChat(messageId, licensee) {
