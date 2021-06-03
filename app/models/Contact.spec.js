@@ -39,6 +39,33 @@ describe('Contact', () => {
       expect(contact._id).toEqual(alteredContact._id)
       expect(alteredContact.talkingWithChatBot).toEqual(true)
     })
+
+    it('normalizes the phone number if number contains @', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
+
+      const contact = await Contact.create({
+        number: '551190283745@c.us',
+        type: 'g.us',
+        talkingWithChatBot: false,
+        licensee: licensee,
+      })
+
+      expect(contact.number).toEqual('5511990283745')
+      expect(contact.type).toEqual('@c.us')
+    })
+
+    it('normalizes the phone number if type is not filled', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
+
+      const contact = await Contact.create({
+        number: '5511902837-4598687665@g.us',
+        talkingWithChatBot: false,
+        licensee: licensee,
+      })
+
+      expect(contact.number).toEqual('5511902837-4598687665')
+      expect(contact.type).toEqual('@g.us')
+    })
   })
 
   describe('validations', () => {

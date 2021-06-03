@@ -74,14 +74,20 @@ describe('NormalizePhone', () => {
   })
 
   describe('type', () => {
-    it('returns type', () => {
-      const phone = new NormalizePhone('551383726534@c.us')
+    it('returns contact type', () => {
+      const phone = new NormalizePhone('5513837265340@c.us')
 
       expect(phone.type).toEqual('@c.us')
     })
 
-    it('returns type if is group message', () => {
+    it('returns group type if is group message', () => {
       const phone = new NormalizePhone('551383726534..32424324@g.us')
+
+      expect(phone.type).toEqual('@g.us')
+    })
+
+    it('returns group type if number contains more than 13 characters', () => {
+      const phone = new NormalizePhone('55138372653465')
 
       expect(phone.type).toEqual('@g.us')
     })
