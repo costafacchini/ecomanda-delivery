@@ -405,4 +405,38 @@ describe('Licensee', () => {
       })
     })
   })
+
+  describe('links', () => {
+    describe('chat webhook', () => {
+      it('returns the url to webhook of chat', async () => {
+        const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
+
+        expect(licensee.urlChatWebhook).toEqual(`https://ecomanda-delivery.herokuapp.com/api/v1/chat/message/?token=${licensee.apiToken}`)
+      })
+    })
+
+    describe('chatbot webhook', () => {
+      it('returns the url to webhook of chatbot', async () => {
+        const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
+
+        expect(licensee.urlChatbotWebhook).toEqual(`https://ecomanda-delivery.herokuapp.com/api/v1/chatbot/message/?token=${licensee.apiToken}`)
+      })
+    })
+
+    describe('chatbot transfer webhook', () => {
+      it('returns the url to webhook of chatbot transfer to chat', async () => {
+        const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
+
+        expect(licensee.urlChatbotTransfer).toEqual(`https://ecomanda-delivery.herokuapp.com/api/v1/chatbot/transfer/?token=${licensee.apiToken}`)
+      })
+    })
+
+    describe('whatsapp webhook', () => {
+      it('returns the url to webhook of whatsapp', async () => {
+        const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
+
+        expect(licensee.urlWhatsappWebhook).toEqual(`https://ecomanda-delivery.herokuapp.com/api/v1/messenger/message/?token=${licensee.apiToken}`)
+      })
+    })
+  })
 })
