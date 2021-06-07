@@ -30,10 +30,13 @@ jobs:
           node-version: '14.x'
       - name: Install dependencies
         run: yarn
-      - name: linter and unit test
+      - name: linter
+#        run: |
+#          yarn
+#          yarn linter
+      - name: unit test
         run: |
           yarn
-          yarn linter
           yarn test --coverageDirectory unit-coverage
       - uses: codecov/codecov-action@v1
         with:
