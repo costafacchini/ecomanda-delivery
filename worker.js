@@ -4,7 +4,7 @@ require('module-alias/register')
 const { redisConnection } = require('@config/redis')
 const queueServer = require('@config/queue')
 const { Worker } = require('bullmq')
-const connect = require('./config/database')
+const connect = require('./src/config/database')
 connect()
 
 queueServer.queues.forEach(queue => {

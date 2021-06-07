@@ -1,0 +1,47 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Test CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  linter-and-unit:
+    runs-on: ubuntu-latest
+    container: node:10.18-jessie
+    services:
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      NODE_ENV: 'test'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - name: Install dependencies
+        run: yarn
+      - name: Connect to Redis
+        run: node client.js
+        env:
+          REDIS_HOST: redis
+          REDIS_PORT: 6379
+      - name: linter and unit test
+        run: |
+          yarn
+          yarn linter
+          yarn test --coverageDirectory unit-coverage
+      - uses: codecov/codecov-action@v1
+        with:
+          file: unit-coverage/lcov.info
+          flags: jestspecs
+          fail_ci_if_error: true

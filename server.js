@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const app = require('./config/app')
+const app = require('./src/config/app')
 const http = require('http')
 const debug = require('debug')('ecomanda-delivery:server')
 

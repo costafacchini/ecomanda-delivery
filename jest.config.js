@@ -4,14 +4,14 @@ const jest = {
   testEnvironment: 'node',
   moduleNameMapper: {
     '^\\.jest(.*)$': '<rootDir>/.jest$1',
-    '@models(.*)$': '<rootDir>/app/models$1',
-    '@controllers(.*)$': '<rootDir>/app/controllers$1',
-    '@routes(.*)$': '<rootDir>/app/routes$1',
-    '@config(.*)$': '<rootDir>/config$1',
+    '@models(.*)$': '<rootDir>/src/app/models$1',
+    '@controllers(.*)$': '<rootDir>/src/app/controllers$1',
+    '@routes(.*)$': '<rootDir>/src/app/routes$1',
+    '@config(.*)$': '<rootDir>/src/config$1',
   },
   collectCoverageFrom: [
-    '<rootDir>/app/**/*.js',
-    '<rootDir>/setup/**/*.js',
+    '<rootDir>/src/app/**/*.js',
+    '<rootDir>/src/setup/**/*.js',
     '!**/config/**'
   ],
   clearMocks: true
