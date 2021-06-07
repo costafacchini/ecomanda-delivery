@@ -46,7 +46,7 @@ describe('closeChat', () => {
       _id: '609dcb059f560046cde64748',
     })
 
-    await closeChat(message._id.toString(), licensee)
+    await closeChat({ messageId: message._id.toString() }, licensee)
 
     expect(jivochatCloseChatSpy).toHaveBeenCalledWith(
       '609dcb059f560046cde64748',

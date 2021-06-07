@@ -11,6 +11,7 @@ const queueOptions = {
     },
     attempts: 2,
     removeOnComplete: true,
+    removeOnFail: 10,
   },
   connection: redisConnection,
 }

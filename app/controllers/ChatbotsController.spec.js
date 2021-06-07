@@ -7,6 +7,7 @@ const queueServer = require('@config/queue')
 describe('chatbots controller', () => {
   let apiToken
   const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
+  jest.spyOn(global.console, 'info').mockImplementation()
 
   beforeAll(async () => {
     jest.clearAllMocks()

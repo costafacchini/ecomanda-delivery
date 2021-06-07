@@ -31,9 +31,11 @@ contactSchema.pre('save', function (next) {
     contact._id = new mongoose.Types.ObjectId()
   }
 
-  const normalizedPhone = new NormalizePhone(contact.number)
-  contact.number = normalizedPhone.number
-  contact.type = normalizedPhone.type
+  if (contact.number.includes('@') || !contact.type) {
+    const normalizedPhone = new NormalizePhone(contact.number)
+    contact.number = normalizedPhone.number
+    contact.type = normalizedPhone.type
+  }
 
   next()
 })

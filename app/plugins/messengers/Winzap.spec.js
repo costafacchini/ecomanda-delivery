@@ -238,7 +238,15 @@ describe('Winzap plugin', () => {
     })
 
     it('updates the contact if contact exists, name is different and message is not file', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+      const licensee = await Licensee.create({
+        name: 'Alcateia Ltds',
+        active: true,
+        licenseKind: 'demo',
+        useChatbot: true,
+        chatbotDefault: 'landbot',
+        chatbotUrl: 'https://teste-url.com',
+        chatbotAuthorizationToken: 'nakhakbagfrsg',
+      })
 
       await Contact.create({
         name: 'John Doe',
@@ -273,6 +281,7 @@ describe('Winzap plugin', () => {
       })
 
       expect(contactUpdated.name).toEqual('Jonny Cash')
+      expect(contactUpdated.talkingWithChatBot).toEqual(true)
     })
 
     it('does not update the contact if contact exists, name is different and message is file', async () => {
