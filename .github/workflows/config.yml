@@ -30,7 +30,7 @@ jobs:
           node-version: '14.x'
       - name: Install dependencies
         run: yarn
-      - name: linter
+#      - name: linter
 #        run: |
 #          yarn
 #          yarn linter
