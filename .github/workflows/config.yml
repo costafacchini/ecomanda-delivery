@@ -31,7 +31,7 @@ jobs:
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.6.0
         with:
-          mongodb-version: '4.2'
+          mongodb-version: '4.0.14'
       - name: Install dependencies
         run: yarn
 #      - name: linter
@@ -41,7 +41,7 @@ jobs:
       - name: unit test
         run: |
           yarn
-          yarn test --coverageDirectory unit-coverage
+          yarn test --coverageDirectory unit-coverage --maxWorkers 4
       - uses: codecov/codecov-action@v1
         with:
           file: unit-coverage/lcov.info
