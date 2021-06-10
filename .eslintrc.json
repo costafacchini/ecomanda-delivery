@@ -17,7 +17,7 @@
     ],
     "rules": {
         "require-await": "error",
-        "no-console": "error",
+        "no-console": "warn",
         "no-warning-comments": "warn",
         "no-nested-ternary": "error",
         "jest/no-focused-tests": "error",
@@ -27,6 +27,7 @@
         "default-param-last": "off",
         "camelcase": "off",
         "space-before-function-paren": 0,
+        "no-unused-vars": [2, {"args": "after-used", "argsIgnorePattern": "^_"}],
         "jest/expect-expect": [
             "error",
             {

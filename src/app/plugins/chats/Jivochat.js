@@ -91,14 +91,14 @@ class Jivochat {
     }
   }
 
-  async transfer(messageId, url, token) {
+  async transfer(messageId, url) {
     const messageToSend = await Message.findById(messageId).populate('contact')
     const contact = await Contact.findById(messageToSend.contact._id)
 
     contact.talkingWithChatBot = false
     await contact.save()
 
-    await this.sendMessage(messageId, url, token)
+    await this.sendMessage(messageId, url)
   }
 
   async sendMessage(messageId, url) {
@@ -176,8 +176,9 @@ class Jivochat {
     return type
   }
 
-  async closeChat(messageId, licensee) {
-    const message = await Message.findById(messageId).populate('contact')
+  async closeChat(messageId) {
+    const message = await Message.findById(messageId).populate('contact').populate('licensee')
+    const licensee = message.licensee
     const contact = await Contact.findById(message.contact._id)
 
     contact.roomId = ''

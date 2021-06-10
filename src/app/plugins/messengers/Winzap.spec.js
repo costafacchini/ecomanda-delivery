@@ -227,7 +227,7 @@ describe('Winzap plugin', () => {
 
         const responseBody = {
           event: 'ack',
-          token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT'
+          token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
         }
 
         const winzap = new Winzap(licensee)
@@ -755,7 +755,7 @@ describe('Winzap plugin', () => {
       expect(winzap.action('to-chat')).toEqual('send-message-to-chat')
     })
 
-    it('returns send-message-to-chatbot if message destination is to chatbot', async() => {
+    it('returns send-message-to-chatbot if message destination is to chatbot', async () => {
       const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
       const winzap = new Winzap(licensee)
 

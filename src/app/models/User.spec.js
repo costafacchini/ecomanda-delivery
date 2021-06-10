@@ -101,6 +101,7 @@ describe('User', () => {
         try {
           await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678' })
         } catch (err) {
+          // eslint-disable-next-line jest/no-conditional-expect, jest/no-try-expect
           expect(err).toEqual('E11000 duplicate key error dup key: { : "john@doe.com" }')
         }
 
@@ -109,6 +110,7 @@ describe('User', () => {
           user.email = 'john@doe.com'
           await user.save()
         } catch (err) {
+          // eslint-disable-next-line jest/no-conditional-expect, jest/no-try-expect
           expect(err).toEqual('E11000 duplicate key error dup key: { : "john@doe.com" }')
         }
       })

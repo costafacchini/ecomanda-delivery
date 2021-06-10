@@ -463,7 +463,12 @@ describe('Rocketchat plugin', () => {
                 fname: '5593165392832 - WhatsApp',
                 t: 'l',
                 ts: '2021-04-19T10:51:04.027Z',
-                v: { _id: 'gwniTTrz84Lc9e7jH', username: 'guest-569', token: '5511989187726-1622497000@g.us', status: 'online' },
+                v: {
+                  _id: 'gwniTTrz84Lc9e7jH',
+                  username: 'guest-569',
+                  token: '5511989187726-1622497000@g.us',
+                  status: 'online',
+                },
                 cl: false,
                 open: true,
                 waitingResponse: true,
@@ -494,7 +499,11 @@ describe('Rocketchat plugin', () => {
                   token: '5511989187726-1622497000@g.us',
                   alias: 'Grupo Teste - 5511989187726-1622497000 - WhatsApp',
                   ts: '2021-04-19T10:52:59.817Z',
-                  u: { _id: 'HNpDrzmTdJB4Z3TR8', username: 'guest-1208', name: 'Grupo Teste - 5511989187726-1622497000 - WhatsApp' },
+                  u: {
+                    _id: 'HNpDrzmTdJB4Z3TR8',
+                    username: 'guest-1208',
+                    name: 'Grupo Teste - 5511989187726-1622497000 - WhatsApp',
+                  },
                   _updatedAt: '2021-04-19T10:52:59.905Z',
                   mentions: [],
                   channels: [],
@@ -908,7 +917,7 @@ describe('Rocketchat plugin', () => {
       expect(contact.talkingWithChatBot).toEqual(true)
 
       const rocketchat = new Rocketchat(licensee)
-      await rocketchat.transfer(message._id, 'url', 'token')
+      await rocketchat.transfer(message._id, 'url')
 
       const modifiedContact = await Contact.findOne(contact._id)
       expect(modifiedContact.talkingWithChatBot).toEqual(false)
@@ -937,10 +946,10 @@ describe('Rocketchat plugin', () => {
       })
 
       const rocketchat = new Rocketchat(licensee)
-      await rocketchat.transfer(message._id.toString(), 'url', 'token')
+      await rocketchat.transfer(message._id.toString(), 'url')
 
       expect(sendMessageSpy).toHaveBeenCalledTimes(1)
-      expect(sendMessageSpy).toHaveBeenCalledWith('60958703f415ed4008748637', 'url', 'token')
+      expect(sendMessageSpy).toHaveBeenCalledWith('60958703f415ed4008748637', 'url')
     })
   })
 
@@ -971,7 +980,7 @@ describe('Rocketchat plugin', () => {
       expect(contact.roomId).toEqual('ka3DiV9CuHD765')
 
       const rocketchat = new Rocketchat(licensee)
-      await rocketchat.closeChat(message._id, licensee)
+      await rocketchat.closeChat(message._id)
 
       const modifiedContact = await Contact.findOne(contact._id)
       expect(modifiedContact.roomId).toEqual('')
@@ -1012,7 +1021,7 @@ describe('Rocketchat plugin', () => {
         expect(contact.roomId).toEqual('ka3DiV9CuHD765')
 
         const rocketchat = new Rocketchat(licensee)
-        await rocketchat.closeChat(message._id, licensee)
+        await rocketchat.closeChat(message._id)
 
         const modifiedContact = await Contact.findOne(contact._id)
         expect(modifiedContact.talkingWithChatBot).toEqual(true)
