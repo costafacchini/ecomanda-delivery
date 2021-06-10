@@ -20,6 +20,7 @@ describe('licensee controller', () => {
       .post('/login')
       .send({ email: 'john@doe.com', password: '12345678' })
       .then((response) => {
+        console.log(`token deveria ter algo aqui: ${response.body.token}`)
         token = response.body.token
       })
   })
