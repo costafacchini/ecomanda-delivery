@@ -44,6 +44,7 @@ jobs:
           SECRET: '394ru6gf6gjSsM6'
           DEFAULT_USER: 'user@user.com'
           DEFAULT_PASSWORD: '09876543'
+          CODECOV_TOKEN: '7180ac8c-b6d7-42c3-91ee-9ed11f9aa100'
       - uses: codecov/codecov-action@v1
         with:
           file: unit-coverage/lcov.info
