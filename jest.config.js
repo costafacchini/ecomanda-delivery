@@ -9,11 +9,13 @@ const jest = {
     '@routes(.*)$': '<rootDir>/src/app/routes$1',
     '@config(.*)$': '<rootDir>/src/config$1',
   },
+  collectCoverage: true,
   collectCoverageFrom: [
     '<rootDir>/src/app/**/*.js',
     '<rootDir>/src/setup/**/*.js',
     '!**/config/**'
   ],
+  coverageDirectory: 'coverage',
   clearMocks: true
 }
 
