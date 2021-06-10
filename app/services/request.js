@@ -13,6 +13,7 @@ async function request(url, method, { headers, body }) {
   let result
 
   try {
+    // eslint-disable-next-line no-undef
     const response = await fetch(url, requestOptions)
     const data = await response.text()
 
