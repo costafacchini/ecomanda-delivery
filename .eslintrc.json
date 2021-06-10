@@ -36,7 +36,7 @@
     },
     "overrides": [
         {
-            "files": ["app/**/*.spec.js", "config/**/*.spec.js", "setup/**/*.spec.js"],
+            "files": ["src/app/**/*.spec.js", "src/config/**/*.spec.js", "src/setup/**/*.spec.js"],
             "extends": [
                 "plugin:jest-dom/recommended",
                 "plugin:jest/recommended"
