@@ -35,7 +35,7 @@ describe('closeChat', () => {
       licensee: licensee,
     })
 
-    const message = await Message.create({
+    await Message.create({
       text: 'Chat clodes by agent',
       number: 'jhd7879a7d9',
       contact: contact,
@@ -46,17 +46,8 @@ describe('closeChat', () => {
       _id: '609dcb059f560046cde64748',
     })
 
-    await closeChat({ messageId: message._id.toString() }, licensee)
+    await closeChat({ messageId: '609dcb059f560046cde64748' })
 
-    expect(jivochatCloseChatSpy).toHaveBeenCalledWith(
-      '609dcb059f560046cde64748',
-      expect.objectContaining({
-        name: 'Alcateia Ltds',
-        active: true,
-        licenseKind: 'demo',
-        chatDefault: 'jivochat',
-        chatUrl: 'https://chat.url',
-      })
-    )
+    expect(jivochatCloseChatSpy).toHaveBeenCalledWith('609dcb059f560046cde64748')
   })
 })

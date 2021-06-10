@@ -1,4 +1,5 @@
 const Licensee = require('@models/Licensee')
+const Body = require('@models/Body')
 const request = require('supertest')
 const mongoServer = require('.jest/utils')
 const { expressServer } = require('.jest/server-express')
@@ -50,8 +51,6 @@ describe('chats controller', () => {
   describe('create', () => {
     describe('response', () => {
       it('returns status 200 and schedule job to process chat message', async () => {
-        const licensee = await Licensee.findOne({ apiToken })
-
         await request(expressServer)
           .post(`/api/v1/chat/message/?token=${apiToken}`)
           .send({
@@ -59,12 +58,14 @@ describe('chats controller', () => {
           })
           .expect('Content-Type', /json/)
           .expect(200)
-          .then((response) => {
+          .then(async (response) => {
+            const body = await Body.findOne({ content: { field: 'test' } })
+
             expect(response.body).toEqual({
               body: 'Solicitação de mensagem para a plataforma de chat agendado',
             })
             expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('chat-message', { field: 'test' }, licensee)
+            expect(queueServerAddJobSpy).toHaveBeenCalledWith('chat-message', { bodyId: body._id })
           })
       })
     })

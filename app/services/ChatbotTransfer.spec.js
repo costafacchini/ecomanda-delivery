@@ -1,10 +1,17 @@
 const transformChatbotTransferBody = require('./ChatbotTransfer')
 const Licensee = require('@models/Licensee')
+const Body = require('@models/Body')
 const Landbot = require('../plugins/chatbots/Landbot')
+const mongoServer = require('.jest/utils')
 
 describe('transformChatbotTransferBody', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await mongoServer.connect()
     jest.clearAllMocks()
+  })
+
+  afterEach(async () => {
+    await mongoServer.disconnect()
   })
 
   it('responds with action to transfer message to chat', async () => {
@@ -14,27 +21,30 @@ describe('transformChatbotTransferBody', () => {
         return { _id: 'KSDF656DSD91NSE' }
       })
 
-    const licensee = new Licensee({
+    const licensee = await Licensee.create({
+      licenseKind: 'demo',
+      name: 'Alcatéia',
       chatbotDefault: 'landbot',
       chatUrl: 'https://chat.url',
     })
 
-    const body = {
-      message: 'text',
+    const body = await Body.create({
+      content: {
+        message: 'text',
+      },
+      licensee: licensee._id,
+    })
+
+    const data = {
+      bodyId: body._id,
     }
 
-    const actions = await transformChatbotTransferBody(body, licensee)
+    const actions = await transformChatbotTransferBody(data)
 
-    expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body)
+    expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
     expect(actions[0].action).toEqual('transfer-to-chat')
     expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://chat.url' })
-    expect(actions[0].licensee).toEqual(
-      expect.objectContaining({
-        chatbotDefault: 'landbot',
-        chatUrl: 'https://chat.url',
-      })
-    )
 
     expect(actions.length).toEqual(1)
   })
@@ -46,16 +56,27 @@ describe('transformChatbotTransferBody', () => {
         return null
       })
 
-    const licensee = new Licensee({
+    const licensee = await Licensee.create({
+      licenseKind: 'demo',
+      name: 'Alcatéia',
       chatbotDefault: 'landbot',
       chatUrl: 'https://chat.url',
     })
 
-    const body = {}
+    const body = await Body.create({
+      content: {
+        is: 'invalid',
+      },
+      licensee: licensee._id,
+    })
 
-    const actions = await transformChatbotTransferBody(body, licensee)
+    const data = {
+      bodyId: body._id,
+    }
 
-    expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body)
+    const actions = await transformChatbotTransferBody(data)
+
+    expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
     expect(actions.length).toEqual(0)
   })

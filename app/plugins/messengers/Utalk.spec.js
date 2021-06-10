@@ -227,7 +227,7 @@ describe('Utalk plugin', () => {
 
         const responseBody = {
           event: 'ack',
-          token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT'
+          token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
         }
 
         const utalk = new Utalk(licensee)

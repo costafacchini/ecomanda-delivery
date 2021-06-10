@@ -1,10 +1,15 @@
+const Body = require('@models/Body')
 const createChatbotPlugin = require('../plugins/chatbots/factory')
 
-async function transformChatbotBody(body, licensee) {
+async function transformChatbotBody(data) {
+  const { bodyId } = data
+  const body = await Body.findById(bodyId).populate('licensee')
+  const licensee = body.licensee
+
   const chatbotPlugin = createChatbotPlugin(licensee)
 
   const actions = []
-  const messages = await chatbotPlugin.responseToMessages(body)
+  const messages = await chatbotPlugin.responseToMessages(body.content)
 
   for (const message of messages) {
     const bodyToSend = {
@@ -16,7 +21,6 @@ async function transformChatbotBody(body, licensee) {
     actions.push({
       action: 'send-message-to-messenger',
       body: bodyToSend,
-      licensee
     })
   }
 

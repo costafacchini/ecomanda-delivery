@@ -135,19 +135,19 @@ userSchema.set('toJSON', {
   virtuals: true,
 })
 
-userSchema.virtual('urlChatWebhook').get(function() {
+userSchema.virtual('urlChatWebhook').get(function () {
   return `https://ecomanda-delivery.herokuapp.com/api/v1/chat/message/?token=${this.apiToken}`
 })
 
-userSchema.virtual('urlChatbotWebhook').get(function() {
+userSchema.virtual('urlChatbotWebhook').get(function () {
   return `https://ecomanda-delivery.herokuapp.com/api/v1/chatbot/message/?token=${this.apiToken}`
 })
 
-userSchema.virtual('urlChatbotTransfer').get(function() {
+userSchema.virtual('urlChatbotTransfer').get(function () {
   return `https://ecomanda-delivery.herokuapp.com/api/v1/chatbot/transfer/?token=${this.apiToken}`
 })
 
-userSchema.virtual('urlWhatsappWebhook').get(function() {
+userSchema.virtual('urlWhatsappWebhook').get(function () {
   return `https://ecomanda-delivery.herokuapp.com/api/v1/messenger/message/?token=${this.apiToken}`
 })
 

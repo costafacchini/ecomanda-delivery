@@ -1,4 +1,5 @@
 const Licensee = require('@models/Licensee')
+const Body = require('@models/Body')
 const request = require('supertest')
 const mongoServer = require('.jest/utils')
 const { expressServer } = require('.jest/server-express')
@@ -50,8 +51,6 @@ describe('chatbots controller', () => {
 
     describe('response', () => {
       it('returns status 200 and schedule job to process chatbot message', async () => {
-        const licensee = await Licensee.findOne({ apiToken })
-
         await request(expressServer)
           .post(`/api/v1/chatbot/message/?token=${apiToken}`)
           .send({
@@ -59,10 +58,12 @@ describe('chatbots controller', () => {
           })
           .expect('Content-Type', /json/)
           .expect(200)
-          .then((response) => {
+          .then(async (response) => {
+            const body = await Body.findOne({ content: { field: 'test' } })
+
             expect(response.body).toEqual({ body: 'Solicitação de mensagem para a plataforma de chatbot agendado' })
             expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('chatbot-message', { field: 'test' }, licensee)
+            expect(queueServerAddJobSpy).toHaveBeenCalledWith('chatbot-message', { bodyId: body._id })
           })
       })
     })
@@ -93,21 +94,21 @@ describe('chatbots controller', () => {
 
     describe('response', () => {
       it('returns status 200 and schedule job to transfer chatbot to chat', async () => {
-        const licensee = await Licensee.findOne({ apiToken })
-
         await request(expressServer)
           .post(`/api/v1/chatbot/transfer/?token=${apiToken}`)
           .send({
-            field: 'test',
+            field: 'alter',
           })
           .expect('Content-Type', /json/)
           .expect(200)
-          .then((response) => {
+          .then(async (response) => {
+            const body = await Body.findOne({ content: { field: 'alter' } })
+
             expect(response.body).toEqual({
               body: 'Solicitação de transferência do chatbot para a plataforma de chat agendado',
             })
             expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('chatbot-transfer-to-chat', { field: 'test' }, licensee)
+            expect(queueServerAddJobSpy).toHaveBeenCalledWith('chatbot-transfer-to-chat', { bodyId: body._id })
           })
       })
     })

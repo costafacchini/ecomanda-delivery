@@ -698,7 +698,7 @@ describe('Jivochat plugin', () => {
       expect(contact.talkingWithChatBot).toEqual(true)
 
       const jivochat = new Jivochat(licensee)
-      await jivochat.transfer(message._id, 'url', 'token')
+      await jivochat.transfer(message._id, 'url')
 
       const modifiedContact = await Contact.findOne(contact._id)
       expect(modifiedContact.talkingWithChatBot).toEqual(false)
@@ -727,10 +727,10 @@ describe('Jivochat plugin', () => {
       })
 
       const jivochat = new Jivochat(licensee)
-      await jivochat.transfer(message._id.toString(), 'url', 'token')
+      await jivochat.transfer(message._id.toString(), 'url')
 
       expect(sendMessageSpy).toHaveBeenCalledTimes(1)
-      expect(sendMessageSpy).toHaveBeenCalledWith('60958703f415ed4008748637', 'url', 'token')
+      expect(sendMessageSpy).toHaveBeenCalledWith('60958703f415ed4008748637', 'url')
     })
   })
 
@@ -761,7 +761,7 @@ describe('Jivochat plugin', () => {
       expect(contact.roomId).toEqual('ka3DiV9CuHD765')
 
       const jivochat = new Jivochat(licensee)
-      await jivochat.closeChat(message._id, licensee)
+      await jivochat.closeChat(message._id)
 
       const modifiedContact = await Contact.findOne(contact._id)
       expect(modifiedContact.roomId).toEqual('')
@@ -802,7 +802,7 @@ describe('Jivochat plugin', () => {
         expect(contact.roomId).toEqual('ka3DiV9CuHD765')
 
         const jivochat = new Jivochat(licensee)
-        await jivochat.closeChat(message._id, licensee)
+        await jivochat.closeChat(message._id)
 
         const modifiedContact = await Contact.findOne(contact._id)
         expect(modifiedContact.talkingWithChatBot).toEqual(true)

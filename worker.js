@@ -12,9 +12,9 @@ queueServer.queues.forEach(queue => {
     const handleResult = await queue.handle(job.data)
     if (handleResult) {
       for (const actionJob of handleResult) {
-        const { action, body, licensee } = actionJob
+        const { action, body } = actionJob
 
-        await queueServer.addJob(action, body, licensee)
+        await queueServer.addJob(action, body)
       }
     }
   }, { connection: redisConnection })

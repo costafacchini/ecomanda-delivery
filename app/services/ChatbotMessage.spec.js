@@ -1,10 +1,17 @@
 const transformChatbotBody = require('./ChatbotMessage')
 const Licensee = require('@models/Licensee')
+const Body = require('@models/Body')
 const Landbot = require('../plugins/chatbots/Landbot')
+const mongoServer = require('.jest/utils')
 
 describe('transformChatbotBody', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await mongoServer.connect()
     jest.clearAllMocks()
+  })
+
+  afterEach(async () => {
+    await mongoServer.disconnect()
   })
 
   it('responds with action to send message to messenger', async () => {
@@ -14,42 +21,35 @@ describe('transformChatbotBody', () => {
         return [{ _id: 'KSDF656DSD91NSE' }, { _id: 'OAR8Q54LDN02T' }]
       })
 
-    const licensee = new Licensee({
+    const licensee = await Licensee.create({
+      licenseKind: 'demo',
+      name: 'Alcatéia',
       chatbotDefault: 'landbot',
       whatsappDefault: 'chatapi',
       whatsappUrl: 'https://chat.url',
       whatsappToken: 'token',
     })
 
-    const body = {
-      message: 'text',
+    const body = await Body.create({
+      content: {
+        message: 'text',
+      },
+      licensee: licensee._id,
+    })
+
+    const data = {
+      bodyId: body._id,
     }
 
-    const actions = await transformChatbotBody(body, licensee)
+    const actions = await transformChatbotBody(data)
 
-    expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body)
+    expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
     expect(actions[0].action).toEqual('send-message-to-messenger')
     expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://chat.url', token: 'token' })
-    expect(actions[0].licensee).toEqual(
-      expect.objectContaining({
-        chatbotDefault: 'landbot',
-        whatsappDefault: 'chatapi',
-        whatsappUrl: 'https://chat.url',
-        whatsappToken: 'token',
-      })
-    )
 
     expect(actions[1].action).toEqual('send-message-to-messenger')
     expect(actions[1].body).toEqual({ messageId: 'OAR8Q54LDN02T', url: 'https://chat.url', token: 'token' })
-    expect(actions[1].licensee).toEqual(
-      expect.objectContaining({
-        chatbotDefault: 'landbot',
-        whatsappDefault: 'chatapi',
-        whatsappUrl: 'https://chat.url',
-        whatsappToken: 'token',
-      })
-    )
 
     expect(actions.length).toEqual(2)
   })
@@ -61,18 +61,29 @@ describe('transformChatbotBody', () => {
         return []
       })
 
-    const licensee = new Licensee({
+    const licensee = await Licensee.create({
+      licenseKind: 'demo',
+      name: 'Alcatéia',
       chatbotDefault: 'landbot',
       whatsappDefault: 'chatapi',
       whatsappUrl: 'https://chat.url',
       whatsappToken: 'token',
     })
 
-    const body = {}
+    const body = await Body.create({
+      content: {
+        is: 'invalid',
+      },
+      licensee: licensee._id,
+    })
 
-    const actions = await transformChatbotBody(body, licensee)
+    const data = {
+      bodyId: body._id,
+    }
 
-    expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body)
+    const actions = await transformChatbotBody(data)
+
+    expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
     expect(actions.length).toEqual(0)
   })

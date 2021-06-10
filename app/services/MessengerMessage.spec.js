@@ -1,80 +1,100 @@
 const transformMessengerBody = require('./MessengerMessage')
 const Licensee = require('@models/Licensee')
+const Body = require('@models/Body')
 const Chatapi = require('../plugins/messengers/Chatapi')
+const mongoServer = require('.jest/utils')
 
 describe('transformMessengerBody', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await mongoServer.connect()
     jest.clearAllMocks()
   })
 
-  it('responds with action to send message to chat and chatbot', async () => {
-    const messengerPluginResponseToMessages = jest.spyOn(Chatapi.prototype, 'responseToMessages').mockImplementation(() => {
-      return [{ _id: 'KSDF656DSD91NSE', destination: 'to-chatbot' }, { _id: 'OAR8Q54LDN02T', destination: 'to-chat' }]
-    })
+  afterEach(async () => {
+    await mongoServer.disconnect()
+  })
 
-    const licensee = new Licensee({
+  it('responds with action to send message to chat and chatbot', async () => {
+    const messengerPluginResponseToMessages = jest
+      .spyOn(Chatapi.prototype, 'responseToMessages')
+      .mockImplementation(() => {
+        return [
+          { _id: 'KSDF656DSD91NSE', destination: 'to-chatbot' },
+          { _id: 'OAR8Q54LDN02T', destination: 'to-chat' },
+        ]
+      })
+
+    const licensee = await Licensee.create({
+      licenseKind: 'demo',
+      name: 'Alcatéia',
       whatsappDefault: 'chatapi',
+      whatsappUrl: 'https://whatsapp.com',
+      whatsappToken: 'bshg25f',
       chatbotUrl: 'https://whatsapp.url',
       chatbotAuthorizationToken: 'ljsdf12g',
       chatUrl: 'https://chat.url',
     })
 
-    const body = {
-      message: {
-        type: 'message',
+    const body = await Body.create({
+      content: {
+        message: {
+          type: 'message',
+        },
       },
+      licensee: licensee._id,
+    })
+
+    const data = {
+      bodyId: body._id,
     }
 
-    const actions = await transformMessengerBody(body, licensee)
+    const actions = await transformMessengerBody(data)
 
-    expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body)
+    expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
     expect(actions[0].action).toEqual('send-message-to-chatbot')
     expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://whatsapp.url', token: 'ljsdf12g' })
-    expect(actions[0].licensee).toEqual(
-      expect.objectContaining({
-        whatsappDefault: 'chatapi',
-        chatbotUrl: 'https://whatsapp.url',
-        chatbotAuthorizationToken: 'ljsdf12g',
-        chatUrl: 'https://chat.url',
-      })
-    )
 
     expect(actions[1].action).toEqual('send-message-to-chat')
     expect(actions[1].body).toEqual({ messageId: 'OAR8Q54LDN02T', url: 'https://chat.url', token: '' })
-    expect(actions[1].licensee).toEqual(
-      expect.objectContaining({
-        whatsappDefault: 'chatapi',
-        chatbotUrl: 'https://whatsapp.url',
-        chatbotAuthorizationToken: 'ljsdf12g',
-        chatUrl: 'https://chat.url',
-      })
-    )
 
     expect(actions.length).toEqual(2)
   })
 
   it('responds with blank actions if body is invalid', async () => {
-    const messengerPluginResponseToMessages = jest.spyOn(Chatapi.prototype, 'responseToMessages').mockImplementation(() => {
-      return []
-    })
+    const messengerPluginResponseToMessages = jest
+      .spyOn(Chatapi.prototype, 'responseToMessages')
+      .mockImplementation(() => {
+        return []
+      })
 
-    const licensee = new Licensee({
-      chatDefault: 'jivochat',
+    const licensee = await Licensee.create({
+      licenseKind: 'demo',
+      name: 'Alcatéia',
       whatsappDefault: 'chatapi',
-      whatsappUrl: 'https://chat.url',
-      whatsappToken: 'token',
+      whatsappUrl: 'https://whatsapp.com',
+      whatsappToken: 'bshg25f',
+      chatbotUrl: 'https://whatsapp.url',
+      chatbotAuthorizationToken: 'ljsdf12g',
+      chatUrl: 'https://chat.url',
     })
 
-    const body = {
-      message: {
-        type: 'typein',
+    const body = await Body.create({
+      content: {
+        message: {
+          type: 'typein',
+        },
       },
+      licensee: licensee._id,
+    })
+
+    const data = {
+      bodyId: body._id,
     }
 
-    const actions = await transformMessengerBody(body, licensee)
+    const actions = await transformMessengerBody(data)
 
-    expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body)
+    expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
     expect(actions.length).toEqual(0)
   })
