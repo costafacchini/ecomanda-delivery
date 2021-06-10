@@ -1,6 +1,6 @@
 const Body = require('@models/Body')
 const Licensee = require('@models/Licensee')
-const mongoServer = require('.jest/utils')
+const mongoServer = require('../../../.jest/utils')
 
 describe('Body', () => {
   beforeEach(async () => {
