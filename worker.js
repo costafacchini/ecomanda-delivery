@@ -1,5 +1,6 @@
 require('dotenv').config()
 require('module-alias/register')
+require('@models/index')
 
 const { redisConnection } = require('@config/redis')
 const queueServer = require('@config/queue')

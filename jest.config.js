@@ -13,7 +13,9 @@ const jest = {
   collectCoverageFrom: [
     '<rootDir>/src/app/**/*.js',
     '<rootDir>/src/setup/**/*.js',
-    '!**/config/**'
+    '!**/config/**',
+    '!<rootDir>/src/app/models/index.js',
+    '!<rootDir>/src/app/jobs/index.js',
   ],
   coverageDirectory: 'coverage',
   clearMocks: true
