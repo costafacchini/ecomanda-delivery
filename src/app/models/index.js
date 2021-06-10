@@ -1,0 +1,5 @@
+require('@models/Body')
+require('@models/Contact')
+require('@models/Licensee')
+require('@models/Message')
+require('@models/User')

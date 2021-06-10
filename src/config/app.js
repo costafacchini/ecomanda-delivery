@@ -1,4 +1,5 @@
 require('module-alias/register')
+require('@models/index')
 
 const createError = require('http-errors')
 const express = require('express')

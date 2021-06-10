@@ -3,7 +3,7 @@ const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
 const { v4: uuidv4 } = require('uuid')
 
-const userSchema = new Schema({
+const licenseeSchema = new Schema({
   _id: ObjectId,
   name: {
     type: String,
@@ -114,7 +114,7 @@ const userSchema = new Schema({
   },
 })
 
-userSchema.pre('save', function (next) {
+licenseeSchema.pre('save', function (next) {
   const licensee = this
 
   if (licensee.whatsappDefault === 'utalk') {
@@ -131,26 +131,26 @@ userSchema.pre('save', function (next) {
   next()
 })
 
-userSchema.set('toJSON', {
+licenseeSchema.set('toJSON', {
   virtuals: true,
 })
 
-userSchema.virtual('urlChatWebhook').get(function () {
+licenseeSchema.virtual('urlChatWebhook').get(function () {
   return `https://ecomanda-delivery.herokuapp.com/api/v1/chat/message/?token=${this.apiToken}`
 })
 
-userSchema.virtual('urlChatbotWebhook').get(function () {
+licenseeSchema.virtual('urlChatbotWebhook').get(function () {
   return `https://ecomanda-delivery.herokuapp.com/api/v1/chatbot/message/?token=${this.apiToken}`
 })
 
-userSchema.virtual('urlChatbotTransfer').get(function () {
+licenseeSchema.virtual('urlChatbotTransfer').get(function () {
   return `https://ecomanda-delivery.herokuapp.com/api/v1/chatbot/transfer/?token=${this.apiToken}`
 })
 
-userSchema.virtual('urlWhatsappWebhook').get(function () {
+licenseeSchema.virtual('urlWhatsappWebhook').get(function () {
   return `https://ecomanda-delivery.herokuapp.com/api/v1/messenger/message/?token=${this.apiToken}`
 })
 
-const Licensee = mongoose.model('Licensee', userSchema)
+const Licensee = mongoose.model('Licensee', licenseeSchema)
 
 module.exports = Licensee
