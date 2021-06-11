@@ -1,0 +1,12 @@
+{
+  "extends": [
+    "config:base",
+    "docker:disable"
+  ],
+  "patch": {
+    "automerge": true
+  },
+  "pin": {
+    "automerge": true
+  }
+}
