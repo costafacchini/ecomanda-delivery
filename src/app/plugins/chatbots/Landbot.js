@@ -23,6 +23,11 @@ class Landbot {
       licensee: this.licensee._id,
     })
 
+    if (!contact) {
+      console.info(`Contato com telefone ${normalizePhone.number} e licenciado ${this.licensee._id} não encontrado`)
+      return []
+    }
+
     const processedMessages = []
     for (const message of messages) {
       const kind = Landbot.kindToMessageKind(message.type)
