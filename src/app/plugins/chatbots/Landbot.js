@@ -91,7 +91,12 @@ class Landbot {
       licensee: this.licensee._id,
     })
 
-    return new Message({
+    if (!contact) {
+      console.info(`Contato com telefone ${normalizePhone.number} e licenciado ${this.licensee._id} não encontrado`)
+      return
+    }
+
+    const message = new Message({
       number: uuidv4(),
       text: observacao,
       kind: 'text',
@@ -100,6 +105,8 @@ class Landbot {
       destination: 'to-transfer',
       departament: id_departamento_rocketchat,
     })
+
+    return await message.save()
   }
 
   async sendMessage(messageId, url, token) {
