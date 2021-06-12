@@ -23,7 +23,7 @@ class Rocketchat {
 
     const contact = await Contact.findOne({
       roomId: responseBody._id,
-      licensee: this.licensee,
+      licensee: this.licensee._id,
     })
 
     const processedMessages = []

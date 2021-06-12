@@ -20,7 +20,7 @@ class Landbot {
     const contact = await Contact.findOne({
       number: normalizePhone.number,
       type: normalizePhone.type,
-      licensee: this.licensee,
+      licensee: this.licensee._id,
     })
 
     const processedMessages = []
@@ -83,7 +83,7 @@ class Landbot {
     const contact = await Contact.findOne({
       number: normalizePhone.number,
       type: normalizePhone.type,
-      licensee: this.licensee,
+      licensee: this.licensee._id,
     })
 
     return new Message({
