@@ -277,7 +277,7 @@ describe('Utalk plugin', () => {
       const contactUpdated = await Contact.findOne({
         number: '5593165392832',
         type: '@c.us',
-        licensee: licensee,
+        licensee: licensee._id,
       })
 
       expect(contactUpdated.name).toEqual('Jonny Cash')
@@ -312,7 +312,7 @@ describe('Utalk plugin', () => {
       const contactUpdated = await Contact.findOne({
         number: '5593165392832',
         type: '@c.us',
-        licensee: licensee,
+        licensee: licensee._id,
       })
 
       expect(contactUpdated.name).toEqual('John Doe')
@@ -343,7 +343,7 @@ describe('Utalk plugin', () => {
         const contact = await Contact.findOne({
           number: '5593165392832',
           type: '@c.us',
-          licensee: licensee,
+          licensee: licensee._id,
         })
 
         expect(contact.name).toEqual('John Doe')
@@ -389,7 +389,7 @@ describe('Utalk plugin', () => {
         const contact = await Contact.findOne({
           number: '5593165392832',
           type: '@c.us',
-          licensee: licensee,
+          licensee: licensee._id,
         })
 
         expect(contact.name).toEqual('5593165392832')
