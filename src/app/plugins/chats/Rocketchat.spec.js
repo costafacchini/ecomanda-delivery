@@ -919,7 +919,7 @@ describe('Rocketchat plugin', () => {
       const rocketchat = new Rocketchat(licensee)
       await rocketchat.transfer(message._id, 'url')
 
-      const modifiedContact = await Contact.findOne(contact._id)
+      const modifiedContact = await Contact.findById(contact._id)
       expect(modifiedContact.talkingWithChatBot).toEqual(false)
     })
 
@@ -982,7 +982,7 @@ describe('Rocketchat plugin', () => {
       const rocketchat = new Rocketchat(licensee)
       await rocketchat.closeChat(message._id)
 
-      const modifiedContact = await Contact.findOne(contact._id)
+      const modifiedContact = await Contact.findById(contact._id)
       expect(modifiedContact.roomId).toEqual('')
     })
 
@@ -1023,7 +1023,7 @@ describe('Rocketchat plugin', () => {
         const rocketchat = new Rocketchat(licensee)
         await rocketchat.closeChat(message._id)
 
-        const modifiedContact = await Contact.findOne(contact._id)
+        const modifiedContact = await Contact.findById(contact._id)
         expect(modifiedContact.talkingWithChatBot).toEqual(true)
         expect(modifiedContact.roomId).toEqual('')
       })

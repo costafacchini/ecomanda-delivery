@@ -297,7 +297,7 @@ describe('Chatapi plugin', () => {
       const contactUpdated = await Contact.findOne({
         number: '5593165392832',
         type: '@c.us',
-        licensee: licensee,
+        licensee: licensee._id,
       })
 
       expect(contactUpdated.name).toEqual('Jonny Cash')
@@ -337,7 +337,7 @@ describe('Chatapi plugin', () => {
         const contact = await Contact.findOne({
           number: '5593165392832',
           type: '@c.us',
-          licensee: licensee,
+          licensee: licensee._id,
         })
 
         expect(contact.name).toEqual('John Doe')

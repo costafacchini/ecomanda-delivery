@@ -700,7 +700,7 @@ describe('Jivochat plugin', () => {
       const jivochat = new Jivochat(licensee)
       await jivochat.transfer(message._id, 'url')
 
-      const modifiedContact = await Contact.findOne(contact._id)
+      const modifiedContact = await Contact.findById(contact._id)
       expect(modifiedContact.talkingWithChatBot).toEqual(false)
     })
 
@@ -763,7 +763,7 @@ describe('Jivochat plugin', () => {
       const jivochat = new Jivochat(licensee)
       await jivochat.closeChat(message._id)
 
-      const modifiedContact = await Contact.findOne(contact._id)
+      const modifiedContact = await Contact.findById(contact._id)
       expect(modifiedContact.roomId).toEqual('')
     })
 
@@ -804,7 +804,7 @@ describe('Jivochat plugin', () => {
         const jivochat = new Jivochat(licensee)
         await jivochat.closeChat(message._id)
 
-        const modifiedContact = await Contact.findOne(contact._id)
+        const modifiedContact = await Contact.findById(contact._id)
         expect(modifiedContact.talkingWithChatBot).toEqual(true)
         expect(modifiedContact.roomId).toEqual('')
       })
