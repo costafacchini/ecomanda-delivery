@@ -2,12 +2,7 @@ const { MongoServer } = require('./mongo')
 
 async function connect() {
   const config = {
-    development: {
-      username: process.env.MONGODB_USERNAME,
-      password: process.env.MONGODB_PASSWORD,
-      host: process.env.MONGODB_HOST,
-      db: process.env.MONGODB_DB,
-    },
+    development: { uri: process.env.MONGODB_URI },
     test: {
       username: process.env.MONGODB_USERNAME,
       password: process.env.MONGODB_PASSWORD,
