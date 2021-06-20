@@ -14,7 +14,11 @@ class Rocketchat {
     if (responseBody.type === 'LivechatSession') {
       return 'close-chat'
     } else {
-      return 'send-message-to-messenger'
+      if (responseBody && responseBody.messages && responseBody.messages.find((message) => message.closingMessage)) {
+        return 'close-chat'
+      } else {
+        return 'send-message-to-messenger'
+      }
     }
   }
 
