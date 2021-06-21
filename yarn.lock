@@ -798,7 +798,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/ioredis@^4.22.2":
+"@types/ioredis@^4.26.4":
   version "4.26.4"
   resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.26.4.tgz#a2b1ed51ddd2c707d7eaac5017cc34a0fe51558a"
   integrity sha512-QFbjNq7EnOGw6d1gZZt2h26OFXjx7z+eqEnbCHSrDI1OOLEgOHMKdtIajJbuCr9uO+X9kQQRe7Lz6uxqxl5XKg==
@@ -1500,15 +1500,15 @@ bull-board@2.1.2:
     express "4.17.1"
     redis-info "^3.0.8"
 
-bullmq@1.28.0:
-  version "1.28.0"
-  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-1.28.0.tgz#f90f30cb6a326cdcb5e34d3a72830e2a56315050"
-  integrity sha512-1EjaZTaurJ4E9FYrDEdEyuotfG8lAATignQrpl6VtXSaElwN9TWNQR2G1EwNq2X0TqFKHINqkW52z68v7ZG33Q==
+bullmq@1.36.0:
+  version "1.36.0"
+  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-1.36.0.tgz#992145f80e15322fb2b86168e1fc40c41fc6a6aa"
+  integrity sha512-MkCIPsyEm0rIMwdTuQbo0cfWYqslKgDgBbIOURghbkpQwg5xJHbBOMPzNspltVMzAdOYaFXafpQBuYnCJpbbgg==
   dependencies:
-    "@types/ioredis" "^4.22.2"
+    "@types/ioredis" "^4.26.4"
     cron-parser "^2.7.3"
     get-port "^5.0.0"
-    ioredis "^4.25.0"
+    ioredis "^4.27.5"
     lodash "^4.17.21"
     semver "^6.3.0"
     tslib "^1.10.0"
@@ -3311,10 +3311,10 @@ ini@~1.3.0:
   resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.8.tgz#a29da425b48806f34767a4efce397269af28432c"
   integrity sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==
 
-ioredis@^4.25.0:
-  version "4.27.3"
-  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.27.3.tgz#4a020c9056bf4e016c476910fb59620a0d899654"
-  integrity sha512-eAirtUIljFkHJwuKQhbGajVrdCUMNKRuOrhzRFeYZRvXnLs4757Oss1S8aiheB4NSO1RsLeG+2RUjY/0/XiSig==
+ioredis@^4.27.5:
+  version "4.27.6"
+  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.27.6.tgz#a53d427d3fe75fbd10ed7ad150ce00559df8dcf8"
+  integrity sha512-6W3ZHMbpCa8ByMyC1LJGOi7P2WiOKP9B3resoZOVLDhi+6dDBOW+KNsRq3yI36Hmnb2sifCxHX+YSarTeXh48A==
   dependencies:
     cluster-key-slot "^1.1.0"
     debug "^4.3.1"
