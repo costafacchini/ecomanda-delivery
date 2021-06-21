@@ -36,17 +36,22 @@ jobs:
 #        run: |
 #          yarn
 #          yarn linter
-      - name: unit test
+      - name: unit test nodejs
         run: |
           yarn
-          yarn test --coverageDirectory unit-coverage --maxWorkers 4
+          yarn test --coverageDirectory nodejs-coverage --maxWorkers 4
         env:
           REDIS_URL: 'redis://127.0.0.1:6379'
           SECRET: '394ru6gf6gjSsM6'
           DEFAULT_USER: 'user@user.com'
           DEFAULT_PASSWORD: '09876543'
+      - name: unit test react
+          run: |
+            cd client
+            yarn
+            yarn test --coverageDirectory '../react-coverage' --maxWorkers 4
       - uses: codecov/codecov-action@v1
         with:
-          file: unit-coverage/lcov.info
+          file: nodejs-coverage/lcov.info,react-coverage/lcov.info
           flags: jestspecs
           fail_ci_if_error: true

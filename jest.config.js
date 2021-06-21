@@ -2,6 +2,7 @@ require('dotenv').config()
 
 const jest = {
   testEnvironment: 'node',
+  modulePathIgnorePatterns: ['<rootDir>/client/'],
   moduleNameMapper: {
     '^\\.jest(.*)$': '<rootDir>/.jest$1',
     '@models(.*)$': '<rootDir>/src/app/models$1',

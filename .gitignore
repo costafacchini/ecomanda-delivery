@@ -6,3 +6,5 @@ dist
 /coverage
 yarn-error.log
 /tmp
+/client/coverage
+/client/build
