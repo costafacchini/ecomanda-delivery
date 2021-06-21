@@ -46,10 +46,10 @@ jobs:
           DEFAULT_USER: 'user@user.com'
           DEFAULT_PASSWORD: '09876543'
       - name: unit test react
-          run: |
-            cd client
-            yarn
-            yarn test --coverageDirectory '../react-coverage' --maxWorkers 4
+        run: |
+          cd client
+          yarn
+          yarn test --coverageDirectory '../react-coverage' --maxWorkers 4
       - uses: codecov/codecov-action@v1
         with:
           file: nodejs-coverage/lcov.info,react-coverage/lcov.info
