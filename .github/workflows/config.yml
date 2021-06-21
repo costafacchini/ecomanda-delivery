@@ -50,6 +50,8 @@ jobs:
           cd client
           yarn
           yarn test --coverageDirectory '../react-coverage' --maxWorkers 4
+        env:
+          SKIP_PREFLIGHT_CHECK: true
       - uses: codecov/codecov-action@v1
         with:
           file: nodejs-coverage/lcov.info,react-coverage/lcov.info
