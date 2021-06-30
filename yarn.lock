@@ -1500,10 +1500,10 @@ bull-board@2.1.3:
     express "4.17.1"
     redis-info "^3.0.8"
 
-bullmq@1.36.1:
-  version "1.36.1"
-  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-1.36.1.tgz#5c0e0cc488a92ab81deb81f1e0ff72e12b9b3848"
-  integrity sha512-mqQTqO3dzIy6GBQwz0A7+nRQOewAxnlV5/77jSPlRAAoH9lVARIwV0uybfUUkSfVfs6fipi6RMo9cc9vOfSqeg==
+bullmq@1.37.0:
+  version "1.37.0"
+  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-1.37.0.tgz#707455fd19e3f7ebac0b7be550de403d32357385"
+  integrity sha512-Bn7NL3Fgpq+JbU9onNHbMG0wdr7uSSqdz+V8C4STiqrsTVep9ChSJ3Oek1kM1f3a2i0q1/ZLbhhJxyfMkr1VKg==
   dependencies:
     "@types/ioredis" "^4.26.4"
     cron-parser "^2.7.3"
