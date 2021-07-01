@@ -31,7 +31,7 @@ const userSchema = new Schema({
     },
   },
   active: { type: Boolean, default: true },
-})
+}, { timestamps: true })
 
 userSchema.pre('save', function (next) {
   const user = this
