@@ -23,6 +23,9 @@ async function transformChatbotTransferBody(data) {
     })
   }
 
+  body.concluded = true
+  await body.save()
+
   return actions
 }
 

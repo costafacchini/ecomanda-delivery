@@ -14,7 +14,7 @@ describe('transformChatbotBody', () => {
     await mongoServer.disconnect()
   })
 
-  it('responds with action to send message to messenger', async () => {
+  it('responds with action to send message to messenger and marks body to concluded', async () => {
     const chatbotPluginResponseToMessages = jest
       .spyOn(Landbot.prototype, 'responseToMessages')
       .mockImplementation(() => {
@@ -45,6 +45,10 @@ describe('transformChatbotBody', () => {
 
     expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
+    const bodyUpdated = await Body.findById(body._id)
+    expect(body.concluded).toEqual(false)
+    expect(bodyUpdated.concluded).toEqual(true)
+
     expect(actions[0].action).toEqual('send-message-to-messenger')
     expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://chat.url', token: 'token' })
 
@@ -54,7 +58,7 @@ describe('transformChatbotBody', () => {
     expect(actions.length).toEqual(2)
   })
 
-  it('responds with blank actions if body is invalid', async () => {
+  it('responds with blank actions if body is invalid and marks body to concluded', async () => {
     const chatbotPluginResponseToMessages = jest
       .spyOn(Landbot.prototype, 'responseToMessages')
       .mockImplementation(() => {
@@ -84,6 +88,10 @@ describe('transformChatbotBody', () => {
     const actions = await transformChatbotBody(data)
 
     expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body.content)
+
+    const bodyUpdated = await Body.findById(body._id)
+    expect(body.concluded).toEqual(false)
+    expect(bodyUpdated.concluded).toEqual(true)
 
     expect(actions.length).toEqual(0)
   })
