@@ -50,7 +50,7 @@
     "mongoose": "5.13.0",
     "morgan": "1.10.0",
     "nodemon": "2.0.9",
-    "rollbar": "2.23.0",
+    "rollbar": "2.24.0",
     "uuid": "8.3.2"
   },
   "_moduleAliases": {
