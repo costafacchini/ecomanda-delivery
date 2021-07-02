@@ -10,7 +10,7 @@ const mongoConnectionOpts = {
 
 class MongoServerTest {
   constructor() {
-    this.mongoServer = new MongoMemoryServer({ binary: { version: '3.6.5' } })
+    this.mongoServer = new MongoMemoryServer()
   }
 
   async connect() {

@@ -4,8 +4,6 @@ const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
 
-jest.setTimeout(600000)
-
 describe('licensee controller', () => {
   let token
 

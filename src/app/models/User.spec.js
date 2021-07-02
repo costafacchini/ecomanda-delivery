@@ -1,8 +1,6 @@
 const User = require('@models/User')
 const mongoServer = require('../../../.jest/utils')
 
-jest.setTimeout(600000)
-
 describe('User', () => {
   beforeEach(async () => {
     await mongoServer.connect()
