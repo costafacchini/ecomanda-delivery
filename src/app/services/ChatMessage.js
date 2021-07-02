@@ -24,6 +24,9 @@ async function transformChatBody(data) {
     })
   }
 
+  body.concluded = true
+  await body.save()
+
   return actions
 }
 

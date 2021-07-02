@@ -13,7 +13,8 @@ const bodySchema = new Schema({
     ref: 'Licensee',
     required: [true, 'Licensee: Você deve preencher o campo'],
   },
-})
+  concluded: { type: Boolean, default: false },
+}, { timestamps: true })
 
 bodySchema.pre('save', function (next) {
   const body = this

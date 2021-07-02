@@ -14,7 +14,7 @@ describe('transformChatBody', () => {
     await mongoServer.disconnect()
   })
 
-  it('responds with action to dispatcher action of plugin', async () => {
+  it('responds with action to dispatcher action of plugin and marks body to concluded', async () => {
     const chatPluginResponseToMessages = jest.spyOn(Jivochat.prototype, 'responseToMessages').mockImplementation(() => {
       return [{ _id: 'KSDF656DSD91NSE' }, { _id: 'OAR8Q54LDN02T' }]
     })
@@ -46,6 +46,10 @@ describe('transformChatBody', () => {
 
     expect(chatPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
+    const bodyUpdated = await Body.findById(body._id)
+    expect(body.concluded).toEqual(false)
+    expect(bodyUpdated.concluded).toEqual(true)
+
     expect(actions[0].action).toEqual('send-message-to-messenger')
     expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://chat.url', token: 'token' })
 
@@ -55,7 +59,7 @@ describe('transformChatBody', () => {
     expect(actions.length).toEqual(2)
   })
 
-  it('responds with blank actions if body is invalid', async () => {
+  it('responds with blank actions if body is invalid and marks body to concluded', async () => {
     const chatPluginResponseToMessages = jest.spyOn(Jivochat.prototype, 'responseToMessages').mockImplementation(() => {
       return []
     })
@@ -86,6 +90,10 @@ describe('transformChatBody', () => {
     const actions = await transformChatBody(data)
 
     expect(chatPluginResponseToMessages).toHaveBeenCalledWith(body.content)
+
+    const bodyUpdated = await Body.findById(body._id)
+    expect(body.concluded).toEqual(false)
+    expect(bodyUpdated.concluded).toEqual(true)
 
     expect(actions.length).toEqual(0)
   })

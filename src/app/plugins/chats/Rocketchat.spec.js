@@ -1042,6 +1042,25 @@ describe('Rocketchat plugin', () => {
       expect(rocketchat.action(responseBody)).toEqual('close-chat')
     })
 
+    it('returns "close-chat" if message have a message with closingMessage attribute', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const responseBody = {
+        type: 'Message',
+        messages: [
+          {
+            msg: 'Hello message',
+          },
+          {
+            closingMessage: true
+          },
+        ],
+      }
+
+      const rocketchat = new Rocketchat(licensee)
+      expect(rocketchat.action(responseBody)).toEqual('close-chat')
+    })
+
     it('returns "send-message-to-messenger" if message type is not "LivechatSession"', async () => {
       const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
 
