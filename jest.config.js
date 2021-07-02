@@ -18,7 +18,7 @@ const jest = {
     '!<rootDir>/src/app/jobs/index.js',
   ],
   coverageDirectory: 'coverage',
-  clearMocks: true
+  clearMocks: true,
 }
 
 module.exports = jest
