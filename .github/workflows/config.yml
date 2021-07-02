@@ -45,8 +45,8 @@ jobs:
           SECRET: '394ru6gf6gjSsM6'
           DEFAULT_USER: 'user@user.com'
           DEFAULT_PASSWORD: '09876543'
-          MONGOMS_DOWNLOAD_URL: 'https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.2.8.tgz'
-          MONGOMS_VERSION: '4.2.8'
+          MONGOMS_DOWNLOAD_URL: 'https://repo.mongodb.org/apt/debian/dists/stretch/mongodb-org/4.0/main/binary-amd64/mongodb-org-server_4.0.25_amd64.deb'
+          MONGOMS_VERSION: '4.0.25'
       - uses: codecov/codecov-action@v1
         with:
           file: unit-coverage/lcov.info
