@@ -64,7 +64,7 @@ const messageSchema = new Schema({
     ref: 'Contact',
     required: [true, 'Contact: Você deve preencher o campo'],
   },
-})
+}, { timestamps: true })
 
 messageSchema.pre('save', function (next) {
   const message = this

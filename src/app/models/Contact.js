@@ -22,7 +22,7 @@ const contactSchema = new Schema({
     ref: 'Licensee',
     required: [true, 'Licensee: Você deve preencher o campo'],
   },
-})
+}, { timestamps: true })
 
 contactSchema.pre('save', function (next) {
   const contact = this

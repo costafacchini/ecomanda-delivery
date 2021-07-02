@@ -14,7 +14,8 @@ class MongoServerTest {
   }
 
   async connect() {
-    const mongoUri = await this.mongoServer.getUri()
+    await this.mongoServer.start()
+    const mongoUri = this.mongoServer.getUri()
     await mongoose.connect(mongoUri, mongoConnectionOpts, (err) => {
       if (err) {
         throw new Error(err)

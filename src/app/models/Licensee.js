@@ -112,7 +112,7 @@ const licenseeSchema = new Schema({
       'Nome do Bucket da AWS: deve ser preenchido quando utilizar os plugins da uTalk ou Winzap',
     ],
   },
-})
+}, { timestamps: true })
 
 licenseeSchema.pre('save', function (next) {
   const licensee = this

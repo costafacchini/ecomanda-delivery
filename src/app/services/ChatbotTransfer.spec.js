@@ -14,7 +14,7 @@ describe('transformChatbotTransferBody', () => {
     await mongoServer.disconnect()
   })
 
-  it('responds with action to transfer message to chat', async () => {
+  it('responds with action to transfer message to chat and marks body to concluded', async () => {
     const chatbotPluginResponseToMessages = jest
       .spyOn(Landbot.prototype, 'responseTransferToMessage')
       .mockImplementation(() => {
@@ -43,13 +43,17 @@ describe('transformChatbotTransferBody', () => {
 
     expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
+    const bodyUpdated = await Body.findById(body._id)
+    expect(body.concluded).toEqual(false)
+    expect(bodyUpdated.concluded).toEqual(true)
+
     expect(actions[0].action).toEqual('transfer-to-chat')
     expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://chat.url' })
 
     expect(actions.length).toEqual(1)
   })
 
-  it('responds with blank actions if body is invalid', async () => {
+  it('responds with blank actions if body is invalid and marks body to concluded', async () => {
     const chatbotPluginResponseToMessages = jest
       .spyOn(Landbot.prototype, 'responseTransferToMessage')
       .mockImplementation(() => {
@@ -77,6 +81,10 @@ describe('transformChatbotTransferBody', () => {
     const actions = await transformChatbotTransferBody(data)
 
     expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body.content)
+
+    const bodyUpdated = await Body.findById(body._id)
+    expect(body.concluded).toEqual(false)
+    expect(bodyUpdated.concluded).toEqual(true)
 
     expect(actions.length).toEqual(0)
   })

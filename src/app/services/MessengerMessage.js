@@ -28,6 +28,9 @@ async function transformMessengerBody(data) {
     })
   }
 
+  body.concluded = true
+  await body.save()
+
   return actions
 }
 
