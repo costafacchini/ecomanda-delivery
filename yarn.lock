@@ -1717,7 +1717,7 @@ debug@4, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1, debug@^4.2.0, debug@^4.3.1:
   dependencies:
     ms "2.1.2"
 
-debug@4.3.2:
+debug@4.3.2, debug@^4.3.2:
   version "4.3.2"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.2.tgz#f0a49c18ac8779e31d4a0c6029dfb76873c7428b"
   integrity sha512-mOp8wKcvj7XxC78zLgw/ZA+6TSgkoE2C/ienthhRD298T7UNwAg9diBpLRxC0mOezLl4B0xV7M0cCO6P/O0Xhw==
@@ -4038,6 +4038,29 @@ mongodb-memory-server-core@7.0.0:
     uuid "^8.3.1"
     yauzl "^2.10.0"
 
+mongodb-memory-server-core@7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-7.1.0.tgz#1b147ab12b18bb3b9426a2ac38782aeb8e9566e1"
+  integrity sha512-tSnffPiC1HrHMW+OA9b6g14MFPq/fXfnHOQPPlPtcjK+dM7tAWhzw1eOSKz0aye4xMiS3+ko37xdmpC/B7R4cA==
+  dependencies:
+    "@types/tmp" "^0.2.0"
+    async-mutex "^0.3.0"
+    camelcase "^6.1.0"
+    debug "^4.2.0"
+    find-cache-dir "^3.3.1"
+    get-port "^5.1.1"
+    https-proxy-agent "^5.0.0"
+    md5-file "^5.0.0"
+    mkdirp "^1.0.4"
+    mongodb "^3.6.9"
+    new-find-package-json "^1.1.0"
+    semver "^7.3.5"
+    tar-stream "^2.1.4"
+    tmp "^0.2.1"
+    tslib "^2.3.0"
+    uuid "^8.3.1"
+    yauzl "^2.10.0"
+
 mongodb-memory-server@7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/mongodb-memory-server/-/mongodb-memory-server-7.0.0.tgz#437c9324957e8f06ab60e8805159ff73a0c7136e"
@@ -4152,6 +4175,14 @@ negotiator@0.6.2:
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.2.tgz#feacf7ccf525a77ae9634436a64883ffeca346fb"
   integrity sha512-hZXc7K2e+PgeI1eDBe/10Ard4ekbfrrqG8Ep+8Jmf4JID2bNg7NvCPOZN+kfF574pFQI7mum2AUqDidoKqcTOw==
+
+new-find-package-json@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/new-find-package-json/-/new-find-package-json-1.1.0.tgz#053e006b17f409b9a816d5bcf0ee2b90a50326a3"
+  integrity sha512-KOH3BNZcTKPzEkaJgG2iSUaurxKmefqRKmCOYH+8xqJytNIgjqU4J88BHfK+gy/UlEzlhccLyuJDJAcCgexSwA==
+  dependencies:
+    debug "^4.3.2"
+    tslib "^2.3.0"
 
 nice-try@^1.0.4:
   version "1.0.5"
