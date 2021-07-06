@@ -144,6 +144,8 @@ class Landbot {
            body: ${JSON.stringify(response.data)}`
       )
     } else {
+      messageToSend.error = JSON.stringify(response.data)
+      await messageToSend.save()
       console.error(
         `Mensagem ${messageToSend._id} não enviada para Landbot.
            status: ${response.status}

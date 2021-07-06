@@ -129,8 +129,7 @@ describe('Rocketchat plugin', () => {
             {
               _id: 'ou4LGLFdsi8tynQb4',
               username: 'amanda',
-              msg:
-                ' Estou encerrando seu atendimento. Precisando de algo é só nos chamar novamente :) A Bennemann deseja a você um ótimo dia!',
+              msg: ' Estou encerrando seu atendimento. Precisando de algo é só nos chamar novamente :) A Bennemann deseja a você um ótimo dia!',
               agentId: 'ZnTJu5mzqdDeaZKoo',
               closingMessage: true,
             },
@@ -882,6 +881,7 @@ describe('Rocketchat plugin', () => {
 
           const messageUpdated = await Message.findById(message._id)
           expect(messageUpdated.sended).toEqual(false)
+          expect(messageUpdated.error).toEqual('{"success":false}')
 
           expect(consoleErrorSpy).toHaveBeenCalledWith(
             'Mensagem 60958703f415ed4008748637 não enviada para a Rocketchat {"success":false}'
@@ -1052,7 +1052,7 @@ describe('Rocketchat plugin', () => {
             msg: 'Hello message',
           },
           {
-            closingMessage: true
+            closingMessage: true,
           },
         ],
       }

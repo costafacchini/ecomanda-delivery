@@ -740,6 +740,12 @@ describe('Winzap plugin', () => {
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(1)
 
+        const messageUpdated = await Message.findById(message._id)
+        expect(messageUpdated.sended).toEqual(false)
+        expect(messageUpdated.error).toEqual(
+          '{"type":"send message","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","status":"whatsapp offline"}'
+        )
+
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           'Mensagem 60958703f415ed4008748637 não enviada para Chatapi. {"type":"send message","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","status":"whatsapp offline"}'
         )

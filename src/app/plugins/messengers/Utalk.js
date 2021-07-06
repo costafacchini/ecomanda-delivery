@@ -142,9 +142,10 @@ class Utalk {
     if (!response.data.status) {
       messageToSend.sended = true
       await messageToSend.save()
-
       console.info(`Mensagem ${messageId} enviada para Utalk com sucesso! ${JSON.stringify(response.data)}`)
     } else {
+      messageToSend.error = JSON.stringify(response.data)
+      await messageToSend.save()
       console.error(`Mensagem ${messageId} não enviada para Chatapi. ${JSON.stringify(response.data)}`)
     }
   }
