@@ -147,6 +147,8 @@ class Jivochat {
       await messageToSend.save()
       console.info(`Mensagem ${messageToSend._id} enviada para Jivochat com sucesso!`)
     } else {
+      messageToSend.error = `mensagem: ${JSON.stringify(response.data)}`
+      await messageToSend.save()
       console.error(
         `Mensagem ${messageToSend._id} não enviada para Jivochat.
            status: ${response.status}

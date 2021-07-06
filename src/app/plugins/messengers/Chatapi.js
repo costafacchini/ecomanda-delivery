@@ -110,16 +110,10 @@ class Chatapi {
 
     if (await this.#readChat(chatId, url, token)) {
       if (messageToSend.kind === 'text') {
-        if (!await this.#sendText(messageToSend._id, messageToSend.text, chatId, url, token)) {
-          return
-        }
+        await this.#sendText(messageToSend, chatId, url, token)
       } else {
-        if (!await this.#sendFile(messageToSend._id, messageToSend.text, messageToSend.url, messageToSend.fileName, chatId, url, token)) {
-          return
-        }
+        await this.#sendFile(messageToSend, chatId, url, token)
       }
-      messageToSend.sended = true
-      await messageToSend.save()
     }
   }
 
@@ -139,41 +133,49 @@ class Chatapi {
     return response.data.read === true
   }
 
-  async #sendText(messageId, message, chatId, url, token) {
+  async #sendText(message, chatId, url, token) {
     const sendMessageUrl = `${url}sendMessage?token=${token}`
 
     const body = {
       chatId: chatId,
-      body: message
+      body: message.text
     }
 
     const response = await request.post(sendMessageUrl, { body })
 
     if (response.data.sent === true) {
-      console.info(`Mensagem ${messageId} enviada para Chatapi com sucesso! ${response.data.message}`)
+      message.sended = true
+      await message.save()
+      console.info(`Mensagem ${message._id} enviada para Chatapi com sucesso! ${response.data.message}`)
     } else {
-      console.error(`Mensagem ${messageId} não enviada para Chatapi. ${JSON.stringify(response.data)}`)
+      message.error = JSON.stringify(response.data)
+      await message.save()
+      console.error(`Mensagem ${message._id} não enviada para Chatapi. ${JSON.stringify(response.data)}`)
     }
 
     return response.data.sent === true
   }
 
-  async #sendFile(messageId, text, fileUrl, fileName, chatId, url, token) {
+  async #sendFile(message, chatId, url, token) {
     const sendFileUrl = `${url}sendFile?token=${token}`
 
     const body = {
       chatId: chatId,
-      body: fileUrl,
-      filename: fileName,
-      caption: text,
+      body: message.url,
+      filename: message.fileName,
+      caption: message.text,
     }
 
     const response = await request.post(sendFileUrl, { body })
 
     if (response.data.sent === true) {
-      console.info(`Mensagem ${messageId} enviada para Chatapi com sucesso! ${response.data.message}`)
+      message.sended = true
+      await message.save()
+      console.info(`Mensagem ${message._id} enviada para Chatapi com sucesso! ${response.data.message}`)
     } else {
-      console.error(`Mensagem ${messageId} não enviada para Chatapi. ${JSON.stringify(response.data)}`)
+      message.error = JSON.stringify(response.data)
+      await message.save()
+      console.error(`Mensagem ${message._id} não enviada para Chatapi. ${JSON.stringify(response.data)}`)
     }
 
     return response.data.sent === true

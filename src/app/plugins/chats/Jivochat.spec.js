@@ -453,7 +453,7 @@ describe('Jivochat plugin', () => {
     })
 
     describe('when response is not 200', () => {
-      it('logs the error message', async () => {
+      it('logs the error message and save error on message', async () => {
         const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
 
         const contact = await Contact.create({
@@ -489,9 +489,12 @@ describe('Jivochat plugin', () => {
           },
         }
 
-        fetchMock.postOnce((url, { body }) => {
-          return url === 'https://url.com.br/jkJGs5a4ea/pAOqw2340' && body === JSON.stringify(expectedBody)
-        }, 404)
+        fetchMock.postOnce(
+          (url, { body }) => {
+            return url === 'https://url.com.br/jkJGs5a4ea/pAOqw2340' && body === JSON.stringify(expectedBody)
+          },
+          { status: 404, body: { error: 'Error message' } }
+        )
 
         expect(message.sended).toEqual(false)
 
@@ -499,13 +502,17 @@ describe('Jivochat plugin', () => {
         await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
         await fetchMock.flush(true)
 
+        const messageUpdated = await Message.findById(message._id)
+        expect(messageUpdated.sended).toEqual(false)
+        expect(messageUpdated.error).toEqual('mensagem: {"error":"Error message"}')
+
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(1)
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Mensagem 60958703f415ed4008748637 não enviada para Jivochat.
            status: 404
-           mensagem: ${JSON.stringify('')}`
+           mensagem: {"error":"Error message"}`
         )
       })
     })
