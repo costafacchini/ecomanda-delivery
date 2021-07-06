@@ -8,6 +8,7 @@ const jest = {
     '@controllers(.*)$': '<rootDir>/src/app/controllers$1',
     '@routes(.*)$': '<rootDir>/src/app/routes$1',
     '@config(.*)$': '<rootDir>/src/config$1',
+    '@queries(.*)$': '<rootDir>/src/queries$1',
   },
   collectCoverage: true,
   collectCoverageFrom: [
