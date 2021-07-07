@@ -11,8 +11,7 @@ const connect = require('./src/config/database')
 connect()
 
 async function schedule() {
-  // Fazer um HTML
-  // Disparar um e-mail
+  // Disparar uma mensagem utilizando o whatsapp do liceniado teste
   const yesterday = moment().subtract(1, 'days')
   const startDate = moment(yesterday).startOf('day')
   const endDate = moment(yesterday).endOf('day')
@@ -39,6 +38,12 @@ async function schedule() {
     }
 
     licenseeMessages.push(record)
+  }
+
+  for (const message of licenseeMessages) {
+    console.log(
+      `Licenciado - ${message.licensee.name}\nMensagens disparadas com sucesso: ${message.success.count}\nMensagens não disparadas: ${message.error.count}\n\n`
+    )
   }
 
   // This command is necessary to wake up the heroku application
