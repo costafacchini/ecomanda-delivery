@@ -10,7 +10,7 @@
     "dev:worker": "nodemon worker.js",
     "test": "NODE_ENV=test jest --no-coverage --maxWorkers=50%",
     "test:coverage": "NODE_ENV=test jest --maxWorkers=50%",
-    "watch": "NODE_ENV=test jest --no-coverage --verbose --watch --runInBand --notify --notifyMode always --maxWorkers=25%",
+    "watch": "NODE_ENV=test jest --no-coverage --verbose --watch --runInBand --notify --notifyMode always",
     "linter": "yarn eslint 'src/app/**/*.{js,ts,tsx}' 'src/config/**/*.{js,ts,tsx}' 'src/setup/**/*.{js,ts,tsx}'"
   },
   "devDependencies": {
@@ -50,6 +50,7 @@
     "moment": "^2.29.1",
     "mongoose": "5.13.2",
     "morgan": "1.10.0",
+    "node-notifier": "^10.0.0",
     "nodemon": "2.0.9",
     "rollbar": "2.24.0",
     "uuid": "8.3.2"
