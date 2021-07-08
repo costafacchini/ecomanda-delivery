@@ -8,8 +8,6 @@ class MessagesSendedQuery {
   }
 
   async all() {
-    console.log(this.startDate)
-    console.log(this.endDate)
     return await Message.find({
       sended: true,
       createdAt: {
