@@ -141,13 +141,21 @@ class Rocketchat {
 
     const response = await request.post(`${url}/api/v1/livechat/message`, { body })
     if (response.data.success === true) {
+      message.error = ''
       message.sended = true
       await message.save()
       console.info(`Mensagem ${message._id} enviada para Rocketchat com sucesso!`)
     } else {
       message.error = JSON.stringify(response.data)
       await message.save()
-      console.error(`Mensagem ${message._id} não enviada para a Rocketchat ${JSON.stringify(response.data)}`)
+
+      if (message.error.includes('invalid-token')) {
+        contact.roomId = ''
+        await contact.save()
+        await this.sendMessage(message._id, url)
+      } else {
+        console.error(`Mensagem ${message._id} não enviada para a Rocketchat ${JSON.stringify(response.data)}`)
+      }
     }
 
     return response.data.success === true
