@@ -122,7 +122,7 @@ class Jivochat {
     if (messageToSend.kind === 'text') {
       body.message.type = 'text'
       if (messageToSend.contact.type === '@g.us') {
-        body.message.text = `${messageToSend.senderName}:\\n${messageToSend.text}\\n`
+        body.message.text = `${messageToSend.senderName}:\n${messageToSend.text}\n.`
       } else {
         body.message.text = messageToSend.text
       }
@@ -147,6 +147,8 @@ class Jivochat {
       await messageToSend.save()
       console.info(`Mensagem ${messageToSend._id} enviada para Jivochat com sucesso!`)
     } else {
+      messageToSend.error = `mensagem: ${JSON.stringify(response.data)}`
+      await messageToSend.save()
       console.error(
         `Mensagem ${messageToSend._id} não enviada para Jivochat.
            status: ${response.status}

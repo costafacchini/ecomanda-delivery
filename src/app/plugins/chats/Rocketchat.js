@@ -100,10 +100,7 @@ class Rocketchat {
       }
     }
 
-    if (await this.#postMessage(messageToSend.contact, messageToSend, roomId, url)) {
-      messageToSend.sended = true
-      await messageToSend.save()
-    }
+    await this.#postMessage(messageToSend.contact, messageToSend, roomId, url)
   }
 
   async #createVisitor(contact, url) {
@@ -144,9 +141,21 @@ class Rocketchat {
 
     const response = await request.post(`${url}/api/v1/livechat/message`, { body })
     if (response.data.success === true) {
+      message.error = ''
+      message.sended = true
+      await message.save()
       console.info(`Mensagem ${message._id} enviada para Rocketchat com sucesso!`)
     } else {
-      console.error(`Mensagem ${message._id} não enviada para a Rocketchat ${JSON.stringify(response.data)}`)
+      message.error = JSON.stringify(response.data)
+      await message.save()
+
+      if (message.error.includes('invalid-token')) {
+        contact.roomId = ''
+        await contact.save()
+        await this.sendMessage(message._id, url)
+      } else {
+        console.error(`Mensagem ${message._id} não enviada para a Rocketchat ${JSON.stringify(response.data)}`)
+      }
     }
 
     return response.data.success === true

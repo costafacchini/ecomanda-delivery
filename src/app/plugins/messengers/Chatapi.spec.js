@@ -38,8 +38,7 @@ describe('Chatapi plugin', () => {
           messages: [
             {
               id: 'false_5593165392832@c.us_3EB066E484BABD9F3C69',
-              body:
-                'https://s3.eu-central-1.wasabisys.com/incoming-chat-api/2021/3/25/244959/1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg',
+              body: 'https://s3.eu-central-1.wasabisys.com/incoming-chat-api/2021/3/25/244959/1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg',
               fromMe: false,
               self: 1,
               isForwarded: 0,
@@ -98,8 +97,7 @@ describe('Chatapi plugin', () => {
           messages: [
             {
               id: 'false_5593165392832@c.us_3EB066E484BABD9F3C69',
-              body:
-                'https://s3.eu-central-1.wasabisys.com/incoming-chat-api/2021/3/25/244959/1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg',
+              body: 'https://s3.eu-central-1.wasabisys.com/incoming-chat-api/2021/3/25/244959/1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg',
               fromMe: false,
               self: 1,
               isForwarded: 0,
@@ -820,6 +818,12 @@ describe('Chatapi plugin', () => {
 
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(2)
+
+        const messageUpdated = await Message.findById(message._id)
+        expect(messageUpdated.sended).toEqual(false)
+        expect(messageUpdated.error).toEqual(
+          '{"sent":false,"message":"Wrong chatId format. Please use phone parameter or chatId from message history. chatId has format 5593165392832@c.us or 5593165392832-5593165392832@g.us"}'
+        )
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           'Mensagem 60958703f415ed4008748637 não enviada para Chatapi. {"sent":false,"message":"Wrong chatId format. Please use phone parameter or chatId from message history. chatId has format 5593165392832@c.us or 5593165392832-5593165392832@g.us"}'

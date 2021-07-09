@@ -2,19 +2,22 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
 
-const bodySchema = new Schema({
-  _id: ObjectId,
-  content: {
-    type: Object,
-    required: [true, 'Conteúdo: Você deve preencher o campo'],
+const bodySchema = new Schema(
+  {
+    _id: ObjectId,
+    content: {
+      type: Object,
+      required: [true, 'Conteúdo: Você deve preencher o campo'],
+    },
+    licensee: {
+      type: ObjectId,
+      ref: 'Licensee',
+      required: [true, 'Licensee: Você deve preencher o campo'],
+    },
+    concluded: { type: Boolean, default: false },
   },
-  licensee: {
-    type: ObjectId,
-    ref: 'Licensee',
-    required: [true, 'Licensee: Você deve preencher o campo'],
-  },
-  concluded: { type: Boolean, default: false },
-}, { timestamps: true })
+  { timestamps: true }
+)
 
 bodySchema.pre('save', function (next) {
   const body = this

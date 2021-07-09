@@ -129,8 +129,7 @@ describe('Rocketchat plugin', () => {
             {
               _id: 'ou4LGLFdsi8tynQb4',
               username: 'amanda',
-              msg:
-                ' Estou encerrando seu atendimento. Precisando de algo é só nos chamar novamente :) A Bennemann deseja a você um ótimo dia!',
+              msg: ' Estou encerrando seu atendimento. Precisando de algo é só nos chamar novamente :) A Bennemann deseja a você um ótimo dia!',
               agentId: 'ZnTJu5mzqdDeaZKoo',
               closingMessage: true,
             },
@@ -882,9 +881,132 @@ describe('Rocketchat plugin', () => {
 
           const messageUpdated = await Message.findById(message._id)
           expect(messageUpdated.sended).toEqual(false)
+          expect(messageUpdated.error).toEqual('{"success":false}')
 
           expect(consoleErrorSpy).toHaveBeenCalledWith(
             'Mensagem 60958703f415ed4008748637 não enviada para a Rocketchat {"success":false}'
+          )
+        })
+
+        it('clears the roomId and retry send message if error includes invalid-token', async () => {
+          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+          const contact = await Contact.create({
+            name: 'John Doe',
+            number: '5593165392832',
+            type: '@c.us',
+            email: 'john@doe.com',
+            talkingWithChatBot: true,
+            licensee: licensee,
+            roomId: 'room',
+          })
+
+          const message = await Message.create({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            number: 'jhd7879a7d9',
+            contact: contact,
+            licensee: licensee,
+            destination: 'to-chatbot',
+            sended: false,
+          })
+
+          const expectedBody = {
+            token: '5593165392832@c.us',
+            rid: 'room',
+            msg: 'Message to send',
+          }
+
+          fetchMock.postOnce(
+            (url, { body }) => {
+              return url === 'https://rocket.com.br/api/v1/livechat/message' && body === JSON.stringify(expectedBody)
+            },
+            { status: 200, body: { success: false, error: 'invalid-token' } }
+          )
+
+          const expectedBodyVisitor = {
+            visitor: {
+              name: 'John Doe - 5593165392832 - WhatsApp',
+              email: 'john@doe.com',
+              token: '5593165392832@c.us',
+            },
+          }
+
+          fetchMock.postOnce(
+            (url, { body }) => {
+              return (
+                url === 'https://rocket.com.br/api/v1/livechat/visitor' && body === JSON.stringify(expectedBodyVisitor)
+              )
+            },
+            {
+              status: 200,
+              body: {
+                visitor: {
+                  _id: 'Z4pqikNyvjvwksYfE',
+                  username: 'guest-1208',
+                  ts: '2021-04-19T10:52:59.481Z',
+                  _updatedAt: '2021-04-19T10:52:59.483Z',
+                  name: 'John Doe - 5593165392832 - WhatsApp',
+                  token: '5593165392832@c.us',
+                  visitorEmails: [{ address: 'john@doe.com' }],
+                },
+                success: true,
+              },
+            }
+          )
+
+          fetchMock.getOnce('https://rocket.com.br/api/v1/livechat/room?token=5593165392832@c.us', {
+            status: 200,
+            body: {
+              room: {
+                _id: 'HNpDrzmTdJB4Z3TR8',
+                msgs: 0,
+                usersCount: 1,
+                lm: '2021-04-19T10:51:04.027Z',
+                fname: '5593165392832 - WhatsApp',
+                t: 'l',
+                ts: '2021-04-19T10:51:04.027Z',
+                v: { _id: 'gwniTTrz84Lc9e7jH', username: 'guest-569', token: '5511942215083@c.us', status: 'online' },
+                cl: false,
+                open: true,
+                waitingResponse: true,
+                _updatedAt: '2021-04-19T10:51:04.027Z',
+              },
+              newRoom: true,
+              success: true,
+            },
+          })
+
+          const expectedSecondBody = {
+            token: '5593165392832@c.us',
+            rid: 'HNpDrzmTdJB4Z3TR8',
+            msg: 'Message to send',
+          }
+
+          fetchMock.postOnce(
+            (url, { body }) => {
+              return (
+                url === 'https://rocket.com.br/api/v1/livechat/message' && body === JSON.stringify(expectedSecondBody)
+              )
+            },
+            { status: 200, body: { success: true } }
+          )
+
+          expect(message.sended).toEqual(false)
+
+          const rocketchat = new Rocketchat(licensee)
+          await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
+          await fetchMock.flush(true)
+
+          expect(fetchMock.done()).toBe(true)
+          expect(fetchMock.calls()).toHaveLength(4)
+
+          const messageUpdated = await Message.findById(message._id)
+          expect(messageUpdated.sended).toEqual(true)
+          expect(messageUpdated.roomId).not.toEqual('room')
+
+          expect(consoleInfoSpy).toHaveBeenCalledWith(
+            'Mensagem 60958703f415ed4008748637 enviada para Rocketchat com sucesso!'
           )
         })
       })
@@ -1052,7 +1174,7 @@ describe('Rocketchat plugin', () => {
             msg: 'Hello message',
           },
           {
-            closingMessage: true
+            closingMessage: true,
           },
         ],
       }
