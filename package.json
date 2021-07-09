@@ -9,6 +9,7 @@
     "dev:server": "bash -c 'docker-compose up -d && trap \"docker-compose stop\" SIGINT && nodemon server.js'",
     "dev:worker": "nodemon worker.js",
     "test": "NODE_ENV=test jest --no-coverage --maxWorkers=50%",
+    "test:ci": "NODE_ENV=test jest",
     "test:coverage": "NODE_ENV=test jest --maxWorkers=50%",
     "watch": "NODE_ENV=test jest --no-coverage --verbose --watch --runInBand --notify --notifyMode always",
     "linter": "yarn eslint 'src/app/**/*.{js,ts,tsx}' 'src/config/**/*.{js,ts,tsx}' 'src/setup/**/*.{js,ts,tsx}'"

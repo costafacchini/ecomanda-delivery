@@ -39,7 +39,7 @@ jobs:
       - name: Unit tests
         run: |
           yarn
-          yarn test --coverageDirectory unit-coverage
+          yarn test:ci --coverageDirectory unit-coverage --maxWorkers 4
         env:
           REDIS_URL: 'redis://127.0.0.1:6379'
           SECRET: '394ru6gf6gjSsM6'
