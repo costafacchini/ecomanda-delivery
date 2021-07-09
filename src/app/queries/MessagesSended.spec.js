@@ -12,6 +12,7 @@ describe('MessagesSendedQuery', () => {
   afterEach(async () => {
     await mongoServer.disconnect()
   })
+
   it('returns the messages that sended filtered by licensee and period', async () => {
     const filteredLicensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
     const filteredContact = await Contact.create({
