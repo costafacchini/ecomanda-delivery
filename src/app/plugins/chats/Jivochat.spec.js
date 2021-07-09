@@ -429,7 +429,7 @@ describe('Jivochat plugin', () => {
             message: {
               id: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
               type: 'text',
-              text: 'John Doe:\\nMessage to send\\n',
+              text: 'John Doe:\nMessage to send\n.',
             },
           }
 
