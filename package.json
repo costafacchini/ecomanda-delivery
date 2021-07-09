@@ -8,8 +8,9 @@
     "dev": "npm-run-all -p dev:*",
     "dev:server": "bash -c 'docker-compose up -d && trap \"docker-compose stop\" SIGINT && nodemon server.js'",
     "dev:worker": "nodemon worker.js",
-    "test": "NODE_ENV=test jest",
-    "test:coverage": "NODE_ENV=test jest --coverage",
+    "test": "NODE_ENV=test jest --no-coverage --maxWorkers=50%",
+    "test:ci": "NODE_ENV=test jest",
+    "test:coverage": "NODE_ENV=test jest --maxWorkers=50%",
     "watch": "NODE_ENV=test jest --no-coverage --verbose --watch --runInBand --notify --notifyMode always",
     "linter": "yarn eslint 'src/app/**/*.{js,ts,tsx}' 'src/config/**/*.{js,ts,tsx}' 'src/setup/**/*.{js,ts,tsx}'"
   },
@@ -47,8 +48,10 @@
     "jsonwebtoken": "8.5.1",
     "lodash": "4.17.21",
     "module-alias": "2.2.2",
+    "moment": "^2.29.1",
     "mongoose": "5.13.2",
     "morgan": "1.10.0",
+    "node-notifier": "^10.0.0",
     "nodemon": "2.0.10",
     "rollbar": "2.24.0",
     "uuid": "8.3.2"
@@ -57,6 +60,8 @@
     "@models": "./src/app/models",
     "@controllers": "./src/app/controllers",
     "@routes": "./src/app/routes",
-    "@config": "./src/config"
+    "@config": "./src/config",
+    "@queries": "./src/app/queries",
+    "@reports": "./src/app/reports"
   }
 }

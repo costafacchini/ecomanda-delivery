@@ -4,34 +4,37 @@ const ObjectId = Schema.ObjectId
 const bcrypt = require('bcrypt')
 const saltRounds = 14
 
-const userSchema = new Schema({
-  _id: ObjectId,
-  name: {
-    type: String,
-    required: [true, 'Nome: Você deve preencher o campo'],
-    validate: {
-      validator: (value) => {
-        return value.length >= 4
+const userSchema = new Schema(
+  {
+    _id: ObjectId,
+    name: {
+      type: String,
+      required: [true, 'Nome: Você deve preencher o campo'],
+      validate: {
+        validator: (value) => {
+          return value.length >= 4
+        },
+        message: (props) => `Nome: Informe um valor com mais que 4 caracteres! Atual: ${props.value}`,
       },
-      message: (props) => `Nome: Informe um valor com mais que 4 caracteres! Atual: ${props.value}`,
     },
-  },
-  email: {
-    type: String,
-    unique: true,
-    required: [true, 'Email: Você deve preencher o campo'],
-  },
-  password: {
-    type: String,
-    validate: {
-      validator: (value) => {
-        return value.length >= 8
+    email: {
+      type: String,
+      unique: true,
+      required: [true, 'Email: Você deve preencher o campo'],
+    },
+    password: {
+      type: String,
+      validate: {
+        validator: (value) => {
+          return value.length >= 8
+        },
+        message: 'Senha: Informe um valor com mais que 8 caracteres!',
       },
-      message: 'Senha: Informe um valor com mais que 8 caracteres!',
     },
+    active: { type: Boolean, default: true },
   },
-  active: { type: Boolean, default: true },
-}, { timestamps: true })
+  { timestamps: true }
+)
 
 userSchema.pre('save', function (next) {
   const user = this

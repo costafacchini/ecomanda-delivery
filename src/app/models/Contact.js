@@ -3,26 +3,29 @@ const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
 const NormalizePhone = require('../helpers/NormalizePhone')
 
-const contactSchema = new Schema({
-  _id: ObjectId,
-  name: String,
-  number: {
+const contactSchema = new Schema(
+  {
+    _id: ObjectId,
+    name: String,
+    number: {
+      type: String,
+      required: [true, 'Numero: Você deve preencher o campo'],
+    },
     type: String,
-    required: [true, 'Numero: Você deve preencher o campo'],
+    talkingWithChatBot: {
+      type: Boolean,
+      required: [true, 'Talking with chatbot: Você deve preencher o campo'],
+    },
+    email: String,
+    roomId: String,
+    licensee: {
+      type: ObjectId,
+      ref: 'Licensee',
+      required: [true, 'Licensee: Você deve preencher o campo'],
+    },
   },
-  type: String,
-  talkingWithChatBot: {
-    type: Boolean,
-    required: [true, 'Talking with chatbot: Você deve preencher o campo'],
-  },
-  email: String,
-  roomId: String,
-  licensee: {
-    type: ObjectId,
-    ref: 'Licensee',
-    required: [true, 'Licensee: Você deve preencher o campo'],
-  },
-}, { timestamps: true })
+  { timestamps: true }
+)
 
 contactSchema.pre('save', function (next) {
   const contact = this
