@@ -52,7 +52,7 @@
     "mongoose": "5.13.2",
     "morgan": "1.10.0",
     "node-notifier": "10.0.0",
-    "nodemon": "2.0.10",
+    "nodemon": "2.0.11",
     "rollbar": "2.24.0",
     "uuid": "8.3.2"
   },
