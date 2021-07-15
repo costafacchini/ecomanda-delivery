@@ -4050,6 +4050,29 @@ mongodb-memory-server-core@7.2.0:
     uuid "^8.3.1"
     yauzl "^2.10.0"
 
+mongodb-memory-server-core@7.2.1:
+  version "7.2.1"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-7.2.1.tgz#b722417972c40a712b0da51899a4325fed35a577"
+  integrity sha512-1Ct/9WtUvWhKhjGx2wgwvoGdqPlVZ8raQUDbRa6tGfKOxbLgjzmLdD24LMA4GRfYSo0088MlUY0ckMjj4pdGwQ==
+  dependencies:
+    "@types/tmp" "^0.2.0"
+    async-mutex "^0.3.0"
+    camelcase "^6.1.0"
+    debug "^4.2.0"
+    find-cache-dir "^3.3.1"
+    get-port "^5.1.1"
+    https-proxy-agent "^5.0.0"
+    md5-file "^5.0.0"
+    mkdirp "^1.0.4"
+    mongodb "^3.6.9"
+    new-find-package-json "^1.1.0"
+    semver "^7.3.5"
+    tar-stream "^2.1.4"
+    tmp "^0.2.1"
+    tslib "^2.3.0"
+    uuid "^8.3.1"
+    yauzl "^2.10.0"
+
 mongodb-memory-server@7.2.0:
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/mongodb-memory-server/-/mongodb-memory-server-7.2.0.tgz#b425b0014841d1d18134de8e08e6d3c6affa13e9"
