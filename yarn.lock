@@ -4027,29 +4027,6 @@ moment@2.29.1, "moment@>= 2.9.0":
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
   integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
 
-mongodb-memory-server-core@7.3.0:
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-7.3.0.tgz#e37278eb708aae8e19ab7937bdb1897e61a3a5db"
-  integrity sha512-TkSTW/ozcETulK8ppWID+eEXZ/Ova6I5Ne+8WEmcQ6YoduL3q/jdP+9qSjrERO1ZcoyRwehx+LPLrphOgNSJ1w==
-  dependencies:
-    "@types/tmp" "^0.2.0"
-    async-mutex "^0.3.0"
-    camelcase "^6.1.0"
-    debug "^4.2.0"
-    find-cache-dir "^3.3.1"
-    get-port "^5.1.1"
-    https-proxy-agent "^5.0.0"
-    md5-file "^5.0.0"
-    mkdirp "^1.0.4"
-    mongodb "^3.6.9"
-    new-find-package-json "^1.1.0"
-    semver "^7.3.5"
-    tar-stream "^2.1.4"
-    tmp "^0.2.1"
-    tslib "^2.3.0"
-    uuid "^8.3.1"
-    yauzl "^2.10.0"
-
 mongodb-memory-server-core@7.3.1:
   version "7.3.1"
   resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-7.3.1.tgz#3520b954d6b51c8daa7a040b13225b80ad0feb09"
