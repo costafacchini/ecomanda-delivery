@@ -4050,12 +4050,35 @@ mongodb-memory-server-core@7.3.0:
     uuid "^8.3.1"
     yauzl "^2.10.0"
 
-mongodb-memory-server@7.3.0:
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/mongodb-memory-server/-/mongodb-memory-server-7.3.0.tgz#008b6077754cf7e6dd5b8bd72b1efe0887254e10"
-  integrity sha512-5sEp+rVbHInuWxf15Lk1wy9FkhvgInjMS1UTp2UKk0q/fAL1Qisb2L3rT7CoHx0jOmpAnk5tAfT/ybUTeiDu6g==
+mongodb-memory-server-core@7.3.1:
+  version "7.3.1"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-7.3.1.tgz#3520b954d6b51c8daa7a040b13225b80ad0feb09"
+  integrity sha512-dkDcYReVTmLqBgrXLluGc5yv5z22DqneKRoDJiRyh8+vUqSieBe5DMkc3Xz005tSk3KwB9ioRu+Hqc/JI1SCbw==
   dependencies:
-    mongodb-memory-server-core "7.3.0"
+    "@types/tmp" "^0.2.0"
+    async-mutex "^0.3.0"
+    camelcase "^6.1.0"
+    debug "^4.2.0"
+    find-cache-dir "^3.3.1"
+    get-port "^5.1.1"
+    https-proxy-agent "^5.0.0"
+    md5-file "^5.0.0"
+    mkdirp "^1.0.4"
+    mongodb "^3.6.9"
+    new-find-package-json "^1.1.0"
+    semver "^7.3.5"
+    tar-stream "^2.1.4"
+    tmp "^0.2.1"
+    tslib "^2.3.0"
+    uuid "^8.3.1"
+    yauzl "^2.10.0"
+
+mongodb-memory-server@7.3.1:
+  version "7.3.1"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server/-/mongodb-memory-server-7.3.1.tgz#20ce1272a6eaedd4a0b6cd2fd65a297860677eec"
+  integrity sha512-bp2uQwuB2fAqzu7+JOJhVyATxmRhG+/CeyJFcQAJozxVpObOVxbVYyvUp3cQRWT7OiPgVspPM9/bLm09e1q0KQ==
+  dependencies:
+    mongodb-memory-server-core "7.3.1"
     tslib "^2.3.0"
 
 mongodb@3.6.10:
