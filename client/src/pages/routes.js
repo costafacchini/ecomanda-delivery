@@ -29,6 +29,7 @@ function Routes() {
         <Route exact path='/' component={SignIn} />
         {/* <Route path='/signup' component={SignUp} /> */}
         {/* <PrivateRoute path='/users' component={UsersRoutes} /> */}
+        <PrivateRoute exact path='/dashboard' component={() => <h1>AAAAAAAAAA</h1>} />
         <PrivateRoute path='/licensees' component={LicenseesRoutes} />
         <Route path='*' component={() => <h1>Page not found</h1>} />
       </Switch>
