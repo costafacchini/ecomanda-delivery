@@ -1341,10 +1341,10 @@ bull-board@2.1.3:
     express "4.17.1"
     redis-info "^3.0.8"
 
-bullmq@1.39.3:
-  version "1.39.3"
-  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-1.39.3.tgz#9af785a93f0ab6726512d88bf4a73b293562b440"
-  integrity sha512-opkswgHY3SxMJ3MskMTVWDe/gMGeIUMIKN4UR+3jVYwukkRvtLW79kCvxizG+W/SP5yh9IPDV51ix9sn2qb2IQ==
+bullmq@1.39.5:
+  version "1.39.5"
+  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-1.39.5.tgz#2a0f464d4f622f7a72e68ba930ea2483dd292a92"
+  integrity sha512-kHhQJeZgYoH5xxtmZ22O6dkpY/G+NlWjpM0xv8ok6LqF5OPXO4oWmhlXrp97XNroxbIRgtIRyzWyGCrPXahF1Q==
   dependencies:
     "@types/ioredis" "^4.26.4"
     cron-parser "^2.7.3"
