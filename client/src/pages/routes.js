@@ -1,9 +1,8 @@
 import React from 'react'
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'
-// import SignUp from './SignUp'
 import SignIn from './SignIn'
-// import UsersRoutes from './Users/routes'
 import LicenseesRoutes from './Licensees/routes'
+import Dashboard from './Dashboard'
 
 import { isAuthenticated } from '../services/auth'
 
@@ -26,11 +25,20 @@ function Routes() {
   return (
     <BrowserRouter>
       <Switch>
-        <Route exact path='/' component={SignIn} />
-        {/* <Route path='/signup' component={SignUp} /> */}
-        {/* <PrivateRoute path='/users' component={UsersRoutes} /> */}
-        <PrivateRoute exact path='/dashboard' component={() => <h1>AAAAAAAAAA</h1>} />
-        <PrivateRoute path='/licensees' component={LicenseesRoutes} />
+        <Route
+          exact
+          path='/'
+          render={props =>
+            isAuthenticated() ? (
+              <Dashboard/>
+            ) : (
+              <Redirect to={{ pathname: '/signin', state: { from: props.location } }} />
+            )
+          }
+        />
+        <Route exact path='/signin' component={SignIn} />
+        <PrivateRoute path='/#/' component={Dashboard} />
+        <PrivateRoute path='/#/licensees' component={LicenseesRoutes} />
         <Route path='*' component={() => <h1>Page not found</h1>} />
       </Switch>
     </BrowserRouter>
