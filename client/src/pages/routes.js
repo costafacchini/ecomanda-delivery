@@ -1,10 +1,13 @@
-import React from 'react'
-import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { HashRouter, Route, Switch, Redirect } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import SignIn from './SignIn'
 import LicenseesRoutes from './Licensees/routes'
 import Dashboard from './Dashboard'
-
-import { isAuthenticated } from '../services/auth'
+import { isAuthenticated, fetchLoggedUser } from '../services/auth'
+import { loadLoggedUser } from './SignIn/slice'
+import BaseLayout from './BaseLayout/index'
+import Configurations from './Configurations/index'
 
 function PrivateRoute({ component: Component, ...rest }) {
   return (
@@ -12,7 +15,9 @@ function PrivateRoute({ component: Component, ...rest }) {
       {...rest}
       render={props =>
         isAuthenticated() ? (
-          <Component {...props} />
+          <BaseLayout>
+            <Component {...props} />
+          </BaseLayout>
         ) : (
           <Redirect to={{ pathname: '/', state: { from: props.location } }} />
         )
@@ -22,26 +27,45 @@ function PrivateRoute({ component: Component, ...rest }) {
 }
 
 function Routes() {
+  const dispatch = useDispatch()
+  const loggedUser = useSelector(state => state.signin.loggedUser)
+
+  console.log(isAuthenticated())
+
+  useEffect(() => {
+    if (isAuthenticated() && !loggedUser) {
+      fetchLoggedUser().then(user => {
+        dispatch(loadLoggedUser(user))
+      })
+    }
+  }, [dispatch, loggedUser])
+
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Switch>
         <Route
           exact
           path='/'
           render={props =>
             isAuthenticated() ? (
-              <Dashboard/>
+              <BaseLayout>
+                <Dashboard />
+              </BaseLayout>
             ) : (
               <Redirect to={{ pathname: '/signin', state: { from: props.location } }} />
             )
           }
         />
         <Route exact path='/signin' component={SignIn} />
-        <PrivateRoute path='/#/' component={Dashboard} />
-        <PrivateRoute path='/#/licensees' component={LicenseesRoutes} />
-        <Route path='*' component={() => <h1>Page not found</h1>} />
+        <PrivateRoute exact path='/licensees' component={LicenseesRoutes} />
+        <PrivateRoute exact path='/configurations' component={Configurations} />
+        <Route path='*' component={() =>
+          <BaseLayout>
+            <h1>Essa página não existe.</h1>
+          </BaseLayout>
+        } />
       </Switch>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 

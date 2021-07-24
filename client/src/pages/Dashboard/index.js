@@ -1,10 +1,9 @@
 import React from 'react'
-import Navbar from '../Navbar'
 
-export default function Dashboard({ loggedUser }) {
+export default function Dashboard() {
   return (
     <>
-      <Navbar loggedUser={loggedUser} />
+      <h1>Dashboard</h1>
     </>
   )
 }

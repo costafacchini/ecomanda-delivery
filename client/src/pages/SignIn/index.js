@@ -1,26 +1,34 @@
 import React, { useState } from 'react'
 import { useHistory, withRouter } from 'react-router-dom'
 import api from '../../services/api'
-import { login } from '../../services/auth'
+import { login, fetchLoggedUser } from '../../services/auth'
 import styles from './index.module.scss'
+import { loadLoggedUser } from '../SignIn/slice'
+import { useDispatch } from 'react-redux'
 
 function SignIn() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  let history = useHistory();
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const dispatch = useDispatch()
+  let history = useHistory()
 
   async function handleSignIn(e) {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!email || !password) {
-      setError('Preencha e-mail e senha para continuar!');
+      setError('Preencha e-mail e senha para continuar!')
     } else {
       const body = { email, password }
-      const response = await api().post('/login', { body });
+      const response = await api().post('/login', { body })
       if (response.status === 200) {
-        login(response.data.token);
-        history.push('/#/');
+        login(email, response.data.token)
+
+        fetchLoggedUser().then(user => {
+          dispatch(loadLoggedUser(user))
+        })
+
+        history.push('/#/')
       } else {
         console.log(response)
         setError(response.data.message)

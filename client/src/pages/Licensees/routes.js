@@ -12,7 +12,7 @@ function LicenseesRoutes() {
       <Route path={`${match.path}/:id(\\d+)`}>
         <LicenseeEdit resourceId={match.params.id} />
       </Route>
-      <Route path={`${match.path}/:id(\\d+)/new`}>
+      <Route path={`${match.path}/new`}>
         <LicenseeNew disabled={false} />
       </Route>
       <Route exact path={`${match.path}`}>

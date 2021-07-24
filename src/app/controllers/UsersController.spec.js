@@ -221,13 +221,28 @@ describe('user controller', () => {
           })
       })
 
+      it('returns status 200 and message if user id does not exists and user email exists', async () => {
+        await request(expressServer)
+          .get('/resources/users/john@doe.com')
+          .set('x-access-token', token)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .then((response) => {
+            expect(response.body.name).toEqual('Silfer')
+            expect(response.body.email).toEqual('john@doe.com')
+            expect(response.body.active).toEqual(true)
+            expect(response.body._id).toBeDefined()
+            expect(response.body.password).not.toBeDefined()
+          })
+      })
+
       it('returns status 404 and message if user does not exists', async () => {
         await request(expressServer)
           .get('/resources/users/12312')
           .set('x-access-token', token)
           .expect('Content-Type', /json/)
           .expect(404, {
-            errors: { message: 'Usuário 12312 não encontrado' },
+            errors: { message: 'Usuário não encontrado' },
           })
       })
 
