@@ -8,29 +8,11 @@ import { isAuthenticated, fetchLoggedUser } from '../services/auth'
 import { loadLoggedUser } from './SignIn/slice'
 import BaseLayout from './BaseLayout/index'
 import Configurations from './Configurations/index'
-
-function PrivateRoute({ component: Component, ...rest }) {
-  return (
-    <Route
-      {...rest}
-      render={props =>
-        isAuthenticated() ? (
-          <BaseLayout>
-            <Component {...props} />
-          </BaseLayout>
-        ) : (
-          <Redirect to={{ pathname: '/', state: { from: props.location } }} />
-        )
-      }
-    />
-  )
-}
+import PrivateRoute from './PrivateRoute/index'
 
 function Routes() {
   const dispatch = useDispatch()
   const loggedUser = useSelector(state => state.signin.loggedUser)
-
-  console.log(isAuthenticated())
 
   useEffect(() => {
     if (isAuthenticated() && !loggedUser) {
