@@ -28,7 +28,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '14.x'
-      - uses: c-hive/gha-yarn-cache@v1
+      - uses: c-hive/gha-yarn-cache@v2
       - name: Install dependencies
         run: yarn
 #      This setting must be enabled when eslint supports private methods.
