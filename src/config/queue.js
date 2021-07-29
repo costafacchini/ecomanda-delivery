@@ -1,6 +1,5 @@
 const { Queue } = require('bullmq')
 const { redisConnection } = require('@config/redis')
-const sleep = require('../app/helpers/sleep')
 
 const jobs = require('../app/jobs')
 
@@ -33,7 +32,6 @@ class QueueServer {
   async addJob(name, body) {
     const queue = this.queues.find((queue) => queue.name === name)
 
-    await sleep(1)
     return await queue.bull.add(name, { body }, { attempts: 3 })
   }
 }
