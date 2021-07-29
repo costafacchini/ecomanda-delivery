@@ -2,6 +2,7 @@ const Rocketchat = require('./Rocketchat')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Licensee = require('@models/Licensee')
+const Room = require('@models/Room')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
 const emoji = require('../../helpers/Emoji')
@@ -33,7 +34,12 @@ describe('Rocketchat plugin', () => {
         type: '@c.us',
         talkingWithChatBot: true,
         licensee: licensee,
+      })
+
+      const room = await Room.create({
         roomId: '4sqv8qitNqhgLdvB4',
+        token: contact._id.toString(),
+        contact: contact,
       })
 
       const responseBody = {
@@ -63,6 +69,7 @@ describe('Rocketchat plugin', () => {
       expect(messages[0]).toBeInstanceOf(Message)
       expect(messages[0].licensee).toEqual(licensee._id)
       expect(messages[0].contact).toEqual(contact._id)
+      expect(messages[0].room).toEqual(room._id)
       expect(messages[0].kind).toEqual('text')
       expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
       expect(messages[0].destination).toEqual('to-messenger')
@@ -76,6 +83,7 @@ describe('Rocketchat plugin', () => {
       expect(messages[1]).toBeInstanceOf(Message)
       expect(messages[1].licensee).toEqual(licensee._id)
       expect(messages[1].contact).toEqual(contact._id)
+      expect(messages[1].room).toEqual(room._id)
       expect(messages[1].kind).toEqual('file')
       expect(messages[1].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
       expect(messages[1].destination).toEqual('to-messenger')
@@ -104,6 +112,19 @@ describe('Rocketchat plugin', () => {
       expect(messages.length).toEqual(0)
     })
 
+    it('return the empty data if room is not exists', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const responseBody = {
+        _id: '4sqv8qitNqhgLdvB4',
+      }
+
+      const rocketchat = new Rocketchat(licensee)
+      const messages = await rocketchat.responseToMessages(responseBody)
+
+      expect(messages.length).toEqual(0)
+    })
+
     describe('when the message is LivechatSession', () => {
       it('returns the response body transformed in message to close-chat', async () => {
         const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
@@ -114,7 +135,12 @@ describe('Rocketchat plugin', () => {
           type: '@c.us',
           talkingWithChatBot: true,
           licensee: licensee,
+        })
+
+        const room = await Room.create({
           roomId: '4sqv8qitNqhgLdvB4',
+          token: contact._id.toString(),
+          contact: contact,
         })
 
         const responseBody = {
@@ -142,6 +168,7 @@ describe('Rocketchat plugin', () => {
         expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
+        expect(messages[0].room).toEqual(room._id)
         expect(messages[0].kind).toEqual('text')
         expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
         expect(messages[0].destination).toEqual('to-messenger')
@@ -186,7 +213,7 @@ describe('Rocketchat plugin', () => {
           visitor: {
             name: 'John Doe - 5593165392832 - WhatsApp',
             email: 'john@doe.com',
-            token: '5593165392832@c.us',
+            token: `${contact._id.toString()}`,
           },
         }
 
@@ -205,7 +232,7 @@ describe('Rocketchat plugin', () => {
                 ts: '2021-04-19T10:52:59.481Z',
                 _updatedAt: '2021-04-19T10:52:59.483Z',
                 name: 'John Doe - 5593165392832 - WhatsApp',
-                token: '5593165392832@c.us',
+                token: `${contact._id.toString()}`,
                 visitorEmails: [{ address: 'john@doe.com' }],
               },
               success: true,
@@ -213,7 +240,7 @@ describe('Rocketchat plugin', () => {
           }
         )
 
-        fetchMock.getOnce('https://rocket.com.br/api/v1/livechat/room?token=5593165392832@c.us', {
+        fetchMock.getOnce(`https://rocket.com.br/api/v1/livechat/room?token=${contact._id.toString()}`, {
           status: 200,
           body: {
             room: {
@@ -224,7 +251,12 @@ describe('Rocketchat plugin', () => {
               fname: '5593165392832 - WhatsApp',
               t: 'l',
               ts: '2021-04-19T10:51:04.027Z',
-              v: { _id: 'gwniTTrz84Lc9e7jH', username: 'guest-569', token: '5511942215083@c.us', status: 'online' },
+              v: {
+                _id: 'gwniTTrz84Lc9e7jH',
+                username: 'guest-569',
+                token: `${contact._id.toString()}`,
+                status: 'online',
+              },
               cl: false,
               open: true,
               waitingResponse: true,
@@ -236,7 +268,7 @@ describe('Rocketchat plugin', () => {
         })
 
         const expectedBody = {
-          token: '5593165392832@c.us',
+          token: `${contact._id.toString()}`,
           rid: 'HNpDrzmTdJB4Z3TR8',
           msg: 'Message to send',
         }
@@ -252,7 +284,7 @@ describe('Rocketchat plugin', () => {
                 _id: 'ZNDvoAqpx6dKRTRHr',
                 rid: 'HNpDrzmTdJB4Z3TR8',
                 msg: 'message',
-                token: '5593165392832@c.us',
+                token: `${contact._id.toString()}`,
                 alias: 'John Doe - 5593165392832 - WhatsApp',
                 ts: '2021-04-19T10:52:59.817Z',
                 u: { _id: 'HNpDrzmTdJB4Z3TR8', username: 'guest-1208', name: 'John Doe - 5593165392832 - WhatsApp' },
@@ -304,7 +336,7 @@ describe('Rocketchat plugin', () => {
           visitor: {
             name: 'John Doe - 5593165392832 - WhatsApp',
             email: 'john@doe.com',
-            token: '5593165392832@c.us',
+            token: `${contact._id.toString()}`,
           },
         }
 
@@ -323,7 +355,7 @@ describe('Rocketchat plugin', () => {
                 ts: '2021-04-19T10:52:59.481Z',
                 _updatedAt: '2021-04-19T10:52:59.483Z',
                 name: 'John Doe - 5593165392832 - WhatsApp',
-                token: '5593165392832@c.us',
+                token: `${contact._id.toString()}`,
                 visitorEmails: [{ address: 'john@doe.com' }],
               },
               success: true,
@@ -331,7 +363,7 @@ describe('Rocketchat plugin', () => {
           }
         )
 
-        fetchMock.getOnce('https://rocket.com.br/api/v1/livechat/room?token=5593165392832@c.us', {
+        fetchMock.getOnce(`https://rocket.com.br/api/v1/livechat/room?token=${contact._id.toString()}`, {
           status: 200,
           body: {
             room: {
@@ -342,7 +374,12 @@ describe('Rocketchat plugin', () => {
               fname: '5593165392832 - WhatsApp',
               t: 'l',
               ts: '2021-04-19T10:51:04.027Z',
-              v: { _id: 'gwniTTrz84Lc9e7jH', username: 'guest-569', token: '5511942215083@c.us', status: 'online' },
+              v: {
+                _id: 'gwniTTrz84Lc9e7jH',
+                username: 'guest-569',
+                token: `${contact._id.toString()}`,
+                status: 'online',
+              },
               cl: false,
               open: true,
               waitingResponse: true,
@@ -354,7 +391,7 @@ describe('Rocketchat plugin', () => {
         })
 
         const expectedBody = {
-          token: '5593165392832@c.us',
+          token: `${contact._id.toString()}`,
           rid: 'HNpDrzmTdJB4Z3TR8',
           msg: 'Message to send',
         }
@@ -370,7 +407,7 @@ describe('Rocketchat plugin', () => {
                 _id: 'ZNDvoAqpx6dKRTRHr',
                 rid: 'HNpDrzmTdJB4Z3TR8',
                 msg: 'message',
-                token: '5593165392832@c.us',
+                token: `${contact._id.toString()}`,
                 alias: 'John Doe - 5593165392832 - WhatsApp',
                 ts: '2021-04-19T10:52:59.817Z',
                 u: { _id: 'HNpDrzmTdJB4Z3TR8', username: 'guest-1208', name: 'John Doe - 5593165392832 - WhatsApp' },
@@ -424,7 +461,7 @@ describe('Rocketchat plugin', () => {
             visitor: {
               name: 'Grupo Teste - 5511989187726-1622497000 - WhatsApp',
               email: 'john@doe.com',
-              token: '5511989187726-1622497000@g.us',
+              token: `${contact._id.toString()}`,
             },
           }
 
@@ -443,7 +480,7 @@ describe('Rocketchat plugin', () => {
                   ts: '2021-04-19T10:52:59.481Z',
                   _updatedAt: '2021-04-19T10:52:59.483Z',
                   name: 'Grupo Teste - 5511989187726-1622497000 - WhatsApp',
-                  token: '5511989187726-1622497000@g.us',
+                  token: `${contact._id.toString()}`,
                   visitorEmails: [{ address: 'john@doe.com' }],
                 },
                 success: true,
@@ -451,7 +488,7 @@ describe('Rocketchat plugin', () => {
             }
           )
 
-          fetchMock.getOnce('https://rocket.com.br/api/v1/livechat/room?token=5511989187726-1622497000@g.us', {
+          fetchMock.getOnce(`https://rocket.com.br/api/v1/livechat/room?token=${contact._id.toString()}`, {
             status: 200,
             body: {
               room: {
@@ -465,7 +502,7 @@ describe('Rocketchat plugin', () => {
                 v: {
                   _id: 'gwniTTrz84Lc9e7jH',
                   username: 'guest-569',
-                  token: '5511989187726-1622497000@g.us',
+                  token: `${contact._id.toString()}`,
                   status: 'online',
                 },
                 cl: false,
@@ -479,7 +516,7 @@ describe('Rocketchat plugin', () => {
           })
 
           const expectedBody = {
-            token: '5511989187726-1622497000@g.us',
+            token: `${contact._id.toString()}`,
             rid: 'HNpDrzmTdJB4Z3TR8',
             msg: '*John Doe:*\nMessage to send',
           }
@@ -495,7 +532,7 @@ describe('Rocketchat plugin', () => {
                   _id: 'ZNDvoAqpx6dKRTRHr',
                   rid: 'HNpDrzmTdJB4Z3TR8',
                   msg: 'message',
-                  token: '5511989187726-1622497000@g.us',
+                  token: `${contact._id.toString()}`,
                   alias: 'Grupo Teste - 5511989187726-1622497000 - WhatsApp',
                   ts: '2021-04-19T10:52:59.817Z',
                   u: {
@@ -555,7 +592,7 @@ describe('Rocketchat plugin', () => {
             visitor: {
               name: 'John Doe - 5593165392832 - WhatsApp',
               email: 'john@doe.com',
-              token: '5593165392832@c.us',
+              token: `${contact._id.toString()}`,
             },
           }
 
@@ -574,7 +611,7 @@ describe('Rocketchat plugin', () => {
                   ts: '2021-04-19T10:52:59.481Z',
                   _updatedAt: '2021-04-19T10:52:59.483Z',
                   name: 'John Doe - 5593165392832 - WhatsApp',
-                  token: '5593165392832@c.us',
+                  token: `${contact._id.toString()}`,
                   visitorEmails: [{ address: 'john@doe.com' }],
                 },
                 success: true,
@@ -582,7 +619,7 @@ describe('Rocketchat plugin', () => {
             }
           )
 
-          fetchMock.getOnce('https://rocket.com.br/api/v1/livechat/room?token=5593165392832@c.us', {
+          fetchMock.getOnce(`https://rocket.com.br/api/v1/livechat/room?token=${contact._id.toString()}`, {
             status: 200,
             body: {
               room: {
@@ -593,7 +630,12 @@ describe('Rocketchat plugin', () => {
                 fname: '5593165392832 - WhatsApp',
                 t: 'l',
                 ts: '2021-04-19T10:51:04.027Z',
-                v: { _id: 'gwniTTrz84Lc9e7jH', username: 'guest-569', token: '5511942215083@c.us', status: 'online' },
+                v: {
+                  _id: 'gwniTTrz84Lc9e7jH',
+                  username: 'guest-569',
+                  token: `${contact._id.toString()}`,
+                  status: 'online',
+                },
                 cl: false,
                 open: true,
                 waitingResponse: true,
@@ -605,7 +647,7 @@ describe('Rocketchat plugin', () => {
           })
 
           const expectedBody = {
-            token: '5593165392832@c.us',
+            token: `${contact._id.toString()}`,
             rid: 'HNpDrzmTdJB4Z3TR8',
             msg: 'https://file-url.com',
           }
@@ -621,7 +663,7 @@ describe('Rocketchat plugin', () => {
                   _id: 'ZNDvoAqpx6dKRTRHr',
                   rid: 'HNpDrzmTdJB4Z3TR8',
                   msg: 'message',
-                  token: '5593165392832@c.us',
+                  token: `${contact._id.toString()}`,
                   alias: 'John Doe - 5593165392832 - WhatsApp',
                   ts: '2021-04-19T10:52:59.817Z',
                   u: { _id: 'HNpDrzmTdJB4Z3TR8', username: 'guest-1208', name: 'John Doe - 5593165392832 - WhatsApp' },
@@ -675,7 +717,7 @@ describe('Rocketchat plugin', () => {
             visitor: {
               name: 'John Doe - 5593165392832 - WhatsApp',
               email: 'john@doe.com',
-              token: '5593165392832@c.us',
+              token: `${contact._id.toString()}`,
             },
           }
 
@@ -733,7 +775,7 @@ describe('Rocketchat plugin', () => {
             visitor: {
               name: 'John Doe - 5593165392832 - WhatsApp',
               email: 'john@doe.com',
-              token: '5593165392832@c.us',
+              token: `${contact._id.toString()}`,
             },
           }
 
@@ -752,7 +794,7 @@ describe('Rocketchat plugin', () => {
                   ts: '2021-04-19T10:52:59.481Z',
                   _updatedAt: '2021-04-19T10:52:59.483Z',
                   name: 'John Doe - 5593165392832 - WhatsApp',
-                  token: '5593165392832@c.us',
+                  token: `${contact._id.toString()}`,
                   visitorEmails: [{ address: 'john@doe.com' }],
                 },
                 success: true,
@@ -760,7 +802,7 @@ describe('Rocketchat plugin', () => {
             }
           )
 
-          fetchMock.getOnce('https://rocket.com.br/api/v1/livechat/room?token=5593165392832@c.us', {
+          fetchMock.getOnce(`https://rocket.com.br/api/v1/livechat/room?token=${contact._id.toString()}`, {
             status: 200,
             body: { success: false },
           })
@@ -808,7 +850,7 @@ describe('Rocketchat plugin', () => {
             visitor: {
               name: 'John Doe - 5593165392832 - WhatsApp',
               email: 'john@doe.com',
-              token: '5593165392832@c.us',
+              token: `${contact._id.toString()}`,
             },
           }
 
@@ -827,7 +869,7 @@ describe('Rocketchat plugin', () => {
                   ts: '2021-04-19T10:52:59.481Z',
                   _updatedAt: '2021-04-19T10:52:59.483Z',
                   name: 'John Doe - 5593165392832 - WhatsApp',
-                  token: '5593165392832@c.us',
+                  token: `${contact._id.toString()}`,
                   visitorEmails: [{ address: 'john@doe.com' }],
                 },
                 success: true,
@@ -835,7 +877,7 @@ describe('Rocketchat plugin', () => {
             }
           )
 
-          fetchMock.getOnce('https://rocket.com.br/api/v1/livechat/room?token=5593165392832@c.us', {
+          fetchMock.getOnce(`https://rocket.com.br/api/v1/livechat/room?token=${contact._id.toString()}`, {
             status: 200,
             body: {
               room: {
@@ -846,7 +888,12 @@ describe('Rocketchat plugin', () => {
                 fname: '5593165392832 - WhatsApp',
                 t: 'l',
                 ts: '2021-04-19T10:51:04.027Z',
-                v: { _id: 'gwniTTrz84Lc9e7jH', username: 'guest-569', token: '5511942215083@c.us', status: 'online' },
+                v: {
+                  _id: 'gwniTTrz84Lc9e7jH',
+                  username: 'guest-569',
+                  token: `${contact._id.toString()}`,
+                  status: 'online',
+                },
                 cl: false,
                 open: true,
                 waitingResponse: true,
@@ -858,7 +905,7 @@ describe('Rocketchat plugin', () => {
           })
 
           const expectedBody = {
-            token: '5593165392832@c.us',
+            token: `${contact._id.toString()}`,
             rid: 'HNpDrzmTdJB4Z3TR8',
             msg: 'Message to send',
           }
@@ -888,7 +935,7 @@ describe('Rocketchat plugin', () => {
           )
         })
 
-        it('clears the roomId and retry send message if error includes invalid-token', async () => {
+        it('close room and retry send message if error includes room-closed', async () => {
           const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
 
           const contact = await Contact.create({
@@ -898,7 +945,12 @@ describe('Rocketchat plugin', () => {
             email: 'john@doe.com',
             talkingWithChatBot: true,
             licensee: licensee,
+          })
+
+          const room = await Room.create({
             roomId: 'room',
+            token: contact._id.toString(),
+            contact: contact,
           })
 
           const message = await Message.create({
@@ -907,12 +959,13 @@ describe('Rocketchat plugin', () => {
             number: 'jhd7879a7d9',
             contact: contact,
             licensee: licensee,
+            room: room,
             destination: 'to-chatbot',
             sended: false,
           })
 
           const expectedBody = {
-            token: '5593165392832@c.us',
+            token: `${contact._id.toString()}`,
             rid: 'room',
             msg: 'Message to send',
           }
@@ -921,14 +974,14 @@ describe('Rocketchat plugin', () => {
             (url, { body }) => {
               return url === 'https://rocket.com.br/api/v1/livechat/message' && body === JSON.stringify(expectedBody)
             },
-            { status: 200, body: { success: false, error: 'invalid-token' } }
+            { status: 200, body: { success: false, error: 'room-closed' } }
           )
 
           const expectedBodyVisitor = {
             visitor: {
               name: 'John Doe - 5593165392832 - WhatsApp',
               email: 'john@doe.com',
-              token: '5593165392832@c.us',
+              token: `${contact._id.toString()}`,
             },
           }
 
@@ -947,7 +1000,7 @@ describe('Rocketchat plugin', () => {
                   ts: '2021-04-19T10:52:59.481Z',
                   _updatedAt: '2021-04-19T10:52:59.483Z',
                   name: 'John Doe - 5593165392832 - WhatsApp',
-                  token: '5593165392832@c.us',
+                  token: `${contact._id.toString()}`,
                   visitorEmails: [{ address: 'john@doe.com' }],
                 },
                 success: true,
@@ -955,7 +1008,7 @@ describe('Rocketchat plugin', () => {
             }
           )
 
-          fetchMock.getOnce('https://rocket.com.br/api/v1/livechat/room?token=5593165392832@c.us', {
+          fetchMock.getOnce(`https://rocket.com.br/api/v1/livechat/room?token=${contact._id.toString()}`, {
             status: 200,
             body: {
               room: {
@@ -966,7 +1019,12 @@ describe('Rocketchat plugin', () => {
                 fname: '5593165392832 - WhatsApp',
                 t: 'l',
                 ts: '2021-04-19T10:51:04.027Z',
-                v: { _id: 'gwniTTrz84Lc9e7jH', username: 'guest-569', token: '5511942215083@c.us', status: 'online' },
+                v: {
+                  _id: 'gwniTTrz84Lc9e7jH',
+                  username: 'guest-569',
+                  token: `${contact._id.toString()}`,
+                  status: 'online',
+                },
                 cl: false,
                 open: true,
                 waitingResponse: true,
@@ -978,7 +1036,7 @@ describe('Rocketchat plugin', () => {
           })
 
           const expectedSecondBody = {
-            token: '5593165392832@c.us',
+            token: `${contact._id.toString()}`,
             rid: 'HNpDrzmTdJB4Z3TR8',
             msg: 'Message to send',
           }
@@ -1001,9 +1059,15 @@ describe('Rocketchat plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(4)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await Message.findById(message._id).populate('room')
           expect(messageUpdated.sended).toEqual(true)
-          expect(messageUpdated.roomId).not.toEqual('room')
+          expect(messageUpdated.room).not.toEqual(room)
+
+          const newRoom = await Room.findById(messageUpdated.room._id)
+          expect(newRoom.closed).toEqual(false)
+
+          const roomClosed = await Room.findById(room._id)
+          expect(roomClosed.closed).toEqual(true)
 
           expect(consoleInfoSpy).toHaveBeenCalledWith(
             'Mensagem 60958703f415ed4008748637 enviada para Rocketchat com sucesso!'
@@ -1076,7 +1140,7 @@ describe('Rocketchat plugin', () => {
   })
 
   describe('#closeChat', () => {
-    it('resets the room id in contact', async () => {
+    it('closes the room', async () => {
       const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
 
       const contact = await Contact.create({
@@ -1085,7 +1149,12 @@ describe('Rocketchat plugin', () => {
         type: '@c.us',
         talkingWithChatBot: false,
         licensee: licensee,
+      })
+
+      const room = await Room.create({
         roomId: 'ka3DiV9CuHD765',
+        token: contact._id.toString(),
+        contact: contact,
       })
 
       const message = await Message.create({
@@ -1094,18 +1163,21 @@ describe('Rocketchat plugin', () => {
         number: 'jhd7879a7d9',
         contact: contact,
         licensee: licensee,
+        room: room,
         destination: 'to-chatbot',
         sended: false,
       })
 
       expect(contact.talkingWithChatBot).toEqual(false)
-      expect(contact.roomId).toEqual('ka3DiV9CuHD765')
+      expect(room.roomId).toEqual('ka3DiV9CuHD765')
+      expect(room.closed).toEqual(false)
 
       const rocketchat = new Rocketchat(licensee)
       await rocketchat.closeChat(message._id)
 
-      const modifiedContact = await Contact.findById(contact._id)
-      expect(modifiedContact.roomId).toEqual('')
+      const modifiedRoom = await Room.findById(room._id)
+      expect(modifiedRoom.roomId).toEqual('ka3DiV9CuHD765')
+      expect(modifiedRoom.closed).toEqual(true)
     })
 
     describe('when the licensee use chatbot', () => {
@@ -1126,7 +1198,12 @@ describe('Rocketchat plugin', () => {
           type: '@c.us',
           talkingWithChatBot: false,
           licensee: licensee,
+        })
+
+        const room = await Room.create({
           roomId: 'ka3DiV9CuHD765',
+          token: contact._id.toString(),
+          contact: contact,
         })
 
         const message = await Message.create({
@@ -1135,19 +1212,18 @@ describe('Rocketchat plugin', () => {
           number: 'jhd7879a7d9',
           contact: contact,
           licensee: licensee,
+          room: room,
           destination: 'to-chatbot',
           sended: false,
         })
 
         expect(contact.talkingWithChatBot).toEqual(false)
-        expect(contact.roomId).toEqual('ka3DiV9CuHD765')
 
         const rocketchat = new Rocketchat(licensee)
         await rocketchat.closeChat(message._id)
 
         const modifiedContact = await Contact.findById(contact._id)
         expect(modifiedContact.talkingWithChatBot).toEqual(true)
-        expect(modifiedContact.roomId).toEqual('')
       })
     })
   })
