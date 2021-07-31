@@ -742,38 +742,6 @@ describe('Jivochat plugin', () => {
   })
 
   describe('#closeChat', () => {
-    it('resets the room id in contact', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-      const contact = await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: false,
-        licensee: licensee,
-        roomId: 'ka3DiV9CuHD765',
-      })
-
-      const message = await Message.create({
-        _id: '60958703f415ed4008748637',
-        text: 'Message to send',
-        number: 'jhd7879a7d9',
-        contact: contact,
-        licensee: licensee,
-        destination: 'to-chatbot',
-        sended: false,
-      })
-
-      expect(contact.talkingWithChatBot).toEqual(false)
-      expect(contact.roomId).toEqual('ka3DiV9CuHD765')
-
-      const jivochat = new Jivochat(licensee)
-      await jivochat.closeChat(message._id)
-
-      const modifiedContact = await Contact.findById(contact._id)
-      expect(modifiedContact.roomId).toEqual('')
-    })
-
     describe('when the licensee use chatbot', () => {
       it('changes the talking with chatbot in contact to true', async () => {
         const licensee = await Licensee.create({
@@ -806,14 +774,12 @@ describe('Jivochat plugin', () => {
         })
 
         expect(contact.talkingWithChatBot).toEqual(false)
-        expect(contact.roomId).toEqual('ka3DiV9CuHD765')
 
         const jivochat = new Jivochat(licensee)
         await jivochat.closeChat(message._id)
 
         const modifiedContact = await Contact.findById(contact._id)
         expect(modifiedContact.talkingWithChatBot).toEqual(true)
-        expect(modifiedContact.roomId).toEqual('')
       })
     })
   })

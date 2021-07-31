@@ -1,8 +1,8 @@
 const emoji = require('../../helpers/Emoji')
-const NormalizePhone = require('../../helpers/NormalizePhone')
 const { v4: uuidv4 } = require('uuid')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
+const Room = require('@models/Room')
 const request = require('../../services/request')
 
 class Rocketchat {
@@ -25,10 +25,10 @@ class Rocketchat {
   async responseToMessages(responseBody) {
     if (!responseBody._id) return []
 
-    const contact = await Contact.findOne({
-      roomId: responseBody._id,
-      licensee: this.licensee._id,
-    })
+    const room = await Room.findOne({ roomId: responseBody._id }).populate('contact')
+    if (!room) return []
+
+    const contact = await Contact.findOne({ _id: room.contact._id })
 
     const processedMessages = []
 
@@ -39,6 +39,7 @@ class Rocketchat {
         kind: 'text',
         licensee: this.licensee._id,
         contact: contact._id,
+        room: room._id,
         destination: 'to-messenger',
       })
 
@@ -54,6 +55,7 @@ class Rocketchat {
           kind: 'text',
           licensee: this.licensee._id,
           contact: contact._id,
+          room: room._id,
           destination: 'to-messenger',
         })
 
@@ -82,17 +84,14 @@ class Rocketchat {
 
   async sendMessage(messageId, url) {
     const messageToSend = await Message.findById(messageId).populate('contact')
-    let roomId = messageToSend.contact.roomId
+    const openRoom = await Room.findOne({ contact: messageToSend.contact, closed: false })
+    let room = openRoom
 
-    if (!roomId) {
-      if (await this.#createVisitor(messageToSend.contact, url) === true) {
-        roomId = await this.#createRoom(messageToSend.contact, url)
-        if (roomId) {
-          const contact = await Contact.findById(messageToSend.contact._id)
-
-          contact.roomId = roomId
-          await contact.save()
-        } else {
+    if (!room) {
+      const token = messageToSend.contact._id.toString()
+      if (await this.#createVisitor(messageToSend.contact, token, url) === true) {
+        room = await this.#createRoom(messageToSend.contact, token, url)
+        if (!room) {
           return
         }
       } else {
@@ -100,15 +99,15 @@ class Rocketchat {
       }
     }
 
-    await this.#postMessage(messageToSend.contact, messageToSend, roomId, url)
+    await this.#postMessage(messageToSend.contact, messageToSend, room, url)
   }
 
-  async #createVisitor(contact, url) {
+  async #createVisitor(contact, token, url) {
     const body = {
       visitor: {
         name: `${contact.name} - ${contact.number} - WhatsApp`,
         email: `${contact.email}`,
-        token: `${contact.number}${contact.type}`
+        token: `${token}`
       }
     }
 
@@ -121,37 +120,49 @@ class Rocketchat {
     return response.data.success === true
   }
 
-  async #createRoom(contact, url) {
-    const response = await request.get(`${url}/api/v1/livechat/room?token=${contact.number}${contact.type}`)
+  async #createRoom(contact, token, url) {
+    const response = await request.get(`${url}/api/v1/livechat/room?token=${token}`)
 
     if (response.data.success !== true) {
       console.error(`Não foi possível criar a sala na Rocketchat ${JSON.stringify(response.data)}`)
       return
     }
 
-    return response.data.room._id
+    const room = await Room.create({
+      roomId: response.data.room._id,
+      contact: contact._id,
+      token: token
+    })
+
+    return room
   }
 
-  async #postMessage(contact, message, roomId, url) {
+  async #postMessage(contact, message, room, url) {
     const body = {
-      token: `${contact.number}${contact.type}`,
-      rid: roomId,
+      token: `${room.token}`,
+      rid: room.roomId,
       msg: this.#formatMessage(message, contact)
     }
 
     const response = await request.post(`${url}/api/v1/livechat/message`, { body })
+
+    if (!message.room || message.room._id !== room._id) message.room = room
+
     if (response.data.success === true) {
-      message.error = ''
       message.sended = true
       await message.save()
+
       console.info(`Mensagem ${message._id} enviada para Rocketchat com sucesso!`)
     } else {
-      message.error = JSON.stringify(response.data)
+      message.error = message.error ? `${message.error} | ${JSON.stringify(response.data)}` : JSON.stringify(response.data)
+      if (message.error.includes('room-closed')) {
+        room.closed = true
+        await room.save()
+        message.room = null
+      }
       await message.save()
 
-      if (message.error.includes('invalid-token')) {
-        contact.roomId = ''
-        await contact.save()
+      if (message.error.includes('room-closed')) {
         await this.sendMessage(message._id, url)
       } else {
         console.error(`Mensagem ${message._id} não enviada para a Rocketchat ${JSON.stringify(response.data)}`)
@@ -171,15 +182,18 @@ class Rocketchat {
   }
 
   async closeChat(messageId) {
-    const message = await Message.findById(messageId).populate('contact').populate('licensee')
+    const message = await Message.findById(messageId).populate('contact').populate('licensee').populate('room')
     const licensee = message.licensee
     const contact = await Contact.findById(message.contact._id)
+    const room = await Room.findById(message.room._id)
 
-    contact.roomId = ''
+    room.closed = true
+    await room.save()
+
     if (licensee.useChatbot) {
       contact.talkingWithChatBot = true
+      await contact.save()
     }
-    await contact.save()
   }
 }
 

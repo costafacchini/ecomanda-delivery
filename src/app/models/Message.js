@@ -65,6 +65,10 @@ const messageSchema = new Schema(
       ref: 'Contact',
       required: [true, 'Contact: Você deve preencher o campo'],
     },
+    room: {
+      type: ObjectId,
+      ref: 'Room',
+    },
     error: String,
   },
   { timestamps: true }

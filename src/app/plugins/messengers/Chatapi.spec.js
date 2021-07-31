@@ -936,6 +936,10 @@ describe('Chatapi plugin', () => {
     it('returns location if kind is location', () => {
       expect(Chatapi.kindToMessageKind('location')).toEqual('location')
     })
+
+    it('returns undefined if kind is unknown', () => {
+      expect(Chatapi.kindToMessageKind('unknown')).toEqual(undefined)
+    })
   })
 
   describe('.action', () => {

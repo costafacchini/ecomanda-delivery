@@ -1,5 +1,6 @@
 const Licensee = require('@models/Licensee')
 const Contact = require('@models/Contact')
+const Room = require('@models/Room')
 const { Client } = require('pg')
 const URLParser = require('url')
 const { sanitizeModelErrors } = require('../../helpers/SanitizeErrors')
@@ -60,7 +61,6 @@ class EcomandaOldImporter {
         talkingWithChatBot: row.chatBot !== 'chat',
         licensee: licensee._id,
       })
-      if (row.room) contact.roomId = row.room
 
       const validation = contact.validateSync()
       if (validation) {
@@ -69,6 +69,10 @@ class EcomandaOldImporter {
         )
       } else {
         await contact.save()
+
+        if (row.room) {
+          await Room.create({ roomId: row.room, contactId: contact._id, token: row.chatRef })
+        }
       }
     }
 
