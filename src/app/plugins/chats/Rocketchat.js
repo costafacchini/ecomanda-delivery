@@ -83,10 +83,11 @@ class Rocketchat {
   }
 
   async sendMessage(messageId, url) {
-    const messageToSend = await Message.findById(messageId).populate('contact').populate('room')
-    let room
+    const messageToSend = await Message.findById(messageId).populate('contact')
+    const openRoom = await Room.findOne({ contact: messageToSend.contact, closed: false })
+    let room = openRoom
 
-    if (!messageToSend.room) {
+    if (!room) {
       const token = messageToSend.contact._id.toString()
       if (await this.#createVisitor(messageToSend.contact, token, url) === true) {
         room = await this.#createRoom(messageToSend.contact, token, url)
@@ -96,8 +97,6 @@ class Rocketchat {
       } else {
         return
       }
-    } else {
-      room = messageToSend.room
     }
 
     await this.#postMessage(messageToSend.contact, messageToSend, room, url)
