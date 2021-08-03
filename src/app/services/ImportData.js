@@ -1,4 +1,4 @@
-const EcomandaOldImporter = require('../plugins/importers/EcomandaOld')
+const EcomandaOldImporter = require('../plugins/importers/ecomanda_old/index')
 
 async function importData(body) {
   const { databaseUrl, licenseeId } = body

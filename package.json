@@ -63,6 +63,7 @@
     "@routes": "./src/app/routes",
     "@config": "./src/config",
     "@queries": "./src/app/queries",
-    "@reports": "./src/app/reports"
+    "@reports": "./src/app/reports",
+    "@helpers": "./src/app/helpers"
   }
 }
