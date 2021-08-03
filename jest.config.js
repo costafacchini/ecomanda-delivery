@@ -10,6 +10,7 @@ const jest = {
     '@routes(.*)$': '<rootDir>/src/app/routes$1',
     '@config(.*)$': '<rootDir>/src/config$1',
     '@queries(.*)$': '<rootDir>/src/app/queries$1',
+    '@helpers(.*)$': '<rootDir>/src/app/helpers$1',
     '@reports(.*)$': '<rootDir>/src/app/reports$1',
   },
   collectCoverage: true,

@@ -183,11 +183,10 @@ class Jivochat {
     const licensee = message.licensee
     const contact = await Contact.findById(message.contact._id)
 
-    contact.roomId = ''
     if (licensee.useChatbot) {
       contact.talkingWithChatBot = true
+      await contact.save()
     }
-    await contact.save()
   }
 }
 

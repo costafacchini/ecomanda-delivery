@@ -1,8 +1,8 @@
 const Licensee = require('@models/Licensee')
-const Contact = require('@models/Contact')
 const { Client } = require('pg')
 const URLParser = require('url')
-const { sanitizeModelErrors } = require('../../helpers/SanitizeErrors')
+const importContact = require('./importContact')
+const importRoom = require('./importRoom')
 
 class EcomandaOldImporter {
   constructor(licenseeId, databaseUrl) {
@@ -30,14 +30,14 @@ class EcomandaOldImporter {
     const data = await client.query(`
       Select
         chat.name,
-            chat."chatBot",
-            chat."chatRef",
-            chat.type,
-            contact.author,
-            contact.number,
-            contact."senderName",
-            rocket.room,
-            rocket.closed
+        chat."chatBot",
+        chat."chatRef",
+        chat.type,
+        contact.author,
+        contact.number,
+        contact."senderName",
+        rocket.room,
+        rocket.closed
       From
         "ChatsContacts" cc
         left join
@@ -54,21 +54,12 @@ class EcomandaOldImporter {
           cc."ChatId" = rocket."ChatId"
     `)
     for (const row of data.rows) {
-      const contact = new Contact({
-        name: row.name,
-        number: row.number,
-        talkingWithChatBot: row.chatBot !== 'chat',
-        licensee: licensee._id,
-      })
-      if (row.room) contact.roomId = row.room
-
-      const validation = contact.validateSync()
-      if (validation) {
-        console.log(
-          `Contato não importado: ${row.name} - ${row.number} motivo: ${sanitizeModelErrors(validation.errors)}`
-        )
+      const response = await importContact(row.chatRef, row.name, row.chatBot, licensee)
+      if (response.success) {
+        const contact = response.contact
+        await importRoom(row.room, contact)
       } else {
-        await contact.save()
+        console.log(response.error)
       }
     }
 

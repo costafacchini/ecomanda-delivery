@@ -16,7 +16,7 @@
     "linter": "yarn eslint 'src/app/**/*.{js,ts,tsx}' 'src/config/**/*.{js,ts,tsx}' 'src/setup/**/*.{js,ts,tsx}'"
   },
   "devDependencies": {
-    "eslint": "7.31.0",
+    "eslint": "7.32.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-config-standard": "16.0.3",
     "eslint-plugin-eslint-comments": "3.2.0",
@@ -28,33 +28,33 @@
     "eslint-plugin-promise": "5.1.0",
     "fetch-mock": "9.11.0",
     "jest": "27.0.6",
-    "mongodb-memory-server": "7.3.1",
-    "mongodb-memory-server-core": "7.3.1",
+    "mongodb-memory-server": "7.3.4",
+    "mongodb-memory-server-core": "7.3.4",
     "npm-run-all": "4.1.5",
     "prettier": "2.3.2",
     "supertest": "6.1.4"
   },
   "dependencies": {
-    "aws-sdk": "2.952.0",
+    "aws-sdk": "2.960.0",
     "bcrypt": "5.0.1",
     "bull-board": "2.1.3",
-    "bullmq": "1.40.0",
+    "bullmq": "1.40.1",
     "cors": "2.8.5",
     "debug": "4.3.2",
     "dotenv": "10.0.0",
     "express": "4.17.1",
-    "express-validator": "6.12.0",
+    "express-validator": "6.12.1",
     "http-errors": "1.8.0",
     "isomorphic-fetch": "3.0.0",
     "jsonwebtoken": "8.5.1",
     "lodash": "4.17.21",
     "module-alias": "2.2.2",
     "moment": "2.29.1",
-    "mongoose": "5.13.3",
+    "mongoose": "5.13.5",
     "morgan": "1.10.0",
     "node-notifier": "10.0.0",
     "nodemon": "2.0.12",
-    "pg": "8.6.0",
+    "pg": "8.7.1",
     "rollbar": "2.24.0",
     "uuid": "8.3.2"
   },
@@ -64,6 +64,7 @@
     "@routes": "./src/app/routes",
     "@config": "./src/config",
     "@queries": "./src/app/queries",
-    "@reports": "./src/app/reports"
+    "@reports": "./src/app/reports",
+    "@helpers": "./src/app/helpers"
   }
 }

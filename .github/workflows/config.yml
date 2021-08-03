@@ -25,10 +25,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js 14.x
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: '14.x'
-      - uses: c-hive/gha-yarn-cache@v1
+      - uses: c-hive/gha-yarn-cache@v2
       - name: Install dependencies
         run: yarn
 #      This setting must be enabled when eslint supports private methods.
@@ -45,6 +45,7 @@ jobs:
           SECRET: '394ru6gf6gjSsM6'
           DEFAULT_USER: 'user@user.com'
           DEFAULT_PASSWORD: '09876543'
+
       - name: unit test react
         run: |
           cd client
@@ -52,7 +53,7 @@ jobs:
           yarn test --coverageDirectory '../react-coverage' --coverage --maxWorkers 4
         env:
           SKIP_PREFLIGHT_CHECK: true
-      - uses: codecov/codecov-action@v1
+      - uses: codecov/codecov-action@v2
         with:
           file: nodejs-coverage/lcov.info
           flags: jestspecs
