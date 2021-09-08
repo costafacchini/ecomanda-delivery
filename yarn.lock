@@ -723,10 +723,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/ioredis@^4.26.4":
-  version "4.26.4"
-  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.26.4.tgz#a2b1ed51ddd2c707d7eaac5017cc34a0fe51558a"
-  integrity sha512-QFbjNq7EnOGw6d1gZZt2h26OFXjx7z+eqEnbCHSrDI1OOLEgOHMKdtIajJbuCr9uO+X9kQQRe7Lz6uxqxl5XKg==
+"@types/ioredis@^4.27.0":
+  version "4.27.2"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.27.2.tgz#067d0e361d7a01f6231fa6b9c6f08846102ba71e"
+  integrity sha512-/HXAbeJOR4Ub1O0XVlOFxrRTf2Yeq7BSre3qGoBvTTxN29tSmQPPwIYYxyzm2SkNgvx0Re9ahqCVanOVHqAARg==
   dependencies:
     "@types/node" "*"
 
@@ -1348,19 +1348,19 @@ bull-board@2.1.3:
     express "4.17.1"
     redis-info "^3.0.8"
 
-bullmq@1.40.2:
-  version "1.40.2"
-  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-1.40.2.tgz#c101280f803a768cee36ada37cfc43d9c1fa9c11"
-  integrity sha512-Hrs3jJ0sqLXrmynI64CBLJ/Lc/zTi/+yrNsPGVPH2HDATVUdGLwe3n19nAVAKbPqxpXOYNGdFN3HuwpEmggLdQ==
+bullmq@1.46.3:
+  version "1.46.3"
+  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-1.46.3.tgz#07895f64aca11bca7565e71230ad1be636452975"
+  integrity sha512-JSeHUgfd3CDbOx+PLltBGMsdM8VSjqQMeMbPFsPuoRCR9IYHBhBFlvzcdYACSHS8+6yrW3sPVCxKP6+CnHbT4w==
   dependencies:
-    "@types/ioredis" "^4.26.4"
+    "@types/ioredis" "^4.27.0"
     cron-parser "^2.7.3"
     get-port "^5.0.0"
-    ioredis "^4.27.5"
+    ioredis "^4.27.8"
     lodash "^4.17.21"
     semver "^6.3.0"
     tslib "^1.10.0"
-    uuid "^8.2.0"
+    uuid "^8.3.2"
 
 bytes@3.1.0:
   version "3.1.0"
@@ -2890,16 +2890,17 @@ ini@~1.3.0:
   resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.8.tgz#a29da425b48806f34767a4efce397269af28432c"
   integrity sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==
 
-ioredis@^4.27.5:
-  version "4.27.6"
-  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.27.6.tgz#a53d427d3fe75fbd10ed7ad150ce00559df8dcf8"
-  integrity sha512-6W3ZHMbpCa8ByMyC1LJGOi7P2WiOKP9B3resoZOVLDhi+6dDBOW+KNsRq3yI36Hmnb2sifCxHX+YSarTeXh48A==
+ioredis@^4.27.8:
+  version "4.27.9"
+  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.27.9.tgz#c27bbade9724f0b8f84c279fb1d567be785ba33d"
+  integrity sha512-hAwrx9F+OQ0uIvaJefuS3UTqW+ByOLyLIV+j0EH8ClNVxvFyH9Vmb08hCL4yje6mDYT5zMquShhypkd50RRzkg==
   dependencies:
     cluster-key-slot "^1.1.0"
     debug "^4.3.1"
     denque "^1.1.0"
     lodash.defaults "^4.2.0"
     lodash.flatten "^4.4.0"
+    lodash.isarguments "^3.1.0"
     p-map "^2.1.0"
     redis-commands "1.7.0"
     redis-errors "^1.2.0"
@@ -3817,6 +3818,11 @@ lodash.includes@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/lodash.includes/-/lodash.includes-4.3.0.tgz#60bb98a87cb923c68ca1e51325483314849f553f"
   integrity sha1-YLuYqHy5I8aMoeUTJUgzFISfVT8=
+
+lodash.isarguments@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/lodash.isarguments/-/lodash.isarguments-3.1.0.tgz#2f573d85c6a24289ff00663b491c1d338ff3458a"
+  integrity sha1-L1c9hcaiQon/AGY7SRwdM4/zRYo=
 
 lodash.isboolean@^3.0.3:
   version "3.0.3"
@@ -5812,7 +5818,7 @@ uuid@3.3.2:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
   integrity sha512-yXJmeNaw3DnnKAOKJE51sL/ZaYfWJRl1pK9dr19YFCu0ObS231AB1/LbqTKRAQ5kw8A90rA6fr4riOUpTZvQZA==
 
-uuid@8.3.2, uuid@^8.2.0, uuid@^8.3.1, uuid@^8.3.2:
+uuid@8.3.2, uuid@^8.3.1, uuid@^8.3.2:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
