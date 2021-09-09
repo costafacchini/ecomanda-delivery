@@ -195,7 +195,6 @@ describe('Rocketchat plugin', () => {
           name: 'John Doe',
           number: '5593165392832',
           type: '@c.us',
-          email: 'john@doe.com',
           talkingWithChatBot: true,
           licensee: licensee,
         })
@@ -212,7 +211,7 @@ describe('Rocketchat plugin', () => {
         const expectedBodyVisitor = {
           visitor: {
             name: 'John Doe - 5593165392832 - WhatsApp',
-            email: 'john@doe.com',
+            email: '5593165392832@c.us',
             token: `${contact._id.toString()}`,
           },
         }
