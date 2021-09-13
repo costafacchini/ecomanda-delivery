@@ -106,7 +106,7 @@ class Rocketchat {
     const body = {
       visitor: {
         name: `${contact.name} - ${contact.number} - WhatsApp`,
-        email: `${contact.email}`,
+        email: contact.email ? `${contact.email}` : `${contact.number}${contact.type}`,
         token: `${token}`
       }
     }
