@@ -71,6 +71,8 @@ class Landbot {
         return 'text'
       case 'image':
         return 'file'
+      case 'document':
+        return 'file'
       case 'location':
         return 'location'
       default:

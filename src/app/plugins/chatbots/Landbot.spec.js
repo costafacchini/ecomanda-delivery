@@ -473,6 +473,10 @@ describe('Landbot plugin', () => {
       expect(Landbot.kindToMessageKind('text')).toEqual('text')
     })
 
+    it('returns file if kind is document', () => {
+      expect(Landbot.kindToMessageKind('document')).toEqual('file')
+    })
+
     it('returns file if kind is image', () => {
       expect(Landbot.kindToMessageKind('image')).toEqual('file')
     })
