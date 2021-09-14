@@ -98,6 +98,8 @@ class Jivochat {
     contact.talkingWithChatBot = false
     await contact.save()
 
+    const kind = Jivochat.kindToMessageKind(message.type)
+
     await this.sendMessage(messageId, url)
   }
 

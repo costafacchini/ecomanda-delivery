@@ -10,7 +10,13 @@ describe('<Routes>', () => {
     jest.clearAllMocks()
   })
 
+  afterEach(() => {
+    window.location.hash = ''
+  })
+
   it('renders the login page if user is not logged in', () => {
+    const isAuthenticatedSpy = jest.spyOn(auth, 'isAuthenticated').mockImplementation(() => false)
+
     store = createStore()
     mountWithRedux(store)(<Routes />)
 
@@ -23,6 +29,7 @@ describe('<Routes>', () => {
     expect(emailField).toBeInTheDocument()
     expect(passwordField).toBeInTheDocument()
     expect(loginButton).toBeInTheDocument()
+    expect(isAuthenticatedSpy).toHaveBeenCalled()
   })
 
   it('renders the dashboard if user is logged in', () => {
@@ -33,7 +40,6 @@ describe('<Routes>', () => {
 
     const title = screen.getByRole('heading', { name: 'Dashboard' })
     const navbar = screen.getByRole('navigation')
-
 
     expect(title).toBeInTheDocument()
     expect(navbar).toBeInTheDocument()
