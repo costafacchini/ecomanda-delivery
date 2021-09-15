@@ -1,0 +1,10 @@
+data
+node_modules
+.env
+dist
+.tool-versions
+/coverage
+yarn-error.log
+/tmp
+/client/coverage
+/client/build
