@@ -581,7 +581,7 @@ describe('Rocketchat plugin', () => {
             licensee: licensee,
             destination: 'to-chatbot',
             sended: false,
-            departament: 'departament',
+            departament: 'department',
           })
 
           const expectedBodyVisitor = {
@@ -645,7 +645,7 @@ describe('Rocketchat plugin', () => {
           const expectedBodyTransfer = {
             token: `${contact._id.toString()}`,
             rid: 'HNpDrzmTdJB4Z3TR8',
-            departament: 'departament',
+            department: 'department',
           }
 
           fetchMock.postOnce(

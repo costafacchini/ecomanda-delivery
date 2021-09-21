@@ -141,11 +141,11 @@ class Rocketchat {
     return room
   }
 
-  async #transferToDepartament(departament, room, url) {
+  async #transferToDepartament(department, room, url) {
     const body = {
       token: `${room.token}`,
       rid: room.roomId,
-      departament
+      department
     }
 
     await request.post(`${url}/api/v1/livechat/message`, { body })
