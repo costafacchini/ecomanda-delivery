@@ -3,9 +3,8 @@ const queueServer = require('@config/queue')
 
 class ChatsController {
   async message(req, res) {
-    console.info(`Mensagem chegando do plugin de chat: ${JSON.stringify(req.body)}`)
-    const body = new Body({ content: req.body, licensee: req.licensee._id })
-    await body.save()
+    console.info(`Mensagem chegando do plugin de chat para ${req.licensee.name}: ${JSON.stringify(req.body)}`)
+    const body = await Body.create({ content: req.body, licensee: req.licensee._id })
 
     await queueServer.addJob('chat-message', { bodyId: body._id })
 
