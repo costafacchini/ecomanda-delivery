@@ -12,6 +12,7 @@ class ChatsController {
 
       res.status(200).send({ body: 'Solicitação de mensagem para a plataforma de chat agendado' })
     } catch (err) {
+      console.info(`Erro ao gravar o body: ${err.toString()}`)
       res.status(500).send({ body: err.toString() })
     }
   }
