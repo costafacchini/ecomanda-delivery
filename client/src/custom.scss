@@ -4,9 +4,15 @@ $secondary: #a8dadc;
 
 $form-label-margin-bottom: .20rem !default;
 
+$form-select-border-radius: 0 !default;
+
 $btn-border-radius: 0;
 
 $input-border-radius: 0;
+
+$form-check-input-border-radius:          0 !default;
+
+// $input-focus-box-shadow: 0 0 0 0.15rem $secondary;
 
 @import '../node_modules/bootstrap/scss/bootstrap';
 @import '../node_modules/bootstrap-icons/font/bootstrap-icons';

@@ -10,7 +10,7 @@ export default function BaseLayout({ children }) {
       <Navbar loggedUser={loggedUser} />
       <div className='container'>
         <div className='row'>
-          <div className='col'>{children}</div>
+          <div className='col pb-5 mt-3'>{children}</div>
         </div>
       </div>
     </>

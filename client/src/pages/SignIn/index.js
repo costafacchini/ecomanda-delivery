@@ -38,7 +38,7 @@ function SignIn() {
 
   return (
     <>
-      <div className='h-100'>
+      <div style={{ background: "linear-gradient(to right, #f1faee, #a8dadc)" }} className='h-100'>
         <div className='h-100 container'>
           <div className='row h-100 justify-content-center pb-5'>
             <div className={`col h-100 col-12 col-md-8 col-lg-6 col-xl-4 ${styles.login}`}>
@@ -84,7 +84,7 @@ function SignIn() {
                 <button
                   className='btn btn-primary mt-4 w-100'
                   onClick={handleSignIn}>
-                    Entrar
+                  Entrar
                 </button>
 
               </div>

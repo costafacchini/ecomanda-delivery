@@ -39,7 +39,7 @@ function Routes() {
           }
         />
         <Route exact path='/signin' component={SignIn} />
-        <PrivateRoute exact path='/licensees' component={LicenseesRoutes} />
+        <PrivateRoute path='/licensees' component={LicenseesRoutes} />
         <PrivateRoute exact path='/configurations' component={Configurations} />
         <Route path='*' component={() =>
           <BaseLayout>

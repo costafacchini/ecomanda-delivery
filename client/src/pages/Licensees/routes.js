@@ -9,11 +9,11 @@ function LicenseesRoutes() {
 
   return (
     <Switch>
-      <Route path={`${match.path}/:id(\\d+)`}>
-        <LicenseeEdit resourceId={match.params.id} />
-      </Route>
-      <Route path={`${match.path}/new`}>
+      <Route exact path={`${match.path}/new`}>
         <LicenseeNew disabled={false} />
+      </Route>
+      <Route path={`${match.path}/:id(\\w+)`}>
+        <LicenseeEdit resourceId={match} />
       </Route>
       <Route exact path={`${match.path}`}>
         <LicenseesIndex />
