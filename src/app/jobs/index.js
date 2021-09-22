@@ -8,6 +8,8 @@ const sendMessageToChatbot = require('./SendMessageToChatbot')
 const sendMessageToMessenger = require('./SendMessageToMessenger')
 const transferToChat = require('./TransferToChat')
 const importData = require('./ImportData')
+const backup = require('./Backup')
+const clearBackups = require('./ClearBackups')
 
 const jobs = [
   chatMessage,
@@ -20,6 +22,8 @@ const jobs = [
   sendMessageToMessenger,
   transferToChat,
   importData,
+  backup,
+  clearBackups,
 ]
 
 module.exports = jobs
