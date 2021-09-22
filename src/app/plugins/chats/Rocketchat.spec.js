@@ -562,7 +562,7 @@ describe('Rocketchat plugin', () => {
         })
       })
 
-      describe('when the message has a departament', () => {
+      describe('when the message has a department', () => {
         it('transfers to departament and send message', async () => {
           const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
 
@@ -651,7 +651,8 @@ describe('Rocketchat plugin', () => {
           fetchMock.postOnce(
             (url, { body }) => {
               return (
-                url === 'https://rocket.com.br/api/v1/livechat/message' && body === JSON.stringify(expectedBodyTransfer)
+                url === 'https://rocket.com.br/api/v1/livechat/room.transfer' &&
+                body === JSON.stringify(expectedBodyTransfer)
               )
             },
             {

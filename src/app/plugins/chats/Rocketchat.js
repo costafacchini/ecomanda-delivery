@@ -148,7 +148,7 @@ class Rocketchat {
       department
     }
 
-    await request.post(`${url}/api/v1/livechat/message`, { body })
+    await request.post(`${url}/api/v1/livechat/room.transfer`, { body })
   }
 
   async #postMessage(contact, message, room, url) {
