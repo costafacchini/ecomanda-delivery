@@ -562,6 +562,163 @@ describe('Rocketchat plugin', () => {
         })
       })
 
+      describe('when the message has a department', () => {
+        it('transfers to departament and send message', async () => {
+          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+          const contact = await Contact.create({
+            name: 'John Doe',
+            number: '5593165392832',
+            type: '@c.us',
+            talkingWithChatBot: true,
+            licensee: licensee,
+          })
+
+          const message = await Message.create({
+            text: 'Message to send',
+            number: 'jhd7879a7d9',
+            contact: contact,
+            licensee: licensee,
+            destination: 'to-chatbot',
+            sended: false,
+            departament: 'department',
+          })
+
+          const expectedBodyVisitor = {
+            visitor: {
+              name: 'John Doe - 5593165392832 - WhatsApp',
+              email: '5593165392832@c.us',
+              token: `${contact._id.toString()}`,
+            },
+          }
+
+          fetchMock.postOnce(
+            (url, { body }) => {
+              return (
+                url === 'https://rocket.com.br/api/v1/livechat/visitor' && body === JSON.stringify(expectedBodyVisitor)
+              )
+            },
+            {
+              status: 200,
+              body: {
+                visitor: {
+                  _id: 'Z4pqikNyvjvwksYfE',
+                  username: 'guest-1208',
+                  ts: '2021-04-19T10:52:59.481Z',
+                  _updatedAt: '2021-04-19T10:52:59.483Z',
+                  name: 'John Doe - 5593165392832 - WhatsApp',
+                  token: `${contact._id.toString()}`,
+                  visitorEmails: [{ address: 'john@doe.com' }],
+                },
+                success: true,
+              },
+            }
+          )
+
+          fetchMock.getOnce(`https://rocket.com.br/api/v1/livechat/room?token=${contact._id.toString()}`, {
+            status: 200,
+            body: {
+              room: {
+                _id: 'HNpDrzmTdJB4Z3TR8',
+                msgs: 0,
+                usersCount: 1,
+                lm: '2021-04-19T10:51:04.027Z',
+                fname: '5593165392832 - WhatsApp',
+                t: 'l',
+                ts: '2021-04-19T10:51:04.027Z',
+                v: {
+                  _id: 'gwniTTrz84Lc9e7jH',
+                  username: 'guest-569',
+                  token: `${contact._id.toString()}`,
+                  status: 'online',
+                },
+                cl: false,
+                open: true,
+                waitingResponse: true,
+                _updatedAt: '2021-04-19T10:51:04.027Z',
+              },
+              newRoom: true,
+              success: true,
+            },
+          })
+
+          const expectedBodyTransfer = {
+            token: `${contact._id.toString()}`,
+            rid: 'HNpDrzmTdJB4Z3TR8',
+            department: 'department',
+          }
+
+          fetchMock.postOnce(
+            (url, { body }) => {
+              return (
+                url === 'https://rocket.com.br/api/v1/livechat/room.transfer' &&
+                body === JSON.stringify(expectedBodyTransfer)
+              )
+            },
+            {
+              status: 200,
+              body: {
+                message: {
+                  _id: 'ZNDvoAqpx6dKRTRHr',
+                  rid: 'HNpDrzmTdJB4Z3TR8',
+                  msg: 'message',
+                  token: `${contact._id.toString()}`,
+                  alias: 'John Doe - 5593165392832 - WhatsApp',
+                  ts: '2021-04-19T10:52:59.817Z',
+                  u: { _id: 'HNpDrzmTdJB4Z3TR8', username: 'guest-1208', name: 'John Doe - 5593165392832 - WhatsApp' },
+                  _updatedAt: '2021-04-19T10:52:59.905Z',
+                  mentions: [],
+                  channels: [],
+                },
+                success: true,
+              },
+            }
+          )
+
+          const expectedBody = {
+            token: `${contact._id.toString()}`,
+            rid: 'HNpDrzmTdJB4Z3TR8',
+            msg: 'Message to send',
+          }
+
+          fetchMock.postOnce(
+            (url, { body }) => {
+              return url === 'https://rocket.com.br/api/v1/livechat/message' && body === JSON.stringify(expectedBody)
+            },
+            {
+              status: 200,
+              body: {
+                message: {
+                  _id: 'ZNDvoAqpx6dKRTRHr',
+                  rid: 'HNpDrzmTdJB4Z3TR8',
+                  msg: 'message',
+                  token: `${contact._id.toString()}`,
+                  alias: 'John Doe - 5593165392832 - WhatsApp',
+                  ts: '2021-04-19T10:52:59.817Z',
+                  u: { _id: 'HNpDrzmTdJB4Z3TR8', username: 'guest-1208', name: 'John Doe - 5593165392832 - WhatsApp' },
+                  _updatedAt: '2021-04-19T10:52:59.905Z',
+                  mentions: [],
+                  channels: [],
+                },
+                success: true,
+              },
+            }
+          )
+
+          expect(message.sended).toEqual(false)
+
+          const rocketchat = new Rocketchat(licensee)
+          await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
+          await fetchMock.flush(true)
+
+          expect(fetchMock.done()).toBe(true)
+          expect(fetchMock.calls()).toHaveLength(4)
+
+          const messageUpdated = await Message.findById(message._id)
+          expect(messageUpdated.sended).toEqual(true)
+        })
+      })
+
       describe('when message is file', () => {
         it('send message file', async () => {
           const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })

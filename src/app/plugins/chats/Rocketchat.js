@@ -99,6 +99,10 @@ class Rocketchat {
       }
     }
 
+    if (messageToSend.departament && messageToSend.departament !== '') {
+      await this.#transferToDepartament(messageToSend.departament, room, url)
+    }
+
     await this.#postMessage(messageToSend.contact, messageToSend, room, url)
   }
 
@@ -135,6 +139,16 @@ class Rocketchat {
     })
 
     return room
+  }
+
+  async #transferToDepartament(department, room, url) {
+    const body = {
+      token: `${room.token}`,
+      rid: room.roomId,
+      department
+    }
+
+    await request.post(`${url}/api/v1/livechat/room.transfer`, { body })
   }
 
   async #postMessage(contact, message, room, url) {
