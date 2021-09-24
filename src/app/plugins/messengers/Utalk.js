@@ -146,7 +146,7 @@ class Utalk {
     } else {
       messageToSend.error = JSON.stringify(response.data)
       await messageToSend.save()
-      console.error(`Mensagem ${messageId} não enviada para Chatapi. ${JSON.stringify(response.data)}`)
+      console.error(`Mensagem ${messageId} não enviada para Utalk. ${JSON.stringify(response.data)}`)
     }
   }
 }

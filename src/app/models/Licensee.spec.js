@@ -179,7 +179,7 @@ describe('Licensee', () => {
         expect(validation.errors['whatsappDefault']).not.toBeDefined()
       })
 
-      it('accepts "utalk", "winzap" and "chatapi" values', () => {
+      it('accepts "utalk", "winzap", "chatapi" and "dialog" values', () => {
         let validation
         const licensee = new Licensee()
 
@@ -194,6 +194,11 @@ describe('Licensee', () => {
         expect(validation.errors['whatsappDefault']).not.toBeDefined()
 
         licensee.whatsappDefault = 'chatapi'
+        validation = licensee.validateSync()
+
+        expect(validation.errors['whatsappDefault']).not.toBeDefined()
+
+        licensee.whatsappDefault = 'dialog'
         validation = licensee.validateSync()
 
         expect(validation.errors['whatsappDefault']).not.toBeDefined()
