@@ -12,14 +12,122 @@ class Dialog {
   }
 
   action(messageDestination) {
-    // if (messageDestination === 'to-chat') {
-    //   return 'send-message-to-chat'
-    // } else {
-    //   return 'send-message-to-chatbot'
-    // }
+    if (messageDestination === 'to-chat') {
+      return 'send-message-to-chat'
+    } else {
+      return 'send-message-to-chatbot'
+    }
   }
 
   async responseToMessages(responseBody) {
+    // Evento de status de mensagem: Leitura
+    // {
+    //   "body": {
+    //     "statuses": [
+    //       {
+    //         "id": "gBEGVUiZKQggAgk2thNSRVRecPk",
+    //         "recipient_id": "554899290820",
+    //         "status": "read",
+    //         "timestamp": "1632478856"
+    //       }
+    //     ]
+    //   }
+    // }
+
+    // Evento de status de mensagem: Enviada
+    // {
+    //   "body": {
+    //     "statuses": [
+    //       {
+    //         "conversation": {
+    //           "id": "42791d1cc46916c652fdc5b7816ce187"
+    //         },
+    //         "id": "gBEGVUiZKQggAgmPv4pP_OixTyo",
+    //         "pricing": {
+    //           "billable": false,
+    //           "pricing_model": "NBP"
+    //         },
+    //         "recipient_id": "554899290820",
+    //         "status": "sent",
+    //         "timestamp": "1632479972"
+    //       }
+    //     ]
+    //   }
+    // }
+
+    // Evento de status de mensagem: Entregue
+    // {
+    //   "body": {
+    //     "statuses": [
+    //       {
+    //         "conversation": {
+    //           "id": "42791d1cc46916c652fdc5b7816ce187"
+    //         },
+    //         "id": "gBEGVUiZKQggAgmPv4pP_OixTyo",
+    //         "pricing": {
+    //           "billable": false,
+    //           "pricing_model": "NBP"
+    //         },
+    //         "recipient_id": "554899290820",
+    //         "status": "delivered",
+    //         "timestamp": "1632479975"
+    //       }
+    //     ]
+    //   }
+    // }
+
+    // Evento de mensagem de áudio recebida
+    // {
+    //   "body": {
+    //     "contacts": [
+    //       {
+    //         "profile": {
+    //           "name": "Alan Facchini"
+    //         },
+    //         "wa_id": "554899290820"
+    //       }
+    //     ],
+    //       "messages": [
+    //         {
+    //           "from": "554899290820",
+    //           "id": "ABEGVUiZKQggAhBMIPBwKdGLK41Trqk9jxUU",
+    //           "timestamp": "1632480156",
+    //           "type": "voice",
+    //           "voice": {
+    //             "id": "930f6128-05d8-4572-bba3-c1e97b21b29d",
+    //             "mime_type": "audio/ogg; codecs=opus",
+    //             "sha256": "e8e8ffda16122145c8922bd7037dcdf9a168e807d974b696d64b5341db66cb79"
+    //           }
+    //         }
+    //       ]
+    //   }
+    // }
+
+    // Evento de mensagem de texto recebida
+    // {
+    //   "body": {
+    //     "contacts": [
+    //       {
+    //         "profile": {
+    //           "name": "Alan Facchini"
+    //         },
+    //         "wa_id": "554899290820"
+    //       }
+    //     ],
+    //       "messages": [
+    //         {
+    //           "from": "554899290820",
+    //           "id": "ABEGVUiZKQggAhCti8dys1iwI7xxiFI5BwIu",
+    //           "text": {
+    //             "body": "Clave teste"
+    //           },
+    //           "timestamp": "1632481790",
+    //           "type": "text"
+    //         }
+    //       ]
+    //   }
+    // }
+
     // if (!responseBody.event) return []
     // const bodyParsed = this.#parseBody(responseBody)
     // if (bodyParsed.dir === 'o') {
@@ -118,6 +226,7 @@ class Dialog {
 
       const messageResponse = await request.post(`${url}v1/messages/`, { headers, body: messageBody })
       if (messageResponse.status === 201) {
+        messageToSend.messageWaId = messageResponse.messages[0].id
         messageToSend.sended = true
         await messageToSend.save()
         console.info(`Mensagem ${messageId} enviada para Dialog360 com sucesso! ${JSON.stringify(response.data)}`)
@@ -127,13 +236,6 @@ class Dialog {
         console.error(`Mensagem ${messageId} não enviada para Dialog360. ${JSON.stringify(response.data)}`)
       }
     }
-
-    // let body = {
-    //   cmd: 'chat',
-    //   id: messageId,
-    //   to: messageToSend.contact.number + messageToSend.contact.type,
-    //   msg: messageToSend.text,
-    // }
   }
 
   async #getContact(number, token) {

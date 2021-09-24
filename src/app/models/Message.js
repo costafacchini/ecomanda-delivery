@@ -69,6 +69,10 @@ const messageSchema = new Schema(
       type: ObjectId,
       ref: 'Room',
     },
+    messageWaId: String,
+    sendedAt: Date,
+    readAt: Date,
+    deliveredAt: Date,
     error: String,
   },
   { timestamps: true }
