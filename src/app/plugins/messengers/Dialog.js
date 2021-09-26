@@ -128,54 +128,98 @@ class Dialog {
     //   }
     // }
 
+    const chatId = responseBody.body.messages[0].from
+    const normalizePhone = new NormalizePhone(chatId)
+    let contact = await Contact.findOne({
+      number: normalizePhone.number,
+      type: normalizePhone.type,
+      licensee: this.licensee._id,
+    })
+
+    if (!contact) {
+      contact = new Contact({
+        name: bodyParsed.name,
+        number: normalizePhone.number,
+        type: normalizePhone.type,
+        talkingWithChatBot: this.licensee.useChatbot,
+        waId: responseBody.body.contacts[0].wa_id,
+        licensee: this.licensee._id,
+      })
+      await contact.save()
+    } else {
+      if (contact.name !== responseBody.body.contacts[0].profile.name || contact.waId !== responseBody.body.contacts[0].wa_id) {
+        contact.name = bodyParsed.name
+        contact.waId = responseBody.body.contacts[0].wa_id
+        contact.talkingWithChatBot = this.licensee.useChatbot
+        await contact.save()
+      }
+    }
+
+    const messageToSend = new Message({
+      number: uuidv4(),
+      messageWaId: responseBody.body.messages[0].id,
+      licensee: this.licensee._id,
+      contact: contact._id,
+      destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
+    })
+
+
+    if (responseBody.body.messages[0].type === 'text') {
+      messageToSend.kind = 'text'
+      messageToSend.text = responseBody.body.messages[0].text.body
+    } else if (responseBody.body.messages[0].type === 'image') {
+      messageToSend.kind = 'file'
+      messageToSend.attachmentWaId = responseBody.body.messages[0].image.id
+
+      // messageToSend.url =
+      messageToSend.fileName = responseBody.body.messages[0].image.sha256
+    } else if (responseBody.body.messages[0].type === 'video') {
+      messageToSend.kind = 'file'
+      messageToSend.attachmentWaId = responseBody.body.messages[0].video.id
+
+      // messageToSend.url =
+      messageToSend.fileName = responseBody.body.messages[0].video.sha256
+    } else if (responseBody.body.messages[0].type === 'voice') {
+      messageToSend.kind = 'file'
+      messageToSend.attachmentWaId = responseBody.body.messages[0].voice.id
+
+      // messageToSend.url =
+      messageToSend.fileName = responseBody.body.messages[0].voice.sha256
+    } else if (responseBody.body.messages[0].type === 'audio') {
+      messageToSend.kind = 'file'
+      messageToSend.attachmentWaId = responseBody.body.messages[0].audio.id
+
+      // messageToSend.url =
+      messageToSend.fileName = responseBody.body.messages[0].audio.sha256
+    } else if (responseBody.body.messages[0].type === 'document') {
+      messageToSend.kind = 'file'
+      messageToSend.attachmentWaId = responseBody.body.messages[0].document.id
+
+      // messageToSend.url =
+      messageToSend.fileName = responseBody.body.messages[0].document.filename
+    }
+
+
+
+    if (bodyParsed.sender) messageToSend.senderName = bodyParsed.sender
+    if (messageToSend.kind === 'file') {
+      messageToSend.fileName = bodyParsed.fileName
+      messageToSend.url = this.#uploadFile(contact, messageToSend.fileName, bodyParsed.blob)
+    }
+    return [await messageToSend.save()]
+
     // if (!responseBody.event) return []
     // const bodyParsed = this.#parseBody(responseBody)
     // if (bodyParsed.dir === 'o') {
     //   return []
     // }
-    // const chatId = bodyParsed.number + '@' + bodyParsed.server
-    // const normalizePhone = new NormalizePhone(chatId)
-    // let contact = await Contact.findOne({
-    //   number: normalizePhone.number,
-    //   type: normalizePhone.type,
-    //   licensee: this.licensee._id,
-    // })
-    // if (!contact) {
-    //   contact = new Contact({
-    //     name: bodyParsed.name,
-    //     number: normalizePhone.number,
-    //     type: normalizePhone.type,
-    //     talkingWithChatBot: this.licensee.useChatbot,
-    //     licensee: this.licensee._id,
-    //   })
-    //   await contact.save()
-    // } else {
-    //   if (contact.name !== bodyParsed.name && bodyParsed.type !== 'file') {
-    //     contact.name = bodyParsed.name
-    //     contact.talkingWithChatBot = this.licensee.useChatbot
-    //     await contact.save()
-    //   }
-    // }
-    // const messageToSend = new Message({
-    //   number: uuidv4(),
-    //   kind: bodyParsed.type,
-    //   licensee: this.licensee._id,
-    //   contact: contact._id,
-    //   text: bodyParsed.text,
-    //   destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
-    // })
-    // if (bodyParsed.sender) messageToSend.senderName = bodyParsed.sender
-    // if (messageToSend.kind === 'file') {
-    //   messageToSend.fileName = bodyParsed.fileName
-    //   messageToSend.url = this.#uploadFile(contact, messageToSend.fileName, bodyParsed.blob)
-    // }
-    // return [await messageToSend.save()]
+
   }
 
   async sendMessage(messageId, url, token) {
     const messageToSend = await Message.findById(messageId).populate('contact')
 
-    const waContact = await this.#getContact(messageToSend.contact.number, token)
+    const waContact = await this.#getContact(messageToSend.contact.number, url, token)
     if (waContact.valid) {
       const headers = { 'D360-API-KEY': token }
 
@@ -226,19 +270,21 @@ class Dialog {
 
       const messageResponse = await request.post(`${url}v1/messages/`, { headers, body: messageBody })
       if (messageResponse.status === 201) {
-        messageToSend.messageWaId = messageResponse.messages[0].id
+        messageToSend.messageWaId = messageResponse.data.messages[0].id
         messageToSend.sended = true
         await messageToSend.save()
-        console.info(`Mensagem ${messageId} enviada para Dialog360 com sucesso! ${JSON.stringify(response.data)}`)
+        console.info(`Mensagem ${messageId} enviada para Dialog360 com sucesso! ${JSON.stringify(messageResponse.data)}`)
       } else {
-        messageToSend.error = JSON.stringify(response.data)
+        messageToSend.error = JSON.stringify(messageResponse.data)
         await messageToSend.save()
-        console.error(`Mensagem ${messageId} não enviada para Dialog360. ${JSON.stringify(response.data)}`)
+        console.error(`Mensagem ${messageId} não enviada para Dialog360. ${JSON.stringify(messageResponse.data)}`)
       }
+    } else {
+      console.error(`A mensagem não foi enviada para a Dialog pois o contato não é válido ${JSON.stringify(waContact.data)}`)
     }
   }
 
-  async #getContact(number, token) {
+  async #getContact(number, url, token) {
     const headers = { 'D360-API-KEY': token }
 
     const body = {
@@ -247,11 +293,12 @@ class Dialog {
       force_check: true,
     }
 
-    const response = await request.post(`${url}v1/contacts`, { headers, body })
+    const response = await request.post(`${url}v1/contacts/`, { headers, body })
 
     return {
-      valid = response.status === 200 && response.data.contacts[0].status === 'valid',
-      waId = response.data.contacts[0].wa_id
+      valid: response.status === 200 && response.data.contacts[0].status === 'valid',
+      waId: response.data.contacts[0].wa_id,
+      data: response.data,
     }
   }
 }

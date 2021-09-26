@@ -21,7 +21,7 @@ describe('Dialog plugin', () => {
     await mongoServer.disconnect()
   })
 
-  describe.skip('#responseToMessages', () => {
+  describe('#responseToMessages', () => {
     describe('image and text', () => {
       it('returns the response body transformed in messages', async () => {
         const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
@@ -470,7 +470,7 @@ describe('Dialog plugin', () => {
 
   describe('#sendMessage', () => {
     describe('when the message was sent', () => {
-      it('marks the message with was sent', async () => {
+      it('marks the message with was sent and logs the success message', async () => {
         const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
 
         const contact = await Contact.create({
@@ -518,8 +518,8 @@ describe('Dialog plugin', () => {
         const expectedBodySendMessage = {
           recipient_type: 'individual',
           to: '553165392832',
-          type = 'text',
-          text = {
+          type: 'text',
+          text: {
             body: 'Message to send',
           },
         }
@@ -533,10 +533,10 @@ describe('Dialog plugin', () => {
             )
           },
           {
-            status: 200,
+            status: 201,
             body: {
               messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
-              meta: { api_status: 'stable', version: '2.35.4' }
+              meta: { api_status: 'stable', version: '2.35.4' },
             },
           }
         )
@@ -553,94 +553,12 @@ describe('Dialog plugin', () => {
         const messageUpdated = await Message.findById(message._id)
         expect(messageUpdated.sended).toEqual(true)
         expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
-      })
-
-      it('logs the success message', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          email: 'john@doe.com',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-messenger',
-          sended: false,
-        })
-
-        const expectedBodyGetContact = {
-          blocking: 'wait',
-          contacts: ['+5593165392832'],
-          force_check: true,
-        }
-
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://waba.360dialog.io/v1/contacts/' &&
-              body === JSON.stringify(expectedBodyGetContact) &&
-              headers['D360-API-KEY'] === 'token-dialog'
-            )
-          },
-          {
-            status: 200,
-            body: {
-              contacts: [{ input: '+5593165392832', status: 'valid', wa_id: '553165392832' }],
-              meta: { api_status: 'stable', version: '2.35.4' },
-            },
-          }
-        )
-
-        const expectedBodySendMessage = {
-          recipient_type: 'individual',
-          to: '553165392832',
-          type = 'text',
-          text = {
-            body: 'Message to send',
-          },
-        }
-
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://waba.360dialog.io/v1/messages/' &&
-              body === JSON.stringify(expectedBodySendMessage) &&
-              headers['D360-API-KEY'] === 'token-dialog'
-            )
-          },
-          {
-            status: 200,
-            body: {
-              messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
-              meta: { api_status: 'stable', version: '2.35.4' }
-            },
-          }
-        )
-
-        expect(message.sended).toEqual(false)
-
-        const dialog = new Dialog(licensee)
-        await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(2)
-
         expect(consoleInfoSpy).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 enviada para Dialog com sucesso! Sent to 5593165392832@c.us'
+          'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
         )
       })
 
-      describe('when the message is file', () => {
+      describe('when the message is image', () => {
         it('marks the message with sended and log the success message', async () => {
           const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
 
@@ -666,41 +584,51 @@ describe('Dialog plugin', () => {
             sended: false,
           })
 
-          const expectedBodyReadChat = {
-            chatId: '5593165392832@c.us',
+          const expectedBodyGetContact = {
+            blocking: 'wait',
+            contacts: ['+5593165392832'],
+            force_check: true,
           }
 
           fetchMock.postOnce(
-            (url, { body }) => {
+            (url, { body, headers }) => {
               return (
-                url === 'https://eu199.chat-api.com/instance103871/readChat?token=etj4w2rcujdmaq34' &&
-                body === JSON.stringify(expectedBodyReadChat)
-              )
-            },
-            { status: 200, body: { read: true, message: null, chatId: 'true_5511989187726@c.us_3EB031DE2C36C5598621' } }
-          )
-
-          const expectedBodySendMessage = {
-            chatId: '5593165392832@c.us',
-            body: 'https://octodex.github.com/images/dojocat.jpg',
-            filename: 'dojocat.jpg',
-            caption: 'Message to send',
-          }
-
-          fetchMock.postOnce(
-            (url, { body }) => {
-              return (
-                url === 'https://eu199.chat-api.com/instance103871/sendFile?token=etj4w2rcujdmaq34' &&
-                body === JSON.stringify(expectedBodySendMessage)
+                url === 'https://waba.360dialog.io/v1/contacts/' &&
+                body === JSON.stringify(expectedBodyGetContact) &&
+                headers['D360-API-KEY'] === 'token-dialog'
               )
             },
             {
               status: 200,
               body: {
-                sent: true,
-                message: 'Sent to 5593165392832@c.us',
-                id: 'true_5511989187726@c.us_3EB031DE2C36C5598621',
-                queueNumber: 4,
+                contacts: [{ input: '+5593165392832', status: 'valid', wa_id: '553165392832' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
+              },
+            }
+          )
+
+          const expectedBodySendMessage = {
+            recipient_type: 'individual',
+            to: '553165392832',
+            type: 'image',
+            image: {
+              link: 'https://octodex.github.com/images/dojocat.jpg',
+            },
+          }
+
+          fetchMock.postOnce(
+            (url, { body, headers }) => {
+              return (
+                url === 'https://waba.360dialog.io/v1/messages/' &&
+                body === JSON.stringify(expectedBodySendMessage) &&
+                headers['D360-API-KEY'] === 'token-dialog'
+              )
+            },
+            {
+              status: 201,
+              body: {
+                messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
               },
             }
           )
@@ -708,7 +636,7 @@ describe('Dialog plugin', () => {
           expect(message.sended).toEqual(false)
 
           const dialog = new Dialog(licensee)
-          await dialog.sendMessage(message._id, 'https://eu199.chat-api.com/instance103871/', 'etj4w2rcujdmaq34')
+          await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
           await fetchMock.flush(true)
 
           expect(fetchMock.done()).toBe(true)
@@ -716,15 +644,295 @@ describe('Dialog plugin', () => {
 
           const messageUpdated = await Message.findById(message._id)
           expect(messageUpdated.sended).toEqual(true)
-
+          expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
           expect(consoleInfoSpy).toHaveBeenCalledWith(
-            'Mensagem 60958703f415ed4008748637 enviada para Dialog com sucesso! Sent to 5593165392832@c.us'
+            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+          )
+        })
+      })
+
+      describe('when the message is video', () => {
+        it('marks the message with sended and log the success message', async () => {
+          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+          const contact = await Contact.create({
+            name: 'John Doe',
+            number: '5593165392832',
+            type: '@c.us',
+            email: 'john@doe.com',
+            talkingWithChatBot: true,
+            licensee: licensee,
+          })
+
+          const message = await Message.create({
+            _id: '60958703f415ed4008748637',
+            number: 'jhd7879a7d9',
+            contact: contact,
+            licensee: licensee,
+            destination: 'to-messenger',
+            text: 'Message to send',
+            kind: 'file',
+            url: 'https://octodex.github.com/images/video.mpg',
+            fileName: 'dojocat.jpg',
+            sended: false,
+          })
+
+          const expectedBodyGetContact = {
+            blocking: 'wait',
+            contacts: ['+5593165392832'],
+            force_check: true,
+          }
+
+          fetchMock.postOnce(
+            (url, { body, headers }) => {
+              return (
+                url === 'https://waba.360dialog.io/v1/contacts/' &&
+                body === JSON.stringify(expectedBodyGetContact) &&
+                headers['D360-API-KEY'] === 'token-dialog'
+              )
+            },
+            {
+              status: 200,
+              body: {
+                contacts: [{ input: '+5593165392832', status: 'valid', wa_id: '553165392832' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
+              },
+            }
+          )
+
+          const expectedBodySendMessage = {
+            recipient_type: 'individual',
+            to: '553165392832',
+            type: 'video',
+            video: {
+              link: 'https://octodex.github.com/images/video.mpg',
+            },
+          }
+
+          fetchMock.postOnce(
+            (url, { body, headers }) => {
+              return (
+                url === 'https://waba.360dialog.io/v1/messages/' &&
+                body === JSON.stringify(expectedBodySendMessage) &&
+                headers['D360-API-KEY'] === 'token-dialog'
+              )
+            },
+            {
+              status: 201,
+              body: {
+                messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
+              },
+            }
+          )
+
+          expect(message.sended).toEqual(false)
+
+          const dialog = new Dialog(licensee)
+          await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
+          await fetchMock.flush(true)
+
+          expect(fetchMock.done()).toBe(true)
+          expect(fetchMock.calls()).toHaveLength(2)
+
+          const messageUpdated = await Message.findById(message._id)
+          expect(messageUpdated.sended).toEqual(true)
+          expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
+          expect(consoleInfoSpy).toHaveBeenCalledWith(
+            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+          )
+        })
+      })
+
+      describe('when the message is audio', () => {
+        it('marks the message with sended and log the success message', async () => {
+          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+          const contact = await Contact.create({
+            name: 'John Doe',
+            number: '5593165392832',
+            type: '@c.us',
+            email: 'john@doe.com',
+            talkingWithChatBot: true,
+            licensee: licensee,
+          })
+
+          const message = await Message.create({
+            _id: '60958703f415ed4008748637',
+            number: 'jhd7879a7d9',
+            contact: contact,
+            licensee: licensee,
+            destination: 'to-messenger',
+            text: 'Message to send',
+            kind: 'file',
+            url: 'https://octodex.github.com/images/message.ogg',
+            fileName: 'message.ogg',
+            sended: false,
+          })
+
+          const expectedBodyGetContact = {
+            blocking: 'wait',
+            contacts: ['+5593165392832'],
+            force_check: true,
+          }
+
+          fetchMock.postOnce(
+            (url, { body, headers }) => {
+              return (
+                url === 'https://waba.360dialog.io/v1/contacts/' &&
+                body === JSON.stringify(expectedBodyGetContact) &&
+                headers['D360-API-KEY'] === 'token-dialog'
+              )
+            },
+            {
+              status: 200,
+              body: {
+                contacts: [{ input: '+5593165392832', status: 'valid', wa_id: '553165392832' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
+              },
+            }
+          )
+
+          const expectedBodySendMessage = {
+            recipient_type: 'individual',
+            to: '553165392832',
+            type: 'audio',
+            audio: {
+              link: 'https://octodex.github.com/images/message.ogg',
+            },
+          }
+
+          fetchMock.postOnce(
+            (url, { body, headers }) => {
+              return (
+                url === 'https://waba.360dialog.io/v1/messages/' &&
+                body === JSON.stringify(expectedBodySendMessage) &&
+                headers['D360-API-KEY'] === 'token-dialog'
+              )
+            },
+            {
+              status: 201,
+              body: {
+                messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
+              },
+            }
+          )
+
+          expect(message.sended).toEqual(false)
+
+          const dialog = new Dialog(licensee)
+          await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
+          await fetchMock.flush(true)
+
+          expect(fetchMock.done()).toBe(true)
+          expect(fetchMock.calls()).toHaveLength(2)
+
+          const messageUpdated = await Message.findById(message._id)
+          expect(messageUpdated.sended).toEqual(true)
+          expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
+          expect(consoleInfoSpy).toHaveBeenCalledWith(
+            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+          )
+        })
+      })
+
+      describe('when the message is document', () => {
+        it('marks the message with sended and log the success message', async () => {
+          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+          const contact = await Contact.create({
+            name: 'John Doe',
+            number: '5593165392832',
+            type: '@c.us',
+            email: 'john@doe.com',
+            talkingWithChatBot: true,
+            licensee: licensee,
+          })
+
+          const message = await Message.create({
+            _id: '60958703f415ed4008748637',
+            number: 'jhd7879a7d9',
+            contact: contact,
+            licensee: licensee,
+            destination: 'to-messenger',
+            text: 'Message to send',
+            kind: 'file',
+            url: 'https://octodex.github.com/images/document.pdf',
+            fileName: 'document.pdf',
+            sended: false,
+          })
+
+          const expectedBodyGetContact = {
+            blocking: 'wait',
+            contacts: ['+5593165392832'],
+            force_check: true,
+          }
+
+          fetchMock.postOnce(
+            (url, { body, headers }) => {
+              return (
+                url === 'https://waba.360dialog.io/v1/contacts/' &&
+                body === JSON.stringify(expectedBodyGetContact) &&
+                headers['D360-API-KEY'] === 'token-dialog'
+              )
+            },
+            {
+              status: 200,
+              body: {
+                contacts: [{ input: '+5593165392832', status: 'valid', wa_id: '553165392832' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
+              },
+            }
+          )
+
+          const expectedBodySendMessage = {
+            recipient_type: 'individual',
+            to: '553165392832',
+            type: 'document',
+            document: {
+              link: 'https://octodex.github.com/images/document.pdf',
+              filename: 'document.pdf',
+            },
+          }
+
+          fetchMock.postOnce(
+            (url, { body, headers }) => {
+              return (
+                url === 'https://waba.360dialog.io/v1/messages/' &&
+                body === JSON.stringify(expectedBodySendMessage) &&
+                headers['D360-API-KEY'] === 'token-dialog'
+              )
+            },
+            {
+              status: 201,
+              body: {
+                messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
+              },
+            }
+          )
+
+          expect(message.sended).toEqual(false)
+
+          const dialog = new Dialog(licensee)
+          await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
+          await fetchMock.flush(true)
+
+          expect(fetchMock.done()).toBe(true)
+          expect(fetchMock.calls()).toHaveLength(2)
+
+          const messageUpdated = await Message.findById(message._id)
+          expect(messageUpdated.sended).toEqual(true)
+          expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
+          expect(consoleInfoSpy).toHaveBeenCalledWith(
+            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
           )
         })
       })
     })
 
-    describe('when can not read the chat messages', () => {
+    describe('when contact is invalid', () => {
       it('logs the error message', async () => {
         const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
 
@@ -747,31 +955,40 @@ describe('Dialog plugin', () => {
           sended: false,
         })
 
-        const expectedBodyReadChat = {
-          chatId: '5593165392832@c.us',
+        const expectedBodyGetContact = {
+          blocking: 'wait',
+          contacts: ['+5593165392832'],
+          force_check: true,
         }
 
         fetchMock.postOnce(
-          (url, { body }) => {
+          (url, { body, headers }) => {
             return (
-              url === 'https://eu199.chat-api.com/instance103871/readChat?token=etj4w2rcujdmaq34' &&
-              body === JSON.stringify(expectedBodyReadChat)
+              url === 'https://waba.360dialog.io/v1/contacts/' &&
+              body === JSON.stringify(expectedBodyGetContact) &&
+              headers['D360-API-KEY'] === 'token-dialog'
             )
           },
-          { status: 200, body: { read: false, message: null, chatId: 'true_5511989187726@c.us_3EB031DE2C36C5598621' } }
+          {
+            status: 200,
+            body: {
+              contacts: [{ input: '+5593165392832', status: 'invalid' }],
+              meta: { api_status: 'stable', version: '2.35.4' },
+            },
+          }
         )
 
         expect(message.sended).toEqual(false)
 
         const dialog = new Dialog(licensee)
-        await dialog.sendMessage(message._id, 'https://eu199.chat-api.com/instance103871/', 'etj4w2rcujdmaq34')
+        await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(1)
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Não foi possível ler as mensagens na Dialog {"read":false,"message":null,"chatId":"true_5511989187726@c.us_3EB031DE2C36C5598621"}'
+          'A mensagem não foi enviada para a Dialog pois o contato não é válido {"contacts":[{"input":"+5593165392832","status":"invalid"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
         )
       })
     })
@@ -799,38 +1016,51 @@ describe('Dialog plugin', () => {
           sended: false,
         })
 
-        const expectedBodyReadChat = {
-          chatId: '5593165392832@c.us',
+        const expectedBodyGetContact = {
+          blocking: 'wait',
+          contacts: ['+5593165392832'],
+          force_check: true,
         }
 
         fetchMock.postOnce(
-          (url, { body }) => {
+          (url, { body, headers }) => {
             return (
-              url === 'https://eu199.chat-api.com/instance103871/readChat?token=etj4w2rcujdmaq34' &&
-              body === JSON.stringify(expectedBodyReadChat)
-            )
-          },
-          { status: 200, body: { read: true, message: null, chatId: 'true_5511989187726@c.us_3EB031DE2C36C5598621' } }
-        )
-
-        const expectedBodySendMessage = {
-          chatId: '5593165392832@c.us',
-          body: 'Message to send',
-        }
-
-        fetchMock.postOnce(
-          (url, { body }) => {
-            return (
-              url === 'https://eu199.chat-api.com/instance103871/sendMessage?token=etj4w2rcujdmaq34' &&
-              body === JSON.stringify(expectedBodySendMessage)
+              url === 'https://waba.360dialog.io/v1/contacts/' &&
+              body === JSON.stringify(expectedBodyGetContact) &&
+              headers['D360-API-KEY'] === 'token-dialog'
             )
           },
           {
             status: 200,
             body: {
-              sent: false,
-              message:
-                'Wrong chatId format. Please use phone parameter or chatId from message history. chatId has format 5593165392832@c.us or 5593165392832-5593165392832@g.us',
+              contacts: [{ input: '+5593165392832', status: 'valid', wa_id: '553165392832' }],
+              meta: { api_status: 'stable', version: '2.35.4' },
+            },
+          }
+        )
+
+        const expectedBodySendMessage = {
+          recipient_type: 'individual',
+          to: '553165392832',
+          type: 'text',
+          text: {
+            body: 'Message to send',
+          },
+        }
+
+        fetchMock.postOnce(
+          (url, { body, headers }) => {
+            return (
+              url === 'https://waba.360dialog.io/v1/messages/' &&
+              body === JSON.stringify(expectedBodySendMessage) &&
+              headers['D360-API-KEY'] === 'token-dialog'
+            )
+          },
+          {
+            status: 400,
+            body: {
+              meta: { api_status: 'stable', version: '2.35.4' },
+              errors: [{ code: 1021, title: 'Bad user', details: 'cannot send messages to myself' }],
             },
           }
         )
@@ -838,7 +1068,7 @@ describe('Dialog plugin', () => {
         expect(message.sended).toEqual(false)
 
         const dialog = new Dialog(licensee)
-        await dialog.sendMessage(message._id, 'https://eu199.chat-api.com/instance103871/', 'etj4w2rcujdmaq34')
+        await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
@@ -847,87 +1077,11 @@ describe('Dialog plugin', () => {
         const messageUpdated = await Message.findById(message._id)
         expect(messageUpdated.sended).toEqual(false)
         expect(messageUpdated.error).toEqual(
-          '{"sent":false,"message":"Wrong chatId format. Please use phone parameter or chatId from message history. chatId has format 5593165392832@c.us or 5593165392832-5593165392832@g.us"}'
+          '{"meta":{"api_status":"stable","version":"2.35.4"},"errors":[{"code":1021,"title":"Bad user","details":"cannot send messages to myself"}]}'
         )
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 não enviada para Dialog. {"sent":false,"message":"Wrong chatId format. Please use phone parameter or chatId from message history. chatId has format 5593165392832@c.us or 5593165392832-5593165392832@g.us"}'
-        )
-      })
-    })
-
-    describe('when the message is scheduled by dialog', () => {
-      it('logs the success message', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          email: 'john@doe.com',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-messenger',
-          sended: false,
-        })
-
-        const expectedBodyReadChat = {
-          chatId: '5593165392832@c.us',
-        }
-
-        fetchMock.postOnce(
-          (url, { body }) => {
-            return (
-              url === 'https://eu199.chat-api.com/instance103871/readChat?token=etj4w2rcujdmaq34' &&
-              body === JSON.stringify(expectedBodyReadChat)
-            )
-          },
-          { status: 200, body: { read: true, message: null, chatId: 'true_5511989187726@c.us_3EB031DE2C36C5598621' } }
-        )
-
-        const expectedBodySendMessage = {
-          chatId: '5593165392832@c.us',
-          body: 'Message to send',
-        }
-
-        fetchMock.postOnce(
-          (url, { body }) => {
-            return (
-              url === 'https://eu199.chat-api.com/instance103871/sendMessage?token=etj4w2rcujdmaq34' &&
-              body === JSON.stringify(expectedBodySendMessage)
-            )
-          },
-          {
-            status: 200,
-            body: {
-              sent: true,
-              message:
-                'Status of the account not equals authenticated. Message to  5593165392832@c.us will be sent after successful auth.',
-              id: 'true_5511989187726@c.us_3EB031DE2C36C5598621',
-              queueNumber: 4,
-            },
-          }
-        )
-
-        expect(message.sended).toEqual(false)
-
-        const dialog = new Dialog(licensee)
-        await dialog.sendMessage(message._id, 'https://eu199.chat-api.com/instance103871/', 'etj4w2rcujdmaq34')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(2)
-
-        expect(consoleInfoSpy).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 enviada para Dialog com sucesso! Status of the account not equals authenticated. Message to  5593165392832@c.us will be sent after successful auth.'
+          'Mensagem 60958703f415ed4008748637 não enviada para Dialog360. {"meta":{"api_status":"stable","version":"2.35.4"},"errors":[{"code":1021,"title":"Bad user","details":"cannot send messages to myself"}]}'
         )
       })
     })

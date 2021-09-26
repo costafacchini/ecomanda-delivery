@@ -70,6 +70,7 @@ const messageSchema = new Schema(
       ref: 'Room',
     },
     messageWaId: String,
+    attachmentWaId: String,
     sendedAt: Date,
     readAt: Date,
     deliveredAt: Date,
