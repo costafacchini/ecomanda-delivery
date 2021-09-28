@@ -6,5 +6,6 @@ dist
 /coverage
 yarn-error.log
 /tmp
+newrelic_agent.log
 /client/coverage
 /client/build
