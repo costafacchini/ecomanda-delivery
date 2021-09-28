@@ -22,6 +22,7 @@ const contactSchema = new Schema(
       ref: 'Licensee',
       required: [true, 'Licensee: Você deve preencher o campo'],
     },
+    waId: String,
   },
   { timestamps: true }
 )

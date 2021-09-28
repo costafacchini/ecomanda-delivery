@@ -53,7 +53,7 @@ const licenseeSchema = new Schema(
     },
     whatsappDefault: {
       type: String,
-      enum: ['utalk', 'winzap', 'chatapi', ''],
+      enum: ['utalk', 'winzap', 'chatapi', 'dialog', ''],
     },
     whatsappToken: {
       type: String,
@@ -126,6 +126,10 @@ licenseeSchema.pre('save', function (next) {
 
   if (licensee.whatsappDefault === 'winzap') {
     licensee.whatsappUrl = 'https://api.winzap.com.br/send/'
+  }
+
+  if (licensee.whatsappDefault === 'dialog') {
+    licensee.whatsappUrl = 'https://waba.360dialog.io/'
   }
 
   if (!licensee._id) {

@@ -3,6 +3,7 @@ const Licensee = require('@models/Licensee')
 const Chatapi = require('./Chatapi')
 const Utalk = require('./Utalk')
 const Winzap = require('./Winzap')
+const Dialog = require('./Dialog')
 
 describe('createMessengerPlugin', () => {
   it('returns the chatapi plugin if it is configured on licensee', () => {
@@ -45,6 +46,20 @@ describe('createMessengerPlugin', () => {
     const plugin = createMessengerPlugin(licensee, body)
 
     expect(plugin).toBeInstanceOf(Winzap)
+  })
+
+  it('returns the dialog plugin if it is configured on licensee', () => {
+    const licensee = new Licensee({
+      whatsappDefault: 'dialog',
+    })
+
+    const body = {
+      type: 'test',
+    }
+
+    const plugin = createMessengerPlugin(licensee, body)
+
+    expect(plugin).toBeInstanceOf(Dialog)
   })
 
   it('throws if option plugin is unknow', () => {
