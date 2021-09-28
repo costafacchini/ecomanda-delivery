@@ -29,7 +29,12 @@ function permit(fields) {
 
 class LicenseesController {
   validations() {
-    return [check('email', 'Email deve ser preenchido com um valor válido').optional().isEmail()]
+    return [
+      check('email', 'Email deve ser preenchido com um valor válido')
+        .optional({ checkFalsy: true })
+        .isEmail()
+        .normalizeEmail(),
+    ]
   }
 
   async create(req, res) {

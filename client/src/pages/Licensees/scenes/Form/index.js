@@ -239,6 +239,7 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                     <option value='utalk'>Utalk</option>
                     <option value='winzap'>Winzap</option>
                     <option value='chatapi'>Chat-api</option>
+                    <option value='dialog'>Dialog360</option>
                   </select>
                 </div>
               </div>
