@@ -25,7 +25,7 @@ async function request(url, method, { headers, body, isDownload }) {
   } catch (e) {
     result = {
       status: 500,
-      data: `Ocorreu um erro ao tentar dar um post na url ${url} com o body ${JSON.stringify(
+      data: `Ocorreu um erro ao tentar dar um ${method} na url ${url} com o body ${JSON.stringify(
         body
       )} e resultou na mensagem ${e}`,
     }

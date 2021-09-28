@@ -1,0 +1,118 @@
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
+import LicenseeForm from './'
+
+describe('<LicenseeForm />', () => {
+  const onSubmit = jest.fn()
+
+  function mount(props = {}) {
+    render(
+      <MemoryRouter>
+        <LicenseeForm onSubmit={onSubmit} {...props} />
+      </MemoryRouter>)
+  }
+
+  it('is rendered with the default initial values', () => {
+    mount()
+
+    expect(screen.getByLabelText('Nome')).toHaveValue('')
+    expect(screen.getByLabelText('E-email')).toHaveValue('')
+    expect(screen.getByLabelText('Telefone')).toHaveValue('')
+    expect(screen.getByLabelText('API token')).toHaveValue('')
+    expect(screen.getByLabelText('Ativo')).not.toBeChecked()
+    expect(screen.getByLabelText('Chatbot')).not.toBeChecked()
+    expect(screen.getByLabelText('Tipo')).toHaveValue('demo')
+    expect(screen.getByLabelText('Whatsapp Default')).toHaveValue('')
+    expect(screen.getByLabelText('Chatbot padrão')).toHaveValue('')
+    expect(screen.getByLabelText('URL do chatbot')).toHaveValue('')
+    expect(screen.getByLabelText('Token do chatbot')).toHaveValue('')
+    expect(screen.getByLabelText('Token do whatsapp')).toHaveValue('')
+    expect(screen.getByLabelText('Url do whatsapp')).toHaveValue('')
+    expect(screen.getByLabelText('Chat padrão')).toHaveValue('')
+    expect(screen.getByLabelText('Url do chat')).toHaveValue('')
+    expect(screen.getByLabelText('Id da AWS')).toHaveValue('')
+    expect(screen.getByLabelText('Senha AWS')).toHaveValue('')
+    expect(screen.getByLabelText('Nome do bucket AWS')).toHaveValue('')
+  })
+
+  it('can receive initial values', () => {
+    const licensee = {
+      name: 'Name',
+      active: true,
+      email: 'email@gmail.com',
+      phone: '48999999215',
+      apiToken: 'token',
+      licenseKind: 'paid',
+      useChatbot: true,
+      chatbotDefault: 'landbot',
+      chatbotUrl: 'URL chatbot',
+      chatbotAuthorizationToken: 'token chatbot',
+      whatsappDefault: 'utalk',
+      whatsappToken: 'token whats',
+      whatsappUrl: 'URL do whats',
+      chatDefault: 'jivochat',
+      chatUrl: 'URL do chat',
+      awsId: 'ID da AWS',
+      awsSecret: 'Senha da AWS',
+      bucketName: 'Nome do bucket',
+    }
+
+    mount({ initialValues: licensee })
+
+    expect(screen.getByLabelText('Nome')).toHaveValue('Name')
+    expect(screen.getByLabelText('Ativo')).toBeChecked()
+    expect(screen.getByLabelText('E-email')).toHaveValue('email@gmail.com')
+    expect(screen.getByLabelText('Telefone')).toHaveValue('48999999215')
+    expect(screen.getByLabelText('API token')).toHaveValue('token')
+    expect(screen.getByLabelText('Tipo')).toHaveValue('paid')
+    expect(screen.getByLabelText('Chatbot')).toBeChecked()
+    expect(screen.getByLabelText('Chatbot padrão')).toHaveValue('landbot')
+    expect(screen.getByLabelText('Whatsapp Default')).toHaveValue('utalk')
+    expect(screen.getByLabelText('URL do chatbot')).toHaveValue('URL chatbot')
+    expect(screen.getByLabelText('Token do chatbot')).toHaveValue('token chatbot')
+    expect(screen.getByLabelText('Token do whatsapp')).toHaveValue('token whats')
+    expect(screen.getByLabelText('Url do whatsapp')).toHaveValue('URL do whats')
+    expect(screen.getByLabelText('Chat padrão')).toHaveValue('jivochat')
+    expect(screen.getByLabelText('Url do chat')).toHaveValue('URL do chat')
+
+    expect(screen.getByLabelText('Id da AWS')).toHaveValue('ID da AWS')
+    expect(screen.getByLabelText('Senha AWS')).toHaveValue('Senha da AWS')
+    expect(screen.getByLabelText('Nome do bucket AWS')).toHaveValue('Nome do bucket')
+  })
+
+  describe('submit', () => {
+    it('is called when the user submits the form', async () => {
+      mount()
+
+      expect(onSubmit).not.toHaveBeenCalled()
+
+      fireEvent.click(screen.getByText('Salvar'))
+
+      await waitFor(() => expect(onSubmit).toHaveBeenCalled())
+
+      expect(onSubmit).toHaveBeenCalledWith({
+        name: '',
+        email: '',
+        phone: '',
+        active: false,
+        apiToken: '',
+        licenseKind: 'demo',
+        useChatbot: false,
+        chatbotDefault: '',
+        chatbotUrl: '',
+        chatbotAuthorizationToken: '',
+        whatsappDefault: '',
+        whatsappToken: '',
+        whatsappUrl: '',
+        chatDefault: '',
+        chatUrl: '',
+        awsId: '',
+        awsSecret: '',
+        bucketName: '',
+        chatbotDefault: ''
+      })
+    })
+  })
+
+
+})

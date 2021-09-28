@@ -1,0 +1,17 @@
+body {
+  height: 100vh;
+  margin: 0;
+  font-family: 'Jost', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #52665a;
+  height: 100vh;
+}
+
+#root {
+  height: 100vh;
+}
+
+code {
+  font-family: 'Ubuntu', sans-serif;
+}
