@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require('uuid')
 const S3 = require('../storage/S3')
 const request = require('../../services/request')
 const files = require('../../helpers/Files')
+const mime = require('mime-types')
 
 class Dialog {
   constructor(licensee) {
@@ -20,115 +21,27 @@ class Dialog {
   }
 
   async responseToMessages(responseBody) {
-    // Evento de status de mensagem: Leitura
-    // {
-    //   "body": {
-    //     "statuses": [
-    //       {
-    //         "id": "gBEGVUiZKQggAgk2thNSRVRecPk",
-    //         "recipient_id": "554899290820",
-    //         "status": "read",
-    //         "timestamp": "1632478856"
-    //       }
-    //     ]
-    //   }
-    // }
+    if (responseBody.statuses) {
+      const status = responseBody.statuses[0]
+      const message = await Message.findOne({
+        licensee: this.licensee._id,
+        messageWaId: status.id,
+      })
 
-    // Evento de status de mensagem: Enviada
-    // {
-    //   "body": {
-    //     "statuses": [
-    //       {
-    //         "conversation": {
-    //           "id": "42791d1cc46916c652fdc5b7816ce187"
-    //         },
-    //         "id": "gBEGVUiZKQggAgmPv4pP_OixTyo",
-    //         "pricing": {
-    //           "billable": false,
-    //           "pricing_model": "NBP"
-    //         },
-    //         "recipient_id": "554899290820",
-    //         "status": "sent",
-    //         "timestamp": "1632479972"
-    //       }
-    //     ]
-    //   }
-    // }
+      if (message) {
+        if (status.status === 'sent') message.sendedAt = new Date()
+        if (status.status === 'delivered') message.deliveredAt = new Date()
+        if (status.status === 'read') message.readAt = new Date()
 
-    // Evento de status de mensagem: Entregue
-    // {
-    //   "body": {
-    //     "statuses": [
-    //       {
-    //         "conversation": {
-    //           "id": "42791d1cc46916c652fdc5b7816ce187"
-    //         },
-    //         "id": "gBEGVUiZKQggAgmPv4pP_OixTyo",
-    //         "pricing": {
-    //           "billable": false,
-    //           "pricing_model": "NBP"
-    //         },
-    //         "recipient_id": "554899290820",
-    //         "status": "delivered",
-    //         "timestamp": "1632479975"
-    //       }
-    //     ]
-    //   }
-    // }
+        await message.save()
+      }
 
-    // Evento de mensagem de áudio recebida
-    // {
-    //   "body": {
-    //     "contacts": [
-    //       {
-    //         "profile": {
-    //           "name": "Alan Facchini"
-    //         },
-    //         "wa_id": "554899290820"
-    //       }
-    //     ],
-    //       "messages": [
-    //         {
-    //           "from": "554899290820",
-    //           "id": "ABEGVUiZKQggAhBMIPBwKdGLK41Trqk9jxUU",
-    //           "timestamp": "1632480156",
-    //           "type": "voice",
-    //           "voice": {
-    //             "id": "930f6128-05d8-4572-bba3-c1e97b21b29d",
-    //             "mime_type": "audio/ogg; codecs=opus",
-    //             "sha256": "e8e8ffda16122145c8922bd7037dcdf9a168e807d974b696d64b5341db66cb79"
-    //           }
-    //         }
-    //       ]
-    //   }
-    // }
+      return []
+    }
 
-    // Evento de mensagem de texto recebida
-    // {
-    //   "body": {
-    //     "contacts": [
-    //       {
-    //         "profile": {
-    //           "name": "Alan Facchini"
-    //         },
-    //         "wa_id": "554899290820"
-    //       }
-    //     ],
-    //       "messages": [
-    //         {
-    //           "from": "554899290820",
-    //           "id": "ABEGVUiZKQggAhCti8dys1iwI7xxiFI5BwIu",
-    //           "text": {
-    //             "body": "Clave teste"
-    //           },
-    //           "timestamp": "1632481790",
-    //           "type": "text"
-    //         }
-    //       ]
-    //   }
-    // }
+    if (!responseBody.messages) return []
 
-    const chatId = responseBody.body.messages[0].from
+    const chatId = responseBody.messages[0].from
     const normalizePhone = new NormalizePhone(chatId)
     let contact = await Contact.findOne({
       number: normalizePhone.number,
@@ -138,18 +51,18 @@ class Dialog {
 
     if (!contact) {
       contact = new Contact({
-        name: bodyParsed.name,
+        name: responseBody.contacts[0].profile.name,
         number: normalizePhone.number,
         type: normalizePhone.type,
         talkingWithChatBot: this.licensee.useChatbot,
-        waId: responseBody.body.contacts[0].wa_id,
+        waId: responseBody.contacts[0].wa_id,
         licensee: this.licensee._id,
       })
       await contact.save()
     } else {
-      if (contact.name !== responseBody.body.contacts[0].profile.name || contact.waId !== responseBody.body.contacts[0].wa_id) {
-        contact.name = bodyParsed.name
-        contact.waId = responseBody.body.contacts[0].wa_id
+      if (contact.name !== responseBody.contacts[0].profile.name || contact.waId !== responseBody.contacts[0].wa_id) {
+        contact.name = responseBody.contacts[0].profile.name
+        contact.waId = responseBody.contacts[0].wa_id
         contact.talkingWithChatBot = this.licensee.useChatbot
         await contact.save()
       }
@@ -157,63 +70,61 @@ class Dialog {
 
     const messageToSend = new Message({
       number: uuidv4(),
-      messageWaId: responseBody.body.messages[0].id,
+      messageWaId: responseBody.messages[0].id,
       licensee: this.licensee._id,
       contact: contact._id,
       destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
     })
 
-
-    if (responseBody.body.messages[0].type === 'text') {
+    if (responseBody.messages[0].type === 'text') {
       messageToSend.kind = 'text'
-      messageToSend.text = responseBody.body.messages[0].text.body
-    } else if (responseBody.body.messages[0].type === 'image') {
-      messageToSend.kind = 'file'
-      messageToSend.attachmentWaId = responseBody.body.messages[0].image.id
+      messageToSend.text = responseBody.messages[0].text.body
+    } else {
+      if (responseBody.messages[0].type === 'image') {
+        messageToSend.attachmentWaId = responseBody.messages[0].image.id
+        messageToSend.fileName = responseBody.messages[0].image.sha256
+      } else if (responseBody.messages[0].type === 'video') {
+        messageToSend.attachmentWaId = responseBody.messages[0].video.id
+        messageToSend.fileName = responseBody.messages[0].video.sha256
+      } else if (responseBody.messages[0].type === 'voice') {
+        messageToSend.attachmentWaId = responseBody.messages[0].voice.id
+        messageToSend.fileName = responseBody.messages[0].voice.sha256
+      } else if (responseBody.messages[0].type === 'audio') {
+        messageToSend.attachmentWaId = responseBody.messages[0].audio.id
+        messageToSend.fileName = responseBody.messages[0].audio.sha256
+      } else if (responseBody.messages[0].type === 'document') {
+        messageToSend.attachmentWaId = responseBody.messages[0].document.id
+        messageToSend.fileName = responseBody.messages[0].document.filename
+      }
 
-      // messageToSend.url =
-      messageToSend.fileName = responseBody.body.messages[0].image.sha256
-    } else if (responseBody.body.messages[0].type === 'video') {
       messageToSend.kind = 'file'
-      messageToSend.attachmentWaId = responseBody.body.messages[0].video.id
-
-      // messageToSend.url =
-      messageToSend.fileName = responseBody.body.messages[0].video.sha256
-    } else if (responseBody.body.messages[0].type === 'voice') {
-      messageToSend.kind = 'file'
-      messageToSend.attachmentWaId = responseBody.body.messages[0].voice.id
-
-      // messageToSend.url =
-      messageToSend.fileName = responseBody.body.messages[0].voice.sha256
-    } else if (responseBody.body.messages[0].type === 'audio') {
-      messageToSend.kind = 'file'
-      messageToSend.attachmentWaId = responseBody.body.messages[0].audio.id
-
-      // messageToSend.url =
-      messageToSend.fileName = responseBody.body.messages[0].audio.sha256
-    } else if (responseBody.body.messages[0].type === 'document') {
-      messageToSend.kind = 'file'
-      messageToSend.attachmentWaId = responseBody.body.messages[0].document.id
-
-      // messageToSend.url =
-      messageToSend.fileName = responseBody.body.messages[0].document.filename
+      messageToSend.url = await this.#getMediaURL(messageToSend.attachmentWaId, contact)
     }
 
-
-
-    if (bodyParsed.sender) messageToSend.senderName = bodyParsed.sender
-    if (messageToSend.kind === 'file') {
-      messageToSend.fileName = bodyParsed.fileName
-      messageToSend.url = this.#uploadFile(contact, messageToSend.fileName, bodyParsed.blob)
-    }
     return [await messageToSend.save()]
+  }
 
-    // if (!responseBody.event) return []
-    // const bodyParsed = this.#parseBody(responseBody)
-    // if (bodyParsed.dir === 'o') {
-    //   return []
-    // }
+  async #getMediaURL(mediaId, contact) {
+    const response = await this.#downloadMedia(mediaId)
+    const extension = mime.extension(response.headers.get('content-type'))
 
+    return this.#uploadFile(contact, `${mediaId}.${extension}`, Buffer.from(response.data).toString('base64'))
+  }
+
+  async #downloadMedia(mediaId) {
+    const headers = { 'D360-API-KEY': this.licensee.whatsappToken }
+    const response = await request.download(`https://waba.360dialog.io/v1/media/${mediaId}`, {
+      headers,
+    })
+
+    return response
+  }
+
+  #uploadFile(contact, fileName, fileBase64) {
+    const s3 = new S3(this.licensee, contact, fileName, fileBase64)
+    s3.uploadFile()
+
+    return s3.presignedUrl()
   }
 
   async sendMessage(messageId, url, token) {

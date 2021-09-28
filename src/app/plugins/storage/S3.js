@@ -64,7 +64,7 @@ class S3 {
       streamFileBase64 = streamFileBase64.substr(streamFileBase64.indexOf(',') + 1)
     }
 
-    return new Buffer(streamFileBase64, 'base64')
+    return Buffer.from(streamFileBase64, 'base64')
   }
 }
 
