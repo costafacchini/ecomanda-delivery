@@ -138,6 +138,12 @@ licenseeSchema.pre('save', function (next) {
   next()
 })
 
+licenseeSchema.post('save', function (licensee) {
+  if (licensee.whatsappDefault === 'dialog') {
+    //
+  }
+})
+
 licenseeSchema.set('toJSON', {
   virtuals: true,
 })
