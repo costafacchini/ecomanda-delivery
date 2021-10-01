@@ -71,5 +71,11 @@ Runs the tests .\
 # Backups
 
 ## gzip
-mongodump --uri {uri} --gzip --archive=={path}
-mongorestore --uri {uri} --gzip --drop {path do backup}
+
+```bash
+# Backup
+$ mongodump --uri {uri} --gzip --archive=={path}
+
+# Restore
+$ mongorestore --uri {uri} --gzip --drop {path do backup}
+```
