@@ -1,6 +1,6 @@
 require('isomorphic-fetch')
 
-async function request(url, method, { headers, body }) {
+async function request(url, method, { headers, body, isDownload }) {
   const requestOptions = {
     method: method,
     headers: {
@@ -15,16 +15,17 @@ async function request(url, method, { headers, body }) {
   try {
     // eslint-disable-next-line no-undef
     const response = await fetch(url, requestOptions)
-    const data = await response.text()
+    const data = isDownload ? await response.buffer() : await response.text()
 
     result = {
       status: response.status,
-      data: data.length > 0 && isJSON(response) ? JSON.parse(data) : data,
+      headers: response.headers,
+      data: data.length > 0 && isJSON(response) && !isDownload ? JSON.parse(data) : data,
     }
   } catch (e) {
     result = {
       status: 500,
-      data: `Ocorreu um erro ao tentar dar um post na url ${url} com o body ${JSON.stringify(
+      data: `Ocorreu um erro ao tentar dar um ${method} na url ${url} com o body ${JSON.stringify(
         body
       )} e resultou na mensagem ${e}`,
     }
@@ -43,5 +44,8 @@ module.exports = {
   },
   post(url, requestOpts = {}) {
     return request(url, 'post', requestOpts)
+  },
+  download(url, requestOpts = {}) {
+    return request(url, 'get', Object.assign(requestOpts, { isDownload: true }))
   },
 }

@@ -750,7 +750,7 @@ describe('Utalk plugin', () => {
         )
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 não enviada para Chatapi. {"type":"send message","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","status":"whatsapp offline"}'
+          'Mensagem 60958703f415ed4008748637 não enviada para Utalk. {"type":"send message","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","status":"whatsapp offline"}'
         )
       })
     })

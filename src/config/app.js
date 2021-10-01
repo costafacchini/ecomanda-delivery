@@ -1,3 +1,4 @@
+const path = require('path')
 require('module-alias/register')
 require('@models/index')
 
@@ -14,6 +15,8 @@ app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ limit: '50mb', extended: false }))
 app.use(logger('dev'))
 connect()
+
+app.use(express.static(path.resolve(__dirname, '../../client/build')))
 enableCors(app)
 routes(app)
 

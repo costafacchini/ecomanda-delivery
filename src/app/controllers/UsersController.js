@@ -64,13 +64,16 @@ class UsersController {
 
   async show(req, res) {
     try {
-      const user = await User.findOne({ _id: req.params.id })
-      const { _id, name, email, active } = user
+      const user = req.params.id.includes('@')
+        ? await User.findOne({ email: req.params.id })
+        : await User.findOne({ _id: req.params.id })
 
-      res.status(200).send({ _id, name, email, active })
+      const { _id, name, email, active, isAdmin } = user
+
+      res.status(200).send({ _id, name, email, active, isAdmin })
     } catch (err) {
       if (err.toString().includes('Cast to ObjectId failed for value')) {
-        return res.status(404).send({ errors: { message: 'Usuário 12312 não encontrado' } })
+        return res.status(404).send({ errors: { message: 'Usuário não encontrado' } })
       } else {
         return res.status(500).send({ errors: { message: err.toString() } })
       }
