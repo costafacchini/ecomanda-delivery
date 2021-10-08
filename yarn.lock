@@ -1456,10 +1456,10 @@ bull-board@2.1.3:
     express "4.17.1"
     redis-info "^3.0.8"
 
-bullmq@1.48.3:
-  version "1.48.3"
-  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-1.48.3.tgz#ba177d7fb306123df9d612524b13fd1525bcdd57"
-  integrity sha512-s6iZ12VLC9smR3cshYBcTONDgafET6mNpAyPBLUILE3sOX2H96/lMc6tHEIF1tBmcxbQH/ebdBDUoB0x+bO8CQ==
+bullmq@1.49.0:
+  version "1.49.0"
+  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-1.49.0.tgz#4e6a653c888c840ba3ab77502cd7becda16ca921"
+  integrity sha512-7ugfc+gydW9JdWWDB8ZdQjPw34sAtbzfAJHndlTp5SO+CgfhBuY+PdKTViIZRNiT7h4whdkUgAqh8oRQ13ZS/Q==
   dependencies:
     cron-parser "^2.18.0"
     get-port "^5.1.1"
