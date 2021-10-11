@@ -31,7 +31,7 @@ class Chatapi {
 
         if (!contact) {
           contact = new Contact({
-            name: message.senderName,
+            name: message.chatName,
             number: normalizePhone.number,
             type: normalizePhone.type,
             talkingWithChatBot: this.licensee.useChatbot,
@@ -56,7 +56,7 @@ class Chatapi {
           destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
         })
 
-        if (normalizePhone.type === '@g.us') messageToSend.senderName = message.chatName
+        if (normalizePhone.type === '@g.us') messageToSend.senderName = message.senderName
 
         if (kind === 'text' || kind === 'location') {
           messageToSend.text = message.body
