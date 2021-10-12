@@ -40,8 +40,8 @@ class Chatapi {
 
           await contact.save()
         } else {
-          if (contact.name !== message.senderName) {
-            contact.name = message.senderName
+          if (contact.name !== message.chatName) {
+            contact.name = message.chatName
             await contact.save()
           }
         }
@@ -63,7 +63,36 @@ class Chatapi {
         }
 
         if (kind === 'file') {
-          messageToSend.text = message.caption
+          if (normalizePhone.type === '@g.us') {
+            if (message.caption) {
+              const textMessageToSend = new Message({
+                number: uuidv4(),
+                kind: 'text',
+                licensee: this.licensee._id,
+                contact: contact._id,
+                destination: messageToSend.destination,
+                text: message.caption,
+                senderName: messageToSend.senderName
+              })
+
+              processedMessages.push(await textMessageToSend.save())
+            }
+
+            const senderTextMessageToSend = new Message({
+              number: uuidv4(),
+              kind: 'text',
+              licensee: this.licensee._id,
+              contact: contact._id,
+              destination: messageToSend.destination,
+              senderName: messageToSend.senderName,
+              text: `${messageToSend.senderName}:`
+            })
+
+            processedMessages.push(await senderTextMessageToSend.save())
+          } else {
+            messageToSend.text = message.caption
+          }
+
           messageToSend.url = message.body
           messageToSend.fileName = message.body.match(/[^\\/]+$/)[0]
         }
