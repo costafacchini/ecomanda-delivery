@@ -85,7 +85,7 @@ class Chatapi {
               contact: contact._id,
               destination: messageToSend.destination,
               senderName: messageToSend.senderName,
-              text: `${messageToSend.senderName}:`
+              text: 'enviou um anexo'
             })
 
             processedMessages.push(await senderTextMessageToSend.save())

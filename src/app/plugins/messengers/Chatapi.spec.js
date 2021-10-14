@@ -257,7 +257,7 @@ describe('Chatapi plugin', () => {
         expect(messages[1].kind).toEqual('text')
         expect(messages[1].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
         expect(messages[1].destination).toEqual('to-chat')
-        expect(messages[1].text).toEqual('John Doe:')
+        expect(messages[1].text).toEqual('enviou um anexo')
         expect(messages[1].senderName).toEqual('John Doe')
         expect(messages[1].url).toEqual(undefined)
         expect(messages[1].fileName).toEqual(undefined)
@@ -272,7 +272,9 @@ describe('Chatapi plugin', () => {
         expect(messages[2].destination).toEqual('to-chat')
         expect(messages[2].text).toEqual(undefined)
         expect(messages[2].senderName).toEqual('John Doe')
-        expect(messages[2].url).toEqual('https://s3.eu-central-1.wasabisys.com/incoming-chat-api/2021/3/25/244959/1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg')
+        expect(messages[2].url).toEqual(
+          'https://s3.eu-central-1.wasabisys.com/incoming-chat-api/2021/3/25/244959/1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg'
+        )
         expect(messages[2].fileName).toEqual('1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg')
         expect(messages[2].latitude).toEqual(undefined)
         expect(messages[2].longitude).toEqual(undefined)
