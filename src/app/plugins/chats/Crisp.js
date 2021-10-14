@@ -1,9 +1,11 @@
 const emoji = require('../../helpers/Emoji')
+const files = require('../../helpers/Files')
 const { v4: uuidv4 } = require('uuid')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Room = require('@models/Room')
 const request = require('../../services/request')
+const mime = require('mime-types')
 
 class Crisp {
   constructor(licensee) {
@@ -20,7 +22,7 @@ class Crisp {
   }
 
   async responseToMessages(responseBody) {
-    if (event === 'message:received' || event === 'session:removed') return []
+    if (responseBody.event !== 'message:send' && responseBody.event !== 'message:received' && responseBody.event !== 'session:removed') return []
 
     const room = await Room.findOne({ roomId: responseBody.data.session_id }).populate('contact')
     if (!room) return []
@@ -42,20 +44,31 @@ class Crisp {
 
       processedMessages.push(await messageToSend.save())
     } else {
-      let text = responseBody.data.content
-      text = text ? emoji.replace(text) : ''
+      if (responseBody.data.type === 'text' || responseBody.data.type === 'file' || responseBody.data.type === 'audio') {
+        const messageToSend = new Message({
+          number: uuidv4(),
+          kind: 'text',
+          licensee: this.licensee._id,
+          contact: contact._id,
+          room: room._id,
+          destination: 'to-messenger',
+        })
 
-      const messageToSend = new Message({
-        number: uuidv4(),
-        text,
-        kind: 'text',
-        licensee: this.licensee._id,
-        contact: contact._id,
-        room: room._id,
-        destination: 'to-messenger',
-      })
+        if (responseBody.data.type === 'text') {
+          const text = responseBody.data.content
+          messageToSend.text = text ? emoji.replace(text) : ''
+        }
 
-      processedMessages.push(await messageToSend.save())
+        if (responseBody.data.type === 'file' || responseBody.data.type === 'audio') {
+          messageToSend.kind = 'file'
+          messageToSend.fileName = responseBody.data.content.name
+          messageToSend.url = responseBody.data.content.url
+        }
+
+        processedMessages.push(await messageToSend.save())
+      } else {
+        return []
+      }
     }
 
     return processedMessages
@@ -85,23 +98,23 @@ class Crisp {
       }
     }
 
-    await this.#postMessage(messageToSend.contact, messageToSend, room, url)
+    await this.#postMessage(url, headers, messageToSend.contact, messageToSend, room)
   }
 
   async #createSession(url, headers, contact) {
-    request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })
+    const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })
 
     if (response.status !== 201) {
       console.error(`Não foi possível criar a sessão na Crisp ${JSON.stringify(response.data)}`)
       return
     } else {
-      await this.#updateContact(contact, url, response.data.data.session_id)
+      await this.#updateContact(url, headers, contact, response.data.data.session_id)
 
       return response.data.data.session_id
     }
   }
 
-  async #updateContact(contact, url, room) {
+  async #updateContact(url, headers, contact, room) {
     const body = {
       nickname: contact.name,
       email: `${contact.number}@${contact.name}.com`,
@@ -110,12 +123,27 @@ class Crisp {
     await request.patch(`https://api.crisp.chat/v1/website/${url}/conversation/${room}/meta`, { headers, body })
   }
 
-  async #postMessage(contact, message, room, url, headers) {
+  async #postMessage(url, headers, contact, message, room, ) {
     const body = {
-      type: 'text',
       from: 'user',
-      origin: 'chat',
-      content: this.#formatMessage(message, contact)
+      origin: 'chat'
+    }
+
+    if (message.kind === 'text') {
+      body.type = 'text'
+      body.content = this.#formatMessage(message, contact)
+    }
+
+    if (message.kind === 'file') {
+      body.type = Crisp.messageType(message.url)
+
+      const content = {
+        name: message.fileName,
+        url: message.url,
+        type: mime.lookup(message.url)
+      }
+
+      body.content = content
     }
 
     const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation/${room}/message`, { headers, body })
@@ -126,10 +154,10 @@ class Crisp {
 
       console.info(`Mensagem ${message._id} enviada para Crisp com sucesso!`)
     } else {
-      messageToSend.error = `mensagem: ${JSON.stringify(response.data)}`
-      await messageToSend.save()
+      message.error = `mensagem: ${JSON.stringify(response.data)}`
+      await message.save()
       console.error(
-        `Mensagem ${messageToSend._id} não enviada para Crisp.
+        `Mensagem ${message._id} não enviada para Crisp.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}`
       )
@@ -142,6 +170,15 @@ class Crisp {
     const text = message.text
 
     return contact.type === '@c.us' ? text : `*${message.senderName}:*\n${text}`
+  }
+
+  static messageType(fileUrl) {
+    let type = 'file'
+    if (files.isMidia(fileUrl)) {
+      type = 'audio'
+    }
+
+    return type
   }
 
   async closeChat(messageId) {
