@@ -213,7 +213,7 @@ describe('Chatapi plugin', () => {
           messages: [
             {
               id: 'false_5593165392832@c.us_3EB066E484BABD9F3C69',
-              body: 'Message to send',
+              body: 'https://s3.eu-central-1.wasabisys.com/incoming-chat-api/2021/3/25/244959/1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg',
               fromMe: false,
               self: 1,
               isForwarded: 0,
@@ -221,9 +221,9 @@ describe('Chatapi plugin', () => {
               time: 1616708028,
               chatId: '5511989187726-1622497000@g.us',
               messageNumber: 111,
-              type: 'chat',
+              type: 'image',
               senderName: 'John Doe',
-              caption: null,
+              caption: 'Message and image',
               quotedMsgBody: null,
               quotedMsgId: null,
               quotedMsgType: null,
@@ -236,13 +236,15 @@ describe('Chatapi plugin', () => {
         const chatapi = new Chatapi(licensee)
         const messages = await chatapi.responseToMessages(responseBody)
 
+        expect(messages.length).toEqual(3)
+
         expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('text')
         expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
         expect(messages[0].destination).toEqual('to-chat')
-        expect(messages[0].text).toEqual('Message to send')
+        expect(messages[0].text).toEqual('Message and image')
         expect(messages[0].senderName).toEqual('John Doe')
         expect(messages[0].url).toEqual(undefined)
         expect(messages[0].fileName).toEqual(undefined)
@@ -250,7 +252,33 @@ describe('Chatapi plugin', () => {
         expect(messages[0].longitude).toEqual(undefined)
         expect(messages[0].departament).toEqual(undefined)
 
-        expect(messages.length).toEqual(1)
+        expect(messages[1].licensee).toEqual(licensee._id)
+        expect(messages[1].contact).toEqual(contact._id)
+        expect(messages[1].kind).toEqual('text')
+        expect(messages[1].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+        expect(messages[1].destination).toEqual('to-chat')
+        expect(messages[1].text).toEqual('enviou um anexo')
+        expect(messages[1].senderName).toEqual('John Doe')
+        expect(messages[1].url).toEqual(undefined)
+        expect(messages[1].fileName).toEqual(undefined)
+        expect(messages[1].latitude).toEqual(undefined)
+        expect(messages[1].longitude).toEqual(undefined)
+        expect(messages[1].departament).toEqual(undefined)
+
+        expect(messages[2].licensee).toEqual(licensee._id)
+        expect(messages[2].contact).toEqual(contact._id)
+        expect(messages[2].kind).toEqual('file')
+        expect(messages[2].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+        expect(messages[2].destination).toEqual('to-chat')
+        expect(messages[2].text).toEqual(undefined)
+        expect(messages[2].senderName).toEqual('John Doe')
+        expect(messages[2].url).toEqual(
+          'https://s3.eu-central-1.wasabisys.com/incoming-chat-api/2021/3/25/244959/1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg'
+        )
+        expect(messages[2].fileName).toEqual('1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg')
+        expect(messages[2].latitude).toEqual(undefined)
+        expect(messages[2].longitude).toEqual(undefined)
+        expect(messages[2].departament).toEqual(undefined)
       })
     })
 
