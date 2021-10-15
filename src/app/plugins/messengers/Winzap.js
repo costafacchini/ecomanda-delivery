@@ -119,7 +119,7 @@ class Winzap {
 
     if (messageToSend.kind === 'file') {
       messageToSend.fileName = bodyParsed.fileName
-      messageToSend.url = uploadFile(licensee, contact, messageToSend.fileName, bodyParsed.blob)
+      messageToSend.url = uploadFile(this.licensee, contact, messageToSend.fileName, bodyParsed.blob)
     }
 
     return [await messageToSend.save()]

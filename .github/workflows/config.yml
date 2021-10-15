@@ -31,11 +31,11 @@ jobs:
       - uses: c-hive/gha-yarn-cache@v2
       - name: Install dependencies
         run: yarn
-#      This setting must be enabled when eslint supports private methods.
-#      - name: linter
-#        run: |
-#          yarn
-#          yarn linter
+     This setting must be enabled when eslint supports private methods.
+     - name: linter
+       run: |
+         yarn
+         yarn linter
       - name: Unit tests NodeJs
         run: |
           yarn
