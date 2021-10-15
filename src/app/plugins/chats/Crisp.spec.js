@@ -348,6 +348,20 @@ describe('Crisp plugin', () => {
       it('returns empty data if kind is unknown', async () => {
         const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
 
+        const contact = await Contact.create({
+          name: 'John Doe',
+          number: '5593165392832@c.us',
+          type: '@c.us',
+          talkingWithChatBot: true,
+          licensee: licensee,
+        })
+
+        await Room.create({
+          roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
+          token: contact._id.toString(),
+          contact: contact,
+        })
+
         const responseBody = {
           website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
           event: 'message:send',

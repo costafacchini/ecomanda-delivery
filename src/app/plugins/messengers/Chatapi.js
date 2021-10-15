@@ -28,19 +28,7 @@ const sendText = async (message, chatId, url, token) => {
     body: message.text,
   }
 
-  const response = await request.post(sendMessageUrl, { body })
-
-  if (response.data.sent === true) {
-    message.sended = true
-    await message.save()
-    console.info(`Mensagem ${message._id} enviada para Chatapi com sucesso! ${response.data.message}`)
-  } else {
-    message.error = JSON.stringify(response.data)
-    await message.save()
-    console.error(`Mensagem ${message._id} não enviada para Chatapi. ${JSON.stringify(response.data)}`)
-  }
-
-  return response.data.sent === true
+  return await request.post(sendMessageUrl, { body })
 }
 
 const sendFile = async (message, chatId, url, token) => {
@@ -53,19 +41,7 @@ const sendFile = async (message, chatId, url, token) => {
     caption: message.text,
   }
 
-  const response = await request.post(sendFileUrl, { body })
-
-  if (response.data.sent === true) {
-    message.sended = true
-    await message.save()
-    console.info(`Mensagem ${message._id} enviada para Chatapi com sucesso! ${response.data.message}`)
-  } else {
-    message.error = JSON.stringify(response.data)
-    await message.save()
-    console.error(`Mensagem ${message._id} não enviada para Chatapi. ${JSON.stringify(response.data)}`)
-  }
-
-  return response.data.sent === true
+  return await request.post(sendFileUrl, { body })
 }
 
 class Chatapi {
@@ -202,11 +178,24 @@ class Chatapi {
     const chatId = messageToSend.contact.number + messageToSend.contact.type
 
     if (await readChat(chatId, url, token)) {
+      let response
       if (messageToSend.kind === 'text') {
-        await sendText(messageToSend, chatId, url, token)
+        response = await sendText(messageToSend, chatId, url, token)
       } else {
-        await sendFile(messageToSend, chatId, url, token)
+        response = await sendFile(messageToSend, chatId, url, token)
       }
+
+      if (response.data.sent === true) {
+        messageToSend.sended = true
+        await messageToSend.save()
+        console.info(`Mensagem ${messageToSend._id} enviada para Chatapi com sucesso! ${response.data.message}`)
+      } else {
+        messageToSend.error = JSON.stringify(response.data)
+        await messageToSend.save()
+        console.error(`Mensagem ${messageToSend._id} não enviada para Chatapi. ${JSON.stringify(response.data)}`)
+      }
+
+      return response.data.sent === true
     }
   }
 }
