@@ -35,6 +35,8 @@ describe('<LicenseeNew />', () => {
       whatsappToken: '',
       whatsappUrl: '',
       chatDefault: '',
+      chatIdentifier: '',
+      chatKey: '',
       chatUrl: '',
       awsId: '',
       awsSecret: '',
