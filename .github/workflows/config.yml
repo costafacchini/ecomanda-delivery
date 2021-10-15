@@ -32,9 +32,9 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: linter
-       run: |
-         yarn
-         yarn linter
+        run: |
+          yarn
+          yarn linter
       - name: Unit tests NodeJs
         run: |
           yarn
@@ -44,7 +44,6 @@ jobs:
           SECRET: '394ru6gf6gjSsM6'
           DEFAULT_USER: 'user@user.com'
           DEFAULT_PASSWORD: '09876543'
-
       - name: Unit tests React
         run: |
           cd client
