@@ -4,6 +4,70 @@ const NormalizePhone = require('../../helpers/NormalizePhone')
 const { v4: uuidv4 } = require('uuid')
 const request = require('../../services/request')
 
+const readChat = async (chatId, url, token) => {
+  const readChatUrl = `${url}readChat?token=${token}`
+
+  const body = {
+    chatId: chatId,
+  }
+
+  const response = await request.post(readChatUrl, { body })
+
+  if (!response.data.read === true) {
+    console.error(`Não foi possível ler as mensagens na Chatapi ${JSON.stringify(response.data)}`)
+  }
+
+  return response.data.read === true
+}
+
+const sendText = async (message, chatId, url, token) => {
+  const sendMessageUrl = `${url}sendMessage?token=${token}`
+
+  const body = {
+    chatId: chatId,
+    body: message.text,
+  }
+
+  const response = await request.post(sendMessageUrl, { body })
+
+  if (response.data.sent === true) {
+    message.sended = true
+    await message.save()
+    console.info(`Mensagem ${message._id} enviada para Chatapi com sucesso! ${response.data.message}`)
+  } else {
+    message.error = JSON.stringify(response.data)
+    await message.save()
+    console.error(`Mensagem ${message._id} não enviada para Chatapi. ${JSON.stringify(response.data)}`)
+  }
+
+  return response.data.sent === true
+}
+
+const sendFile = async (message, chatId, url, token) => {
+  const sendFileUrl = `${url}sendFile?token=${token}`
+
+  const body = {
+    chatId: chatId,
+    body: message.url,
+    filename: message.fileName,
+    caption: message.text,
+  }
+
+  const response = await request.post(sendFileUrl, { body })
+
+  if (response.data.sent === true) {
+    message.sended = true
+    await message.save()
+    console.info(`Mensagem ${message._id} enviada para Chatapi com sucesso! ${response.data.message}`)
+  } else {
+    message.error = JSON.stringify(response.data)
+    await message.save()
+    console.error(`Mensagem ${message._id} não enviada para Chatapi. ${JSON.stringify(response.data)}`)
+  }
+
+  return response.data.sent === true
+}
+
 class Chatapi {
   constructor(licensee) {
     this.licensee = licensee
@@ -35,7 +99,7 @@ class Chatapi {
             number: normalizePhone.number,
             type: normalizePhone.type,
             talkingWithChatBot: this.licensee.useChatbot,
-            licensee: this.licensee._id
+            licensee: this.licensee._id,
           })
 
           await contact.save()
@@ -72,7 +136,7 @@ class Chatapi {
                 contact: contact._id,
                 destination: messageToSend.destination,
                 text: message.caption,
-                senderName: messageToSend.senderName
+                senderName: messageToSend.senderName,
               })
 
               processedMessages.push(await textMessageToSend.save())
@@ -85,7 +149,7 @@ class Chatapi {
               contact: contact._id,
               destination: messageToSend.destination,
               senderName: messageToSend.senderName,
-              text: 'enviou um anexo'
+              text: 'enviou um anexo',
             })
 
             processedMessages.push(await senderTextMessageToSend.save())
@@ -129,7 +193,7 @@ class Chatapi {
     if (messageDestination === 'to-chat') {
       return 'send-message-to-chat'
     } else {
-      return  'send-message-to-chatbot'
+      return 'send-message-to-chatbot'
     }
   }
 
@@ -137,77 +201,13 @@ class Chatapi {
     const messageToSend = await Message.findById(messageId).populate('contact')
     const chatId = messageToSend.contact.number + messageToSend.contact.type
 
-    if (await this.#readChat(chatId, url, token)) {
+    if (await readChat(chatId, url, token)) {
       if (messageToSend.kind === 'text') {
-        await this.#sendText(messageToSend, chatId, url, token)
+        await sendText(messageToSend, chatId, url, token)
       } else {
-        await this.#sendFile(messageToSend, chatId, url, token)
+        await sendFile(messageToSend, chatId, url, token)
       }
     }
-  }
-
-  async #readChat(chatId, url, token) {
-    const readChatUrl = `${url}readChat?token=${token}`
-
-    const body = {
-      chatId: chatId
-    }
-
-    const response = await request.post(readChatUrl, { body })
-
-    if (!response.data.read === true) {
-      console.error(`Não foi possível ler as mensagens na Chatapi ${JSON.stringify(response.data)}`)
-    }
-
-    return response.data.read === true
-  }
-
-  async #sendText(message, chatId, url, token) {
-    const sendMessageUrl = `${url}sendMessage?token=${token}`
-
-    const body = {
-      chatId: chatId,
-      body: message.text
-    }
-
-    const response = await request.post(sendMessageUrl, { body })
-
-    if (response.data.sent === true) {
-      message.sended = true
-      await message.save()
-      console.info(`Mensagem ${message._id} enviada para Chatapi com sucesso! ${response.data.message}`)
-    } else {
-      message.error = JSON.stringify(response.data)
-      await message.save()
-      console.error(`Mensagem ${message._id} não enviada para Chatapi. ${JSON.stringify(response.data)}`)
-    }
-
-    return response.data.sent === true
-  }
-
-  async #sendFile(message, chatId, url, token) {
-    const sendFileUrl = `${url}sendFile?token=${token}`
-
-    const body = {
-      chatId: chatId,
-      body: message.url,
-      filename: message.fileName,
-      caption: message.text,
-    }
-
-    const response = await request.post(sendFileUrl, { body })
-
-    if (response.data.sent === true) {
-      message.sended = true
-      await message.save()
-      console.info(`Mensagem ${message._id} enviada para Chatapi com sucesso! ${response.data.message}`)
-    } else {
-      message.error = JSON.stringify(response.data)
-      await message.save()
-      console.error(`Mensagem ${message._id} não enviada para Chatapi. ${JSON.stringify(response.data)}`)
-    }
-
-    return response.data.sent === true
   }
 }
 

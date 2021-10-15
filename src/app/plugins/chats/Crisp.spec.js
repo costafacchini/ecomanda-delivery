@@ -429,11 +429,20 @@ describe('Crisp plugin', () => {
           }
         )
 
+        const expectedBodyPatch = {
+          nickname: 'John Doe - 5593165392832 - WhatsApp',
+          email: 'john@doe.com',
+          phone: '5593165392832',
+        }
+
         fetchMock.patchOnce(
-          (url, { headers }) => {
-            return (url =
-              'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
-              JSON.stringify(headers).includes('Authorization'))
+          (url, { headers, body }) => {
+            return (
+              url ===
+                'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
+              body === JSON.stringify(expectedBodyPatch) &&
+              JSON.stringify(headers).includes('Authorization')
+            )
           },
           {
             status: 200,
@@ -533,11 +542,20 @@ describe('Crisp plugin', () => {
           }
         )
 
+        const expectedBodyPatch = {
+          nickname: 'John Doe - 5593165392832 - WhatsApp',
+          email: 'john@doe.com',
+          phone: '5593165392832',
+        }
+
         fetchMock.patchOnce(
-          (url, { headers }) => {
-            return (url =
-              'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
-              JSON.stringify(headers).includes('Authorization'))
+          (url, { headers, body }) => {
+            return (
+              url ===
+                'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
+              body === JSON.stringify(expectedBodyPatch) &&
+              JSON.stringify(headers).includes('Authorization')
+            )
           },
           {
             status: 200,
@@ -637,11 +655,20 @@ describe('Crisp plugin', () => {
             }
           )
 
+          const expectedBodyPatch = {
+            nickname: 'Grupo Teste - 5511989187726-1622497000 - WhatsApp',
+            email: 'john@doe.com',
+            phone: '5511989187726-1622497000',
+          }
+
           fetchMock.patchOnce(
-            (url, { headers }) => {
-              return (url =
-                'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
-                JSON.stringify(headers).includes('Authorization'))
+            (url, { headers, body }) => {
+              return (
+                url ===
+                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
+                body === JSON.stringify(expectedBodyPatch) &&
+                JSON.stringify(headers).includes('Authorization')
+              )
             },
             {
               status: 200,
@@ -795,11 +822,20 @@ describe('Crisp plugin', () => {
             }
           )
 
+          const expectedBodyPatch = {
+            nickname: 'John Doe - 5593165392832 - WhatsApp',
+            email: 'john@doe.com',
+            phone: '5593165392832',
+          }
+
           fetchMock.patchOnce(
-            (url, { headers }) => {
-              return (url =
-                'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
-                JSON.stringify(headers).includes('Authorization'))
+            (url, { headers, body }) => {
+              return (
+                url ===
+                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
+                body === JSON.stringify(expectedBodyPatch) &&
+                JSON.stringify(headers).includes('Authorization')
+              )
             },
             {
               status: 200,
@@ -912,11 +948,20 @@ describe('Crisp plugin', () => {
             }
           )
 
+          const expectedBodyPatch = {
+            nickname: 'John Doe - 5593165392832 - WhatsApp',
+            email: 'john@doe.com',
+            phone: '5593165392832',
+          }
+
           fetchMock.patchOnce(
-            (url, { headers }) => {
-              return (url =
-                'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
-                JSON.stringify(headers).includes('Authorization'))
+            (url, { headers, body }) => {
+              return (
+                url ===
+                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
+                body === JSON.stringify(expectedBodyPatch) &&
+                JSON.stringify(headers).includes('Authorization')
+              )
             },
             {
               status: 200,
@@ -1017,11 +1062,20 @@ describe('Crisp plugin', () => {
             }
           )
 
+          const expectedBodyPatch = {
+            nickname: 'John Doe - 5593165392832 - WhatsApp',
+            email: 'john@doe.com',
+            phone: '5593165392832',
+          }
+
           fetchMock.patchOnce(
-            (url, { headers }) => {
-              return (url =
-                'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
-                JSON.stringify(headers).includes('Authorization'))
+            (url, { headers, body }) => {
+              return (
+                url ===
+                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
+                body === JSON.stringify(expectedBodyPatch) &&
+                JSON.stringify(headers).includes('Authorization')
+              )
             },
             {
               status: 200,
