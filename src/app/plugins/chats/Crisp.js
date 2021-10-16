@@ -8,8 +8,10 @@ const request = require('../../services/request')
 const mime = require('mime-types')
 
 const createSession = async (url, headers, contact) => {
+  console.log(`https://api.crisp.chat/v1/website/${url}/conversation`)
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })
 
+  console.log('step 1', response)
   if (response.status !== 201) {
     console.error(`Não foi possível criar a sessão na Crisp ${JSON.stringify(response.data)}`)
     return
@@ -26,7 +28,12 @@ const updateContact = async (url, headers, contact, room) => {
     email: contact.email ? `${contact.email}` : `${contact.number}${contact.type}`,
     phone: contact.number,
   }
-  await request.patch(`https://api.crisp.chat/v1/website/${url}/conversation/${room}/meta`, { headers, body })
+  console.log(`https://api.crisp.chat/v1/website/${url}/conversation/${room}/meta`)
+  const response = await request.patch(`https://api.crisp.chat/v1/website/${url}/conversation/${room}/meta`, {
+    headers,
+    body,
+  })
+  console.log('step 2', response)
 }
 
 const postMessage = async (url, headers, contact, message, room) => {
@@ -52,11 +59,13 @@ const postMessage = async (url, headers, contact, message, room) => {
     body.content = content
   }
 
+  console.log(`https://api.crisp.chat/v1/website/${url}/conversation/${room}/message`)
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation/${room}/message`, {
     headers,
     body,
   })
 
+  console.log('step 3', response)
   if (response.data.error === false) {
     message.sended = true
     await message.save()
