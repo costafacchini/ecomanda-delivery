@@ -5,6 +5,70 @@ const Contact = require('@models/Contact')
 const Room = require('@models/Room')
 const request = require('../../services/request')
 
+const createVisitor = async (contact, token, url) => {
+  const body = {
+    visitor: {
+      name: `${contact.name} - ${contact.number} - WhatsApp`,
+      email: contact.email ? `${contact.email}` : `${contact.number}${contact.type}`,
+      token: `${token}`,
+    },
+  }
+
+  const response = await request.post(`${url}/api/v1/livechat/visitor`, { body })
+
+  if (response.data.success !== true) {
+    console.error(`Não foi possível criar o visitante na Rocketchat ${JSON.stringify(response.data)}`)
+  }
+
+  return response.data.success === true
+}
+
+const createRoom = async (contact, token, url) => {
+  const response = await request.get(`${url}/api/v1/livechat/room?token=${token}`)
+
+  if (response.data.success !== true) {
+    console.error(`Não foi possível criar a sala na Rocketchat ${JSON.stringify(response.data)}`)
+    return
+  }
+
+  const room = await Room.create({
+    roomId: response.data.room._id,
+    contact: contact._id,
+    token: token,
+  })
+
+  return room
+}
+
+const transferToDepartament = async (department, room, url) => {
+  const body = {
+    token: `${room.token}`,
+    rid: room.roomId,
+    department,
+  }
+
+  await request.post(`${url}/api/v1/livechat/room.transfer`, { body })
+}
+
+const postMessage = async (contact, message, room, url) => {
+  const body = {
+    token: `${room.token}`,
+    rid: room.roomId,
+    msg: formatMessage(message, contact),
+  }
+
+  return await request.post(`${url}/api/v1/livechat/message`, { body })
+}
+
+const formatMessage = (message, contact) => {
+  let text = message.text
+  if (message.kind === 'file') {
+    text = message.url
+  }
+
+  return contact.type === '@c.us' ? text : `*${message.senderName}:*\n${text}`
+}
+
 class Rocketchat {
   constructor(licensee) {
     this.licensee = licensee
@@ -59,11 +123,11 @@ class Rocketchat {
           destination: 'to-messenger',
         })
 
-       if (message.attachments) {
-         messageToSend.kind = 'file'
-         messageToSend.url = message.fileUpload.publicFilePath
-         messageToSend.fileName = message.attachments[0].title
-       }
+        if (message.attachments) {
+          messageToSend.kind = 'file'
+          messageToSend.url = message.fileUpload.publicFilePath
+          messageToSend.fileName = message.attachments[0].title
+        }
 
         processedMessages.push(await messageToSend.save())
       }
@@ -89,8 +153,8 @@ class Rocketchat {
 
     if (!room) {
       const token = messageToSend.contact._id.toString()
-      if (await this.#createVisitor(messageToSend.contact, token, url) === true) {
-        room = await this.#createRoom(messageToSend.contact, token, url)
+      if ((await createVisitor(messageToSend.contact, token, url)) === true) {
+        room = await createRoom(messageToSend.contact, token, url)
         if (!room) {
           return
         }
@@ -100,99 +164,37 @@ class Rocketchat {
     }
 
     if (messageToSend.departament && messageToSend.departament !== '') {
-      await this.#transferToDepartament(messageToSend.departament, room, url)
+      await transferToDepartament(messageToSend.departament, room, url)
     }
 
-    await this.#postMessage(messageToSend.contact, messageToSend, room, url)
-  }
+    const response = await postMessage(messageToSend.contact, messageToSend, room, url)
 
-  async #createVisitor(contact, token, url) {
-    const body = {
-      visitor: {
-        name: `${contact.name} - ${contact.number} - WhatsApp`,
-        email: contact.email ? `${contact.email}` : `${contact.number}${contact.type}`,
-        token: `${token}`
-      }
-    }
-
-    const response = await request.post(`${url}/api/v1/livechat/visitor`, { body })
-
-    if (response.data.success !== true) {
-      console.error(`Não foi possível criar o visitante na Rocketchat ${JSON.stringify(response.data)}`)
-    }
-
-    return response.data.success === true
-  }
-
-  async #createRoom(contact, token, url) {
-    const response = await request.get(`${url}/api/v1/livechat/room?token=${token}`)
-
-    if (response.data.success !== true) {
-      console.error(`Não foi possível criar a sala na Rocketchat ${JSON.stringify(response.data)}`)
-      return
-    }
-
-    const room = await Room.create({
-      roomId: response.data.room._id,
-      contact: contact._id,
-      token: token
-    })
-
-    return room
-  }
-
-  async #transferToDepartament(department, room, url) {
-    const body = {
-      token: `${room.token}`,
-      rid: room.roomId,
-      department
-    }
-
-    await request.post(`${url}/api/v1/livechat/room.transfer`, { body })
-  }
-
-  async #postMessage(contact, message, room, url) {
-    const body = {
-      token: `${room.token}`,
-      rid: room.roomId,
-      msg: this.#formatMessage(message, contact)
-    }
-
-    const response = await request.post(`${url}/api/v1/livechat/message`, { body })
-
-    if (!message.room || message.room._id !== room._id) message.room = room
+    if (!messageToSend.room || messageToSend.room._id !== room._id) messageToSend.room = room
 
     if (response.data.success === true) {
-      message.sended = true
-      await message.save()
+      messageToSend.sended = true
+      await messageToSend.save()
 
-      console.info(`Mensagem ${message._id} enviada para Rocketchat com sucesso!`)
+      console.info(`Mensagem ${messageToSend._id} enviada para Rocketchat com sucesso!`)
     } else {
-      message.error = message.error ? `${message.error} | ${JSON.stringify(response.data)}` : JSON.stringify(response.data)
-      if (message.error.includes('room-closed')) {
+      messageToSend.error = messageToSend.error
+        ? `${messageToSend.error} | ${JSON.stringify(response.data)}`
+        : JSON.stringify(response.data)
+      if (messageToSend.error.includes('room-closed')) {
         room.closed = true
         await room.save()
-        message.room = null
+        messageToSend.room = null
       }
-      await message.save()
+      await messageToSend.save()
 
-      if (message.error.includes('room-closed')) {
-        await this.sendMessage(message._id, url)
+      if (messageToSend.error.includes('room-closed')) {
+        await this.sendMessage(messageToSend._id, url)
       } else {
-        console.error(`Mensagem ${message._id} não enviada para a Rocketchat ${JSON.stringify(response.data)}`)
+        console.error(`Mensagem ${messageToSend._id} não enviada para a Rocketchat ${JSON.stringify(response.data)}`)
       }
     }
 
     return response.data.success === true
-  }
-
-  #formatMessage(message, contact) {
-    let text = message.text
-    if (message.kind === 'file') {
-      text = message.url
-    }
-
-    return contact.type === '@c.us' ? text : `*${message.senderName}:*\n${text}`
   }
 
   async closeChat(messageId) {

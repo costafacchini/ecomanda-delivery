@@ -6,7 +6,7 @@ describe('importData', () => {
     .spyOn(EcomandaOldImporter.prototype, 'importContacts')
     .mockImplementation()
 
-  beforeEach(async () => {
+  beforeEach(() => {
     jest.clearAllMocks()
   })
 

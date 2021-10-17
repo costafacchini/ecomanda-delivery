@@ -489,6 +489,20 @@ describe('Utalk plugin', () => {
 
       expect(messages.length).toEqual(0)
     })
+
+    it('return the empty data if event is chat and chat type is not chat and has no caption', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const responseBody = {
+        event: 'chat',
+        'chat[type]': 'file',
+      }
+
+      const utalk = new Utalk(licensee)
+      const messages = await utalk.responseToMessages(responseBody)
+
+      expect(messages.length).toEqual(0)
+    })
   })
 
   describe('#sendMessage', () => {

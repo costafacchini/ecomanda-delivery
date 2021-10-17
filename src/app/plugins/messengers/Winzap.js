@@ -5,6 +5,58 @@ const { v4: uuidv4 } = require('uuid')
 const S3 = require('../storage/S3')
 const request = require('../../services/request')
 
+const parseBody = (responseBody) => {
+  if (responseBody.event === 'chat' && responseBody['chat[type]'] !== 'chat' && !responseBody['caption']) {
+    return {
+      dir: 'o',
+    }
+  }
+
+  if (responseBody.event === 'chat') {
+    const chatNumber =
+      responseBody['contact[server]'] === 'g.us'
+        ? responseBody['contact[groupNumber]']
+        : responseBody['contact[number]']
+    const chatName =
+      responseBody['contact[server]'] === 'g.us' ? responseBody['contact[groupName]'] : responseBody['contact[name]']
+
+    return {
+      name: chatName,
+      type: 'text',
+      server: responseBody['contact[server]'],
+      number: chatNumber,
+      dir: responseBody['chat[dir]'],
+      text: responseBody['chat[type]'] === 'chat' ? responseBody['chat[body]'] : responseBody['caption'],
+      sender: responseBody['contact[server]'] === 'g.us' ? responseBody['contact[name]'] : '',
+    }
+  }
+
+  if (responseBody.event === 'file') {
+    return {
+      name: responseBody['number'],
+      type: 'file',
+      server: '',
+      number: responseBody['number'],
+      dir: responseBody['dir'],
+      fileName: responseBody['fn'],
+      blob: responseBody['blob'],
+    }
+  }
+
+  if (responseBody.event === 'ack') {
+    return {
+      dir: 'o',
+    }
+  }
+}
+
+const uploadFile = (licensee, contact, fileName, fileBase64) => {
+  const s3 = new S3(licensee, contact, fileName, fileBase64)
+  s3.uploadFile()
+
+  return s3.presignedUrl()
+}
+
 class Winzap {
   constructor(licensee) {
     this.licensee = licensee
@@ -14,14 +66,14 @@ class Winzap {
     if (messageDestination === 'to-chat') {
       return 'send-message-to-chat'
     } else {
-      return  'send-message-to-chatbot'
+      return 'send-message-to-chatbot'
     }
   }
 
   async responseToMessages(responseBody) {
     if (!responseBody.event) return []
 
-    const bodyParsed = this.#parseBody(responseBody)
+    const bodyParsed = parseBody(responseBody)
 
     if (bodyParsed.dir === 'o') {
       return []
@@ -67,58 +119,10 @@ class Winzap {
 
     if (messageToSend.kind === 'file') {
       messageToSend.fileName = bodyParsed.fileName
-      messageToSend.url = this.#uploadFile(contact, messageToSend.fileName, bodyParsed.blob)
+      messageToSend.url = uploadFile(this.licensee, contact, messageToSend.fileName, bodyParsed.blob)
     }
 
     return [await messageToSend.save()]
-  }
-
-  #parseBody(responseBody) {
-    if (responseBody.event === 'chat' && responseBody['chat[type]'] !== 'chat' && !responseBody['caption']) {
-      return {
-        dir: 'o'
-      }
-    }
-
-    if (responseBody.event === 'chat') {
-      const chatNumber = responseBody['contact[server]'] === 'g.us' ? responseBody['contact[groupNumber]'] : responseBody['contact[number]']
-      const chatName = responseBody['contact[server]'] === 'g.us' ? responseBody['contact[groupName]'] : responseBody['contact[name]']
-
-      return {
-        name: chatName,
-        type: 'text',
-        server: responseBody['contact[server]'],
-        number: chatNumber,
-        dir: responseBody['chat[dir]'],
-        text: responseBody['chat[type]'] === 'chat' ? responseBody['chat[body]'] : responseBody['caption'],
-        sender: responseBody['contact[server]'] === 'g.us' ? responseBody['contact[name]'] : '',
-      }
-    }
-
-    if (responseBody.event === 'file') {
-      return {
-        name: responseBody['number'],
-        type: 'file',
-        server: '',
-        number: responseBody['number'],
-        dir: responseBody['dir'],
-        fileName: responseBody['fn'],
-        blob: responseBody['blob']
-      }
-    }
-
-    if (responseBody.event === 'ack') {
-      return {
-        dir: 'o'
-      }
-    }
-  }
-
-  #uploadFile(contact, fileName, fileBase64) {
-    const s3 = new S3(this.licensee, contact, fileName, fileBase64)
-    s3.uploadFile()
-
-    return s3.presignedUrl()
   }
 
   async sendMessage(messageId, url, token) {
@@ -129,7 +133,7 @@ class Winzap {
       cmd: 'chat',
       id: messageId,
       to: messageToSend.contact.number + messageToSend.contact.type,
-      msg: messageToSend.text
+      msg: messageToSend.text,
     }
 
     if (messageToSend.kind === 'file') {

@@ -7,6 +7,47 @@ const request = require('../../services/request')
 const files = require('../../helpers/Files')
 const mime = require('mime-types')
 
+const getMediaURL = async (licensee, mediaId, contact) => {
+  const response = await downloadMedia(mediaId, licensee.whatsappToken)
+  const extension = mime.extension(response.headers.get('content-type'))
+
+  return uploadFile(licensee, contact, `${mediaId}.${extension}`, Buffer.from(response.data).toString('base64'))
+}
+
+const downloadMedia = async (mediaId, whatsappToken) => {
+  const headers = { 'D360-API-KEY': whatsappToken }
+  const response = await request.download(`https://waba.360dialog.io/v1/media/${mediaId}`, {
+    headers,
+  })
+
+  return response
+}
+
+const uploadFile = (licensee, contact, fileName, fileBase64) => {
+  const s3 = new S3(licensee, contact, fileName, fileBase64)
+  s3.uploadFile()
+
+  return s3.presignedUrl()
+}
+
+const getContact = async (number, url, token) => {
+  const headers = { 'D360-API-KEY': token }
+
+  const body = {
+    blocking: 'wait',
+    contacts: [`+${number}`],
+    force_check: true,
+  }
+
+  const response = await request.post(`${url}v1/contacts/`, { headers, body })
+
+  return {
+    valid: response.status === 200 && response.data.contacts[0].status === 'valid',
+    waId: response.data.contacts[0].wa_id,
+    data: response.data,
+  }
+}
+
 class Dialog {
   constructor(licensee) {
     this.licensee = licensee
@@ -98,39 +139,16 @@ class Dialog {
       }
 
       messageToSend.kind = 'file'
-      messageToSend.url = await this.#getMediaURL(messageToSend.attachmentWaId, contact)
+      messageToSend.url = await getMediaURL(this.licensee, messageToSend.attachmentWaId, contact)
     }
 
     return [await messageToSend.save()]
   }
 
-  async #getMediaURL(mediaId, contact) {
-    const response = await this.#downloadMedia(mediaId)
-    const extension = mime.extension(response.headers.get('content-type'))
-
-    return this.#uploadFile(contact, `${mediaId}.${extension}`, Buffer.from(response.data).toString('base64'))
-  }
-
-  async #downloadMedia(mediaId) {
-    const headers = { 'D360-API-KEY': this.licensee.whatsappToken }
-    const response = await request.download(`https://waba.360dialog.io/v1/media/${mediaId}`, {
-      headers,
-    })
-
-    return response
-  }
-
-  #uploadFile(contact, fileName, fileBase64) {
-    const s3 = new S3(this.licensee, contact, fileName, fileBase64)
-    s3.uploadFile()
-
-    return s3.presignedUrl()
-  }
-
   async sendMessage(messageId, url, token) {
     const messageToSend = await Message.findById(messageId).populate('contact')
 
-    const waContact = await this.#getContact(messageToSend.contact.number, url, token)
+    const waContact = await getContact(messageToSend.contact.number, url, token)
     if (waContact.valid) {
       const headers = { 'D360-API-KEY': token }
 
@@ -184,32 +202,18 @@ class Dialog {
         messageToSend.messageWaId = messageResponse.data.messages[0].id
         messageToSend.sended = true
         await messageToSend.save()
-        console.info(`Mensagem ${messageId} enviada para Dialog360 com sucesso! ${JSON.stringify(messageResponse.data)}`)
+        console.info(
+          `Mensagem ${messageId} enviada para Dialog360 com sucesso! ${JSON.stringify(messageResponse.data)}`
+        )
       } else {
         messageToSend.error = JSON.stringify(messageResponse.data)
         await messageToSend.save()
         console.error(`Mensagem ${messageId} não enviada para Dialog360. ${JSON.stringify(messageResponse.data)}`)
       }
     } else {
-      console.error(`A mensagem não foi enviada para a Dialog pois o contato não é válido ${JSON.stringify(waContact.data)}`)
-    }
-  }
-
-  async #getContact(number, url, token) {
-    const headers = { 'D360-API-KEY': token }
-
-    const body = {
-      blocking: 'wait',
-      contacts: [`+${number}`],
-      force_check: true,
-    }
-
-    const response = await request.post(`${url}v1/contacts/`, { headers, body })
-
-    return {
-      valid: response.status === 200 && response.data.contacts[0].status === 'valid',
-      waId: response.data.contacts[0].wa_id,
-      data: response.data,
+      console.error(
+        `A mensagem não foi enviada para a Dialog pois o contato não é válido ${JSON.stringify(waContact.data)}`
+      )
     }
   }
 }

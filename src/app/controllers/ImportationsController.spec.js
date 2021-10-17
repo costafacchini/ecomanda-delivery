@@ -58,7 +58,7 @@ describe('importations controller', () => {
           })
           .expect('Content-Type', /json/)
           .expect(200)
-          .then(async (response) => {
+          .then((response) => {
             expect(response.body).toEqual({
               body: 'Solicitação de importação agendada',
             })
