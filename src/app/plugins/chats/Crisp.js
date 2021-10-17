@@ -106,14 +106,7 @@ class Crisp {
   }
 
   async responseToMessages(responseBody) {
-    if (
-      responseBody.event !== 'message:send' &&
-      responseBody.event !== 'session:removed' &&
-      responseBody.event !== 'message:received'
-    )
-      return []
-
-    if (responseBody.event === 'message:received' && responseBody.data.content.namespace !== 'state:resolved') return []
+    if (responseBody.event !== 'session:removed' && responseBody.event !== 'message:received') return []
 
     const room = await Room.findOne({ roomId: responseBody.data.session_id }).populate('contact')
     if (!room) return []

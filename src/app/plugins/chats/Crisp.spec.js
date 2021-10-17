@@ -44,7 +44,7 @@ describe('Crisp plugin', () => {
 
       const responseBody = {
         website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
-        event: 'message:send',
+        event: 'message:received',
         data: {
           website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
           type: 'text',
@@ -260,7 +260,7 @@ describe('Crisp plugin', () => {
 
         const responseBody = {
           website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
-          event: 'message:send',
+          event: 'message:received',
           data: {
             website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
             type: 'file',
@@ -312,7 +312,7 @@ describe('Crisp plugin', () => {
 
         const responseBody = {
           website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
-          event: 'message:send',
+          event: 'message:received',
           data: {
             website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
             type: 'audio',
