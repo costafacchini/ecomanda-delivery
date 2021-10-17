@@ -95,7 +95,6 @@ class Crisp {
   }
 
   action(responseBody) {
-    'state:resolved'
     if (
       responseBody.event === 'session:removed' ||
       (responseBody.event === 'message:received' && responseBody.data.content.namespace === 'state:resolved')
@@ -109,10 +108,12 @@ class Crisp {
   async responseToMessages(responseBody) {
     if (
       responseBody.event !== 'message:send' &&
-      responseBody.event !== 'message:received' &&
-      responseBody.event !== 'session:removed'
+      responseBody.event !== 'session:removed' &&
+      responseBody.event !== 'message:received'
     )
       return []
+
+    if (responseBody.event === 'message:received' && responseBody.data.content.namespace !== 'state:resolved') return []
 
     const room = await Room.findOne({ roomId: responseBody.data.session_id }).populate('contact')
     if (!room) return []
