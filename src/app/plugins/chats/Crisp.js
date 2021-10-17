@@ -8,16 +8,20 @@ const request = require('../../services/request')
 const mime = require('mime-types')
 
 const createSession = async (url, headers, contact) => {
-  console.log('url ', `https://api.crisp.chat/v1/website/${url}/conversation`)
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })
 
   if (response.status !== 201) {
     console.error(`Não foi possível criar a sessão na Crisp ${JSON.stringify(response.data)}`)
     return
   } else {
+    const room = await Room.create({
+      roomId: response.data.data.session_id,
+      contact: contact._id,
+    })
+
     await updateContact(url, headers, contact, response.data.data.session_id)
 
-    return response.data.data.session_id
+    return room
   }
 }
 
@@ -56,13 +60,11 @@ const postMessage = async (url, headers, contact, message, room) => {
     body.content = content
   }
 
-  console.log('url 2  ', `https://api.crisp.chat/v1/website/${url}/conversation/${room}/message`)
-  const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation/${room}/message`, {
+  const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation/${room.roomId}/message`, {
     headers,
     body,
   })
 
-  console.log('step 1', response)
   if (response.data.error === false) {
     message.sended = true
     await message.save()
