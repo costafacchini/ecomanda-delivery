@@ -45,6 +45,9 @@ module.exports = {
   post(url, requestOpts = {}) {
     return request(url, 'post', requestOpts)
   },
+  patch(url, requestOpts = {}) {
+    return request(url, 'patch', requestOpts)
+  },
   download(url, requestOpts = {}) {
     return request(url, 'get', Object.assign(requestOpts, { isDownload: true }))
   },

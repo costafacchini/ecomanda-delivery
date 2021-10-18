@@ -22,6 +22,8 @@ function permit(fields) {
     'awsId',
     'awsSecret',
     'bucketName',
+    'chatIdentifier',
+    'chatKey',
   ]
 
   return _.pick(fields, permitedFields)
@@ -61,6 +63,8 @@ class LicenseesController {
       awsId,
       awsSecret,
       bucketName,
+      chatIdentifier,
+      chatKey,
     } = req.body
 
     const licensee = new Licensee({
@@ -81,6 +85,8 @@ class LicenseesController {
       awsId,
       awsSecret,
       bucketName,
+      chatIdentifier,
+      chatKey,
     })
 
     const validation = licensee.validateSync()
