@@ -1,6 +1,7 @@
 require('dotenv').config()
 require('module-alias/register')
 require('@models/index')
+const moment = require('moment')
 
 const request = require('./src/app/services/request')
 const Body = require('@models/Body')
@@ -8,9 +9,18 @@ const connect = require('./src/config/database')
 connect()
 
 async function schedule() {
-  // This command destroy bodies that are concluded
-  const res = await Body.deleteMany({ concluded: true })
-  console.log(`Bodies concluded destroyed: ${res.deletedCount}`)
+  // This command destroy bodies that are older than 1 day
+
+  try {
+    const yesterday = moment().subtract(1, 'days')
+    const start = moment().subtract(10, 'days')
+    const end = moment(yesterday).endOf('day')
+
+    const res = await Body.deleteMany({ createdAt: { $gte: start, $lt: end } })
+    console.log(`Bodies concluded destroyed: ${res.deletedCount}`)
+  } catch (err) {
+    console.log(err)
+  }
 
   // This command is necessary to wake up the heroku application
   await request.get('https://ecomanda-delivery.herokuapp.com/resources')
