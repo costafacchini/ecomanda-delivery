@@ -20,4 +20,8 @@ function updateLicensee(licensee) {
   return api().post(`resources/licensees/${licensee.id}`, { headers, body: licensee })
 }
 
-export { createLicensee, getLicensees, getLicensee, updateLicensee }
+function setLicenseeWebhook(licensee) {
+  return api().post(`resources/licensees/${licensee.id}/dialogwebhook`, { headers, body: licensee })
+}
+
+export { createLicensee, getLicensees, getLicensee, updateLicensee, setLicenseeWebhook }

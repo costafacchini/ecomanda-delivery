@@ -33,4 +33,6 @@ router.post('/licensees/:id', licenseesController.validations(), licenseesContro
 router.get('/licensees/:id', licenseesController.show)
 router.get('/licensees/', licenseesController.index)
 
+router.post('/licensees/:id/dialogwebhook', licenseesController.setDialogWebhook)
+
 module.exports = router

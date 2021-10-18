@@ -1428,6 +1428,40 @@ describe('Dialog plugin', () => {
     })
   })
 
+  describe('#setWebhook', () => {
+    it('config the webhook on dialog', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const expectedBody = {
+        url: `${licensee.urlWhatsappWebhook}`,
+      }
+
+      fetchMock.postOnce(
+        (url, { body, headers }) => {
+          return (
+            url === 'https://waba.360dialog.io/v1/configs/webhook' &&
+            body === JSON.stringify(expectedBody) &&
+            headers['D360-API-KEY'] === 'token-dialog'
+          )
+        },
+        {
+          status: 200,
+          body: {
+            url: `${licensee.urlWhatsappWebhook}`,
+          },
+        }
+      )
+
+      const dialog = new Dialog(licensee)
+      const setted = await dialog.setWebhook('https://waba.360dialog.io/', 'token-dialog')
+      await fetchMock.flush(true)
+
+      expect(fetchMock.done()).toBe(true)
+      expect(fetchMock.calls()).toHaveLength(1)
+      expect(setted).toEqual(true)
+    })
+  })
+
   describe('.action', () => {
     it('returns send-message-to-chat if message destination is to chat', async () => {
       const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })

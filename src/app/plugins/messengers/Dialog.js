@@ -216,6 +216,18 @@ class Dialog {
       )
     }
   }
+
+  async setWebhook(url, token) {
+    const headers = { 'D360-API-KEY': token }
+
+    const body = {
+      url: `${this.licensee.urlWhatsappWebhook}`,
+    }
+
+    const response = await request.post(`${url}v1/configs/webhook`, { headers, body })
+
+    return response.status === 200
+  }
 }
 
 module.exports = Dialog
