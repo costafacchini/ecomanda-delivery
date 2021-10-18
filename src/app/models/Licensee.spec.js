@@ -265,7 +265,7 @@ describe('Licensee', () => {
         expect(validation.errors['chatDefault']).not.toBeDefined()
       })
 
-      it('accepts "jivochat" and "rocketchat" values', () => {
+      it('accepts "jivochat", "rocketchat" and "crisp" values', () => {
         let validation
         const licensee = new Licensee()
 
@@ -275,6 +275,11 @@ describe('Licensee', () => {
         expect(validation.errors['chatDefault']).not.toBeDefined()
 
         licensee.chatDefault = 'rocketchat'
+        validation = licensee.validateSync()
+
+        expect(validation.errors['chatDefault']).not.toBeDefined()
+
+        licensee.chatDefault = 'crisp'
         validation = licensee.validateSync()
 
         expect(validation.errors['chatDefault']).not.toBeDefined()
@@ -304,6 +309,42 @@ describe('Licensee', () => {
 
         expect(validation.errors['chatUrl'].message).toEqual(
           'URL do Chat: deve ser preenchido quando tiver um plugin configurado'
+        )
+      })
+    })
+
+    describe('chatKey', () => {
+      it('is not required', () => {
+        const licensee = new Licensee({ chatDefault: '', chatUrl: '' })
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['chatUrl']).not.toBeDefined()
+      })
+
+      it('is required if chatDefault is crisp', () => {
+        const licensee = new Licensee({ chatDefault: 'crisp', chatUrl: '' })
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['chatKey'].message).toEqual(
+          'Key do Chat: deve ser preenchido quando o plugin de chat for crisp'
+        )
+      })
+    })
+
+    describe('chatIdentifier', () => {
+      it('is not required', () => {
+        const licensee = new Licensee({ chatDefault: '', chatUrl: '' })
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['chatUrl']).not.toBeDefined()
+      })
+
+      it('is required if chatDefault is crisp', () => {
+        const licensee = new Licensee({ chatDefault: 'crisp', chatUrl: '' })
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['chatIdentifier'].message).toEqual(
+          'Identifier do Chat: deve ser preenchido quando o plugin de chat for crisp'
         )
       })
     })

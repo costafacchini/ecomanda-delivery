@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, cleanup } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import LicenseeForm from './'
 
@@ -17,19 +17,19 @@ describe('<LicenseeForm />', () => {
 
     expect(screen.getByLabelText('Nome')).toHaveValue('')
     expect(screen.getByLabelText('E-email')).toHaveValue('')
+    expect(screen.getByLabelText('Licença')).toHaveValue('demo')
     expect(screen.getByLabelText('Telefone')).toHaveValue('')
     expect(screen.getByLabelText('API token')).toHaveValue('')
     expect(screen.getByLabelText('Ativo')).not.toBeChecked()
-    expect(screen.getByLabelText('Chatbot')).not.toBeChecked()
-    expect(screen.getByLabelText('Tipo')).toHaveValue('demo')
-    expect(screen.getByLabelText('Whatsapp Default')).toHaveValue('')
+    expect(screen.getByLabelText('Usa chatbot?')).not.toBeChecked()
     expect(screen.getByLabelText('Chatbot padrão')).toHaveValue('')
     expect(screen.getByLabelText('URL do chatbot')).toHaveValue('')
     expect(screen.getByLabelText('Token do chatbot')).toHaveValue('')
-    expect(screen.getByLabelText('Token do whatsapp')).toHaveValue('')
-    expect(screen.getByLabelText('Url do whatsapp')).toHaveValue('')
     expect(screen.getByLabelText('Chat padrão')).toHaveValue('')
     expect(screen.getByLabelText('Url do chat')).toHaveValue('')
+    expect(screen.getByLabelText('Whatsapp padrão')).toHaveValue('')
+    expect(screen.getByLabelText('Token do whatsapp')).toHaveValue('')
+    expect(screen.getByLabelText('Url do whatsapp')).toHaveValue('')
     expect(screen.getByLabelText('Id da AWS')).toHaveValue('')
     expect(screen.getByLabelText('Senha AWS')).toHaveValue('')
     expect(screen.getByLabelText('Nome do bucket AWS')).toHaveValue('')
@@ -50,8 +50,10 @@ describe('<LicenseeForm />', () => {
       whatsappDefault: 'utalk',
       whatsappToken: 'token whats',
       whatsappUrl: 'URL do whats',
-      chatDefault: 'jivochat',
+      chatDefault: 'crisp',
       chatUrl: 'URL do chat',
+      chatKey: 'key',
+      chatIdentifier: 'identifier',
       awsId: 'ID da AWS',
       awsSecret: 'Senha da AWS',
       bucketName: 'Nome do bucket',
@@ -64,20 +66,79 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('E-email')).toHaveValue('email@gmail.com')
     expect(screen.getByLabelText('Telefone')).toHaveValue('48999999215')
     expect(screen.getByLabelText('API token')).toHaveValue('token')
-    expect(screen.getByLabelText('Tipo')).toHaveValue('paid')
-    expect(screen.getByLabelText('Chatbot')).toBeChecked()
+    expect(screen.getByLabelText('Licença')).toHaveValue('paid')
+    expect(screen.getByLabelText('Usa chatbot?')).toBeChecked()
     expect(screen.getByLabelText('Chatbot padrão')).toHaveValue('landbot')
-    expect(screen.getByLabelText('Whatsapp Default')).toHaveValue('utalk')
+    expect(screen.getByLabelText('Whatsapp padrão')).toHaveValue('utalk')
     expect(screen.getByLabelText('URL do chatbot')).toHaveValue('URL chatbot')
     expect(screen.getByLabelText('Token do chatbot')).toHaveValue('token chatbot')
     expect(screen.getByLabelText('Token do whatsapp')).toHaveValue('token whats')
     expect(screen.getByLabelText('Url do whatsapp')).toHaveValue('URL do whats')
-    expect(screen.getByLabelText('Chat padrão')).toHaveValue('jivochat')
+    expect(screen.getByLabelText('Chat padrão')).toHaveValue('crisp')
     expect(screen.getByLabelText('Url do chat')).toHaveValue('URL do chat')
-
+    expect(screen.getByLabelText('Identifier')).toHaveValue('identifier')
+    expect(screen.getByLabelText('Key')).toHaveValue('key')
     expect(screen.getByLabelText('Id da AWS')).toHaveValue('ID da AWS')
     expect(screen.getByLabelText('Senha AWS')).toHaveValue('Senha da AWS')
     expect(screen.getByLabelText('Nome do bucket AWS')).toHaveValue('Nome do bucket')
+  })
+
+  describe('fields', () => {
+    it('disables chatbot fields if "Usa chatbot?" is false', () => {
+      mount({ initialValues: { useChatbot: true } })
+
+      expect(screen.getByLabelText('Usa chatbot?')).toBeChecked()
+      expect(screen.getByLabelText('Chatbot padrão')).toBeEnabled()
+      expect(screen.getByLabelText('URL do chatbot')).toBeEnabled()
+      expect(screen.getByLabelText('Token do chatbot')).toBeEnabled()
+
+      cleanup()
+      mount({ initialValues: { useChatbot: false } })
+
+      expect(screen.getByLabelText('Usa chatbot?')).not.toBeChecked()
+      expect(screen.getByLabelText('Chatbot padrão')).toBeDisabled()
+      expect(screen.getByLabelText('URL do chatbot')).toBeDisabled()
+      expect(screen.getByLabelText('Token do chatbot')).toBeDisabled()
+    })
+
+    it('disables chat fields if "Chat padrão" is blank', () => {
+      mount({ initialValues: { chatDefault: 'crisp' } })
+
+      expect(screen.getByLabelText('Url do chat')).toBeEnabled()
+      expect(screen.getByLabelText('Identifier')).toBeEnabled()
+      expect(screen.getByLabelText('Key')).toBeEnabled()
+
+      cleanup()
+      mount({ initialValues: { chatDefault: '' } })
+
+      expect(screen.getByLabelText('Url do chat')).toBeDisabled()
+    })
+
+    it('disables whatsapp fields if "Whatsapp padrão" is blank', () => {
+      mount({ initialValues: { whatsappDefault: 'dialog' } })
+
+      expect(screen.getByLabelText('Token do whatsapp')).toBeEnabled()
+      expect(screen.getByLabelText('Url do whatsapp')).toBeEnabled()
+
+      cleanup()
+      mount({ initialValues: { whatsappDefault: '' } })
+
+      expect(screen.getByLabelText('Token do whatsapp')).toBeDisabled()
+      expect(screen.getByLabelText('Url do whatsapp')).toBeDisabled()
+    })
+
+    it('shows key and identifier fields if "Chat padrão" is crisp', () => {
+      mount({ initialValues: { chatDefault: 'crisp' } })
+
+      expect(screen.getByLabelText('Identifier')).toBeVisible()
+      expect(screen.getByLabelText('Key')).toBeEnabled()
+
+      cleanup()
+      mount({ initialValues: { chatDefault: 'jivochat' } })
+
+      expect(screen.queryByLabelText('Identifier')).not.toBeInTheDocument()
+      expect(screen.queryByLabelText('Key')).not.toBeInTheDocument()
+    })
   })
 
   describe('submit', () => {
@@ -105,14 +166,13 @@ describe('<LicenseeForm />', () => {
         whatsappToken: '',
         whatsappUrl: '',
         chatDefault: '',
+        chatIdentifier: '',
+        chatKey: '',
         chatUrl: '',
         awsId: '',
         awsSecret: '',
         bucketName: '',
-        chatbotDefault: ''
       })
     })
   })
-
-
 })

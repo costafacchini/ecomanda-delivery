@@ -75,7 +75,7 @@ const licenseeSchema = new Schema(
     },
     chatDefault: {
       type: String,
-      enum: ['jivochat', 'rocketchat', ''],
+      enum: ['jivochat', 'rocketchat', 'crisp', ''],
     },
     chatUrl: {
       type: String,
@@ -84,6 +84,24 @@ const licenseeSchema = new Schema(
           return !!this.chatDefault
         },
         'URL do Chat: deve ser preenchido quando tiver um plugin configurado',
+      ],
+    },
+    chatKey: {
+      type: String,
+      required: [
+        function () {
+          return this.chatDefault === 'crisp'
+        },
+        'Key do Chat: deve ser preenchido quando o plugin de chat for crisp',
+      ],
+    },
+    chatIdentifier: {
+      type: String,
+      required: [
+        function () {
+          return this.chatDefault === 'crisp'
+        },
+        'Identifier do Chat: deve ser preenchido quando o plugin de chat for crisp',
       ],
     },
     awsId: {

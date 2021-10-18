@@ -1,23 +1,25 @@
-class NormalizePhone {
-  constructor(number) {
-    this.number = number.replace(/[^0-9.-]/g, '')
-    this.type = number.includes('@g.us') || number.replace(/[^0-9]/g, '').length > 13 ? '@g.us' : '@c.us'
-    this.#normalize()
+const normalize = (number) => {
+  let result = number
+  if (number[number.length - 1] === '.') {
+    result = number.slice(0, number.length - 1)
+  }
+  if (result.length <= 9) {
+    result = ''
+  }
+  if (result.length === 10 || result.length === 11) {
+    result = '55' + result
+  }
+  if (result.length === 12) {
+    result = [result.slice(0, 4), '9', result.slice(4)].join('')
   }
 
-  #normalize() {
-    if (this.number[this.number.length - 1] === '.') {
-      this.number = this.number.slice(0, this.number.length - 1)
-    }
-    if (this.number.length <= 9) {
-      this.number = ''
-    }
-    if (this.number.length === 10 || this.number.length === 11) {
-      this.number = '55' + this.number
-    }
-    if (this.number.length === 12) {
-      this.number = [this.number.slice(0, 4), '9', this.number.slice(4)].join('')
-    }
+  return result
+}
+
+class NormalizePhone {
+  constructor(number) {
+    this.type = number.includes('@g.us') || number.replace(/[^0-9]/g, '').length > 13 ? '@g.us' : '@c.us'
+    this.number = normalize(number.replace(/[^0-9.-]/g, ''))
   }
 }
 
