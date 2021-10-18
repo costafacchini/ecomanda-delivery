@@ -3,9 +3,11 @@ const jwt = require('jsonwebtoken')
 const SECRET = process.env.SECRET
 const UsersController = require('@controllers/UsersController')
 const LicenseesController = require('@controllers/LicenseesController')
+const MessagesController = require('@controllers/MessagesController')
 
 const usersController = new UsersController()
 const licenseesController = new LicenseesController()
+const messagesController = new MessagesController()
 
 router.route('*').all(authenticate, (req, res, next) => {
   next()
@@ -34,5 +36,7 @@ router.get('/licensees/:id', licenseesController.show)
 router.get('/licensees/', licenseesController.index)
 
 router.post('/licensees/:id/dialogwebhook', licenseesController.setDialogWebhook)
+
+router.get('/messages/', messagesController.index)
 
 module.exports = router
