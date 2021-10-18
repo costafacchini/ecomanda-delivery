@@ -1,4 +1,5 @@
 const Licensee = require('@models/Licensee')
+const createMessengerPlugin = require('../plugins/messengers/factory')
 const { check, validationResult } = require('express-validator')
 const { sanitizeExpressErrors, sanitizeModelErrors } = require('../helpers/SanitizeErrors')
 const _ = require('lodash')
@@ -144,6 +145,21 @@ class LicenseesController {
   async index(req, res) {
     try {
       res.status(200).send(await Licensee.find({}))
+    } catch (err) {
+      res.status(500).send({ errors: { message: err.toString() } })
+    }
+  }
+
+  async setDialogWebhook(req, res) {
+    try {
+      const licensee = await Licensee.findOne({ _id: req.params.id })
+
+      if (licensee.whatsappDefault === 'dialog') {
+        const pluginWhatsapp = createMessengerPlugin(licensee)
+        await pluginWhatsapp.setWebhook(licensee.whatsappUrl, licensee.whatsappToken)
+      }
+
+      res.status(200).send({ message: 'Webhook configurado!' })
     } catch (err) {
       res.status(500).send({ errors: { message: err.toString() } })
     }

@@ -487,4 +487,77 @@ describe('licensee controller', () => {
       })
     })
   })
+
+  describe('setDialogWebhook', () => {
+    describe('response', () => {
+      it('returns status 200 and message if dialog webhook is set', async () => {
+        const licensee = await Licensee.create({
+          name: 'Alcateia Ltds',
+          email: 'alcateia@alcateia.com',
+          phone: '11098538273',
+          active: true,
+          licenseKind: 'demo',
+          useChatbot: true,
+          chatbotDefault: 'landbot',
+          whatsappDefault: 'dialog',
+          chatDefault: 'rocketchat',
+          chatbotUrl: 'https://chatbot.url',
+          chatbotAuthorizationToken: 'chat-bot-token',
+          whatsappToken: 'whatsapp-token',
+          whatsappUrl: 'https://whatsapp.url',
+          chatUrl: 'https://chat.url',
+          awsId: 'aws-id',
+          awsSecret: 'aws-secret',
+          bucketName: 'bocket-name',
+        })
+
+        await request(expressServer)
+          .post(`/resources/licensees/${licensee._id}/dialogwebhook`)
+          .set('x-access-token', token)
+          .send({ _id: 123 })
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .then((response) => {
+            expect(response.body.message).toEqual('Webhook configurado!')
+          })
+      })
+
+      it('returns status 500 and message if the some error ocurred', async () => {
+        const licenseeFindOneSpy = jest.spyOn(Licensee, 'findOne').mockImplementation(() => {
+          throw new Error('some error')
+        })
+
+        const licensee = await Licensee.create({
+          name: 'Alcateia Ltds',
+          email: 'alcateia@alcateia.com',
+          phone: '11098538273',
+          active: true,
+          licenseKind: 'demo',
+          useChatbot: true,
+          chatbotDefault: 'landbot',
+          whatsappDefault: 'dialog',
+          chatDefault: 'rocketchat',
+          chatbotUrl: 'https://chatbot.url',
+          chatbotAuthorizationToken: 'chat-bot-token',
+          whatsappToken: 'whatsapp-token',
+          whatsappUrl: 'https://whatsapp.url',
+          chatUrl: 'https://chat.url',
+          awsId: 'aws-id',
+          awsSecret: 'aws-secret',
+          bucketName: 'bocket-name',
+        })
+
+        await request(expressServer)
+          .post(`/resources/licensees/${licensee._id}/dialogwebhook`)
+          .set('x-access-token', token)
+          .send({ _id: 123 })
+          .expect('Content-Type', /json/)
+          .expect(500, {
+            errors: { message: 'Error: some error' },
+          })
+
+        licenseeFindOneSpy.mockRestore()
+      })
+    })
+  })
 })
