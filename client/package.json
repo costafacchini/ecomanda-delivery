@@ -47,6 +47,6 @@
     ]
   },
   "devDependencies": {
-    "@testing-library/dom": "8.9.1"
+    "@testing-library/dom": "8.10.0"
   }
 }
