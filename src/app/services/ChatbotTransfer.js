@@ -23,8 +23,7 @@ async function transformChatbotTransferBody(data) {
     })
   }
 
-  body.concluded = true
-  await body.save()
+  await Body.deleteOne({ _id: bodyId })
 
   return actions
 }

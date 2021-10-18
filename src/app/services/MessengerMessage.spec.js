@@ -14,7 +14,7 @@ describe('transformMessengerBody', () => {
     await mongoServer.disconnect()
   })
 
-  it('responds with action to send message to chat and chatbot and marks body to concluded', async () => {
+  it('responds with action to send message to chat and chatbot and delete body', async () => {
     const messengerPluginResponseToMessages = jest
       .spyOn(Chatapi.prototype, 'responseToMessages')
       .mockImplementation(() => {
@@ -52,9 +52,8 @@ describe('transformMessengerBody', () => {
 
     expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
-    const bodyUpdated = await Body.findById(body._id)
-    expect(body.concluded).toEqual(false)
-    expect(bodyUpdated.concluded).toEqual(true)
+    const bodyDeleted = await Body.findById(body._id)
+    expect(bodyDeleted).toEqual(null)
 
     expect(actions[0].action).toEqual('send-message-to-chatbot')
     expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://whatsapp.url', token: 'ljsdf12g' })
@@ -65,7 +64,7 @@ describe('transformMessengerBody', () => {
     expect(actions.length).toEqual(2)
   })
 
-  it('responds with blank actions if body is invalid and marks body to concluded', async () => {
+  it('responds with blank actions if body is invalid and delete body', async () => {
     const messengerPluginResponseToMessages = jest
       .spyOn(Chatapi.prototype, 'responseToMessages')
       .mockImplementation(() => {
@@ -100,9 +99,8 @@ describe('transformMessengerBody', () => {
 
     expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
-    const bodyUpdated = await Body.findById(body._id)
-    expect(body.concluded).toEqual(false)
-    expect(bodyUpdated.concluded).toEqual(true)
+    const bodyDeleted = await Body.findById(body._id)
+    expect(bodyDeleted).toEqual(null)
 
     expect(actions.length).toEqual(0)
   })
