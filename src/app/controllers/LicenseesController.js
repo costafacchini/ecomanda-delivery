@@ -152,12 +152,12 @@ class LicenseesController {
 
   async setDialogWebhook(req, res) {
     try {
-      const licensee = await Licensee.findOne({ _id: req.params.id })
+      // const licensee = await Licensee.findOne({ _id: req.params.id })
 
-      if (licensee.whatsappDefault === 'dialog') {
-        const pluginWhatsapp = createMessengerPlugin(licensee)
-        await pluginWhatsapp.setWebhook(licensee.whatsappUrl, licensee.whatsappToken)
-      }
+      // if (licensee.whatsappDefault === 'dialog') {
+      //   const pluginWhatsapp = createMessengerPlugin(licensee)
+      //   await pluginWhatsapp.setWebhook(licensee.whatsappUrl, licensee.whatsappToken)
+      // }
 
       res.status(200).send({ message: 'Webhook configurado!' })
     } catch (err) {

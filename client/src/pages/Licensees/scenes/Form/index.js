@@ -1,6 +1,7 @@
 import { FieldWithError, Form } from '../../../../components/form'
 import * as Yup from 'yup'
 import { useHistory } from 'react-router-dom'
+import { setLicenseeWebhook } from '../services/licensee'
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string()
@@ -305,6 +306,21 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                   />
                 </div>
               </div>
+
+              {props.values.whatsappDefault === 'dialog' && props.values.apiToken && (
+                <div className='row pb-4'>
+                  <div className='form-group col-5'>
+                    <button
+                      onClick={async (event) => {
+                        event.preventDefault()
+                        await setLicenseeWebhook(props.values)
+                      }}
+                      className='btn btn-info'>
+                        Configurar Webhook na Dialog360
+                    </button>
+                  </div>
+                </div>
+              )}
             </fieldset>
 
             <fieldset>

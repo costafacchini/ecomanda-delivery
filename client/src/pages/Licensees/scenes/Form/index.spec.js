@@ -1,6 +1,9 @@
 import { fireEvent, render, screen, waitFor, cleanup } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import LicenseeForm from './'
+import { setLicenseeWebhook } from '../services/licensee'
+
+jest.mock('../services/licensee')
 
 describe('<LicenseeForm />', () => {
   const onSubmit = jest.fn()
@@ -138,6 +141,32 @@ describe('<LicenseeForm />', () => {
 
       expect(screen.queryByLabelText('Identifier')).not.toBeInTheDocument()
       expect(screen.queryByLabelText('Key')).not.toBeInTheDocument()
+    })
+
+    it('shows button set webhook if "Whatsapp padrão" is dialog and licensee has apiToken', () => {
+      mount({ initialValues: { whatsappDefault: 'dialog' } })
+
+      expect(screen.queryByRole('button', { name: 'Configurar Webhook na Dialog360' })).not.toBeInTheDocument()
+
+      cleanup()
+      mount({ initialValues: { apiToken: 'key' } })
+
+      expect(screen.queryByRole('button', { name: 'Configurar Webhook na Dialog360' })).not.toBeInTheDocument()
+
+      cleanup()
+      mount({ initialValues: { whatsappDefault: 'dialog', apiToken: 'key' } })
+
+      expect(screen.getByRole('button', { name: 'Configurar Webhook na Dialog360' })).toBeInTheDocument()
+    })
+
+    it('Configurar Webhook na Dialog360 click', () => {
+      mount({ initialValues: { whatsappDefault: 'dialog', apiToken: 'key' } })
+
+      expect(setLicenseeWebhook).not.toHaveBeenCalled()
+
+      fireEvent.click(screen.getByRole('button', { name: 'Configurar Webhook na Dialog360' }))
+
+      expect(setLicenseeWebhook).toHaveBeenCalledTimes(1)
     })
   })
 
