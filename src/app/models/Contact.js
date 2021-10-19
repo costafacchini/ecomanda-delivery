@@ -23,6 +23,7 @@ const contactSchema = new Schema(
       required: [true, 'Licensee: Você deve preencher o campo'],
     },
     waId: String,
+    landbotId: String,
   },
   { timestamps: true }
 )

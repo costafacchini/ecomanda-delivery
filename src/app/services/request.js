@@ -51,4 +51,7 @@ module.exports = {
   download(url, requestOpts = {}) {
     return request(url, 'get', Object.assign(requestOpts, { isDownload: true }))
   },
+  delete(url, requestOpts = {}) {
+    return request(url, 'delete', requestOpts)
+  },
 }

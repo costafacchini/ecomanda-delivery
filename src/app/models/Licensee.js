@@ -42,6 +42,7 @@ const licenseeSchema = new Schema(
         'URL do Chatbot: deve ser preenchido quando utiliza Chatbot',
       ],
     },
+    chatbotApiToken: String,
     chatbotAuthorizationToken: {
       type: String,
       required: [
