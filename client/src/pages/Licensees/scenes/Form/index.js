@@ -18,6 +18,7 @@ const licenseeInitialValues = {
   chatbotDefault: '',
   chatbotUrl: '',
   chatbotAuthorizationToken: '',
+  chatbotApiToken: '',
   whatsappDefault: '',
   whatsappToken: '',
   whatsappUrl: '',
@@ -191,6 +192,20 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                   />
                 </div>
               </div>
+
+              <div className='row'>
+                <div className='form-group col-5'>
+                  <label htmlFor='chatbotApiToken'>Token de acesso via API do chatbot</label>
+                  <FieldWithError
+                    id='chatbotApiToken'
+                    name='chatbotApiToken'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.chatbotApiToken}
+                  />
+                </div>
+              </div>
             </fieldset>
 
             <div className='row'>
@@ -323,7 +338,7 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
               )}
             </fieldset>
 
-            <fieldset>
+            <fieldset className='pb-4'>
               <div className='row'>
                 <div className='form-group col-5'>
                   <label htmlFor='awsId'>Id da AWS</label>
@@ -362,6 +377,68 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                     onChange={props.handleChange}
                     onBlur={props.handleBlur}
                     value={props.values.bucketName}
+                  />
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <div className='row'>
+                <div className='form-group col-5'>
+                  <label htmlFor='urlChatWebhook'>URL para webhook de Chat</label>
+                  <FieldWithError
+                    disabled
+                    id='urlChatWebhook'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.urlChatWebhook}
+                    name='urlChatWebhook'
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-5'>
+                  <label htmlFor='urlChatbotWebhook'>URL para webhook de Chatbot</label>
+                  <FieldWithError
+                    disabled
+                    id='urlChatbotWebhook'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.urlChatbotWebhook}
+                    name='urlChatbotWebhook'
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-5'>
+                  <label htmlFor='urlChatbotTransfer'>URL de webhook para transferir do Chatbot para o Chat</label>
+                  <FieldWithError
+                    disabled
+                    id='urlChatbotTransfer'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.urlChatbotTransfer}
+                    name='urlChatbotTransfer'
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-5'>
+                  <label htmlFor='urlWhatsappWebhook'>URL para webhook de whatsapp</label>
+                  <FieldWithError
+                    disabled
+                    id='urlWhatsappWebhook'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.urlWhatsappWebhook}
+                    name='urlWhatsappWebhook'
                   />
                 </div>
               </div>
