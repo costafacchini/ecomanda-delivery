@@ -10,6 +10,7 @@ const transferToChat = require('./TransferToChat')
 const importData = require('./ImportData')
 const backup = require('./Backup')
 const clearBackups = require('./ClearBackups')
+const resetChatbots = require('./ResetChatbots')
 
 const jobs = [
   chatMessage,
@@ -24,6 +25,7 @@ const jobs = [
   importData,
   backup,
   clearBackups,
+  resetChatbots,
 ]
 
 module.exports = jobs
