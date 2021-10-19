@@ -143,6 +143,48 @@ describe('Landbot plugin', () => {
       expect(messages.length).toEqual(3)
     })
 
+    it('changes the landbotId in contact if is different', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const contact = await Contact.create({
+        name: 'John Doe',
+        number: '5593165392832@c.us',
+        type: '@c.us',
+        talkingWithChatBot: true,
+        licensee: licensee,
+        landbotId: '123',
+      })
+
+      const responseBody = {
+        messages: [
+          {
+            type: 'text',
+            timestamp: '1234567890',
+            message: 'Hello world',
+          },
+        ],
+        customer: {
+          id: 2000,
+          name: 'John',
+          number: '5593165392832',
+        },
+        agent: {
+          id: 1,
+          type: 'human',
+        },
+        channel: {
+          id: 100,
+          name: 'Android App',
+        },
+      }
+
+      const landbot = new Landbot(licensee)
+      await landbot.responseToMessages(responseBody)
+
+      const contactUpdated = await Contact.findById(contact._id)
+      expect(contactUpdated.landbotId).toEqual('2000')
+    })
+
     it('return the empty array if body is blank', async () => {
       const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
 
@@ -483,6 +525,37 @@ describe('Landbot plugin', () => {
 
     it('returns location if kind is location', () => {
       expect(Landbot.kindToMessageKind('location')).toEqual('location')
+    })
+  })
+
+  describe('#dropConversation', () => {
+    it('send request to delete customer on landbot', async () => {
+      const licensee = await Licensee.create({
+        name: 'Alcateia Ltds',
+        active: true,
+        licenseKind: 'demo',
+        chatbotApiToken: 'token',
+      })
+
+      const contact = await Contact.create({
+        name: 'John Doe',
+        number: '5593165392832',
+        type: '@c.us',
+        talkingWithChatBot: true,
+        licensee: licensee,
+        landbotId: '20000',
+      })
+
+      fetchMock.deleteOnce((url, { headers }) => {
+        return url === 'https://api.landbot.io/v1/customers/20000/' && headers['Authorization'] === 'Token token'
+      }, 204)
+
+      const landbot = new Landbot(licensee)
+      await landbot.dropConversation(contact._id, 'token')
+      await fetchMock.flush(true)
+
+      expect(fetchMock.done()).toBe(true)
+      expect(fetchMock.calls()).toHaveLength(1)
     })
   })
 })

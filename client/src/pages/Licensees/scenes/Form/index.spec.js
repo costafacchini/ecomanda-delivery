@@ -28,6 +28,7 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Chatbot padrão')).toHaveValue('')
     expect(screen.getByLabelText('URL do chatbot')).toHaveValue('')
     expect(screen.getByLabelText('Token do chatbot')).toHaveValue('')
+    expect(screen.getByLabelText('Token de acesso via API do chatbot')).toHaveValue('')
     expect(screen.getByLabelText('Chat padrão')).toHaveValue('')
     expect(screen.getByLabelText('Url do chat')).toHaveValue('')
     expect(screen.getByLabelText('Whatsapp padrão')).toHaveValue('')
@@ -36,6 +37,10 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Id da AWS')).toHaveValue('')
     expect(screen.getByLabelText('Senha AWS')).toHaveValue('')
     expect(screen.getByLabelText('Nome do bucket AWS')).toHaveValue('')
+    expect(screen.getByLabelText('URL para webhook de Chat')).toHaveValue('')
+    expect(screen.getByLabelText('URL para webhook de Chatbot')).toHaveValue('')
+    expect(screen.getByLabelText('URL de webhook para transferir do Chatbot para o Chat')).toHaveValue('')
+    expect(screen.getByLabelText('URL para webhook de whatsapp')).toHaveValue('')
   })
 
   it('can receive initial values', () => {
@@ -50,6 +55,7 @@ describe('<LicenseeForm />', () => {
       chatbotDefault: 'landbot',
       chatbotUrl: 'URL chatbot',
       chatbotAuthorizationToken: 'token chatbot',
+      chatbotApiToken: 'token api chatbot',
       whatsappDefault: 'utalk',
       whatsappToken: 'token whats',
       whatsappUrl: 'URL do whats',
@@ -60,6 +66,10 @@ describe('<LicenseeForm />', () => {
       awsId: 'ID da AWS',
       awsSecret: 'Senha da AWS',
       bucketName: 'Nome do bucket',
+      urlChatWebhook: 'URL para webhook de Chat',
+      urlChatbotWebhook: 'URL para webhook de Chatbot',
+      urlChatbotTransfer: 'URL de webhook para transferir do Chatbot para o Chat',
+      urlWhatsappWebhook: 'URL para webhook de whatsapp',
     }
 
     mount({ initialValues: licensee })
@@ -75,6 +85,7 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Whatsapp padrão')).toHaveValue('utalk')
     expect(screen.getByLabelText('URL do chatbot')).toHaveValue('URL chatbot')
     expect(screen.getByLabelText('Token do chatbot')).toHaveValue('token chatbot')
+    expect(screen.getByLabelText('Token de acesso via API do chatbot')).toHaveValue('token api chatbot')
     expect(screen.getByLabelText('Token do whatsapp')).toHaveValue('token whats')
     expect(screen.getByLabelText('Url do whatsapp')).toHaveValue('URL do whats')
     expect(screen.getByLabelText('Chat padrão')).toHaveValue('crisp')
@@ -84,6 +95,10 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Id da AWS')).toHaveValue('ID da AWS')
     expect(screen.getByLabelText('Senha AWS')).toHaveValue('Senha da AWS')
     expect(screen.getByLabelText('Nome do bucket AWS')).toHaveValue('Nome do bucket')
+    expect(screen.getByLabelText('URL para webhook de Chat')).toHaveValue('URL para webhook de Chat')
+    expect(screen.getByLabelText('URL para webhook de Chatbot')).toHaveValue('URL para webhook de Chatbot')
+    expect(screen.getByLabelText('URL de webhook para transferir do Chatbot para o Chat')).toHaveValue('URL de webhook para transferir do Chatbot para o Chat')
+    expect(screen.getByLabelText('URL para webhook de whatsapp')).toHaveValue('URL para webhook de whatsapp')
   })
 
   describe('fields', () => {
@@ -191,6 +206,7 @@ describe('<LicenseeForm />', () => {
         chatbotDefault: '',
         chatbotUrl: '',
         chatbotAuthorizationToken: '',
+        chatbotApiToken: '',
         whatsappDefault: '',
         whatsappToken: '',
         whatsappUrl: '',

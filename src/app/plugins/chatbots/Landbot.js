@@ -28,6 +28,11 @@ class Landbot {
       return []
     }
 
+    if (contact.landbotId !== customer.id) {
+      contact.landbotId = customer.id
+      await contact.save()
+    }
+
     const processedMessages = []
     for (const message of messages) {
       const kind = Landbot.kindToMessageKind(message.type)
@@ -154,6 +159,18 @@ class Landbot {
            mensagem: ${JSON.stringify(response.data)}`
       )
     }
+  }
+
+  async dropConversation(contactId) {
+    const contact = await Contact.findById(contactId)
+
+    const headers = {
+      Authorization: `Token ${this.licensee.chatbotApiToken}`,
+    }
+
+    const response = await request.delete(`https://api.landbot.io/v1/customers/${contact.landbotId}/`, { headers })
+
+    return response.status === 204
   }
 }
 
