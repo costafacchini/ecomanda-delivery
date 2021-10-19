@@ -1,5 +1,6 @@
 require('dotenv').config()
-require('newrelic')
+
+if (process.env.NODE_ENV === 'production') require('newrelic')
 
 const app = require('./src/config/app')
 const http = require('http')

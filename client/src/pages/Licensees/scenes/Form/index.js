@@ -18,6 +18,7 @@ const licenseeInitialValues = {
   chatbotDefault: '',
   chatbotUrl: '',
   chatbotAuthorizationToken: '',
+  messageOnResetChatbot: '',
   chatbotApiToken: '',
   whatsappDefault: '',
   whatsappToken: '',
@@ -203,6 +204,20 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                     onChange={props.handleChange}
                     onBlur={props.handleBlur}
                     value={props.values.chatbotApiToken}
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-5'>
+                  <label htmlFor='messageOnResetChatbot'>Mensagem de encerramento de chatbot abandonado</label>
+                  <textarea className='form-control' rows={4}
+                    id='messageOnResetChatbot'
+                    name='messageOnResetChatbot'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.messageOnResetChatbot}
                   />
                 </div>
               </div>

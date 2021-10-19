@@ -43,6 +43,7 @@ const licenseeSchema = new Schema(
       ],
     },
     chatbotApiToken: String,
+    messageOnResetChatbot: String,
     chatbotAuthorizationToken: {
       type: String,
       required: [

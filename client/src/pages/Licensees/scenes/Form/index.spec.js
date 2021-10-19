@@ -29,6 +29,7 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('URL do chatbot')).toHaveValue('')
     expect(screen.getByLabelText('Token do chatbot')).toHaveValue('')
     expect(screen.getByLabelText('Token de acesso via API do chatbot')).toHaveValue('')
+    expect(screen.getByLabelText('Mensagem de encerramento de chatbot abandonado')).toHaveValue('')
     expect(screen.getByLabelText('Chat padrão')).toHaveValue('')
     expect(screen.getByLabelText('Url do chat')).toHaveValue('')
     expect(screen.getByLabelText('Whatsapp padrão')).toHaveValue('')
@@ -55,6 +56,7 @@ describe('<LicenseeForm />', () => {
       chatbotDefault: 'landbot',
       chatbotUrl: 'URL chatbot',
       chatbotAuthorizationToken: 'token chatbot',
+      messageOnResetChatbot: 'message',
       chatbotApiToken: 'token api chatbot',
       whatsappDefault: 'utalk',
       whatsappToken: 'token whats',
@@ -86,6 +88,7 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('URL do chatbot')).toHaveValue('URL chatbot')
     expect(screen.getByLabelText('Token do chatbot')).toHaveValue('token chatbot')
     expect(screen.getByLabelText('Token de acesso via API do chatbot')).toHaveValue('token api chatbot')
+    expect(screen.getByLabelText('Mensagem de encerramento de chatbot abandonado')).toHaveValue('message')
     expect(screen.getByLabelText('Token do whatsapp')).toHaveValue('token whats')
     expect(screen.getByLabelText('Url do whatsapp')).toHaveValue('URL do whats')
     expect(screen.getByLabelText('Chat padrão')).toHaveValue('crisp')
@@ -109,6 +112,8 @@ describe('<LicenseeForm />', () => {
       expect(screen.getByLabelText('Chatbot padrão')).toBeEnabled()
       expect(screen.getByLabelText('URL do chatbot')).toBeEnabled()
       expect(screen.getByLabelText('Token do chatbot')).toBeEnabled()
+      expect(screen.getByLabelText('Token de acesso via API do chatbot')).toBeEnabled()
+      expect(screen.getByLabelText('Mensagem de encerramento de chatbot abandonado')).toBeEnabled()
 
       cleanup()
       mount({ initialValues: { useChatbot: false } })
@@ -117,6 +122,8 @@ describe('<LicenseeForm />', () => {
       expect(screen.getByLabelText('Chatbot padrão')).toBeDisabled()
       expect(screen.getByLabelText('URL do chatbot')).toBeDisabled()
       expect(screen.getByLabelText('Token do chatbot')).toBeDisabled()
+      expect(screen.getByLabelText('Token de acesso via API do chatbot')).toBeDisabled()
+      expect(screen.getByLabelText('Mensagem de encerramento de chatbot abandonado')).toBeDisabled()
     })
 
     it('disables chat fields if "Chat padrão" is blank', () => {
@@ -206,6 +213,7 @@ describe('<LicenseeForm />', () => {
         chatbotDefault: '',
         chatbotUrl: '',
         chatbotAuthorizationToken: '',
+        messageOnResetChatbot: '',
         chatbotApiToken: '',
         whatsappDefault: '',
         whatsappToken: '',

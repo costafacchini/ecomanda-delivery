@@ -31,6 +31,7 @@ describe('<LicenseeNew />', () => {
       chatbotDefault: '',
       chatbotUrl: '',
       chatbotAuthorizationToken: '',
+      messageOnResetChatbot: '',
       chatbotApiToken: '',
       whatsappDefault: '',
       whatsappToken: '',
