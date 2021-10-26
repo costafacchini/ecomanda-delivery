@@ -58,7 +58,7 @@ const postMessage = async (url, headers, contact, message, room) => {
     }
 
     if (body.type === 'audio') {
-      content.duration = 10000
+      content.duration = 60
     }
 
     body.content = content
