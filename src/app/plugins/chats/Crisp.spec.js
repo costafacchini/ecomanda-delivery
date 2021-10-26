@@ -428,7 +428,8 @@ describe('Crisp plugin', () => {
           (url, { headers }) => {
             return (
               url === 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation' &&
-              JSON.stringify(headers).includes('Authorization')
+              JSON.stringify(headers).includes('Authorization') &&
+              JSON.stringify(headers).includes('X-Crisp-Tier')
             )
           },
           {
@@ -455,7 +456,8 @@ describe('Crisp plugin', () => {
               url ===
                 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
               body === JSON.stringify(expectedBodyPatch) &&
-              JSON.stringify(headers).includes('Authorization')
+              JSON.stringify(headers).includes('Authorization') &&
+              JSON.stringify(headers).includes('X-Crisp-Tier')
             )
           },
           {
@@ -481,7 +483,8 @@ describe('Crisp plugin', () => {
               url ===
                 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message' &&
               body === JSON.stringify(expectedBody) &&
-              JSON.stringify(headers).includes('Authorization')
+              JSON.stringify(headers).includes('Authorization') &&
+              JSON.stringify(headers).includes('X-Crisp-Tier')
             )
           },
           {
@@ -541,7 +544,8 @@ describe('Crisp plugin', () => {
           (url, { headers }) => {
             return (
               url === 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation' &&
-              JSON.stringify(headers).includes('Authorization')
+              JSON.stringify(headers).includes('Authorization') &&
+              JSON.stringify(headers).includes('X-Crisp-Tier')
             )
           },
           {
@@ -568,7 +572,8 @@ describe('Crisp plugin', () => {
               url ===
                 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
               body === JSON.stringify(expectedBodyPatch) &&
-              JSON.stringify(headers).includes('Authorization')
+              JSON.stringify(headers).includes('Authorization') &&
+              JSON.stringify(headers).includes('X-Crisp-Tier')
             )
           },
           {
@@ -594,7 +599,8 @@ describe('Crisp plugin', () => {
               url ===
                 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message' &&
               body === JSON.stringify(expectedBody) &&
-              JSON.stringify(headers).includes('Authorization')
+              JSON.stringify(headers).includes('Authorization') &&
+              JSON.stringify(headers).includes('X-Crisp-Tier')
             )
           },
           {
@@ -654,7 +660,8 @@ describe('Crisp plugin', () => {
             (url, { headers }) => {
               return (
                 url === 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation' &&
-                JSON.stringify(headers).includes('Authorization')
+                JSON.stringify(headers).includes('Authorization') &&
+                JSON.stringify(headers).includes('X-Crisp-Tier')
               )
             },
             {
@@ -681,7 +688,8 @@ describe('Crisp plugin', () => {
                 url ===
                   'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
                 body === JSON.stringify(expectedBodyPatch) &&
-                JSON.stringify(headers).includes('Authorization')
+                JSON.stringify(headers).includes('Authorization') &&
+                JSON.stringify(headers).includes('X-Crisp-Tier')
               )
             },
             {
@@ -707,7 +715,8 @@ describe('Crisp plugin', () => {
                 url ===
                   'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message' &&
                 body === JSON.stringify(expectedBody) &&
-                JSON.stringify(headers).includes('Authorization')
+                JSON.stringify(headers).includes('Authorization') &&
+                JSON.stringify(headers).includes('X-Crisp-Tier')
               )
             },
             {
@@ -763,7 +772,8 @@ describe('Crisp plugin', () => {
             (url, { headers }) => {
               return (
                 url === 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation' &&
-                JSON.stringify(headers).includes('Authorization')
+                JSON.stringify(headers).includes('Authorization') &&
+                JSON.stringify(headers).includes('X-Crisp-Tier')
               )
             },
             {
@@ -821,7 +831,8 @@ describe('Crisp plugin', () => {
             (url, { headers }) => {
               return (
                 url === 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation' &&
-                JSON.stringify(headers).includes('Authorization')
+                JSON.stringify(headers).includes('Authorization') &&
+                JSON.stringify(headers).includes('X-Crisp-Tier')
               )
             },
             {
@@ -848,7 +859,8 @@ describe('Crisp plugin', () => {
                 url ===
                   'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
                 body === JSON.stringify(expectedBodyPatch) &&
-                JSON.stringify(headers).includes('Authorization')
+                JSON.stringify(headers).includes('Authorization') &&
+                JSON.stringify(headers).includes('X-Crisp-Tier')
               )
             },
             {
@@ -874,7 +886,8 @@ describe('Crisp plugin', () => {
                 url ===
                   'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message' &&
                 body === JSON.stringify(expectedBody) &&
-                JSON.stringify(headers).includes('Authorization')
+                JSON.stringify(headers).includes('Authorization') &&
+                JSON.stringify(headers).includes('X-Crisp-Tier')
               )
             },
             {
@@ -947,7 +960,8 @@ describe('Crisp plugin', () => {
             (url, { headers }) => {
               return (
                 url === 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation' &&
-                JSON.stringify(headers).includes('Authorization')
+                JSON.stringify(headers).includes('Authorization') &&
+                JSON.stringify(headers).includes('X-Crisp-Tier')
               )
             },
             {
@@ -974,7 +988,8 @@ describe('Crisp plugin', () => {
                 url ===
                   'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
                 body === JSON.stringify(expectedBodyPatch) &&
-                JSON.stringify(headers).includes('Authorization')
+                JSON.stringify(headers).includes('Authorization') &&
+                JSON.stringify(headers).includes('X-Crisp-Tier')
               )
             },
             {
@@ -1000,7 +1015,8 @@ describe('Crisp plugin', () => {
                 url ===
                   'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message' &&
                 body === JSON.stringify(expectedBody) &&
-                JSON.stringify(headers).includes('Authorization')
+                JSON.stringify(headers).includes('Authorization') &&
+                JSON.stringify(headers).includes('X-Crisp-Tier')
               )
             },
             {
@@ -1061,7 +1077,8 @@ describe('Crisp plugin', () => {
             (url, { headers }) => {
               return (
                 url === 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation' &&
-                JSON.stringify(headers).includes('Authorization')
+                JSON.stringify(headers).includes('Authorization') &&
+                JSON.stringify(headers).includes('X-Crisp-Tier')
               )
             },
             {
@@ -1088,7 +1105,8 @@ describe('Crisp plugin', () => {
                 url ===
                   'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
                 body === JSON.stringify(expectedBodyPatch) &&
-                JSON.stringify(headers).includes('Authorization')
+                JSON.stringify(headers).includes('Authorization') &&
+                JSON.stringify(headers).includes('X-Crisp-Tier')
               )
             },
             {
@@ -1118,7 +1136,8 @@ describe('Crisp plugin', () => {
                 url ===
                   'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message' &&
                 body === JSON.stringify(expectedBody) &&
-                JSON.stringify(headers).includes('Authorization')
+                JSON.stringify(headers).includes('Authorization') &&
+                JSON.stringify(headers).includes('X-Crisp-Tier')
               )
             },
             {

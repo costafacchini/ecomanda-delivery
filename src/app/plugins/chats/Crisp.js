@@ -175,7 +175,7 @@ class Crisp {
   async sendMessage(messageId, url) {
     const messageToSend = await Message.findById(messageId).populate('contact')
     const basicToken = Buffer.from(`${this.licensee.chatIdentifier}:${this.licensee.chatKey}`).toString('base64')
-    const headers = { Authorization: `Basic ${basicToken}` }
+    const headers = { Authorization: `Basic ${basicToken}`, 'X-Crisp-Tier': 'plugin' }
     const openRoom = await Room.findOne({ contact: messageToSend.contact, closed: false })
     let room = openRoom
 
