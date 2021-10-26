@@ -57,6 +57,10 @@ const postMessage = async (url, headers, contact, message, room) => {
       type: mime.lookup(message.url),
     }
 
+    if (body.type === 'audio') {
+      content.duration = 60
+    }
+
     body.content = content
   }
 

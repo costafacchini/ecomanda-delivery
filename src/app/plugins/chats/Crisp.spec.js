@@ -1162,6 +1162,128 @@ describe('Crisp plugin', () => {
           expect(fetchMock.calls()).toHaveLength(3)
         })
       })
+
+      describe('when message is audio', () => {
+        it('sends the message with audio', async () => {
+          const licensee = await Licensee.create({
+            name: 'Alcateia Ltds',
+            active: true,
+            licenseKind: 'demo',
+            chatIdentifier: 'identifier',
+            chatKey: 'key',
+          })
+
+          const contact = await Contact.create({
+            name: 'John Doe',
+            number: '5593165392832',
+            type: '@c.us',
+            email: 'john@doe.com',
+            talkingWithChatBot: true,
+            licensee: licensee,
+          })
+
+          const message = await Message.create({
+            text: 'Message to send',
+            number: 'jhd7879a7d9',
+            contact: contact,
+            licensee: licensee,
+            destination: 'to-chatbot',
+            kind: 'file',
+            url: 'https://message.with.file.com/file.ogg',
+            fileName: 'file.ogg',
+            sended: false,
+          })
+
+          fetchMock.postOnce(
+            (url, { headers }) => {
+              return (
+                url === 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation' &&
+                JSON.stringify(headers).includes('Authorization') &&
+                JSON.stringify(headers).includes('X-Crisp-Tier')
+              )
+            },
+            {
+              status: 201,
+              body: {
+                error: false,
+                reason: 'added',
+                data: {
+                  session_id: 'session_a06054de-d9dc-407a-98ea-72c7fb460472',
+                },
+              },
+            }
+          )
+
+          const expectedBodyPatch = {
+            nickname: 'John Doe - 5593165392832 - WhatsApp',
+            email: 'john@doe.com',
+            phone: '5593165392832',
+          }
+
+          fetchMock.patchOnce(
+            (url, { headers, body }) => {
+              return (
+                url ===
+                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
+                body === JSON.stringify(expectedBodyPatch) &&
+                JSON.stringify(headers).includes('Authorization') &&
+                JSON.stringify(headers).includes('X-Crisp-Tier')
+              )
+            },
+            {
+              status: 200,
+              body: {
+                error: false,
+                reason: 'updated',
+                data: {},
+              },
+            }
+          )
+
+          const expectedBody = {
+            from: 'user',
+            origin: 'chat',
+            type: 'audio',
+            content: {
+              name: 'file.ogg',
+              url: 'https://message.with.file.com/file.ogg',
+              type: 'audio/ogg',
+              duration: 60,
+            },
+          }
+
+          fetchMock.postOnce(
+            (url, { headers, body }) => {
+              return (
+                url ===
+                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message' &&
+                body === JSON.stringify(expectedBody) &&
+                JSON.stringify(headers).includes('Authorization') &&
+                JSON.stringify(headers).includes('X-Crisp-Tier')
+              )
+            },
+            {
+              status: 202,
+              body: {
+                error: false,
+                reason: 'dispatched',
+                data: {
+                  fingerprint: 163408807364277,
+                },
+              },
+            }
+          )
+
+          expect(message.sended).toEqual(false)
+
+          const crisp = new Crisp(licensee)
+          await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
+          await fetchMock.flush(true)
+
+          expect(fetchMock.done()).toBe(true)
+          expect(fetchMock.calls()).toHaveLength(3)
+        })
+      })
     })
   })
 
