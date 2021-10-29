@@ -1,10 +1,10 @@
 import mountWithRedux, { createStore } from '../../../../.jest/redux-testing'
 import LicenseeNew from './';
 import { fireEvent, screen, waitFor } from '@testing-library/react'
-import { getLicensee, updateLicensee } from '../services/licensee'
+import { getLicensee, updateLicensee } from '../../../../services/licensees'
 import { MemoryRouter } from 'react-router';
 
-jest.mock('../services/licensee')
+jest.mock('../../../../services/licensees')
 
 describe('<LicenseeNew />', () => {
   function mount() {

@@ -3,6 +3,7 @@ import { HashRouter, Route, Switch, Redirect } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import SignIn from './SignIn'
 import LicenseesRoutes from './Licensees/routes'
+import ReportsRoutes from './Reports/routes'
 import Dashboard from './Dashboard'
 import { isAuthenticated, fetchLoggedUser } from '../services/auth'
 import { loadLoggedUser } from './SignIn/slice'
@@ -40,6 +41,7 @@ function Routes() {
         />
         <Route exact path='/signin' component={SignIn} />
         <PrivateRoute path='/licensees' component={LicenseesRoutes} />
+        <PrivateRoute path='/reports' component={ReportsRoutes} />
         <PrivateRoute exact path='/configurations' component={Configurations} />
         <Route path='*' component={() =>
           <BaseLayout>
