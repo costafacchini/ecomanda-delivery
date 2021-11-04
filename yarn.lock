@@ -3827,7 +3827,7 @@ jest-worker@^27.3.1:
     merge-stream "^2.0.0"
     supports-color "^8.0.0"
 
-jest@27.3.1:
+jest@^27.3.1:
   version "27.3.1"
   resolved "https://registry.yarnpkg.com/jest/-/jest-27.3.1.tgz#b5bab64e8f56b6f7e275ba1836898b0d9f1e5c8a"
   integrity sha512-U2AX0AgQGd5EzMsiZpYt8HyZ+nSVIh5ujQ9CPp9EQZJMjXIiSZpJNweZl0swatKRoqHWgGKM3zaSwm4Zaz87ng==
@@ -4337,6 +4337,14 @@ mongodb-memory-server-core@8.0.0:
     tslib "^2.3.1"
     uuid "^8.3.1"
     yauzl "^2.10.0"
+
+mongodb-memory-server-global@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server-global/-/mongodb-memory-server-global-8.0.0.tgz#6db068e2fc9010a6ca2153c2ba85f0fa9013d641"
+  integrity sha512-MDReFuQrHIdhbcnk7+itux4MzpZBIqi5IRV3fv9itRySCZe9ulzcq7Z3SwYw+F4RfVMoJCBNyyxLq3nRc6Eu4A==
+  dependencies:
+    mongodb-memory-server-core "8.0.0"
+    tslib "^2.3.1"
 
 mongodb-memory-server@8.0.0:
   version "8.0.0"
@@ -6364,6 +6372,11 @@ yargs@^16.2.0:
     string-width "^4.2.0"
     y18n "^5.0.5"
     yargs-parser "^20.2.2"
+
+yarn@^1.22.17:
+  version "1.22.17"
+  resolved "https://registry.yarnpkg.com/yarn/-/yarn-1.22.17.tgz#bf910747d22497b573131f7341c0e1d15c74036c"
+  integrity sha512-H0p241BXaH0UN9IeH//RT82tl5PfNraVpSpEoW+ET7lmopNC61eZ+A+IDvU8FM6Go5vx162SncDL8J1ZjRBriQ==
 
 yauzl@^2.10.0:
   version "2.10.0"
