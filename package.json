@@ -19,12 +19,12 @@
     "linter": "yarn eslint 'src/app/**/*.{js,ts,tsx}' 'src/config/**/*.{js,ts,tsx}' 'src/setup/**/*.{js,ts,tsx}'"
   },
   "devDependencies": {
-    "eslint": "8.0.1",
+    "eslint": "8.1.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-config-standard": "16.0.3",
     "eslint-plugin-eslint-comments": "3.2.0",
     "eslint-plugin-import": "2.25.2",
-    "eslint-plugin-jest": "25.2.2",
+    "eslint-plugin-jest": "25.2.3",
     "eslint-plugin-jest-dom": "3.9.2",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-prettier": "4.0.0",
@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "archiver": "5.3.0",
-    "aws-sdk": "2.1021.0",
+    "aws-sdk": "2.1022.0",
     "bcrypt": "5.0.1",
     "bull-board": "2.1.3",
     "bullmq": "1.51.3",
