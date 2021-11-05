@@ -42,7 +42,8 @@ jobs:
           yarn
           yarn test:ci --coverageDirectory nodejs-coverage --maxWorkers 4
         env:
-          REDIS_URL: 'redis://redis:6379'
+          REDIS_HOST: redis
+          REDIS_PORT: 6379
           SECRET: '394ru6gf6gjSsM6'
           DEFAULT_USER: 'user@user.com'
           DEFAULT_PASSWORD: '09876543'

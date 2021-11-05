@@ -4,8 +4,6 @@ const { createDefaultUser } = require('../setup/database')
 const mongoConnectionOpts = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  useFindAndModify: false,
-  useCreateIndex: true,
 }
 
 class MongoServer {
