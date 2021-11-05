@@ -1,31 +1,25 @@
 const mongoose = require('mongoose')
 const { MongoMemoryServer } = require('mongodb-memory-server')
 
-const mongoConnectionOpts = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-  useCreateIndex: true,
-}
-
 class MongoServerTest {
-  constructor() {
-    this.mongoServer = new MongoMemoryServer({ binary: { version: '3.6.5' } })
-  }
-
   async connect() {
-    await this.mongoServer.start()
-    const mongoUri = this.mongoServer.getUri()
-    await mongoose.connect(mongoUri, mongoConnectionOpts, (err) => {
-      if (err) {
-        throw new Error(err)
-      }
-    })
+    if (!global.__MONGOINSTANCE) {
+      const instance = await MongoMemoryServer.create()
+      global.__MONGOINSTANCE = instance
+    }
+
+    const mongoUri = global.__MONGOINSTANCE.getUri()
+    await mongoose.connect(mongoUri, {})
+    await mongoose.connection.db.dropDatabase()
   }
 
   async disconnect() {
     await mongoose.disconnect()
-    await this.mongoServer.stop()
+    const instance = global.__MONGOINSTANCE
+    if (instance) {
+      await instance.stop()
+      global.__MONGOINSTANCE = null
+    }
   }
 }
 
