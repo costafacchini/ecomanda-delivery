@@ -36,7 +36,7 @@ jobs:
       - name: Connect to Redis
         run: node client.js
         env:
-          REDIS_HOST: localhost
+          REDIS_HOST: redis
           REDIS_PORT: 6379
       - name: linter
         run: |
