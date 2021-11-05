@@ -32,8 +32,8 @@ jobs:
       - name: Install dependencies
         run: yarn
         env:
-          MONGOMS_VERSION: '4.2.8'
-          MONGOMS_DOWNLOAD_URL: 'https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.2.8.tgz'
+          MONGOMS_VERSION: '5.0'
+          MONGOMS_DOWNLOAD_URL: 'http://downloads.mongodb.org/linux/mongodb-linux-x86_64-debian10-v5.0-latest.tgz'
       - name: linter
         run: |
           yarn
@@ -47,8 +47,8 @@ jobs:
           SECRET: '394ru6gf6gjSsM6'
           DEFAULT_USER: 'user@user.com'
           DEFAULT_PASSWORD: '09876543'
-          MONGOMS_VERSION: '4.2.8'
-          MONGOMS_DOWNLOAD_URL: 'https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.2.8.tgz'
+          MONGOMS_VERSION: '5.0'
+          MONGOMS_DOWNLOAD_URL: 'http://downloads.mongodb.org/linux/mongodb-linux-x86_64-debian10-v5.0-latest.tgz'
           MONGOMS_DEBUG: 1
       - name: Unit tests React
         run: |
