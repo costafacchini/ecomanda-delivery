@@ -48,7 +48,6 @@ jobs:
           DEFAULT_PASSWORD: '09876543'
           MONGOMS_VERSION: '5.0'
           MONGOMS_DOWNLOAD_URL: 'http://downloads.mongodb.org/linux/mongodb-linux-x86_64-debian10-v5.0-latest.tgz'
-          MONGOMS_DEBUG: 1
       - name: Unit tests React
         run: |
           cd client
