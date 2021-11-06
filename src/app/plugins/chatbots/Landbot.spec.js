@@ -5,6 +5,7 @@ const Licensee = require('@models/Licensee')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
 const emoji = require('../../helpers/Emoji')
+const Room = require('@models/Room')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -276,6 +277,41 @@ describe('Landbot plugin', () => {
       const message = await landbot.responseTransferToMessage(responseBody)
 
       expect(message).toEqual(undefined)
+    })
+
+    it('close room if the body has a iniciar_nova_conversa with true', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const contact = await Contact.create({
+        name: 'John Doe',
+        number: '5593165392832@c.us',
+        type: '@c.us',
+        talkingWithChatBot: true,
+        licensee: licensee,
+      })
+
+      const room = await Room.create({
+        roomId: 'ka3DiV9CuHD765',
+        token: contact._id.toString(),
+        contact: contact,
+        closed: false,
+      })
+
+      const responseBody = {
+        number: '5593165392832@c.us',
+        observacao: 'Message to send chat',
+        id_departamento_rocketchat: '100',
+        iniciar_nova_conversa: 'true',
+      }
+
+      const landbot = new Landbot(licensee)
+      const message = await landbot.responseTransferToMessage(responseBody)
+
+      expect(message).toBeInstanceOf(Message)
+
+      const modifiedRoom = await Room.findById(room._id)
+      expect(modifiedRoom.roomId).toEqual('ka3DiV9CuHD765')
+      expect(modifiedRoom.closed).toEqual(true)
     })
   })
 
