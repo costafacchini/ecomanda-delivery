@@ -30,6 +30,7 @@ const updateContact = async (url, headers, contact, room) => {
     nickname: `${contact.name} - ${contact.number} - WhatsApp`,
     email: contact.email ? `${contact.email}` : `${contact.number}${contact.type}`,
     phone: contact.number,
+    segments: ['chat', 'suporte', 'email'],
   }
   await request.patch(`https://api.crisp.chat/v1/website/${url}/conversation/${room}/meta`, {
     headers,
