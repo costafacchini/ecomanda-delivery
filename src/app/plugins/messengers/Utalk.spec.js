@@ -318,6 +318,43 @@ describe('Utalk plugin', () => {
       expect(contactUpdated.name).toEqual('John Doe')
     })
 
+    it('does not update the contact if contact exists and body name is undefined', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      await Contact.create({
+        name: 'John Doe',
+        number: '5593165392832@c.us',
+        type: '@c.us',
+        talkingWithChatBot: false,
+        licensee: licensee,
+      })
+
+      const responseBody = {
+        event: 'chat',
+        token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
+        user: '5511940650658',
+        'contact[number]': '5593165392832',
+        'contact[server]': 'c.us',
+        'chat[dtm]': '1603582444',
+        'chat[uid]': '3EB016638A2AD49A9ECE',
+        'chat[dir]': 'i',
+        'chat[type]': 'chat',
+        'chat[body]': 'Message to send',
+        ack: '-1',
+      }
+
+      const utalk = new Utalk(licensee)
+      await utalk.responseToMessages(responseBody)
+
+      const contactUpdated = await Contact.findOne({
+        number: '5593165392832',
+        type: '@c.us',
+        licensee: licensee._id,
+      })
+
+      expect(contactUpdated.name).toEqual('John Doe')
+    })
+
     describe('when the contact does not exists', () => {
       it('registers the contact and return the response body transformed in messages', async () => {
         const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
