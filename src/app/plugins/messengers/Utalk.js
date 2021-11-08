@@ -100,9 +100,7 @@ class Utalk {
 
       await contact.save()
     } else {
-      if (contact.name !== bodyParsed.name && bodyParsed.type !== 'file') {
-        console.log('Vai atualizar', bodyParsed.name)
-        console.log('Vai atualizar II', contact.name)
+      if (contact.name !== bodyParsed.name && bodyParsed.type !== 'file' && bodyParsed.name) {
         contact.name = bodyParsed.name
         contact.talkingWithChatBot = this.licensee.useChatbot
         await contact.save()
