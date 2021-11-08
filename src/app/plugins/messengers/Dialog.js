@@ -102,8 +102,6 @@ class Dialog {
       await contact.save()
     } else {
       if (contact.name !== responseBody.contacts[0].profile.name || contact.waId !== responseBody.contacts[0].wa_id) {
-        console.log('Vai atualizar I', responseBody.contacts[0].profile.name)
-        console.log('Vai atualizar II', responseBody.contacts[0].wa_id)
         contact.name = responseBody.contacts[0].profile.name
         contact.waId = responseBody.contacts[0].wa_id
         contact.talkingWithChatBot = this.licensee.useChatbot
