@@ -313,6 +313,61 @@ describe('Landbot plugin', () => {
       expect(modifiedRoom.roomId).toEqual('ka3DiV9CuHD765')
       expect(modifiedRoom.closed).toEqual(true)
     })
+
+    it('updates the contact name when name is different of the contact name', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const contact = await Contact.create({
+        name: 'John Doe',
+        number: '5593165392832@c.us',
+        type: '@c.us',
+        talkingWithChatBot: true,
+        licensee: licensee,
+      })
+
+      const responseBody = {
+        name: 'John Silver Doe',
+        number: '5593165392832@c.us',
+        observacao: 'Message to send chat',
+        id_departamento_rocketchat: '100',
+      }
+
+      const landbot = new Landbot(licensee)
+      const message = await landbot.responseTransferToMessage(responseBody)
+
+      expect(message).toBeInstanceOf(Message)
+
+      const modifiedContact = await Contact.findById(contact._id)
+      expect(modifiedContact.name).toEqual('John Silver Doe')
+    })
+
+    it('updates the contact email when email is different of the contact email', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      const contact = await Contact.create({
+        name: 'John Doe',
+        number: '5593165392832@c.us',
+        type: '@c.us',
+        talkingWithChatBot: true,
+        licensee: licensee,
+        email: 'john@doe.com',
+      })
+
+      const responseBody = {
+        email: 'john_silver@doe.com',
+        number: '5593165392832@c.us',
+        observacao: 'Message to send chat',
+        id_departamento_rocketchat: '100',
+      }
+
+      const landbot = new Landbot(licensee)
+      const message = await landbot.responseTransferToMessage(responseBody)
+
+      expect(message).toBeInstanceOf(Message)
+
+      const modifiedContact = await Contact.findById(contact._id)
+      expect(modifiedContact.email).toEqual('john_silver@doe.com')
+    })
   })
 
   describe('#sendMessage', () => {

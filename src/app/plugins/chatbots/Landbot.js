@@ -95,7 +95,7 @@ class Landbot {
   }
 
   async responseTransferToMessage(responseBody) {
-    const { number, observacao, id_departamento_rocketchat, iniciar_nova_conversa } = responseBody
+    const { name, email, number, observacao, id_departamento_rocketchat, iniciar_nova_conversa } = responseBody
 
     if (!number) return
 
@@ -110,6 +110,18 @@ class Landbot {
     if (!contact) {
       console.info(`Contato com telefone ${normalizePhone.number} e licenciado ${this.licensee._id} não encontrado`)
       return
+    }
+
+    if (name || email) {
+      if (name && name !== contact.name) {
+        contact.name = name
+      }
+
+      if (email && email !== contact.email) {
+        contact.email = email
+      }
+
+      await contact.save()
     }
 
     if (iniciar_nova_conversa && iniciar_nova_conversa === 'true') {
