@@ -8,9 +8,14 @@ const createRedis = function () {
       tls: {
         rejectUnauthorized: false,
       },
+      enableReadyCheck: false,
+      maxRetriesPerRequest: null,
     })
   } else {
-    return new Redis(REDIS_URL)
+    return new Redis(REDIS_URL, {
+      enableReadyCheck: false,
+      maxRetriesPerRequest: null,
+    })
   }
 }
 

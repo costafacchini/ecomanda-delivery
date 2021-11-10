@@ -1,17 +1,17 @@
 import mountWithRedux, { createStore } from '../../../../.jest/redux-testing'
-import LicenseeNew from './';
+import LicenseeEdit from './';
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { getLicensee, updateLicensee } from '../../../../services/licensees'
 import { MemoryRouter } from 'react-router';
 
 jest.mock('../../../../services/licensees')
 
-describe('<LicenseeNew />', () => {
+describe('<LicenseeEdit />', () => {
   function mount() {
     const store = createStore()
     mountWithRedux(store)(
       <MemoryRouter>
-        <LicenseeNew />
+        <LicenseeEdit />
       </MemoryRouter>)
   }
 
@@ -37,6 +37,5 @@ describe('<LicenseeNew />', () => {
     fireEvent.click(screen.getByRole('button', { name: "Salvar" }))
 
     await waitFor(() => expect(updateLicensee).toHaveBeenCalledWith(expect.objectContaining({ name: 'New Name' })))
-
   })
 })

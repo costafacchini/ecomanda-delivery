@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useHistory, withRouter } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import api from '../../services/api'
 import { login, fetchLoggedUser } from '../../services/auth'
 import styles from './index.module.scss'
@@ -11,7 +11,7 @@ function SignIn() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const dispatch = useDispatch()
-  let history = useHistory()
+  let navigate = useNavigate()
 
   async function handleSignIn(e) {
     e.preventDefault()
@@ -28,7 +28,7 @@ function SignIn() {
           dispatch(loadLoggedUser(user))
         })
 
-        history.push('/#/')
+        navigate('/#/')
       } else {
         console.log(response)
         setError(response.data.message)
@@ -97,4 +97,4 @@ function SignIn() {
   )
 }
 
-export default withRouter(SignIn);
+export default SignIn

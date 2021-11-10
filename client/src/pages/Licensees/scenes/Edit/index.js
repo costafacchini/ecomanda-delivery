@@ -2,16 +2,16 @@ import Form from '../Form'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
 import { getLicensee, updateLicensee } from '../services/licensee'
-import { useHistory, useRouteMatch } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react';
 
 function LicenseeEdit() {
-  const history = useHistory()
-  const match = useRouteMatch()
+  const navigate = useNavigate()
+  let { id } = useParams()
   const [errors, setErrors] = useState(null)
   const [licensee, setLicensee] = useState(null)
 
-  const licenseeId = match.params.id
+  const licenseeId = id
 
   useEffect(() => {
     async function fetchLicensee() {
@@ -36,7 +36,7 @@ function LicenseeEdit() {
 
             if (response.status === 200) {
               toast.success('Licenciado atualizado com sucesso!');
-              history.push('/licensees')
+              navigate('/licensees')
               setErrors(null)
             } else {
               setErrors(response.data.errors)

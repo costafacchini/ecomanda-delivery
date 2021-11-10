@@ -1,6 +1,6 @@
 import React from 'react'
 import './App.css'
-import Routes from './pages/routes'
+import RootRoutes from './pages/routes'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -8,7 +8,7 @@ function App() {
   return (
     <>
       <ToastContainer />
-      <Routes />
+      <RootRoutes />
     </>
   )
 }

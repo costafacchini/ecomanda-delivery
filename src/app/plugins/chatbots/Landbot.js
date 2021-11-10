@@ -4,6 +4,15 @@ const { v4: uuidv4 } = require('uuid')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const request = require('../../services/request')
+const Room = require('@models/Room')
+
+const closeRoom = async (contact) => {
+  const room = await Room.findOne({ contact: contact._id, closed: false })
+  if (room) {
+    room.closed = true
+    await room.save()
+  }
+}
 
 class Landbot {
   constructor(licensee) {
@@ -86,7 +95,7 @@ class Landbot {
   }
 
   async responseTransferToMessage(responseBody) {
-    const { number, observacao, id_departamento_rocketchat } = responseBody
+    const { name, email, number, observacao, id_departamento_rocketchat, iniciar_nova_conversa } = responseBody
 
     if (!number) return
 
@@ -101,6 +110,22 @@ class Landbot {
     if (!contact) {
       console.info(`Contato com telefone ${normalizePhone.number} e licenciado ${this.licensee._id} não encontrado`)
       return
+    }
+
+    if (name || email) {
+      if (name && name !== contact.name) {
+        contact.name = name
+      }
+
+      if (email && email !== contact.email) {
+        contact.email = email
+      }
+
+      await contact.save()
+    }
+
+    if (iniciar_nova_conversa && iniciar_nova_conversa === 'true') {
+      await closeRoom(contact)
     }
 
     const message = new Message({

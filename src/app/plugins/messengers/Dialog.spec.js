@@ -562,6 +562,95 @@ describe('Dialog plugin', () => {
       expect(contactUpdated.waId).toEqual('5593165392832')
     })
 
+    it('does not update the contact if name is undefined', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      await Contact.create({
+        name: 'John Doe',
+        number: '5593165392832@c.us',
+        type: '@c.us',
+        talkingWithChatBot: false,
+        licensee: licensee,
+        waId: '5593165392832',
+      })
+
+      const responseBody = {
+        contacts: [
+          {
+            profile: {},
+            wa_id: '5593165392832',
+          },
+        ],
+        messages: [
+          {
+            from: '5593165392832',
+            id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
+            text: {
+              body: 'Message',
+            },
+            timestamp: '1632784639',
+            type: 'text',
+          },
+        ],
+      }
+
+      const dialog = new Dialog(licensee)
+      await dialog.responseToMessages(responseBody)
+
+      const contactUpdated = await Contact.findOne({
+        number: '5593165392832',
+        type: '@c.us',
+        licensee: licensee._id,
+      })
+
+      expect(contactUpdated.name).toEqual('John Doe')
+    })
+
+    it('does not update the contact if wa_id is undefined', async () => {
+      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+
+      await Contact.create({
+        name: 'John Doe',
+        number: '5593165392832@c.us',
+        type: '@c.us',
+        talkingWithChatBot: false,
+        licensee: licensee,
+        waId: '5593165392832',
+      })
+
+      const responseBody = {
+        contacts: [
+          {
+            profile: {
+              name: 'John Doe',
+            },
+          },
+        ],
+        messages: [
+          {
+            from: '5593165392832',
+            id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
+            text: {
+              body: 'Message',
+            },
+            timestamp: '1632784639',
+            type: 'text',
+          },
+        ],
+      }
+
+      const dialog = new Dialog(licensee)
+      await dialog.responseToMessages(responseBody)
+
+      const contactUpdated = await Contact.findOne({
+        number: '5593165392832',
+        type: '@c.us',
+        licensee: licensee._id,
+      })
+
+      expect(contactUpdated.waId).toEqual('5593165392832')
+    })
+
     describe('when the contact does not exists', () => {
       it('registers the contact and return the response body transformed in messages', async () => {
         const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })

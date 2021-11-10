@@ -1,17 +1,13 @@
 import React from 'react'
-import { Route, Switch, withRouter, useRouteMatch } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import ReportsIndex from './scenes/Index'
 
 function ReportsRoutes() {
-  let match = useRouteMatch()
-
   return (
-    <Switch>
-      <Route exact path={`${match.path}`}>
-        <ReportsIndex />
-      </Route>
-    </Switch>
+    <Routes>
+      <Route exact path='/' element={<ReportsIndex />} />
+    </Routes>
   )
 }
 
-export default withRouter(ReportsRoutes)
+export default ReportsRoutes

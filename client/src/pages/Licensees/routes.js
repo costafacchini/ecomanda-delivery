@@ -1,25 +1,17 @@
 import React from 'react'
-import { Route, Switch, withRouter, useRouteMatch } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import LicenseesIndex from './scenes/Index'
 import LicenseeNew from './scenes/New'
 import LicenseeEdit from './scenes/Edit'
 
 function LicenseesRoutes() {
-  let match = useRouteMatch()
-
   return (
-    <Switch>
-      <Route exact path={`${match.path}/new`}>
-        <LicenseeNew disabled={false} />
-      </Route>
-      <Route path={`${match.path}/:id(\\w+)`}>
-        <LicenseeEdit resourceId={match} />
-      </Route>
-      <Route exact path={`${match.path}`}>
-        <LicenseesIndex />
-      </Route>
-    </Switch>
+    <Routes>
+      <Route path="/new" element={<LicenseeNew />} />
+      <Route path=":id" element={<LicenseeEdit />} />
+      <Route exact path="/" element={<LicenseesIndex />} />
+    </Routes>
   )
 }
 
-export default withRouter(LicenseesRoutes)
+export default LicenseesRoutes

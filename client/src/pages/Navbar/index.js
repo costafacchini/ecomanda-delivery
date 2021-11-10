@@ -19,10 +19,10 @@ export default function Navbar({ loggedUser }) {
                 </li>
               )}
               <li className="nav-item">
-                <a className="nav-link" href="/#/configurations">Configurações</a>
+                <a className="nav-link" href="/#/reports">Relatórios</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="/#/reports">Relatórios</a>
+                <a className="nav-link" href="/#/configurations">Configurações</a>
               </li>
               {/* <li className="nav-item">
                 <a className="nav-link" href="/#/messages">Mensagens</a>

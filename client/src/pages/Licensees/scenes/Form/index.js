@@ -1,6 +1,6 @@
 import { FieldWithError, Form } from '../../../../components/form'
 import * as Yup from 'yup'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { setLicenseeWebhook } from '../services/licensee'
 
 const SignupSchema = Yup.object().shape({
@@ -33,7 +33,7 @@ const licenseeInitialValues = {
 }
 
 function LicenseeForm({ onSubmit, errors, initialValues }) {
-  let history = useHistory();
+  let navigate = useNavigate();
 
   return (
     <div>
@@ -470,7 +470,7 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
             <div className='row'>
               <div className='col-5'>
                 <div className='mt-4 d-flex justify-content-between'>
-                  <button onClick={()=> history.push('/licensees')} className='btn btn-secondary' type='button'>Voltar</button>
+                  <button onClick={() => navigate('/licensees')} className='btn btn-secondary' type='button'>Voltar</button>
                   <button className='btn btn-success' type='submit'>Salvar</button>
                 </div>
               </div>

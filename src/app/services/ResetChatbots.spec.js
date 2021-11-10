@@ -6,6 +6,8 @@ const mongoServer = require('.jest/utils')
 const fetchMock = require('fetch-mock')
 
 describe('resetChatbots', () => {
+  jest.spyOn(global.console, 'info').mockImplementation()
+
   beforeEach(async () => {
     await mongoServer.connect()
     fetchMock.reset()
