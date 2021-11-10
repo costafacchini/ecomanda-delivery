@@ -31,9 +31,9 @@ export default function Navbar({ loggedUser }) {
                 <a className="nav-link" href="/#/sendmessages">Enviar mensagem</a>
               </li> */}
             </ul>
-              <div className="btn-item">
-                <a className="btn btn-primary" href="/" onClick={logout}>Sair</a>
-              </div>
+            <div className="btn-item">
+              <a className="btn btn-primary" href="/" onClick={logout}>Sair</a>
+            </div>
           </div>
         </div>
       </nav>
