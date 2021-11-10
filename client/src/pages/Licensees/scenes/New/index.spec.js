@@ -1,12 +1,17 @@
-import LicenseeNew from ".";
+import LicenseeNew from '.'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
 import { createLicensee } from '../../../../services/licensees'
 
 jest.mock('../../../../services/licensees')
 
 describe('<LicenseeNew />', () => {
   function mount() {
-    render(<LicenseeNew />)
+    render(
+      <MemoryRouter>
+        <LicenseeNew />
+      </MemoryRouter>
+    )
   }
 
   it('creates a new licensee when the backend returns success', async () => {
