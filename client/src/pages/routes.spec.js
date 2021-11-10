@@ -1,9 +1,9 @@
 import { screen } from '@testing-library/react'
-import Routes from '../pages/routes'
+import RootRoutes from '../pages/routes'
 import mountWithRedux, { createStore } from '../.jest/redux-testing'
 import * as auth from '../services/auth'
 
-describe('<Routes>', () => {
+describe('<RootRoutes>', () => {
   let store
 
   beforeEach(() => {
@@ -18,7 +18,7 @@ describe('<Routes>', () => {
     const isAuthenticatedSpy = jest.spyOn(auth, 'isAuthenticated').mockImplementation(() => false)
 
     store = createStore()
-    mountWithRedux(store)(<Routes />)
+    mountWithRedux(store)(<RootRoutes />)
 
     const title = screen.getByText(/e-comanda/i)
     const emailField = screen.getByText(/email/i)
@@ -36,7 +36,7 @@ describe('<Routes>', () => {
     const isAuthenticatedSpy = jest.spyOn(auth, 'isAuthenticated').mockImplementation(() => true)
 
     store = createStore()
-    mountWithRedux(store)(<Routes />)
+    mountWithRedux(store)(<RootRoutes />)
 
     const title = screen.getByRole('heading', { name: 'Dashboard' })
     const navbar = screen.getByRole('navigation')

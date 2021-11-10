@@ -2,10 +2,10 @@ import Form from '../Form'
 import { toast } from 'react-toastify';
 import { useState } from 'react';
 import { createLicensee } from '../services/licensee';
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 function LicenseeNew() {
-  const history = useHistory()
+  let navigate = useNavigate()
   const [errors, setErrors] = useState(null)
 
   return (
@@ -17,7 +17,7 @@ function LicenseeNew() {
 
           if (response.status === 201) {
             toast.success('Licenciado criado com sucesso!');
-            history.push('/licensees')
+            navigate('/licensees')
             setErrors(null)
           } else {
             setErrors(response.data.errors)
