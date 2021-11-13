@@ -3,6 +3,7 @@ class QueryBuilder {
     this.query = model
     this.filterByClause = []
     this.filterByIntervalClause = []
+    this.filterByExpressionClause
   }
 
   sortBy(field, direction) {
@@ -20,6 +21,10 @@ class QueryBuilder {
 
   filterByInterval(field, start, end) {
     this.filterByIntervalClause.push({ field, start, end })
+  }
+
+  filterByExpression(fields, value) {
+    this.filterByExpressionClause = { fields, value }
   }
 
   getQuery() {
@@ -43,6 +48,28 @@ class QueryBuilder {
       this.filterByIntervalClause.forEach((filterInterval) => {
         this.query.where(filterInterval.field).gt(filterInterval.start).lt(filterInterval.end)
       })
+    }
+
+    if (this.filterByExpressionClause) {
+      const fields = []
+      if (this.filterByExpressionClause.fields instanceof Array) {
+        this.filterByExpressionClause.fields.forEach((field) => fields.push(field))
+      } else {
+        fields.push(this.filterByExpressionClause.fields)
+      }
+
+      const values = this.filterByExpressionClause.value.split(' ')
+      if (fields.length === 1 && values.length === 1) {
+        this.query.where({ [fields[0]]: new RegExp(values[0], 'i') })
+      } else {
+        const expressionClauses = []
+        fields.forEach((field) => {
+          values.forEach((value) => {
+            expressionClauses.push({ [field]: new RegExp(value, 'i') })
+          })
+        })
+        this.query.or(expressionClauses)
+      }
     }
 
     return this.query

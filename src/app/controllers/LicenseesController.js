@@ -3,6 +3,7 @@ const createMessengerPlugin = require('../plugins/messengers/factory')
 const { check, validationResult } = require('express-validator')
 const { sanitizeExpressErrors, sanitizeModelErrors } = require('../helpers/SanitizeErrors')
 const _ = require('lodash')
+const LicenseesQuery = require('@queries/LicenseesQuery')
 
 function permit(fields) {
   const permitedFields = [
@@ -150,7 +151,33 @@ class LicenseesController {
 
   async index(req, res) {
     try {
-      res.status(200).send(await Licensee.find({}))
+      const page = req.body.page || 1
+      const limit = req.body.limit || 30
+
+      const licenseesQuery = new LicenseesQuery()
+
+      licenseesQuery.page(page)
+      licenseesQuery.limit(limit)
+
+      if (req.body.chatDefault) {
+        licenseesQuery.filterByChatDefault(req.body.chatDefault)
+      }
+
+      if (req.body.chatbotDefault) {
+        licenseesQuery.filterByChatbotDefault(req.body.chatbotDefault)
+      }
+
+      if (req.body.whatsappDefault) {
+        licenseesQuery.filterByWhatsappDefault(req.body.whatsappDefault)
+      }
+
+      if (req.body.expression) {
+        licenseesQuery.filterByExpression(req.body.expression)
+      }
+
+      const messages = await licenseesQuery.all()
+
+      res.status(200).send(messages)
     } catch (err) {
       res.status(500).send({ errors: { message: err.toString() } })
     }
