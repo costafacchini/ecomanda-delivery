@@ -55,7 +55,7 @@
     "module-alias": "2.2.2",
     "moment": "2.29.1",
     "mongodb": "4.1.4",
-    "mongoose": "6.0.12",
+    "mongoose": "6.0.13",
     "morgan": "1.10.0",
     "newrelic": "8.5.2",
     "node-notifier": "10.0.0",
