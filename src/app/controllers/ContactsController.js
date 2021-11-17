@@ -5,7 +5,7 @@ const _ = require('lodash')
 const ContactsQuery = require('@queries/ContactsQuery')
 
 function permit(fields) {
-  const permitedFields = ['name', 'number', 'type', 'talkingWithChatBot', 'licensee', 'waId', 'landbotId']
+  const permitedFields = ['name', 'number', 'type', 'talkingWithChatBot', 'licensee', 'waId', 'landbotId', 'email']
 
   return _.pick(fields, permitedFields)
 }
@@ -26,7 +26,7 @@ class ContactsController {
       return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
     }
 
-    const { name, number, type, talkingWithChatBot, licensee, waId, landbotId } = req.body
+    const { name, number, type, talkingWithChatBot, licensee, waId, landbotId, email } = req.body
 
     const contact = new Contact({
       name,
@@ -36,6 +36,7 @@ class ContactsController {
       licensee,
       waId,
       landbotId,
+      email,
     })
 
     const validation = contact.validateSync()
