@@ -89,33 +89,33 @@ class ContactsController {
 
   async index(req, res) {
     try {
-      const page = req.body.page || 1
-      const limit = req.body.limit || 30
+      const page = req.query.page || 1
+      const limit = req.query.limit || 30
 
       const contactsQuery = new ContactsQuery()
 
       contactsQuery.page(page)
       contactsQuery.limit(limit)
 
-      if (req.body.type) {
-        contactsQuery.filterByType(req.body.type)
+      if (req.query.type) {
+        contactsQuery.filterByType(req.query.type)
       }
 
-      if (req.body.talkingWithChatbot) {
-        contactsQuery.filterByTalkingWithChatbot(req.body.talkingWithChatbot)
+      if (req.query.talkingWithChatbot) {
+        contactsQuery.filterByTalkingWithChatbot(req.query.talkingWithChatbot)
       }
 
-      if (req.body.licensee) {
-        contactsQuery.filterByLicensee(req.body.licensee)
+      if (req.query.licensee) {
+        contactsQuery.filterByLicensee(req.query.licensee)
       }
 
-      if (req.body.expression) {
-        contactsQuery.filterByExpression(req.body.expression)
+      if (req.query.expression) {
+        contactsQuery.filterByExpression(req.query.expression)
       }
 
-      const messages = await contactsQuery.all()
+      const contacts = await contactsQuery.all()
 
-      res.status(200).send(messages)
+      res.status(200).send(contacts)
     } catch (err) {
       res.status(500).send({ errors: { message: err.toString() } })
     }

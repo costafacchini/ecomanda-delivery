@@ -440,16 +440,10 @@ describe('licensee controller', () => {
     describe('response', () => {
       it('returns status 200 and message if licensee exists', async () => {
         await request(expressServer)
-          .get('/resources/licensees/')
+          .get(
+            '/resources/licensees/?chatDefault=rocketchat&chatbotDefault=landbot&whatsappDefault=winzap&expression=Alca&page=1&limit=6'
+          )
           .set('x-access-token', token)
-          .send({
-            page: 1,
-            limit: 6,
-            chatDefault: 'rocketchat',
-            chatbotDefault: 'landbot',
-            whatsappDefault: 'winzap',
-            expression: 'Alca',
-          })
           .expect('Content-Type', /json/)
           .expect(200)
           .then((response) => {

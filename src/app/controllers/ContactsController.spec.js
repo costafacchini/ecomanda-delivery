@@ -299,16 +299,10 @@ describe('contact controller', () => {
     describe('response', () => {
       it('returns status 200 and message if contact exists', async () => {
         await request(expressServer)
-          .get('/resources/contacts/')
+          .get(
+            `/resources/contacts/?expression=Doe&talkingWithChatbot=false&licensee=${licensee._id.toString()}&type=@c.us&page=1&limit=3`
+          )
           .set('x-access-token', token)
-          .send({
-            page: 1,
-            limit: 6,
-            type: '@c.us',
-            talkingWithChatbot: 'false',
-            licensee: licensee._id.toString(),
-            expression: 'Doe',
-          })
           .expect('Content-Type', /json/)
           .expect(200)
           .then((response) => {

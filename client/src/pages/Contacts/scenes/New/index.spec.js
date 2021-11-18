@@ -22,27 +22,12 @@ describe('<ContactNew />', () => {
 
     await waitFor(() => expect(createContact).toHaveBeenCalledWith({
       name: '',
+      number: '',
       email: '',
-      phone: '',
-      active: false,
-      apiToken: '',
-      licenseKind: 'demo',
-      useChatbot: false,
-      chatbotDefault: '',
-      chatbotUrl: '',
-      chatbotAuthorizationToken: '',
-      messageOnResetChatbot: '',
-      chatbotApiToken: '',
-      whatsappDefault: '',
-      whatsappToken: '',
-      whatsappUrl: '',
-      chatDefault: '',
-      chatIdentifier: '',
-      chatKey: '',
-      chatUrl: '',
-      awsId: '',
-      awsSecret: '',
-      bucketName: '',
+      talkingWithChatBot: false,
+      licensee: '',
+      waId: '',
+      landbotId: '',
     }))
   })
 

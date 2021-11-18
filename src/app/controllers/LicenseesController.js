@@ -151,28 +151,28 @@ class LicenseesController {
 
   async index(req, res) {
     try {
-      const page = req.body.page || 1
-      const limit = req.body.limit || 30
+      const page = req.query.page || 1
+      const limit = req.query.limit || 30
 
       const licenseesQuery = new LicenseesQuery()
 
       licenseesQuery.page(page)
       licenseesQuery.limit(limit)
 
-      if (req.body.chatDefault) {
-        licenseesQuery.filterByChatDefault(req.body.chatDefault)
+      if (req.query.chatDefault) {
+        licenseesQuery.filterByChatDefault(req.query.chatDefault)
       }
 
-      if (req.body.chatbotDefault) {
-        licenseesQuery.filterByChatbotDefault(req.body.chatbotDefault)
+      if (req.query.chatbotDefault) {
+        licenseesQuery.filterByChatbotDefault(req.query.chatbotDefault)
       }
 
-      if (req.body.whatsappDefault) {
-        licenseesQuery.filterByWhatsappDefault(req.body.whatsappDefault)
+      if (req.query.whatsappDefault) {
+        licenseesQuery.filterByWhatsappDefault(req.query.whatsappDefault)
       }
 
-      if (req.body.expression) {
-        licenseesQuery.filterByExpression(req.body.expression)
+      if (req.query.expression) {
+        licenseesQuery.filterByExpression(req.query.expression)
       }
 
       const messages = await licenseesQuery.all()
