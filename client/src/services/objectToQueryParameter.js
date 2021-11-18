@@ -1,5 +1,5 @@
 export default function parseUrl(url, urlParams) {
-  return urlParams ? `${url}?${objectToQueryParameter(urlParams)}` : url
+  return urlParams && objectToQueryParameter(urlParams) !== '' ? `${url}?${objectToQueryParameter(urlParams)}` : url
 }
 
 function objectToQueryParameter(object) {
