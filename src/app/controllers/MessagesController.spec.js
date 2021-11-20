@@ -5,6 +5,10 @@ const Contact = require('@models/Contact')
 const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
+const { userSuper: userSuperFactory } = require('@factories/user')
+const { licensee: licenseeFactory } = require('@factories/licensee')
+const { contact: contactFactory } = require('@factories/contact')
+const { message: messageFactory } = require('@factories/message')
 
 describe('messengers controller', () => {
   let token
@@ -12,11 +16,7 @@ describe('messengers controller', () => {
   beforeAll(async () => {
     await mongoServer.connect()
 
-    await User.create({
-      name: 'John Doe',
-      email: 'john@doe.com',
-      password: '12345678',
-    })
+    await User.create(userSuperFactory.build())
 
     await request(expressServer)
       .post('/login')
@@ -40,21 +40,6 @@ describe('messengers controller', () => {
         .post('/resources/licensees/')
         .send({
           name: 'Alcateia Ltda',
-          email: 'alcateia@ltda.com',
-          phone: '11876509234',
-          active: true,
-          licenseKind: 'p',
-          useChatbot: true,
-          chatbotDefault: 'landbot',
-          whatsappDefault: 'chatapi',
-          chatbotUrl: 'https:/chatbot.url',
-          chatbotAuthorizationToken: 'chatbotToken',
-          whatsappToken: 'whatsToken',
-          whatsappUrl: 'https://whatsapp.url',
-          chatUrl: 'https://chat.url',
-          awsId: 'awsId',
-          awsSecret: 'awsSecret',
-          bucketName: 'bucketName',
         })
         .expect('Content-Type', /json/)
         .expect(401, {
@@ -63,11 +48,11 @@ describe('messengers controller', () => {
         })
     })
 
-    it('returns status 500 and message if x-access-token in not inform in header', async () => {
+    it('returns status 500 and message if x-access-token is invalid', async () => {
       await request(expressServer)
         .post('/resources/licensees/')
-        .set('x-access-token', 'dasadasdasd')
-        .send({ name: 'Mary Jane', email: 'mary@jane.com', password: '12345678', active: true })
+        .set('x-access-token', 'invalid')
+        .send({ name: 'Mary Jane' })
         .expect('Content-Type', /json/)
         .expect(500, {
           auth: false,
@@ -79,21 +64,11 @@ describe('messengers controller', () => {
   describe('index', () => {
     describe('response', () => {
       it('returns status 200 and return messages', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
-        const contact = await Contact.create({
-          number: '5511990283745',
-          talkingWithChatBot: false,
-          licensee: licensee._id,
-        })
-        await Message.create({
-          text: 'Message 1',
-          number: contact.number,
-          contact: contact._id,
-          licensee: licensee._id,
-          destination: 'to-chat',
-          sended: true,
-          createdAt: new Date(2021, 6, 3, 0, 0, 0),
-        })
+        const licensee = await Licensee.create(licenseeFactory.build())
+
+        const contact = await Contact.create(contactFactory.build({ licensee }))
+
+        await Message.create(messageFactory.build({ licensee, contact }))
 
         await request(expressServer)
           .get('/resources/messages/')

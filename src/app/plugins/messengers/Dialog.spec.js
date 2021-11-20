@@ -5,10 +5,14 @@ const Licensee = require('@models/Licensee')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
 const S3 = require('../storage/S3')
+const { licensee: licenseeFactory } = require('@factories/licensee')
+const { contact: contactFactory } = require('@factories/contact')
+const { message: messageFactory } = require('@factories/message')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
 describe('Dialog plugin', () => {
+  let licensee
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
   const uploadFileS3Spy = jest.spyOn(S3.prototype, 'uploadFile').mockImplementation()
@@ -17,9 +21,11 @@ describe('Dialog plugin', () => {
   })
 
   beforeEach(async () => {
+    await mongoServer.connect()
     jest.clearAllMocks()
     fetchMock.reset()
-    await mongoServer.connect()
+
+    licensee = await Licensee.create(licenseeFactory.build({ whatsappToken: 'whats-token' }))
   })
 
   afterEach(async () => {
@@ -29,15 +35,13 @@ describe('Dialog plugin', () => {
   describe('#responseToMessages', () => {
     describe('text', () => {
       it('returns the response body transformed in messages', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: false,
-          licensee: licensee,
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
 
         const responseBody = {
           contacts: [
@@ -45,12 +49,12 @@ describe('Dialog plugin', () => {
               profile: {
                 name: 'John Doe',
               },
-              wa_id: '5593165392832',
+              wa_id: '5511990283745',
             },
           ],
           messages: [
             {
-              from: '5593165392832',
+              from: '5511990283745',
               id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
               text: {
                 body: 'Message',
@@ -84,20 +88,13 @@ describe('Dialog plugin', () => {
 
     describe('image', () => {
       it('returns the response body transformed in messages', async () => {
-        const licensee = await Licensee.create({
-          name: 'Alcateia Ltds',
-          active: true,
-          licenseKind: 'demo',
-          whatsappToken: 'whats-token',
-        })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: false,
-          licensee: licensee,
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
 
         const responseBody = {
           contacts: [
@@ -105,12 +102,12 @@ describe('Dialog plugin', () => {
               profile: {
                 name: 'John Doe',
               },
-              wa_id: '5593165392832',
+              wa_id: '5511990283745',
             },
           ],
           messages: [
             {
-              from: '5593165392832',
+              from: '5511990283745',
               id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
               image: {
                 id: 'image-media-id',
@@ -162,20 +159,13 @@ describe('Dialog plugin', () => {
 
     describe('video', () => {
       it('returns the response body transformed in messages', async () => {
-        const licensee = await Licensee.create({
-          name: 'Alcateia Ltds',
-          active: true,
-          licenseKind: 'demo',
-          whatsappToken: 'whats-token',
-        })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: false,
-          licensee: licensee,
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
 
         const responseBody = {
           contacts: [
@@ -183,12 +173,12 @@ describe('Dialog plugin', () => {
               profile: {
                 name: 'John Doe',
               },
-              wa_id: '5593165392832',
+              wa_id: '5511990283745',
             },
           ],
           messages: [
             {
-              from: '5593165392832',
+              from: '5511990283745',
               id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
               video: {
                 id: 'image-media-id',
@@ -240,20 +230,13 @@ describe('Dialog plugin', () => {
 
     describe('voice', () => {
       it('returns the response body transformed in messages', async () => {
-        const licensee = await Licensee.create({
-          name: 'Alcateia Ltds',
-          active: true,
-          licenseKind: 'demo',
-          whatsappToken: 'whats-token',
-        })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: false,
-          licensee: licensee,
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
 
         const responseBody = {
           contacts: [
@@ -261,12 +244,12 @@ describe('Dialog plugin', () => {
               profile: {
                 name: 'John Doe',
               },
-              wa_id: '5593165392832',
+              wa_id: '5511990283745',
             },
           ],
           messages: [
             {
-              from: '5593165392832',
+              from: '5511990283745',
               id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
               voice: {
                 id: 'image-media-id',
@@ -318,20 +301,13 @@ describe('Dialog plugin', () => {
 
     describe('audio', () => {
       it('returns the response body transformed in messages', async () => {
-        const licensee = await Licensee.create({
-          name: 'Alcateia Ltds',
-          active: true,
-          licenseKind: 'demo',
-          whatsappToken: 'whats-token',
-        })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: false,
-          licensee: licensee,
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
 
         const responseBody = {
           contacts: [
@@ -339,12 +315,12 @@ describe('Dialog plugin', () => {
               profile: {
                 name: 'John Doe',
               },
-              wa_id: '5593165392832',
+              wa_id: '5511990283745',
             },
           ],
           messages: [
             {
-              from: '5593165392832',
+              from: '5511990283745',
               id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
               audio: {
                 id: 'image-media-id',
@@ -396,20 +372,13 @@ describe('Dialog plugin', () => {
 
     describe('document', () => {
       it('returns the response body transformed in messages', async () => {
-        const licensee = await Licensee.create({
-          name: 'Alcateia Ltds',
-          active: true,
-          licenseKind: 'demo',
-          whatsappToken: 'whats-token',
-        })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: false,
-          licensee: licensee,
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
 
         const responseBody = {
           contacts: [
@@ -417,12 +386,12 @@ describe('Dialog plugin', () => {
               profile: {
                 name: 'John Doe',
               },
-              wa_id: '5593165392832',
+              wa_id: '5511990283745',
             },
           ],
           messages: [
             {
-              from: '5593165392832',
+              from: '5511990283745',
               id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
               document: {
                 id: 'image-media-id',
@@ -473,15 +442,13 @@ describe('Dialog plugin', () => {
     })
 
     it('updates the contact if contact exists and name is different', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-      await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: false,
-        licensee: licensee,
-      })
+      await Contact.create(
+        contactFactory.build({
+          name: 'John Doe',
+          talkingWithChatBot: false,
+          licensee,
+        })
+      )
 
       const responseBody = {
         contacts: [
@@ -489,12 +456,12 @@ describe('Dialog plugin', () => {
             profile: {
               name: 'Jonny Cash',
             },
-            wa_id: '5593165392832',
+            wa_id: '5511990283745',
           },
         ],
         messages: [
           {
-            from: '5593165392832',
+            from: '5511990283745',
             id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
             text: {
               body: 'Message',
@@ -509,7 +476,7 @@ describe('Dialog plugin', () => {
       await dialog.responseToMessages(responseBody)
 
       const contactUpdated = await Contact.findOne({
-        number: '5593165392832',
+        number: '5511990283745',
         type: '@c.us',
         licensee: licensee._id,
       })
@@ -518,15 +485,13 @@ describe('Dialog plugin', () => {
     })
 
     it('updates the contact if contact exists and waId is different', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', waId: '123', active: true, licenseKind: 'demo' })
-
-      await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: false,
-        licensee: licensee,
-      })
+      await Contact.create(
+        contactFactory.build({
+          name: 'John Doe',
+          talkingWithChatBot: false,
+          licensee,
+        })
+      )
 
       const responseBody = {
         contacts: [
@@ -534,12 +499,12 @@ describe('Dialog plugin', () => {
             profile: {
               name: 'Jonny Cash',
             },
-            wa_id: '5593165392832',
+            wa_id: '5511990283745',
           },
         ],
         messages: [
           {
-            from: '5593165392832',
+            from: '5511990283745',
             id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
             text: {
               body: 'Message',
@@ -554,36 +519,34 @@ describe('Dialog plugin', () => {
       await dialog.responseToMessages(responseBody)
 
       const contactUpdated = await Contact.findOne({
-        number: '5593165392832',
+        number: '5511990283745',
         type: '@c.us',
         licensee: licensee._id,
       })
 
-      expect(contactUpdated.waId).toEqual('5593165392832')
+      expect(contactUpdated.waId).toEqual('5511990283745')
     })
 
     it('does not update the contact if name is undefined', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-      await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: false,
-        licensee: licensee,
-        waId: '5593165392832',
-      })
+      await Contact.create(
+        contactFactory.build({
+          name: 'John Doe',
+          talkingWithChatBot: false,
+          waId: '5511990283745',
+          licensee,
+        })
+      )
 
       const responseBody = {
         contacts: [
           {
             profile: {},
-            wa_id: '5593165392832',
+            wa_id: '5511990283745',
           },
         ],
         messages: [
           {
-            from: '5593165392832',
+            from: '5511990283745',
             id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
             text: {
               body: 'Message',
@@ -598,7 +561,7 @@ describe('Dialog plugin', () => {
       await dialog.responseToMessages(responseBody)
 
       const contactUpdated = await Contact.findOne({
-        number: '5593165392832',
+        number: '5511990283745',
         type: '@c.us',
         licensee: licensee._id,
       })
@@ -607,16 +570,14 @@ describe('Dialog plugin', () => {
     })
 
     it('does not update the contact if wa_id is undefined', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-      await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: false,
-        licensee: licensee,
-        waId: '5593165392832',
-      })
+      await Contact.create(
+        contactFactory.build({
+          name: 'John Doe',
+          talkingWithChatBot: false,
+          waId: '5511990283745',
+          licensee,
+        })
+      )
 
       const responseBody = {
         contacts: [
@@ -628,7 +589,7 @@ describe('Dialog plugin', () => {
         ],
         messages: [
           {
-            from: '5593165392832',
+            from: '5511990283745',
             id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
             text: {
               body: 'Message',
@@ -643,18 +604,16 @@ describe('Dialog plugin', () => {
       await dialog.responseToMessages(responseBody)
 
       const contactUpdated = await Contact.findOne({
-        number: '5593165392832',
+        number: '5511990283745',
         type: '@c.us',
         licensee: licensee._id,
       })
 
-      expect(contactUpdated.waId).toEqual('5593165392832')
+      expect(contactUpdated.waId).toEqual('5511990283745')
     })
 
     describe('when the contact does not exists', () => {
       it('registers the contact and return the response body transformed in messages', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
         const responseBody = {
           contacts: [
             {
@@ -699,16 +658,14 @@ describe('Dialog plugin', () => {
 
     describe('when the contact talking with chatbot', () => {
       it('returns the response body transformed in message with destination "to_chatbot"', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        await Contact.create({
-          name: 'John Doe',
-          number: '5593165392997@c.us',
-          type: '@c.us',
-          talkingWithChatBot: true,
-          waId: '5593165392997',
-          licensee: licensee,
-        })
+        await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            licensee,
+            waId: '5511990283745',
+          })
+        )
 
         const responseBody = {
           contacts: [
@@ -716,12 +673,12 @@ describe('Dialog plugin', () => {
               profile: {
                 name: 'John Doe',
               },
-              wa_id: '5593165392997',
+              wa_id: '5511990283745',
             },
           ],
           messages: [
             {
-              from: '5593165392997',
+              from: '5511990283745',
               id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC44',
               text: {
                 body: 'Message',
@@ -743,8 +700,6 @@ describe('Dialog plugin', () => {
     })
 
     it('return the empty data if body is blank', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const responseBody = {}
 
       const dialog = new Dialog(licensee)
@@ -754,8 +709,6 @@ describe('Dialog plugin', () => {
     })
 
     it('return the empty data if body does not have messages', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const responseBody = {
         instanceId: '244959',
       }
@@ -768,25 +721,24 @@ describe('Dialog plugin', () => {
 
     describe('when the body has statuses', () => {
       it('fills the message sendedAt if status is sent', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            waId: '5593165392997',
+            licensee,
+          })
+        )
 
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392997@c.us',
-          type: '@c.us',
-          talkingWithChatBot: true,
-          waId: '5593165392997',
-          licensee: licensee,
-        })
-
-        await Message.create({
-          text: 'Text',
-          number: 'Abc012',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-chat',
-          messageWaId: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC44',
-        })
+        await Message.create(
+          messageFactory.build({
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+            messageWaId: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC44',
+          })
+        )
 
         const responseBody = {
           statuses: [
@@ -811,25 +763,24 @@ describe('Dialog plugin', () => {
       })
 
       it('fills the message deliveredAt if status is delivered', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            waId: '5593165392997',
+            licensee,
+          })
+        )
 
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392997@c.us',
-          type: '@c.us',
-          talkingWithChatBot: true,
-          waId: '5593165392997',
-          licensee: licensee,
-        })
-
-        await Message.create({
-          text: 'Text',
-          number: 'Abc012',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-chat',
-          messageWaId: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC44',
-        })
+        await Message.create(
+          messageFactory.build({
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+            messageWaId: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC44',
+          })
+        )
 
         const responseBody = {
           statuses: [
@@ -854,25 +805,24 @@ describe('Dialog plugin', () => {
       })
 
       it('fills the message readAt if status is read', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            waId: '5593165392997',
+            licensee,
+          })
+        )
 
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392997@c.us',
-          type: '@c.us',
-          talkingWithChatBot: true,
-          waId: '5593165392997',
-          licensee: licensee,
-        })
-
-        await Message.create({
-          text: 'Text',
-          number: 'Abc012',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-chat',
-          messageWaId: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC44',
-        })
+        await Message.create(
+          messageFactory.build({
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+            messageWaId: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC44',
+          })
+        )
 
         const responseBody = {
           statuses: [
@@ -901,30 +851,28 @@ describe('Dialog plugin', () => {
   describe('#sendMessage', () => {
     describe('when the message was sent', () => {
       it('marks the message with was sent and logs the success message', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            waId: '5593165392997',
+            licensee,
+          })
+        )
 
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          email: 'john@doe.com',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-messenger',
-          sended: false,
-        })
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
 
         const expectedBodyGetContact = {
           blocking: 'wait',
-          contacts: ['+5593165392832'],
+          contacts: ['+5511990283745'],
           force_check: true,
         }
 
@@ -939,7 +887,7 @@ describe('Dialog plugin', () => {
           {
             status: 200,
             body: {
-              contacts: [{ input: '+5593165392832', status: 'valid', wa_id: '553165392832' }],
+              contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
               meta: { api_status: 'stable', version: '2.35.4' },
             },
           }
@@ -990,52 +938,36 @@ describe('Dialog plugin', () => {
 
       describe('when the message is image', () => {
         it('marks the message with sended and log the success message', async () => {
-          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-          const contact = await Contact.create({
-            name: 'John Doe',
-            number: '5593165392832',
-            type: '@c.us',
-            email: 'john@doe.com',
-            talkingWithChatBot: true,
-            licensee: licensee,
-          })
-
-          const message = await Message.create({
-            _id: '60958703f415ed4008748637',
-            number: 'jhd7879a7d9',
-            contact: contact,
-            licensee: licensee,
-            destination: 'to-messenger',
-            text: 'Message to send',
-            kind: 'file',
-            url: 'https://octodex.github.com/images/dojocat.jpg',
-            fileName: 'dojocat.jpg',
-            sended: false,
-          })
-
-          const expectedBodyGetContact = {
-            blocking: 'wait',
-            contacts: ['+5593165392832'],
-            force_check: true,
-          }
-
-          fetchMock.postOnce(
-            (url, { body, headers }) => {
-              return (
-                url === 'https://waba.360dialog.io/v1/contacts/' &&
-                body === JSON.stringify(expectedBodyGetContact) &&
-                headers['D360-API-KEY'] === 'token-dialog'
-              )
-            },
-            {
-              status: 200,
-              body: {
-                contacts: [{ input: '+5593165392832', status: 'valid', wa_id: '553165392832' }],
-                meta: { api_status: 'stable', version: '2.35.4' },
-              },
-            }
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              talkingWithChatBot: true,
+              waId: '5593165392997',
+              licensee,
+            })
           )
+
+          const message = await Message.create(
+            messageFactory.build({
+              _id: '60958703f415ed4008748637',
+              text: 'Message to send',
+              kind: 'file',
+              url: 'https://octodex.github.com/images/dojocat.jpg',
+              fileName: 'dojocat.jpg',
+              contact,
+              licensee,
+              sended: false,
+              messageWaId: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC44',
+            })
+          )
+
+          fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+            status: 200,
+            body: {
+              contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
+              meta: { api_status: 'stable', version: '2.35.4' },
+            },
+          })
 
           const expectedBodySendMessage = {
             recipient_type: 'individual',
@@ -1083,52 +1015,36 @@ describe('Dialog plugin', () => {
 
       describe('when the message is video', () => {
         it('marks the message with sended and log the success message', async () => {
-          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-          const contact = await Contact.create({
-            name: 'John Doe',
-            number: '5593165392832',
-            type: '@c.us',
-            email: 'john@doe.com',
-            talkingWithChatBot: true,
-            licensee: licensee,
-          })
-
-          const message = await Message.create({
-            _id: '60958703f415ed4008748637',
-            number: 'jhd7879a7d9',
-            contact: contact,
-            licensee: licensee,
-            destination: 'to-messenger',
-            text: 'Message to send',
-            kind: 'file',
-            url: 'https://octodex.github.com/images/video.mpg',
-            fileName: 'dojocat.jpg',
-            sended: false,
-          })
-
-          const expectedBodyGetContact = {
-            blocking: 'wait',
-            contacts: ['+5593165392832'],
-            force_check: true,
-          }
-
-          fetchMock.postOnce(
-            (url, { body, headers }) => {
-              return (
-                url === 'https://waba.360dialog.io/v1/contacts/' &&
-                body === JSON.stringify(expectedBodyGetContact) &&
-                headers['D360-API-KEY'] === 'token-dialog'
-              )
-            },
-            {
-              status: 200,
-              body: {
-                contacts: [{ input: '+5593165392832', status: 'valid', wa_id: '553165392832' }],
-                meta: { api_status: 'stable', version: '2.35.4' },
-              },
-            }
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              talkingWithChatBot: true,
+              waId: '5593165392997',
+              licensee,
+            })
           )
+
+          const message = await Message.create(
+            messageFactory.build({
+              _id: '60958703f415ed4008748637',
+              text: 'Message to send',
+              kind: 'file',
+              url: 'https://octodex.github.com/images/video.mpg',
+              fileName: 'dojocat.jpg',
+              contact,
+              licensee,
+              sended: false,
+              messageWaId: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC44',
+            })
+          )
+
+          fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+            status: 200,
+            body: {
+              contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
+              meta: { api_status: 'stable', version: '2.35.4' },
+            },
+          })
 
           const expectedBodySendMessage = {
             recipient_type: 'individual',
@@ -1176,52 +1092,37 @@ describe('Dialog plugin', () => {
 
       describe('when the message is audio', () => {
         it('marks the message with sended and log the success message', async () => {
-          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-          const contact = await Contact.create({
-            name: 'John Doe',
-            number: '5593165392832',
-            type: '@c.us',
-            email: 'john@doe.com',
-            talkingWithChatBot: true,
-            licensee: licensee,
-          })
-
-          const message = await Message.create({
-            _id: '60958703f415ed4008748637',
-            number: 'jhd7879a7d9',
-            contact: contact,
-            licensee: licensee,
-            destination: 'to-messenger',
-            text: 'Message to send',
-            kind: 'file',
-            url: 'https://octodex.github.com/images/message.ogg',
-            fileName: 'message.ogg',
-            sended: false,
-          })
-
-          const expectedBodyGetContact = {
-            blocking: 'wait',
-            contacts: ['+5593165392832'],
-            force_check: true,
-          }
-
-          fetchMock.postOnce(
-            (url, { body, headers }) => {
-              return (
-                url === 'https://waba.360dialog.io/v1/contacts/' &&
-                body === JSON.stringify(expectedBodyGetContact) &&
-                headers['D360-API-KEY'] === 'token-dialog'
-              )
-            },
-            {
-              status: 200,
-              body: {
-                contacts: [{ input: '+5593165392832', status: 'valid', wa_id: '553165392832' }],
-                meta: { api_status: 'stable', version: '2.35.4' },
-              },
-            }
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              talkingWithChatBot: true,
+              email: 'john@doe.com',
+              waId: '5593165392997',
+              licensee,
+            })
           )
+
+          const message = await Message.create(
+            messageFactory.build({
+              _id: '60958703f415ed4008748637',
+              text: 'Message to send',
+              kind: 'file',
+              url: 'https://octodex.github.com/images/message.ogg',
+              fileName: 'message.ogg',
+              contact,
+              licensee,
+              sended: false,
+              messageWaId: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC44',
+            })
+          )
+
+          fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+            status: 200,
+            body: {
+              contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
+              meta: { api_status: 'stable', version: '2.35.4' },
+            },
+          })
 
           const expectedBodySendMessage = {
             recipient_type: 'individual',
@@ -1269,52 +1170,36 @@ describe('Dialog plugin', () => {
 
       describe('when the message is document', () => {
         it('marks the message with sended and log the success message', async () => {
-          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-          const contact = await Contact.create({
-            name: 'John Doe',
-            number: '5593165392832',
-            type: '@c.us',
-            email: 'john@doe.com',
-            talkingWithChatBot: true,
-            licensee: licensee,
-          })
-
-          const message = await Message.create({
-            _id: '60958703f415ed4008748637',
-            number: 'jhd7879a7d9',
-            contact: contact,
-            licensee: licensee,
-            destination: 'to-messenger',
-            text: 'Message to send',
-            kind: 'file',
-            url: 'https://octodex.github.com/images/document.pdf',
-            fileName: 'document.pdf',
-            sended: false,
-          })
-
-          const expectedBodyGetContact = {
-            blocking: 'wait',
-            contacts: ['+5593165392832'],
-            force_check: true,
-          }
-
-          fetchMock.postOnce(
-            (url, { body, headers }) => {
-              return (
-                url === 'https://waba.360dialog.io/v1/contacts/' &&
-                body === JSON.stringify(expectedBodyGetContact) &&
-                headers['D360-API-KEY'] === 'token-dialog'
-              )
-            },
-            {
-              status: 200,
-              body: {
-                contacts: [{ input: '+5593165392832', status: 'valid', wa_id: '553165392832' }],
-                meta: { api_status: 'stable', version: '2.35.4' },
-              },
-            }
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              talkingWithChatBot: true,
+              waId: '5593165392997',
+              email: 'john@doe.com',
+              licensee,
+            })
           )
+
+          const message = await Message.create(
+            messageFactory.build({
+              _id: '60958703f415ed4008748637',
+              text: 'Message to send',
+              contact,
+              licensee,
+              sended: false,
+              kind: 'file',
+              url: 'https://octodex.github.com/images/document.pdf',
+              fileName: 'document.pdf',
+            })
+          )
+
+          fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+            status: 200,
+            body: {
+              contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
+              meta: { api_status: 'stable', version: '2.35.4' },
+            },
+          })
 
           const expectedBodySendMessage = {
             recipient_type: 'individual',
@@ -1364,49 +1249,32 @@ describe('Dialog plugin', () => {
 
     describe('when contact is invalid', () => {
       it('logs the error message', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          email: 'john@doe.com',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-messenger',
-          sended: false,
-        })
-
-        const expectedBodyGetContact = {
-          blocking: 'wait',
-          contacts: ['+5593165392832'],
-          force_check: true,
-        }
-
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://waba.360dialog.io/v1/contacts/' &&
-              body === JSON.stringify(expectedBodyGetContact) &&
-              headers['D360-API-KEY'] === 'token-dialog'
-            )
-          },
-          {
-            status: 200,
-            body: {
-              contacts: [{ input: '+5593165392832', status: 'invalid' }],
-              meta: { api_status: 'stable', version: '2.35.4' },
-            },
-          }
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            waId: '5593165392997',
+            licensee,
+          })
         )
+
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
+
+        fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+          status: 200,
+          body: {
+            contacts: [{ input: '+5511990283745', status: 'invalid' }],
+            meta: { api_status: 'stable', version: '2.35.4' },
+          },
+        })
 
         expect(message.sended).toEqual(false)
 
@@ -1418,56 +1286,39 @@ describe('Dialog plugin', () => {
         expect(fetchMock.calls()).toHaveLength(1)
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'A mensagem não foi enviada para a Dialog pois o contato não é válido {"contacts":[{"input":"+5593165392832","status":"invalid"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+          'A mensagem não foi enviada para a Dialog pois o contato não é válido {"contacts":[{"input":"+5511990283745","status":"invalid"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
         )
       })
     })
 
     describe('when can not send the message', () => {
       it('logs the error message', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          email: 'john@doe.com',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-messenger',
-          sended: false,
-        })
-
-        const expectedBodyGetContact = {
-          blocking: 'wait',
-          contacts: ['+5593165392832'],
-          force_check: true,
-        }
-
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://waba.360dialog.io/v1/contacts/' &&
-              body === JSON.stringify(expectedBodyGetContact) &&
-              headers['D360-API-KEY'] === 'token-dialog'
-            )
-          },
-          {
-            status: 200,
-            body: {
-              contacts: [{ input: '+5593165392832', status: 'valid', wa_id: '553165392832' }],
-              meta: { api_status: 'stable', version: '2.35.4' },
-            },
-          }
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            waId: '5593165392997',
+            licensee,
+          })
         )
+
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
+
+        fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+          status: 200,
+          body: {
+            contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
+            meta: { api_status: 'stable', version: '2.35.4' },
+          },
+        })
 
         const expectedBodySendMessage = {
           recipient_type: 'individual',
@@ -1519,8 +1370,6 @@ describe('Dialog plugin', () => {
 
   describe('#setWebhook', () => {
     it('config the webhook on dialog', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const expectedBody = {
         url: `${licensee.urlWhatsappWebhook}`,
       }
@@ -1552,15 +1401,13 @@ describe('Dialog plugin', () => {
   })
 
   describe('.action', () => {
-    it('returns send-message-to-chat if message destination is to chat', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+    it('returns send-message-to-chat if message destination is to chat', () => {
       const dialog = new Dialog(licensee)
 
       expect(dialog.action('to-chat')).toEqual('send-message-to-chat')
     })
 
-    it('returns send-message-to-chatbot if message destination is to chatbot', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+    it('returns send-message-to-chatbot if message destination is to chatbot', () => {
       const dialog = new Dialog(licensee)
 
       expect(dialog.action('to-chatbot')).toEqual('send-message-to-chatbot')

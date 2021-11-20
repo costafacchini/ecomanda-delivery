@@ -4,17 +4,23 @@ const Contact = require('@models/Contact')
 const Licensee = require('@models/Licensee')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
+const { licensee: licenseeFactory } = require('@factories/licensee')
+const { contact: contactFactory } = require('@factories/contact')
+const { message: messageFactory } = require('@factories/message')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
 describe('Chatapi plugin', () => {
+  let licensee
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
 
   beforeEach(async () => {
+    await mongoServer.connect()
     jest.clearAllMocks()
     fetchMock.reset()
-    await mongoServer.connect()
+
+    licensee = await Licensee.create(licenseeFactory.build())
   })
 
   afterEach(async () => {
@@ -24,27 +30,25 @@ describe('Chatapi plugin', () => {
   describe('#responseToMessages', () => {
     describe('image and text', () => {
       it('returns the response body transformed in messages', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: false,
-          licensee: licensee,
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
 
         const responseBody = {
           messages: [
             {
-              id: 'false_5593165392832@c.us_3EB066E484BABD9F3C69',
+              id: 'false_5511990283745@c.us_3EB066E484BABD9F3C69',
               body: 'https://s3.eu-central-1.wasabisys.com/incoming-chat-api/2021/3/25/244959/1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg',
               fromMe: false,
               self: 1,
               isForwarded: 0,
-              author: '5593165392832@c.us',
+              author: '5511990283745@c.us',
               time: 1616708028,
-              chatId: '5593165392832@c.us',
+              chatId: '5511990283745@c.us',
               messageNumber: 111,
               type: 'image',
               senderName: 'John Doe',
@@ -83,27 +87,25 @@ describe('Chatapi plugin', () => {
 
     describe('image', () => {
       it('returns the response body transformed in messages', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: false,
-          licensee: licensee,
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
 
         const responseBody = {
           messages: [
             {
-              id: 'false_5593165392832@c.us_3EB066E484BABD9F3C69',
+              id: 'false_5511990283745@c.us_3EB066E484BABD9F3C69',
               body: 'https://s3.eu-central-1.wasabisys.com/incoming-chat-api/2021/3/25/244959/1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg',
               fromMe: false,
               self: 1,
               isForwarded: 0,
-              author: '5593165392832@c.us',
+              author: '5511990283745@c.us',
               time: 1616708028,
-              chatId: '5593165392832@c.us',
+              chatId: '5511990283745@c.us',
               messageNumber: 111,
               type: 'image',
               senderName: 'John Doe',
@@ -142,27 +144,25 @@ describe('Chatapi plugin', () => {
 
     describe('text', () => {
       it('returns the response body transformed in messages', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: false,
-          licensee: licensee,
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
 
         const responseBody = {
           messages: [
             {
-              id: 'false_5593165392832@c.us_3EB066E484BABD9F3C69',
+              id: 'false_5511990283745@c.us_3EB066E484BABD9F3C69',
               body: 'Message to send',
               fromMe: false,
               self: 1,
               isForwarded: 0,
-              author: '5593165392832@c.us',
+              author: '5511990283745@c.us',
               time: 1616708028,
-              chatId: '5593165392832@c.us',
+              chatId: '5511990283745@c.us',
               messageNumber: 111,
               type: 'chat',
               senderName: 'John Doe',
@@ -199,25 +199,25 @@ describe('Chatapi plugin', () => {
 
     describe('group', () => {
       it('returns the response body transformed in messages', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'Grupo Teste',
-          number: '5511989187726-1622497000@g.us',
-          type: '@g.us',
-          talkingWithChatBot: false,
-          licensee: licensee,
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'Grupo Teste',
+            number: '5511989187726-1622497000@g.us',
+            type: '@g.us',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
 
         const responseBody = {
           messages: [
             {
-              id: 'false_5593165392832@c.us_3EB066E484BABD9F3C69',
+              id: 'false_5511990283745@c.us_3EB066E484BABD9F3C69',
               body: 'https://s3.eu-central-1.wasabisys.com/incoming-chat-api/2021/3/25/244959/1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg',
               fromMe: false,
               self: 1,
               isForwarded: 0,
-              author: '5593165392832@c.us',
+              author: '5511990283745@c.us',
               time: 1616708028,
               chatId: '5511989187726-1622497000@g.us',
               messageNumber: 111,
@@ -283,27 +283,25 @@ describe('Chatapi plugin', () => {
     })
 
     it('updates the contact if contact exists and name is different', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-      await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: false,
-        licensee: licensee,
-      })
+      await Contact.create(
+        contactFactory.build({
+          name: 'John Doe',
+          talkingWithChatBot: false,
+          licensee,
+        })
+      )
 
       const responseBody = {
         messages: [
           {
-            id: 'false_5593165392832@c.us_3EB066E484BABD9F3C69',
+            id: 'false_5511990283745@c.us_3EB066E484BABD9F3C69',
             body: 'Message to send',
             fromMe: false,
             self: 1,
             isForwarded: 0,
-            author: '5593165392832@c.us',
+            author: '5511990283745@c.us',
             time: 1616708028,
-            chatId: '5593165392832@c.us',
+            chatId: '5511990283745@c.us',
             messageNumber: 111,
             type: 'chat',
             senderName: 'Jonny Cash',
@@ -321,7 +319,7 @@ describe('Chatapi plugin', () => {
       await chatapi.responseToMessages(responseBody)
 
       const contactUpdated = await Contact.findOne({
-        number: '5593165392832',
+        number: '5511990283745',
         type: '@c.us',
         licensee: licensee._id,
       })
@@ -331,19 +329,17 @@ describe('Chatapi plugin', () => {
 
     describe('when the contact does not exists', () => {
       it('registers the contact and return the response body transformed in messages', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
         const responseBody = {
           messages: [
             {
-              id: 'false_5593165392832@c.us_3EB066E484BABD9F3C69',
+              id: 'false_5511990283745@c.us_3EB066E484BABD9F3C69',
               body: 'Message to send',
               fromMe: false,
               self: 1,
               isForwarded: 0,
-              author: '5593165392832@c.us',
+              author: '5511990283745@c.us',
               time: 1616708028,
-              chatId: '5593165392832@c.us',
+              chatId: '5511990283745@c.us',
               messageNumber: 111,
               type: 'chat',
               senderName: 'John Doe',
@@ -361,13 +357,13 @@ describe('Chatapi plugin', () => {
         const messages = await chatapi.responseToMessages(responseBody)
 
         const contact = await Contact.findOne({
-          number: '5593165392832',
+          number: '5511990283745',
           type: '@c.us',
           licensee: licensee._id,
         })
 
         expect(contact.name).toEqual('John Doe')
-        expect(contact.number).toEqual('5593165392832')
+        expect(contact.number).toEqual('5511990283745')
         expect(contact.type).toEqual('@c.us')
         expect(contact.talkingWithChatBot).toEqual(licensee.useChatbot)
         expect(contact.licensee).toEqual(licensee._id)
@@ -392,27 +388,25 @@ describe('Chatapi plugin', () => {
 
     describe('when the contact talking with chatbot', () => {
       it('returns the response body transformed in message with destination "to_chatbot"', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
+        await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            licensee,
+          })
+        )
 
         const responseBody = {
           messages: [
             {
-              id: 'false_5593165392832@c.us_3EB066E484BABD9F3C69',
+              id: 'false_5511990283745@c.us_3EB066E484BABD9F3C69',
               body: 'Message to send',
               fromMe: false,
               self: 1,
               isForwarded: 0,
-              author: '5593165392832@c.us',
+              author: '5511990283745@c.us',
               time: 1616708028,
-              chatId: '5593165392832@c.us',
+              chatId: '5511990283745@c.us',
               messageNumber: 111,
               type: 'chat',
               senderName: 'John Doe',
@@ -438,19 +432,17 @@ describe('Chatapi plugin', () => {
 
     describe('when the message is from me', () => {
       it('returns the response body transformed in message ignoring the message from me', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
         const responseBody = {
           messages: [
             {
-              id: 'false_5593165392832@c.us_3EB066E484BABD9F3C69',
+              id: 'false_5511990283745@c.us_3EB066E484BABD9F3C69',
               body: 'Message to send',
               fromMe: true,
               self: 1,
               isForwarded: 0,
-              author: '5593165392832@c.us',
+              author: '5511990283745@c.us',
               time: 1616708028,
-              chatId: '5593165392832@c.us',
+              chatId: '5511990283745@c.us',
               messageNumber: 111,
               type: 'chat',
               senderName: 'John Doe',
@@ -472,8 +464,6 @@ describe('Chatapi plugin', () => {
     })
 
     it('return the empty data if body is blank', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const responseBody = {}
 
       const chatapi = new Chatapi(licensee)
@@ -483,8 +473,6 @@ describe('Chatapi plugin', () => {
     })
 
     it('return the empty data if body does not have messages', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const responseBody = {
         instanceId: '244959',
       }
@@ -499,29 +487,27 @@ describe('Chatapi plugin', () => {
   describe('#sendMessage', () => {
     describe('when the message was sent', () => {
       it('marks the message with was sent', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            email: 'john@doe.com',
+            licensee,
+          })
+        )
 
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          email: 'john@doe.com',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-messenger',
-          sended: false,
-        })
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
 
         const expectedBodyReadChat = {
-          chatId: '5593165392832@c.us',
+          chatId: '5511990283745@c.us',
         }
 
         fetchMock.postOnce(
@@ -535,7 +521,7 @@ describe('Chatapi plugin', () => {
         )
 
         const expectedBodySendMessage = {
-          chatId: '5593165392832@c.us',
+          chatId: '5511990283745@c.us',
           body: 'Message to send',
         }
 
@@ -550,7 +536,7 @@ describe('Chatapi plugin', () => {
             status: 200,
             body: {
               sent: true,
-              message: 'Sent to 5593165392832@c.us',
+              message: 'Sent to 5511990283745@c.us',
               id: 'true_5511989187726@c.us_3EB031DE2C36C5598621',
               queueNumber: 4,
             },
@@ -571,63 +557,39 @@ describe('Chatapi plugin', () => {
       })
 
       it('logs the success message', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          email: 'john@doe.com',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-messenger',
-          sended: false,
-        })
-
-        const expectedBodyReadChat = {
-          chatId: '5593165392832@c.us',
-        }
-
-        fetchMock.postOnce(
-          (url, { body }) => {
-            return (
-              url === 'https://eu199.chat-api.com/instance103871/readChat?token=etj4w2rcujdmaq34' &&
-              body === JSON.stringify(expectedBodyReadChat)
-            )
-          },
-          { status: 200, body: { read: true, message: null, chatId: 'true_5511989187726@c.us_3EB031DE2C36C5598621' } }
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            email: 'john@doe.com',
+            licensee,
+          })
         )
 
-        const expectedBodySendMessage = {
-          chatId: '5593165392832@c.us',
-          body: 'Message to send',
-        }
-
-        fetchMock.postOnce(
-          (url, { body }) => {
-            return (
-              url === 'https://eu199.chat-api.com/instance103871/sendMessage?token=etj4w2rcujdmaq34' &&
-              body === JSON.stringify(expectedBodySendMessage)
-            )
-          },
-          {
-            status: 200,
-            body: {
-              sent: true,
-              message: 'Sent to 5593165392832@c.us',
-              id: 'true_5511989187726@c.us_3EB031DE2C36C5598621',
-              queueNumber: 4,
-            },
-          }
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
         )
+
+        fetchMock.postOnce('https://eu199.chat-api.com/instance103871/readChat?token=etj4w2rcujdmaq34', {
+          status: 200,
+          body: { read: true, message: null, chatId: 'true_5511989187726@c.us_3EB031DE2C36C5598621' },
+        })
+
+        fetchMock.postOnce('https://eu199.chat-api.com/instance103871/sendMessage?token=etj4w2rcujdmaq34', {
+          status: 200,
+          body: {
+            sent: true,
+            message: 'Sent to 5511990283745@c.us',
+            id: 'true_5511989187726@c.us_3EB031DE2C36C5598621',
+            queueNumber: 4,
+          },
+        })
 
         expect(message.sended).toEqual(false)
 
@@ -639,52 +601,41 @@ describe('Chatapi plugin', () => {
         expect(fetchMock.calls()).toHaveLength(2)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 enviada para Chatapi com sucesso! Sent to 5593165392832@c.us'
+          'Mensagem 60958703f415ed4008748637 enviada para Chatapi com sucesso! Sent to 5511990283745@c.us'
         )
       })
 
       describe('when the message is file', () => {
         it('marks the message with sended and log the success message', async () => {
-          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-          const contact = await Contact.create({
-            name: 'John Doe',
-            number: '5593165392832',
-            type: '@c.us',
-            email: 'john@doe.com',
-            talkingWithChatBot: true,
-            licensee: licensee,
-          })
-
-          const message = await Message.create({
-            _id: '60958703f415ed4008748637',
-            number: 'jhd7879a7d9',
-            contact: contact,
-            licensee: licensee,
-            destination: 'to-messenger',
-            text: 'Message to send',
-            kind: 'file',
-            url: 'https://octodex.github.com/images/dojocat.jpg',
-            fileName: 'dojocat.jpg',
-            sended: false,
-          })
-
-          const expectedBodyReadChat = {
-            chatId: '5593165392832@c.us',
-          }
-
-          fetchMock.postOnce(
-            (url, { body }) => {
-              return (
-                url === 'https://eu199.chat-api.com/instance103871/readChat?token=etj4w2rcujdmaq34' &&
-                body === JSON.stringify(expectedBodyReadChat)
-              )
-            },
-            { status: 200, body: { read: true, message: null, chatId: 'true_5511989187726@c.us_3EB031DE2C36C5598621' } }
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              talkingWithChatBot: true,
+              email: 'john@doe.com',
+              licensee,
+            })
           )
 
+          const message = await Message.create(
+            messageFactory.build({
+              _id: '60958703f415ed4008748637',
+              text: 'Message to send',
+              kind: 'file',
+              url: 'https://octodex.github.com/images/dojocat.jpg',
+              fileName: 'dojocat.jpg',
+              contact,
+              licensee,
+              sended: false,
+            })
+          )
+
+          fetchMock.postOnce('https://eu199.chat-api.com/instance103871/readChat?token=etj4w2rcujdmaq34', {
+            status: 200,
+            body: { read: true, message: null, chatId: 'true_5511989187726@c.us_3EB031DE2C36C5598621' },
+          })
+
           const expectedBodySendMessage = {
-            chatId: '5593165392832@c.us',
+            chatId: '5511990283745@c.us',
             body: 'https://octodex.github.com/images/dojocat.jpg',
             filename: 'dojocat.jpg',
             caption: 'Message to send',
@@ -701,7 +652,7 @@ describe('Chatapi plugin', () => {
               status: 200,
               body: {
                 sent: true,
-                message: 'Sent to 5593165392832@c.us',
+                message: 'Sent to 5511990283745@c.us',
                 id: 'true_5511989187726@c.us_3EB031DE2C36C5598621',
                 queueNumber: 4,
               },
@@ -721,7 +672,7 @@ describe('Chatapi plugin', () => {
           expect(messageUpdated.sended).toEqual(true)
 
           expect(consoleInfoSpy).toHaveBeenCalledWith(
-            'Mensagem 60958703f415ed4008748637 enviada para Chatapi com sucesso! Sent to 5593165392832@c.us'
+            'Mensagem 60958703f415ed4008748637 enviada para Chatapi com sucesso! Sent to 5511990283745@c.us'
           )
         })
       })
@@ -729,40 +680,29 @@ describe('Chatapi plugin', () => {
 
     describe('when can not read the chat messages', () => {
       it('logs the error message', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          email: 'john@doe.com',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-messenger',
-          sended: false,
-        })
-
-        const expectedBodyReadChat = {
-          chatId: '5593165392832@c.us',
-        }
-
-        fetchMock.postOnce(
-          (url, { body }) => {
-            return (
-              url === 'https://eu199.chat-api.com/instance103871/readChat?token=etj4w2rcujdmaq34' &&
-              body === JSON.stringify(expectedBodyReadChat)
-            )
-          },
-          { status: 200, body: { read: false, message: null, chatId: 'true_5511989187726@c.us_3EB031DE2C36C5598621' } }
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            email: 'john@doe.com',
+            licensee,
+          })
         )
+
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
+
+        fetchMock.postOnce('https://eu199.chat-api.com/instance103871/readChat?token=etj4w2rcujdmaq34', {
+          status: 200,
+          body: { read: false, message: null, chatId: 'true_5511989187726@c.us_3EB031DE2C36C5598621' },
+        })
 
         expect(message.sended).toEqual(false)
 
@@ -781,43 +721,32 @@ describe('Chatapi plugin', () => {
 
     describe('when can not send the message', () => {
       it('logs the error message', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          email: 'john@doe.com',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-messenger',
-          sended: false,
-        })
-
-        const expectedBodyReadChat = {
-          chatId: '5593165392832@c.us',
-        }
-
-        fetchMock.postOnce(
-          (url, { body }) => {
-            return (
-              url === 'https://eu199.chat-api.com/instance103871/readChat?token=etj4w2rcujdmaq34' &&
-              body === JSON.stringify(expectedBodyReadChat)
-            )
-          },
-          { status: 200, body: { read: true, message: null, chatId: 'true_5511989187726@c.us_3EB031DE2C36C5598621' } }
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            email: 'john@doe.com',
+            licensee,
+          })
         )
 
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
+
+        fetchMock.postOnce('https://eu199.chat-api.com/instance103871/readChat?token=etj4w2rcujdmaq34', {
+          status: 200,
+          body: { read: true, message: null, chatId: 'true_5511989187726@c.us_3EB031DE2C36C5598621' },
+        })
+
         const expectedBodySendMessage = {
-          chatId: '5593165392832@c.us',
+          chatId: '5511990283745@c.us',
           body: 'Message to send',
         }
 
@@ -833,7 +762,7 @@ describe('Chatapi plugin', () => {
             body: {
               sent: false,
               message:
-                'Wrong chatId format. Please use phone parameter or chatId from message history. chatId has format 5593165392832@c.us or 5593165392832-5593165392832@g.us',
+                'Wrong chatId format. Please use phone parameter or chatId from message history. chatId has format 5511990283745@c.us or 5511990283745-5511990283745@g.us',
             },
           }
         )
@@ -850,54 +779,43 @@ describe('Chatapi plugin', () => {
         const messageUpdated = await Message.findById(message._id)
         expect(messageUpdated.sended).toEqual(false)
         expect(messageUpdated.error).toEqual(
-          '{"sent":false,"message":"Wrong chatId format. Please use phone parameter or chatId from message history. chatId has format 5593165392832@c.us or 5593165392832-5593165392832@g.us"}'
+          '{"sent":false,"message":"Wrong chatId format. Please use phone parameter or chatId from message history. chatId has format 5511990283745@c.us or 5511990283745-5511990283745@g.us"}'
         )
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 não enviada para Chatapi. {"sent":false,"message":"Wrong chatId format. Please use phone parameter or chatId from message history. chatId has format 5593165392832@c.us or 5593165392832-5593165392832@g.us"}'
+          'Mensagem 60958703f415ed4008748637 não enviada para Chatapi. {"sent":false,"message":"Wrong chatId format. Please use phone parameter or chatId from message history. chatId has format 5511990283745@c.us or 5511990283745-5511990283745@g.us"}'
         )
       })
     })
 
     describe('when the message is scheduled by chatapi', () => {
       it('logs the success message', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          email: 'john@doe.com',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-messenger',
-          sended: false,
-        })
-
-        const expectedBodyReadChat = {
-          chatId: '5593165392832@c.us',
-        }
-
-        fetchMock.postOnce(
-          (url, { body }) => {
-            return (
-              url === 'https://eu199.chat-api.com/instance103871/readChat?token=etj4w2rcujdmaq34' &&
-              body === JSON.stringify(expectedBodyReadChat)
-            )
-          },
-          { status: 200, body: { read: true, message: null, chatId: 'true_5511989187726@c.us_3EB031DE2C36C5598621' } }
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            email: 'john@doe.com',
+            licensee,
+          })
         )
 
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
+
+        fetchMock.postOnce('https://eu199.chat-api.com/instance103871/readChat?token=etj4w2rcujdmaq34', {
+          status: 200,
+          body: { read: true, message: null, chatId: 'true_5511989187726@c.us_3EB031DE2C36C5598621' },
+        })
+
         const expectedBodySendMessage = {
-          chatId: '5593165392832@c.us',
+          chatId: '5511990283745@c.us',
           body: 'Message to send',
         }
 
@@ -913,7 +831,7 @@ describe('Chatapi plugin', () => {
             body: {
               sent: true,
               message:
-                'Status of the account not equals authenticated. Message to  5593165392832@c.us will be sent after successful auth.',
+                'Status of the account not equals authenticated. Message to  5511990283745@c.us will be sent after successful auth.',
               id: 'true_5511989187726@c.us_3EB031DE2C36C5598621',
               queueNumber: 4,
             },
@@ -930,7 +848,7 @@ describe('Chatapi plugin', () => {
         expect(fetchMock.calls()).toHaveLength(2)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 enviada para Chatapi com sucesso! Status of the account not equals authenticated. Message to  5593165392832@c.us will be sent after successful auth.'
+          'Mensagem 60958703f415ed4008748637 enviada para Chatapi com sucesso! Status of the account not equals authenticated. Message to  5511990283745@c.us will be sent after successful auth.'
         )
       })
     })
@@ -971,15 +889,13 @@ describe('Chatapi plugin', () => {
   })
 
   describe('.action', () => {
-    it('returns send-message-to-chat if message destination is to chat', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+    it('returns send-message-to-chat if message destination is to chat', () => {
       const chatapi = new Chatapi(licensee)
 
       expect(chatapi.action('to-chat')).toEqual('send-message-to-chat')
     })
 
-    it('returns send-message-to-chatbot if message destination is to chatbot', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+    it('returns send-message-to-chatbot if message destination is to chatbot', () => {
       const chatapi = new Chatapi(licensee)
 
       expect(chatapi.action('to-chatbot')).toEqual('send-message-to-chatbot')

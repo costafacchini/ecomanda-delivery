@@ -4,6 +4,9 @@ const Contact = require('@models/Contact')
 const Message = require('@models/Message')
 const MessagesSendedYesterday = require('./MessagesSendedYesterday')
 const moment = require('moment')
+const { licensee: licenseeFactory } = require('@factories/licensee')
+const { contact: contactFactory } = require('@factories/contact')
+const { message: messageFactory } = require('@factories/message')
 
 describe('MessagesSendedYesterday', () => {
   beforeEach(async () => {
@@ -15,109 +18,91 @@ describe('MessagesSendedYesterday', () => {
   })
 
   it('returns the resume os messages sended yesterday', async () => {
-    const licensee1 = await Licensee.create({ name: 'Alcateia', licenseKind: 'paid' })
-    const contact1 = await Contact.create({
-      number: '551190283745',
-      talkingWithChatBot: false,
-      licensee: licensee1._id,
-    })
-    const messageOfYesterday1 = await Message.create({
-      text: 'Message 1',
-      number: contact1.number,
-      contact: contact1._id,
-      licensee: licensee1._id,
-      destination: 'to-chat',
-      sended: true,
-      createdAt: moment().subtract(1, 'days'),
-    })
-    const messageOfYesterday2 = await Message.create({
-      text: 'Message 2',
-      number: contact1.number,
-      contact: contact1._id,
-      licensee: licensee1._id,
-      destination: 'to-chat',
-      sended: true,
-      createdAt: moment().subtract(1, 'days'),
-    })
-    const messageOfYesterday3 = await Message.create({
-      text: 'Not sended',
-      number: contact1.number,
-      contact: contact1._id,
-      licensee: licensee1._id,
-      destination: 'to-chat',
-      sended: false,
-      createdAt: moment().subtract(1, 'days'),
-    })
-    const messageOfTwoDays1 = await Message.create({
-      text: 'Message 3',
-      number: contact1.number,
-      contact: contact1._id,
-      licensee: licensee1._id,
-      destination: 'to-chat',
-      sended: true,
-      createdAt: moment().subtract(2, 'days'),
-    })
-    const messageOfToday1 = await Message.create({
-      text: 'Message 4',
-      number: contact1.number,
-      contact: contact1._id,
-      licensee: licensee1._id,
-      destination: 'to-chat',
-      sended: true,
-      createdAt: moment(),
-    })
+    const licensee1 = await Licensee.create(licenseeFactory.build({ name: 'Alcateia', licenseKind: 'paid' }))
+    const contact1 = await Contact.create(contactFactory.build({ licensee: licensee1 }))
+    const messageOfYesterday1 = await Message.create(
+      messageFactory.build({
+        contact: contact1,
+        licensee: licensee1,
+        sended: true,
+        createdAt: moment().subtract(1, 'days'),
+      })
+    )
+    const messageOfYesterday2 = await Message.create(
+      messageFactory.build({
+        contact: contact1,
+        licensee: licensee1,
+        sended: true,
+        createdAt: moment().subtract(1, 'days'),
+      })
+    )
+    const messageOfYesterday3 = await Message.create(
+      messageFactory.build({
+        contact: contact1,
+        licensee: licensee1,
+        sended: false,
+        createdAt: moment().subtract(1, 'days'),
+      })
+    )
+    const messageOfTwoDays1 = await Message.create(
+      messageFactory.build({
+        contact: contact1,
+        licensee: licensee1,
+        sended: true,
+        createdAt: moment().subtract(2, 'days'),
+      })
+    )
+    const messageOfToday1 = await Message.create(
+      messageFactory.build({
+        contact: contact1,
+        licensee: licensee1,
+        sended: true,
+        createdAt: moment(),
+      })
+    )
 
-    const licensee2 = await Licensee.create({ name: 'Alcateia II', licenseKind: 'paid' })
-    const contact2 = await Contact.create({
-      number: '551190283745',
-      talkingWithChatBot: false,
-      licensee: licensee2._id,
-    })
-    const messageOfYesterday4 = await Message.create({
-      text: 'Message 1',
-      number: contact2.number,
-      contact: contact2._id,
-      licensee: licensee2._id,
-      destination: 'to-chat',
-      sended: true,
-      createdAt: moment().subtract(1, 'days'),
-    })
-    const messageOfYesterday5 = await Message.create({
-      text: 'Message 2',
-      number: contact2.number,
-      contact: contact2._id,
-      licensee: licensee2._id,
-      destination: 'to-chat',
-      sended: true,
-      createdAt: moment().subtract(1, 'days'),
-    })
-    const messageOfYesterday6 = await Message.create({
-      text: 'Not sended 2',
-      number: contact2.number,
-      contact: contact2._id,
-      licensee: licensee2._id,
-      destination: 'to-chat',
-      sended: false,
-      createdAt: moment().subtract(1, 'days'),
-    })
-    const messageOfTwoDays2 = await Message.create({
-      text: 'Message 3',
-      number: contact2.number,
-      contact: contact2._id,
-      licensee: licensee2._id,
-      destination: 'to-chat',
-      sended: true,
-      createdAt: moment().subtract(2, 'days'),
-    })
-    const messageOfToday2 = await Message.create({
-      text: 'Message 4',
-      number: contact2.number,
-      contact: contact2._id,
-      licensee: licensee2._id,
-      destination: 'to-chat',
-      sended: true,
-      createdAt: moment(),
-    })
+    const licensee2 = await Licensee.create(licenseeFactory.build({ name: 'Alcateia II', licenseKind: 'paid' }))
+    const contact2 = await Contact.create(contactFactory.build({ licensee: licensee2 }))
+    const messageOfYesterday4 = await Message.create(
+      messageFactory.build({
+        contact: contact2,
+        licensee: licensee2,
+        sended: true,
+        createdAt: moment().subtract(1, 'days'),
+      })
+    )
+    const messageOfYesterday5 = await Message.create(
+      messageFactory.build({
+        contact: contact2,
+        licensee: licensee2,
+        sended: true,
+        createdAt: moment().subtract(1, 'days'),
+      })
+    )
+    const messageOfYesterday6 = await Message.create(
+      messageFactory.build({
+        contact: contact2,
+        licensee: licensee2,
+        sended: false,
+        createdAt: moment().subtract(1, 'days'),
+      })
+    )
+    const messageOfTwoDays2 = await Message.create(
+      messageFactory.build({
+        contact: contact2,
+        licensee: licensee2,
+        sended: true,
+        createdAt: moment().subtract(2, 'days'),
+      })
+    )
+    const messageOfToday2 = await Message.create(
+      messageFactory.build({
+        contact: contact2,
+        licensee: licensee2,
+        sended: true,
+        createdAt: moment(),
+      })
+    )
 
     const messagesSendedYesterday = new MessagesSendedYesterday()
     const records = await messagesSendedYesterday.report()

@@ -3,6 +3,7 @@ const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
 const queueServer = require('@config/queue')
+const { licensee: licenseeFactory } = require('@factories/licensee')
 
 describe('importations controller', () => {
   let apiToken
@@ -14,11 +15,7 @@ describe('importations controller', () => {
     jest.clearAllMocks()
     await mongoServer.connect()
 
-    licensee = await Licensee.create({
-      name: 'Alcateia Ltds',
-      active: true,
-      licenseKind: 'demo',
-    })
+    licensee = await Licensee.create(licenseeFactory.build())
     apiToken = licensee.apiToken
   })
 
