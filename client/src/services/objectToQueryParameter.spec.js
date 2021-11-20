@@ -14,8 +14,8 @@ describe('#objectToQueryParameter', () => {
 
   describe('when some data is a Date', () => {
     it('fills the value of the parameter as a string in iso8601 format', () => {
-      expect(parseUrl('resource/test', { birthdate: new Date(2002, 6, 18) })).toBe('resource/test?birthdate=2002-07-18T03:00:00.000Z')
-      expect(parseUrl('resource/test', { birthdate: new Date(2002, 6, 18).toISOString() })).toBe('resource/test?birthdate=2002-07-18T03:00:00.000Z')
+      expect(parseUrl('resource/test', { birthdate: new Date(2002, 6, 18) })).toBe('resource/test?birthdate=2002-07-18T00:00:00.000Z')
+      expect(parseUrl('resource/test', { birthdate: new Date(2002, 6, 18).toISOString() })).toBe('resource/test?birthdate=2002-07-18T00:00:00.000Z')
     })
   })
 
