@@ -243,7 +243,7 @@ describe('contact controller', () => {
             expect(response.body.number).toEqual('5511990283745')
             expect(response.body.type).toEqual('@c.us')
             expect(response.body.talkingWithChatBot).toEqual(false)
-            expect(response.body.licensee).toEqual(licensee._id.toString())
+            expect(response.body.licensee._id.toString()).toEqual(licensee._id.toString())
             expect(response.body.waId).toEqual('12345')
             expect(response.body.landbotId).toEqual('56477')
             expect(response.body._id).toEqual(contact._id.toString())
