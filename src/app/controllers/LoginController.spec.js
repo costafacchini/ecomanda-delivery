@@ -3,11 +3,12 @@ const jwt = require('jsonwebtoken')
 const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
+const { userSuper: userSuperFactory } = require('@factories/user')
 
 describe('login controller', () => {
   beforeAll(async () => {
     await mongoServer.connect()
-    await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678' })
+    await User.create(userSuperFactory.build())
   })
 
   afterAll(async () => {
@@ -70,7 +71,7 @@ describe('login controller', () => {
       })
 
       it('returns status 401 and message if is not active', async () => {
-        await User.create({ name: 'John Doe', email: 'mary@doe.com', password: '12345678', active: false })
+        await User.create(userSuperFactory.build({ email: 'mary@doe.com', active: false }))
 
         await request(expressServer)
           .post('/login')

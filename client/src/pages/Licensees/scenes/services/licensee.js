@@ -1,5 +1,6 @@
 import { getToken } from '../../../../services/auth'
 import api from '../../../../services/api'
+import parseUrl from '../../../../services/objectToQueryParameter'
 
 const token = getToken()
 const headers = { 'x-access-token': `${token}` }
@@ -8,8 +9,9 @@ function createLicensee(values) {
   return api().post('resources/licensees/', { body: values, headers })
 }
 
-function getLicensees() {
-  return api().get('resources/licensees/', { headers })
+function getLicensees(queryParams) {
+  const url = parseUrl('resources/licensees/', queryParams)
+  return api().get(url, { headers })
 }
 
 function getLicensee(id) {

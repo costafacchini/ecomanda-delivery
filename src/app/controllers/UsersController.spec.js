@@ -1,18 +1,17 @@
 const User = require('@models/User')
+const Licensee = require('@models/Licensee')
 const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
+const { userSuper: userSuperFactory, user: userFactory } = require('@factories/user')
+const { licensee: licenseeFactory } = require('@factories/licensee')
 
 describe('user controller', () => {
   let token
 
   beforeAll(async () => {
     await mongoServer.connect()
-    await User.create({
-      name: 'John Doe',
-      email: 'john@doe.com',
-      password: '12345678',
-    })
+    await User.create(userSuperFactory.build())
 
     await request(expressServer)
       .post('/login')
@@ -30,7 +29,7 @@ describe('user controller', () => {
     it('returns status 401 and message if x-access-token in not inform in header', async () => {
       await request(expressServer)
         .post('/resources/users/')
-        .send({ name: 'Mary Jane', email: 'mary@jane.com', password: '12345678', active: true })
+        .send(userSuperFactory.build({ name: 'Mary Jane', email: 'mary@jane.com' }))
         .expect('Content-Type', /json/)
         .expect(401, {
           auth: false,
@@ -38,11 +37,11 @@ describe('user controller', () => {
         })
     })
 
-    it('returns status 500 and message if x-access-token in not inform in header', async () => {
+    it('returns status 500 and message if x-access-token is invalid', async () => {
       await request(expressServer)
         .post('/resources/users/')
-        .set('x-access-token', 'dasadasdasd')
-        .send({ name: 'Mary Jane', email: 'mary@jane.com', password: '12345678', active: true })
+        .set('x-access-token', 'invalid')
+        .send(userSuperFactory.build({ name: 'Mary Jane', email: 'mary@jane.com' }))
         .expect('Content-Type', /json/)
         .expect(500, {
           auth: false,
@@ -54,28 +53,32 @@ describe('user controller', () => {
   describe('create', () => {
     describe('response', () => {
       it('returns status 201 and the user data if the create is successful', async () => {
+        const licensee = await Licensee.create(licenseeFactory.build())
+
         await request(expressServer)
           .post('/resources/users/')
           .set('x-access-token', token)
-          .send({ name: 'Mary Jane', email: 'mary@jane.com', password: '12345678', active: true })
+          .send(userFactory.build({ name: 'Mary Jane', email: 'mary@jane.com', isAdmin: true, licensee }))
           .expect('Content-Type', /json/)
           .expect(201)
           .then((response) => {
             expect(response.body.email).toEqual('mary@jane.com')
             expect(response.body.name).toEqual('Mary Jane')
             expect(response.body.active).toEqual(true)
+            expect(response.body.isAdmin).toEqual(true)
+            expect(response.body.licensee._id.toString()).toEqual(licensee._id.toString())
             expect(response.body._id).toBeDefined()
-            expect(response.body._id).not.toBe('')
-            expect(response.body._id).not.toBe(null)
             expect(response.body.password).not.toBeDefined()
           })
       })
 
       it('returns status 422 and message if the user is not valid', async () => {
+        const licensee = await Licensee.create(licenseeFactory.build())
+
         await request(expressServer)
           .post('/resources/users/')
           .set('x-access-token', token)
-          .send({ name: 'Sil', email: 'silfer@tape.com', password: '123456' })
+          .send(userFactory.build({ name: 'Sil', email: 'silfer@tape.com', password: '123456', licensee }))
           .expect('Content-Type', /json/)
           .expect(422, {
             errors: [
@@ -86,6 +89,8 @@ describe('user controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurred when create the user', async () => {
+        const licensee = await Licensee.create(licenseeFactory.build())
+
         const mockFunction = jest.spyOn(User.prototype, 'save').mockImplementation(() => {
           throw new Error('some error')
         })
@@ -93,7 +98,7 @@ describe('user controller', () => {
         await request(expressServer)
           .post('/resources/users/')
           .set('x-access-token', token)
-          .send({ name: 'Silfer', email: 'silfer@tape.com', password: '12345678' })
+          .send({ name: 'Silfer', email: 'silfer@tape.com', password: '12345678', licensee })
           .expect('Content-Type', /json/)
           .expect(500, {
             errors: { message: 'Error: some error' },
@@ -120,12 +125,7 @@ describe('user controller', () => {
   describe('update', () => {
     describe('response', () => {
       it('returns status 200 and the user data if the update is successful', async () => {
-        const user = await User.create({
-          name: 'John Wick',
-          email: 'john@wick.com',
-          password: '12345678',
-          active: true,
-        })
+        const user = await User.findOne({ email: 'john@doe.com' })
 
         await request(expressServer)
           .post(`/resources/users/${user._id}`)
@@ -197,12 +197,15 @@ describe('user controller', () => {
   describe('show', () => {
     describe('response', () => {
       it('returns status 200 and message if user exists', async () => {
-        const user = await User.create({
-          name: 'Jonny Walker',
-          email: 'jonny@walker.com',
-          password: '12345678',
-          active: true,
-        })
+        const licensee = await Licensee.create(licenseeFactory.build())
+
+        const user = await User.create(
+          userFactory.build({
+            name: 'Jonny Walker',
+            email: 'jonny@walker.com',
+            licensee,
+          })
+        )
 
         await request(expressServer)
           .get(`/resources/users/${user._id}`)
@@ -212,11 +215,10 @@ describe('user controller', () => {
           .then((response) => {
             expect(response.body.email).toEqual('jonny@walker.com')
             expect(response.body.name).toEqual('Jonny Walker')
+            expect(response.body.isAdmin).toEqual(false)
+            expect(response.body.isSuper).toEqual(false)
             expect(response.body.active).toEqual(true)
             expect(response.body._id).toMatch(user._id.toString())
-            expect(response.body._id).toBeDefined()
-            expect(response.body._id).not.toBe('')
-            expect(response.body._id).not.toBe(null)
             expect(response.body.password).not.toBeDefined()
           })
       })
@@ -230,7 +232,8 @@ describe('user controller', () => {
           .then((response) => {
             expect(response.body.name).toEqual('Silfer')
             expect(response.body.email).toEqual('john@doe.com')
-            expect(response.body.active).toEqual(true)
+            expect(response.body.isAdmin).toEqual(false)
+            expect(response.body.active).toEqual(false)
             expect(response.body._id).toBeDefined()
             expect(response.body.password).not.toBeDefined()
           })
@@ -274,13 +277,13 @@ describe('user controller', () => {
           .expect(200)
           .then((response) => {
             expect(Array.isArray(response.body)).toEqual(true)
-            expect(response.body.length).toEqual(4)
-            expect(response.body[3].name).toEqual('Jonny Walker')
-            expect(response.body[3].email).toEqual('jonny@walker.com')
-            expect(response.body[3].active).toEqual(true)
-            expect(response.body[3]._id).toBeDefined()
-            expect(response.body[3]._id).toBeDefined()
-            expect(response.body[3].password).not.toBeDefined()
+            expect(response.body.length).toEqual(3)
+            expect(response.body[2].name).toEqual('Jonny Walker')
+            expect(response.body[2].email).toEqual('jonny@walker.com')
+            expect(response.body[2].active).toEqual(true)
+            expect(response.body[2]._id).toBeDefined()
+            expect(response.body[2]._id).toBeDefined()
+            expect(response.body[2].password).not.toBeDefined()
           })
       })
 

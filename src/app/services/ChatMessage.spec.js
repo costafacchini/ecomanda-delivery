@@ -3,11 +3,25 @@ const Licensee = require('@models/Licensee')
 const Body = require('@models/Body')
 const Jivochat = require('../plugins/chats/Jivochat')
 const mongoServer = require('.jest/utils')
+const { licensee: licenseeFactory } = require('@factories/licensee')
+const { body: bodyFactory } = require('@factories/body')
 
 describe('transformChatBody', () => {
+  let licensee
+
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
+
+    licensee = await Licensee.create(
+      licenseeFactory.build({
+        chatDefault: 'jivochat',
+        chatUrl: 'https://www.jivo.chat.com',
+        whatsappDefault: 'chatapi',
+        whatsappUrl: 'https://chat.url',
+        whatsappToken: 'token',
+      })
+    )
   })
 
   afterEach(async () => {
@@ -19,24 +33,11 @@ describe('transformChatBody', () => {
       return [{ _id: 'KSDF656DSD91NSE' }, { _id: 'OAR8Q54LDN02T' }]
     })
 
-    const licensee = await Licensee.create({
-      licenseKind: 'demo',
-      name: 'Alcatéia',
-      chatDefault: 'jivochat',
-      chatUrl: 'https://www.jivo.chat.com',
-      whatsappDefault: 'chatapi',
-      whatsappUrl: 'https://chat.url',
-      whatsappToken: 'token',
-    })
-
-    const body = await Body.create({
-      content: {
-        message: {
-          type: 'message',
-        },
-      },
-      licensee: licensee._id,
-    })
+    const body = await Body.create(
+      bodyFactory.build({
+        licensee: licensee,
+      })
+    )
 
     const data = {
       bodyId: body._id,
@@ -63,24 +64,16 @@ describe('transformChatBody', () => {
       return []
     })
 
-    const licensee = await Licensee.create({
-      licenseKind: 'demo',
-      name: 'Alcatéia',
-      chatDefault: 'jivochat',
-      chatUrl: 'https://www.jivo.chat.com',
-      whatsappDefault: 'chatapi',
-      whatsappUrl: 'https://chat.url',
-      whatsappToken: 'token',
-    })
-
-    const body = await Body.create({
-      content: {
-        message: {
-          type: 'typein',
+    const body = await Body.create(
+      bodyFactory.build({
+        content: {
+          message: {
+            type: 'typein',
+          },
         },
-      },
-      licensee: licensee._id,
-    })
+        licensee: licensee,
+      })
+    )
 
     const data = {
       bodyId: body._id,

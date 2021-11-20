@@ -3,6 +3,8 @@ const User = require('@models/User')
 const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
+const { licenseeComplete: licenseeCompleteFactory, licensee: licenseeFactory } = require('@factories/licensee')
+const { userSuper: userSuperFactory } = require('@factories/user')
 
 describe('licensee controller', () => {
   let token
@@ -10,11 +12,7 @@ describe('licensee controller', () => {
   beforeAll(async () => {
     await mongoServer.connect()
 
-    await User.create({
-      name: 'John Doe',
-      email: 'john@doe.com',
-      password: '12345678',
-    })
+    await User.create(userSuperFactory.build())
 
     await request(expressServer)
       .post('/login')
@@ -32,24 +30,7 @@ describe('licensee controller', () => {
     it('returns status 401 and message if x-access-token in not inform in header', async () => {
       await request(expressServer)
         .post('/resources/licensees/')
-        .send({
-          name: 'Alcateia Ltda',
-          email: 'alcateia@ltda.com',
-          phone: '11876509234',
-          active: true,
-          licenseKind: 'p',
-          useChatbot: true,
-          chatbotDefault: 'landbot',
-          whatsappDefault: 'chatapi',
-          chatbotUrl: 'https:/chatbot.url',
-          chatbotAuthorizationToken: 'chatbotToken',
-          whatsappToken: 'whatsToken',
-          whatsappUrl: 'https://whatsapp.url',
-          chatUrl: 'https://chat.url',
-          awsId: 'awsId',
-          awsSecret: 'awsSecret',
-          bucketName: 'bucketName',
-        })
+        .send(licenseeCompleteFactory.build())
         .expect('Content-Type', /json/)
         .expect(401, {
           auth: false,
@@ -57,11 +38,18 @@ describe('licensee controller', () => {
         })
     })
 
-    it('returns status 500 and message if x-access-token in not inform in header', async () => {
+    it('returns status 500 and message if x-access-token is invalid', async () => {
       await request(expressServer)
         .post('/resources/licensees/')
-        .set('x-access-token', 'dasadasdasd')
-        .send({ name: 'Mary Jane', email: 'mary@jane.com', password: '12345678', active: true })
+        .set('x-access-token', 'invalid')
+        .send(
+          licenseeCompleteFactory.build({
+            name: 'Mary Jane',
+            email: 'mary@jane.com',
+            password: '12345678',
+            active: true,
+          })
+        )
         .expect('Content-Type', /json/)
         .expect(500, {
           auth: false,
@@ -76,25 +64,9 @@ describe('licensee controller', () => {
         await request(expressServer)
           .post('/resources/licensees/')
           .set('x-access-token', token)
-          .send({
-            name: 'Alcateia Ltds',
-            email: 'alcateia@alcateia.com',
-            phone: '11098538273',
-            active: true,
-            licenseKind: 'demo',
-            useChatbot: true,
-            chatbotDefault: 'landbot',
-            whatsappDefault: 'winzap',
-            chatDefault: 'rocketchat',
-            chatbotUrl: 'https://chatbot.url',
-            chatbotAuthorizationToken: 'chat-bot-token',
-            whatsappToken: 'whatsapp-token',
-            whatsappUrl: 'https://whatsapp.url',
-            chatUrl: 'https://chat.url',
-            awsId: 'aws-id',
-            awsSecret: 'aws-secret',
-            bucketName: 'bocket-name',
-          })
+          .send(
+            licenseeCompleteFactory.build({ whatsappDefault: 'winzap', whatsappUrl: 'https://api.winzap.com.br/send/' })
+          )
           .expect('Content-Type', /json/)
           .expect(201)
           .then((response) => {
@@ -125,7 +97,7 @@ describe('licensee controller', () => {
         await request(expressServer)
           .post('/resources/licensees/')
           .set('x-access-token', token)
-          .send({ name: '', email: 'alcateia@alcateia.com' })
+          .send(licenseeCompleteFactory.build({ name: '', licenseKind: '' }))
           .expect('Content-Type', /json/)
           .expect(422, {
             errors: [
@@ -143,13 +115,7 @@ describe('licensee controller', () => {
         await request(expressServer)
           .post('/resources/licensees/')
           .set('x-access-token', token)
-          .send({
-            name: 'Alcateia Ltds',
-            email: 'alcateia@alcateia.com',
-            phone: '11098538273',
-            active: true,
-            licenseKind: 'demo',
-          })
+          .send(licenseeFactory.build())
           .expect('Content-Type', /json/)
           .expect(500, {
             errors: { message: 'Error: some error' },
@@ -163,13 +129,7 @@ describe('licensee controller', () => {
           await request(expressServer)
             .post('/resources/licensees/')
             .set('x-access-token', token)
-            .send({
-              name: 'Alcateia Ltds',
-              email: 'alcateiaalcateia.com',
-              phone: '11098538273',
-              active: true,
-              licenseKind: 'demo',
-            })
+            .send(licenseeFactory.build({ email: 'emailinvalid.com' }))
             .expect('Content-Type', /json/)
             .expect(422, {
               errors: [{ message: 'Email deve ser preenchido com um valor válido' }],
@@ -182,25 +142,7 @@ describe('licensee controller', () => {
   describe('update', () => {
     describe('response', () => {
       it('returns status 200 and the licensee data if the update is successful', async () => {
-        const licensee = await Licensee.create({
-          name: 'Alcateia Ltds',
-          email: 'alcateia@alcateia.com',
-          phone: '11098538273',
-          active: true,
-          licenseKind: 'demo',
-          useChatbot: true,
-          chatbotDefault: 'landbot',
-          whatsappDefault: 'winzap',
-          chatDefault: 'rocketchat',
-          chatbotUrl: 'https://chatbot.url',
-          chatbotAuthorizationToken: 'chat-bot-token',
-          whatsappToken: 'whatsapp-token',
-          whatsappUrl: 'https://whatsapp.url',
-          chatUrl: 'https://chat.url',
-          awsId: 'aws-id',
-          awsSecret: 'aws-secret',
-          bucketName: 'bocket-name',
-        })
+        const licensee = await Licensee.create(licenseeCompleteFactory.build())
 
         await request(expressServer)
           .post(`/resources/licensees/${licensee._id}`)
@@ -250,30 +192,12 @@ describe('licensee controller', () => {
       })
 
       it('returns status 422 and message if the licensee is not valid', async () => {
-        const licensee = await Licensee.create({
-          name: 'Alcateia Ltds',
-          email: 'alcateia@alcateia.com',
-          phone: '11098538273',
-          active: true,
-          licenseKind: 'demo',
-          useChatbot: true,
-          chatbotDefault: 'landbot',
-          whatsappDefault: 'winzap',
-          chatDefault: 'rocketchat',
-          chatbotUrl: 'https://chatbot.url',
-          chatbotAuthorizationToken: 'chat-bot-token',
-          whatsappToken: 'whatsapp-token',
-          whatsappUrl: 'https://whatsapp.url',
-          chatUrl: 'https://chat.url',
-          awsId: 'aws-id',
-          awsSecret: 'aws-secret',
-          bucketName: 'bocket-name',
-        })
+        const licensee = await Licensee.create(licenseeFactory.build())
 
         await request(expressServer)
           .post(`/resources/licensees/${licensee._id}`)
           .set('x-access-token', token)
-          .send({ name: '', email: 'modified@alcateia.com', licenseKind: '' })
+          .send({ name: '', licenseKind: '' })
           .expect('Content-Type', /json/)
           .expect(422, {
             errors: [
@@ -288,25 +212,7 @@ describe('licensee controller', () => {
           throw new Error('some error')
         })
 
-        const licensee = await Licensee.create({
-          name: 'Alcateia Ltds',
-          email: 'alcateia@alcateia.com',
-          phone: '11098538273',
-          active: true,
-          licenseKind: 'demo',
-          useChatbot: true,
-          chatbotDefault: 'landbot',
-          whatsappDefault: 'winzap',
-          chatDefault: 'rocketchat',
-          chatbotUrl: 'https://chatbot.url',
-          chatbotAuthorizationToken: 'chat-bot-token',
-          whatsappToken: 'whatsapp-token',
-          whatsappUrl: 'https://whatsapp.url',
-          chatUrl: 'https://chat.url',
-          awsId: 'aws-id',
-          awsSecret: 'aws-secret',
-          bucketName: 'bocket-name',
-        })
+        const licensee = await Licensee.create(licenseeFactory.build())
 
         await request(expressServer)
           .post(`/resources/licensees/${licensee._id}`)
@@ -322,25 +228,7 @@ describe('licensee controller', () => {
 
       describe('validations', () => {
         it('returns status 422 and message if the email is invalid', async () => {
-          const licensee = await Licensee.create({
-            name: 'Alcateia Ltds',
-            email: 'alcateia@alcateia.com',
-            phone: '11098538273',
-            active: true,
-            licenseKind: 'demo',
-            useChatbot: true,
-            chatbotDefault: 'landbot',
-            whatsappDefault: 'winzap',
-            chatDefault: 'rocketchat',
-            chatbotUrl: 'https://chatbot.url',
-            chatbotAuthorizationToken: 'chat-bot-token',
-            whatsappToken: 'whatsapp-token',
-            whatsappUrl: 'https://whatsapp.url',
-            chatUrl: 'https://chat.url',
-            awsId: 'aws-id',
-            awsSecret: 'aws-secret',
-            bucketName: 'bocket-name',
-          })
+          const licensee = await Licensee.create(licenseeFactory.build())
 
           await request(expressServer)
             .post(`/resources/licensees/${licensee._id}`)
@@ -358,25 +246,7 @@ describe('licensee controller', () => {
   describe('show', () => {
     describe('response', () => {
       it('returns status 200 and message if licensee exists', async () => {
-        const licensee = await Licensee.create({
-          name: 'Alcateia Ltds',
-          email: 'alcateia@alcateia.com',
-          phone: '11098538273',
-          active: true,
-          licenseKind: 'demo',
-          useChatbot: true,
-          chatbotDefault: 'landbot',
-          whatsappDefault: 'winzap',
-          chatDefault: 'rocketchat',
-          chatbotUrl: 'https://chatbot.url',
-          chatbotAuthorizationToken: 'chat-bot-token',
-          whatsappToken: 'whatsapp-token',
-          whatsappUrl: 'https://whatsapp.url',
-          chatUrl: 'https://chat.url',
-          awsId: 'aws-id',
-          awsSecret: 'aws-secret',
-          bucketName: 'bocket-name',
-        })
+        const licensee = await Licensee.create(licenseeCompleteFactory.build())
 
         await request(expressServer)
           .get(`/resources/licensees/${licensee._id}`)
@@ -391,20 +261,17 @@ describe('licensee controller', () => {
             expect(response.body.licenseKind).toEqual('demo')
             expect(response.body.useChatbot).toEqual(true)
             expect(response.body.chatbotDefault).toEqual('landbot')
-            expect(response.body.whatsappDefault).toEqual('winzap')
+            expect(response.body.whatsappDefault).toEqual('dialog')
             expect(response.body.chatDefault).toEqual('rocketchat')
             expect(response.body.chatbotUrl).toEqual('https://chatbot.url')
             expect(response.body.chatbotAuthorizationToken).toEqual('chat-bot-token')
             expect(response.body.whatsappToken).toEqual('whatsapp-token')
-            expect(response.body.whatsappUrl).toEqual('https://api.winzap.com.br/send/')
+            expect(response.body.whatsappUrl).toEqual('https://waba.360dialog.io/')
             expect(response.body.chatUrl).toEqual('https://chat.url')
             expect(response.body.awsId).toEqual('aws-id')
             expect(response.body.awsSecret).toEqual('aws-secret')
             expect(response.body.bucketName).toEqual('bocket-name')
             expect(response.body._id).toMatch(licensee._id.toString())
-            expect(response.body._id).toBeDefined()
-            expect(response.body._id).not.toBe('')
-            expect(response.body._id).not.toBe(null)
           })
       })
 
@@ -439,34 +306,70 @@ describe('licensee controller', () => {
   describe('index', () => {
     describe('response', () => {
       it('returns status 200 and message if licensee exists', async () => {
+        await Licensee.create(
+          licenseeCompleteFactory.build({
+            chatDefault: 'jivochat',
+            chatbotDefault: 'landbot',
+            whatsappDefault: 'winzap',
+            name: 'Alcalina',
+          })
+        )
+        await Licensee.create(
+          licenseeCompleteFactory.build({
+            chatDefault: 'jivochat',
+            chatbotDefault: 'landbot',
+            whatsappDefault: 'winzap',
+            name: 'Alcateia ltds',
+          })
+        )
+        await Licensee.create(
+          licenseeCompleteFactory.build({
+            chatDefault: 'jivochat',
+            chatbotDefault: 'landbot',
+            whatsappDefault: 'winzap',
+            name: 'Alcachofra',
+          })
+        )
+        await Licensee.create(
+          licenseeCompleteFactory.build({
+            active: false,
+            chatDefault: 'jivochat',
+            chatbotDefault: 'landbot',
+            whatsappDefault: 'winzap',
+            name: 'Alcachofra',
+          })
+        )
+
         await request(expressServer)
-          .get('/resources/licensees/')
+          .get(
+            '/resources/licensees/?chatDefault=jivochat&chatbotDefault=landbot&whatsappDefault=winzap&expression=Alca&page=1&limit=3&active=false'
+          )
           .set('x-access-token', token)
           .expect('Content-Type', /json/)
           .expect(200)
           .then((response) => {
             expect(Array.isArray(response.body)).toEqual(true)
-            expect(response.body.length).toEqual(6)
-            expect(response.body[5].name).toEqual('Alcateia Ltds')
-            expect(response.body[5].email).toEqual('alcateia@alcateia.com')
-            expect(response.body[5].phone).toEqual('11098538273')
-            expect(response.body[5].active).toEqual(true)
-            expect(response.body[5].licenseKind).toEqual('demo')
-            expect(response.body[5].useChatbot).toEqual(true)
-            expect(response.body[5].chatbotDefault).toEqual('landbot')
-            expect(response.body[5].whatsappDefault).toEqual('winzap')
-            expect(response.body[5].chatDefault).toEqual('rocketchat')
-            expect(response.body[5].chatbotUrl).toEqual('https://chatbot.url')
-            expect(response.body[5].chatbotAuthorizationToken).toEqual('chat-bot-token')
-            expect(response.body[5].whatsappToken).toEqual('whatsapp-token')
-            expect(response.body[5].whatsappUrl).toEqual('https://api.winzap.com.br/send/')
-            expect(response.body[5].chatUrl).toEqual('https://chat.url')
-            expect(response.body[5].awsId).toEqual('aws-id')
-            expect(response.body[5].awsSecret).toEqual('aws-secret')
-            expect(response.body[5].bucketName).toEqual('bocket-name')
-            expect(response.body[5]._id).toBeDefined()
-            expect(response.body[5]._id).not.toBe('')
-            expect(response.body[5]._id).not.toBe(null)
+            expect(response.body.length).toEqual(3)
+            expect(response.body[1].name).toEqual('Alcateia ltds')
+            expect(response.body[1].email).toEqual('alcateia@alcateia.com')
+            expect(response.body[1].phone).toEqual('11098538273')
+            expect(response.body[1].active).toEqual(true)
+            expect(response.body[1].licenseKind).toEqual('demo')
+            expect(response.body[1].useChatbot).toEqual(true)
+            expect(response.body[1].chatbotDefault).toEqual('landbot')
+            expect(response.body[1].whatsappDefault).toEqual('winzap')
+            expect(response.body[1].chatDefault).toEqual('jivochat')
+            expect(response.body[1].chatbotUrl).toEqual('https://chatbot.url')
+            expect(response.body[1].chatbotAuthorizationToken).toEqual('chat-bot-token')
+            expect(response.body[1].whatsappToken).toEqual('whatsapp-token')
+            expect(response.body[1].whatsappUrl).toEqual('https://api.winzap.com.br/send/')
+            expect(response.body[1].chatUrl).toEqual('https://chat.url')
+            expect(response.body[1].awsId).toEqual('aws-id')
+            expect(response.body[1].awsSecret).toEqual('aws-secret')
+            expect(response.body[1].bucketName).toEqual('bocket-name')
+            expect(response.body[1]._id).toBeDefined()
+            expect(response.body[1]._id).not.toBe('')
+            expect(response.body[1]._id).not.toBe(null)
           })
       })
 
@@ -491,25 +394,7 @@ describe('licensee controller', () => {
   describe('setDialogWebhook', () => {
     describe('response', () => {
       it('returns status 200 and message if dialog webhook is set', async () => {
-        const licensee = await Licensee.create({
-          name: 'Alcateia Ltds',
-          email: 'alcateia@alcateia.com',
-          phone: '11098538273',
-          active: true,
-          licenseKind: 'demo',
-          useChatbot: true,
-          chatbotDefault: 'landbot',
-          whatsappDefault: 'dialog',
-          chatDefault: 'rocketchat',
-          chatbotUrl: 'https://chatbot.url',
-          chatbotAuthorizationToken: 'chat-bot-token',
-          whatsappToken: 'whatsapp-token',
-          whatsappUrl: 'https://whatsapp.url',
-          chatUrl: 'https://chat.url',
-          awsId: 'aws-id',
-          awsSecret: 'aws-secret',
-          bucketName: 'bocket-name',
-        })
+        const licensee = await Licensee.create(licenseeCompleteFactory.build())
 
         await request(expressServer)
           .post(`/resources/licensees/${licensee._id}/dialogwebhook`)
@@ -527,25 +412,7 @@ describe('licensee controller', () => {
           throw new Error('some error')
         })
 
-        const licensee = await Licensee.create({
-          name: 'Alcateia Ltds',
-          email: 'alcateia@alcateia.com',
-          phone: '11098538273',
-          active: true,
-          licenseKind: 'demo',
-          useChatbot: true,
-          chatbotDefault: 'landbot',
-          whatsappDefault: 'dialog',
-          chatDefault: 'rocketchat',
-          chatbotUrl: 'https://chatbot.url',
-          chatbotAuthorizationToken: 'chat-bot-token',
-          whatsappToken: 'whatsapp-token',
-          whatsappUrl: 'https://whatsapp.url',
-          chatUrl: 'https://chat.url',
-          awsId: 'aws-id',
-          awsSecret: 'aws-secret',
-          bucketName: 'bocket-name',
-        })
+        const licensee = await Licensee.create(licenseeCompleteFactory.build())
 
         await request(expressServer)
           .post(`/resources/licensees/${licensee._id}/dialogwebhook`)

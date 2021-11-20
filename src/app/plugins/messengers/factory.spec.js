@@ -4,12 +4,15 @@ const Chatapi = require('./Chatapi')
 const Utalk = require('./Utalk')
 const Winzap = require('./Winzap')
 const Dialog = require('./Dialog')
+const { licensee: licenseeFactory } = require('@factories/licensee')
 
 describe('createMessengerPlugin', () => {
   it('returns the chatapi plugin if it is configured on licensee', () => {
-    const licensee = new Licensee({
-      whatsappDefault: 'chatapi',
-    })
+    const licensee = new Licensee(
+      licenseeFactory.build({
+        whatsappDefault: 'chatapi',
+      })
+    )
 
     const body = {
       message: 'test',
@@ -21,9 +24,11 @@ describe('createMessengerPlugin', () => {
   })
 
   it('returns the utalk plugin if it is configured on licensee', () => {
-    const licensee = new Licensee({
-      whatsappDefault: 'utalk',
-    })
+    const licensee = new Licensee(
+      licenseeFactory.build({
+        whatsappDefault: 'utalk',
+      })
+    )
 
     const body = {
       type: 'test',
@@ -35,9 +40,11 @@ describe('createMessengerPlugin', () => {
   })
 
   it('returns the winzap plugin if it is configured on licensee', () => {
-    const licensee = new Licensee({
-      whatsappDefault: 'winzap',
-    })
+    const licensee = new Licensee(
+      licenseeFactory.build({
+        whatsappDefault: 'winzap',
+      })
+    )
 
     const body = {
       type: 'test',
@@ -49,9 +56,11 @@ describe('createMessengerPlugin', () => {
   })
 
   it('returns the dialog plugin if it is configured on licensee', () => {
-    const licensee = new Licensee({
-      whatsappDefault: 'dialog',
-    })
+    const licensee = new Licensee(
+      licenseeFactory.build({
+        whatsappDefault: 'dialog',
+      })
+    )
 
     const body = {
       type: 'test',
@@ -63,9 +72,11 @@ describe('createMessengerPlugin', () => {
   })
 
   it('throws if option plugin is unknow', () => {
-    const licensee = new Licensee({
-      whatsappDefault: 'something',
-    })
+    const licensee = new Licensee(
+      licenseeFactory.build({
+        whatsappDefault: 'something',
+      })
+    )
 
     const body = {
       field: 'test',

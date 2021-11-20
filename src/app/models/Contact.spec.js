@@ -1,10 +1,16 @@
 const Contact = require('@models/Contact')
 const Licensee = require('@models/Licensee')
 const mongoServer = require('../../../.jest/utils')
+const { licensee: licenseeFactory } = require('@factories/licensee')
+const { contact: contactFactory } = require('@factories/contact')
 
 describe('Contact', () => {
+  let licensee
+
   beforeEach(async () => {
     await mongoServer.connect()
+
+    licensee = await Licensee.create(licenseeFactory.build())
   })
 
   afterEach(async () => {
@@ -13,25 +19,13 @@ describe('Contact', () => {
 
   describe('before save', () => {
     it('generates _id', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
-
-      const contact = await Contact.create({
-        number: '551190283745',
-        talkingWithChatBot: false,
-        licensee: licensee,
-      })
+      const contact = await Contact.create(contactFactory.build({ licensee }))
 
       expect(contact._id).not.toEqual(null)
     })
 
     it('does not changes _id if contact is changed', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
-
-      const contact = await Contact.create({
-        number: '551190283745',
-        talkingWithChatBot: false,
-        licensee: licensee,
-      })
+      const contact = await Contact.create(contactFactory.build({ licensee }))
 
       contact.talkingWithChatBot = true
       const alteredContact = await contact.save()
@@ -41,27 +35,21 @@ describe('Contact', () => {
     })
 
     it('normalizes the phone number if number contains @', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
-
-      const contact = await Contact.create({
-        number: '551190283745@c.us',
-        type: 'g.us',
-        talkingWithChatBot: false,
-        licensee: licensee,
-      })
+      const contact = await Contact.create(
+        contactFactory.build({ licensee, number: '5511990283745@c.us', type: 'g.us' })
+      )
 
       expect(contact.number).toEqual('5511990283745')
       expect(contact.type).toEqual('@c.us')
     })
 
     it('normalizes the phone number if type is not filled', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
-
-      const contact = await Contact.create({
-        number: '5511902837-4598687665@g.us',
-        talkingWithChatBot: false,
-        licensee: licensee,
-      })
+      const contact = await Contact.create(
+        contactFactory.build({
+          licensee,
+          number: '5511902837-4598687665@g.us',
+        })
+      )
 
       expect(contact.number).toEqual('5511902837-4598687665')
       expect(contact.type).toEqual('@g.us')
@@ -78,13 +66,7 @@ describe('Contact', () => {
       })
 
       it('normalizes the number and type', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          number: '5538209234582@c.us',
-          licensee: licensee,
-          talkingWithChatBot: true,
-        })
+        const contact = await Contact.create(contactFactory.build({ licensee, number: '5538209234582@c.us' }))
 
         expect(contact.number).toEqual('5538209234582')
         expect(contact.type).toEqual('@c.us')

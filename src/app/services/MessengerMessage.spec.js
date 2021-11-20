@@ -3,11 +3,26 @@ const Licensee = require('@models/Licensee')
 const Body = require('@models/Body')
 const Chatapi = require('../plugins/messengers/Chatapi')
 const mongoServer = require('.jest/utils')
+const { licensee: licenseeFactory } = require('@factories/licensee')
+const { body: bodyFactory } = require('@factories/body')
 
 describe('transformMessengerBody', () => {
+  let licensee
+
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
+
+    licensee = await Licensee.create(
+      licenseeFactory.build({
+        whatsappDefault: 'chatapi',
+        whatsappUrl: 'https://whatsapp.com',
+        whatsappToken: 'bshg25f',
+        chatbotUrl: 'https://whatsapp.url',
+        chatbotAuthorizationToken: 'ljsdf12g',
+        chatUrl: 'https://chat.url',
+      })
+    )
   })
 
   afterEach(async () => {
@@ -24,25 +39,16 @@ describe('transformMessengerBody', () => {
         ]
       })
 
-    const licensee = await Licensee.create({
-      licenseKind: 'demo',
-      name: 'Alcatéia',
-      whatsappDefault: 'chatapi',
-      whatsappUrl: 'https://whatsapp.com',
-      whatsappToken: 'bshg25f',
-      chatbotUrl: 'https://whatsapp.url',
-      chatbotAuthorizationToken: 'ljsdf12g',
-      chatUrl: 'https://chat.url',
-    })
-
-    const body = await Body.create({
-      content: {
-        message: {
-          type: 'message',
+    const body = await Body.create(
+      bodyFactory.build({
+        content: {
+          message: {
+            type: 'message',
+          },
         },
-      },
-      licensee: licensee._id,
-    })
+        licensee,
+      })
+    )
 
     const data = {
       bodyId: body._id,
@@ -71,25 +77,16 @@ describe('transformMessengerBody', () => {
         return []
       })
 
-    const licensee = await Licensee.create({
-      licenseKind: 'demo',
-      name: 'Alcatéia',
-      whatsappDefault: 'chatapi',
-      whatsappUrl: 'https://whatsapp.com',
-      whatsappToken: 'bshg25f',
-      chatbotUrl: 'https://whatsapp.url',
-      chatbotAuthorizationToken: 'ljsdf12g',
-      chatUrl: 'https://chat.url',
-    })
-
-    const body = await Body.create({
-      content: {
-        message: {
-          type: 'typein',
+    const body = await Body.create(
+      bodyFactory.build({
+        content: {
+          message: {
+            type: 'typein',
+          },
         },
-      },
-      licensee: licensee._id,
-    })
+        licensee,
+      })
+    )
 
     const data = {
       bodyId: body._id,
