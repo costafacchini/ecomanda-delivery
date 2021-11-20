@@ -2655,7 +2655,7 @@ find@^0.2.4:
   dependencies:
     traverse-chain "~0.1.0"
 
-fishery@^2.0.0:
+fishery@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/fishery/-/fishery-2.0.0.tgz#4688ffed9c0b09b1fcc07bf1d32105a989705b74"
   integrity sha512-cthWZUgcIgGEz1lVDpUZtV2UGmCk1yjiMl0sMHfAlcXZdUeuGB25QeOTujImn9kuySuItmp8zNoxf0gLAtGRqw==
