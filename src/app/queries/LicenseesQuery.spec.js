@@ -197,4 +197,19 @@ describe('LicenseesQuery', () => {
       expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: licensee1._id })]))
     })
   })
+
+  describe('filterByActive', () => {
+    it('returns only active licensees', async () => {
+      const licensee1 = await Licensee.create(licenseeFactory.build())
+      const licenseeInactive = await Licensee.create(licenseeFactory.build({ active: false }))
+
+      const licenseesQuery = new LicenseesQuery()
+      licenseesQuery.filterByActive()
+      const records = await licenseesQuery.all()
+
+      expect(records.length).toEqual(1)
+      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: licensee1._id })]))
+      expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: licenseeInactive._id })]))
+    })
+  })
 })

@@ -330,10 +330,19 @@ describe('licensee controller', () => {
             name: 'Alcachofra',
           })
         )
+        await Licensee.create(
+          licenseeCompleteFactory.build({
+            active: false,
+            chatDefault: 'jivochat',
+            chatbotDefault: 'landbot',
+            whatsappDefault: 'winzap',
+            name: 'Alcachofra',
+          })
+        )
 
         await request(expressServer)
           .get(
-            '/resources/licensees/?chatDefault=jivochat&chatbotDefault=landbot&whatsappDefault=winzap&expression=Alca&page=1&limit=3'
+            '/resources/licensees/?chatDefault=jivochat&chatbotDefault=landbot&whatsappDefault=winzap&expression=Alca&page=1&limit=3&active=false'
           )
           .set('x-access-token', token)
           .expect('Content-Type', /json/)

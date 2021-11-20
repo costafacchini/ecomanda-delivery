@@ -75,7 +75,7 @@ class ContactsController {
 
   async show(req, res) {
     try {
-      const contact = await Contact.findOne({ _id: req.params.id })
+      const contact = await Contact.findOne({ _id: req.params.id }).populate('licensee')
 
       res.status(200).send(contact)
     } catch (err) {

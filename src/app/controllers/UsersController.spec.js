@@ -216,6 +216,7 @@ describe('user controller', () => {
             expect(response.body.email).toEqual('jonny@walker.com')
             expect(response.body.name).toEqual('Jonny Walker')
             expect(response.body.isAdmin).toEqual(false)
+            expect(response.body.isSuper).toEqual(false)
             expect(response.body.active).toEqual(true)
             expect(response.body._id).toMatch(user._id.toString())
             expect(response.body.password).not.toBeDefined()

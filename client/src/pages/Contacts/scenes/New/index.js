@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { createContact } from '../services/contact'
 import { useNavigate } from 'react-router-dom'
 
-function ContactNew(loggedUser) {
+function ContactNew({ loggedUser }) {
   let navigate = useNavigate()
   const [errors, setErrors] = useState(null)
 
@@ -12,8 +12,8 @@ function ContactNew(loggedUser) {
     <div className='row'>
       <div className='col'>
         <h3>Contato criando</h3>
-        <Form errors={errors} onSubmit={async (values) => {
-          if (values.licensee && values.licensee === '') {
+        <Form errors={errors} loggedUser={loggedUser} onSubmit={async (values) => {
+          if (values.licensee === '' && !loggedUser.isSuper) {
             values.licensee = loggedUser.licensee
           }
           const response = await createContact(values)

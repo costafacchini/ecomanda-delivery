@@ -9,8 +9,8 @@ function createLicensee(values) {
   return api().post('resources/licensees/', { body: values, headers })
 }
 
-function getLicensees(expression) {
-  const url = parseUrl('resources/licensees/', { expression })
+function getLicensees(queryParams) {
+  const url = parseUrl('resources/licensees/', queryParams)
   return api().get(url, { headers })
 }
 

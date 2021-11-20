@@ -175,6 +175,10 @@ class LicenseesController {
         licenseesQuery.filterByExpression(req.query.expression)
       }
 
+      if (req.query.active) {
+        licenseesQuery.filterByActive()
+      }
+
       const messages = await licenseesQuery.all()
 
       res.status(200).send(messages)

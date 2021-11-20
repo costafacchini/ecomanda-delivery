@@ -28,6 +28,10 @@ class LicenseesQuery {
     this.expressionClause = value
   }
 
+  filterByActive() {
+    this.expressionActive = true
+  }
+
   async all() {
     const query = new QueryBuilder(Licensee)
     query.sortBy('createdAt', 1)
@@ -39,6 +43,8 @@ class LicenseesQuery {
     if (this.chatbotClause) query.filterBy('chatbotDefault', this.chatbotClause)
 
     if (this.whatsappClause) query.filterBy('whatsappDefault', this.whatsappClause)
+
+    if (this.expressionActive) query.filterBy('active', this.expressionActive)
 
     if (this.expressionClause) query.filterByExpression(['name', 'email', 'phone'], this.expressionClause)
 

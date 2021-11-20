@@ -5,7 +5,7 @@ import { getContact, updateContact } from '../services/contact'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 
-function ContactEdit() {
+function ContactEdit({ loggedUser }) {
   const navigate = useNavigate()
   let { id } = useParams()
   const [errors, setErrors] = useState(null)
@@ -30,6 +30,7 @@ function ContactEdit() {
         <h3>Contato editando</h3>
         <Form
           initialValues={contact}
+          loggedUser={loggedUser}
           errors={errors}
           onSubmit={async (values) => {
             const response = await updateContact(values)
