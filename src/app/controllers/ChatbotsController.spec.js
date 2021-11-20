@@ -4,6 +4,7 @@ const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
 const queueServer = require('@config/queue')
+const { licensee: licenseeFactory } = require('@factories/licensee')
 
 describe('chatbots controller', () => {
   let apiToken
@@ -14,11 +15,7 @@ describe('chatbots controller', () => {
     jest.clearAllMocks()
     await mongoServer.connect()
 
-    const licensee = await Licensee.create({
-      name: 'Alcateia Ltds',
-      active: true,
-      licenseKind: 'demo',
-    })
+    const licensee = await Licensee.create(licenseeFactory.build())
     apiToken = licensee.apiToken
   })
 

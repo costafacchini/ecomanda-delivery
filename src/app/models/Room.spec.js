@@ -2,10 +2,17 @@ const Licensee = require('@models/Licensee')
 const Contact = require('@models/Contact')
 const Room = require('@models/Room')
 const mongoServer = require('../../../.jest/utils')
+const { licensee: licenseeFactory } = require('@factories/licensee')
+const { contact: contactFactory } = require('@factories/contact')
 
 describe('Room', () => {
+  let contact
+
   beforeEach(async () => {
     await mongoServer.connect()
+
+    const licensee = await Licensee.create(licenseeFactory.build())
+    contact = await Contact.create(contactFactory.build({ licensee }))
   })
 
   afterEach(async () => {
@@ -14,26 +21,12 @@ describe('Room', () => {
 
   describe('before save', () => {
     it('generates _id', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
-      const contact = await Contact.create({
-        number: '551190283745',
-        talkingWithChatBot: false,
-        licensee: licensee,
-      })
-
-      const room = await Room.create({ contact: contact })
+      const room = await Room.create({ contact })
 
       expect(room._id).not.toEqual(null)
     })
 
     it('does not changes _id if room is changed', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
-      const contact = await Contact.create({
-        number: '551190283745',
-        talkingWithChatBot: false,
-        licensee: licensee,
-      })
-
       const room = await Room.create({ roomId: 'acb0134', contact: contact })
 
       room.roomId = 'Changed'

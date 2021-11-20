@@ -4,6 +4,9 @@ const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Chatapi = require('../plugins/messengers/Chatapi')
 const mongoServer = require('.jest/utils')
+const { licensee: licenseeFactory } = require('@factories/licensee')
+const { contact: contactFactory } = require('@factories/contact')
+const { message: messageFactory } = require('@factories/message')
 
 describe('sendMessageToMessenger', () => {
   const chatapiSendMessageSpy = jest.spyOn(Chatapi.prototype, 'sendMessage').mockImplementation(() => {})
@@ -18,30 +21,26 @@ describe('sendMessageToMessenger', () => {
   })
 
   it('asks the plugin to send message to messenger', async () => {
-    const licensee = await Licensee.create({
-      licenseKind: 'demo',
-      name: 'Alcatéia',
-      whatsappDefault: 'chatapi',
-      whatsappUrl: 'https://chat.url',
-      whatsappToken: 'token',
-    })
+    const licensee = await Licensee.create(
+      licenseeFactory.build({
+        whatsappDefault: 'chatapi',
+        whatsappUrl: 'https://chat.url',
+        whatsappToken: 'token',
+      })
+    )
 
-    const contact = await Contact.create({
-      name: 'John Doe',
-      number: '5593165392832@c.us',
-      type: '@c.us',
-      talkingWithChatBot: false,
-      licensee: licensee._id,
-    })
+    const contact = await Contact.create(
+      contactFactory.build({
+        licensee,
+      })
+    )
 
-    const message = await Message.create({
-      text: 'Message to send',
-      number: 'jhd7879a7d9',
-      contact: contact._id,
-      licensee: licensee._id,
-      destination: 'to-messenger',
-      sended: false,
-    })
+    const message = await Message.create(
+      messageFactory.build({
+        contact,
+        licensee,
+      })
+    )
 
     const data = {
       messageId: message._id,

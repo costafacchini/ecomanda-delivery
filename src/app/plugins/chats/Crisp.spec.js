@@ -6,18 +6,25 @@ const Room = require('@models/Room')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
 const emoji = require('../../helpers/Emoji')
+const { licensee: licenseeFactory } = require('@factories/licensee')
+const { contact: contactFactory } = require('@factories/contact')
+const { room: roomFactory } = require('@factories/room')
+const { message: messageFactory } = require('@factories/message')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
 describe('Crisp plugin', () => {
+  let licensee
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
   const emojiReplaceSpy = jest.spyOn(emoji, 'replace')
 
   beforeEach(async () => {
+    await mongoServer.connect()
     jest.clearAllMocks()
     fetchMock.reset()
-    await mongoServer.connect()
+
+    licensee = await Licensee.create(licenseeFactory.build())
   })
 
   afterEach(async () => {
@@ -26,21 +33,20 @@ describe('Crisp plugin', () => {
 
   describe('#responseToMessages', () => {
     it('returns the response body transformed in messages', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+      const contact = await Contact.create(
+        contactFactory.build({
+          name: 'John Doe',
+          talkingWithChatBot: true,
+          licensee,
+        })
+      )
 
-      const contact = await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: true,
-        licensee: licensee,
-      })
-
-      const room = await Room.create({
-        roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
-        token: contact._id.toString(),
-        contact: contact,
-      })
+      const room = await Room.create(
+        roomFactory.build({
+          roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
+          contact,
+        })
+      )
 
       const responseBody = {
         website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
@@ -88,8 +94,6 @@ describe('Crisp plugin', () => {
     })
 
     it('return the empty data if body is blank', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const responseBody = {}
 
       const crisp = new Crisp(licensee)
@@ -99,8 +103,6 @@ describe('Crisp plugin', () => {
     })
 
     it('return the empty data if body event is no "message:send" or "message:received" or "session:removed"', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const responseBody = {
         event: 'message:another',
       }
@@ -112,8 +114,6 @@ describe('Crisp plugin', () => {
     })
 
     it('return the empty data if room is not exists', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const responseBody = {
         website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
         event: 'message:send',
@@ -143,21 +143,20 @@ describe('Crisp plugin', () => {
     })
 
     it('returns the response body transformed in message to close-chat if event is "session:removed"', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+      const contact = await Contact.create(
+        contactFactory.build({
+          name: 'John Doe',
+          talkingWithChatBot: true,
+          licensee,
+        })
+      )
 
-      const contact = await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: true,
-        licensee: licensee,
-      })
-
-      const room = await Room.create({
-        roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
-        token: contact._id.toString(),
-        contact: contact,
-      })
+      const room = await Room.create(
+        roomFactory.build({
+          roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
+          contact,
+        })
+      )
 
       const responseBody = {
         website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
@@ -191,21 +190,20 @@ describe('Crisp plugin', () => {
     })
 
     it('returns the response body transformed in message to close-chat if event is "message:received" and namespace is "state:resolved"', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+      const contact = await Contact.create(
+        contactFactory.build({
+          name: 'John Doe',
+          talkingWithChatBot: true,
+          licensee,
+        })
+      )
 
-      const contact = await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: true,
-        licensee: licensee,
-      })
-
-      const room = await Room.create({
-        roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
-        token: contact._id.toString(),
-        contact: contact,
-      })
+      const room = await Room.create(
+        roomFactory.build({
+          roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
+          contact,
+        })
+      )
 
       const responseBody = {
         website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
@@ -242,21 +240,20 @@ describe('Crisp plugin', () => {
 
     describe('message types', () => {
       it('returns messages with file data if it is file', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            licensee,
+          })
+        )
 
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        await Room.create({
-          roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
-          token: contact._id.toString(),
-          contact: contact,
-        })
+        await Room.create(
+          roomFactory.build({
+            roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
+            contact,
+          })
+        )
 
         const responseBody = {
           website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
@@ -294,21 +291,20 @@ describe('Crisp plugin', () => {
       })
 
       it('returns messages with file data if it is audio', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            licensee,
+          })
+        )
 
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        await Room.create({
-          roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
-          token: contact._id.toString(),
-          contact: contact,
-        })
+        await Room.create(
+          roomFactory.build({
+            roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
+            contact,
+          })
+        )
 
         const responseBody = {
           website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
@@ -346,21 +342,20 @@ describe('Crisp plugin', () => {
       })
 
       it('returns empty data if kind is unknown', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            licensee,
+          })
+        )
 
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        await Room.create({
-          roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
-          token: contact._id.toString(),
-          contact: contact,
-        })
+        await Room.create(
+          roomFactory.build({
+            roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
+            contact,
+          })
+        )
 
         const responseBody = {
           website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
@@ -398,31 +393,30 @@ describe('Crisp plugin', () => {
   describe('#sendMessage', () => {
     describe('when response data does not contains error', () => {
       it('marks the message with sended', async () => {
-        const licensee = await Licensee.create({
-          name: 'Alcateia Ltds',
-          active: true,
-          licenseKind: 'demo',
-          chatIdentifier: 'identifier',
-          chatKey: 'key',
-        })
+        const licensee = await Licensee.create(
+          licenseeFactory.build({
+            chatIdentifier: 'identifier',
+            chatKey: 'key',
+          })
+        )
 
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          email: 'john@doe.com',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            email: 'john@doe.com',
+            licensee,
+          })
+        )
 
-        const message = await Message.create({
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-chatbot',
-          sended: false,
-        })
+        const message = await Message.create(
+          messageFactory.build({
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
 
         fetchMock.postOnce(
           (url, { headers }) => {
@@ -445,9 +439,9 @@ describe('Crisp plugin', () => {
         )
 
         const expectedBodyPatch = {
-          nickname: 'John Doe - 5593165392832 - WhatsApp',
+          nickname: 'John Doe - 5511990283745 - WhatsApp',
           email: 'john@doe.com',
-          phone: '5593165392832',
+          phone: '5511990283745',
         }
 
         fetchMock.patchOnce(
@@ -513,69 +507,45 @@ describe('Crisp plugin', () => {
       })
 
       it('logs the success message', async () => {
-        const licensee = await Licensee.create({
-          name: 'Alcateia Ltds',
-          active: true,
-          licenseKind: 'demo',
-          chatIdentifier: 'identifier',
-          chatKey: 'key',
-        })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          talkingWithChatBot: true,
-          email: 'john@doe.com',
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-chatbot',
-          sended: false,
-        })
-
-        fetchMock.postOnce(
-          (url, { headers }) => {
-            return (
-              url === 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation' &&
-              JSON.stringify(headers).includes('Authorization') &&
-              JSON.stringify(headers).includes('X-Crisp-Tier')
-            )
-          },
-          {
-            status: 201,
-            body: {
-              error: false,
-              reason: 'added',
-              data: {
-                session_id: 'session_a06054de-d9dc-407a-98ea-72c7fb460472',
-              },
-            },
-          }
+        const licensee = await Licensee.create(
+          licenseeFactory.build({
+            chatIdentifier: 'identifier',
+            chatKey: 'key',
+          })
         )
 
-        const expectedBodyPatch = {
-          nickname: 'John Doe - 5593165392832 - WhatsApp',
-          email: 'john@doe.com',
-          phone: '5593165392832',
-        }
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            email: 'john@doe.com',
+            licensee,
+          })
+        )
+
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
+
+        fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
+          status: 201,
+          body: {
+            error: false,
+            reason: 'added',
+            data: {
+              session_id: 'session_a06054de-d9dc-407a-98ea-72c7fb460472',
+            },
+          },
+        })
 
         fetchMock.patchOnce(
-          (url, { headers, body }) => {
-            return (
-              url ===
-                'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
-              body === JSON.stringify(expectedBodyPatch) &&
-              JSON.stringify(headers).includes('Authorization') &&
-              JSON.stringify(headers).includes('X-Crisp-Tier')
-            )
-          },
+          'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta',
           {
             status: 200,
             body: {
@@ -586,23 +556,8 @@ describe('Crisp plugin', () => {
           }
         )
 
-        const expectedBody = {
-          from: 'user',
-          origin: 'chat',
-          type: 'text',
-          content: 'Message to send',
-        }
-
         fetchMock.postOnce(
-          (url, { headers, body }) => {
-            return (
-              url ===
-                'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message' &&
-              body === JSON.stringify(expectedBody) &&
-              JSON.stringify(headers).includes('Authorization') &&
-              JSON.stringify(headers).includes('X-Crisp-Tier')
-            )
-          },
+          'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message',
           {
             status: 202,
             body: {
@@ -629,32 +584,31 @@ describe('Crisp plugin', () => {
 
       describe('when message has a departament', () => {
         it('sends the departament when updates the conversation', async () => {
-          const licensee = await Licensee.create({
-            name: 'Alcateia Ltds',
-            active: true,
-            licenseKind: 'demo',
-            chatIdentifier: 'identifier',
-            chatKey: 'key',
-          })
+          const licensee = await Licensee.create(
+            licenseeFactory.build({
+              chatIdentifier: 'identifier',
+              chatKey: 'key',
+            })
+          )
 
-          const contact = await Contact.create({
-            name: 'John Doe',
-            number: '5593165392832',
-            type: '@c.us',
-            email: 'john@doe.com',
-            talkingWithChatBot: true,
-            licensee: licensee,
-          })
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              talkingWithChatBot: true,
+              email: 'john@doe.com',
+              licensee,
+            })
+          )
 
-          const message = await Message.create({
-            text: 'Message to send',
-            number: 'jhd7879a7d9',
-            contact: contact,
-            licensee: licensee,
-            destination: 'to-chatbot',
-            sended: false,
-            departament: 'segment1,segment 2',
-          })
+          const message = await Message.create(
+            messageFactory.build({
+              text: 'Message to send',
+              contact,
+              licensee,
+              sended: false,
+              departament: 'segment1,segment 2',
+            })
+          )
 
           fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
             status: 201,
@@ -667,21 +621,8 @@ describe('Crisp plugin', () => {
             },
           })
 
-          const expectedBodyPatch = {
-            nickname: 'John Doe - 5593165392832 - WhatsApp',
-            email: 'john@doe.com',
-            phone: '5593165392832',
-            segments: ['segment1', 'segment 2'],
-          }
-
           fetchMock.patchOnce(
-            (url, { body }) => {
-              return (
-                url ===
-                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
-                body === JSON.stringify(expectedBodyPatch)
-              )
-            },
+            'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta',
             {
               status: 200,
               body: {
@@ -692,21 +633,8 @@ describe('Crisp plugin', () => {
             }
           )
 
-          const expectedBody = {
-            from: 'user',
-            origin: 'chat',
-            type: 'text',
-            content: 'Message to send',
-          }
-
           fetchMock.postOnce(
-            (url, { body }) => {
-              return (
-                url ===
-                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message' &&
-                body === JSON.stringify(expectedBody)
-              )
-            },
+            'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message',
             {
               status: 202,
               body: {
@@ -735,52 +663,36 @@ describe('Crisp plugin', () => {
 
       describe('when message is for group', () => {
         it('send message formatted to group', async () => {
-          const licensee = await Licensee.create({
-            name: 'Alcateia Ltds',
-            active: true,
-            licenseKind: 'demo',
-            chatIdentifier: 'identifier',
-            chatKey: 'key',
-          })
-
-          const contact = await Contact.create({
-            name: 'Grupo Teste',
-            number: '5511989187726-1622497000@g.us',
-            type: '@g.us',
-            email: 'john@doe.com',
-            talkingWithChatBot: true,
-            licensee: licensee,
-          })
-
-          const message = await Message.create({
-            text: 'Message to send',
-            number: 'jhd7879a7d9',
-            contact: contact,
-            licensee: licensee,
-            destination: 'to-chatbot',
-            senderName: 'John Doe',
-            sended: false,
-          })
-
-          fetchMock.postOnce(
-            (url, { headers }) => {
-              return (
-                url === 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation' &&
-                JSON.stringify(headers).includes('Authorization') &&
-                JSON.stringify(headers).includes('X-Crisp-Tier')
-              )
-            },
-            {
-              status: 201,
-              body: {
-                error: false,
-                reason: 'added',
-                data: {
-                  session_id: 'session_a06054de-d9dc-407a-98ea-72c7fb460472',
-                },
-              },
-            }
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'Grupo Teste',
+              number: '5511989187726-1622497000@g.us',
+              type: '@g.us',
+              email: 'john@doe.com',
+              licensee,
+            })
           )
+
+          const message = await Message.create(
+            messageFactory.build({
+              text: 'Message to send',
+              contact,
+              licensee,
+              sended: false,
+              senderName: 'John Doe',
+            })
+          )
+
+          fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
+            status: 201,
+            body: {
+              error: false,
+              reason: 'added',
+              data: {
+                session_id: 'session_a06054de-d9dc-407a-98ea-72c7fb460472',
+              },
+            },
+          })
 
           const expectedBodyPatch = {
             nickname: 'Grupo Teste - 5511989187726-1622497000 - WhatsApp',
@@ -789,13 +701,11 @@ describe('Crisp plugin', () => {
           }
 
           fetchMock.patchOnce(
-            (url, { headers, body }) => {
+            (url, { body }) => {
               return (
                 url ===
                   'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
-                body === JSON.stringify(expectedBodyPatch) &&
-                JSON.stringify(headers).includes('Authorization') &&
-                JSON.stringify(headers).includes('X-Crisp-Tier')
+                body === JSON.stringify(expectedBodyPatch)
               )
             },
             {
@@ -816,13 +726,11 @@ describe('Crisp plugin', () => {
           }
 
           fetchMock.postOnce(
-            (url, { headers, body }) => {
+            (url, { body }) => {
               return (
                 url ===
                   'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message' &&
-                body === JSON.stringify(expectedBody) &&
-                JSON.stringify(headers).includes('Authorization') &&
-                JSON.stringify(headers).includes('X-Crisp-Tier')
+                body === JSON.stringify(expectedBody)
               )
             },
             {
@@ -853,38 +761,31 @@ describe('Crisp plugin', () => {
 
       describe('when message has a session and departament', () => {
         it('updates conversation to sets the segments', async () => {
-          const licensee = await Licensee.create({
-            name: 'Alcateia Ltds',
-            active: true,
-            licenseKind: 'demo',
-            chatIdentifier: 'identifier',
-            chatKey: 'key',
-          })
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              email: 'john@doe.com',
+              talkingWithChatBot: true,
+              licensee,
+            })
+          )
 
-          const contact = await Contact.create({
-            name: 'John Doe',
-            number: '5593165392832',
-            type: '@c.us',
-            email: 'john@doe.com',
-            talkingWithChatBot: true,
-            licensee: licensee,
-          })
+          const message = await Message.create(
+            messageFactory.build({
+              text: 'Message to send',
+              contact,
+              licensee,
+              sended: false,
+              departament: 'segment1,segment 2',
+            })
+          )
 
-          const message = await Message.create({
-            text: 'Message to send',
-            number: 'jhd7879a7d9',
-            contact: contact,
-            licensee: licensee,
-            destination: 'to-chatbot',
-            sended: false,
-            departament: 'segment1,segment 2',
-          })
-
-          await Room.create({
-            roomId: 'session_a06054de-d9dc-407a-98ea-72c7fb460472',
-            token: contact._id.toString(),
-            contact: contact,
-          })
+          await Room.create(
+            roomFactory.build({
+              roomId: 'session_a06054de-d9dc-407a-98ea-72c7fb460472',
+              contact,
+            })
+          )
 
           const expectedBodyPatch = {
             segments: ['segment1', 'segment 2'],
@@ -908,21 +809,8 @@ describe('Crisp plugin', () => {
             }
           )
 
-          const expectedBody = {
-            from: 'user',
-            origin: 'chat',
-            type: 'text',
-            content: 'Message to send',
-          }
-
           fetchMock.postOnce(
-            (url, { body }) => {
-              return (
-                url ===
-                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message' &&
-                body === JSON.stringify(expectedBody)
-              )
-            },
+            'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message',
             {
               status: 202,
               body: {
@@ -951,44 +839,33 @@ describe('Crisp plugin', () => {
 
       describe('when does not create session', () => {
         it('logs the error and does not send message', async () => {
-          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-          const contact = await Contact.create({
-            name: 'John Doe',
-            number: '5593165392832',
-            type: '@c.us',
-            email: 'john@doe.com',
-            talkingWithChatBot: true,
-            licensee: licensee,
-          })
-
-          const message = await Message.create({
-            _id: '60958703f415ed4008748637',
-            text: 'Message to send',
-            number: 'jhd7879a7d9',
-            contact: contact,
-            licensee: licensee,
-            destination: 'to-chatbot',
-            sended: false,
-          })
-
-          fetchMock.postOnce(
-            (url, { headers }) => {
-              return (
-                url === 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation' &&
-                JSON.stringify(headers).includes('Authorization') &&
-                JSON.stringify(headers).includes('X-Crisp-Tier')
-              )
-            },
-            {
-              status: 402,
-              body: {
-                error: true,
-                reason: 'invalid_session',
-                data: {},
-              },
-            }
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              email: 'john@doe.com',
+              talkingWithChatBot: true,
+              licensee,
+            })
           )
+
+          const message = await Message.create(
+            messageFactory.build({
+              _id: '60958703f415ed4008748637',
+              text: 'Message to send',
+              contact,
+              licensee,
+              sended: false,
+            })
+          )
+
+          fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
+            status: 402,
+            body: {
+              error: true,
+              reason: 'invalid_session',
+              data: {},
+            },
+          })
 
           expect(message.sended).toEqual(false)
 
@@ -1010,63 +887,38 @@ describe('Crisp plugin', () => {
 
       describe('when does not send message', () => {
         it('logs the error', async () => {
-          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-          const contact = await Contact.create({
-            name: 'John Doe',
-            number: '5593165392832',
-            type: '@c.us',
-            email: 'john@doe.com',
-            talkingWithChatBot: true,
-            licensee: licensee,
-          })
-
-          const message = await Message.create({
-            _id: '60958703f415ed4008748637',
-            text: 'Message to send',
-            number: 'jhd7879a7d9',
-            contact: contact,
-            licensee: licensee,
-            destination: 'to-chatbot',
-            sended: false,
-          })
-
-          fetchMock.postOnce(
-            (url, { headers }) => {
-              return (
-                url === 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation' &&
-                JSON.stringify(headers).includes('Authorization') &&
-                JSON.stringify(headers).includes('X-Crisp-Tier')
-              )
-            },
-            {
-              status: 201,
-              body: {
-                error: false,
-                reason: 'added',
-                data: {
-                  session_id: 'session_a06054de-d9dc-407a-98ea-72c7fb460472',
-                },
-              },
-            }
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              email: 'john@doe.com',
+              talkingWithChatBot: true,
+              licensee,
+            })
           )
 
-          const expectedBodyPatch = {
-            nickname: 'John Doe - 5593165392832 - WhatsApp',
-            email: 'john@doe.com',
-            phone: '5593165392832',
-          }
+          const message = await Message.create(
+            messageFactory.build({
+              _id: '60958703f415ed4008748637',
+              text: 'Message to send',
+              contact,
+              licensee,
+              sended: false,
+            })
+          )
+
+          fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
+            status: 201,
+            body: {
+              error: false,
+              reason: 'added',
+              data: {
+                session_id: 'session_a06054de-d9dc-407a-98ea-72c7fb460472',
+              },
+            },
+          })
 
           fetchMock.patchOnce(
-            (url, { headers, body }) => {
-              return (
-                url ===
-                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
-                body === JSON.stringify(expectedBodyPatch) &&
-                JSON.stringify(headers).includes('Authorization') &&
-                JSON.stringify(headers).includes('X-Crisp-Tier')
-              )
-            },
+            'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta',
             {
               status: 200,
               body: {
@@ -1077,23 +929,8 @@ describe('Crisp plugin', () => {
             }
           )
 
-          const expectedBody = {
-            from: 'user',
-            origin: 'chat',
-            type: 'text',
-            content: 'Message to send',
-          }
-
           fetchMock.postOnce(
-            (url, { headers, body }) => {
-              return (
-                url ===
-                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message' &&
-                body === JSON.stringify(expectedBody) &&
-                JSON.stringify(headers).includes('Authorization') &&
-                JSON.stringify(headers).includes('X-Crisp-Tier')
-              )
-            },
+            'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message',
             {
               status: 404,
               body: {
@@ -1134,68 +971,37 @@ describe('Crisp plugin', () => {
     describe('message types', () => {
       describe('when message is text', () => {
         it('sends the message with text', async () => {
-          const licensee = await Licensee.create({
-            name: 'Alcateia Ltds',
-            active: true,
-            licenseKind: 'demo',
-            chatIdentifier: 'identifier',
-            chatKey: 'key',
-          })
-
-          const contact = await Contact.create({
-            name: 'John Doe',
-            number: '5593165392832',
-            type: '@c.us',
-            email: 'john@doe.com',
-            talkingWithChatBot: true,
-            licensee: licensee,
-          })
-
-          const message = await Message.create({
-            text: 'Message to send',
-            number: 'jhd7879a7d9',
-            contact: contact,
-            licensee: licensee,
-            destination: 'to-chatbot',
-            sended: false,
-          })
-
-          fetchMock.postOnce(
-            (url, { headers }) => {
-              return (
-                url === 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation' &&
-                JSON.stringify(headers).includes('Authorization') &&
-                JSON.stringify(headers).includes('X-Crisp-Tier')
-              )
-            },
-            {
-              status: 201,
-              body: {
-                error: false,
-                reason: 'added',
-                data: {
-                  session_id: 'session_a06054de-d9dc-407a-98ea-72c7fb460472',
-                },
-              },
-            }
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              email: 'john@doe.com',
+              talkingWithChatBot: true,
+              licensee,
+            })
           )
 
-          const expectedBodyPatch = {
-            nickname: 'John Doe - 5593165392832 - WhatsApp',
-            email: 'john@doe.com',
-            phone: '5593165392832',
-          }
+          const message = await Message.create(
+            messageFactory.build({
+              text: 'Message to send',
+              contact,
+              licensee,
+              sended: false,
+            })
+          )
+
+          fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
+            status: 201,
+            body: {
+              error: false,
+              reason: 'added',
+              data: {
+                session_id: 'session_a06054de-d9dc-407a-98ea-72c7fb460472',
+              },
+            },
+          })
 
           fetchMock.patchOnce(
-            (url, { headers, body }) => {
-              return (
-                url ===
-                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
-                body === JSON.stringify(expectedBodyPatch) &&
-                JSON.stringify(headers).includes('Authorization') &&
-                JSON.stringify(headers).includes('X-Crisp-Tier')
-              )
-            },
+            'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta',
             {
               status: 200,
               body: {
@@ -1206,23 +1012,8 @@ describe('Crisp plugin', () => {
             }
           )
 
-          const expectedBody = {
-            from: 'user',
-            origin: 'chat',
-            type: 'text',
-            content: 'Message to send',
-          }
-
           fetchMock.postOnce(
-            (url, { headers, body }) => {
-              return (
-                url ===
-                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message' &&
-                body === JSON.stringify(expectedBody) &&
-                JSON.stringify(headers).includes('Authorization') &&
-                JSON.stringify(headers).includes('X-Crisp-Tier')
-              )
-            },
+            'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message',
             {
               status: 202,
               body: {
@@ -1248,71 +1039,40 @@ describe('Crisp plugin', () => {
 
       describe('when message is file', () => {
         it('sends the message with file', async () => {
-          const licensee = await Licensee.create({
-            name: 'Alcateia Ltds',
-            active: true,
-            licenseKind: 'demo',
-            chatIdentifier: 'identifier',
-            chatKey: 'key',
-          })
-
-          const contact = await Contact.create({
-            name: 'John Doe',
-            number: '5593165392832',
-            type: '@c.us',
-            email: 'john@doe.com',
-            talkingWithChatBot: true,
-            licensee: licensee,
-          })
-
-          const message = await Message.create({
-            text: 'Message to send',
-            number: 'jhd7879a7d9',
-            contact: contact,
-            licensee: licensee,
-            destination: 'to-chatbot',
-            kind: 'file',
-            url: 'https://message.with.file.com/file.txt',
-            fileName: 'file.txt',
-            sended: false,
-          })
-
-          fetchMock.postOnce(
-            (url, { headers }) => {
-              return (
-                url === 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation' &&
-                JSON.stringify(headers).includes('Authorization') &&
-                JSON.stringify(headers).includes('X-Crisp-Tier')
-              )
-            },
-            {
-              status: 201,
-              body: {
-                error: false,
-                reason: 'added',
-                data: {
-                  session_id: 'session_a06054de-d9dc-407a-98ea-72c7fb460472',
-                },
-              },
-            }
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              email: 'john@doe.com',
+              talkingWithChatBot: true,
+              licensee,
+            })
           )
 
-          const expectedBodyPatch = {
-            nickname: 'John Doe - 5593165392832 - WhatsApp',
-            email: 'john@doe.com',
-            phone: '5593165392832',
-          }
+          const message = await Message.create(
+            messageFactory.build({
+              text: 'Message to send',
+              contact,
+              licensee,
+              sended: false,
+              kind: 'file',
+              url: 'https://message.with.file.com/file.txt',
+              fileName: 'file.txt',
+            })
+          )
+
+          fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
+            status: 201,
+            body: {
+              error: false,
+              reason: 'added',
+              data: {
+                session_id: 'session_a06054de-d9dc-407a-98ea-72c7fb460472',
+              },
+            },
+          })
 
           fetchMock.patchOnce(
-            (url, { headers, body }) => {
-              return (
-                url ===
-                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
-                body === JSON.stringify(expectedBodyPatch) &&
-                JSON.stringify(headers).includes('Authorization') &&
-                JSON.stringify(headers).includes('X-Crisp-Tier')
-              )
-            },
+            'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta',
             {
               status: 200,
               body: {
@@ -1335,13 +1095,11 @@ describe('Crisp plugin', () => {
           }
 
           fetchMock.postOnce(
-            (url, { headers, body }) => {
+            (url, { body }) => {
               return (
                 url ===
                   'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message' &&
-                body === JSON.stringify(expectedBody) &&
-                JSON.stringify(headers).includes('Authorization') &&
-                JSON.stringify(headers).includes('X-Crisp-Tier')
+                body === JSON.stringify(expectedBody)
               )
             },
             {
@@ -1369,71 +1127,40 @@ describe('Crisp plugin', () => {
 
       describe('when message is audio', () => {
         it('sends the message with audio', async () => {
-          const licensee = await Licensee.create({
-            name: 'Alcateia Ltds',
-            active: true,
-            licenseKind: 'demo',
-            chatIdentifier: 'identifier',
-            chatKey: 'key',
-          })
-
-          const contact = await Contact.create({
-            name: 'John Doe',
-            number: '5593165392832',
-            type: '@c.us',
-            email: 'john@doe.com',
-            talkingWithChatBot: true,
-            licensee: licensee,
-          })
-
-          const message = await Message.create({
-            text: 'Message to send',
-            number: 'jhd7879a7d9',
-            contact: contact,
-            licensee: licensee,
-            destination: 'to-chatbot',
-            kind: 'file',
-            url: 'https://message.with.file.com/file.ogg',
-            fileName: 'file.ogg',
-            sended: false,
-          })
-
-          fetchMock.postOnce(
-            (url, { headers }) => {
-              return (
-                url === 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation' &&
-                JSON.stringify(headers).includes('Authorization') &&
-                JSON.stringify(headers).includes('X-Crisp-Tier')
-              )
-            },
-            {
-              status: 201,
-              body: {
-                error: false,
-                reason: 'added',
-                data: {
-                  session_id: 'session_a06054de-d9dc-407a-98ea-72c7fb460472',
-                },
-              },
-            }
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              email: 'john@doe.com',
+              talkingWithChatBot: true,
+              licensee,
+            })
           )
 
-          const expectedBodyPatch = {
-            nickname: 'John Doe - 5593165392832 - WhatsApp',
-            email: 'john@doe.com',
-            phone: '5593165392832',
-          }
+          const message = await Message.create(
+            messageFactory.build({
+              text: 'Message to send',
+              contact,
+              licensee,
+              sended: false,
+              kind: 'file',
+              url: 'https://message.with.file.com/file.ogg',
+              fileName: 'file.ogg',
+            })
+          )
+
+          fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
+            status: 201,
+            body: {
+              error: false,
+              reason: 'added',
+              data: {
+                session_id: 'session_a06054de-d9dc-407a-98ea-72c7fb460472',
+              },
+            },
+          })
 
           fetchMock.patchOnce(
-            (url, { headers, body }) => {
-              return (
-                url ===
-                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
-                body === JSON.stringify(expectedBodyPatch) &&
-                JSON.stringify(headers).includes('Authorization') &&
-                JSON.stringify(headers).includes('X-Crisp-Tier')
-              )
-            },
+            'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta',
             {
               status: 200,
               body: {
@@ -1457,13 +1184,11 @@ describe('Crisp plugin', () => {
           }
 
           fetchMock.postOnce(
-            (url, { headers, body }) => {
+            (url, { body }) => {
               return (
                 url ===
                   'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message' &&
-                body === JSON.stringify(expectedBody) &&
-                JSON.stringify(headers).includes('Authorization') &&
-                JSON.stringify(headers).includes('X-Crisp-Tier')
+                body === JSON.stringify(expectedBody)
               )
             },
             {
@@ -1494,25 +1219,24 @@ describe('Crisp plugin', () => {
   describe('#transfer', () => {
     it('changes the talking with chatbot in contact to false', async () => {
       jest.spyOn(Crisp.prototype, 'sendMessage').mockImplementation()
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+      const contact = await Contact.create(
+        contactFactory.build({
+          name: 'John Doe',
+          email: 'john@doe.com',
+          talkingWithChatBot: true,
+          licensee,
+        })
+      )
 
-      const contact = await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: true,
-        licensee: licensee,
-      })
-
-      const message = await Message.create({
-        _id: '60958703f415ed4008748637',
-        text: 'Message to send',
-        number: 'jhd7879a7d9',
-        contact: contact,
-        licensee: licensee,
-        destination: 'to-chatbot',
-        sended: false,
-      })
+      const message = await Message.create(
+        messageFactory.build({
+          _id: '60958703f415ed4008748637',
+          text: 'Message to send',
+          contact,
+          licensee,
+          sended: false,
+        })
+      )
 
       expect(contact.talkingWithChatBot).toEqual(true)
 
@@ -1525,25 +1249,24 @@ describe('Crisp plugin', () => {
 
     it('sends message to chat', async () => {
       const sendMessageSpy = jest.spyOn(Crisp.prototype, 'sendMessage').mockImplementation()
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+      const contact = await Contact.create(
+        contactFactory.build({
+          name: 'John Doe',
+          email: 'john@doe.com',
+          talkingWithChatBot: true,
+          licensee,
+        })
+      )
 
-      const contact = await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: true,
-        licensee: licensee,
-      })
-
-      const message = await Message.create({
-        _id: '60958703f415ed4008748637',
-        text: 'Message to send',
-        number: 'jhd7879a7d9',
-        contact: contact,
-        licensee: licensee,
-        destination: 'to-chatbot',
-        sended: false,
-      })
+      const message = await Message.create(
+        messageFactory.build({
+          _id: '60958703f415ed4008748637',
+          text: 'Message to send',
+          contact,
+          licensee,
+          sended: false,
+        })
+      )
 
       const crisp = new Crisp(licensee)
       await crisp.transfer(message._id.toString(), 'url')
@@ -1556,40 +1279,41 @@ describe('Crisp plugin', () => {
   describe('#closeChat', () => {
     describe('when the licensee use chatbot', () => {
       it('changes the talking with chatbot in contact to true', async () => {
-        const licensee = await Licensee.create({
-          name: 'Alcateia Ltds',
-          active: true,
-          licenseKind: 'demo',
-          useChatbot: true,
-          chatbotDefault: 'landbot',
-          chatbotUrl: 'https://url.com',
-          chatbotAuthorizationToken: 'token',
-        })
+        const licensee = await Licensee.create(
+          licenseeFactory.build({
+            useChatbot: true,
+            chatbotDefault: 'landbot',
+            chatbotUrl: 'https://url.com',
+            chatbotAuthorizationToken: 'token',
+          })
+        )
 
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: false,
-          licensee: licensee,
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            email: 'john@doe.com',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
 
-        const room = await Room.create({
-          roomId: 'ka3DiV9CuHD765',
-          token: contact._id.toString(),
-          contact: contact,
-        })
+        const room = await Room.create(
+          roomFactory.build({
+            roomId: 'ka3DiV9CuHD765',
+            contact,
+          })
+        )
 
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          room: room,
-          destination: 'to-chatbot',
-          sended: false,
-        })
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            room,
+            sended: false,
+          })
+        )
 
         expect(contact.talkingWithChatBot).toEqual(false)
 
@@ -1603,9 +1327,7 @@ describe('Crisp plugin', () => {
   })
 
   describe('#action', () => {
-    it('returns "send-message-to-messenger"', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
+    it('returns "send-message-to-messenger"', () => {
       const responseBody = {
         event: 'message:received',
         data: {
@@ -1616,9 +1338,7 @@ describe('Crisp plugin', () => {
       const crisp = new Crisp(licensee)
       expect(crisp.action(responseBody)).toEqual('send-message-to-messenger')
     })
-    it('returns "close-chat" if event is "session:removed"', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
+    it('returns "close-chat" if event is "session:removed"', () => {
       const responseBody = {
         event: 'session:removed',
       }
@@ -1627,9 +1347,7 @@ describe('Crisp plugin', () => {
       expect(crisp.action(responseBody)).toEqual('close-chat')
     })
 
-    it('returns "close-chat" if event is "message:received" and namespace is "state:resolved"', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
+    it('returns "close-chat" if event is "message:received" and namespace is "state:resolved"', () => {
       const responseBody = {
         event: 'message:received',
         data: {

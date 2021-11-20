@@ -33,6 +33,17 @@ const userSchema = new Schema(
     },
     active: { type: Boolean, default: true },
     isAdmin: { type: Boolean, default: false },
+    isSuper: { type: Boolean, default: false },
+    licensee: {
+      type: ObjectId,
+      ref: 'Licensee',
+      required: [
+        function () {
+          return !this.isSuper
+        },
+        'Licensee: Você deve preencher o campo',
+      ],
+    },
   },
   { timestamps: true }
 )

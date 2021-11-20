@@ -4,6 +4,9 @@ const Contact = require('@models/Contact')
 const Message = require('@models/Message')
 const mongoServer = require('.jest/utils')
 const fetchMock = require('fetch-mock')
+const { licensee: licenseeFactory } = require('@factories/licensee')
+const { contact: contactFactory } = require('@factories/contact')
+const { message: messageFactory } = require('@factories/message')
 
 describe('resetChatbots', () => {
   jest.spyOn(global.console, 'info').mockImplementation()
@@ -20,152 +23,157 @@ describe('resetChatbots', () => {
 
   describe('if licensees uses chatbot and contacts that talking with chatbot and the last message has destination to messenger and the sended a hour ago', () => {
     it('calls the drop conversation to reset chatbot', async () => {
-      const licensee = await Licensee.create({
-        licenseKind: 'demo',
-        name: 'Alcatéia',
-        chatbotDefault: 'landbot',
-        chatbotUrl: 'https://landbot.url',
-        chatbotAuthorizationToken: 'ljsdf12g',
-        useChatbot: true,
-        chatbotApiToken: 'api-token',
-      })
+      const licensee = await Licensee.create(
+        licenseeFactory.build({
+          chatbotDefault: 'landbot',
+          chatbotUrl: 'https://landbot.url',
+          chatbotAuthorizationToken: 'ljsdf12g',
+          useChatbot: true,
+          chatbotApiToken: 'api-token',
+        })
+      )
 
-      const contact = await Contact.create({
-        number: '551190283745',
-        talkingWithChatBot: true,
-        licensee: licensee._id,
-        landbotId: 'landbot-id',
-      })
+      const contact = await Contact.create(
+        contactFactory.build({
+          talkingWithChatBot: true,
+          landbotId: 'landbot-id',
+          licensee,
+        })
+      )
 
-      await Message.create({
-        text: 'Message 1',
-        number: contact.number,
-        contact: contact._id,
-        licensee: licensee._id,
-        destination: 'to-messenger',
-        sended: true,
-        createdAt: new Date(2021, 6, 3, 0, 0, 0),
-      })
+      await Message.create(
+        messageFactory.build({
+          contact,
+          licensee,
+          destination: 'to-messenger',
+          createdAt: new Date(2021, 6, 3, 0, 0, 0),
+        })
+      )
 
-      const contactThatMessageDoesNotCreatedInTimeLimit = await Contact.create({
-        number: '551190283745',
-        talkingWithChatBot: true,
-        licensee: licensee._id,
-        landbotId: 'landbot-id',
-      })
+      const contactThatMessageDoesNotCreatedInTimeLimit = await Contact.create(
+        contactFactory.build({
+          talkingWithChatBot: true,
+          landbotId: 'landbot-id',
+          licensee,
+        })
+      )
 
-      await Message.create({
-        text: 'Message 1',
-        number: contactThatMessageDoesNotCreatedInTimeLimit.number,
-        contact: contactThatMessageDoesNotCreatedInTimeLimit._id,
-        licensee: licensee._id,
-        destination: 'to-messenger',
-        sended: true,
-        createdAt: new Date(),
-      })
+      await Message.create(
+        messageFactory.build({
+          contact: contactThatMessageDoesNotCreatedInTimeLimit,
+          licensee,
+          destination: 'to-messenger',
+          createdAt: new Date(),
+        })
+      )
 
-      const contactThatMessageDoesNotSended = await Contact.create({
-        number: '551190283745',
-        talkingWithChatBot: true,
-        licensee: licensee._id,
-        landbotId: 'landbot-id',
-      })
+      const contactThatMessageDoesNotSended = await Contact.create(
+        contactFactory.build({
+          talkingWithChatBot: true,
+          landbotId: 'landbot-id',
+          licensee,
+        })
+      )
 
-      await Message.create({
-        text: 'Message 1',
-        number: contactThatMessageDoesNotSended.number,
-        contact: contactThatMessageDoesNotSended._id,
-        licensee: licensee._id,
-        destination: 'to-messenger',
-        sended: false,
-        createdAt: new Date(2021, 6, 3, 0, 0, 0),
-      })
+      await Message.create(
+        messageFactory.build({
+          contact: contactThatMessageDoesNotSended,
+          licensee,
+          destination: 'to-messenger',
+          sended: false,
+          createdAt: new Date(2021, 6, 3, 0, 0, 0),
+        })
+      )
 
-      const contactThatNotTalkingWithChatbot = await Contact.create({
-        number: '551190283745',
-        talkingWithChatBot: false,
-        licensee: licensee._id,
-        landbotId: 'landbot-id',
-      })
+      const contactThatNotTalkingWithChatbot = await Contact.create(
+        contactFactory.build({
+          talkingWithChatBot: false,
+          landbotId: 'landbot-id',
+          licensee,
+        })
+      )
 
-      await Message.create({
-        text: 'Message 1',
-        number: contactThatNotTalkingWithChatbot.number,
-        contact: contactThatNotTalkingWithChatbot._id,
-        licensee: licensee._id,
-        destination: 'to-messenger',
-        sended: true,
-        createdAt: new Date(2021, 6, 3, 0, 0, 0),
-      })
+      await Message.create(
+        messageFactory.build({
+          contact: contactThatNotTalkingWithChatbot,
+          licensee,
+          destination: 'to-messenger',
+          sended: true,
+          createdAt: new Date(2021, 6, 3, 0, 0, 0),
+        })
+      )
 
-      const contactWithoutLandbotId = await Contact.create({
-        number: '551190283745',
-        talkingWithChatBot: true,
-        licensee: licensee._id,
-      })
+      const contactWithoutLandbotId = await Contact.create(
+        contactFactory.build({
+          talkingWithChatBot: true,
+          licensee,
+        })
+      )
 
-      await Message.create({
-        text: 'Message 1',
-        number: contactWithoutLandbotId.number,
-        contact: contactWithoutLandbotId._id,
-        licensee: licensee._id,
-        destination: 'to-messenger',
-        sended: true,
-        createdAt: new Date(2021, 6, 3, 0, 0, 0),
-      })
+      await Message.create(
+        messageFactory.build({
+          contact: contactWithoutLandbotId,
+          licensee,
+          destination: 'to-messenger',
+          sended: true,
+          createdAt: new Date(2021, 6, 3, 0, 0, 0),
+        })
+      )
 
-      const licenseeWhithoutChatbot = await Licensee.create({
-        licenseKind: 'demo',
-        name: 'Alcatéia',
-        chatbotDefault: 'landbot',
-        chatbotUrl: 'https://landbot.url',
-        chatbotAuthorizationToken: 'ljsdf12g',
-        useChatbot: false,
-        chatbotApiToken: 'api-token',
-      })
+      const licenseeWhithoutChatbot = await Licensee.create(
+        licenseeFactory.build({
+          chatbotDefault: 'landbot',
+          chatbotUrl: 'https://landbot.url',
+          chatbotAuthorizationToken: 'ljsdf12g',
+          useChatbot: false,
+          chatbotApiToken: 'api-token',
+        })
+      )
 
-      const contact2 = await Contact.create({
-        number: '551190283745',
-        talkingWithChatBot: true,
-        licensee: licenseeWhithoutChatbot._id,
-        landbotId: 'landbot-id',
-      })
+      const contact2 = await Contact.create(
+        contactFactory.build({
+          talkingWithChatBot: true,
+          landbotId: 'landbot-id',
+          licensee: licenseeWhithoutChatbot,
+        })
+      )
 
-      await Message.create({
-        text: 'Message 1',
-        number: contact2.number,
-        contact: contact2._id,
-        licensee: licenseeWhithoutChatbot._id,
-        destination: 'to-messenger',
-        sended: true,
-        createdAt: new Date(2021, 6, 3, 0, 0, 0),
-      })
+      await Message.create(
+        messageFactory.build({
+          contact: contact2,
+          licensee: licenseeWhithoutChatbot,
+          destination: 'to-messenger',
+          sended: true,
+          createdAt: new Date(2021, 6, 3, 0, 0, 0),
+        })
+      )
 
-      const licenseeWithoutChatbotApiToken = await Licensee.create({
-        licenseKind: 'demo',
-        name: 'Alcatéia',
-        chatbotDefault: 'landbot',
-        chatbotUrl: 'https://landbot.url',
-        chatbotAuthorizationToken: 'ljsdf12g',
-        useChatbot: true,
-      })
+      const licenseeWithoutChatbotApiToken = await Licensee.create(
+        licenseeFactory.build({
+          chatbotDefault: 'landbot',
+          chatbotUrl: 'https://landbot.url',
+          chatbotAuthorizationToken: 'ljsdf12g',
+          useChatbot: true,
+        })
+      )
 
-      const contact3 = await Contact.create({
-        number: '551190283745',
-        talkingWithChatBot: true,
-        licensee: licenseeWithoutChatbotApiToken._id,
-        landbotId: 'landbot-id',
-      })
+      const contact3 = await Contact.create(
+        contactFactory.build({
+          talkingWithChatBot: true,
+          landbotId: 'landbot-id',
+          licensee: licenseeWithoutChatbotApiToken,
+        })
+      )
 
-      await Message.create({
-        text: 'Message 1',
-        number: contact3.number,
-        contact: contact3._id,
-        licensee: licenseeWithoutChatbotApiToken._id,
-        destination: 'to-messenger',
-        sended: true,
-        createdAt: new Date(2021, 6, 3, 0, 0, 0),
-      })
+      await Message.create(
+        messageFactory.build({
+          contact: contact3,
+          licensee: licenseeWithoutChatbotApiToken,
+          destination: 'to-messenger',
+          sended: true,
+          createdAt: new Date(2021, 6, 3, 0, 0, 0),
+        })
+      )
 
       fetchMock.deleteOnce((url, { headers }) => {
         return (
@@ -205,39 +213,40 @@ describe('resetChatbots', () => {
 
     describe('when the licensee has a message on reset chatbot', () => {
       it('sends a message to the contact that the chatbot conversation has been closed', async () => {
-        const licensee = await Licensee.create({
-          licenseKind: 'demo',
-          name: 'Alcatéia',
-          chatbotDefault: 'landbot',
-          chatbotUrl: 'https://landbot.url',
-          chatbotAuthorizationToken: 'ljsdf12g',
-          useChatbot: true,
-          chatbotApiToken: 'api-token',
-          messageOnResetChatbot: 'Encerrando',
-          whatsappDefault: 'utalk',
-          whatsappToken: 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K',
-          whatsappUrl: 'https://v1.utalk.chat/send/',
-          awsId: 'aws-id',
-          awsSecret: 'aws-secret',
-          bucketName: 'bucket-name',
-        })
+        const licensee = await Licensee.create(
+          licenseeFactory.build({
+            chatbotDefault: 'landbot',
+            chatbotUrl: 'https://landbot.url',
+            chatbotAuthorizationToken: 'ljsdf12g',
+            useChatbot: true,
+            chatbotApiToken: 'api-token',
+            messageOnResetChatbot: 'Encerrando',
+            whatsappDefault: 'utalk',
+            whatsappToken: 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K',
+            whatsappUrl: 'https://v1.utalk.chat/send/',
+            awsId: 'aws-id',
+            awsSecret: 'aws-secret',
+            bucketName: 'bucket-name',
+          })
+        )
 
-        const contact = await Contact.create({
-          number: '551190283745',
-          talkingWithChatBot: true,
-          licensee: licensee._id,
-          landbotId: 'landbot-id',
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            talkingWithChatBot: true,
+            landbotId: 'landbot-id',
+            licensee,
+          })
+        )
 
-        const message = await Message.create({
-          text: 'Message 1',
-          number: contact.number,
-          contact: contact._id,
-          licensee: licensee._id,
-          destination: 'to-messenger',
-          sended: true,
-          createdAt: new Date(2021, 6, 3, 0, 0, 0),
-        })
+        const message = await Message.create(
+          messageFactory.build({
+            contact,
+            licensee,
+            destination: 'to-messenger',
+            sended: true,
+            createdAt: new Date(2021, 6, 3, 0, 0, 0),
+          })
+        )
 
         fetchMock.deleteOnce((url, { headers }) => {
           return (

@@ -4,6 +4,9 @@ const User = require('@models/User')
 const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
+const { userSuper: userSuperFactory } = require('@factories/user')
+const { licensee: licenseeFactory } = require('@factories/licensee')
+const { contact: contactFactory } = require('@factories/contact')
 
 describe('contact controller', () => {
   let token
@@ -12,11 +15,7 @@ describe('contact controller', () => {
   beforeAll(async () => {
     await mongoServer.connect()
 
-    await User.create({
-      name: 'John Doe',
-      email: 'john@doe.com',
-      password: '12345678',
-    })
+    await User.create(userSuperFactory.build())
 
     await request(expressServer)
       .post('/login')
@@ -25,7 +24,7 @@ describe('contact controller', () => {
         token = response.body.token
       })
 
-    licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
+    licensee = await Licensee.create(licenseeFactory.build())
   })
 
   afterAll(async () => {
@@ -46,10 +45,10 @@ describe('contact controller', () => {
         })
     })
 
-    it('returns status 500 and message if x-access-token in not inform in header', async () => {
+    it('returns status 500 and message if x-access-token in invalid', async () => {
       await request(expressServer)
         .post('/resources/contacts/')
-        .set('x-access-token', 'dasadasdasd')
+        .set('x-access-token', 'invalid')
         .send({ name: 'Mary Jane' })
         .expect('Content-Type', /json/)
         .expect(500, {
@@ -65,20 +64,20 @@ describe('contact controller', () => {
         await request(expressServer)
           .post('/resources/contacts/')
           .set('x-access-token', token)
-          .send({
-            name: 'John Doe',
-            number: '554492482687',
-            type: '@c.us',
-            talkingWithChatBot: false,
-            licensee: licensee._id,
-            waId: '12345',
-            landbotId: '56477',
-          })
+          .send(
+            contactFactory.build({
+              name: 'John Doe',
+              type: '@c.us',
+              licensee,
+              waId: '12345',
+              landbotId: '56477',
+            })
+          )
           .expect('Content-Type', /json/)
           .expect(201)
           .then((response) => {
             expect(response.body.name).toEqual('John Doe')
-            expect(response.body.number).toEqual('554492482687')
+            expect(response.body.number).toEqual('5511990283745')
             expect(response.body.type).toEqual('@c.us')
             expect(response.body.talkingWithChatBot).toEqual(false)
             expect(response.body.licensee).toEqual(licensee._id.toString())
@@ -91,7 +90,7 @@ describe('contact controller', () => {
         await request(expressServer)
           .post('/resources/contacts/')
           .set('x-access-token', token)
-          .send({ name: 'John Doe', number: '', talkingWithChatBot: false, licensee: licensee._id })
+          .send(contactFactory.build({ number: '', licensee }))
           .expect('Content-Type', /json/)
           .expect(422, {
             errors: [{ message: 'Numero: Você deve preencher o campo' }],
@@ -106,15 +105,7 @@ describe('contact controller', () => {
         await request(expressServer)
           .post('/resources/contacts/')
           .set('x-access-token', token)
-          .send({
-            name: 'John Doe',
-            number: '554492482687',
-            type: '@c.us',
-            talkingWithChatBot: false,
-            licensee: licensee._id,
-            waId: '12345',
-            landbotId: '56477',
-          })
+          .send(contactFactory.build({ licensee }))
           .expect('Content-Type', /json/)
           .expect(500, {
             errors: { message: 'Error: some error' },
@@ -147,17 +138,17 @@ describe('contact controller', () => {
   describe('update', () => {
     describe('response', () => {
       it('returns status 200 and the contact data if the update is successful', async () => {
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '554492482687',
-          type: '@c.us',
-          talkingWithChatBot: false,
-          licensee: licensee._id,
-          waId: '12345',
-          landbotId: '56477',
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            type: '@c.us',
+            licensee,
+            waId: '12345',
+            landbotId: '56477',
+          })
+        )
 
-        const licenseeNew = await Licensee.create({ name: 'Another', licenseKind: 'demo' })
+        const licenseeNew = await Licensee.create(licenseeFactory.build())
 
         await request(expressServer)
           .post(`/resources/contacts/${contact._id}`)
@@ -188,15 +179,15 @@ describe('contact controller', () => {
       })
 
       it('returns status 422 and message if the contact is not valid', async () => {
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '554492482687',
-          type: '@c.us',
-          talkingWithChatBot: false,
-          licensee: licensee._id,
-          waId: '12345',
-          landbotId: '56477',
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            type: '@c.us',
+            licensee,
+            waId: '12345',
+            landbotId: '56477',
+          })
+        )
 
         await request(expressServer)
           .post(`/resources/contacts/${contact._id}`)
@@ -213,15 +204,7 @@ describe('contact controller', () => {
           throw new Error('some error')
         })
 
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '554492482687',
-          type: '@c.us',
-          talkingWithChatBot: false,
-          licensee: licensee._id,
-          waId: '12345',
-          landbotId: '56477',
-        })
+        const contact = await Contact.create(contactFactory.build({ licensee }))
 
         await request(expressServer)
           .post(`/resources/contacts/${contact._id}`)
@@ -240,15 +223,15 @@ describe('contact controller', () => {
   describe('show', () => {
     describe('response', () => {
       it('returns status 200 and message if contact exists', async () => {
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '554492482687',
-          type: '@c.us',
-          talkingWithChatBot: false,
-          licensee: licensee._id,
-          waId: '12345',
-          landbotId: '56477',
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            type: '@c.us',
+            licensee,
+            waId: '12345',
+            landbotId: '56477',
+          })
+        )
 
         await request(expressServer)
           .get(`/resources/contacts/${contact._id}`)
@@ -257,10 +240,10 @@ describe('contact controller', () => {
           .expect(200)
           .then((response) => {
             expect(response.body.name).toEqual('John Doe')
-            expect(response.body.number).toEqual('554492482687')
+            expect(response.body.number).toEqual('5511990283745')
             expect(response.body.type).toEqual('@c.us')
             expect(response.body.talkingWithChatBot).toEqual(false)
-            expect(response.body.licensee).toEqual(licensee._id.toString())
+            expect(response.body.licensee._id.toString()).toEqual(licensee._id.toString())
             expect(response.body.waId).toEqual('12345')
             expect(response.body.landbotId).toEqual('56477')
             expect(response.body._id).toEqual(contact._id.toString())
@@ -299,23 +282,17 @@ describe('contact controller', () => {
     describe('response', () => {
       it('returns status 200 and message if contact exists', async () => {
         await request(expressServer)
-          .get('/resources/contacts/')
+          .get(
+            `/resources/contacts/?expression=Doe&talkingWithChatbot=false&licensee=${licensee._id.toString()}&type=@c.us&page=1&limit=3`
+          )
           .set('x-access-token', token)
-          .send({
-            page: 1,
-            limit: 6,
-            type: '@c.us',
-            talkingWithChatbot: 'false',
-            licensee: licensee._id.toString(),
-            expression: 'Doe',
-          })
           .expect('Content-Type', /json/)
           .expect(200)
           .then((response) => {
             expect(Array.isArray(response.body)).toEqual(true)
             expect(response.body.length).toEqual(3)
             expect(response.body[1].name).toEqual('John Doe')
-            expect(response.body[1].number).toEqual('554492482687')
+            expect(response.body[1].number).toEqual('5511990283745')
             expect(response.body[1].type).toEqual('@c.us')
             expect(response.body[1].talkingWithChatBot).toEqual(false)
             expect(response.body[1].licensee).toEqual(licensee._id.toString())

@@ -5,10 +5,14 @@ const Licensee = require('@models/Licensee')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
 const S3 = require('../storage/S3')
+const { licensee: licenseeFactory } = require('@factories/licensee')
+const { contact: contactFactory } = require('@factories/contact')
+const { message: messageFactory } = require('@factories/message')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
 describe('Utalk plugin', () => {
+  let licensee
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
   const uploadFileS3Spy = jest.spyOn(S3.prototype, 'uploadFile').mockImplementation()
@@ -17,9 +21,11 @@ describe('Utalk plugin', () => {
   })
 
   beforeEach(async () => {
+    await mongoServer.connect()
     jest.clearAllMocks()
     fetchMock.reset()
-    await mongoServer.connect()
+
+    licensee = await Licensee.create(licenseeFactory.build())
   })
 
   afterEach(async () => {
@@ -29,21 +35,19 @@ describe('Utalk plugin', () => {
   describe('#responseToMessages', () => {
     describe('image and text', () => {
       it('returns the response body transformed in messages with only text message', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: false,
-          licensee: licensee,
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
 
         const responseBody = {
           event: 'chat',
           token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
           user: '5511940650658',
-          'contact[number]': '5593165392832',
+          'contact[number]': '5511990283745',
           'contact[name]': 'John Doe',
           'contact[server]': 'c.us',
           'chat[dtm]': '1603582444',
@@ -79,15 +83,13 @@ describe('Utalk plugin', () => {
 
     describe('image', () => {
       it('returns the response body transformed in messages', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: false,
-          licensee: licensee,
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
 
         const responseBody = {
           event: 'file',
@@ -96,7 +98,7 @@ describe('Utalk plugin', () => {
           blob: 'data:image/jpeg;base64,/9j/4AAQSkZJRgA...',
           dir: 'i',
           user: '5511940650658',
-          number: '5593165392832',
+          number: '5511990283745',
           uid: '3EB016638A2AD49A9ECE',
         }
 
@@ -125,21 +127,19 @@ describe('Utalk plugin', () => {
 
     describe('text', () => {
       it('returns the response body transformed in messages', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: false,
-          licensee: licensee,
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
 
         const responseBody = {
           event: 'chat',
           token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
           user: '5511940650658',
-          'contact[number]': '5593165392832',
+          'contact[number]': '5511990283745',
           'contact[name]': 'John Doe',
           'contact[server]': 'c.us',
           'chat[dtm]': '1603582444',
@@ -173,21 +173,21 @@ describe('Utalk plugin', () => {
 
     describe('group', () => {
       it('returns the response body transformed in messages', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'Grupo Teste',
-          number: '5511989187726-1622497000@g.us',
-          type: '@g.us',
-          talkingWithChatBot: false,
-          licensee: licensee,
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'Grupo Teste',
+            number: '5511989187726-1622497000@g.us',
+            type: '@g.us',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
 
         const responseBody = {
           event: 'chat',
           token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
           user: '5511940650658',
-          'contact[number]': '5593165392832',
+          'contact[number]': '5511990283745',
           'contact[name]': 'John Doe',
           'contact[server]': 'g.us',
           'contact[groupName]': 'Grupo Teste',
@@ -223,8 +223,6 @@ describe('Utalk plugin', () => {
 
     describe('ack', () => {
       it('returns the response body transformed in message ignoring the message from me', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
         const responseBody = {
           event: 'ack',
           token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
@@ -238,29 +236,28 @@ describe('Utalk plugin', () => {
     })
 
     it('updates the contact if contact exists, name is different and message is not file', async () => {
-      const licensee = await Licensee.create({
-        name: 'Alcateia Ltds',
-        active: true,
-        licenseKind: 'demo',
-        useChatbot: true,
-        chatbotDefault: 'landbot',
-        chatbotUrl: 'https://teste-url.com',
-        chatbotAuthorizationToken: 'nakhakbagfrsg',
-      })
+      const licensee = await Licensee.create(
+        licenseeFactory.build({
+          useChatbot: true,
+          chatbotDefault: 'landbot',
+          chatbotUrl: 'https://teste-url.com',
+          chatbotAuthorizationToken: 'token',
+        })
+      )
 
-      await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: false,
-        licensee: licensee,
-      })
+      await Contact.create(
+        contactFactory.build({
+          name: 'John Doe',
+          talkingWithChatBot: false,
+          licensee,
+        })
+      )
 
       const responseBody = {
         event: 'chat',
         token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
         user: '5511940650658',
-        'contact[number]': '5593165392832',
+        'contact[number]': '5511990283745',
         'contact[name]': 'Jonny Cash',
         'contact[server]': 'c.us',
         'chat[dtm]': '1603582444',
@@ -275,7 +272,7 @@ describe('Utalk plugin', () => {
       await utalk.responseToMessages(responseBody)
 
       const contactUpdated = await Contact.findOne({
-        number: '5593165392832',
+        number: '5511990283745',
         type: '@c.us',
         licensee: licensee._id,
       })
@@ -285,15 +282,13 @@ describe('Utalk plugin', () => {
     })
 
     it('does not update the contact if contact exists, name is different and message is file', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-      await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: false,
-        licensee: licensee,
-      })
+      await Contact.create(
+        contactFactory.build({
+          name: 'John Doe',
+          talkingWithChatBot: false,
+          licensee,
+        })
+      )
 
       const responseBody = {
         event: 'file',
@@ -302,7 +297,7 @@ describe('Utalk plugin', () => {
         blob: 'data:image/jpeg;base64,/9j/4AAQSkZJRgA...',
         dir: 'i',
         user: '5511940650658',
-        number: '5593165392832',
+        number: '5511990283745',
         uid: '3EB016638A2AD49A9ECE',
       }
 
@@ -310,7 +305,7 @@ describe('Utalk plugin', () => {
       await utalk.responseToMessages(responseBody)
 
       const contactUpdated = await Contact.findOne({
-        number: '5593165392832',
+        number: '5511990283745',
         type: '@c.us',
         licensee: licensee._id,
       })
@@ -319,21 +314,19 @@ describe('Utalk plugin', () => {
     })
 
     it('does not update the contact if contact exists and body name is undefined', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-      await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: false,
-        licensee: licensee,
-      })
+      await Contact.create(
+        contactFactory.build({
+          name: 'John Doe',
+          talkingWithChatBot: false,
+          licensee,
+        })
+      )
 
       const responseBody = {
         event: 'chat',
         token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
         user: '5511940650658',
-        'contact[number]': '5593165392832',
+        'contact[number]': '5511990283745',
         'contact[server]': 'c.us',
         'chat[dtm]': '1603582444',
         'chat[uid]': '3EB016638A2AD49A9ECE',
@@ -347,7 +340,7 @@ describe('Utalk plugin', () => {
       await utalk.responseToMessages(responseBody)
 
       const contactUpdated = await Contact.findOne({
-        number: '5593165392832',
+        number: '5511990283745',
         type: '@c.us',
         licensee: licensee._id,
       })
@@ -357,13 +350,11 @@ describe('Utalk plugin', () => {
 
     describe('when the contact does not exists', () => {
       it('registers the contact and return the response body transformed in messages', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
         const responseBody = {
           event: 'chat',
           token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
           user: '5511940650658',
-          'contact[number]': '5593165392832',
+          'contact[number]': '5511990283745',
           'contact[name]': 'John Doe',
           'contact[server]': 'c.us',
           'chat[dtm]': '1603582444',
@@ -378,13 +369,13 @@ describe('Utalk plugin', () => {
         const messages = await utalk.responseToMessages(responseBody)
 
         const contact = await Contact.findOne({
-          number: '5593165392832',
+          number: '5511990283745',
           type: '@c.us',
           licensee: licensee._id,
         })
 
         expect(contact.name).toEqual('John Doe')
-        expect(contact.number).toEqual('5593165392832')
+        expect(contact.number).toEqual('5511990283745')
         expect(contact.type).toEqual('@c.us')
         expect(contact.talkingWithChatBot).toEqual(licensee.useChatbot)
         expect(contact.licensee).toEqual(licensee._id)
@@ -407,8 +398,6 @@ describe('Utalk plugin', () => {
       })
 
       it('registers the contact with number at name and return the response body transformed in messages if message is file', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
         const responseBody = {
           event: 'file',
           token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
@@ -416,7 +405,7 @@ describe('Utalk plugin', () => {
           blob: 'data:image/jpeg;base64,/9j/4AAQSkZJRgA...',
           dir: 'i',
           user: '5511940650658',
-          number: '5593165392832',
+          number: '5511990283745',
           uid: '3EB016638A2AD49A9ECE',
         }
 
@@ -424,13 +413,13 @@ describe('Utalk plugin', () => {
         const messages = await utalk.responseToMessages(responseBody)
 
         const contact = await Contact.findOne({
-          number: '5593165392832',
+          number: '5511990283745',
           type: '@c.us',
           licensee: licensee._id,
         })
 
-        expect(contact.name).toEqual('5593165392832')
-        expect(contact.number).toEqual('5593165392832')
+        expect(contact.name).toEqual('5511990283745')
+        expect(contact.number).toEqual('5511990283745')
         expect(contact.type).toEqual('@c.us')
         expect(contact.talkingWithChatBot).toEqual(licensee.useChatbot)
         expect(contact.licensee).toEqual(licensee._id)
@@ -455,21 +444,19 @@ describe('Utalk plugin', () => {
 
     describe('when the contact talking with chatbot', () => {
       it('returns the response body transformed in message with destination "to_chatbot"', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
+        await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            licensee,
+          })
+        )
 
         const responseBody = {
           event: 'chat',
           token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
           user: '5511940650658',
-          'contact[number]': '5593165392832',
+          'contact[number]': '5511990283745',
           'contact[name]': 'John Doe',
           'contact[server]': 'c.us',
           'chat[dtm]': '1603582444',
@@ -492,8 +479,6 @@ describe('Utalk plugin', () => {
 
     describe('when the message is from me', () => {
       it('returns the response body transformed in message ignoring the message from me', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
         const responseBody = {
           event: 'chat',
           token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
@@ -517,8 +502,6 @@ describe('Utalk plugin', () => {
     })
 
     it('return the empty data if body is blank', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const responseBody = {}
 
       const utalk = new Utalk(licensee)
@@ -528,8 +511,6 @@ describe('Utalk plugin', () => {
     })
 
     it('return the empty data if event is chat and chat type is not chat and has no caption', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const responseBody = {
         event: 'chat',
         'chat[type]': 'file',
@@ -545,31 +526,28 @@ describe('Utalk plugin', () => {
   describe('#sendMessage', () => {
     describe('when the message was sent', () => {
       it('marks the message with was sent', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            licensee,
+          })
+        )
 
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          email: 'john@doe.com',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-messenger',
-          sended: false,
-        })
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
 
         const expectedBody = {
           cmd: 'chat',
           id: '60958703f415ed4008748637',
-          to: '5593165392832@c.us',
+          to: '5511990283745@c.us',
           msg: 'Message to send',
         }
 
@@ -585,7 +563,7 @@ describe('Utalk plugin', () => {
             body: {
               type: 'send message',
               cmd: 'chat',
-              to: '5593165392832@c.us',
+              to: '5511990283745@c.us',
               servidor: 'res_utalk',
             },
           }
@@ -605,52 +583,34 @@ describe('Utalk plugin', () => {
       })
 
       it('logs the success message', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          email: 'john@doe.com',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-messenger',
-          sended: false,
-        })
-
-        const expectedBody = {
-          cmd: 'chat',
-          id: '60958703f415ed4008748637',
-          to: '5593165392832@c.us',
-          msg: 'Message to send',
-        }
-
-        fetchMock.postOnce(
-          (url, { body }) => {
-            return (
-              url === 'https://api.utalk.com.br/send/WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K/' &&
-              body === JSON.stringify(expectedBody)
-            )
-          },
-          {
-            status: 200,
-            body: {
-              type: 'send message',
-              cmd: 'chat',
-              to: '5593165392832@c.us',
-              token: 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K',
-              servidor: 'res_utalk',
-            },
-          }
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            licensee,
+          })
         )
+
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
+
+        fetchMock.postOnce('https://api.utalk.com.br/send/WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K/', {
+          status: 200,
+          body: {
+            type: 'send message',
+            cmd: 'chat',
+            to: '5511990283745@c.us',
+            token: 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K',
+            servidor: 'res_utalk',
+          },
+        })
 
         expect(message.sended).toEqual(false)
 
@@ -662,40 +622,37 @@ describe('Utalk plugin', () => {
         expect(fetchMock.calls()).toHaveLength(1)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 enviada para Utalk com sucesso! {"type":"send message","cmd":"chat","to":"5593165392832@c.us","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","servidor":"res_utalk"}'
+          'Mensagem 60958703f415ed4008748637 enviada para Utalk com sucesso! {"type":"send message","cmd":"chat","to":"5511990283745@c.us","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","servidor":"res_utalk"}'
         )
       })
 
       describe('when the message is file', () => {
         it('marks the message with sended and log the success message', async () => {
-          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              talkingWithChatBot: true,
+              licensee,
+            })
+          )
 
-          const contact = await Contact.create({
-            name: 'John Doe',
-            number: '5593165392832',
-            type: '@c.us',
-            email: 'john@doe.com',
-            talkingWithChatBot: true,
-            licensee: licensee,
-          })
-
-          const message = await Message.create({
-            _id: '60958703f415ed4008748637',
-            number: 'jhd7879a7d9',
-            contact: contact,
-            licensee: licensee,
-            destination: 'to-messenger',
-            text: 'Message to send',
-            kind: 'file',
-            url: 'https://octodex.github.com/images/dojocat.jpg',
-            fileName: 'dojocat.jpg',
-            sended: false,
-          })
+          const message = await Message.create(
+            messageFactory.build({
+              _id: '60958703f415ed4008748637',
+              text: 'Message to send',
+              kind: 'file',
+              url: 'https://octodex.github.com/images/dojocat.jpg',
+              fileName: 'dojocat.jpg',
+              contact,
+              licensee,
+              sended: false,
+            })
+          )
 
           const expectedBody = {
             cmd: 'media',
             id: '60958703f415ed4008748637',
-            to: '5593165392832@c.us',
+            to: '5511990283745@c.us',
             msg: 'Message to send',
             link: 'https://octodex.github.com/images/dojocat.jpg',
           }
@@ -712,7 +669,7 @@ describe('Utalk plugin', () => {
               body: {
                 type: 'send message',
                 cmd: 'chat',
-                to: '5593165392832@c.us',
+                to: '5511990283745@c.us',
                 token: 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K',
                 servidor: 'res_utalk',
               },
@@ -732,7 +689,7 @@ describe('Utalk plugin', () => {
           expect(messageUpdated.sended).toEqual(true)
 
           expect(consoleInfoSpy).toHaveBeenCalledWith(
-            'Mensagem 60958703f415ed4008748637 enviada para Utalk com sucesso! {"type":"send message","cmd":"chat","to":"5593165392832@c.us","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","servidor":"res_utalk"}'
+            'Mensagem 60958703f415ed4008748637 enviada para Utalk com sucesso! {"type":"send message","cmd":"chat","to":"5511990283745@c.us","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","servidor":"res_utalk"}'
           )
         })
       })
@@ -740,31 +697,28 @@ describe('Utalk plugin', () => {
 
     describe('when can not send the message', () => {
       it('logs the error message', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            licensee,
+          })
+        )
 
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          email: 'john@doe.com',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-messenger',
-          sended: false,
-        })
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
 
         const expectedBody = {
           cmd: 'chat',
           id: '60958703f415ed4008748637',
-          to: '5593165392832@c.us',
+          to: '5511990283745@c.us',
           msg: 'Message to send',
         }
 
@@ -808,15 +762,13 @@ describe('Utalk plugin', () => {
   })
 
   describe('#action', () => {
-    it('returns send-message-to-chat if message destination is to chat', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+    it('returns send-message-to-chat if message destination is to chat', () => {
       const utalk = new Utalk(licensee)
 
       expect(utalk.action('to-chat')).toEqual('send-message-to-chat')
     })
 
-    it('returns send-message-to-chatbot if message destination is to chatbot', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+    it('returns send-message-to-chatbot if message destination is to chatbot', () => {
       const utalk = new Utalk(licensee)
 
       expect(utalk.action('to-chatbot')).toEqual('send-message-to-chatbot')

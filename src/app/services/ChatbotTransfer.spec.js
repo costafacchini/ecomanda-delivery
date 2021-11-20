@@ -3,11 +3,22 @@ const Licensee = require('@models/Licensee')
 const Body = require('@models/Body')
 const Landbot = require('../plugins/chatbots/Landbot')
 const mongoServer = require('.jest/utils')
+const { licensee: licenseeFactory } = require('@factories/licensee')
+const { body: bodyFactory } = require('@factories/body')
 
 describe('transformChatbotTransferBody', () => {
+  let licensee
+
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
+
+    licensee = await Licensee.create(
+      licenseeFactory.build({
+        chatbotDefault: 'landbot',
+        chatUrl: 'https://chat.url',
+      })
+    )
   })
 
   afterEach(async () => {
@@ -21,19 +32,11 @@ describe('transformChatbotTransferBody', () => {
         return { _id: 'KSDF656DSD91NSE' }
       })
 
-    const licensee = await Licensee.create({
-      licenseKind: 'demo',
-      name: 'Alcatéia',
-      chatbotDefault: 'landbot',
-      chatUrl: 'https://chat.url',
-    })
-
-    const body = await Body.create({
-      content: {
-        message: 'text',
-      },
-      licensee: licensee._id,
-    })
+    const body = await Body.create(
+      bodyFactory.build({
+        licensee: licensee,
+      })
+    )
 
     const data = {
       bodyId: body._id,
@@ -59,19 +62,14 @@ describe('transformChatbotTransferBody', () => {
         return null
       })
 
-    const licensee = await Licensee.create({
-      licenseKind: 'demo',
-      name: 'Alcatéia',
-      chatbotDefault: 'landbot',
-      chatUrl: 'https://chat.url',
-    })
-
-    const body = await Body.create({
-      content: {
-        is: 'invalid',
-      },
-      licensee: licensee._id,
-    })
+    const body = await Body.create(
+      bodyFactory.build({
+        content: {
+          is: 'invalid',
+        },
+        licensee: licensee,
+      })
+    )
 
     const data = {
       bodyId: body._id,

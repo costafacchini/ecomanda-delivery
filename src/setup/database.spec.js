@@ -1,6 +1,7 @@
 const mongoServer = require('../../.jest/utils')
 const User = require('@models/User')
 const { createDefaultUser } = require('./database')
+const { userSuper: userSuperFactory } = require('../app/factories/user')
 
 describe('#createDefaultUser', () => {
   beforeEach(async () => {
@@ -19,7 +20,7 @@ describe('#createDefaultUser', () => {
   })
 
   it('does not create the default user if has users', async () => {
-    const user = await new User({ name: 'Default user', email: 'teste', password: 'testeteste' })
+    const user = await new User(userSuperFactory.build())
     await user.save()
 
     expect(await User.countDocuments()).toEqual(1)
