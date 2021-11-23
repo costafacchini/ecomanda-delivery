@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import SignIn from './SignIn'
 import LicenseesRoutes from './Licensees/routes'
 import ContactsRoutes from './Contacts/routes'
-import ReportsRoutes from './Reports/routes'
+import MessagesRoutes from './Messages/routes'
 import Dashboard from './Dashboard'
 import { isAuthenticated, fetchLoggedUser } from '../services/auth'
 import { loadLoggedUser } from './SignIn/slice'
@@ -54,10 +54,10 @@ function RootRoutes() {
           }
         />
         <Route
-          path='/reports'
+          path='/messages/*'
           element={
             <PrivateRoute redirectTo='/'>
-              <ReportsRoutes />
+              <MessagesRoutes />
             </PrivateRoute>
           }
         />

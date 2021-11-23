@@ -1,11 +1,9 @@
 import { useState } from 'react'
-import { Link } from "react-router-dom"
+import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { fetchLicensees } from './slice'
-import { useEffect } from "react"
-import LicenseeTypeahead from '../../../../components/LicenseeTypeahead'
+import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 
-function LicenseesIndex({ licensees, dispatch }) {
+function MessagesIndex({ messages, loggedUser }) {
 
   const [filters, setFilters] = useState({ startDate: '', endDate: '', licensee: '', onlyErrors: false })
 
@@ -17,7 +15,7 @@ function LicenseesIndex({ licensees, dispatch }) {
     <>
       <div className='d-flex justify-content-between pb-2'>
         <div className=''>
-          <h3 className='pr-3'>Relatórios</h3>
+          <h3 className='pr-3'>Mensagens</h3>
         </div>
       </div>
 
@@ -36,12 +34,14 @@ function LicenseesIndex({ licensees, dispatch }) {
           </div>
         </div>
 
-        <div className='col-3'>
-          <div className='form-group'>
-            <label htmlFor='licensee'>Licenciado</label>
-            <LicenseeTypeahead className='form-select' value={filters.licensee} onChange={handleChange} name='licensee' id='licensee' />
+        {loggedUser.isSuper && (
+          <div className='col-3'>
+            <div className='form-group'>
+              <label htmlFor='licensee'>Licenciado</label>
+              <SelectLicenseesWithFilter className='form-select' selectedItem={filters.licensee} onChange={handleChange} name='licensee' id='licensee' />
+            </div>
           </div>
-        </div>
+        )}
 
         <div className='col-3 col-12 mt-3'>
           <div className="form-check">
@@ -68,12 +68,11 @@ function LicenseesIndex({ licensees, dispatch }) {
             </tr>
           </thead>
           <tbody>
-            {licensees.map((licensee) => (
-              <tr key={licensee.id}>
-                <td>{licensee.name}</td>
-                <td>{licensee.email}</td>
-                <td>{licensee.licenseKind}</td>
-                <td><Link to={`/licensees/${licensee.id}`}><i className="bi bi-pencil" /></Link></td>
+            {messages.map((message) => (
+              <tr key={message.id.toString()}>
+                <td>{message.name}</td>
+                <td>{message.email}</td>
+                <td>{message.licenseKind}</td>
               </tr>
             ))}
           </tbody>
@@ -85,8 +84,8 @@ function LicenseesIndex({ licensees, dispatch }) {
 
 const mapStateToProps = (state) => {
   return {
-    licensees: state.licenseesIndex.licensees
+    messages: state.messagesIndex.messages
   }
 }
 
-export default connect(mapStateToProps)(LicenseesIndex)
+export default connect(mapStateToProps)(MessagesIndex)
