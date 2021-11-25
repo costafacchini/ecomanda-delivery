@@ -51,6 +51,8 @@ function ContactsIndex({ contacts, dispatch }) {
   useEffect(() => {
     let abortController = new AbortController()
 
+    if (!filters.expression) return
+
     try {
       dispatch(fetchContacts(filters))
     } catch (error) {
