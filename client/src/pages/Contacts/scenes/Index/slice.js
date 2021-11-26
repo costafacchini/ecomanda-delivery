@@ -26,7 +26,7 @@ export const slice = createSlice({
   },
   extraReducers: (builder)=>{
     builder.addCase(fetchContacts.fulfilled, (state, action)=>{
-      state.contacts = action.payload
+      state.contacts = action.meta.arg.page === 1 ? action.payload : [...state.contacts, ...action.payload]
     })
     builder.addCase(addContacts.fulfilled, (state, action) => {
       state.contacts = [...state.contacts, ...action.payload]

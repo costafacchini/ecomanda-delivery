@@ -1,57 +1,14 @@
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { fetchContacts, addContacts } from './slice'
+import { fetchContacts } from './slice'
 import { useEffect, useState } from 'react'
 
 function ContactsIndex({ contacts, dispatch }) {
   const [filters, setFilters] = useState({ expression: '', page: 1 })
   const [expression, setExpression] = useState('')
-  const [page, setPage] = useState(1)
 
   useEffect(() => {
     let abortController = new AbortController()
-
-    try {
-      dispatch(fetchContacts({
-        page: 1,
-        expression: '',
-      }))
-    } catch (error) {
-      if (error.name === 'AbortError') {
-          // Handling error thrown by aborting request
-      }
-    }
-
-    return () => {
-      abortController.abort()
-    }
-  }, [dispatch])
-
-  useEffect(() => {
-    if (page === 1) return
-
-    let abortController = new AbortController()
-
-    try {
-      dispatch(addContacts({
-        page,
-        expression: '',
-      }))
-    } catch (error) {
-      if (error.name === 'AbortError') {
-        // Handling error thrown by aborting request
-      }
-    }
-
-    return () => {
-      abortController.abort()
-    }
-  }, [dispatch, page])
-
-  useEffect(() => {
-    let abortController = new AbortController()
-
-    if (!filters.expression) return
 
     try {
       dispatch(fetchContacts(filters))
@@ -98,8 +55,7 @@ function ContactsIndex({ contacts, dispatch }) {
               />
               <div className='input-group-append'>
                 <button className='btn btn-primary' title='Filtre pelo contato' onClick={() => {
-                  setPage(1)
-                  setFilters({ expression, page })
+                  setFilters({ ...filters, expression })
                 }}>
                   <i className='bi bi-search'></i>
                 </button>
@@ -138,7 +94,11 @@ function ContactsIndex({ contacts, dispatch }) {
           {expression === '' && (contacts.length > 29) && (
             <div className='row'>
               <div className='col text-center mt-3'>
-                <button type='button' className='btn btn-outline-primary d-print-none' onClick={() => setPage(page + 1)}>
+                <button
+                  type='button'
+                  className='btn btn-outline-primary d-print-none'
+                  onClick={() => setFilters({ ...filters, page: filters.page + 1 })}
+                >
                   Carregar mais
                 </button>
               </div>
