@@ -10,14 +10,14 @@ const fetchLicensees = createAsyncThunk(
 )
 
 export const slice = createSlice({
-  name: 'licensees',
+  name: 'licenseesIndex',
   initialState: {
     licensees: [],
   },
   reducers: {
   },
-  extraReducers: (builder)=>{
-    builder.addCase(fetchLicensees.fulfilled, (state, action)=>{
+  extraReducers: (builder) => {
+    builder.addCase(fetchLicensees.fulfilled, (state, action) => {
       state.licensees = action.payload
     })
   }

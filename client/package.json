@@ -9,6 +9,7 @@
     "@testing-library/user-event": "13.5.0",
     "bootstrap": "5.1.3",
     "bootstrap-icons": "1.7.1",
+    "fishery": "^2.1.0",
     "formik": "2.2.9",
     "loadash": "1.0.0",
     "node-sass": "4.14.1",
@@ -27,7 +28,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "jest:watch": "react-scripts test --no-coverage --verbose --watch --runInBand --notify --notifyMode always"
   },
   "proxy": "http://localhost:5000",
   "eslintConfig": {
