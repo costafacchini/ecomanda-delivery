@@ -14,12 +14,23 @@ function ContactEdit({ loggedUser }) {
   const contactId = id
 
   useEffect(() => {
+    let abortController = new AbortController()
+
     async function fetchContact() {
-      const { data: licensee } = await getContact(contactId)
-      setContact(licensee)
+      try {
+        const { data: licensee } = await getContact(contactId)
+        setContact(licensee)
+      } catch (error) {
+        if (error.name === 'AbortError') {
+          // Handling error thrown by aborting request
+        }
+      }
     }
 
     fetchContact()
+    return () => {
+      abortController.abort()
+    }
   }, [contactId])
 
   if (!contact) return null
