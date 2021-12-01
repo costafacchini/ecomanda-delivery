@@ -9,14 +9,6 @@ const fetchContacts = createAsyncThunk(
   }
 )
 
-const addContacts = createAsyncThunk(
-  'users/addContactsStatus',
-  async (filters) => {
-    const response = await getContacts(filters)
-    return response.data
-  }
-)
-
 export const slice = createSlice({
   name: 'contacts',
   initialState: {
@@ -28,11 +20,8 @@ export const slice = createSlice({
     builder.addCase(fetchContacts.fulfilled, (state, action)=>{
       state.contacts = action.meta.arg.page === 1 ? action.payload : [...state.contacts, ...action.payload]
     })
-    builder.addCase(addContacts.fulfilled, (state, action) => {
-      state.contacts = [...state.contacts, ...action.payload]
-    })
   }
 })
 
-export { fetchContacts, addContacts }
+export { fetchContacts }
 export default slice.reducer
