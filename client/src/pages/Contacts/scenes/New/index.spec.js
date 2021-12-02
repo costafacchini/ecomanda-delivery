@@ -1,9 +1,9 @@
 import ContactNew from '.'
 import { fireEvent, render, screen, waitFor, cleanup } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
-import { createContact } from '../services/contact'
+import { createContact } from '../../../../services/contact'
 
-jest.mock('../services/contact')
+jest.mock('../../../../services/contact')
 
 describe('<ContactNew />', () => {
   let loggedUser = {

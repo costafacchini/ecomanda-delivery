@@ -2,8 +2,6 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import ContactForm from './'
 
-jest.mock('../services/contact')
-
 describe('<ContactForm />', () => {
   const onSubmit = jest.fn()
 

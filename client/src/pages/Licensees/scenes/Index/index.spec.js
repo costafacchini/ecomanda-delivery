@@ -1,12 +1,11 @@
 import mountWithRedux, { createStore } from '../../../../.jest/redux-testing'
 import LicenseeIndex from './'
-import { findByText, fireEvent, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { getLicensees } from '../../../../services/licensee'
-import { fetchLicensees } from './slice'
 import { MemoryRouter } from 'react-router'
 import { licenseeFactory } from '../../../../factories/licensee'
 
-jest.mock('../../../../services/licensees')
+jest.mock('../../../../services/licensee')
 
 describe('<LicenseeIndex />', () => {
   function mount() {

@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import Select, { createFilter } from 'react-select'
 import debounce from 'lodash/debounce'
-import { getLicensees } from '../../services/licensee'
+import { getContacts } from '../../services/contact'
 
-export default function SelectLicenseesWithFilter({ isDisabled, onChange, selectedItem }) {
+export default function SelectContactsWithFilter({ isDisabled, onChange, selectedItem }) {
   const [defaultValue, setDefaultValue] = useState(null)
   const [selectedOption, setSelectedOption] = useState(null)
   const [options, setOptions] = useState([])
@@ -36,8 +36,8 @@ export default function SelectLicenseesWithFilter({ isDisabled, onChange, select
   async function onFetch(value) {
     try {
       setIsLoading(true)
-      const { data: licensees } = await getLicensees({ expression: value, active: true })
-      setOptions(transformData(licensees))
+      const { data: contacts } = await getContacts({ expression: value, active: true })
+      setOptions(transformData(contacts))
     } catch (_) {}
     setIsLoading(false)
   }

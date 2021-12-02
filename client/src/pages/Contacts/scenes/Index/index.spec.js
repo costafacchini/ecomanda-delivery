@@ -1,12 +1,11 @@
 import mountWithRedux, { createStore } from '../../../../.jest/redux-testing'
 import ContactsIndex from './'
-import { findByText, fireEvent, screen, waitFor } from '@testing-library/react'
-import { getContacts } from '../services/contact'
-import { fetchContacts } from './slice'
+import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { getContacts } from '../../../../services/contact'
 import { MemoryRouter } from 'react-router'
 import { contactFactory } from '../../../../factories/contact'
 
-jest.mock('../services/contact')
+jest.mock('../../../../services/contact')
 
 describe('<ContactsIndex />', () => {
   function mount() {

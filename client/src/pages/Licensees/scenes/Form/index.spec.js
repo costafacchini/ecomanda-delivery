@@ -1,9 +1,9 @@
 import { fireEvent, render, screen, waitFor, cleanup } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import LicenseeForm from './'
-import { setLicenseeWebhook } from '../services/licensee'
+import { setLicenseeWebhook } from '../../../../services/licensee'
 
-jest.mock('../services/licensee')
+jest.mock('../../../../services/licensee')
 
 describe('<LicenseeForm />', () => {
   const onSubmit = jest.fn()

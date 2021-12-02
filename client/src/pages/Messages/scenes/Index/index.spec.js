@@ -1,25 +1,25 @@
 import mountWithRedux, { createStore } from '../../../../.jest/redux-testing'
-import LicenseeNew from './';
+import MessageIndex from './'
 import { screen, waitFor } from '@testing-library/react'
-import { getLicensees } from '../../../../services/licensees'
-import { MemoryRouter } from 'react-router';
+import { getMessages } from '../../../../services/message'
+import { MemoryRouter } from 'react-router'
 
-jest.mock('../../../../services/licensees')
+jest.mock('../../../../services/message')
 
-describe('<LicenseeNew />', () => {
+describe('<MessageIndex />', () => {
   function mount() {
     const store = createStore()
     mountWithRedux(store)(
       <MemoryRouter>
-        <LicenseeNew />
+        <MessageIndex />
       </MemoryRouter>)
   }
 
-  it('renders the licensees', async () => {
-    getLicensees.mockResolvedValue({ status: 201, data: [{ id: '1', name: 'Licenciado' }] })
+  it('renders the messages', async () => {
+    getMessages.mockResolvedValue({ status: 201, data: [{ id: '1', name: 'Mensagem' }] })
 
     mount()
 
-    await waitFor(() => expect(screen.getByText('Licenciado')).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText('Mensagem')).toBeInTheDocument())
   })
 })

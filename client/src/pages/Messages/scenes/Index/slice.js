@@ -1,16 +1,16 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { getMessages } from '../../../../services/messages'
+import { getMessages } from '../../../../services/message'
 
 const fetchMessages = createAsyncThunk(
-  'messages/fetchMessages',
-  async () => {
-    const response = await getMessages()
+  'users/fetchMessagesStatus',
+  async (filters) => {
+    const response = await getMessages(filters)
     return response.data
   }
 )
 
 export const slice = createSlice({
-  name: 'messages',
+  name: 'messagesIndex',
   initialState: {
     filters: {},
     messages: []

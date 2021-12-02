@@ -1,7 +1,7 @@
 import Form from '../Form'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
-import { getLicensee, updateLicensee } from '../../../../services/licensees'
+import { getLicensee, updateLicensee } from '../../../../services/licensee'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 

@@ -1,9 +1,9 @@
 import LicenseeNew from '.'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
-import { createLicensee } from '../../../../services/licensees'
+import { createLicensee } from '../../../../services/licensee'
 
-jest.mock('../../../../services/licensees')
+jest.mock('../../../../services/licensee')
 
 describe('<LicenseeNew />', () => {
   function mount() {

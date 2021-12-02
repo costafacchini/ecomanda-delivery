@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { getContacts } from '../services/contact'
+import { getContacts } from '../../../../services/contact'
 
 const fetchContacts = createAsyncThunk(
   'users/fetchContactsStatus',

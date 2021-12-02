@@ -1,7 +1,7 @@
 import { FieldWithError, Form } from '../../../../components/form'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router-dom'
-import { setLicenseeWebhook } from '../services/licensee'
+import { setLicenseeWebhook } from '../../../../services/licensee'
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string()
