@@ -22,14 +22,14 @@ describe('<TriggerForm />', () => {
   })
 
   it('can receive initial values', () => {
-    const contact = {
+    const trigger = {
       name: 'Name',
       triggerKind: 'multi_product',
       expression: 'multiple-products',
       catalogMulti: 'products',
     }
 
-    mount({ initialValues: contact })
+    mount({ initialValues: trigger })
 
     expect(screen.getByLabelText('Nome')).toHaveValue('Name')
     expect(screen.getByLabelText('Expressão')).toHaveValue('multiple-products')
@@ -39,48 +39,48 @@ describe('<TriggerForm />', () => {
 
   describe('fields', () => {
     it('renders fields if kind is multi_product', () => {
-      const contact = {
+      const trigger = {
         triggerKind: 'multi_product',
         catalogMulti: 'product',
       }
 
-      mount({ initialValues: contact })
+      mount({ initialValues: trigger })
 
       expect(screen.getByLabelText('Tipo')).toHaveValue('multi_product')
       expect(screen.getByLabelText('Catálogo')).toHaveValue('product')
     })
 
     it('renders fields if kind is single_product', () => {
-      const contact = {
+      const trigger = {
         triggerKind: 'single_product',
         catalogSingle: 'product',
       }
 
-      mount({ initialValues: contact })
+      mount({ initialValues: trigger })
 
       expect(screen.getByLabelText('Tipo')).toHaveValue('single_product')
       expect(screen.getByLabelText('Catálogo')).toHaveValue('product')
     })
 
     it('renders fields if kind is reply_button', () => {
-      const contact = {
+      const trigger = {
         triggerKind: 'reply_button',
         textReplyButton: 'buttons',
       }
 
-      mount({ initialValues: contact })
+      mount({ initialValues: trigger })
 
       expect(screen.getByLabelText('Tipo')).toHaveValue('reply_button')
       expect(screen.getByLabelText('Script')).toHaveValue('buttons')
     })
 
     it('renders fields if kind is list_message', () => {
-      const contact = {
+      const trigger = {
         triggerKind: 'list_message',
         messagesList: 'messages',
       }
 
-      mount({ initialValues: contact })
+      mount({ initialValues: trigger })
 
       expect(screen.getByLabelText('Tipo')).toHaveValue('list_message')
       expect(screen.getByLabelText('Mensagens')).toHaveValue('messages')
