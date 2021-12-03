@@ -1,0 +1,79 @@
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const ObjectId = Schema.ObjectId
+
+const triggerSchema = new Schema(
+  {
+    _id: ObjectId,
+    name: String,
+    triggerKind: {
+      type: String,
+      enum: ['multi_product', 'single_product', 'reply_button', 'list_message'],
+      required: [true, 'Tipo de Gatilho: Você deve informar um valor ( catalog | summary )'],
+    },
+    expression: {
+      type: String,
+      required: [true, 'Expressão: Você deve preencher o campo'],
+    },
+    catalogMulti: {
+      type: String,
+      required: [
+        function () {
+          return this.triggerKind === 'multi_product'
+        },
+        'Catalogo: deve ser preenchido quando o gatilho é do tipo vários produtos',
+      ],
+    },
+    catalogSingle: {
+      type: String,
+      required: [
+        function () {
+          return this.triggerKind === 'single_product'
+        },
+        'Catalogo: deve ser preenchido quando o gatilho é do tipo produto único',
+      ],
+    },
+    textReplyButton: {
+      type: String,
+      required: [
+        function () {
+          return this.triggerKind === 'reply_button'
+        },
+        'Script: deve ser preenchido quando o gatilho é do tipo botões de resposta',
+      ],
+    },
+    messagesList: {
+      type: String,
+      required: [
+        function () {
+          return this.triggerKind === 'list_message'
+        },
+        'Mensagens: deve ser preenchido quando o gatilho é do tipo lista de mensagens',
+      ],
+    },
+    licensee: {
+      type: ObjectId,
+      ref: 'Licensee',
+      required: [true, 'Licensee: Você deve preencher o campo'],
+    },
+  },
+  { timestamps: true }
+)
+
+triggerSchema.pre('save', function (next) {
+  const trigger = this
+
+  if (!trigger._id) {
+    trigger._id = new mongoose.Types.ObjectId()
+  }
+
+  next()
+})
+
+triggerSchema.set('toJSON', {
+  virtuals: true,
+})
+
+const Trigger = mongoose.model('Trigger', triggerSchema)
+
+module.exports = Trigger

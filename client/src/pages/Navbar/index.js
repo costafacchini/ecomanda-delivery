@@ -22,6 +22,9 @@ export default function Navbar({ loggedUser }) {
                 <a className="nav-link" href="/#/contacts">Contatos</a>
               </li>
               <li className="nav-item">
+                <a className="nav-link" href="/#/triggers">Gatilhos</a>
+              </li>
+              <li className="nav-item">
                 <a className="nav-link" href="/#/configurations">Configurações</a>
               </li>
               {/* <li className="nav-item">
