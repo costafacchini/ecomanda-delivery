@@ -1,4 +1,4 @@
-import { Field, ErrorMessage, Formik } from 'formik';
+import { Field, ErrorMessage, Formik } from 'formik'
 
 
 const FieldWithError = (props) => {
