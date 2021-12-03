@@ -4,6 +4,7 @@ const NormalizePhone = require('../../helpers/NormalizePhone')
 const { v4: uuidv4 } = require('uuid')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
+const Trigger = require('@models/Contact')
 const request = require('../../services/request')
 
 class Jivochat {
@@ -52,6 +53,14 @@ class Jivochat {
       contact: contact._id,
       destination: 'to-messenger',
     })
+
+    if (kind === 'text') {
+      const trigger = await Trigger.findOne({ expression: text, licensee: this.licensee._id })
+      if (trigger) {
+        messageToSend.kind = 'interactive'
+        messageToSend.trigger = trigger._id
+      }
+    }
 
     if (kind === 'file') {
       messageToSend.url = message.file

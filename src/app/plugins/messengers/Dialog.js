@@ -1,5 +1,6 @@
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
+const Trigger = require('@models/Contact')
 const NormalizePhone = require('../../helpers/NormalizePhone')
 const { v4: uuidv4 } = require('uuid')
 const S3 = require('../storage/S3')
@@ -123,6 +124,19 @@ class Dialog {
     if (responseBody.messages[0].type === 'text') {
       messageToSend.kind = 'text'
       messageToSend.text = responseBody.messages[0].text.body
+    } else if (responseBody.messages[0].type === 'interactive') {
+      const expression = responseBody.messages[0].interactive.list_reply
+        ? responseBody.messages[0].interactive.list_reply.id
+        : responseBody.messages[0].interactive.button_reply.id
+
+      const trigger = await Trigger.findOne({ expression, licensee: this.licensee._id })
+      if (trigger) {
+        messageToSend.kind = 'interactive'
+        messageToSend.destination = 'to-messenger'
+        messageToSend.trigger = trigger._id
+      } else {
+        messageToSend.text = expression
+      }
     } else {
       if (responseBody.messages[0].type === 'image') {
         messageToSend.attachmentWaId = responseBody.messages[0].image.id
@@ -164,6 +178,30 @@ class Dialog {
         messageBody.type = 'text'
         messageBody.text = {
           body: messageToSend.text,
+        }
+      }
+
+      if (messageToSend.kind === 'interactive') {
+        const trigger = await Trigger.findById(messageToSend.trigger)
+        if (trigger) {
+          messageToSend.type = 'interactive'
+          if (trigger.triggerKind === 'multi_product') {
+            messageToSend.interactive = trigger.catalogMulti
+          }
+          if (trigger.triggerKind === 'single_product') {
+            messageToSend.interactive = trigger.catalogSingle
+          }
+          if (trigger.triggerKind === 'reply_button') {
+            messageToSend.interactive = trigger.textReplyButton
+          }
+          if (trigger.triggerKind === 'list_message') {
+            messageToSend.interactive = trigger.messagesList
+          }
+        } else {
+          messageBody.type = 'text'
+          messageBody.text = {
+            body: messageToSend.text,
+          }
         }
       }
 

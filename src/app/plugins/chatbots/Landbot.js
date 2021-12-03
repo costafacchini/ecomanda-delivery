@@ -5,6 +5,7 @@ const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const request = require('../../services/request')
 const Room = require('@models/Room')
+const Trigger = require('@models/Contact')
 
 const closeRoom = async (contact) => {
   const room = await Room.findOne({ contact: contact._id, closed: false })
@@ -62,6 +63,14 @@ class Landbot {
         contact: contact._id,
         destination: 'to-messenger',
       })
+
+      if (kind === 'text') {
+        const trigger = await Trigger.findOne({ expression: text, licensee: this.licensee._id })
+        if (trigger) {
+          messageToSend.kind = 'interactive'
+          messageToSend.trigger = trigger._id
+        }
+      }
 
       if (kind === 'file') {
         messageToSend.url = message.url
