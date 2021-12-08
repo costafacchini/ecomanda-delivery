@@ -2,13 +2,15 @@ require('dotenv').config()
 require('module-alias/register')
 require('@models/index')
 
-const queueServer = require('@config/queue')
-
+const request = require('./src/app/services/request')
+const Licensee = require('@models/Licensee')
 const connect = require('./src/config/database')
 connect()
 
 async function schedule() {
-  await queueServer.addJob('clear-backups')
+  const licensee = await Licensee.findOne()
+
+  await request.post(`http://localhost:5000/api/v1/backups/clear?token=${licensee.apiToken}`)
 
   // process.exit()
 }
