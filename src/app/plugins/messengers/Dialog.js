@@ -1,6 +1,6 @@
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
-const Trigger = require('@models/Contact')
+const Trigger = require('@models/Trigger')
 const NormalizePhone = require('../../helpers/NormalizePhone')
 const { v4: uuidv4 } = require('uuid')
 const S3 = require('../storage/S3')
@@ -184,18 +184,18 @@ class Dialog {
       if (messageToSend.kind === 'interactive') {
         const trigger = await Trigger.findById(messageToSend.trigger)
         if (trigger) {
-          messageToSend.type = 'interactive'
+          messageBody.type = 'interactive'
           if (trigger.triggerKind === 'multi_product') {
-            messageToSend.interactive = trigger.catalogMulti
+            messageBody.interactive = JSON.parse(trigger.catalogMulti)
           }
           if (trigger.triggerKind === 'single_product') {
-            messageToSend.interactive = trigger.catalogSingle
+            messageBody.interactive = JSON.parse(trigger.catalogSingle)
           }
           if (trigger.triggerKind === 'reply_button') {
-            messageToSend.interactive = trigger.textReplyButton
+            messageBody.interactive = JSON.parse(trigger.textReplyButton)
           }
           if (trigger.triggerKind === 'list_message') {
-            messageToSend.interactive = trigger.messagesList
+            messageBody.interactive = JSON.parse(trigger.messagesList)
           }
         } else {
           messageBody.type = 'text'

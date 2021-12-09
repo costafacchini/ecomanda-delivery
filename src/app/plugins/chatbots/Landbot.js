@@ -5,7 +5,7 @@ const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const request = require('../../services/request')
 const Room = require('@models/Room')
-const Trigger = require('@models/Contact')
+const Trigger = require('@models/Trigger')
 
 const closeRoom = async (contact) => {
   const room = await Room.findOne({ contact: contact._id, closed: false })
