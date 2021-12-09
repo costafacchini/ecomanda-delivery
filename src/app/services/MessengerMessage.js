@@ -13,8 +13,17 @@ async function transformMessengerBody(data) {
 
   for (const message of messages) {
     const action = messengerPlugin.action(message.destination)
-    const url = message.destination === 'to-chat' ? licensee.chatUrl : licensee.chatbotUrl
-    const token = message.destination === 'to-chat' ? '' : licensee.chatbotAuthorizationToken
+    let url, token
+    if (message.destination === 'to-chat') {
+      url = licensee.chatUrl
+      token = ''
+    } else if (message.destination === 'to-messenger') {
+      url = licensee.whatsappUrl
+      token = licensee.whatsappToken
+    } else {
+      url = licensee.chatbotUrl
+      token = licensee.chatbotAuthorizationToken
+    }
 
     const bodyToSend = {
       messageId: message._id,
