@@ -124,6 +124,9 @@ class Dialog {
     if (responseBody.messages[0].type === 'text') {
       messageToSend.kind = 'text'
       messageToSend.text = responseBody.messages[0].text.body
+    } else if (responseBody.messages[0].type === 'order') {
+
+
     } else if (responseBody.messages[0].type === 'interactive') {
       const expression = responseBody.messages[0].interactive.list_reply
         ? responseBody.messages[0].interactive.list_reply.id

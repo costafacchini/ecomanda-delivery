@@ -2069,6 +2069,92 @@ describe('Dialog plugin', () => {
             )
           })
         })
+
+        describe('if does not has a trigger', () => {
+          it('send the message as text', async () => {
+            const contact = await Contact.create(
+              contactFactory.build({
+                name: 'John Doe',
+                talkingWithChatBot: true,
+                waId: '5593165392997',
+                email: 'john@doe.com',
+                licensee,
+              })
+            )
+
+            const message = await Message.create(
+              messageFactory.build({
+                _id: '60958703f415ed4008748637',
+                text: 'Hello World',
+                contact,
+                licensee,
+                sended: false,
+                kind: 'interactive',
+              })
+            )
+
+            const expectedBodyGetContact = {
+              blocking: 'wait',
+              contacts: ['+5511990283745'],
+              force_check: true,
+            }
+
+            fetchMock.postOnce(
+              (url, { body }) => {
+                return (
+                  url === 'https://waba.360dialog.io/v1/contacts/' && body === JSON.stringify(expectedBodyGetContact)
+                )
+              },
+              {
+                status: 200,
+                body: {
+                  contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
+                  meta: { api_status: 'stable', version: '2.35.4' },
+                },
+              }
+            )
+
+            const expectedBodySendMessage = {
+              recipient_type: 'individual',
+              to: '553165392832',
+              type: 'text',
+              text: {
+                body: 'Hello World',
+              },
+            }
+
+            fetchMock.postOnce(
+              (url, { body }) => {
+                return (
+                  url === 'https://waba.360dialog.io/v1/messages/' && body === JSON.stringify(expectedBodySendMessage)
+                )
+              },
+              {
+                status: 201,
+                body: {
+                  messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+                  meta: { api_status: 'stable', version: '2.35.4' },
+                },
+              }
+            )
+
+            expect(message.sended).toEqual(false)
+
+            const dialog = new Dialog(licensee)
+            await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
+            await fetchMock.flush(true)
+
+            expect(fetchMock.done()).toBe(true)
+            expect(fetchMock.calls()).toHaveLength(2)
+
+            const messageUpdated = await Message.findById(message._id)
+            expect(messageUpdated.sended).toEqual(true)
+            expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
+            expect(consoleInfoSpy).toHaveBeenCalledWith(
+              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+            )
+          })
+        })
       })
     })
 
