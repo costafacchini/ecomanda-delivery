@@ -2323,5 +2323,11 @@ describe('Dialog plugin', () => {
 
       expect(dialog.action('to-chatbot')).toEqual('send-message-to-chatbot')
     })
+
+    it('returns send-message-to-messenger if message destination is to messenger', () => {
+      const dialog = new Dialog(licensee)
+
+      expect(dialog.action('to-messenger')).toEqual('send-message-to-messenger')
+    })
   })
 })
