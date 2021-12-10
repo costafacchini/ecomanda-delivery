@@ -2,12 +2,19 @@ const Dialog = require('./Dialog')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Licensee = require('@models/Licensee')
+const Trigger = require('@models/Trigger')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
 const S3 = require('../storage/S3')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
+const {
+  triggerReplyButton: triggerReplyButtonFactory,
+  triggerMultiProduct: triggerMultiProductFactory,
+  triggerListMessage: triggerListMessageFactory,
+  triggerSingleProduct: triggerSingleProductFactory,
+} = require('@factories/trigger')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -436,6 +443,240 @@ describe('Dialog plugin', () => {
         expect(messages[0].departament).toEqual(undefined)
         expect(uploadFileS3Spy).toHaveBeenCalledTimes(1)
         expect(presignedUrlS3Spy).toHaveBeenCalledTimes(1)
+
+        expect(messages.length).toEqual(1)
+      })
+    })
+
+    describe('interactive list_reply', () => {
+      it('returns the response body transformed in messages', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
+
+        const trigger = await Trigger.create(triggerReplyButtonFactory.build({ licensee }))
+
+        const responseBody = {
+          contacts: [
+            {
+              profile: {
+                name: 'John Doe',
+              },
+              wa_id: '5511990283745',
+            },
+          ],
+          messages: [
+            {
+              from: '5511990283745',
+              id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
+              timestamp: '1632784639',
+              type: 'interactive',
+              interactive: {
+                list_reply: {
+                  description: 'Descrição 2',
+                  id: 'send_reply_buttons',
+                  title: 'Opção 2',
+                },
+                type: 'list_reply',
+              },
+            },
+          ],
+        }
+
+        const dialog = new Dialog(licensee)
+        const messages = await dialog.responseToMessages(responseBody)
+
+        expect(messages[0]).toBeInstanceOf(Message)
+        expect(messages[0].licensee).toEqual(licensee._id)
+        expect(messages[0].contact).toEqual(contact._id)
+        expect(messages[0].kind).toEqual('interactive')
+        expect(messages[0].messageWaId).toEqual('ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC')
+        expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+        expect(messages[0].destination).toEqual('to-messenger')
+        expect(messages[0].trigger).toEqual(trigger._id)
+        expect(messages[0].text).toEqual(undefined)
+        expect(messages[0].url).toEqual(undefined)
+        expect(messages[0].fileName).toEqual(undefined)
+        expect(messages[0].latitude).toEqual(undefined)
+        expect(messages[0].longitude).toEqual(undefined)
+        expect(messages[0].departament).toEqual(undefined)
+
+        expect(messages.length).toEqual(1)
+      })
+
+      it('returns message with text if does not have trigger', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
+
+        const responseBody = {
+          contacts: [
+            {
+              profile: {
+                name: 'John Doe',
+              },
+              wa_id: '5511990283745',
+            },
+          ],
+          messages: [
+            {
+              from: '5511990283745',
+              id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
+              timestamp: '1632784639',
+              type: 'interactive',
+              interactive: {
+                list_reply: {
+                  description: 'Descrição 2',
+                  id: 'send_reply_buttons',
+                  title: 'Opção 2',
+                },
+                type: 'list_reply',
+              },
+            },
+          ],
+        }
+
+        const dialog = new Dialog(licensee)
+        const messages = await dialog.responseToMessages(responseBody)
+
+        expect(messages[0]).toBeInstanceOf(Message)
+        expect(messages[0].licensee).toEqual(licensee._id)
+        expect(messages[0].contact).toEqual(contact._id)
+        expect(messages[0].kind).toEqual('text')
+        expect(messages[0].messageWaId).toEqual('ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC')
+        expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+        expect(messages[0].destination).toEqual('to-chat')
+        expect(messages[0].trigger).toEqual(undefined)
+        expect(messages[0].text).toEqual('send_reply_buttons')
+        expect(messages[0].url).toEqual(undefined)
+        expect(messages[0].fileName).toEqual(undefined)
+        expect(messages[0].latitude).toEqual(undefined)
+        expect(messages[0].longitude).toEqual(undefined)
+        expect(messages[0].departament).toEqual(undefined)
+
+        expect(messages.length).toEqual(1)
+      })
+    })
+
+    describe('interactive button_reply', () => {
+      it('returns the response body transformed in messages', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
+
+        const trigger = await Trigger.create(triggerReplyButtonFactory.build({ licensee }))
+
+        const responseBody = {
+          contacts: [
+            {
+              profile: {
+                name: 'John Doe',
+              },
+              wa_id: '5511990283745',
+            },
+          ],
+          messages: [
+            {
+              from: '5511990283745',
+              id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
+              timestamp: '1632784639',
+              type: 'interactive',
+              interactive: {
+                button_reply: {
+                  id: 'send_reply_buttons',
+                  title: 'Opção 2',
+                },
+                type: 'button_reply',
+              },
+            },
+          ],
+        }
+
+        const dialog = new Dialog(licensee)
+        const messages = await dialog.responseToMessages(responseBody)
+
+        expect(messages[0]).toBeInstanceOf(Message)
+        expect(messages[0].licensee).toEqual(licensee._id)
+        expect(messages[0].contact).toEqual(contact._id)
+        expect(messages[0].kind).toEqual('interactive')
+        expect(messages[0].messageWaId).toEqual('ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC')
+        expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+        expect(messages[0].destination).toEqual('to-messenger')
+        expect(messages[0].trigger).toEqual(trigger._id)
+        expect(messages[0].text).toEqual(undefined)
+        expect(messages[0].url).toEqual(undefined)
+        expect(messages[0].fileName).toEqual(undefined)
+        expect(messages[0].latitude).toEqual(undefined)
+        expect(messages[0].longitude).toEqual(undefined)
+        expect(messages[0].departament).toEqual(undefined)
+
+        expect(messages.length).toEqual(1)
+      })
+
+      it('returns message with text if does not have trigger', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
+
+        const responseBody = {
+          contacts: [
+            {
+              profile: {
+                name: 'John Doe',
+              },
+              wa_id: '5511990283745',
+            },
+          ],
+          messages: [
+            {
+              from: '5511990283745',
+              id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
+              timestamp: '1632784639',
+              type: 'interactive',
+              interactive: {
+                button_reply: {
+                  id: 'send_reply_buttons',
+                  title: 'Opção 2',
+                },
+                type: 'button_reply',
+              },
+            },
+          ],
+        }
+
+        const dialog = new Dialog(licensee)
+        const messages = await dialog.responseToMessages(responseBody)
+
+        expect(messages[0]).toBeInstanceOf(Message)
+        expect(messages[0].licensee).toEqual(licensee._id)
+        expect(messages[0].contact).toEqual(contact._id)
+        expect(messages[0].kind).toEqual('text')
+        expect(messages[0].messageWaId).toEqual('ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC')
+        expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+        expect(messages[0].destination).toEqual('to-chat')
+        expect(messages[0].trigger).toEqual(undefined)
+        expect(messages[0].text).toEqual('send_reply_buttons')
+        expect(messages[0].url).toEqual(undefined)
+        expect(messages[0].fileName).toEqual(undefined)
+        expect(messages[0].latitude).toEqual(undefined)
+        expect(messages[0].longitude).toEqual(undefined)
+        expect(messages[0].departament).toEqual(undefined)
 
         expect(messages.length).toEqual(1)
       })
@@ -1245,6 +1486,676 @@ describe('Dialog plugin', () => {
           )
         })
       })
+
+      describe('when the message is interactive', () => {
+        describe('if triggerKind is multi_product', () => {
+          it('marks the message with sended and log the success message', async () => {
+            const contact = await Contact.create(
+              contactFactory.build({
+                name: 'John Doe',
+                talkingWithChatBot: true,
+                waId: '5593165392997',
+                email: 'john@doe.com',
+                licensee,
+              })
+            )
+
+            const trigger = await Trigger.create({
+              ...triggerMultiProductFactory.build({ licensee }),
+              catalogMulti: JSON.stringify({
+                type: 'product_list',
+                header: {
+                  type: 'text',
+                  text: 'Menu',
+                },
+                body: {
+                  text: 'Itens',
+                },
+                footer: {
+                  text: 'Selecione os itens desejados',
+                },
+                action: {
+                  catalog_id: '889635565073049',
+                  sections: [
+                    {
+                      title: 'Pizza',
+                      product_items: [
+                        {
+                          product_retailer_id: '1010',
+                        },
+                        {
+                          product_retailer_id: '1011',
+                        },
+                        {
+                          product_retailer_id: '1021',
+                        },
+                      ],
+                    },
+                    {
+                      title: 'Refrigerante',
+                      product_items: [
+                        {
+                          product_retailer_id: '1016',
+                        },
+                      ],
+                    },
+                  ],
+                },
+              }),
+            })
+
+            const message = await Message.create(
+              messageFactory.build({
+                _id: '60958703f415ed4008748637',
+                contact,
+                licensee,
+                sended: false,
+                kind: 'interactive',
+                trigger: trigger._id,
+              })
+            )
+
+            fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+              status: 200,
+              body: {
+                contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
+              },
+            })
+
+            const expectedBodySendMessage = {
+              recipient_type: 'individual',
+              to: '553165392832',
+              type: 'interactive',
+              interactive: {
+                type: 'product_list',
+                header: {
+                  type: 'text',
+                  text: 'Menu',
+                },
+                body: {
+                  text: 'Itens',
+                },
+                footer: {
+                  text: 'Selecione os itens desejados',
+                },
+                action: {
+                  catalog_id: '889635565073049',
+                  sections: [
+                    {
+                      title: 'Pizza',
+                      product_items: [
+                        {
+                          product_retailer_id: '1010',
+                        },
+                        {
+                          product_retailer_id: '1011',
+                        },
+                        {
+                          product_retailer_id: '1021',
+                        },
+                      ],
+                    },
+                    {
+                      title: 'Refrigerante',
+                      product_items: [
+                        {
+                          product_retailer_id: '1016',
+                        },
+                      ],
+                    },
+                  ],
+                },
+              },
+            }
+
+            fetchMock.postOnce(
+              (url, { body, headers }) => {
+                return (
+                  url === 'https://waba.360dialog.io/v1/messages/' &&
+                  body === JSON.stringify(expectedBodySendMessage) &&
+                  headers['D360-API-KEY'] === 'token-dialog'
+                )
+              },
+              {
+                status: 201,
+                body: {
+                  messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+                  meta: { api_status: 'stable', version: '2.35.4' },
+                },
+              }
+            )
+
+            expect(message.sended).toEqual(false)
+
+            const dialog = new Dialog(licensee)
+            await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
+            await fetchMock.flush(true)
+
+            expect(fetchMock.done()).toBe(true)
+            expect(fetchMock.calls()).toHaveLength(2)
+
+            const messageUpdated = await Message.findById(message._id)
+            expect(messageUpdated.sended).toEqual(true)
+            expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
+            expect(consoleInfoSpy).toHaveBeenCalledWith(
+              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+            )
+          })
+        })
+
+        describe('if triggerKind is single_product', () => {
+          it('marks the message with sended and log the success message', async () => {
+            const contact = await Contact.create(
+              contactFactory.build({
+                name: 'John Doe',
+                talkingWithChatBot: true,
+                waId: '5593165392997',
+                email: 'john@doe.com',
+                licensee,
+              })
+            )
+
+            const trigger = await Trigger.create({
+              ...triggerSingleProductFactory.build({ licensee }),
+              catalogSingle: JSON.stringify({
+                recipient_type: 'individual',
+                to: '554899290820',
+                type: 'interactive',
+                interactive: {
+                  type: 'product',
+                  body: {
+                    text: 'text-body-content',
+                  },
+                  footer: {
+                    text: 'text-footer-content',
+                  },
+                  action: {
+                    catalog_id: '889635565073049',
+                    product_retailer_id: '1010',
+                  },
+                },
+              }),
+            })
+
+            const message = await Message.create(
+              messageFactory.build({
+                _id: '60958703f415ed4008748637',
+                contact,
+                licensee,
+                sended: false,
+                kind: 'interactive',
+                trigger: trigger._id,
+              })
+            )
+
+            fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+              status: 200,
+              body: {
+                contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
+              },
+            })
+
+            const expectedBodySendMessage = {
+              recipient_type: 'individual',
+              to: '553165392832',
+              type: 'interactive',
+              interactive: {
+                recipient_type: 'individual',
+                to: '554899290820',
+                type: 'interactive',
+                interactive: {
+                  type: 'product',
+                  body: {
+                    text: 'text-body-content',
+                  },
+                  footer: {
+                    text: 'text-footer-content',
+                  },
+                  action: {
+                    catalog_id: '889635565073049',
+                    product_retailer_id: '1010',
+                  },
+                },
+              },
+            }
+
+            fetchMock.postOnce(
+              (url, { body, headers }) => {
+                return (
+                  url === 'https://waba.360dialog.io/v1/messages/' &&
+                  body === JSON.stringify(expectedBodySendMessage) &&
+                  headers['D360-API-KEY'] === 'token-dialog'
+                )
+              },
+              {
+                status: 201,
+                body: {
+                  messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+                  meta: { api_status: 'stable', version: '2.35.4' },
+                },
+              }
+            )
+
+            expect(message.sended).toEqual(false)
+
+            const dialog = new Dialog(licensee)
+            await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
+            await fetchMock.flush(true)
+
+            expect(fetchMock.done()).toBe(true)
+            expect(fetchMock.calls()).toHaveLength(2)
+
+            const messageUpdated = await Message.findById(message._id)
+            expect(messageUpdated.sended).toEqual(true)
+            expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
+            expect(consoleInfoSpy).toHaveBeenCalledWith(
+              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+            )
+          })
+        })
+
+        describe('if triggerKind is reply_button', () => {
+          it('marks the message with sended and log the success message', async () => {
+            const contact = await Contact.create(
+              contactFactory.build({
+                name: 'John Doe',
+                talkingWithChatBot: true,
+                waId: '5593165392997',
+                email: 'john@doe.com',
+                licensee,
+              })
+            )
+
+            const trigger = await Trigger.create({
+              ...triggerReplyButtonFactory.build({ licensee }),
+              textReplyButton: JSON.stringify({
+                type: 'button',
+                header: {
+                  type: 'text',
+                  text: 'Menu',
+                },
+                body: {
+                  text: 'Itens',
+                },
+                footer: {
+                  text: 'Selecione os itens desejados',
+                },
+                action: {
+                  buttons: [
+                    {
+                      type: 'reply',
+                      reply: {
+                        id: 'resposta 1',
+                        title: 'First Button Title',
+                      },
+                    },
+                    {
+                      type: 'reply',
+                      reply: {
+                        id: 'resposta 2',
+                        title: 'Second Button Title',
+                      },
+                    },
+                    {
+                      type: 'reply',
+                      reply: {
+                        id: 'resposta 3',
+                        title: 'Third Button Title',
+                      },
+                    },
+                  ],
+                },
+              }),
+            })
+
+            const message = await Message.create(
+              messageFactory.build({
+                _id: '60958703f415ed4008748637',
+                contact,
+                licensee,
+                sended: false,
+                kind: 'interactive',
+                trigger: trigger._id,
+              })
+            )
+
+            fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+              status: 200,
+              body: {
+                contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
+              },
+            })
+
+            const expectedBodySendMessage = {
+              recipient_type: 'individual',
+              to: '553165392832',
+              type: 'interactive',
+              interactive: {
+                type: 'button',
+                header: {
+                  type: 'text',
+                  text: 'Menu',
+                },
+                body: {
+                  text: 'Itens',
+                },
+                footer: {
+                  text: 'Selecione os itens desejados',
+                },
+                action: {
+                  buttons: [
+                    {
+                      type: 'reply',
+                      reply: {
+                        id: 'resposta 1',
+                        title: 'First Button Title',
+                      },
+                    },
+                    {
+                      type: 'reply',
+                      reply: {
+                        id: 'resposta 2',
+                        title: 'Second Button Title',
+                      },
+                    },
+                    {
+                      type: 'reply',
+                      reply: {
+                        id: 'resposta 3',
+                        title: 'Third Button Title',
+                      },
+                    },
+                  ],
+                },
+              },
+            }
+
+            fetchMock.postOnce(
+              (url, { body, headers }) => {
+                return (
+                  url === 'https://waba.360dialog.io/v1/messages/' &&
+                  body === JSON.stringify(expectedBodySendMessage) &&
+                  headers['D360-API-KEY'] === 'token-dialog'
+                )
+              },
+              {
+                status: 201,
+                body: {
+                  messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+                  meta: { api_status: 'stable', version: '2.35.4' },
+                },
+              }
+            )
+
+            expect(message.sended).toEqual(false)
+
+            const dialog = new Dialog(licensee)
+            await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
+            await fetchMock.flush(true)
+
+            expect(fetchMock.done()).toBe(true)
+            expect(fetchMock.calls()).toHaveLength(2)
+
+            const messageUpdated = await Message.findById(message._id)
+            expect(messageUpdated.sended).toEqual(true)
+            expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
+            expect(consoleInfoSpy).toHaveBeenCalledWith(
+              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+            )
+          })
+        })
+
+        describe('if triggerKind is list_message', () => {
+          it('marks the message with sended and log the success message', async () => {
+            const contact = await Contact.create(
+              contactFactory.build({
+                name: 'John Doe',
+                talkingWithChatBot: true,
+                waId: '5593165392997',
+                email: 'john@doe.com',
+                licensee,
+              })
+            )
+
+            const trigger = await Trigger.create({
+              ...triggerListMessageFactory.build({ licensee }),
+              messagesList: JSON.stringify({
+                type: 'list',
+                header: {
+                  type: 'text',
+                  text: 'Menu',
+                },
+                body: {
+                  text: 'Itens',
+                },
+                footer: {
+                  text: 'Selecione os itens desejados',
+                },
+                action: {
+                  button: 'cta-button-content',
+                  sections: [
+                    {
+                      title: 'Opções',
+                      rows: [
+                        {
+                          id: '1',
+                          title: 'Opção 1',
+                          description: 'Descrição 1',
+                        },
+                        {
+                          id: '2',
+                          title: 'Opção 2',
+                          description: 'Descrição 2',
+                        },
+                        {
+                          id: '3',
+                          title: 'Opção 3',
+                          description: 'Descrição 3',
+                        },
+                        {
+                          id: '4',
+                          title: 'Opção 4',
+                          description: 'Descrição 4',
+                        },
+                      ],
+                    },
+                  ],
+                },
+              }),
+            })
+
+            const message = await Message.create(
+              messageFactory.build({
+                _id: '60958703f415ed4008748637',
+                contact,
+                licensee,
+                sended: false,
+                kind: 'interactive',
+                trigger: trigger._id,
+              })
+            )
+
+            fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+              status: 200,
+              body: {
+                contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
+              },
+            })
+
+            const expectedBodySendMessage = {
+              recipient_type: 'individual',
+              to: '553165392832',
+              type: 'interactive',
+              interactive: {
+                type: 'list',
+                header: {
+                  type: 'text',
+                  text: 'Menu',
+                },
+                body: {
+                  text: 'Itens',
+                },
+                footer: {
+                  text: 'Selecione os itens desejados',
+                },
+                action: {
+                  button: 'cta-button-content',
+                  sections: [
+                    {
+                      title: 'Opções',
+                      rows: [
+                        {
+                          id: '1',
+                          title: 'Opção 1',
+                          description: 'Descrição 1',
+                        },
+                        {
+                          id: '2',
+                          title: 'Opção 2',
+                          description: 'Descrição 2',
+                        },
+                        {
+                          id: '3',
+                          title: 'Opção 3',
+                          description: 'Descrição 3',
+                        },
+                        {
+                          id: '4',
+                          title: 'Opção 4',
+                          description: 'Descrição 4',
+                        },
+                      ],
+                    },
+                  ],
+                },
+              },
+            }
+
+            fetchMock.postOnce(
+              (url, { body, headers }) => {
+                return (
+                  url === 'https://waba.360dialog.io/v1/messages/' &&
+                  body === JSON.stringify(expectedBodySendMessage) &&
+                  headers['D360-API-KEY'] === 'token-dialog'
+                )
+              },
+              {
+                status: 201,
+                body: {
+                  messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+                  meta: { api_status: 'stable', version: '2.35.4' },
+                },
+              }
+            )
+
+            expect(message.sended).toEqual(false)
+
+            const dialog = new Dialog(licensee)
+            await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
+            await fetchMock.flush(true)
+
+            expect(fetchMock.done()).toBe(true)
+            expect(fetchMock.calls()).toHaveLength(2)
+
+            const messageUpdated = await Message.findById(message._id)
+            expect(messageUpdated.sended).toEqual(true)
+            expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
+            expect(consoleInfoSpy).toHaveBeenCalledWith(
+              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+            )
+          })
+        })
+
+        describe('if does not has a trigger', () => {
+          it('send the message as text', async () => {
+            const contact = await Contact.create(
+              contactFactory.build({
+                name: 'John Doe',
+                talkingWithChatBot: true,
+                waId: '5593165392997',
+                email: 'john@doe.com',
+                licensee,
+              })
+            )
+
+            const message = await Message.create(
+              messageFactory.build({
+                _id: '60958703f415ed4008748637',
+                text: 'Hello World',
+                contact,
+                licensee,
+                sended: false,
+                kind: 'interactive',
+              })
+            )
+
+            const expectedBodyGetContact = {
+              blocking: 'wait',
+              contacts: ['+5511990283745'],
+              force_check: true,
+            }
+
+            fetchMock.postOnce(
+              (url, { body }) => {
+                return (
+                  url === 'https://waba.360dialog.io/v1/contacts/' && body === JSON.stringify(expectedBodyGetContact)
+                )
+              },
+              {
+                status: 200,
+                body: {
+                  contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
+                  meta: { api_status: 'stable', version: '2.35.4' },
+                },
+              }
+            )
+
+            const expectedBodySendMessage = {
+              recipient_type: 'individual',
+              to: '553165392832',
+              type: 'text',
+              text: {
+                body: 'Hello World',
+              },
+            }
+
+            fetchMock.postOnce(
+              (url, { body }) => {
+                return (
+                  url === 'https://waba.360dialog.io/v1/messages/' && body === JSON.stringify(expectedBodySendMessage)
+                )
+              },
+              {
+                status: 201,
+                body: {
+                  messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+                  meta: { api_status: 'stable', version: '2.35.4' },
+                },
+              }
+            )
+
+            expect(message.sended).toEqual(false)
+
+            const dialog = new Dialog(licensee)
+            await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
+            await fetchMock.flush(true)
+
+            expect(fetchMock.done()).toBe(true)
+            expect(fetchMock.calls()).toHaveLength(2)
+
+            const messageUpdated = await Message.findById(message._id)
+            expect(messageUpdated.sended).toEqual(true)
+            expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
+            expect(consoleInfoSpy).toHaveBeenCalledWith(
+              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+            )
+          })
+        })
+      })
     })
 
     describe('when contact is invalid', () => {
@@ -1411,6 +2322,12 @@ describe('Dialog plugin', () => {
       const dialog = new Dialog(licensee)
 
       expect(dialog.action('to-chatbot')).toEqual('send-message-to-chatbot')
+    })
+
+    it('returns send-message-to-messenger if message destination is to messenger', () => {
+      const dialog = new Dialog(licensee)
+
+      expect(dialog.action('to-messenger')).toEqual('send-message-to-messenger')
     })
   })
 })

@@ -3,6 +3,7 @@ const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Licensee = require('@models/Licensee')
 const Room = require('@models/Room')
+const Trigger = require('@models/Trigger')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
 const emoji = require('../../helpers/Emoji')
@@ -10,6 +11,7 @@ const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { room: roomFactory } = require('@factories/room')
 const { message: messageFactory } = require('@factories/message')
+const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -48,6 +50,8 @@ describe('Rocketchat plugin', () => {
         })
       )
 
+      const trigger = await Trigger.create(triggerReplyButtonFactory.build({ licensee }))
+
       const responseBody = {
         _id: '4sqv8qitNqhgLdvB4',
         type: 'Message',
@@ -66,11 +70,16 @@ describe('Rocketchat plugin', () => {
               publicFilePath: 'https://octodex.github.com/images/dojocat.jpg',
             },
           },
+          {
+            msg: 'send_reply_buttons',
+          },
         ],
       }
 
       const rocketchat = new Rocketchat(licensee)
       const messages = await rocketchat.responseToMessages(responseBody)
+
+      expect(messages.length).toEqual(3)
 
       expect(messages[0]).toBeInstanceOf(Message)
       expect(messages[0].licensee).toEqual(licensee._id)
@@ -100,11 +109,24 @@ describe('Rocketchat plugin', () => {
       expect(messages[1].longitude).toEqual(undefined)
       expect(messages[1].departament).toEqual(undefined)
 
-      expect(emojiReplaceSpy).toHaveBeenCalledTimes(2)
+      expect(messages[2]).toBeInstanceOf(Message)
+      expect(messages[2].licensee).toEqual(licensee._id)
+      expect(messages[2].contact).toEqual(contact._id)
+      expect(messages[2].room).toEqual(room._id)
+      expect(messages[2].kind).toEqual('interactive')
+      expect(messages[2].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+      expect(messages[2].destination).toEqual('to-messenger')
+      expect(messages[2].text).toEqual('send_reply_buttons')
+      expect(messages[2].trigger).toEqual(trigger._id)
+      expect(messages[2].url).toEqual(undefined)
+      expect(messages[2].fileName).toEqual(undefined)
+      expect(messages[2].latitude).toEqual(undefined)
+      expect(messages[2].longitude).toEqual(undefined)
+      expect(messages[2].departament).toEqual(undefined)
+
+      expect(emojiReplaceSpy).toHaveBeenCalledTimes(3)
       expect(emojiReplaceSpy).toHaveBeenCalledWith('Hello message')
       expect(emojiReplaceSpy).toHaveBeenCalledWith('Message with image')
-
-      expect(messages.length).toEqual(2)
     })
 
     it('return the empty data if body is blank', async () => {

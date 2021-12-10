@@ -2,6 +2,7 @@ const Landbot = require('./Landbot')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Licensee = require('@models/Licensee')
+const Trigger = require('@models/Trigger')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
 const emoji = require('../../helpers/Emoji')
@@ -10,6 +11,7 @@ const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { room: roomFactory } = require('@factories/room')
 const { message: messageFactory } = require('@factories/message')
+const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -39,6 +41,8 @@ describe('Landbot plugin', () => {
           licensee,
         })
       )
+
+      const trigger = await Trigger.create(triggerReplyButtonFactory.build({ licensee }))
 
       const responseBody = {
         messages: [
@@ -70,6 +74,11 @@ describe('Landbot plugin', () => {
             message: 'It is here',
           },
           {
+            type: 'text',
+            timestamp: '1234567347',
+            message: 'send_reply_buttons',
+          },
+          {
             type: 'dialog',
             timestamp: '1234567890',
             title: 'Hi there',
@@ -94,6 +103,8 @@ describe('Landbot plugin', () => {
 
       const landbot = new Landbot(licensee)
       const messages = await landbot.responseToMessages(responseBody)
+
+      expect(messages.length).toEqual(4)
 
       expect(messages[0]).toBeInstanceOf(Message)
       expect(messages[0].licensee).toEqual(licensee._id)
@@ -134,18 +145,31 @@ describe('Landbot plugin', () => {
       expect(messages[2].longitude).toEqual(101.75)
       expect(messages[2].departament).toEqual(undefined)
 
-      expect(emojiReplaceSpy).toHaveBeenCalledTimes(3)
+      expect(messages[3]).toBeInstanceOf(Message)
+      expect(messages[3].licensee).toEqual(licensee._id)
+      expect(messages[3].contact).toEqual(contact._id)
+      expect(messages[3].kind).toEqual('interactive')
+      expect(messages[3].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+      expect(messages[3].destination).toEqual('to-messenger')
+      expect(messages[3].text).toEqual('send_reply_buttons')
+      expect(messages[3].trigger).toEqual(trigger._id)
+      expect(messages[3].url).toEqual(undefined)
+      expect(messages[3].fileName).toEqual(undefined)
+      expect(messages[3].latitude).toEqual(undefined)
+      expect(messages[3].longitude).toEqual(undefined)
+      expect(messages[3].departament).toEqual(undefined)
+
+      expect(emojiReplaceSpy).toHaveBeenCalledTimes(4)
       expect(emojiReplaceSpy).toHaveBeenCalledWith('Hello world')
       expect(emojiReplaceSpy).toHaveBeenCalledWith('Text with image')
       expect(emojiReplaceSpy).toHaveBeenCalledWith('It is here')
+      expect(emojiReplaceSpy).toHaveBeenCalledWith('send_reply_buttons')
 
       expect(consoleInfoSpy).toHaveBeenCalledTimes(2)
       expect(consoleInfoSpy).toHaveBeenCalledWith(
         'Tipo de mensagem retornado pela Landbot não reconhecido: multiple_images'
       )
       expect(consoleInfoSpy).toHaveBeenCalledWith('Tipo de mensagem retornado pela Landbot não reconhecido: dialog')
-
-      expect(messages.length).toEqual(3)
     })
 
     it('changes the landbotId in contact if is different', async () => {

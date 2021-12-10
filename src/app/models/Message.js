@@ -39,7 +39,7 @@ const messageSchema = new Schema(
     },
     kind: {
       type: String,
-      enum: ['text', 'file', 'location'],
+      enum: ['text', 'file', 'location', 'interactive'],
       default: 'text',
     },
     destination: {
@@ -68,6 +68,10 @@ const messageSchema = new Schema(
     room: {
       type: ObjectId,
       ref: 'Room',
+    },
+    trigger: {
+      type: ObjectId,
+      ref: 'Trigger',
     },
     messageWaId: String,
     attachmentWaId: String,
