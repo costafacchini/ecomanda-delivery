@@ -10,7 +10,7 @@ connect()
 async function schedule() {
   const licensee = await Licensee.findOne()
 
-  await request.post(`http://localhost:5000/api/v1/backups/schedule?token=${licensee.apiToken}`)
+  await request.post(`https://ecomanda-delivery.herokuapp.com/api/v1/backups/schedule?token=${licensee.apiToken}`)
   // process.exit()
 }
 
