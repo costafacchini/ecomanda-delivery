@@ -22,10 +22,10 @@ const jobs = [
   sendMessageToChatbot,
   sendMessageToMessenger,
   transferToChat,
-  importData,
+  resetChatbots,
   backup,
   clearBackups,
-  resetChatbots,
+  importData,
 ]
 
 module.exports = jobs
