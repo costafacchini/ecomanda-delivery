@@ -126,6 +126,23 @@ class Dialog {
     if (responseBody.messages[0].type === 'text') {
       messageToSend.kind = 'text'
       messageToSend.text = responseBody.messages[0].text.body
+    } else if (responseBody.messages[0].type === 'order') {
+      const produtos = []
+      for (const item of responseBody.messages[0].order.product_items) {
+        produtos.push({
+          valor: item.item_price,
+          nome: item.product_retailer_id,
+          quantidade: item.quantity,
+        })
+      }
+      const order = {
+        loja: this.licensee._id,
+        cliente_id: contact._id,
+        entrega: 0,
+        produtos,
+      }
+      // Precisa fazer o request do checkin
+      // Precisa fazer o request do checkout
     } else if (responseBody.messages[0].type === 'interactive') {
       const expression = responseBody.messages[0].interactive.list_reply
         ? responseBody.messages[0].interactive.list_reply.id
