@@ -3,6 +3,7 @@ const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Licensee = require('@models/Licensee')
 const Room = require('@models/Room')
+const Trigger = require('@models/Trigger')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
 const emoji = require('../../helpers/Emoji')
@@ -10,6 +11,7 @@ const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { room: roomFactory } = require('@factories/room')
 const { message: messageFactory } = require('@factories/message')
+const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -386,6 +388,66 @@ describe('Crisp plugin', () => {
         const message = await crisp.responseToMessages(responseBody)
 
         expect(message).toEqual([])
+      })
+
+      it('returns messages with interactive data if it is text with trigger expression', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            licensee,
+          })
+        )
+
+        await Room.create(
+          roomFactory.build({
+            roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
+            contact,
+          })
+        )
+
+        const trigger = await Trigger.create(triggerReplyButtonFactory.build({ licensee }))
+
+        const responseBody = {
+          website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
+          event: 'message:received',
+          data: {
+            website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
+            type: 'text',
+            from: 'operator',
+            origin: 'chat',
+            content: 'send_reply_buttons',
+            fingerprint: 163239623329114,
+            user: {
+              nickname: 'John Doe',
+              user_id: '440ac64d-fee9-4935-b7a8-4c8cb44bb13c',
+            },
+            mentions: [],
+            timestamp: 1632396233539,
+            stamped: true,
+            session_id: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
+          },
+          timestamp: 1632396233588,
+        }
+
+        const crisp = new Crisp(licensee)
+        const messages = await crisp.responseToMessages(responseBody)
+
+        expect(messages[0]).toBeInstanceOf(Message)
+        expect(messages[0].licensee).toEqual(licensee._id)
+        expect(messages[0].contact).toEqual(contact._id)
+        expect(messages[0].kind).toEqual('interactive')
+        expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+        expect(messages[0].destination).toEqual('to-messenger')
+        expect(messages[0].text).toEqual('send_reply_buttons')
+        expect(messages[0].trigger).toEqual(trigger._id)
+        expect(messages[0].url).toEqual(undefined)
+        expect(messages[0].fileName).toEqual(undefined)
+        expect(messages[0].latitude).toEqual(undefined)
+        expect(messages[0].longitude).toEqual(undefined)
+        expect(messages[0].departament).toEqual(undefined)
+
+        expect(messages.length).toEqual(1)
       })
     })
   })

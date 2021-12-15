@@ -5,6 +5,7 @@ const moment = require('moment')
 
 const request = require('./src/app/services/request')
 const Body = require('@models/Body')
+const Room = require('@models/Room')
 const connect = require('./src/config/database')
 connect()
 
@@ -16,8 +17,11 @@ async function schedule() {
     const start = moment().subtract(10, 'days')
     const end = moment(yesterday).endOf('day')
 
-    const res = await Body.deleteMany({ createdAt: { $gte: start, $lt: end } })
+    let res = await Body.deleteMany({ createdAt: { $gte: start, $lt: end } })
     console.log(`Bodies concluded destroyed: ${res.deletedCount}`)
+
+    res = await Room.deleteMany({ closed: true })
+    console.log(`Rooms concluded destroyed: ${res.deletedCount}`)
   } catch (err) {
     console.log(err)
   }

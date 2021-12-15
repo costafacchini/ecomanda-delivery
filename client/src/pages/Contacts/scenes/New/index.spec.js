@@ -33,6 +33,14 @@ describe('<ContactNew />', () => {
       licensee: 'id',
       waId: '',
       landbotId: '',
+      address: '',
+      address_number: '',
+      address_complement: '',
+      neighborhood: '',
+      city: '',
+      cep: '',
+      ud: '',
+      delivery_tax: 0,
     }))
 
     cleanup()
@@ -54,6 +62,14 @@ describe('<ContactNew />', () => {
       licensee: '',
       waId: '',
       landbotId: '',
+      address: '',
+      address_number: '',
+      address_complement: '',
+      neighborhood: '',
+      city: '',
+      cep: '',
+      ud: '',
+      delivery_tax: 0,
     }))
   })
 

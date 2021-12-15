@@ -22,14 +22,14 @@ export default function Navbar({ loggedUser }) {
                 <a className="nav-link" href="/#/contacts">Contatos</a>
               </li>
               <li className="nav-item">
+                <a className="nav-link" href="/#/triggers">Gatilhos</a>
+              </li>
+              <li className="nav-item">
                 <a className="nav-link" href="/#/messages">Mensagens</a>
               </li>
               <li className="nav-item">
                 <a className="nav-link" href="/#/configurations">Configurações</a>
               </li>
-              {/*<li className="nav-item">
-                <a className="nav-link" href="/#/sendmessages">Enviar mensagem</a>
-              </li> */}
             </ul>
             <div className="btn-item">
               <a className="btn btn-primary" href="/" onClick={logout}>Sair</a>

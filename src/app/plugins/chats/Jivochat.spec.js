@@ -2,12 +2,14 @@ const Jivochat = require('./Jivochat')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Licensee = require('@models/Licensee')
+const Trigger = require('@models/Trigger')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
 const emoji = require('../../helpers/Emoji')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
+const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -271,6 +273,51 @@ describe('Jivochat plugin', () => {
         expect(consoleInfoSpy).toHaveBeenCalledWith('Tipo de mensagem retornado pela Jivochat não reconhecido: any')
 
         expect(message).toEqual([])
+      })
+
+      it('returns messages with interactive data if it is text with trigger expression', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            licensee,
+          })
+        )
+
+        const trigger = await Trigger.create(triggerReplyButtonFactory.build({ licensee }))
+
+        const responseBody = {
+          sender: {
+            name: 'Mary Jane',
+          },
+          recipient: {
+            id: '5511990283745@c.us',
+          },
+          message: {
+            type: 'text',
+            id: 'jivo_message_id',
+            text: 'send_reply_buttons',
+          },
+        }
+
+        const jivochat = new Jivochat(licensee)
+        const messages = await jivochat.responseToMessages(responseBody)
+
+        expect(messages[0]).toBeInstanceOf(Message)
+        expect(messages[0].licensee).toEqual(licensee._id)
+        expect(messages[0].contact).toEqual(contact._id)
+        expect(messages[0].kind).toEqual('interactive')
+        expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+        expect(messages[0].destination).toEqual('to-messenger')
+        expect(messages[0].text).toEqual('send_reply_buttons')
+        expect(messages[0].trigger).toEqual(trigger._id)
+        expect(messages[0].url).toEqual(undefined)
+        expect(messages[0].fileName).toEqual(undefined)
+        expect(messages[0].latitude).toEqual(undefined)
+        expect(messages[0].longitude).toEqual(undefined)
+        expect(messages[0].departament).toEqual(undefined)
+
+        expect(messages.length).toEqual(1)
       })
     })
   })

@@ -4,11 +4,13 @@ const SECRET = process.env.SECRET
 const UsersController = require('@controllers/UsersController')
 const LicenseesController = require('@controllers/LicenseesController')
 const ContactsController = require('@controllers/ContactsController')
+const TriggersController = require('@controllers/TriggersController')
 const MessagesController = require('@controllers/MessagesController')
 
 const usersController = new UsersController()
 const licenseesController = new LicenseesController()
 const contactsController = new ContactsController()
+const triggersController = new TriggersController()
 const messagesController = new MessagesController()
 
 router.route('*').all(authenticate, (req, res, next) => {
@@ -41,6 +43,11 @@ router.post('/contacts/', contactsController.validations(), contactsController.c
 router.post('/contacts/:id', contactsController.validations(), contactsController.update)
 router.get('/contacts/:id', contactsController.show)
 router.get('/contacts/', contactsController.index)
+
+router.post('/triggers/', triggersController.create)
+router.post('/triggers/:id', triggersController.update)
+router.get('/triggers/:id', triggersController.show)
+router.get('/triggers/', triggersController.index)
 
 router.post('/licensees/:id/dialogwebhook', licenseesController.setDialogWebhook)
 

@@ -4,6 +4,7 @@ const { v4: uuidv4 } = require('uuid')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Room = require('@models/Room')
+const Trigger = require('@models/Trigger')
 const request = require('../../services/request')
 const mime = require('mime-types')
 
@@ -165,6 +166,12 @@ class Crisp {
         if (responseBody.data.type === 'text') {
           const text = responseBody.data.content
           messageToSend.text = text ? emoji.replace(text) : ''
+
+          const trigger = await Trigger.findOne({ expression: text, licensee: this.licensee._id })
+          if (trigger) {
+            messageToSend.kind = 'interactive'
+            messageToSend.trigger = trigger._id
+          }
         }
 
         if (responseBody.data.type === 'file' || responseBody.data.type === 'audio') {
