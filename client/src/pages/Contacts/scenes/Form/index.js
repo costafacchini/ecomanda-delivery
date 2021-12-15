@@ -15,6 +15,14 @@ const contactInitialValues = {
   licensee: '',
   waId: '',
   landbotId: '',
+  address: '',
+  address_number: '',
+  address_complement: '',
+  neighborhood: '',
+  city: '',
+  cep: '',
+  ud: '',
+  delivery_tax: 0,
 }
 
 function ContactForm({ onSubmit, errors, initialValues, loggedUser }) {
@@ -125,6 +133,118 @@ function ContactForm({ onSubmit, errors, initialValues, loggedUser }) {
                     onChange={props.handleChange}
                     onBlur={props.handleBlur}
                     value={props.values.landbotId}
+                  />
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset className='pb-4'>
+              <div className='row'>
+                <div className='form-group col-3'>
+                  <label htmlFor='cep'>Cep</label>
+                  <FieldWithError
+                    id='cep'
+                    name='cep'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.cep}
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-4'>
+                  <label htmlFor='city'>Cidade</label>
+                  <FieldWithError
+                    id='city'
+                    name='city'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.city}
+                  />
+                </div>
+
+                <div className='form-group col-1'>
+                  <label htmlFor='uf'>UF</label>
+                  <FieldWithError
+                    id='uf'
+                    name='uf'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.uf}
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-5'>
+                  <label htmlFor='address'>Endereço</label>
+                  <FieldWithError
+                    id='address'
+                    name='address'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.address}
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-2'>
+                  <label htmlFor='address_number'>Número</label>
+                  <FieldWithError
+                    id='address_number'
+                    name='address_number'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.address_number}
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-5'>
+                  <label htmlFor='address_complement'>Complemento</label>
+                  <FieldWithError
+                    id='address_complement'
+                    name='address_complement'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.address_complement}
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-5'>
+                  <label htmlFor='neighborhood'>Bairro</label>
+                  <FieldWithError
+                    id='neighborhood'
+                    name='neighborhood'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.neighborhood}
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-5'>
+                  <label htmlFor='delivery_tax'>Taxa de entrega</label>
+                  <FieldWithError
+                    id='delivery_tax'
+                    name='delivery_tax'
+                    type='number'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.delivery_tax}
                   />
                 </div>
               </div>
