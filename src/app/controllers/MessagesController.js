@@ -24,7 +24,7 @@ class MessagesController {
       }
 
       if (req.query.kind) {
-        messagesQuery.filterByKind(req.query.kink)
+        messagesQuery.filterByKind(req.query.kind)
       }
 
       if (req.query.destination) {

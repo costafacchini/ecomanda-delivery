@@ -65,25 +65,25 @@ describe('messengers controller', () => {
     describe('response', () => {
       it('returns status 200 and return messages', async () => {
         const licensee = await Licensee.create(licenseeFactory.build())
+        const another_licensee = await Licensee.create(licenseeFactory.build())
 
         const contact = await Contact.create(contactFactory.build({ licensee }))
+        const another_contact = await Contact.create(contactFactory.build({ licensee }))
 
         await Message.create(messageFactory.build({ licensee, contact }))
+        await Message.create(messageFactory.build({ licensee, contact, createdAt: new Date(2021, 5, 30, 0, 0, 0) }))
+        await Message.create(messageFactory.build({ licensee, contact, createdAt: new Date(2021, 6, 5, 0, 0, 0) }))
+        await Message.create(messageFactory.build({ destination: 'to-chatbot', licensee, contact }))
+        await Message.create(messageFactory.build({ licensee: another_licensee, contact }))
+        await Message.create(messageFactory.build({ licensee, contact: another_contact }))
+        await Message.create(messageFactory.build({ licensee, contact, kind: 'interactive' }))
+        await Message.create(messageFactory.build({ licensee, contact, sended: false }))
 
         await request(expressServer)
-          .get('/resources/messages/')
+          .get(
+            `/resources/messages/?page=1&limit=10&destination=to-chat&initialDate=2021-07-01T00:00:00.000Z&endDate=2021-07-05T00:00:00.000Z&licensee=${licensee._id}&contact=${contact._id}&kind=text&sended=true`
+          )
           .set('x-access-token', token)
-          .send({
-            page: 1,
-            limit: 25,
-            initialDate: '2021-7-1',
-            endDate: '2021-7-5',
-            licensee: licensee._id,
-            contact: contact._id,
-            kind: 'text',
-            destination: 'to-chat',
-            sended: true,
-          })
           .expect('Content-Type', /json/)
           .expect(200)
           .then((response) => {

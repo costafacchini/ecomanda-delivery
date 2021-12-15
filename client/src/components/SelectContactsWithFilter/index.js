@@ -1,14 +1,19 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Select, { createFilter } from 'react-select'
 import debounce from 'lodash/debounce'
 import { getContacts } from '../../services/contact'
 
-export default function SelectContactsWithFilter({ isDisabled, onChange, selectedItem }) {
+export default function SelectContactsWithFilter({ isDisabled, onChange, selectedItem, licensee }) {
   const [defaultValue, setDefaultValue] = useState(null)
   const [selectedOption, setSelectedOption] = useState(null)
   const [options, setOptions] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [optionsLoaded, setOptionsLoaded] = useState(false)
+  const [selectedLicensee, setSelectedLicensee] = useState(licensee)
+
+  useEffect(() => {
+    setSelectedLicensee(licensee)
+  }, [licensee])
 
   const filterConfig = {
     ignoreCase: true,
@@ -26,7 +31,7 @@ export default function SelectContactsWithFilter({ isDisabled, onChange, selecte
   }
 
   function transformData(values) {
-    return values.map(value => ({ value: value._id, label: value.name }))
+    return values.map(value => ({ value: value._id, label: `${value.name}  |  ${value.number}` }))
   }
 
   function handleSetSearchInput(value) {
@@ -36,7 +41,12 @@ export default function SelectContactsWithFilter({ isDisabled, onChange, selecte
   async function onFetch(value) {
     try {
       setIsLoading(true)
-      const { data: contacts } = await getContacts({ expression: value, active: true })
+      const filters = { expression: value, active: true }
+      if (selectedLicensee) {
+        filters.licensee = selectedLicensee
+      }
+      const { data: contacts } = await getContacts(filters)
+
       setOptions(transformData(contacts))
     } catch (_) {}
     setIsLoading(false)

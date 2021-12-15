@@ -1,14 +1,32 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { fetchMessages } from './slice'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 import SelectContactsWithFilter from '../../../../components/SelectContactsWithFilter'
 
+// Precisa estilizar a mensagem
+// Acredito que teria que criar um componente para renderizar certinho em duas ou três linhas cada mensagem por causa dos tipos e os erros
+// Falta testes para os componentes de tela da mensagem
+// Falta testes para os componentes de select
+
 function MessagesIndex({ messages, loggedUser, dispatch }) {
-  const [filters, setFilters] = useState({ startDate: '', endDate: '', licensee: '', onlyErrors: false, contact: '' })
+  const [filters, setFilters] = useState({
+    startDate: '',
+    endDate: '',
+    licensee: '',
+    onlyErrors: false,
+    contact: '',
+    kind: '',
+    destination: ''
+  })
+
+  useEffect(() => {
+    if (loggedUser && !loggedUser.isSuper && filters.licensee !== loggedUser.licensee) {
+      setFilters({ ...filters, licensee: loggedUser.licensee })
+    }
+  }, [loggedUser, filters])
 
   function handleChange({ target }) {
-    console.log(target)
     setFilters({ ...filters, [target.name]: target.value })
   }
 
@@ -54,20 +72,56 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
       <div className='row'>
         <div className='col-3'>
           <div className='form-group'>
-            <label htmlFor='startDate'>Data início</label>
+            <label htmlFor='startDate'>Data inicial</label>
             <input value={filters.startDate} onChange={handleChange} className='form-control' type='date' name='startDate' id='startDate' />
           </div>
         </div>
 
         <div className='col-3'>
           <div className='form-group'>
-            <label htmlFor='endDate'>Data início</label>
+            <label htmlFor='endDate'>Data Final</label>
             <input value={filters.endDate} onChange={handleChange} className='form-control' type='date' name='endDate' id='endDate' />
           </div>
         </div>
 
+        <div className='form-group col-3'>
+          <label htmlFor='kind'>Tipo</label>
+          <select
+            value={filters.kind}
+            name='kind'
+            id='kind'
+            className='form-select'
+            onChange={handleChange}
+          >
+            <option value=''></option>
+            <option value='text'>Texto</option>
+            <option value='file'>Arquivo</option>
+            <option value='location'>Localização</option>
+            <option value='interactive'>Interativa</option>
+          </select>
+        </div>
+
+        <div className='form-group col-3'>
+          <label htmlFor='destination'>Destino</label>
+          <select
+            value={filters.destination}
+            name='destination'
+            id='destination'
+            className='form-select'
+            onChange={handleChange}
+          >
+            <option value=''></option>
+            <option value='to-chatbot'>Chatbot</option>
+            <option value='to-chat'>Chat</option>
+            <option value='to-messenger'>Whatsapp</option>
+            <option value='to-transfer'>Transferência</option>
+          </select>
+        </div>
+      </div>
+
+      <div className='row'>
         {loggedUser && loggedUser.isSuper && (
-          <div className='col-3'>
+          <div className='col-6'>
             <div className='form-group'>
               <label htmlFor='licensee'>Licenciado</label>
               <SelectLicenseesWithFilter
@@ -84,13 +138,7 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
           </div>
         )}
 
-
-Precisa estilizar a mensagem
-Acredito que teria que criar um componente para renderizar certinho em duas ou três linhas cada mensagem por causa dos tipos e os erros
-
-Precisa também filtrar os contatos por licenciado
-Precisa arrumar os testes do controlador de mensagens do backend
-        <div className='col-3'>
+        <div className='col-6'>
           <div className='form-group'>
             <label htmlFor='contact'>Contato</label>
             <SelectContactsWithFilter
@@ -102,6 +150,7 @@ Precisa arrumar os testes do controlador de mensagens do backend
                 const inputValue = e && e.value ? e.value : ''
                 setFilters({ ...filters, contact: inputValue })
               }}
+              licensee={filters.licensee}
             />
           </div>
         </div>
@@ -136,7 +185,7 @@ Precisa arrumar os testes do controlador de mensagens do backend
           <tbody>
             {messages.map((message) => (
               <tr key={message._id.toString()}>
-                <td>{message.contact}</td>
+                <td>{message.contact.name}</td>
                 <td>{message.text}</td>
                 <td>{message.kind}</td>
                 <td>{message.destination}</td>
