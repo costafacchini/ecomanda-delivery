@@ -2,35 +2,58 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
 
-const valoresSchema = new Schema({
-  nome: String,
-  quantidade: Number,
-  valor: Number,
+const detailSchema = new Schema({
+  name: String,
+  quantity: Number,
+  unit_price: Number,
 })
 
-const atributosSchema = new Schema({
-  nome: String,
-  quantidade: Number,
-  valor: Number,
-  valores: valoresSchema,
+const additionalSchema = new Schema({
+  name: String,
+  quantity: Number,
+  unit_price: Number,
+  detail: detailSchema,
 })
 
-const produtosSchema = new Schema({
-  nome: String,
-  quantidade: Number,
-  valor: Number,
-  atributos: [atributosSchema],
+const productsSchema = new Schema({
+  product_retailer_id: String,
+  name: String,
+  quantity: Number,
+  unit_price: Number,
+  additionals: [additionalSchema],
 })
 
 const cartSchema = new Schema(
   {
     _id: ObjectId,
-    loja: String,
-    cliente_id: String,
-    entrega: Number,
-    produtos: [produtosSchema],
-    total: Number,
-    archived: { type: Boolean, default: false },
+    delivery_tax: {
+      type: Number,
+      default: 0,
+    },
+    contact: {
+      type: ObjectId,
+      ref: 'Contact',
+      required: [true, 'Contact: Você deve preencher o campo'],
+    },
+    licensee: {
+      type: ObjectId,
+      ref: 'Licensee',
+      required: [true, 'Licensee: Você deve preencher o campo'],
+    },
+    products: [productsSchema],
+    total: {
+      type: Number,
+      default: 0,
+    },
+    concluded: { type: Boolean, default: false },
+    catalog: String,
+    address: String,
+    address_number: String,
+    address_complement: String,
+    neighborhood: String,
+    city: String,
+    cep: String,
+    uf: String,
   },
   { timestamps: true }
 )
