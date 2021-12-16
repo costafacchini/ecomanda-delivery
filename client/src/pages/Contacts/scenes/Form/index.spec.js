@@ -23,6 +23,14 @@ describe('<ContactForm />', () => {
     expect(screen.getByLabelText('Conversando com chatbot?')).not.toBeChecked()
     expect(screen.getByLabelText('ID da API oficial do whatsapp')).toHaveValue('')
     expect(screen.getByLabelText('ID do contato na landbot')).toHaveValue('')
+    expect(screen.getByLabelText('Cep')).toHaveValue('')
+    expect(screen.getByLabelText('Cidade')).toHaveValue('')
+    expect(screen.getByLabelText('UF')).toHaveValue('')
+    expect(screen.getByLabelText('Endereço')).toHaveValue('')
+    expect(screen.getByLabelText('Número')).toHaveValue('')
+    expect(screen.getByLabelText('Complemento')).toHaveValue('')
+    expect(screen.getByLabelText('Bairro')).toHaveValue('')
+    expect(screen.getByLabelText('Taxa de entrega')).toHaveValue(0)
   })
 
   it('can receive initial values', () => {
@@ -33,6 +41,14 @@ describe('<ContactForm />', () => {
       talkingWithChatBot: true,
       waId: 'waId',
       landbotId: 'landbotId',
+      address: 'Avenida Coronel Adolfo Lustosa 475',
+      address_number: '784',
+      address_complement: 'Próximo ao centro',
+      neighborhood: 'Centro',
+      city: 'Alto Parnaíba',
+      cep: '65810970',
+      uf: 'MA',
+      delivery_tax: 14.6,
     }
 
     mount({ initialValues: contact })
@@ -43,6 +59,14 @@ describe('<ContactForm />', () => {
     expect(screen.getByLabelText('Conversando com chatbot?')).toBeChecked()
     expect(screen.getByLabelText('ID da API oficial do whatsapp')).toHaveValue('waId')
     expect(screen.getByLabelText('ID do contato na landbot')).toHaveValue('landbotId')
+    expect(screen.getByLabelText('Cep')).toHaveValue('65810970')
+    expect(screen.getByLabelText('Cidade')).toHaveValue('Alto Parnaíba')
+    expect(screen.getByLabelText('UF')).toHaveValue('MA')
+    expect(screen.getByLabelText('Endereço')).toHaveValue('Avenida Coronel Adolfo Lustosa 475')
+    expect(screen.getByLabelText('Número')).toHaveValue('784')
+    expect(screen.getByLabelText('Complemento')).toHaveValue('Próximo ao centro')
+    expect(screen.getByLabelText('Bairro')).toHaveValue('Centro')
+    expect(screen.getByLabelText('Taxa de entrega')).toHaveValue(14.6)
   })
 
   describe('submit', () => {
@@ -63,6 +87,14 @@ describe('<ContactForm />', () => {
         licensee: '',
         waId: '',
         landbotId: '',
+        address: '',
+        address_number: '',
+        address_complement: '',
+        neighborhood: '',
+        city: '',
+        cep: '',
+        ud: '',
+        delivery_tax: 0,
       })
     })
   })
