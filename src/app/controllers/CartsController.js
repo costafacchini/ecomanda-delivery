@@ -1,6 +1,5 @@
 const Cart = require('@models/Cart')
-const { validationResult } = require('express-validator')
-const { sanitizeExpressErrors, sanitizeModelErrors } = require('../helpers/SanitizeErrors')
+const { sanitizeModelErrors } = require('../helpers/SanitizeErrors')
 const _ = require('lodash')
 const Contact = require('@models/Contact')
 const NormalizePhone = require('@helpers/NormalizePhone')
