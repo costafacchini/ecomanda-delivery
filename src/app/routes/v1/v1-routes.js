@@ -31,9 +31,11 @@ router.post('/backups/clear', backupsController.clear)
 router.get('/contacts/address/:number', adressesController.show)
 router.post('/contacts/address/:number', adressesController.update)
 
-router.post('/carts/', cartsController.validations(), cartsController.create)
-router.post('/carts/:id', cartsController.validations(), cartsController.update)
-router.get('/carts/:id', cartsController.show)
-router.get('/carts/', cartsController.index)
+router.post('/carts/', cartsController.create)
+router.post('/carts/:contact', cartsController.update)
+router.delete('/carts/:contact', cartsController.close)
+router.get('/carts/:contact', cartsController.show)
+router.post('/carts/:contact/item', cartsController.addItem)
+router.delete('/carts/:contact/item', cartsController.removeItem)
 
 module.exports = router

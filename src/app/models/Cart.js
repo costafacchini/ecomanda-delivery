@@ -12,7 +12,7 @@ const additionalSchema = new Schema({
   name: String,
   quantity: Number,
   unit_price: Number,
-  detail: detailSchema,
+  details: [detailSchema],
 })
 
 const productsSchema = new Schema({
