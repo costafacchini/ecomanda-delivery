@@ -58,7 +58,7 @@
     "mongodb": "4.2.2",
     "mongoose": "6.1.5",
     "morgan": "1.10.0",
-    "newrelic": "8.6.0",
+    "newrelic": "8.7.0",
     "node-notifier": "10.0.0",
     "nodemon": "2.0.15",
     "pg": "8.7.1",
