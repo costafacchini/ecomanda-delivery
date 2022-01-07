@@ -38,6 +38,9 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Id da AWS')).toHaveValue('')
     expect(screen.getByLabelText('Senha AWS')).toHaveValue('')
     expect(screen.getByLabelText('Nome do bucket AWS')).toHaveValue('')
+    expect(screen.getByLabelText('Plugin para uso de carrinho de compra')).toHaveValue('')
+    expect(screen.getByLabelText('Id da loja')).toHaveValue('')
+    expect(screen.getByLabelText('Id do status do carrinho de compra')).toHaveValue('')
     expect(screen.getByLabelText('URL para webhook de Chat')).toHaveValue('')
     expect(screen.getByLabelText('URL para webhook de Chatbot')).toHaveValue('')
     expect(screen.getByLabelText('URL de webhook para transferir do Chatbot para o Chat')).toHaveValue('')
@@ -68,6 +71,9 @@ describe('<LicenseeForm />', () => {
       awsId: 'ID da AWS',
       awsSecret: 'Senha da AWS',
       bucketName: 'Nome do bucket',
+      cartDefault: 'go2go',
+      unidadeId: '999',
+      statusId: '5433',
       urlChatWebhook: 'URL para webhook de Chat',
       urlChatbotWebhook: 'URL para webhook de Chatbot',
       urlChatbotTransfer: 'URL de webhook para transferir do Chatbot para o Chat',
@@ -98,6 +104,9 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Id da AWS')).toHaveValue('ID da AWS')
     expect(screen.getByLabelText('Senha AWS')).toHaveValue('Senha da AWS')
     expect(screen.getByLabelText('Nome do bucket AWS')).toHaveValue('Nome do bucket')
+    expect(screen.getByLabelText('Plugin para uso de carrinho de compra')).toHaveValue('go2go')
+    expect(screen.getByLabelText('Id da loja')).toHaveValue('999')
+    expect(screen.getByLabelText('Id do status do carrinho de compra')).toHaveValue('5433')
     expect(screen.getByLabelText('URL para webhook de Chat')).toHaveValue('URL para webhook de Chat')
     expect(screen.getByLabelText('URL para webhook de Chatbot')).toHaveValue('URL para webhook de Chatbot')
     expect(screen.getByLabelText('URL de webhook para transferir do Chatbot para o Chat')).toHaveValue('URL de webhook para transferir do Chatbot para o Chat')
@@ -225,6 +234,9 @@ describe('<LicenseeForm />', () => {
         awsId: '',
         awsSecret: '',
         bucketName: '',
+        cartDefault: '',
+        unidadeId: '',
+        statusId: ''
       })
     })
   })

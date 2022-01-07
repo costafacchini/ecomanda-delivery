@@ -45,6 +45,25 @@ describe('Cart', () => {
       expect(cart.concluded).toEqual(false)
       expect(cart.delivery_tax).toEqual(0)
     })
+
+    it('fills the total', async () => {
+      const products = [
+        {
+          unit_price: 10,
+          quantity: 2,
+          product_retailer_id: '0123',
+        },
+        {
+          unit_price: 20,
+          quantity: 1,
+          product_retailer_id: '0124',
+        },
+      ]
+
+      const cart = await Cart.create(cartFactory.build({ delivery_tax: 5.0, products: products, contact, licensee }))
+
+      expect(cart.total).toEqual(45)
+    })
   })
 
   describe('validations', () => {
@@ -64,6 +83,81 @@ describe('Cart', () => {
 
         expect(validation.errors['licensee'].message).toEqual('Licensee: Você deve preencher o campo')
       })
+    })
+  })
+
+  describe('calculateTotal', () => {
+    it('returns the sum of all products', () => {
+      const cart = new Cart()
+
+      cart.delivery_tax = 2
+      cart.products = [
+        {
+          unit_price: 10,
+          quantity: 2,
+          additionals: [
+            {
+              quantity: 1,
+              unit_price: 0.5,
+              details: [
+                {
+                  quantity: 1,
+                  unit_price: 0.1,
+                },
+                {
+                  quantity: 2,
+                  unit_price: 0.2,
+                },
+              ],
+            },
+            {
+              quantity: 2,
+              unit_price: 0.3,
+            },
+          ],
+        },
+        {
+          unit_price: 20,
+          quantity: 1,
+        },
+      ]
+
+      expect(cart.calculateTotal()).toEqual(45.2)
+    })
+  })
+
+  describe('calculateTotalItem', () => {
+    it('returns the sum of an item', () => {
+      const cart = new Cart()
+
+      cart.products = [
+        {
+          unit_price: 10,
+          quantity: 2,
+          additionals: [
+            {
+              quantity: 1,
+              unit_price: 0.5,
+              details: [
+                {
+                  quantity: 1,
+                  unit_price: 0.1,
+                },
+                {
+                  quantity: 2,
+                  unit_price: 0.2,
+                },
+              ],
+            },
+            {
+              quantity: 2,
+              unit_price: 0.3,
+            },
+          ],
+        },
+      ]
+
+      expect(cart.calculateTotalItem(cart.products[0])).toEqual(23.2)
     })
   })
 })

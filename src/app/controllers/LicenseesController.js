@@ -28,6 +28,9 @@ function permit(fields) {
     'bucketName',
     'chatIdentifier',
     'chatKey',
+    'cartDefault',
+    'unidadeId',
+    'statusId',
   ]
 
   return _.pick(fields, permitedFields)
@@ -71,6 +74,9 @@ class LicenseesController {
       bucketName,
       chatIdentifier,
       chatKey,
+      cartDefault,
+      unidadeId,
+      statusId,
     } = req.body
 
     const licensee = new Licensee({
@@ -95,6 +101,9 @@ class LicenseesController {
       bucketName,
       chatIdentifier,
       chatKey,
+      cartDefault,
+      unidadeId,
+      statusId,
     })
 
     const validation = licensee.validateSync()
