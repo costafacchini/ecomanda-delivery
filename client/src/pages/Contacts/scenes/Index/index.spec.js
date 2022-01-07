@@ -1,8 +1,7 @@
 import mountWithRedux, { createStore } from '../../../../.jest/redux-testing'
 import ContactsIndex from './'
-import { findByText, fireEvent, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { getContacts } from '../services/contact'
-import { fetchContacts } from './slice'
 import { MemoryRouter } from 'react-router'
 import { contactFactory } from '../../../../factories/contact'
 
@@ -29,6 +28,7 @@ describe('<ContactsIndex />', () => {
     expect(getContacts).toHaveBeenCalledWith({
       page: 1,
       expression: '',
+      licensee: '',
     })
 
     expect(screen.getByText('Contato')).toBeInTheDocument()
@@ -48,6 +48,7 @@ describe('<ContactsIndex />', () => {
     expect(getContacts).toHaveBeenCalledWith({
       page: 2,
       expression: '',
+      licensee: '',
     })
   })
 
@@ -69,6 +70,9 @@ describe('<ContactsIndex />', () => {
     expect(getContacts).toHaveBeenNthCalledWith(2, {
       page: 1,
       expression: 'expression',
+      licensee: '',
     })
   })
+
+  // Testar a alteração do licenciado pelo componente da tela
 })

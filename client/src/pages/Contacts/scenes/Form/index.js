@@ -103,9 +103,10 @@ function ContactForm({ onSubmit, errors, initialValues, loggedUser }) {
                 <div className='row'>
                   <div className='form-group col-5'>
                     <label htmlFor='waId'>Licenciado</label>
-                    <SelectLicenseesWithFilter selectedItem={props.values.licensee} onChange={(e) => (
-                      props.setFieldValue('licensee', e.value, false)
-                    )} />
+                    <SelectLicenseesWithFilter selectedItem={props.values.licensee} onChange={(e) => {
+                      const inputValue = e && e.value ? e.value : null
+                      props.setFieldValue('licensee', inputValue, false)
+                    }} />
                   </div>
                 </div>
               )}
