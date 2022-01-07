@@ -28,6 +28,7 @@ describe('<TriggersIndex />', () => {
     expect(getTriggers).toHaveBeenCalledWith({
       page: 1,
       expression: '',
+      licensee: '',
     })
 
     expect(screen.getByText('Gatilho')).toBeInTheDocument()
@@ -47,6 +48,7 @@ describe('<TriggersIndex />', () => {
     expect(getTriggers).toHaveBeenCalledWith({
       page: 2,
       expression: '',
+      licensee: '',
     })
   })
 
@@ -68,6 +70,7 @@ describe('<TriggersIndex />', () => {
     expect(getTriggers).toHaveBeenNthCalledWith(2, {
       page: 1,
       expression: 'expression',
+      licensee: '',
     })
   })
 })

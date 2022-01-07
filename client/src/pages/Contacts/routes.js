@@ -12,7 +12,7 @@ function ContactsRoutes() {
     <Routes>
       <Route path="/new" element={<ContactNew loggedUser={loggedUser} />} />
       <Route path=":id" element={<ContactEdit loggedUser={loggedUser} />} />
-      <Route path="/" element={<ContactsIndex />} />
+      <Route path="/" element={<ContactsIndex loggedUser={loggedUser} />} />
     </Routes>
   )
 }

@@ -18,7 +18,7 @@ export default function SelectLicenseesWithFilter({ isDisabled, onChange, select
   }
 
   function handleOnChange(value) {
-    if (value && value !== selectedOption) {
+    if (value !== selectedOption) {
       setSelectedOption(value)
 
       onChange(value)

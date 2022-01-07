@@ -3,8 +3,8 @@ import { connect } from 'react-redux'
 import { fetchTriggers } from './slice'
 import { useEffect, useState } from 'react'
 
-function TriggersIndex({ triggers, dispatch }) {
-  const [filters, setFilters] = useState({ expression: '', page: 1 })
+function TriggersIndex({ triggers, dispatch, loggedUser }) {
+  const [filters, setFilters] = useState({ expression: '', page: 1, licensee: '' })
   const [expression, setExpression] = useState('')
 
   useEffect(() => {
@@ -22,6 +22,12 @@ function TriggersIndex({ triggers, dispatch }) {
       abortController.abort()
     }
   }, [dispatch, filters])
+
+  useEffect(() => {
+    if (loggedUser && !loggedUser.isSuper && filters.licensee !== loggedUser.licensee) {
+      setFilters({ ...filters, licensee: loggedUser.licensee })
+    }
+  }, [loggedUser, filters])
 
   function changeExpression(event) {
     setExpression(event.target.value)
