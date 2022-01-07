@@ -12,7 +12,7 @@ function TriggersRoutes() {
     <Routes>
       <Route path="/new" element={<TriggerNew loggedUser={loggedUser} />} />
       <Route path=":id" element={<TriggerEdit loggedUser={loggedUser} />} />
-      <Route path="/" element={<TriggersIndex />} />
+      <Route path="/" element={<TriggersIndex loggedUser={loggedUser} />} />
     </Routes>
   )
 }
