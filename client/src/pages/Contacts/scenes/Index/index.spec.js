@@ -73,4 +73,6 @@ describe('<ContactsIndex />', () => {
       licensee: '',
     })
   })
+
+  // Testar a alteração do licenciado pelo componente da tela
 })

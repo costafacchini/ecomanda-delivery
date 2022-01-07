@@ -12,7 +12,7 @@ describe('<TriggersIndex />', () => {
     const store = createStore()
     mountWithRedux(store)(
       <MemoryRouter>
-        <TriggersIndex />
+        <TriggersIndex  />
       </MemoryRouter>)
 
     return store
@@ -73,4 +73,6 @@ describe('<TriggersIndex />', () => {
       licensee: '',
     })
   })
+
+  // Testar a alteração do licenciado pelo componente da tela
 })
