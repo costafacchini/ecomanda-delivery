@@ -41,6 +41,7 @@ describe('<ContactNew />', () => {
       cep: '',
       ud: '',
       delivery_tax: 0,
+      plugin_cart_id: ''
     }))
 
     cleanup()
@@ -70,6 +71,7 @@ describe('<ContactNew />', () => {
       cep: '',
       ud: '',
       delivery_tax: 0,
+      plugin_cart_id: ''
     }))
   })
 

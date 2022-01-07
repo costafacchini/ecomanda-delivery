@@ -29,7 +29,10 @@ const licenseeInitialValues = {
   awsSecret: '',
   bucketName: '',
   chatKey: '',
-  chatIdentifier: ''
+  chatIdentifier: '',
+  cartDefault: '',
+  unidadeId: '',
+  statusId: ''
 }
 
 function LicenseeForm({ onSubmit, errors, initialValues }) {
@@ -396,6 +399,53 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                 </div>
               </div>
             </fieldset>
+
+            <fieldset className='pb-4'>
+              <div className='row'>
+                <div className='form-group col-5'>
+                  <label htmlFor='cartDefault'>Plugin para uso de carrinho de compra</label>
+                  <select
+                    value={props.values.cartDefault}
+                    className='form-select'
+                    id='cartDefault'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                  >
+                    <option value=''></option>
+                    <option value='go2go'>Go2Go</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-5'>
+                  <label htmlFor='unidadeId'>Id da loja</label>
+                  <FieldWithError
+                    id='unidadeId'
+                    name='unidadeId'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.unidadeId}
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-5'>
+                  <label htmlFor='statusId'>Id do status do carrinho de compra</label>
+                  <FieldWithError
+                    id='statusId'
+                    name='statusId'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.statusId}
+                  />
+                </div>
+              </div>
+            </fieldset>
+
 
             <fieldset>
               <div className='row'>
