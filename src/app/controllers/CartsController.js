@@ -14,6 +14,7 @@ async function getContact(number, licenseeId) {
   })
 }
 
+// Tentar remover essa função daqui e deixar apenas no modelo de cart
 function calculateTotal(products, delivery_tax) {
   return products?.reduce((summaryProducts, product) => {
     const additionalsTotal =
@@ -71,14 +72,11 @@ class CartsController {
         return res.status(404).send({ errors: { message: `Contato ${contact} não encontrado` } })
       }
 
-      const total = calculateTotal(products, delivery_tax)
-
       const cart = new Cart({
         delivery_tax,
         contact: cartContact._id,
         licensee: req.licensee._id,
         products,
-        total,
         concluded,
         catalog,
         address,
@@ -158,9 +156,6 @@ class CartsController {
       if (!cart) {
         return res.status(404).send({ errors: { message: `Carrinho não encontrado` } })
       }
-
-      const total = calculateTotal(cart.products, cart.delivery_tax)
-      cart.total = total
 
       res.status(200).send(cart)
     } catch (err) {
@@ -263,9 +258,6 @@ class CartsController {
       }
 
       cart = await Cart.findOne({ _id: cart._id })
-
-      const total = calculateTotal(cart.products, cart.delivery_tax)
-      cart.total = total
 
       res.status(200).send(cart)
     } catch (err) {

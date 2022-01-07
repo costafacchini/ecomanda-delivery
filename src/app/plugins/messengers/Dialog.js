@@ -1,12 +1,14 @@
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Trigger = require('@models/Trigger')
+const Cart = require('@models/Cart')
 const NormalizePhone = require('../../helpers/NormalizePhone')
 const { v4: uuidv4 } = require('uuid')
 const S3 = require('../storage/S3')
 const request = require('../../services/request')
 const files = require('../../helpers/Files')
 const mime = require('mime-types')
+const cartFactory = require('../../plugins/carts/factory')
 
 const getMediaURL = async (licensee, mediaId, contact) => {
   const response = await downloadMedia(mediaId, licensee.whatsappToken)
@@ -126,6 +128,34 @@ class Dialog {
     if (responseBody.messages[0].type === 'text') {
       messageToSend.kind = 'text'
       messageToSend.text = responseBody.messages[0].text.body
+    } else if (responseBody.messages[0].type === 'order') {
+      let cart = await Cart.findOne({ contact, concluded: false })
+      if (!cart) {
+        cart = new Cart({
+          licensee: this.licensee._id,
+          contact: contact._id,
+        })
+      }
+
+      const products = []
+      for (const item of responseBody.messages[0].order.product_items) {
+        products.push({
+          unit_price: item.item_price,
+          product_retailer_id: item.product_retailer_id,
+          quantity: item.quantity,
+        })
+      }
+
+      cart.delivery_tax = 0
+      cart.catalog = responseBody.messages[0].order.catalog_id
+      cart.note = responseBody.messages[0].order.text
+      cart.products = products
+
+      await cart.save()
+
+      messageToSend.kind = 'cart'
+      messageToSend.cart = cart._id
+      messageToSend.destination = 'to-chatbot'
     } else if (responseBody.messages[0].type === 'interactive') {
       const expression = responseBody.messages[0].interactive.list_reply
         ? responseBody.messages[0].interactive.list_reply.id
@@ -237,6 +267,16 @@ class Dialog {
         messageBody.location = {
           longitude: messageToSend.longitude,
           latitude: messageToSend.latitude,
+        }
+      }
+
+      if (messageToSend.kind === 'cart') {
+        const cartPlugin = cartFactory(this.licensee)
+        const cartTransformed = await cartPlugin.transformCart(this.licensee, messageToSend.cart)
+
+        messageBody.type = 'text'
+        messageBody.text = {
+          body: JSON.stringify(cartTransformed),
         }
       }
 

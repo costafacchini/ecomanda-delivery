@@ -133,6 +133,12 @@ const licenseeSchema = new Schema(
         'Nome do Bucket da AWS: deve ser preenchido quando utilizar os plugins da uTalk ou Winzap',
       ],
     },
+    cartDefault: {
+      type: String,
+      enum: ['go2go', ''],
+    },
+    unidadeId: String,
+    statusId: String,
   },
   { timestamps: true }
 )
