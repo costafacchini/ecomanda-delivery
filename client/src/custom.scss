@@ -12,7 +12,8 @@ $input-border-radius: 0;
 
 $form-check-input-border-radius:          0 !default;
 
-// $input-focus-box-shadow: 0 0 0 0.15rem $secondary;
+$table-cell-padding-y:        .8rem !default;
+$table-cell-padding-x:        .6rem !default;
 
 @import '../node_modules/bootstrap/scss/bootstrap';
 @import '../node_modules/bootstrap-icons/font/bootstrap-icons';

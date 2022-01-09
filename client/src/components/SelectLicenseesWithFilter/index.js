@@ -3,7 +3,7 @@ import Select, { createFilter } from 'react-select'
 import debounce from 'lodash/debounce'
 import { getLicensees } from '../../services/licensee'
 
-export default function SelectLicenseesWithFilter({ isDisabled, onChange, selectedItem }) {
+export default function SelectLicenseesWithFilter({ isDisabled, onChange, selectedItem, ...props }) {
   const [defaultValue, setDefaultValue] = useState(null)
   const [selectedOption, setSelectedOption] = useState(null)
   const [options, setOptions] = useState([])
@@ -62,19 +62,17 @@ export default function SelectLicenseesWithFilter({ isDisabled, onChange, select
   }
 
   return(
-      <>
       <Select
         defaultValue={defaultValue}
         isClearable
         isSearchable
         isLoading={isLoading}
-        name='color'
         isDisabled={isDisabled}
         options={options}
         filterOption={createFilter(filterConfig)}
         onChange={handleOnChange}
         onInputChange={handleSetSearchInput}
+        {...props}
       />
-      </>
   )
 }

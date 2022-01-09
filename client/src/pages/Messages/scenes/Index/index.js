@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { fetchMessages } from './slice'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 import SelectContactsWithFilter from '../../../../components/SelectContactsWithFilter'
+import styles from './styles.module.scss'
 
 // Precisa estilizar a mensagem
 // Acredito que teria que criar um componente para renderizar certinho em duas ou três linhas cada mensagem por causa dos tipos e os erros
@@ -79,7 +80,7 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
 
         <div className='col-3'>
           <div className='form-group'>
-            <label htmlFor='endDate'>Data Final</label>
+            <label htmlFor='endDate'>Data final</label>
             <input value={filters.endDate} onChange={handleChange} className='form-control' type='date' name='endDate' id='endDate' />
           </div>
         </div>
@@ -122,13 +123,14 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
       <div className='row'>
         {loggedUser && loggedUser.isSuper && (
           <div className='col-6'>
-            <div className='form-group'>
-              <label htmlFor='licensee'>Licenciado</label>
+            <div className=''>
+              <label htmlFor='licensee' id='licensee'>Licenciado</label>
               <SelectLicenseesWithFilter
-                className='form-select'
+                className=''
                 selectedItem={filters.licensee}
-                name='licensee'
-                id='licensee'
+                // name='licensee'
+                inputId='licensee'
+                aria-labelledby='licensee'
                 onChange={(e) => {
                   const inputValue = e && e.value ? e.value : ''
                   setFilters({ ...filters, licensee: inputValue })
@@ -170,7 +172,7 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
       </div>
 
       <div className='row mt-3'>
-        <table className='table'>
+        <table className={`${styles.stickyHeader} table table-striped table-hover table table-bordered`} >
           <thead>
             <tr>
               <th scope='col'>Contato</th>
@@ -179,19 +181,40 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
               <th scope='col'>Destino</th>
               <th scope='col'>Departamento</th>
               <th scope='col'>Enviada?</th>
-              <th scope='col'>Erro</th>
             </tr>
           </thead>
           <tbody>
             {messages.map((message) => (
               <tr key={message._id.toString()}>
-                <td>{message.contact.name}</td>
+                <td>
+                  <div>
+                    {message.contact.name}
+                  </div>
+                  {message.error && (
+                    <div>
+                      <details className='mt-1'>
+                        <summary className='text-muted'>Visualizar erro</summary>
+                        <p>
+                          {message.error}
+                        </p>
+                      </details>
+                    </div>
+                  )}
+                </td>
                 <td>{message.text}</td>
-                <td>{message.kind}</td>
+                <td>
+                  <div>
+                    {message.kind}
+                  </div>
+                  <div>
+                    <a href={message.url} download target='_blank' rel="noreferrer">
+                      {message.fileName}
+                    </a>
+                  </div>
+                </td>
                 <td>{message.destination}</td>
                 <td>{message.departament}</td>
-                <td>{message.sended}</td>
-                <td>{message.error}</td>
+                <td>{message.sended ? 'Sim' : 'Não'}</td>
               </tr>
             ))}
           </tbody>
