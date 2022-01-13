@@ -13,6 +13,7 @@ const jest = {
     '@helpers(.*)$': '<rootDir>/src/app/helpers$1',
     '@reports(.*)$': '<rootDir>/src/app/reports$1',
     '@factories(.*)$': '<rootDir>/src/app/factories$1',
+    '@plugins(.*)$': '<rootDir>/src/app/plugins$1',
   },
   collectCoverage: true,
   collectCoverageFrom: [
@@ -27,6 +28,7 @@ const jest = {
     '!<rootDir>/src/app/services/ClearBackups.js',
   ],
   coverageDirectory: 'coverage',
+  setupFiles: ['jest-date-mock'],
   clearMocks: true,
 }
 

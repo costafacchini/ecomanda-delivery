@@ -32,6 +32,7 @@ const contactSchema = new Schema(
     cep: String,
     uf: String,
     delivery_tax: Number,
+    plugin_cart_id: String,
   },
   { timestamps: true }
 )

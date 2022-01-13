@@ -23,6 +23,7 @@ const contactInitialValues = {
   cep: '',
   ud: '',
   delivery_tax: 0,
+  plugin_cart_id: ''
 }
 
 function ContactForm({ onSubmit, errors, initialValues, loggedUser }) {
@@ -246,6 +247,20 @@ function ContactForm({ onSubmit, errors, initialValues, loggedUser }) {
                     onChange={props.handleChange}
                     onBlur={props.handleBlur}
                     value={props.values.delivery_tax}
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-5'>
+                  <label htmlFor='plugin_cart_id'>Id no plugin de carrinho</label>
+                  <FieldWithError
+                    id='plugin_cart_id'
+                    name='plugin_cart_id'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.plugin_cart_id}
                   />
                 </div>
               </div>

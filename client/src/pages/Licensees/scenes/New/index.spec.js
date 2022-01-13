@@ -44,6 +44,9 @@ describe('<LicenseeNew />', () => {
       awsId: '',
       awsSecret: '',
       bucketName: '',
+      cartDefault: '',
+      unidadeId: '',
+      statusId: '',
     }))
   })
 

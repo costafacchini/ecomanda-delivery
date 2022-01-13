@@ -22,6 +22,7 @@ function permit(fields) {
     'cep',
     'uf',
     'delivery_tax',
+    'plugin_cart_id',
   ]
 
   return _.pick(fields, permitedFields)
@@ -60,6 +61,7 @@ class ContactsController {
       cep,
       uf,
       delivery_tax,
+      plugin_cart_id,
     } = req.body
 
     const contact = new Contact({
@@ -79,6 +81,7 @@ class ContactsController {
       cep,
       uf,
       delivery_tax,
+      plugin_cart_id,
     })
 
     const validation = contact.validateSync()

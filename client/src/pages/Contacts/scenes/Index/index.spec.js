@@ -28,6 +28,7 @@ describe('<ContactsIndex />', () => {
     expect(getContacts).toHaveBeenCalledWith({
       page: 1,
       expression: '',
+      licensee: '',
     })
 
     expect(screen.getByText('Contato')).toBeInTheDocument()
@@ -47,6 +48,7 @@ describe('<ContactsIndex />', () => {
     expect(getContacts).toHaveBeenCalledWith({
       page: 2,
       expression: '',
+      licensee: '',
     })
   })
 
@@ -68,6 +70,9 @@ describe('<ContactsIndex />', () => {
     expect(getContacts).toHaveBeenNthCalledWith(2, {
       page: 1,
       expression: 'expression',
+      licensee: '',
     })
   })
+
+  // Testar a alteração do licenciado pelo componente da tela
 })

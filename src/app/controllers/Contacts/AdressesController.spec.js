@@ -6,7 +6,7 @@ const { expressServer } = require('../../../../.jest/server-express')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 
-describe('contact controller', () => {
+describe('addresses controller', () => {
   let licensee
 
   beforeAll(async () => {

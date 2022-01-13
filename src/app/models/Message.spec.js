@@ -148,6 +148,16 @@ describe('Message', () => {
         validation = message.validateSync()
 
         expect(validation.errors['kind']).not.toBeDefined()
+
+        message.licenseKind = 'interactive'
+        validation = message.validateSync()
+
+        expect(validation.errors['kind']).not.toBeDefined()
+
+        message.licenseKind = 'cart'
+        validation = message.validateSync()
+
+        expect(validation.errors['kind']).not.toBeDefined()
       })
 
       it('does not accepts another values', () => {

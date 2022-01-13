@@ -296,6 +296,41 @@ describe('Licensee', () => {
       })
     })
 
+    describe('cartDefault', () => {
+      it('accepts blank value', () => {
+        const licensee = new Licensee({ cartDefault: '' })
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['cartDefault']).not.toBeDefined()
+      })
+
+      it('accepts nil value', () => {
+        const licensee = new Licensee()
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['cartDefault']).not.toBeDefined()
+      })
+
+      it('accepts "go2go" values', () => {
+        let validation
+        const licensee = new Licensee()
+
+        licensee.cartDefault = 'go2go'
+        validation = licensee.validateSync()
+
+        expect(validation.errors['chatDefault']).not.toBeDefined()
+      })
+
+      it('does not accepts another values', () => {
+        const licensee = new Licensee({ cartDefault: 'some' })
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['cartDefault'].message).toEqual(
+          '`some` is not a valid enum value for path `cartDefault`.'
+        )
+      })
+    })
+
     describe('chatUrl', () => {
       it('is not required if not chatDefault', () => {
         const licensee = new Licensee({ chatDefault: '', chatUrl: '' })

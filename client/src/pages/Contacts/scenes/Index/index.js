@@ -2,9 +2,10 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { fetchContacts } from './slice'
 import { useEffect, useState } from 'react'
+import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 
-function ContactsIndex({ contacts, dispatch }) {
-  const [filters, setFilters] = useState({ expression: '', page: 1 })
+function ContactsIndex({ contacts, dispatch, loggedUser }) {
+  const [filters, setFilters] = useState({ expression: '', page: 1, licensee: '' })
   const [expression, setExpression] = useState('')
 
   useEffect(() => {
@@ -23,6 +24,12 @@ function ContactsIndex({ contacts, dispatch }) {
     }
   }, [dispatch, filters])
 
+  useEffect(() => {
+    if (loggedUser && !loggedUser.isSuper && filters.licensee !== loggedUser.licensee) {
+      setFilters({ ...filters, licensee: loggedUser.licensee })
+    }
+  }, [loggedUser, filters])
+
   function changeExpression(event) {
     setExpression(event.target.value)
   }
@@ -36,6 +43,27 @@ function ContactsIndex({ contacts, dispatch }) {
           </div>
           <div className=''>
             <Link to='/contacts/new' className='btn btn-primary'>Criar +</Link>
+          </div>
+        </div>
+      </div>
+      <div className='row'>
+        <div className='d-flex flex-row justify-content-end pb-2'>
+          <div className='flex-column w-50'>
+            {loggedUser && loggedUser.isSuper && (
+              <div className='form-group'>
+                <label htmlFor='licensee'>Licenciado</label>
+                <SelectLicenseesWithFilter
+                  className='form-select'
+                  selectedItem={filters.licensee}
+                  name='licensee'
+                  id='licensee'
+                  onChange={(e) => {
+                    const inputValue = e && e.value ? e.value : ''
+                    setFilters({ ...filters, licensee: inputValue })
+                  }}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

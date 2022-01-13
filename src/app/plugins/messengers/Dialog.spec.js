@@ -3,6 +3,7 @@ const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Licensee = require('@models/Licensee')
 const Trigger = require('@models/Trigger')
+const Cart = require('@models/Cart')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
 const S3 = require('../storage/S3')
@@ -15,6 +16,8 @@ const {
   triggerListMessage: triggerListMessageFactory,
   triggerSingleProduct: triggerSingleProductFactory,
 } = require('@factories/trigger')
+const { cart: cartFactory } = require('@factories/cart')
+const { advanceTo, clear } = require('jest-date-mock')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -679,6 +682,140 @@ describe('Dialog plugin', () => {
         expect(messages[0].departament).toEqual(undefined)
 
         expect(messages.length).toEqual(1)
+      })
+    })
+
+    describe('cart', () => {
+      it('returns the response body transformed in messages and create new cart if contact has no cart opened', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
+
+        const cartConcluded = await Cart.create(cartFactory.build({ contact, licensee, concluded: true }))
+
+        const responseBody = {
+          contacts: [{ profile: { name: 'John Doe' }, wa_id: '5511990283745' }],
+          messages: [
+            {
+              from: '5511990283745',
+              id: 'ABEGVUiZKQggAhDXso22hmrDkcGXa_BDMaei',
+              order: {
+                catalog_id: '889635565073049',
+                product_items: [
+                  { currency: 'BRL', item_price: 25.8, product_retailer_id: '1011', quantity: 1 },
+                  { currency: 'BRL', item_price: 5, product_retailer_id: '1016', quantity: 2 },
+                ],
+                text: 'Note',
+              },
+              timestamp: '1638368401',
+              type: 'order',
+            },
+          ],
+        }
+
+        const dialog = new Dialog(licensee)
+        const messages = await dialog.responseToMessages(responseBody)
+
+        const cart = await Cart.findOne({ contact: contact._id, concluded: false })
+
+        expect(messages[0]).toBeInstanceOf(Message)
+        expect(messages[0].licensee).toEqual(licensee._id)
+        expect(messages[0].contact).toEqual(contact._id)
+        expect(messages[0].kind).toEqual('cart')
+        expect(messages[0].messageWaId).toEqual('ABEGVUiZKQggAhDXso22hmrDkcGXa_BDMaei')
+        expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+        expect(messages[0].destination).toEqual('to-chatbot')
+        expect(messages[0].cart).not.toEqual(cartConcluded._id)
+        expect(messages[0].cart).toEqual(cart._id)
+        expect(messages[0].text).toEqual(undefined)
+        expect(messages[0].url).toEqual(undefined)
+        expect(messages[0].fileName).toEqual(undefined)
+        expect(messages[0].latitude).toEqual(undefined)
+        expect(messages[0].longitude).toEqual(undefined)
+        expect(messages[0].departament).toEqual(undefined)
+
+        expect(messages.length).toEqual(1)
+
+        expect(cart.delivery_tax).toEqual(0)
+        expect(cart.catalog).toEqual('889635565073049')
+        expect(cart.note).toEqual('Note')
+        expect(cart.products.length).toEqual(2)
+        expect(cart.products[0].unit_price).toEqual(25.8)
+        expect(cart.products[0].quantity).toEqual(1)
+        expect(cart.products[0].product_retailer_id).toEqual('1011')
+        expect(cart.products[1].unit_price).toEqual(5)
+        expect(cart.products[1].quantity).toEqual(2)
+        expect(cart.products[1].product_retailer_id).toEqual('1016')
+      })
+
+      it('returns the response body transformed in messages and updates the cart if contact has cart opened', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
+
+        const cart = await Cart.create(cartFactory.build({ contact, licensee, concluded: false }))
+
+        const responseBody = {
+          contacts: [{ profile: { name: 'John Doe' }, wa_id: '5511990283745' }],
+          messages: [
+            {
+              from: '5511990283745',
+              id: 'ABEGVUiZKQggAhDXso22hmrDkcGXa_BDMaei',
+              order: {
+                catalog_id: '889635565073049',
+                product_items: [
+                  { currency: 'BRL', item_price: 25.8, product_retailer_id: '1011', quantity: 1 },
+                  { currency: 'BRL', item_price: 5, product_retailer_id: '1016', quantity: 2 },
+                ],
+                text: 'Note',
+              },
+              timestamp: '1638368401',
+              type: 'order',
+            },
+          ],
+        }
+
+        const dialog = new Dialog(licensee)
+        const messages = await dialog.responseToMessages(responseBody)
+
+        expect(messages[0]).toBeInstanceOf(Message)
+        expect(messages[0].licensee).toEqual(licensee._id)
+        expect(messages[0].contact).toEqual(contact._id)
+        expect(messages[0].kind).toEqual('cart')
+        expect(messages[0].messageWaId).toEqual('ABEGVUiZKQggAhDXso22hmrDkcGXa_BDMaei')
+        expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+        expect(messages[0].destination).toEqual('to-chatbot')
+        expect(messages[0].cart).toEqual(cart._id)
+        expect(messages[0].text).toEqual(undefined)
+        expect(messages[0].url).toEqual(undefined)
+        expect(messages[0].fileName).toEqual(undefined)
+        expect(messages[0].latitude).toEqual(undefined)
+        expect(messages[0].longitude).toEqual(undefined)
+        expect(messages[0].departament).toEqual(undefined)
+
+        expect(messages.length).toEqual(1)
+
+        const cartUpdated = await Cart.findOne({ contact: contact._id, concluded: false })
+
+        expect(cartUpdated._id).toEqual(cart._id)
+        expect(cartUpdated.delivery_tax).toEqual(0)
+        expect(cartUpdated.catalog).toEqual('889635565073049')
+        expect(cartUpdated.note).toEqual('Note')
+        expect(cartUpdated.products.length).toEqual(2)
+        expect(cartUpdated.products[0].unit_price).toEqual(25.8)
+        expect(cartUpdated.products[0].quantity).toEqual(1)
+        expect(cartUpdated.products[0].product_retailer_id).toEqual('1011')
+        expect(cartUpdated.products[1].unit_price).toEqual(5)
+        expect(cartUpdated.products[1].quantity).toEqual(2)
+        expect(cartUpdated.products[1].product_retailer_id).toEqual('1016')
       })
     })
 
@@ -2154,6 +2291,91 @@ describe('Dialog plugin', () => {
               'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
             )
           })
+        })
+      })
+
+      describe('when the message is cart', () => {
+        it('marks the message with sended and log the success message', async () => {
+          advanceTo(new Date('2021-01-05T10:25:47.000Z'))
+
+          licensee.cartDefault = 'go2go'
+
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              talkingWithChatBot: true,
+              waId: '5593165392997',
+              licensee,
+            })
+          )
+
+          const cart = await Cart.create(cartFactory.build({ contact, licensee }))
+
+          const message = await Message.create(
+            messageFactory.build({
+              _id: '60958703f415ed4008748637',
+              kind: 'cart',
+              contact,
+              licensee,
+              cart,
+              sended: false,
+            })
+          )
+
+          fetchMock.postOnce(
+            (url) => {
+              return url === 'https://waba.360dialog.io/v1/contacts/'
+            },
+            {
+              status: 200,
+              body: {
+                contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
+              },
+            }
+          )
+
+          const expectedBodySendMessage = {
+            recipient_type: 'individual',
+            to: '553165392832',
+            type: 'text',
+            text: {
+              body: '{"order":{"origemId":0,"deliveryMode":"MERCHANT","refPedido":"Ecommerce","refOrigem":"Ecommerce","refCurtaOrigem":"","docNotaFiscal":false,"valorDocNotaFiscal":"","nomeCliente":"John Doe","endEntrega":"","dataPedido":"2021-01-05T10:25:47.000Z","subTotal":17.8,"impostos":0,"voucher":0,"dataEntrega":"2021-01-05T10:25:47.000Z","taxaEntrega":0,"totalPedido":17.8,"documento":"","flagIntegrado":"NaoIntegrado","valorPagar":17.8,"telefonePedido":"5511990283745","pagamentos":[{"tipo":"","valor":17.8,"observacao":"","codigoResposta":"","bandeira":0,"troco":0,"nsu":0,"status":"NaoInformado","descontoId":0,"prePago":false,"transactionId":0}],"entrega":{"retiraLoja":false,"data":"","retirada":"Hoje","endereco":{"id":37025,"pais":"Brasil","padrao":false}},"itens":[{"produtoId":"0123","quantidade":2,"precoTotal":8.9,"adicionalPedidoItems":[{"produtoId":"Additional 1","atributoValorId":"Detail 1","quantidade":1,"precoTotal":0.5}]}]}}',
+            },
+          }
+
+          fetchMock.postOnce(
+            (url, { body }) => {
+              return (
+                url === 'https://waba.360dialog.io/v1/messages/' && body === JSON.stringify(expectedBodySendMessage)
+              )
+            },
+            {
+              status: 201,
+              body: {
+                messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
+              },
+            }
+          )
+
+          expect(message.sended).toEqual(false)
+
+          const dialog = new Dialog(licensee)
+          await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
+          await fetchMock.flush(true)
+
+          expect(fetchMock.done()).toBe(true)
+          expect(fetchMock.calls()).toHaveLength(2)
+
+          const messageUpdated = await Message.findById(message._id)
+          expect(messageUpdated.sended).toEqual(true)
+          expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
+          expect(consoleInfoSpy).toHaveBeenCalledWith(
+            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+          )
+
+          clear()
         })
       })
     })

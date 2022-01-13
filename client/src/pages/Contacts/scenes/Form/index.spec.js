@@ -29,6 +29,7 @@ describe('<ContactForm />', () => {
     expect(screen.getByLabelText('Complemento')).toHaveValue('')
     expect(screen.getByLabelText('Bairro')).toHaveValue('')
     expect(screen.getByLabelText('Taxa de entrega')).toHaveValue(0)
+    expect(screen.getByLabelText('Id no plugin de carrinho')).toHaveValue('')
   })
 
   it('can receive initial values', () => {
@@ -47,6 +48,7 @@ describe('<ContactForm />', () => {
       cep: '65810970',
       uf: 'MA',
       delivery_tax: 14.6,
+      plugin_cart_id: '12356'
     }
 
     mount({ initialValues: contact })
@@ -65,6 +67,7 @@ describe('<ContactForm />', () => {
     expect(screen.getByLabelText('Complemento')).toHaveValue('Próximo ao centro')
     expect(screen.getByLabelText('Bairro')).toHaveValue('Centro')
     expect(screen.getByLabelText('Taxa de entrega')).toHaveValue(14.6)
+    expect(screen.getByLabelText('Id no plugin de carrinho')).toHaveValue('12356')
   })
 
   describe('submit', () => {
@@ -93,6 +96,7 @@ describe('<ContactForm />', () => {
         cep: '',
         ud: '',
         delivery_tax: 0,
+        plugin_cart_id: ''
       })
     })
   })
