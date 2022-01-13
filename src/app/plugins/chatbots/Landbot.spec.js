@@ -3,15 +3,18 @@ const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Licensee = require('@models/Licensee')
 const Trigger = require('@models/Trigger')
+const Cart = require('@models/Cart')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
-const emoji = require('../../helpers/Emoji')
+const emoji = require('@helpers/Emoji')
 const Room = require('@models/Room')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { room: roomFactory } = require('@factories/room')
 const { message: messageFactory } = require('@factories/message')
 const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
+const { cart: cartFactory } = require('@factories/cart')
+const { advanceTo, clear } = require('jest-date-mock')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -498,6 +501,81 @@ describe('Landbot plugin', () => {
              },
            })}`
         )
+      })
+
+      describe('when the message is cart', () => {
+        it('sends the message with cart parsed in body', async () => {
+          advanceTo(new Date('2021-01-05T10:25:47.000Z'))
+
+          licensee.cartDefault = 'go2go'
+
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              talkingWithChatBot: true,
+              licensee,
+            })
+          )
+
+          const cart = await Cart.create(cartFactory.build({ contact, licensee }))
+
+          const message = await Message.create(
+            messageFactory.build({
+              kind: 'cart',
+              contact,
+              licensee,
+              cart,
+              sended: false,
+            })
+          )
+
+          const expectedBody = {
+            customer: {
+              name: 'John Doe',
+              number: '5511990283745',
+              type: '@c.us',
+              licensee: licensee._id,
+            },
+            message: {
+              type: 'text',
+              message:
+                '{"order":{"origemId":0,"deliveryMode":"MERCHANT","refPedido":"Ecommerce","refOrigem":"Ecommerce","refCurtaOrigem":"","docNotaFiscal":false,"valorDocNotaFiscal":"","nomeCliente":"John Doe","endEntrega":"","dataPedido":"2021-01-05T10:25:47.000Z","subTotal":17.8,"impostos":0,"voucher":0,"dataEntrega":"2021-01-05T10:25:47.000Z","taxaEntrega":0,"totalPedido":17.8,"documento":"","flagIntegrado":"NaoIntegrado","valorPagar":17.8,"telefonePedido":"5511990283745","pagamentos":[{"tipo":"","valor":17.8,"observacao":"","codigoResposta":"","bandeira":0,"troco":0,"nsu":0,"status":"NaoInformado","descontoId":0,"prePago":false,"transactionId":0}],"entrega":{"retiraLoja":false,"data":"","retirada":"Hoje","endereco":{"id":37025,"pais":"Brasil","padrao":false}},"itens":[{"produtoId":"0123","quantidade":2,"precoTotal":8.9,"adicionalPedidoItems":[{"produtoId":"Additional 1","atributoValorId":"Detail 1","quantidade":1,"precoTotal":0.5}]}]}}',
+              payload: '$1',
+            },
+          }
+
+          fetchMock.postOnce(
+            (url, { body }) => {
+              return url === 'https://url.com.br/5511990283745/' && body === JSON.stringify(expectedBody)
+            },
+            {
+              status: 201,
+              body: {
+                success: true,
+                customer: {
+                  id: 42,
+                  name: 'John Doe',
+                  phone: '5511990283745@c.us',
+                  token: 'token',
+                },
+              },
+            }
+          )
+
+          expect(message.sended).toEqual(false)
+
+          const landbot = new Landbot(licensee)
+          await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
+          await fetchMock.flush(true)
+
+          expect(fetchMock.done()).toBe(true)
+          expect(fetchMock.calls()).toHaveLength(1)
+
+          const messageUpdated = await Message.findById(message._id)
+          expect(messageUpdated.sended).toEqual(true)
+
+          clear()
+        })
       })
     })
 
