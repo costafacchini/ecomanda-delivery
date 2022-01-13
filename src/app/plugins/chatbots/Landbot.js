@@ -1,11 +1,12 @@
-const emoji = require('../../helpers/Emoji')
-const NormalizePhone = require('../../helpers/NormalizePhone')
+const emoji = require('@helpers/Emoji')
+const NormalizePhone = require('@helpers/NormalizePhone')
 const { v4: uuidv4 } = require('uuid')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const request = require('../../services/request')
 const Room = require('@models/Room')
 const Trigger = require('@models/Trigger')
+const cartFactory = require('@plugins/carts/factory')
 
 const closeRoom = async (contact) => {
   const room = await Room.findOne({ contact: contact._id, closed: false })
@@ -168,6 +169,13 @@ class Landbot {
         message: messageToSend.text,
         payload: '$1',
       },
+    }
+
+    if (messageToSend.kind === 'cart') {
+      const cartPlugin = cartFactory(this.licensee)
+      const cartTransformed = await cartPlugin.transformCart(this.licensee, messageToSend.cart)
+
+      body.message.message = JSON.stringify(cartTransformed)
     }
 
     const headers = {
