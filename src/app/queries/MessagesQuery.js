@@ -56,7 +56,7 @@ class MessagesQuery {
 
     if (this.sendedClause) query.filterBy('sended', this.sendedClause)
 
-    return await query.getQuery().populate('contact').exec()
+    return await query.getQuery().populate('contact').populate('cart').populate('trigger').exec()
   }
 }
 

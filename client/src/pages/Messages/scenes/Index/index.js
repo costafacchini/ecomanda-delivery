@@ -3,9 +3,9 @@ import { connect } from 'react-redux'
 import { fetchMessages } from './slice'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 import SelectContactsWithFilter from '../../../../components/SelectContactsWithFilter'
+import CartDescription from './components/cart'
 import styles from './styles.module.scss'
 
-// Precisa estilizar a mensagem
 // Acredito que teria que criar um componente para renderizar certinho em duas ou três linhas cada mensagem por causa dos tipos e os erros
 // Falta testes para os componentes de tela da mensagem
 // Falta testes para os componentes de select
@@ -21,6 +21,14 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
     destination: ''
   })
 
+  const [page, setPage] = useState(1)
+
+  useEffect(() => {
+    if (page !== 1) {
+      dispatch(fetchMessages({ ...filters, page: page }))
+    }
+  }, [dispatch, page, filters])
+
   useEffect(() => {
     if (loggedUser && !loggedUser.isSuper && filters.licensee !== loggedUser.licensee) {
       setFilters({ ...filters, licensee: loggedUser.licensee })
@@ -28,6 +36,7 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
   }, [loggedUser, filters])
 
   function handleChange({ target }) {
+    setPage(1)
     setFilters({ ...filters, [target.name]: target.value })
   }
 
@@ -99,6 +108,7 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
             <option value='file'>Arquivo</option>
             <option value='location'>Localização</option>
             <option value='interactive'>Interativa</option>
+            <option value='cart'>Carrinho</option>
           </select>
         </div>
 
@@ -123,14 +133,13 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
       <div className='row'>
         {loggedUser && loggedUser.isSuper && (
           <div className='col-6'>
-            <div className=''>
+            <div className='form-group'>
               <label htmlFor='licensee' id='licensee'>Licenciado</label>
               <SelectLicenseesWithFilter
-                className=''
-                selectedItem={filters.licensee}
-                // name='licensee'
-                inputId='licensee'
+                className='form-select'
+                name='licensee'
                 aria-labelledby='licensee'
+                selectedItem={filters.licensee}
                 onChange={(e) => {
                   const inputValue = e && e.value ? e.value : ''
                   setFilters({ ...filters, licensee: inputValue })
@@ -142,11 +151,11 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
 
         <div className='col-6'>
           <div className='form-group'>
-            <label htmlFor='contact'>Contato</label>
+            <label htmlFor='contact' id='contact'>Contato</label>
             <SelectContactsWithFilter
               className='form-select'
               name='contact'
-              id='contact'
+              aria-labelledby='contact'
               selectedItem={filters.contact}
               onChange={(e) => {
                 const inputValue = e && e.value ? e.value : ''
@@ -188,7 +197,7 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
               <tr key={message._id.toString()}>
                 <td>
                   <div>
-                    {message.contact.name}
+                    {message.contact?.name}
                   </div>
                   {message.error && (
                     <div>
@@ -201,15 +210,37 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
                     </div>
                   )}
                 </td>
-                <td>{message.text}</td>
+                <td>
+                  {message.kind === 'location' && (
+                    <>
+                      <a href={`http://maps.google.com/maps?q=${message.text.replace(';', ',')}&ll=${message.text.replace(';', ',')}&z=17`} target='_blank' rel='noreferrer'>
+                        <i className='bi bi-geo-alt'></i>
+                      </a>
+                      {` (${message.text})`}
+                    </>
+                  )}
+                  {message.kind === 'cart' && (
+                    <CartDescription cart={message.cart} />
+                  )}
+                  {message.kind !== 'location' && message.kind !== 'cart' && (
+                    <p>{message.text}</p>
+                  )}
+                </td>
                 <td>
                   <div>
                     {message.kind}
                   </div>
                   <div>
-                    <a href={message.url} download target='_blank' rel="noreferrer">
-                      {message.fileName}
-                    </a>
+                    {message.url && (
+                      <a href={message.url} download target='_blank' rel='noreferrer'>
+                        {message.fileName}
+                      </a>
+                    )}
+                    {message.trigger && (
+                      <a href={`#/triggers/${message.trigger._id.toString()}`} target='_blank' rel='noreferrer'>
+                        {message.trigger.name}
+                      </a>
+                    )}
                   </div>
                 </td>
                 <td>{message.destination}</td>
@@ -219,6 +250,25 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
             ))}
           </tbody>
         </table>
+        <section>
+          <div className='container'>
+            {messages.length > 29 && (
+              <div className='row'>
+                <div className='col text-center mt-3'>
+                  <button
+                    type='button'
+                    className='btn btn-outline-primary d-print-none'
+                    onClick={() => {
+                      setPage(page + 1)
+                    }}
+                  >
+                    Carregar mais
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
       </div>
     </>
   )

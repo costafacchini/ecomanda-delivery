@@ -3,26 +3,56 @@ import MessageIndex from './'
 import { fireEvent, screen, cleanup } from '@testing-library/react'
 import { getMessages } from '../../../../services/message'
 import { MemoryRouter } from 'react-router'
+import { getLicensees } from '../../../../services/licensee'
+import { getContacts } from '../../../../services/contact'
 
 jest.mock('../../../../services/message')
+jest.mock('../../../../services/licensee')
+jest.mock('../../../../services/contact')
 
 describe('<MessageIndex />', () => {
   function mount() {
+    const loggedUser = {
+      isSuper: true
+    }
+
     const store = createStore()
     mountWithRedux(store)(
       <MemoryRouter>
-        <MessageIndex />
+        <MessageIndex loggedUser={loggedUser} />
       </MemoryRouter>)
   }
 
   it('renders the messages when the user clicks on the search button', async () => {
-    getMessages.mockResolvedValue({ status: 201, data: [{ _id: '1', contact: { name: 'Contact' } }] })
+    getMessages.mockResolvedValue(
+      {
+        status: 201,
+        data: [
+          {
+            _id: '1',
+            contact: {
+              name: 'Contact',
+            },
+            kind: 'text',
+            text: 'First message',
+            destination: 'to-chat',
+            departament: 'departament',
+            sended: true,
+          }
+        ]
+      }
+    )
 
     mount()
 
     fireEvent.click(screen.getByText('Pesquisar'))
 
     expect(await screen.findByText('Contact')).toBeInTheDocument()
+    expect(screen.getByText('First message')).toBeInTheDocument()
+    expect(screen.getByText('text')).toBeInTheDocument()
+    expect(screen.getByText('to-chat')).toBeInTheDocument()
+    expect(screen.getByText('departament')).toBeInTheDocument()
+    expect(screen.getByText('Sim')).toBeInTheDocument()
 
     expect(getMessages).toHaveBeenCalledWith({
       "contact": "",
@@ -101,19 +131,58 @@ describe('<MessageIndex />', () => {
     })
   })
 
-  xdescribe('licensee typeahead filter', () => {
+  describe('licensee select filter', () => {
+    it('does not show the licensee if logged user is not super', async () => {
+      const loggedUser = {
+        isSuper: false
+      }
+
+      const store = createStore()
+      mountWithRedux(store)(
+        <MemoryRouter>
+          <MessageIndex loggedUser={loggedUser} />
+        </MemoryRouter>)
+
+      expect(screen.getByLabelText('Contato')).toBeInTheDocument()
+      expect(screen.queryByLabelText('Licenciado')).not.toBeInTheDocument()
+    })
+
     it('changes the filters to get the messages', async () => {
-      getMessages.mockResolvedValue({ status: 201, data: [{ _id: '1', contact: { name: 'Contact' } }] })
+      getLicensees.mockResolvedValueOnce({ status: 201, data: [{ _id: '12345678', name: 'Alcateia' }] })
+
+      getMessages.mockResolvedValueOnce({ status: 201, data: [{ _id: '1', contact: { name: 'Contact' } }] })
 
       mount()
 
-      fireEvent.change(screen.getByLabelText('Licenciado'), { target: { value: 'licensee' } })
+      fireEvent.change(screen.getByLabelText('Licenciado'), { target: { value: 'alca' } })
+
+      fireEvent.click(await screen.findByText('Alcateia'))
 
       fireEvent.click(screen.getByText('Pesquisar'))
 
       await screen.findByText('Contact')
 
-      expect(getMessages).toHaveBeenCalledWith(expect.objectContaining({ destination: 'to-chat' }))
+      expect(getMessages).toHaveBeenCalledWith(expect.objectContaining({ licensee: '12345678' }))
+    })
+  })
+
+  describe('contact select filter', () => {
+    it('changes the filters to get the messages', async () => {
+      getContacts.mockResolvedValueOnce({ status: 201, data: [{ _id: '9876543', name: 'John Doe', number: '12345' }] })
+
+      getMessages.mockResolvedValueOnce({ status: 201, data: [{ _id: '1', contact: { name: 'John Doe' } }] })
+
+      mount()
+
+      fireEvent.change(screen.getByLabelText('Contato'), { target: { value: 'john' } })
+
+      fireEvent.click(await screen.findByText('John Doe | 12345'))
+
+      fireEvent.click(screen.getByText('Pesquisar'))
+
+      await screen.findByText('John Doe')
+
+      expect(getMessages).toHaveBeenCalledWith(expect.objectContaining({ contact: '9876543' }))
     })
   })
 
@@ -221,7 +290,7 @@ describe('<MessageIndex />', () => {
     })
   })
 
-  xdescribe('location  link', () => {
+  describe('location link', () => {
     it('is rendered when theres a cordinate', async () => {
       getMessages.mockResolvedValueOnce(
         {
@@ -232,8 +301,8 @@ describe('<MessageIndex />', () => {
               contact: {
                 name: 'Contact',
               },
-              fileName: 'File name',
-              url: 'google.com'
+              kind: 'location',
+              text: '-25.5617048;-49.3086837',
             }
           ]
         }
@@ -243,12 +312,16 @@ describe('<MessageIndex />', () => {
 
       fireEvent.click(screen.getByText('Pesquisar'))
 
-      const link = await screen.findByText('File name')
+      expect(await screen.findByText('(-25.5617048;-49.3086837)')).toBeInTheDocument()
 
-      expect(link).toHaveAttribute('href', 'google.com')
+      const link = screen.getByRole('link')
 
-      cleanup()
+      expect(link).toHaveAttribute('href', 'http://maps.google.com/maps?q=-25.5617048,-49.3086837&ll=-25.5617048,-49.3086837&z=17')
+    })
+  })
 
+  describe('interactive link', () => {
+    it('is rendered when theres a trigger', async () => {
       getMessages.mockResolvedValueOnce(
         {
           status: 201,
@@ -257,6 +330,11 @@ describe('<MessageIndex />', () => {
               _id: '1',
               contact: {
                 name: 'Contact',
+              },
+              kind: 'interactive',
+              trigger: {
+                _id: '123235',
+                name: 'Trigger',
               },
             }
           ]
@@ -267,10 +345,44 @@ describe('<MessageIndex />', () => {
 
       fireEvent.click(screen.getByText('Pesquisar'))
 
-      await screen.findByText('Contact')
+      expect(await screen.findByText('interactive')).toBeInTheDocument()
 
-      expect(screen.queryByText('File name')).not.toBeInTheDocument()
+      const link = screen.getByText('Trigger')
 
+      expect(link).toHaveAttribute('href', '#/triggers/123235')
+    })
+  })
+
+  describe('cart description', () => {
+    it('is rendered when theres a cart', async () => {
+      getMessages.mockResolvedValueOnce(
+        {
+          status: 201,
+          data: [
+            {
+              _id: '1',
+              contact: {
+                name: 'Contact',
+              },
+              kind: 'interactive',
+              trigger: {
+                _id: '123235',
+                name: 'Trigger',
+              },
+            }
+          ]
+        }
+      )
+
+      mount()
+
+      fireEvent.click(screen.getByText('Pesquisar'))
+
+      expect(await screen.findByText('interactive')).toBeInTheDocument()
+
+      const link = screen.getByText('Trigger')
+
+      expect(link).toHaveAttribute('href', '#/triggers/123235')
     })
   })
 })

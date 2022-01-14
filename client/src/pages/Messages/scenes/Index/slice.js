@@ -19,7 +19,7 @@ export const slice = createSlice({
   },
   extraReducers: (builder)=>{
     builder.addCase(fetchMessages.fulfilled, (state, action)=>{
-      state.messages = action.payload
+      state.messages = action.meta.arg.page === 1 ? action.payload : [...state.messages, ...action.payload]
     })
   }
 })

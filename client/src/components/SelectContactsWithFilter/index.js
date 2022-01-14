@@ -3,7 +3,7 @@ import Select, { createFilter } from 'react-select'
 import debounce from 'lodash/debounce'
 import { getContacts } from '../../services/contact'
 
-export default function SelectContactsWithFilter({ isDisabled, onChange, selectedItem, licensee }) {
+export default function SelectContactsWithFilter({ isDisabled, onChange, selectedItem, licensee, ...props }) {
   const [defaultValue, setDefaultValue] = useState(null)
   const [selectedOption, setSelectedOption] = useState(null)
   const [options, setOptions] = useState([])
@@ -72,19 +72,17 @@ export default function SelectContactsWithFilter({ isDisabled, onChange, selecte
   }
 
   return(
-      <>
       <Select
         defaultValue={defaultValue}
         isClearable
         isSearchable
         isLoading={isLoading}
-        name='color'
         isDisabled={isDisabled}
         options={options}
         filterOption={createFilter(filterConfig)}
         onChange={handleOnChange}
         onInputChange={handleSetSearchInput}
+        {...props}
       />
-      </>
   )
 }
