@@ -5,6 +5,7 @@ import { getMessages } from '../../../../services/message'
 import { MemoryRouter } from 'react-router'
 import { getLicensees } from '../../../../services/licensee'
 import { getContacts } from '../../../../services/contact'
+import { messageFactory } from '../../../../factories/message'
 
 jest.mock('../../../../services/message')
 jest.mock('../../../../services/licensee')
@@ -62,6 +63,24 @@ describe('<MessageIndex />', () => {
       "licensee": "",
       "onlyErrors": false,
       "startDate": "",
+    })
+  })
+
+  describe('pagination', () => {
+    it('paginates the messages', async () => {
+      getMessages.mockResolvedValue({ status: 201, data: messageFactory.buildList(30) })
+
+      mount()
+
+      fireEvent.click(screen.getByText('Pesquisar'))
+      expect(await screen.findByText('Carregar mais')).toBeInTheDocument()
+
+      getMessages.mockResolvedValue({ status: 201, data: [messageFactory.build({ text: 'Message from new page' })] })
+      fireEvent.click(await screen.findByText('Carregar mais'))
+
+      expect(await screen.findByText('Message from new page')).toBeInTheDocument()
+
+      expect(getMessages).toHaveBeenCalledWith(expect.objectContaining({ page: 2 }))
     })
   })
 

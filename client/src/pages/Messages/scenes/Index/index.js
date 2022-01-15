@@ -6,8 +6,6 @@ import SelectContactsWithFilter from '../../../../components/SelectContactsWithF
 import CartDescription from './components/cart'
 import styles from './styles.module.scss'
 
-// Acredito que teria que criar um componente para renderizar certinho em duas ou três linhas cada mensagem por causa dos tipos e os erros
-// Falta testes para os componentes de tela da mensagem
 // Falta testes para os componentes de select
 
 function MessagesIndex({ messages, loggedUser, dispatch }) {
@@ -136,7 +134,6 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
             <div className='form-group'>
               <label htmlFor='licensee' id='licensee'>Licenciado</label>
               <SelectLicenseesWithFilter
-                className='form-select'
                 name='licensee'
                 aria-labelledby='licensee'
                 selectedItem={filters.licensee}
@@ -153,7 +150,6 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
           <div className='form-group'>
             <label htmlFor='contact' id='contact'>Contato</label>
             <SelectContactsWithFilter
-              className='form-select'
               name='contact'
               aria-labelledby='contact'
               selectedItem={filters.contact}
