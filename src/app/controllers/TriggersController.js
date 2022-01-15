@@ -27,8 +27,17 @@ class TriggersController {
       return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
     }
 
-    const { name, triggerKind, expression, catalogMulti, catalogSingle, textReplyButton, messagesList, licensee, order } =
-      req.body
+    const {
+      name,
+      triggerKind,
+      expression,
+      catalogMulti,
+      catalogSingle,
+      textReplyButton,
+      messagesList,
+      licensee,
+      order,
+    } = req.body
 
     const trigger = new Trigger({
       name,
