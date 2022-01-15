@@ -53,7 +53,6 @@ function ContactsIndex({ contacts, dispatch, loggedUser }) {
               <div className='form-group'>
                 <label htmlFor='licensee'>Licenciado</label>
                 <SelectLicenseesWithFilter
-                  className='form-select'
                   selectedItem={filters.licensee}
                   name='licensee'
                   id='licensee'

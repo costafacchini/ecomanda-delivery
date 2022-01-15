@@ -5,6 +5,7 @@ import SignIn from './SignIn'
 import LicenseesRoutes from './Licensees/routes'
 import ContactsRoutes from './Contacts/routes'
 import TriggersRoutes from './Triggers/routes'
+import MessagesRoutes from './Messages/routes'
 import Dashboard from './Dashboard'
 import { isAuthenticated, fetchLoggedUser } from '../services/auth'
 import { loadLoggedUser } from './SignIn/slice'
@@ -58,6 +59,14 @@ function RootRoutes() {
           element={
             <PrivateRoute redirectTo='/'>
               <TriggersRoutes />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path='/messages/*'
+          element={
+            <PrivateRoute redirectTo='/'>
+              <MessagesRoutes />
             </PrivateRoute>
           }
         />

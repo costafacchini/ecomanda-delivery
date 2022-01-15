@@ -1,14 +1,19 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Select, { createFilter } from 'react-select'
 import debounce from 'lodash/debounce'
-import { getLicensees } from '../../services/licensee'
+import { getContacts } from '../../services/contact'
 
-export default function SelectLicenseesWithFilter({ isDisabled, onChange, selectedItem, ...props }) {
+export default function SelectContactsWithFilter({ isDisabled, onChange, selectedItem, licensee, ...props }) {
   const [defaultValue, setDefaultValue] = useState(null)
   const [selectedOption, setSelectedOption] = useState(null)
   const [options, setOptions] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [optionsLoaded, setOptionsLoaded] = useState(false)
+  const [selectedLicensee, setSelectedLicensee] = useState(licensee)
+
+  useEffect(() => {
+    setSelectedLicensee(licensee)
+  }, [licensee])
 
   const filterConfig = {
     ignoreCase: true,
@@ -26,7 +31,7 @@ export default function SelectLicenseesWithFilter({ isDisabled, onChange, select
   }
 
   function transformData(values) {
-    return values.map(value => ({ value: value._id, label: value.name }))
+    return values.map(value => ({ value: value._id, label: `${value.name}  |  ${value.number}` }))
   }
 
   function handleSetSearchInput(value) {
@@ -36,8 +41,13 @@ export default function SelectLicenseesWithFilter({ isDisabled, onChange, select
   async function onFetch(value) {
     try {
       setIsLoading(true)
-      const { data: licensees } = await getLicensees({ expression: value, active: true })
-      setOptions(transformData(licensees))
+      const filters = { expression: value, active: true }
+      if (selectedLicensee) {
+        filters.licensee = selectedLicensee
+      }
+      const { data: contacts } = await getContacts(filters)
+
+      setOptions(transformData(contacts))
     } catch (_) {}
     setIsLoading(false)
   }

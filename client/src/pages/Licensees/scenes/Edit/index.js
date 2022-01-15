@@ -1,9 +1,9 @@
 import Form from '../Form'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
-import { getLicensee, updateLicensee } from '../services/licensee'
+import { getLicensee, updateLicensee } from '../../../../services/licensee'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useEffect } from 'react';
+import { useEffect } from 'react'
 
 function LicenseeEdit() {
   const navigate = useNavigate()
@@ -35,12 +35,12 @@ function LicenseeEdit() {
             const response = await updateLicensee(values)
 
             if (response.status === 200) {
-              toast.success('Licenciado atualizado com sucesso!');
+              toast.success('Licenciado atualizado com sucesso!')
               navigate('/licensees')
               setErrors(null)
             } else {
               setErrors(response.data.errors)
-              toast.error('Ops! Não foi possível atualizar o licenciado.');
+              toast.error('Ops! Não foi possível atualizar o licenciado.')
             }
           }}
         />

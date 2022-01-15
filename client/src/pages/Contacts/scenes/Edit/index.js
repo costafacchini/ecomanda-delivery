@@ -1,7 +1,7 @@
 import Form from '../Form'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
-import { getContact, updateContact } from '../services/contact'
+import { getContact, updateContact } from '../../../../services/contact'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 

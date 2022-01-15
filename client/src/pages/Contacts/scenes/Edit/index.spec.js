@@ -1,10 +1,10 @@
 import mountWithRedux, { createStore } from '../../../../.jest/redux-testing'
 import ContactEdit from './'
 import { fireEvent, screen, waitFor } from '@testing-library/react'
-import { getContact, updateContact } from '../services/contact'
+import { getContact, updateContact } from '../../../../services/contact'
 import { MemoryRouter } from 'react-router';
 
-jest.mock('../services/contact')
+jest.mock('../../../../services/contact')
 
 describe('<ContactEdit />', () => {
   function mount() {

@@ -1,6 +1,6 @@
-import { getToken } from '../../../../services/auth'
-import api from '../../../../services/api'
-import parseUrl from '../../../../services/objectToQueryParameter'
+import { getToken } from './auth'
+import api from './api'
+import parseUrl from './objectToQueryParameter'
 
 const token = getToken()
 const headers = { 'x-access-token': `${token}` }

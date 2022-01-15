@@ -1,10 +1,9 @@
 import reducer, { fetchContacts } from './slice'
 import  { createStore } from '../../../../.jest/redux-testing'
 import { contactFactory } from '../../../../factories/contact'
-import { getContacts } from '../services/contact'
+import { getContacts } from '../../../../services/contact'
 
-jest.mock('../services/contact')
-
+jest.mock('../../../../services/contact')
 
 describe('Contacts slice', () => {
   const initialState = {

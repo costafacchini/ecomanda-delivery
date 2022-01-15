@@ -1,0 +1,15 @@
+:local(.stickyHeader){
+  thead {
+    background-color: white;
+  }
+
+  th{
+    position: sticky;
+    top: 0;
+    background-color: white !important;
+  }
+
+  td:first-of-type{
+    white-space: nowrap;
+  }
+}

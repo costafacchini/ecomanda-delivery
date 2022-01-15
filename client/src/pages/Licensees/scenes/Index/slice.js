@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { getLicensees } from '../services/licensee'
+import { getLicensees } from '../../../../services/licensee'
 
 const fetchLicensees = createAsyncThunk(
   'users/fetchLicenseesStatus',

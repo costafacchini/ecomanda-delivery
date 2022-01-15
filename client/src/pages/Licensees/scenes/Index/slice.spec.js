@@ -1,10 +1,9 @@
 import reducer, { fetchLicensees } from './slice'
 import { createStore } from '../../../../.jest/redux-testing'
 import { licenseeFactory } from '../../../../factories/licensee'
-import { getLicensees } from '../services/licensee'
+import { getLicensees } from '../../../../services/licensee'
 
-jest.mock('../services/licensee')
-
+jest.mock('../../../../services/licensee')
 
 describe('Licensees slice', () => {
   const initialState = {
