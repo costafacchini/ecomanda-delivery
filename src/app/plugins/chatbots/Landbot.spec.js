@@ -45,6 +45,7 @@ describe('Landbot plugin', () => {
         })
       )
 
+      const triggerOrder2 = await Trigger.create(triggerReplyButtonFactory.build({ licensee, order: 2 }))
       const trigger = await Trigger.create(triggerReplyButtonFactory.build({ licensee }))
 
       const responseBody = {
@@ -107,7 +108,7 @@ describe('Landbot plugin', () => {
       const landbot = new Landbot(licensee)
       const messages = await landbot.responseToMessages(responseBody)
 
-      expect(messages.length).toEqual(4)
+      expect(messages.length).toEqual(5)
 
       expect(messages[0]).toBeInstanceOf(Message)
       expect(messages[0].licensee).toEqual(licensee._id)
@@ -161,6 +162,20 @@ describe('Landbot plugin', () => {
       expect(messages[3].latitude).toEqual(undefined)
       expect(messages[3].longitude).toEqual(undefined)
       expect(messages[3].departament).toEqual(undefined)
+
+      expect(messages[4]).toBeInstanceOf(Message)
+      expect(messages[4].licensee).toEqual(licensee._id)
+      expect(messages[4].contact).toEqual(contact._id)
+      expect(messages[4].kind).toEqual('interactive')
+      expect(messages[4].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+      expect(messages[4].destination).toEqual('to-messenger')
+      expect(messages[4].text).toEqual('send_reply_buttons')
+      expect(messages[4].trigger).toEqual(triggerOrder2._id)
+      expect(messages[4].url).toEqual(undefined)
+      expect(messages[4].fileName).toEqual(undefined)
+      expect(messages[4].latitude).toEqual(undefined)
+      expect(messages[4].longitude).toEqual(undefined)
+      expect(messages[4].departament).toEqual(undefined)
 
       expect(emojiReplaceSpy).toHaveBeenCalledTimes(4)
       expect(emojiReplaceSpy).toHaveBeenCalledWith('Hello world')

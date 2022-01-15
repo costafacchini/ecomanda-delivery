@@ -63,6 +63,7 @@ describe('<MessageIndex />', () => {
       "licensee": "",
       "onlyErrors": false,
       "startDate": "",
+      "page": 1,
     })
   })
 

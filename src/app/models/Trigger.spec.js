@@ -33,6 +33,12 @@ describe('Trigger', () => {
       expect(trigger._id).toEqual(alteredTrigger._id)
       expect(alteredTrigger.talkingWithChatBot).toEqual(true)
     })
+
+    it('fills the fields that have a default value', () => {
+      const trigger = new Trigger()
+
+      expect(trigger.order).toEqual(1)
+    })
   })
 
   describe('validations', () => {

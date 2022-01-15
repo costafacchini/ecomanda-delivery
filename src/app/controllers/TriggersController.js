@@ -14,6 +14,7 @@ function permit(fields) {
     'textReplyButton',
     'messagesList',
     'licensee',
+    'order',
   ]
 
   return _.pick(fields, permitedFields)
@@ -26,8 +27,17 @@ class TriggersController {
       return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
     }
 
-    const { name, triggerKind, expression, catalogMulti, catalogSingle, textReplyButton, messagesList, licensee } =
-      req.body
+    const {
+      name,
+      triggerKind,
+      expression,
+      catalogMulti,
+      catalogSingle,
+      textReplyButton,
+      messagesList,
+      licensee,
+      order,
+    } = req.body
 
     const trigger = new Trigger({
       name,
@@ -38,6 +48,7 @@ class TriggersController {
       textReplyButton,
       messagesList,
       licensee,
+      order,
     })
 
     const validation = trigger.validateSync()

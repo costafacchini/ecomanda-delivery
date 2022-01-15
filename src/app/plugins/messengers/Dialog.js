@@ -87,6 +87,8 @@ class Dialog {
 
     if (!responseBody.messages) return []
 
+    const processedMessages = []
+
     const chatId = responseBody.messages[0].from
     const normalizePhone = new NormalizePhone(chatId)
     let contact = await Contact.findOne({
@@ -117,81 +119,104 @@ class Dialog {
       }
     }
 
-    const messageToSend = new Message({
-      number: uuidv4(),
-      messageWaId: responseBody.messages[0].id,
-      licensee: this.licensee._id,
-      contact: contact._id,
-      destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
-    })
-
-    if (responseBody.messages[0].type === 'text') {
-      messageToSend.kind = 'text'
-      messageToSend.text = responseBody.messages[0].text.body
-    } else if (responseBody.messages[0].type === 'order') {
-      let cart = await Cart.findOne({ contact, concluded: false })
-      if (!cart) {
-        cart = new Cart({
-          licensee: this.licensee._id,
-          contact: contact._id,
-        })
-      }
-
-      const products = []
-      for (const item of responseBody.messages[0].order.product_items) {
-        products.push({
-          unit_price: item.item_price,
-          product_retailer_id: item.product_retailer_id,
-          quantity: item.quantity,
-        })
-      }
-
-      cart.delivery_tax = 0
-      cart.catalog = responseBody.messages[0].order.catalog_id
-      cart.note = responseBody.messages[0].order.text
-      cart.products = products
-
-      await cart.save()
-
-      messageToSend.kind = 'cart'
-      messageToSend.cart = cart._id
-      messageToSend.destination = 'to-chatbot'
-    } else if (responseBody.messages[0].type === 'interactive') {
+    if (responseBody.messages[0].type === 'interactive') {
       const expression = responseBody.messages[0].interactive.list_reply
         ? responseBody.messages[0].interactive.list_reply.id
         : responseBody.messages[0].interactive.button_reply.id
 
-      const trigger = await Trigger.findOne({ expression, licensee: this.licensee._id })
-      if (trigger) {
-        messageToSend.kind = 'interactive'
-        messageToSend.destination = 'to-messenger'
-        messageToSend.trigger = trigger._id
+      const triggers = await Trigger.find({ expression, licensee: this.licensee._id }).sort({ order: 'asc' })
+      if (triggers.length > 0) {
+        for (const trigger of triggers) {
+          const messageToSend = new Message({
+            number: uuidv4(),
+            messageWaId: responseBody.messages[0].id,
+            licensee: this.licensee._id,
+            contact: contact._id,
+            destination: 'to-messenger',
+            kind: 'interactive',
+            trigger: trigger._id,
+          })
+
+          processedMessages.push(await messageToSend.save())
+        }
       } else {
-        messageToSend.text = expression
+        const messageToSend = new Message({
+          number: uuidv4(),
+          messageWaId: responseBody.messages[0].id,
+          licensee: this.licensee._id,
+          contact: contact._id,
+          destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
+          text: expression,
+        })
+
+        processedMessages.push(await messageToSend.save())
       }
     } else {
-      if (responseBody.messages[0].type === 'image') {
-        messageToSend.attachmentWaId = responseBody.messages[0].image.id
-        messageToSend.fileName = responseBody.messages[0].image.sha256
-      } else if (responseBody.messages[0].type === 'video') {
-        messageToSend.attachmentWaId = responseBody.messages[0].video.id
-        messageToSend.fileName = responseBody.messages[0].video.sha256
-      } else if (responseBody.messages[0].type === 'voice') {
-        messageToSend.attachmentWaId = responseBody.messages[0].voice.id
-        messageToSend.fileName = responseBody.messages[0].voice.sha256
-      } else if (responseBody.messages[0].type === 'audio') {
-        messageToSend.attachmentWaId = responseBody.messages[0].audio.id
-        messageToSend.fileName = responseBody.messages[0].audio.sha256
-      } else if (responseBody.messages[0].type === 'document') {
-        messageToSend.attachmentWaId = responseBody.messages[0].document.id
-        messageToSend.fileName = responseBody.messages[0].document.filename
+      const messageToSend = new Message({
+        number: uuidv4(),
+        messageWaId: responseBody.messages[0].id,
+        licensee: this.licensee._id,
+        contact: contact._id,
+        destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
+      })
+
+      if (responseBody.messages[0].type === 'text') {
+        messageToSend.kind = 'text'
+        messageToSend.text = responseBody.messages[0].text.body
+      } else if (responseBody.messages[0].type === 'order') {
+        let cart = await Cart.findOne({ contact, concluded: false })
+        if (!cart) {
+          cart = new Cart({
+            licensee: this.licensee._id,
+            contact: contact._id,
+          })
+        }
+
+        const products = []
+        for (const item of responseBody.messages[0].order.product_items) {
+          products.push({
+            unit_price: item.item_price,
+            product_retailer_id: item.product_retailer_id,
+            quantity: item.quantity,
+          })
+        }
+
+        cart.delivery_tax = 0
+        cart.catalog = responseBody.messages[0].order.catalog_id
+        cart.note = responseBody.messages[0].order.text
+        cart.products = products
+
+        await cart.save()
+
+        messageToSend.kind = 'cart'
+        messageToSend.cart = cart._id
+        messageToSend.destination = 'to-chatbot'
+      } else {
+        if (responseBody.messages[0].type === 'image') {
+          messageToSend.attachmentWaId = responseBody.messages[0].image.id
+          messageToSend.fileName = responseBody.messages[0].image.sha256
+        } else if (responseBody.messages[0].type === 'video') {
+          messageToSend.attachmentWaId = responseBody.messages[0].video.id
+          messageToSend.fileName = responseBody.messages[0].video.sha256
+        } else if (responseBody.messages[0].type === 'voice') {
+          messageToSend.attachmentWaId = responseBody.messages[0].voice.id
+          messageToSend.fileName = responseBody.messages[0].voice.sha256
+        } else if (responseBody.messages[0].type === 'audio') {
+          messageToSend.attachmentWaId = responseBody.messages[0].audio.id
+          messageToSend.fileName = responseBody.messages[0].audio.sha256
+        } else if (responseBody.messages[0].type === 'document') {
+          messageToSend.attachmentWaId = responseBody.messages[0].document.id
+          messageToSend.fileName = responseBody.messages[0].document.filename
+        }
+
+        messageToSend.kind = 'file'
+        messageToSend.url = await getMediaURL(this.licensee, messageToSend.attachmentWaId, contact)
       }
 
-      messageToSend.kind = 'file'
-      messageToSend.url = await getMediaURL(this.licensee, messageToSend.attachmentWaId, contact)
+      processedMessages.push(await messageToSend.save())
     }
 
-    return [await messageToSend.save()]
+    return processedMessages
   }
 
   async sendMessage(messageId, url, token) {

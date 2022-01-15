@@ -34,6 +34,7 @@ describe('<TriggerNew />', () => {
       catalogSingle: '',
       textReplyButton: '',
       messagesList: '',
+      order: 1,
     }))
 
     cleanup()
@@ -56,6 +57,7 @@ describe('<TriggerNew />', () => {
       catalogSingle: '',
       textReplyButton: '',
       messagesList: '',
+      order: 1,
     }))
   })
 

@@ -154,33 +154,54 @@ class Crisp {
         responseBody.data.type === 'file' ||
         responseBody.data.type === 'audio'
       ) {
-        const messageToSend = new Message({
-          number: uuidv4(),
-          kind: 'text',
-          licensee: this.licensee._id,
-          contact: contact._id,
-          room: room._id,
-          destination: 'to-messenger',
-        })
-
         if (responseBody.data.type === 'text') {
-          const text = responseBody.data.content
-          messageToSend.text = text ? emoji.replace(text) : ''
+          const text = responseBody.data.content ? emoji.replace(responseBody.data.content) : ''
 
-          const trigger = await Trigger.findOne({ expression: text, licensee: this.licensee._id })
-          if (trigger) {
-            messageToSend.kind = 'interactive'
-            messageToSend.trigger = trigger._id
+          const triggers = await Trigger.find({ expression: text, licensee: this.licensee._id }).sort({ order: 'asc' })
+          if (triggers.length > 0) {
+            for (const trigger of triggers) {
+              const messageToSend = new Message({
+                number: uuidv4(),
+                kind: 'interactive',
+                text,
+                licensee: this.licensee._id,
+                contact: contact._id,
+                room: room._id,
+                destination: 'to-messenger',
+                trigger: trigger._id,
+              })
+
+              processedMessages.push(await messageToSend.save())
+            }
+          } else {
+            const messageToSend = new Message({
+              number: uuidv4(),
+              kind: 'text',
+              text,
+              licensee: this.licensee._id,
+              contact: contact._id,
+              room: room._id,
+              destination: 'to-messenger',
+            })
+
+            processedMessages.push(await messageToSend.save())
           }
-        }
+        } else if (responseBody.data.type === 'file' || responseBody.data.type === 'audio') {
+          const messageToSend = new Message({
+            number: uuidv4(),
+            kind: 'text',
+            licensee: this.licensee._id,
+            contact: contact._id,
+            room: room._id,
+            destination: 'to-messenger',
+          })
 
-        if (responseBody.data.type === 'file' || responseBody.data.type === 'audio') {
           messageToSend.kind = 'file'
           messageToSend.fileName = responseBody.data.content.name
           messageToSend.url = responseBody.data.content.url
-        }
 
-        processedMessages.push(await messageToSend.save())
+          processedMessages.push(await messageToSend.save())
+        }
       } else {
         return []
       }

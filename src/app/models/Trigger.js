@@ -56,6 +56,11 @@ const triggerSchema = new Schema(
       ref: 'Licensee',
       required: [true, 'Licensee: Você deve preencher o campo'],
     },
+    order: {
+      type: Number,
+      default: 1,
+      required: [true, 'Ordem: Você deve preencher o campo'],
+    },
   },
   { timestamps: true }
 )
