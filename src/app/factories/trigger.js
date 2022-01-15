@@ -7,6 +7,7 @@ const triggerMultiProduct = Factory.define(() => ({
   triggerKind: 'multi_product',
   catalogMulti: 'catalog',
   licensee: licensee.build(),
+  order: 1,
 }))
 
 const triggerSingleProduct = Factory.define(() => ({
@@ -15,6 +16,7 @@ const triggerSingleProduct = Factory.define(() => ({
   triggerKind: 'single_product',
   catalogSingle: 'product',
   licensee: licensee.build(),
+  order: 1,
 }))
 
 const triggerReplyButton = Factory.define(() => ({
@@ -23,6 +25,7 @@ const triggerReplyButton = Factory.define(() => ({
   triggerKind: 'reply_button',
   textReplyButton: 'buttons',
   licensee: licensee.build(),
+  order: 1,
 }))
 
 const triggerListMessage = Factory.define(() => ({
@@ -31,6 +34,7 @@ const triggerListMessage = Factory.define(() => ({
   triggerKind: 'list_message',
   messagesList: 'list',
   licensee: licensee.build(),
+  order: 1,
 }))
 
 module.exports = { triggerMultiProduct, triggerSingleProduct, triggerReplyButton, triggerListMessage }

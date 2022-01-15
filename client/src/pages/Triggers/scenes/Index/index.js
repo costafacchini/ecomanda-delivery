@@ -97,6 +97,7 @@ function TriggersIndex({ triggers, dispatch, loggedUser }) {
             <tr>
               <th scope='col'>Nome</th>
               <th scope='col'>Expressão</th>
+              <th scope='col'>Ordem</th>
               <th scope='col'>Tipo</th>
               <th scope='col'>Conteúdo</th>
               <th scope='col'></th>
@@ -107,6 +108,7 @@ function TriggersIndex({ triggers, dispatch, loggedUser }) {
               <tr key={trigger.id}>
                 <td>{trigger.name}</td>
                 <td>{trigger.expression}</td>
+                <td>{trigger.order}</td>
                 <td>{trigger.triggerKind}</td>
                 {trigger.triggerKind === 'multi_product' && (<td>{trigger.catalogMulti}</td>)}
                 {trigger.triggerKind === 'single_product' && (<td>{trigger.catalogSingle}</td>)}

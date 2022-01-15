@@ -114,31 +114,51 @@ class Rocketchat {
         let text = message.attachments ? message.attachments[0].description : message.msg
         text = text ? emoji.replace(text) : ''
 
-        const messageToSend = new Message({
-          number: uuidv4(),
-          text,
-          kind: 'text',
-          licensee: this.licensee._id,
-          contact: contact._id,
-          room: room._id,
-          destination: 'to-messenger',
-        })
+        if (message.attachments) {
+          const messageToSend = new Message({
+            number: uuidv4(),
+            text,
+            kind: 'file',
+            licensee: this.licensee._id,
+            contact: contact._id,
+            room: room._id,
+            destination: 'to-messenger',
+            url: message.fileUpload.publicFilePath,
+            fileName: message.attachments[0].title,
+          })
 
-        if (messageToSend.kind === 'text') {
-          const trigger = await Trigger.findOne({ expression: text, licensee: this.licensee._id })
-          if (trigger) {
-            messageToSend.kind = 'interactive'
-            messageToSend.trigger = trigger._id
+          processedMessages.push(await messageToSend.save())
+        } else {
+          const triggers = await Trigger.find({ expression: text, licensee: this.licensee._id }).sort({ order: 'asc' })
+          if (triggers.length > 0) {
+            for (const trigger of triggers) {
+              const messageToSend = new Message({
+                number: uuidv4(),
+                text,
+                kind: 'interactive',
+                licensee: this.licensee._id,
+                contact: contact._id,
+                room: room._id,
+                destination: 'to-messenger',
+                trigger: trigger._id,
+              })
+
+              processedMessages.push(await messageToSend.save())
+            }
+          } else {
+            const messageToSend = new Message({
+              number: uuidv4(),
+              text,
+              kind: 'text',
+              licensee: this.licensee._id,
+              contact: contact._id,
+              room: room._id,
+              destination: 'to-messenger',
+            })
+
+            processedMessages.push(await messageToSend.save())
           }
         }
-
-        if (message.attachments) {
-          messageToSend.kind = 'file'
-          messageToSend.url = message.fileUpload.publicFilePath
-          messageToSend.fileName = message.attachments[0].title
-        }
-
-        processedMessages.push(await messageToSend.save())
       }
     }
 

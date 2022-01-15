@@ -19,7 +19,7 @@ describe('<TriggersIndex />', () => {
   }
 
   it('filters for all triggers on it is opened and there is no previous applied filters', async () => {
-    getTriggers.mockResolvedValue({ status: 201, data: [{ id: '1', name: 'Gatilho' }] })
+    getTriggers.mockResolvedValue({ status: 201, data: [triggerFactory.build()] })
 
     mount()
 
@@ -32,6 +32,10 @@ describe('<TriggersIndex />', () => {
     })
 
     expect(screen.getByText('Gatilho')).toBeInTheDocument()
+    expect(screen.getByText('hello-trigger')).toBeInTheDocument()
+    expect(screen.getByText('1')).toBeInTheDocument()
+    expect(screen.getByText('multi_product')).toBeInTheDocument()
+    expect(screen.getByText('catalog')).toBeInTheDocument()
   })
 
   it('paginates the triggers', async () => {

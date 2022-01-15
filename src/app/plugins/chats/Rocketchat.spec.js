@@ -50,6 +50,7 @@ describe('Rocketchat plugin', () => {
         })
       )
 
+      const triggerOrder2 = await Trigger.create(triggerReplyButtonFactory.build({ licensee, order: 2 }))
       const trigger = await Trigger.create(triggerReplyButtonFactory.build({ licensee }))
 
       const responseBody = {
@@ -79,7 +80,7 @@ describe('Rocketchat plugin', () => {
       const rocketchat = new Rocketchat(licensee)
       const messages = await rocketchat.responseToMessages(responseBody)
 
-      expect(messages.length).toEqual(3)
+      expect(messages.length).toEqual(4)
 
       expect(messages[0]).toBeInstanceOf(Message)
       expect(messages[0].licensee).toEqual(licensee._id)
@@ -89,6 +90,7 @@ describe('Rocketchat plugin', () => {
       expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
       expect(messages[0].destination).toEqual('to-messenger')
       expect(messages[0].text).toEqual('Hello message')
+      expect(messages[0].trigger).toEqual(undefined)
       expect(messages[0].url).toEqual(undefined)
       expect(messages[0].fileName).toEqual(undefined)
       expect(messages[0].latitude).toEqual(undefined)
@@ -103,6 +105,7 @@ describe('Rocketchat plugin', () => {
       expect(messages[1].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
       expect(messages[1].destination).toEqual('to-messenger')
       expect(messages[1].text).toEqual('Message with image')
+      expect(messages[1].trigger).toEqual(undefined)
       expect(messages[1].url).toEqual('https://octodex.github.com/images/dojocat.jpg')
       expect(messages[1].fileName).toEqual('dojocat.jpg')
       expect(messages[1].latitude).toEqual(undefined)
@@ -123,6 +126,21 @@ describe('Rocketchat plugin', () => {
       expect(messages[2].latitude).toEqual(undefined)
       expect(messages[2].longitude).toEqual(undefined)
       expect(messages[2].departament).toEqual(undefined)
+
+      expect(messages[3]).toBeInstanceOf(Message)
+      expect(messages[3].licensee).toEqual(licensee._id)
+      expect(messages[3].contact).toEqual(contact._id)
+      expect(messages[3].room).toEqual(room._id)
+      expect(messages[3].kind).toEqual('interactive')
+      expect(messages[3].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+      expect(messages[3].destination).toEqual('to-messenger')
+      expect(messages[3].text).toEqual('send_reply_buttons')
+      expect(messages[3].trigger).toEqual(triggerOrder2._id)
+      expect(messages[3].url).toEqual(undefined)
+      expect(messages[3].fileName).toEqual(undefined)
+      expect(messages[3].latitude).toEqual(undefined)
+      expect(messages[3].longitude).toEqual(undefined)
+      expect(messages[3].departament).toEqual(undefined)
 
       expect(emojiReplaceSpy).toHaveBeenCalledTimes(3)
       expect(emojiReplaceSpy).toHaveBeenCalledWith('Hello message')

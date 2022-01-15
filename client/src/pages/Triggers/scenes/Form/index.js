@@ -16,6 +16,7 @@ const triggerInitialValues = {
   catalogSingle: '',
   textReplyButton: '',
   messagesList: '',
+  order: 1,
 }
 
 function TriggerForm({ onSubmit, errors, initialValues, loggedUser }) {
@@ -34,7 +35,7 @@ function TriggerForm({ onSubmit, errors, initialValues, loggedUser }) {
           <form onSubmit={props.handleSubmit}>
             <fieldset className='pb-4'>
               <div className='row'>
-                <div className='form-group col-5'>
+                <div className='form-group col-4'>
                   <label htmlFor='name'>Nome</label>
                   <FieldWithError
                     id='name'
@@ -43,6 +44,18 @@ function TriggerForm({ onSubmit, errors, initialValues, loggedUser }) {
                     onBlur={props.handleBlur}
                     value={props.values.name}
                     name='name'
+                  />
+                </div>
+
+                <div className='form-group col-1'>
+                  <label htmlFor='order'>Ordem</label>
+                  <FieldWithError
+                    id='order'
+                    type='number'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.order}
+                    name='order'
                   />
                 </div>
               </div>

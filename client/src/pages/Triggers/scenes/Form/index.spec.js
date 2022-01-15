@@ -16,6 +16,7 @@ describe('<TriggerForm />', () => {
     mount()
 
     expect(screen.getByLabelText('Nome')).toHaveValue('')
+    expect(screen.getByLabelText('Ordem')).toHaveValue(1)
     expect(screen.getByLabelText('Expressão')).toHaveValue('')
     expect(screen.getByLabelText('Tipo')).toHaveValue('multi_product')
     expect(screen.getByLabelText('Catálogo')).toHaveValue('')
@@ -27,11 +28,13 @@ describe('<TriggerForm />', () => {
       triggerKind: 'multi_product',
       expression: 'multiple-products',
       catalogMulti: 'products',
+      order: 2
     }
 
     mount({ initialValues: trigger })
 
     expect(screen.getByLabelText('Nome')).toHaveValue('Name')
+    expect(screen.getByLabelText('Ordem')).toHaveValue(2)
     expect(screen.getByLabelText('Expressão')).toHaveValue('multiple-products')
     expect(screen.getByLabelText('Tipo')).toHaveValue('multi_product')
     expect(screen.getByLabelText('Catálogo')).toHaveValue('products')
@@ -106,6 +109,7 @@ describe('<TriggerForm />', () => {
         catalogSingle: '',
         textReplyButton: '',
         messagesList: '',
+        order: 1,
       })
     })
   })

@@ -284,6 +284,7 @@ describe('Jivochat plugin', () => {
           })
         )
 
+        const triggerOrder2 = await Trigger.create(triggerReplyButtonFactory.build({ licensee, order: 2 }))
         const trigger = await Trigger.create(triggerReplyButtonFactory.build({ licensee }))
 
         const responseBody = {
@@ -317,7 +318,21 @@ describe('Jivochat plugin', () => {
         expect(messages[0].longitude).toEqual(undefined)
         expect(messages[0].departament).toEqual(undefined)
 
-        expect(messages.length).toEqual(1)
+        expect(messages[1]).toBeInstanceOf(Message)
+        expect(messages[1].licensee).toEqual(licensee._id)
+        expect(messages[1].contact).toEqual(contact._id)
+        expect(messages[1].kind).toEqual('interactive')
+        expect(messages[1].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+        expect(messages[1].destination).toEqual('to-messenger')
+        expect(messages[1].text).toEqual('send_reply_buttons')
+        expect(messages[1].trigger).toEqual(triggerOrder2._id)
+        expect(messages[1].url).toEqual(undefined)
+        expect(messages[1].fileName).toEqual(undefined)
+        expect(messages[1].latitude).toEqual(undefined)
+        expect(messages[1].longitude).toEqual(undefined)
+        expect(messages[1].departament).toEqual(undefined)
+
+        expect(messages.length).toEqual(2)
       })
     })
   })

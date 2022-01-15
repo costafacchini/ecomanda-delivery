@@ -53,37 +53,58 @@ class Landbot {
         continue
       }
 
-      // .replace(/%first_name%/i, customer.name)
       const text = emoji.replace(message.message)
 
-      const messageToSend = new Message({
-        number: uuidv4(),
-        text,
-        kind,
-        licensee: this.licensee._id,
-        contact: contact._id,
-        destination: 'to-messenger',
-      })
-
       if (kind === 'text') {
-        const trigger = await Trigger.findOne({ expression: text, licensee: this.licensee._id })
-        if (trigger) {
-          messageToSend.kind = 'interactive'
-          messageToSend.trigger = trigger._id
+        const triggers = await Trigger.find({ expression: text, licensee: this.licensee._id }).sort({ order: 'asc' })
+        if (triggers.length > 0) {
+          for (const trigger of triggers) {
+            const messageToSend = new Message({
+              number: uuidv4(),
+              text,
+              kind: 'interactive',
+              licensee: this.licensee._id,
+              contact: contact._id,
+              destination: 'to-messenger',
+              trigger: trigger._id,
+            })
+
+            processedMessages.push(await messageToSend.save())
+          }
+        } else {
+          const messageToSend = new Message({
+            number: uuidv4(),
+            text,
+            kind,
+            licensee: this.licensee._id,
+            contact: contact._id,
+            destination: 'to-messenger',
+          })
+
+          processedMessages.push(await messageToSend.save())
         }
-      }
+      } else {
+        const messageToSend = new Message({
+          number: uuidv4(),
+          text,
+          kind,
+          licensee: this.licensee._id,
+          contact: contact._id,
+          destination: 'to-messenger',
+        })
 
-      if (kind === 'file') {
-        messageToSend.url = message.url
-        messageToSend.fileName = message.url.match(/[^\\/]+$/)[0]
-      }
+        if (kind === 'file') {
+          messageToSend.url = message.url
+          messageToSend.fileName = message.url.match(/[^\\/]+$/)[0]
+        }
 
-      if (kind === 'location') {
-        messageToSend.latitude = message.latitude
-        messageToSend.longitude = message.longitude
-      }
+        if (kind === 'location') {
+          messageToSend.latitude = message.latitude
+          messageToSend.longitude = message.longitude
+        }
 
-      processedMessages.push(await messageToSend.save())
+        processedMessages.push(await messageToSend.save())
+      }
     }
 
     return processedMessages
