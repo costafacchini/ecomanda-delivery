@@ -6,8 +6,6 @@ import SelectContactsWithFilter from '../../../../components/SelectContactsWithF
 import CartDescription from './components/cart'
 import styles from './styles.module.scss'
 
-// Falta testes para os componentes de select
-
 function MessagesIndex({ messages, loggedUser, dispatch }) {
   const [filters, setFilters] = useState({
     startDate: '',
@@ -57,7 +55,7 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
     let abortController = new AbortController()
 
     try {
-      dispatch(fetchMessages(filters))
+      dispatch(fetchMessages({ ...filters, page: page }))
     } catch (error) {
       if (error.name === 'AbortError') {
         // Handling error thrown by aborting request
