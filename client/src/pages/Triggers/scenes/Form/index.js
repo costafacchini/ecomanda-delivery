@@ -2,6 +2,7 @@ import { FieldWithError, Form } from '../../../../components/form'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router-dom'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
+import styles from './styles.module.scss'
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string()
@@ -99,6 +100,7 @@ function TriggerForm({ onSubmit, errors, initialValues, loggedUser }) {
                     <option value='single_product'>Único produto</option>
                     <option value='reply_button'>Botões de resposta</option>
                     <option value='list_message'>Lista de opções (mensagens)</option>
+                    <option value='text'>Texto</option>
                   </select>
                 </div>
               </div>
@@ -174,6 +176,34 @@ function TriggerForm({ onSubmit, errors, initialValues, loggedUser }) {
                         onBlur={props.handleBlur}
                         value={props.values.messagesList}
                       />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {props.values.triggerKind === 'text' && (
+                <div className='row'>
+                  <div className='form-group col-5'>
+                    <label htmlFor='text'>Texto</label>
+                    <div className='pb-2'>
+                      <textarea
+                        id='text'
+                        name='text'
+                        className='form-control'
+                        rows={8}
+                        onChange={props.handleChange}
+                        onBlur={props.handleBlur}
+                        value={props.values.text}
+                      />
+                    </div>
+                    <div className={`${styles.textHelp}`}>
+                      <span>O campo de texto aceita algumas palavras reservadas:</span>
+                      <ul>
+                        <li>$last_cart_resume - carrinho do contato</li>
+                        <li>$contact_name - nome do contato</li>
+                        <li>$contact_number - número de telefone do contato</li>
+                        <li>$contact_address_complete - endereço completo do contato</li>
+                      </ul>
                     </div>
                   </div>
                 </div>

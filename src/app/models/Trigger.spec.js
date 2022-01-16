@@ -131,5 +131,21 @@ describe('Trigger', () => {
         )
       })
     })
+
+    describe('text', () => {
+      it('is not required if triggerKind is not text', () => {
+        const trigger = new Trigger({ triggerKind: 'multi_product', text: '' })
+        const validation = trigger.validateSync()
+
+        expect(validation.errors['text']).not.toBeDefined()
+      })
+
+      it('is required if triggerKind is text', () => {
+        const trigger = new Trigger({ triggerKind: 'text', text: '' })
+        const validation = trigger.validateSync()
+
+        expect(validation.errors['text'].message).toEqual('Texto: deve ser preenchido quando o gatilho é do tipo texto')
+      })
+    })
   })
 })

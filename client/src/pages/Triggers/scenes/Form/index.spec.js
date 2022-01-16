@@ -20,6 +20,12 @@ describe('<TriggerForm />', () => {
     expect(screen.getByLabelText('Expressão')).toHaveValue('')
     expect(screen.getByLabelText('Tipo')).toHaveValue('multi_product')
     expect(screen.getByLabelText('Catálogo')).toHaveValue('')
+
+    expect(screen.queryByText('O campo de texto aceita algumas palavras reservadas:')).not.toBeInTheDocument()
+    expect(screen.queryByText('$last_cart_resume - carrinho do contato')).not.toBeInTheDocument()
+    expect(screen.queryByText('$contact_name - nome do contato')).not.toBeInTheDocument()
+    expect(screen.queryByText('$contact_number - número de telefone do contato')).not.toBeInTheDocument()
+    expect(screen.queryByText('$contact_address_complete - endereço completo do contato')).not.toBeInTheDocument()
   })
 
   it('can receive initial values', () => {
@@ -87,6 +93,23 @@ describe('<TriggerForm />', () => {
 
       expect(screen.getByLabelText('Tipo')).toHaveValue('list_message')
       expect(screen.getByLabelText('Mensagens')).toHaveValue('messages')
+    })
+
+    it('renders fields if kind is text', () => {
+      const trigger = {
+        triggerKind: 'text',
+        text: 'messages',
+      }
+
+      mount({ initialValues: trigger })
+
+      expect(screen.getByLabelText('Tipo')).toHaveValue('text')
+      expect(screen.getByLabelText('Texto')).toHaveValue('messages')
+      expect(screen.getByText('O campo de texto aceita algumas palavras reservadas:')).toBeInTheDocument()
+      expect(screen.getByText('$last_cart_resume - carrinho do contato')).toBeInTheDocument()
+      expect(screen.getByText('$contact_name - nome do contato')).toBeInTheDocument()
+      expect(screen.getByText('$contact_number - número de telefone do contato')).toBeInTheDocument()
+      expect(screen.getByText('$contact_address_complete - endereço completo do contato')).toBeInTheDocument()
     })
   })
 
