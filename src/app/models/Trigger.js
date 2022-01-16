@@ -8,7 +8,7 @@ const triggerSchema = new Schema(
     name: String,
     triggerKind: {
       type: String,
-      enum: ['multi_product', 'single_product', 'reply_button', 'list_message'],
+      enum: ['multi_product', 'single_product', 'reply_button', 'list_message', 'text'],
       required: [true, 'Tipo de Gatilho: Você deve informar um valor ( catalog | summary )'],
     },
     expression: {
@@ -49,6 +49,15 @@ const triggerSchema = new Schema(
           return this.triggerKind === 'list_message'
         },
         'Mensagens: deve ser preenchido quando o gatilho é do tipo lista de mensagens',
+      ],
+    },
+    text: {
+      type: String,
+      required: [
+        function () {
+          return this.triggerKind === 'text'
+        },
+        'Texto: deve ser preenchido quando o gatilho é do tipo texto',
       ],
     },
     licensee: {

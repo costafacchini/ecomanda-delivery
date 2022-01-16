@@ -2,13 +2,14 @@ const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Trigger = require('@models/Trigger')
 const Cart = require('@models/Cart')
-const NormalizePhone = require('../../helpers/NormalizePhone')
+const NormalizePhone = require('@helpers/NormalizePhone')
 const { v4: uuidv4 } = require('uuid')
 const S3 = require('../storage/S3')
 const request = require('../../services/request')
-const files = require('../../helpers/Files')
+const files = require('@helpers/Files')
 const mime = require('mime-types')
 const cartFactory = require('../../plugins/carts/factory')
+const parseText = require('@helpers/ParseTriggerText')
 
 const getMediaURL = async (licensee, mediaId, contact) => {
   const response = await downloadMedia(mediaId, licensee.whatsappToken)
@@ -253,6 +254,12 @@ class Dialog {
           }
           if (trigger.triggerKind === 'list_message') {
             messageBody.interactive = JSON.parse(trigger.messagesList)
+          }
+          if (trigger.triggerKind === 'text') {
+            messageBody.type = 'text'
+            messageBody.text = {
+              body: await parseText(trigger.text, messageToSend.contact),
+            }
           }
         } else {
           messageBody.type = 'text'

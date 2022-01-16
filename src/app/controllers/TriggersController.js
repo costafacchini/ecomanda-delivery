@@ -15,6 +15,7 @@ function permit(fields) {
     'messagesList',
     'licensee',
     'order',
+    'text',
   ]
 
   return _.pick(fields, permitedFields)
@@ -37,6 +38,7 @@ class TriggersController {
       messagesList,
       licensee,
       order,
+      text,
     } = req.body
 
     const trigger = new Trigger({
@@ -49,6 +51,7 @@ class TriggersController {
       messagesList,
       licensee,
       order,
+      text,
     })
 
     const validation = trigger.validateSync()

@@ -37,4 +37,13 @@ const triggerListMessage = Factory.define(() => ({
   order: 1,
 }))
 
-module.exports = { triggerMultiProduct, triggerSingleProduct, triggerReplyButton, triggerListMessage }
+const triggerText = Factory.define(() => ({
+  name: 'Send text',
+  expression: 'send_text',
+  triggerKind: 'text',
+  text: 'texto',
+  licensee: licensee.build(),
+  order: 1,
+}))
+
+module.exports = { triggerMultiProduct, triggerSingleProduct, triggerReplyButton, triggerListMessage, triggerText }
