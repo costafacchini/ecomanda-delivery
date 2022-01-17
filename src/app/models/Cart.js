@@ -74,25 +74,29 @@ cartSchema.pre('save', function (next) {
 
 cartSchema.post('save', async function (cart) {
   const contact = await Contact.findById(cart.contact)
-  if (contact.address !== cart.address) {
+  if (cart.address && cart.address !== '' && contact.address !== cart.address) {
     contact.address = cart.address
   }
-  if (contact.address_number !== cart.address_number) {
+  if (cart.address_number && cart.address_number !== '' && contact.address_number !== cart.address_number) {
     contact.address_number = cart.address_number
   }
-  if (contact.address_complement !== cart.address_complement) {
+  if (
+    cart.address_complement &&
+    cart.address_complement !== '' &&
+    contact.address_complement !== cart.address_complement
+  ) {
     contact.address_complement = cart.address_complement
   }
-  if (contact.neighborhood !== cart.neighborhood) {
+  if (cart.neighborhood && cart.neighborhood !== '' && contact.neighborhood !== cart.neighborhood) {
     contact.neighborhood = cart.neighborhood
   }
-  if (contact.city !== cart.city) {
+  if (cart.city && cart.city !== '' && contact.city !== cart.city) {
     contact.city = cart.city
   }
-  if (contact.cep !== cart.cep) {
+  if (cart.cep && cart.cep !== '' && contact.cep !== cart.cep) {
     contact.cep = cart.cep
   }
-  if (contact.uf !== cart.uf) {
+  if (cart.uf && cart.uf !== '' && contact.uf !== cart.uf) {
     contact.uf = cart.uf
   }
 
