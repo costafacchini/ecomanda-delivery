@@ -3,7 +3,7 @@ import TriggersIndex from './'
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { getTriggers } from '../../../../services/trigger'
 import { MemoryRouter } from 'react-router'
-import { triggerFactory } from '../../../../factories/trigger'
+import { triggerFactory, triggerSingleProduct, triggerReplyButton, triggerListMessage, triggerText } from '../../../../factories/trigger'
 
 jest.mock('../../../../services/trigger')
 
@@ -19,7 +19,18 @@ describe('<TriggersIndex />', () => {
   }
 
   it('filters for all triggers on it is opened and there is no previous applied filters', async () => {
-    getTriggers.mockResolvedValue({ status: 201, data: [triggerFactory.build()] })
+    getTriggers.mockResolvedValue(
+      {
+        status: 201,
+        data: [
+          triggerFactory.build({ _id: 1 }),
+          triggerSingleProduct.build({ _id: 2 }),
+          triggerReplyButton.build({ _id: 3 }),
+          triggerListMessage.build({ _id: 4 }),
+          triggerText.build({ _id: 5 })
+        ]
+      }
+    )
 
     mount()
 
@@ -33,9 +44,17 @@ describe('<TriggersIndex />', () => {
 
     expect(screen.getByText('Gatilho')).toBeInTheDocument()
     expect(screen.getByText('hello-trigger')).toBeInTheDocument()
-    expect(screen.getByText('1')).toBeInTheDocument()
+    expect(screen.getAllByText('1').length).toEqual(5)
     expect(screen.getByText('multi_product')).toBeInTheDocument()
     expect(screen.getByText('catalog')).toBeInTheDocument()
+    expect(screen.getByText('single_product')).toBeInTheDocument()
+    expect(screen.getByText('product')).toBeInTheDocument()
+    expect(screen.getByText('reply_button')).toBeInTheDocument()
+    expect(screen.getByText('buttons')).toBeInTheDocument()
+    expect(screen.getByText('list_message')).toBeInTheDocument()
+    expect(screen.getByText('list')).toBeInTheDocument()
+    expect(screen.getByText('text')).toBeInTheDocument()
+    expect(screen.getByText('texto')).toBeInTheDocument()
   })
 
   it('paginates the triggers', async () => {

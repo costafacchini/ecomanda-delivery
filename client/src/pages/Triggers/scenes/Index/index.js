@@ -105,7 +105,7 @@ function TriggersIndex({ triggers, dispatch, loggedUser }) {
           </thead>
           <tbody>
             {triggers.map((trigger) => (
-              <tr key={trigger.id}>
+              <tr key={trigger._id}>
                 <td>{trigger.name}</td>
                 <td>{trigger.expression}</td>
                 <td>{trigger.order}</td>
@@ -114,7 +114,8 @@ function TriggersIndex({ triggers, dispatch, loggedUser }) {
                 {trigger.triggerKind === 'single_product' && (<td>{trigger.catalogSingle}</td>)}
                 {trigger.triggerKind === 'reply_button' && (<td>{trigger.textReplyButton}</td>)}
                 {trigger.triggerKind === 'list_message' && (<td>{trigger.messagesList}</td>)}
-                <td><Link to={`/triggers/${trigger.id}`}><i className='bi bi-pencil' /></Link></td>
+                {trigger.triggerKind === 'text' && (<td>{trigger.text}</td>)}
+                <td><Link to={`/triggers/${trigger._id}`}><i className='bi bi-pencil' /></Link></td>
               </tr>
             ))}
           </tbody>
