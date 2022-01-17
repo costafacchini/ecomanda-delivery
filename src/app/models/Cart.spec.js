@@ -66,6 +66,107 @@ describe('Cart', () => {
     })
   })
 
+  describe('post save', () => {
+    it('updates the contact address with cart address', async () => {
+      expect(contact.address).toEqual(undefined)
+      expect(contact.address_number).toEqual(undefined)
+      expect(contact.address_complement).toEqual(undefined)
+      expect(contact.neighborhood).toEqual(undefined)
+      expect(contact.city).toEqual(undefined)
+      expect(contact.cep).toEqual(undefined)
+      expect(contact.uf).toEqual(undefined)
+
+      await Cart.create(
+        cartFactory.build({
+          contact,
+          licensee,
+          address: 'Rua Teste',
+          address_number: '123',
+          address_complement: 'Apto 123',
+          neighborhood: 'Bairro Teste',
+          city: 'São Paulo',
+          cep: '01234567',
+          uf: 'SP',
+        })
+      )
+
+      const contactUpdated = await Contact.findById(contact._id)
+      expect(contactUpdated.address).toEqual('Rua Teste')
+      expect(contactUpdated.address_number).toEqual('123')
+      expect(contactUpdated.address_complement).toEqual('Apto 123')
+      expect(contactUpdated.neighborhood).toEqual('Bairro Teste')
+      expect(contactUpdated.city).toEqual('São Paulo')
+      expect(contactUpdated.cep).toEqual('01234567')
+      expect(contactUpdated.uf).toEqual('SP')
+    })
+
+    it('does not update the contact address if cart address is undefined', async () => {
+      expect(contact.address).toEqual(undefined)
+      expect(contact.address_number).toEqual(undefined)
+      expect(contact.address_complement).toEqual(undefined)
+      expect(contact.neighborhood).toEqual(undefined)
+      expect(contact.city).toEqual(undefined)
+      expect(contact.cep).toEqual(undefined)
+      expect(contact.uf).toEqual(undefined)
+
+      await Cart.create(
+        cartFactory.build({
+          contact,
+          licensee,
+          address: undefined,
+          address_number: undefined,
+          address_complement: undefined,
+          neighborhood: undefined,
+          city: undefined,
+          cep: undefined,
+          uf: undefined,
+        })
+      )
+
+      const contactUpdated = await Contact.findById(contact._id)
+      expect(contactUpdated.address).toEqual(undefined)
+      expect(contactUpdated.address_number).toEqual(undefined)
+      expect(contactUpdated.address_complement).toEqual(undefined)
+      expect(contactUpdated.neighborhood).toEqual(undefined)
+      expect(contactUpdated.city).toEqual(undefined)
+      expect(contactUpdated.cep).toEqual(undefined)
+      expect(contactUpdated.uf).toEqual(undefined)
+    })
+
+    it('does not update the contact address if cart address is blank', async () => {
+      expect(contact.address).toEqual(undefined)
+      expect(contact.address_number).toEqual(undefined)
+      expect(contact.address_complement).toEqual(undefined)
+      expect(contact.neighborhood).toEqual(undefined)
+      expect(contact.city).toEqual(undefined)
+      expect(contact.cep).toEqual(undefined)
+      expect(contact.uf).toEqual(undefined)
+
+      await Cart.create(
+        cartFactory.build({
+          contact,
+          licensee,
+          address: '',
+          address_number: '',
+          address_complement: '',
+          neighborhood: '',
+          city: '',
+          cep: '',
+          uf: '',
+        })
+      )
+
+      const contactUpdated = await Contact.findById(contact._id)
+      expect(contactUpdated.address).toEqual(undefined)
+      expect(contactUpdated.address_number).toEqual(undefined)
+      expect(contactUpdated.address_complement).toEqual(undefined)
+      expect(contactUpdated.neighborhood).toEqual(undefined)
+      expect(contactUpdated.city).toEqual(undefined)
+      expect(contactUpdated.cep).toEqual(undefined)
+      expect(contactUpdated.uf).toEqual(undefined)
+    })
+  })
+
   describe('validations', () => {
     describe('contact', () => {
       it('is required', () => {
