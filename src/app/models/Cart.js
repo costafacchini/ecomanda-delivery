@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
+const Contact = require('@models/Contact')
 
 const detailSchema = new Schema({
   name: String,
@@ -69,6 +70,33 @@ cartSchema.pre('save', function (next) {
   cart.total = cart.calculateTotal()
 
   next()
+})
+
+cartSchema.post('save', async function (cart) {
+  const contact = await Contact.findById(cart.contact)
+  if (contact.address !== cart.address) {
+    contact.address = cart.address
+  }
+  if (contact.address_number !== cart.address_number) {
+    contact.address_number = cart.address_number
+  }
+  if (contact.address_complement !== cart.address_complement) {
+    contact.address_complement = cart.address_complement
+  }
+  if (contact.neighborhood !== cart.neighborhood) {
+    contact.neighborhood = cart.neighborhood
+  }
+  if (contact.city !== cart.city) {
+    contact.city = cart.city
+  }
+  if (contact.cep !== cart.cep) {
+    contact.cep = cart.cep
+  }
+  if (contact.uf !== cart.uf) {
+    contact.uf = cart.uf
+  }
+
+  await contact.save()
 })
 
 cartSchema.set('toJSON', {
