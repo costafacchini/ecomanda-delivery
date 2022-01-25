@@ -2295,10 +2295,10 @@ dot-prop@^5.2.0:
   dependencies:
     is-obj "^2.0.0"
 
-dotenv@14.3.1:
-  version "14.3.1"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-14.3.1.tgz#c82cfa57792b6081eb82de19fabc59d0fe2ad4d2"
-  integrity sha512-qMpNS0qiX1sFnBTn9zcXxL+IPcnb3WJni85/R60vSAE4V0TBWj9pyrq0dOoK87B4MdYkAUWU8WL4W/4OzYn9LQ==
+dotenv@14.3.2:
+  version "14.3.2"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-14.3.2.tgz#7c30b3a5f777c79a3429cb2db358eef6751e8369"
+  integrity sha512-vwEppIphpFdvaMCaHfCEv9IgwcxMljMw2TnAQBB4VWPvzXQLTb82jwmdOKzlEVUL3gNFT4l4TPKO+Bn+sqcrVQ==
 
 duplexer3@^0.1.4:
   version "0.1.4"
