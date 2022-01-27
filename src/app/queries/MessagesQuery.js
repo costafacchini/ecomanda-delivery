@@ -37,9 +37,20 @@ class MessagesQuery {
     this.sendedClause = value
   }
 
+  sortBy(field, order) {
+    this.sortByClause = {
+      field,
+      order,
+    }
+  }
+
   async all() {
     const query = new QueryBuilder(Message)
-    query.sortBy('createdAt', -1)
+    if (this.sortByClause) {
+      query.sortBy(this.sortByClause.field, this.sortByClause.order)
+    } else {
+      query.sortBy('createdAt', -1)
+    }
 
     if (this.pageClause) query.page(this.pageClause, this.limitClause)
 

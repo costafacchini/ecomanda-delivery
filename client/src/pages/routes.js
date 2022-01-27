@@ -10,7 +10,6 @@ import Dashboard from './Dashboard'
 import { isAuthenticated, fetchLoggedUser } from '../services/auth'
 import { loadLoggedUser } from './SignIn/slice'
 import BaseLayout from './BaseLayout/index'
-import Configurations from './Configurations/index'
 import PrivateRoute from './PrivateRoute/index'
 
 function RootRoutes() {
@@ -67,14 +66,6 @@ function RootRoutes() {
           element={
             <PrivateRoute redirectTo='/'>
               <MessagesRoutes />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          exact path='/configurations'
-          element={
-            <PrivateRoute redirectTo='/'>
-              <Configurations />
             </PrivateRoute>
           }
         />
