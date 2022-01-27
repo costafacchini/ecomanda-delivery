@@ -7,6 +7,7 @@ const detailSchema = new Schema({
   name: String,
   quantity: Number,
   unit_price: Number,
+  note: String,
 })
 
 const additionalSchema = new Schema({
@@ -14,6 +15,7 @@ const additionalSchema = new Schema({
   quantity: Number,
   unit_price: Number,
   details: [detailSchema],
+  note: String,
 })
 
 const productsSchema = new Schema({
@@ -22,6 +24,7 @@ const productsSchema = new Schema({
   quantity: Number,
   unit_price: Number,
   additionals: [additionalSchema],
+  note: String,
 })
 
 const cartSchema = new Schema(
