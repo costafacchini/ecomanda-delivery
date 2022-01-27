@@ -14,23 +14,6 @@ async function getContact(number, licenseeId) {
   })
 }
 
-// Tentar remover essa função daqui e deixar apenas no modelo de cart
-function calculateTotal(products, delivery_tax) {
-  return products?.reduce((summaryProducts, product) => {
-    const additionalsTotal =
-      product.additionals?.reduce((summaryAdditionals, additional) => {
-        const detailsTotal =
-          additional.details?.reduce((summaryDetails, detail) => {
-            return summaryDetails + detail.unit_price * detail.quantity
-          }, 0) || 0
-
-        return summaryAdditionals + (detailsTotal + additional.unit_price) * additional.quantity
-      }, 0) || 0
-
-    return summaryProducts + (product.unit_price + additionalsTotal) * product.quantity
-  }, delivery_tax || 0)
-}
-
 function permit(fields) {
   const permitedFields = [
     'delivery_tax',
@@ -122,15 +105,19 @@ class CartsController {
       }
 
       try {
-        const total = calculateTotal(fields.products, fields.delivery_tax)
-        fields.total = total
-
-        await Cart.updateOne({ _id: cart._id }, { $set: fields }, { runValidators: true })
+        Object.keys(fields).forEach((field) => {
+          if (Array.isArray(fields[field])) {
+            fields[field].forEach((item) => {
+              cart[field].push(item)
+            })
+          } else {
+            cart[field] = fields[field]
+          }
+        })
+        await cart.save()
       } catch (err) {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
       }
-
-      cart = await Cart.findOne({ _id: cart._id })
 
       res.status(200).send(cart)
     } catch (err) {
@@ -216,15 +203,10 @@ class CartsController {
       })
 
       try {
-        await Cart.updateOne({ _id: cart._id }, { products: cart.products }, { runValidators: true })
+        await cart.save()
       } catch (err) {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
       }
-
-      cart = await Cart.findOne({ _id: cart._id })
-
-      const total = calculateTotal(cart.products, cart.delivery_tax)
-      cart.total = total
 
       res.status(200).send(cart)
     } catch (err) {
