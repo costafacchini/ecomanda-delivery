@@ -38,21 +38,25 @@ async function getMessagesSummary(licensee, reportDate) {
       count: 0,
     },
   ]
-  const startDate = moment.tz(reportDate, 'UTC').subtract(2, 'months').startOf('month')
-  const endDate = moment.tz(reportDate, 'UTC').subtract(1, 'month').endOf('month')
+  const startDateMonth1 = moment.tz(reportDate, 'UTC').subtract(2, 'months').startOf('month')
+  const endDateMonth1 = moment.tz(reportDate, 'UTC').subtract(2, 'month').endOf('month')
 
+  messagesSummary[0].count = await getMessagesCountedByMonth(licensee, startDateMonth1, endDateMonth1)
+
+  const startDateMonth2 = moment.tz(reportDate, 'UTC').subtract(1, 'months').startOf('month')
+  const endDateMonth2 = moment.tz(reportDate, 'UTC').subtract(1, 'month').endOf('month')
+
+  messagesSummary[1].count = await getMessagesCountedByMonth(licensee, startDateMonth2, endDateMonth2)
+
+  return messagesSummary
+}
+
+async function getMessagesCountedByMonth(licensee, startDate, endDate) {
   const messagesQuery = new MessagesQuery()
   messagesQuery.filterByLicensee(licensee._id)
   messagesQuery.filterByCreatedAt(startDate, endDate)
 
-  const records = await messagesQuery.all()
-  for (const record of records) {
-    const month = moment(record.createdAt).format('MM')
-    const year = moment(record.createdAt).format('yyyy')
-    const summary = messagesSummary.find((summary) => summary.month === month && summary.year === year)
-    if (summary) summary.count++
-  }
-  return messagesSummary
+  return await messagesQuery.count()
 }
 
 class BillingQuery {

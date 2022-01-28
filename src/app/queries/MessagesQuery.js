@@ -44,14 +44,7 @@ class MessagesQuery {
     }
   }
 
-  async all() {
-    const query = new QueryBuilder(Message)
-    if (this.sortByClause) {
-      query.sortBy(this.sortByClause.field, this.sortByClause.order)
-    } else {
-      query.sortBy('createdAt', -1)
-    }
-
+  applyFilters(query) {
     if (this.pageClause) query.page(this.pageClause, this.limitClause)
 
     if (this.startDateClause && this.endDateClause)
@@ -66,8 +59,25 @@ class MessagesQuery {
     if (this.destinationClause) query.filterBy('destination', this.destinationClause)
 
     if (this.sendedClause) query.filterBy('sended', this.sendedClause)
+  }
+
+  async all() {
+    const query = new QueryBuilder(Message)
+    if (this.sortByClause) {
+      query.sortBy(this.sortByClause.field, this.sortByClause.order)
+    } else {
+      query.sortBy('createdAt', -1)
+    }
+    this.applyFilters(query)
 
     return await query.getQuery().populate('contact').populate('cart').populate('trigger').exec()
+  }
+
+  async count() {
+    const query = new QueryBuilder(Message)
+    this.applyFilters(query)
+
+    return await query.getQuery().count()
   }
 }
 
