@@ -2,21 +2,34 @@ const Landbot = require('./Landbot')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Licensee = require('@models/Licensee')
+const Trigger = require('@models/Trigger')
+const Cart = require('@models/Cart')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
-const emoji = require('../../helpers/Emoji')
+const emoji = require('@helpers/Emoji')
+const Room = require('@models/Room')
+const { licensee: licenseeFactory } = require('@factories/licensee')
+const { contact: contactFactory } = require('@factories/contact')
+const { room: roomFactory } = require('@factories/room')
+const { message: messageFactory } = require('@factories/message')
+const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
+const { cart: cartFactory } = require('@factories/cart')
+const { advanceTo, clear } = require('jest-date-mock')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
 describe('Landbot plugin', () => {
+  let licensee
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
   const emojiReplaceSpy = jest.spyOn(emoji, 'replace')
 
   beforeEach(async () => {
+    await mongoServer.connect()
     jest.clearAllMocks()
     fetchMock.reset()
-    await mongoServer.connect()
+
+    licensee = await Licensee.create(licenseeFactory.build())
   })
 
   afterEach(async () => {
@@ -25,15 +38,15 @@ describe('Landbot plugin', () => {
 
   describe('#responseToMessages', () => {
     it('returns the response body transformed in messages', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+      const contact = await Contact.create(
+        contactFactory.build({
+          talkingWithChatBot: true,
+          licensee,
+        })
+      )
 
-      const contact = await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: true,
-        licensee: licensee,
-      })
+      const triggerOrder2 = await Trigger.create(triggerReplyButtonFactory.build({ licensee, order: 2 }))
+      const trigger = await Trigger.create(triggerReplyButtonFactory.build({ licensee }))
 
       const responseBody = {
         messages: [
@@ -65,6 +78,11 @@ describe('Landbot plugin', () => {
             message: 'It is here',
           },
           {
+            type: 'text',
+            timestamp: '1234567347',
+            message: 'send_reply_buttons',
+          },
+          {
             type: 'dialog',
             timestamp: '1234567890',
             title: 'Hi there',
@@ -75,7 +93,7 @@ describe('Landbot plugin', () => {
         customer: {
           id: 2000,
           name: 'John',
-          number: '5593165392832',
+          number: '5511990283745',
         },
         agent: {
           id: 1,
@@ -89,6 +107,8 @@ describe('Landbot plugin', () => {
 
       const landbot = new Landbot(licensee)
       const messages = await landbot.responseToMessages(responseBody)
+
+      expect(messages.length).toEqual(5)
 
       expect(messages[0]).toBeInstanceOf(Message)
       expect(messages[0].licensee).toEqual(licensee._id)
@@ -129,31 +149,55 @@ describe('Landbot plugin', () => {
       expect(messages[2].longitude).toEqual(101.75)
       expect(messages[2].departament).toEqual(undefined)
 
-      expect(emojiReplaceSpy).toHaveBeenCalledTimes(3)
+      expect(messages[3]).toBeInstanceOf(Message)
+      expect(messages[3].licensee).toEqual(licensee._id)
+      expect(messages[3].contact).toEqual(contact._id)
+      expect(messages[3].kind).toEqual('interactive')
+      expect(messages[3].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+      expect(messages[3].destination).toEqual('to-messenger')
+      expect(messages[3].text).toEqual('send_reply_buttons')
+      expect(messages[3].trigger).toEqual(trigger._id)
+      expect(messages[3].url).toEqual(undefined)
+      expect(messages[3].fileName).toEqual(undefined)
+      expect(messages[3].latitude).toEqual(undefined)
+      expect(messages[3].longitude).toEqual(undefined)
+      expect(messages[3].departament).toEqual(undefined)
+
+      expect(messages[4]).toBeInstanceOf(Message)
+      expect(messages[4].licensee).toEqual(licensee._id)
+      expect(messages[4].contact).toEqual(contact._id)
+      expect(messages[4].kind).toEqual('interactive')
+      expect(messages[4].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+      expect(messages[4].destination).toEqual('to-messenger')
+      expect(messages[4].text).toEqual('send_reply_buttons')
+      expect(messages[4].trigger).toEqual(triggerOrder2._id)
+      expect(messages[4].url).toEqual(undefined)
+      expect(messages[4].fileName).toEqual(undefined)
+      expect(messages[4].latitude).toEqual(undefined)
+      expect(messages[4].longitude).toEqual(undefined)
+      expect(messages[4].departament).toEqual(undefined)
+
+      expect(emojiReplaceSpy).toHaveBeenCalledTimes(4)
       expect(emojiReplaceSpy).toHaveBeenCalledWith('Hello world')
       expect(emojiReplaceSpy).toHaveBeenCalledWith('Text with image')
       expect(emojiReplaceSpy).toHaveBeenCalledWith('It is here')
+      expect(emojiReplaceSpy).toHaveBeenCalledWith('send_reply_buttons')
 
       expect(consoleInfoSpy).toHaveBeenCalledTimes(2)
       expect(consoleInfoSpy).toHaveBeenCalledWith(
         'Tipo de mensagem retornado pela Landbot não reconhecido: multiple_images'
       )
       expect(consoleInfoSpy).toHaveBeenCalledWith('Tipo de mensagem retornado pela Landbot não reconhecido: dialog')
-
-      expect(messages.length).toEqual(3)
     })
 
     it('changes the landbotId in contact if is different', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-      const contact = await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: true,
-        licensee: licensee,
-        landbotId: '123',
-      })
+      const contact = await Contact.create(
+        contactFactory.build({
+          talkingWithChatBot: true,
+          landbotId: '123',
+          licensee,
+        })
+      )
 
       const responseBody = {
         messages: [
@@ -166,7 +210,7 @@ describe('Landbot plugin', () => {
         customer: {
           id: 2000,
           name: 'John',
-          number: '5593165392832',
+          number: '5511990283745',
         },
         agent: {
           id: 1,
@@ -186,8 +230,6 @@ describe('Landbot plugin', () => {
     })
 
     it('return the empty array if body is blank', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const responseBody = {}
 
       const landbot = new Landbot(licensee)
@@ -197,8 +239,6 @@ describe('Landbot plugin', () => {
     })
 
     it('return the empty array if body does not have a customer', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const responseBody = {
         messages: [
           {
@@ -214,8 +254,6 @@ describe('Landbot plugin', () => {
     })
 
     it('return the empty array if body does not have messages', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const responseBody = {
         customer: {
           name: 'John Doe',
@@ -231,18 +269,15 @@ describe('Landbot plugin', () => {
 
   describe('#responseTransferToMessage', () => {
     it('returns the response body transformed in message', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-      const contact = await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: true,
-        licensee: licensee,
-      })
+      const contact = await Contact.create(
+        contactFactory.build({
+          talkingWithChatBot: true,
+          licensee,
+        })
+      )
 
       const responseBody = {
-        number: '5593165392832@c.us',
+        number: '5511990283745@c.us',
         observacao: 'Message to send chat',
         id_departamento_rocketchat: '100',
       }
@@ -265,8 +300,6 @@ describe('Landbot plugin', () => {
     })
 
     it('return the empty message if number is blank', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const responseBody = {
         observacao: 'Message to send chat',
         id_departamento_rocketchat: '100',
@@ -277,34 +310,112 @@ describe('Landbot plugin', () => {
 
       expect(message).toEqual(undefined)
     })
+
+    it('close room if the body has a iniciar_nova_conversa with true', async () => {
+      const contact = await Contact.create(
+        contactFactory.build({
+          talkingWithChatBot: true,
+          licensee,
+        })
+      )
+
+      const room = await Room.create(
+        roomFactory.build({
+          contact,
+        })
+      )
+
+      const responseBody = {
+        number: '5511990283745@c.us',
+        observacao: 'Message to send chat',
+        id_departamento_rocketchat: '100',
+        iniciar_nova_conversa: 'true',
+      }
+
+      const landbot = new Landbot(licensee)
+      const message = await landbot.responseTransferToMessage(responseBody)
+
+      expect(message).toBeInstanceOf(Message)
+
+      const modifiedRoom = await Room.findById(room._id)
+      expect(modifiedRoom.roomId).toEqual('ka3DiV9CuHD765')
+      expect(modifiedRoom.closed).toEqual(true)
+    })
+
+    it('updates the contact name when name is different of the contact name', async () => {
+      const contact = await Contact.create(
+        contactFactory.build({
+          talkingWithChatBot: true,
+          licensee,
+        })
+      )
+
+      const responseBody = {
+        name: 'John Silver Doe',
+        number: '5511990283745@c.us',
+        observacao: 'Message to send chat',
+        id_departamento_rocketchat: '100',
+      }
+
+      const landbot = new Landbot(licensee)
+      const message = await landbot.responseTransferToMessage(responseBody)
+
+      expect(message).toBeInstanceOf(Message)
+
+      const modifiedContact = await Contact.findById(contact._id)
+      expect(modifiedContact.name).toEqual('John Silver Doe')
+    })
+
+    it('updates the contact email when email is different of the contact email', async () => {
+      const contact = await Contact.create(
+        contactFactory.build({
+          talkingWithChatBot: true,
+          licensee,
+          email: 'john@doe.com',
+        })
+      )
+
+      const responseBody = {
+        email: 'john_silver@doe.com',
+        number: '5511990283745@c.us',
+        observacao: 'Message to send chat',
+        id_departamento_rocketchat: '100',
+      }
+
+      const landbot = new Landbot(licensee)
+      const message = await landbot.responseTransferToMessage(responseBody)
+
+      expect(message).toBeInstanceOf(Message)
+
+      const modifiedContact = await Contact.findById(contact._id)
+      expect(modifiedContact.email).toEqual('john_silver@doe.com')
+    })
   })
 
   describe('#sendMessage', () => {
     describe('when response status is 201', () => {
       it('marks the message with sended', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            licensee,
+          })
+        )
 
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-chatbot',
-          sended: false,
-        })
+        const message = await Message.create(
+          messageFactory.build({
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
 
         const expectedBody = {
           customer: {
             name: 'John Doe',
-            number: '5593165392832',
+            number: '5511990283745',
             type: '@c.us',
             licensee: licensee._id,
           },
@@ -318,7 +429,7 @@ describe('Landbot plugin', () => {
         fetchMock.postOnce(
           (url, { body, headers }) => {
             return (
-              url === 'https://url.com.br/5593165392832/' &&
+              url === 'https://url.com.br/5511990283745/' &&
               body === JSON.stringify(expectedBody) &&
               headers['Authorization'] === 'Token token'
             )
@@ -330,7 +441,7 @@ describe('Landbot plugin', () => {
               customer: {
                 id: 42,
                 name: 'John Doe',
-                phone: '5593165392832@c.us',
+                phone: '5511990283745@c.us',
                 token: 'token',
               },
             },
@@ -351,64 +462,38 @@ describe('Landbot plugin', () => {
       })
 
       it('logs the success message', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          talkingWithChatBot: true,
-          email: 'john@doe.com',
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-chatbot',
-          sended: false,
-        })
-
-        const expectedBody = {
-          customer: {
+        const contact = await Contact.create(
+          contactFactory.build({
             name: 'John Doe',
-            number: '5593165392832',
+            talkingWithChatBot: true,
             email: 'john@doe.com',
-            type: '@c.us',
-            licensee: licensee._id,
-          },
-          message: {
-            type: 'text',
-            message: 'Message to send',
-            payload: '$1',
-          },
-        }
-
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://url.com.br/5593165392832/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Token token'
-            )
-          },
-          {
-            status: 201,
-            body: {
-              success: true,
-              customer: {
-                id: 42,
-                name: 'John Doe',
-                phone: '5593165392832@c.us',
-                email: 'john@doe.com',
-                token: 'token',
-              },
-            },
-          }
+            licensee,
+          })
         )
+
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
+
+        fetchMock.postOnce('https://url.com.br/5511990283745/', {
+          status: 201,
+          body: {
+            success: true,
+            customer: {
+              id: 42,
+              name: 'John Doe',
+              phone: '5511990283745@c.us',
+              email: 'john@doe.com',
+              token: 'token',
+            },
+          },
+        })
 
         const landbot = new Landbot(licensee)
         await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
@@ -425,68 +510,117 @@ describe('Landbot plugin', () => {
              customer: {
                id: 42,
                name: 'John Doe',
-               phone: '5593165392832@c.us',
+               phone: '5511990283745@c.us',
                email: 'john@doe.com',
                token: 'token',
              },
            })}`
         )
       })
+
+      describe('when the message is cart', () => {
+        it('sends the message with cart parsed in body', async () => {
+          advanceTo(new Date('2021-01-05T10:25:47.000Z'))
+
+          licensee.cartDefault = 'go2go'
+
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              talkingWithChatBot: true,
+              licensee,
+            })
+          )
+
+          const cart = await Cart.create(cartFactory.build({ contact, licensee }))
+
+          const message = await Message.create(
+            messageFactory.build({
+              kind: 'cart',
+              contact,
+              licensee,
+              cart,
+              sended: false,
+            })
+          )
+
+          const expectedBody = {
+            customer: {
+              name: 'John Doe',
+              number: '5511990283745',
+              type: '@c.us',
+              licensee: licensee._id,
+            },
+            message: {
+              type: 'text',
+              message:
+                '{"order":{"origemId":0,"deliveryMode":"MERCHANT","refPedido":"Ecommerce","refOrigem":"Ecommerce","refCurtaOrigem":"","docNotaFiscal":false,"valorDocNotaFiscal":"","nomeCliente":"John Doe","endEntrega":"","dataPedido":"2021-01-05T10:25:47.000Z","subTotal":17.8,"impostos":0,"voucher":0,"dataEntrega":"2021-01-05T10:25:47.000Z","taxaEntrega":0,"totalPedido":17.8,"documento":"","flagIntegrado":"NaoIntegrado","valorPagar":17.8,"telefonePedido":"5511990283745","pagamentos":[{"tipo":"","valor":17.8,"observacao":"","codigoResposta":"","bandeira":0,"troco":0,"nsu":0,"status":"NaoInformado","descontoId":0,"prePago":false,"transactionId":0}],"entrega":{"retiraLoja":false,"data":"","retirada":"Hoje","endereco":{"id":37025,"pais":"Brasil","padrao":false}},"itens":[{"produtoId":"0123","quantidade":2,"precoTotal":8.9,"adicionalPedidoItems":[{"produtoId":"Additional 1","atributoValorId":"Detail 1","quantidade":1,"precoTotal":0.5}]}]}}',
+              payload: '$1',
+            },
+          }
+
+          fetchMock.postOnce(
+            (url, { body }) => {
+              return url === 'https://url.com.br/5511990283745/' && body === JSON.stringify(expectedBody)
+            },
+            {
+              status: 201,
+              body: {
+                success: true,
+                customer: {
+                  id: 42,
+                  name: 'John Doe',
+                  phone: '5511990283745@c.us',
+                  token: 'token',
+                },
+              },
+            }
+          )
+
+          expect(message.sended).toEqual(false)
+
+          const landbot = new Landbot(licensee)
+          await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
+          await fetchMock.flush(true)
+
+          expect(fetchMock.done()).toBe(true)
+          expect(fetchMock.calls()).toHaveLength(1)
+
+          const messageUpdated = await Message.findById(message._id)
+          expect(messageUpdated.sended).toEqual(true)
+
+          clear()
+        })
+      })
     })
 
     describe('when response is not 201', () => {
       it('logs the error message', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          email: 'john@doe.com',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-chatbot',
-          sended: false,
-        })
-
-        const expectedBody = {
-          customer: {
+        const contact = await Contact.create(
+          contactFactory.build({
             name: 'John Doe',
-            number: '5593165392832',
             email: 'john@doe.com',
-            type: '@c.us',
-            licensee: licensee._id,
-          },
-          message: {
-            type: 'text',
-            message: 'Message to send',
-            payload: '$1',
-          },
-        }
-
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://url.com.br/5593165392832/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Token token'
-            )
-          },
-          {
-            status: 403,
-            body: {
-              detail: 'invalid token',
-            },
-          }
+            talkingWithChatBot: true,
+            licensee,
+          })
         )
+
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
+
+        fetchMock.postOnce('https://url.com.br/5511990283745/', {
+          status: 403,
+          body: {
+            detail: 'invalid token',
+          },
+        })
 
         expect(message.sended).toEqual(false)
 
@@ -530,21 +664,20 @@ describe('Landbot plugin', () => {
 
   describe('#dropConversation', () => {
     it('send request to delete customer on landbot', async () => {
-      const licensee = await Licensee.create({
-        name: 'Alcateia Ltds',
-        active: true,
-        licenseKind: 'demo',
-        chatbotApiToken: 'token',
-      })
+      const licensee = await Licensee.create(
+        licenseeFactory.build({
+          chatbotApiToken: 'token',
+        })
+      )
 
-      const contact = await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832',
-        type: '@c.us',
-        talkingWithChatBot: true,
-        licensee: licensee,
-        landbotId: '20000',
-      })
+      const contact = await Contact.create(
+        contactFactory.build({
+          name: 'John Doe',
+          talkingWithChatBot: true,
+          licensee,
+          landbotId: '20000',
+        })
+      )
 
       fetchMock.deleteOnce((url, { headers }) => {
         return url === 'https://api.landbot.io/v1/customers/20000/' && headers['Authorization'] === 'Token token'

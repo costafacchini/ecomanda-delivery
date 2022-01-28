@@ -4,6 +4,7 @@ const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
 const queueServer = require('@config/queue')
+const { licensee: licenseeFactory } = require('@factories/licensee')
 
 describe('chatbots controller', () => {
   let apiToken
@@ -14,11 +15,7 @@ describe('chatbots controller', () => {
     jest.clearAllMocks()
     await mongoServer.connect()
 
-    const licensee = await Licensee.create({
-      name: 'Alcateia Ltds',
-      active: true,
-      licenseKind: 'demo',
-    })
+    const licensee = await Licensee.create(licenseeFactory.build())
     apiToken = licensee.apiToken
   })
 
@@ -109,6 +106,40 @@ describe('chatbots controller', () => {
             })
             expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
             expect(queueServerAddJobSpy).toHaveBeenCalledWith('chatbot-transfer-to-chat', { bodyId: body._id })
+          })
+      })
+    })
+  })
+
+  describe('reset', () => {
+    describe('about auth', () => {
+      it('returns status 401 and message if query param token is not valid', async () => {
+        await request(expressServer)
+          .post('/api/v1/chatbot/reset/?token=627365264')
+          .expect('Content-Type', /json/)
+          .expect(401, { message: 'Token não informado ou inválido.' })
+      })
+
+      it('returns status 401 and message if query param token is informed', async () => {
+        await request(expressServer)
+          .post('/api/v1/chatbot/reset')
+          .expect('Content-Type', /json/)
+          .expect(401, { message: 'Token não informado ou inválido.' })
+      })
+    })
+
+    describe('response', () => {
+      it('returns status 200 and schedule job to reset chatbots', async () => {
+        await request(expressServer)
+          .post(`/api/v1/chatbot/reset/?token=${apiToken}`)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .then((response) => {
+            expect(response.body).toEqual({
+              body: 'Solicitação para resetar os chatbots abandonados agendado',
+            })
+            expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
+            expect(queueServerAddJobSpy).toHaveBeenCalledWith('reset-chatbots', {})
           })
       })
     })

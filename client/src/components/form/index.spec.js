@@ -1,8 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { FieldWithError } from './'
 import { Formik } from 'formik'
-import * as Yup from "yup";
-import userEvent from '@testing-library/user-event'
+import * as Yup from 'yup'
 
 describe('FieldWithError', () => {
   it('receives any props', () => {
@@ -21,7 +20,7 @@ describe('FieldWithError', () => {
     const Validation = Yup.object().shape({
       field: Yup.string()
         .required('Required')
-    });
+    })
 
     render(
       <Formik initialValues={{ field: '' }} initialErrors={{ field: 'Too Short!' }} validationSchema={Validation} >

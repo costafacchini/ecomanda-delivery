@@ -1,9 +1,20 @@
-const emoji = require('../../helpers/Emoji')
-const NormalizePhone = require('../../helpers/NormalizePhone')
+const emoji = require('@helpers/Emoji')
+const NormalizePhone = require('@helpers/NormalizePhone')
 const { v4: uuidv4 } = require('uuid')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const request = require('../../services/request')
+const Room = require('@models/Room')
+const Trigger = require('@models/Trigger')
+const cartFactory = require('@plugins/carts/factory')
+
+const closeRoom = async (contact) => {
+  const room = await Room.findOne({ contact: contact._id, closed: false })
+  if (room) {
+    room.closed = true
+    await room.save()
+  }
+}
 
 class Landbot {
   constructor(licensee) {
@@ -42,29 +53,58 @@ class Landbot {
         continue
       }
 
-      // .replace(/%first_name%/i, customer.name)
       const text = emoji.replace(message.message)
 
-      const messageToSend = new Message({
-        number: uuidv4(),
-        text,
-        kind,
-        licensee: this.licensee._id,
-        contact: contact._id,
-        destination: 'to-messenger',
-      })
+      if (kind === 'text') {
+        const triggers = await Trigger.find({ expression: text, licensee: this.licensee._id }).sort({ order: 'asc' })
+        if (triggers.length > 0) {
+          for (const trigger of triggers) {
+            const messageToSend = new Message({
+              number: uuidv4(),
+              text,
+              kind: 'interactive',
+              licensee: this.licensee._id,
+              contact: contact._id,
+              destination: 'to-messenger',
+              trigger: trigger._id,
+            })
 
-      if (kind === 'file') {
-        messageToSend.url = message.url
-        messageToSend.fileName = message.url.match(/[^\\/]+$/)[0]
+            processedMessages.push(await messageToSend.save())
+          }
+        } else {
+          const messageToSend = new Message({
+            number: uuidv4(),
+            text,
+            kind,
+            licensee: this.licensee._id,
+            contact: contact._id,
+            destination: 'to-messenger',
+          })
+
+          processedMessages.push(await messageToSend.save())
+        }
+      } else {
+        const messageToSend = new Message({
+          number: uuidv4(),
+          text,
+          kind,
+          licensee: this.licensee._id,
+          contact: contact._id,
+          destination: 'to-messenger',
+        })
+
+        if (kind === 'file') {
+          messageToSend.url = message.url
+          messageToSend.fileName = message.url.match(/[^\\/]+$/)[0]
+        }
+
+        if (kind === 'location') {
+          messageToSend.latitude = message.latitude
+          messageToSend.longitude = message.longitude
+        }
+
+        processedMessages.push(await messageToSend.save())
       }
-
-      if (kind === 'location') {
-        messageToSend.latitude = message.latitude
-        messageToSend.longitude = message.longitude
-      }
-
-      processedMessages.push(await messageToSend.save())
     }
 
     return processedMessages
@@ -86,7 +126,7 @@ class Landbot {
   }
 
   async responseTransferToMessage(responseBody) {
-    const { number, observacao, id_departamento_rocketchat } = responseBody
+    const { name, email, number, observacao, id_departamento_rocketchat, iniciar_nova_conversa } = responseBody
 
     if (!number) return
 
@@ -101,6 +141,22 @@ class Landbot {
     if (!contact) {
       console.info(`Contato com telefone ${normalizePhone.number} e licenciado ${this.licensee._id} não encontrado`)
       return
+    }
+
+    if (name || email) {
+      if (name && name !== contact.name) {
+        contact.name = name
+      }
+
+      if (email && email !== contact.email) {
+        contact.email = email
+      }
+
+      await contact.save()
+    }
+
+    if (iniciar_nova_conversa && iniciar_nova_conversa === 'true') {
+      await closeRoom(contact)
     }
 
     const message = new Message({
@@ -134,6 +190,13 @@ class Landbot {
         message: messageToSend.text,
         payload: '$1',
       },
+    }
+
+    if (messageToSend.kind === 'cart') {
+      const cartPlugin = cartFactory(this.licensee)
+      const cartTransformed = await cartPlugin.transformCart(this.licensee, messageToSend.cart)
+
+      body.message.message = JSON.stringify(cartTransformed)
     }
 
     const headers = {

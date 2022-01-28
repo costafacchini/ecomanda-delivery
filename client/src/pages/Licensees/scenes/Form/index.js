@@ -1,7 +1,7 @@
 import { FieldWithError, Form } from '../../../../components/form'
 import * as Yup from 'yup'
-import { useHistory } from 'react-router-dom'
-import { setLicenseeWebhook } from '../services/licensee'
+import { useNavigate } from 'react-router-dom'
+import { setLicenseeWebhook } from '../../../../services/licensee'
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string()
@@ -29,11 +29,14 @@ const licenseeInitialValues = {
   awsSecret: '',
   bucketName: '',
   chatKey: '',
-  chatIdentifier: ''
+  chatIdentifier: '',
+  cartDefault: '',
+  unidadeId: '',
+  statusId: ''
 }
 
 function LicenseeForm({ onSubmit, errors, initialValues }) {
-  let history = useHistory();
+  let navigate = useNavigate();
 
   return (
     <div>
@@ -397,6 +400,53 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
               </div>
             </fieldset>
 
+            <fieldset className='pb-4'>
+              <div className='row'>
+                <div className='form-group col-5'>
+                  <label htmlFor='cartDefault'>Plugin para uso de carrinho de compra</label>
+                  <select
+                    value={props.values.cartDefault}
+                    className='form-select'
+                    id='cartDefault'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                  >
+                    <option value=''></option>
+                    <option value='go2go'>Go2Go</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-5'>
+                  <label htmlFor='unidadeId'>Id da loja</label>
+                  <FieldWithError
+                    id='unidadeId'
+                    name='unidadeId'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.unidadeId}
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-5'>
+                  <label htmlFor='statusId'>Id do status do carrinho de compra</label>
+                  <FieldWithError
+                    id='statusId'
+                    name='statusId'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.statusId}
+                  />
+                </div>
+              </div>
+            </fieldset>
+
+
             <fieldset>
               <div className='row'>
                 <div className='form-group col-5'>
@@ -470,7 +520,7 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
             <div className='row'>
               <div className='col-5'>
                 <div className='mt-4 d-flex justify-content-between'>
-                  <button onClick={()=> history.push('/licensees')} className='btn btn-secondary' type='button'>Voltar</button>
+                  <button onClick={() => navigate('/licensees')} className='btn btn-secondary' type='button'>Voltar</button>
                   <button className='btn btn-success' type='submit'>Salvar</button>
                 </div>
               </div>

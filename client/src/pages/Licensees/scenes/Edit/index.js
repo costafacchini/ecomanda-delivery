@@ -1,17 +1,17 @@
 import Form from '../Form'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
-import { getLicensee, updateLicensee } from '../services/licensee'
-import { useHistory, useRouteMatch } from 'react-router-dom'
-import { useEffect } from 'react';
+import { getLicensee, updateLicensee } from '../../../../services/licensee'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useEffect } from 'react'
 
 function LicenseeEdit() {
-  const history = useHistory()
-  const match = useRouteMatch()
+  const navigate = useNavigate()
+  let { id } = useParams()
   const [errors, setErrors] = useState(null)
   const [licensee, setLicensee] = useState(null)
 
-  const licenseeId = match.params.id
+  const licenseeId = id
 
   useEffect(() => {
     async function fetchLicensee() {
@@ -35,12 +35,12 @@ function LicenseeEdit() {
             const response = await updateLicensee(values)
 
             if (response.status === 200) {
-              toast.success('Licenciado atualizado com sucesso!');
-              history.push('/licensees')
+              toast.success('Licenciado atualizado com sucesso!')
+              navigate('/licensees')
               setErrors(null)
             } else {
               setErrors(response.data.errors)
-              toast.error('Ops! Não foi possível atualizar o licenciado.');
+              toast.error('Ops! Não foi possível atualizar o licenciado.')
             }
           }}
         />

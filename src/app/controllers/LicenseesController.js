@@ -3,6 +3,7 @@ const createMessengerPlugin = require('../plugins/messengers/factory')
 const { check, validationResult } = require('express-validator')
 const { sanitizeExpressErrors, sanitizeModelErrors } = require('../helpers/SanitizeErrors')
 const _ = require('lodash')
+const LicenseesQuery = require('@queries/LicenseesQuery')
 
 function permit(fields) {
   const permitedFields = [
@@ -27,6 +28,9 @@ function permit(fields) {
     'bucketName',
     'chatIdentifier',
     'chatKey',
+    'cartDefault',
+    'unidadeId',
+    'statusId',
   ]
 
   return _.pick(fields, permitedFields)
@@ -70,6 +74,9 @@ class LicenseesController {
       bucketName,
       chatIdentifier,
       chatKey,
+      cartDefault,
+      unidadeId,
+      statusId,
     } = req.body
 
     const licensee = new Licensee({
@@ -94,6 +101,9 @@ class LicenseesController {
       bucketName,
       chatIdentifier,
       chatKey,
+      cartDefault,
+      unidadeId,
+      statusId,
     })
 
     const validation = licensee.validateSync()
@@ -150,7 +160,37 @@ class LicenseesController {
 
   async index(req, res) {
     try {
-      res.status(200).send(await Licensee.find({}))
+      const page = req.query.page || 1
+      const limit = req.query.limit || 30
+
+      const licenseesQuery = new LicenseesQuery()
+
+      licenseesQuery.page(page)
+      licenseesQuery.limit(limit)
+
+      if (req.query.chatDefault) {
+        licenseesQuery.filterByChatDefault(req.query.chatDefault)
+      }
+
+      if (req.query.chatbotDefault) {
+        licenseesQuery.filterByChatbotDefault(req.query.chatbotDefault)
+      }
+
+      if (req.query.whatsappDefault) {
+        licenseesQuery.filterByWhatsappDefault(req.query.whatsappDefault)
+      }
+
+      if (req.query.expression) {
+        licenseesQuery.filterByExpression(req.query.expression)
+      }
+
+      if (req.query.active) {
+        licenseesQuery.filterByActive()
+      }
+
+      const messages = await licenseesQuery.all()
+
+      res.status(200).send(messages)
     } catch (err) {
       res.status(500).send({ errors: { message: err.toString() } })
     }

@@ -1,5 +1,6 @@
 const Licensee = require('@models/Licensee')
 const mongoServer = require('../../../.jest/utils')
+const { licensee: licenseeFactory } = require('@factories/licensee')
 
 describe('Licensee', () => {
   beforeEach(async () => {
@@ -12,13 +13,13 @@ describe('Licensee', () => {
 
   describe('before save', () => {
     it('generates _id', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
+      const licensee = await Licensee.create(licenseeFactory.build())
 
       expect(licensee._id).not.toEqual(null)
     })
 
     it('does not changes _id if licensee is changed', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
+      const licensee = await Licensee.create(licenseeFactory.build())
 
       licensee.name = 'Changed'
       const alteredLicensee = await licensee.save()
@@ -291,6 +292,41 @@ describe('Licensee', () => {
 
         expect(validation.errors['chatDefault'].message).toEqual(
           '`some` is not a valid enum value for path `chatDefault`.'
+        )
+      })
+    })
+
+    describe('cartDefault', () => {
+      it('accepts blank value', () => {
+        const licensee = new Licensee({ cartDefault: '' })
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['cartDefault']).not.toBeDefined()
+      })
+
+      it('accepts nil value', () => {
+        const licensee = new Licensee()
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['cartDefault']).not.toBeDefined()
+      })
+
+      it('accepts "go2go" values', () => {
+        let validation
+        const licensee = new Licensee()
+
+        licensee.cartDefault = 'go2go'
+        validation = licensee.validateSync()
+
+        expect(validation.errors['chatDefault']).not.toBeDefined()
+      })
+
+      it('does not accepts another values', () => {
+        const licensee = new Licensee({ cartDefault: 'some' })
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['cartDefault'].message).toEqual(
+          '`some` is not a valid enum value for path `cartDefault`.'
         )
       })
     })

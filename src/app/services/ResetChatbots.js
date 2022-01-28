@@ -46,7 +46,7 @@ async function resetChatbots() {
       if (message.destination === 'to-messenger' && message.createdAt < getTimeLimit() && message.sended === true) {
         const chatPlugin = createChatbotPlugin(licensee)
 
-        await chatPlugin.dropConversation(message.contact.toString())
+        await chatPlugin.dropConversation(message.contact._id.toString())
 
         contact.landbotId = null
         await contact.save()

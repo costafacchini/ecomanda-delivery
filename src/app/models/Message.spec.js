@@ -2,10 +2,19 @@ const Message = require('@models/Message')
 const Licensee = require('@models/Licensee')
 const Contact = require('@models/Contact')
 const mongoServer = require('../../../.jest/utils')
+const { licensee: licenseeFactory } = require('@factories/licensee')
+const { contact: contactFactory } = require('@factories/contact')
+const { message: messageFactory } = require('@factories/message')
 
 describe('Message', () => {
+  let licensee
+  let contact
+
   beforeEach(async () => {
     await mongoServer.connect()
+
+    licensee = await Licensee.create(licenseeFactory.build())
+    contact = await Contact.create(contactFactory.build({ licensee }))
   })
 
   afterEach(async () => {
@@ -14,31 +23,13 @@ describe('Message', () => {
 
   describe('before save', () => {
     it('generates _id', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
-      const contact = await Contact.create({ number: '551190283745', talkingWithChatBot: false, licensee: licensee })
-
-      const message = await Message.create({
-        text: 'Text',
-        number: 'Abc012',
-        contact: contact,
-        licensee: licensee,
-        destination: 'to-chat',
-      })
+      const message = await Message.create(messageFactory.build({ contact, licensee }))
 
       expect(message._id).not.toEqual(null)
     })
 
     it('does not changes _id if message is changed', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
-      const contact = await Contact.create({ number: '551190283745', talkingWithChatBot: false, licensee: licensee })
-
-      const message = await Message.create({
-        text: 'Text',
-        number: 'Abc012',
-        contact: contact,
-        licensee: licensee,
-        destination: 'to-chat',
-      })
+      const message = await Message.create(messageFactory.build({ contact, licensee }))
 
       message.text = 'Changed'
       const alteredMessage = await message.save()
@@ -154,6 +145,16 @@ describe('Message', () => {
         expect(validation.errors['kind']).not.toBeDefined()
 
         message.licenseKind = 'location'
+        validation = message.validateSync()
+
+        expect(validation.errors['kind']).not.toBeDefined()
+
+        message.licenseKind = 'interactive'
+        validation = message.validateSync()
+
+        expect(validation.errors['kind']).not.toBeDefined()
+
+        message.licenseKind = 'cart'
         validation = message.validateSync()
 
         expect(validation.errors['kind']).not.toBeDefined()

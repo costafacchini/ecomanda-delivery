@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
-const NormalizePhone = require('../helpers/NormalizePhone')
+const NormalizePhone = require('@helpers/NormalizePhone')
 
 const contactSchema = new Schema(
   {
@@ -24,6 +24,15 @@ const contactSchema = new Schema(
     },
     waId: String,
     landbotId: String,
+    address: String,
+    address_number: String,
+    address_complement: String,
+    neighborhood: String,
+    city: String,
+    cep: String,
+    uf: String,
+    delivery_tax: Number,
+    plugin_cart_id: String,
   },
   { timestamps: true }
 )
@@ -39,6 +48,10 @@ contactSchema.pre('save', function (next) {
     const normalizedPhone = new NormalizePhone(contact.number)
     contact.number = normalizedPhone.number
     contact.type = normalizedPhone.type
+  }
+
+  if (contact.cep) {
+    contact.cep = contact.cep.replace(/[^0-9]/g, '')
   }
 
   next()

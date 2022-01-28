@@ -4,10 +4,11 @@ const { v4: uuidv4 } = require('uuid')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Room = require('@models/Room')
+const Trigger = require('@models/Trigger')
 const request = require('../../services/request')
 const mime = require('mime-types')
 
-const createSession = async (url, headers, contact) => {
+const createSession = async (url, headers, contact, segments) => {
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })
 
   if (response.status !== 201) {
@@ -19,19 +20,35 @@ const createSession = async (url, headers, contact) => {
       contact: contact._id,
     })
 
-    await updateContact(url, headers, contact, response.data.data.session_id)
+    await updateContact(url, headers, contact, response.data.data.session_id, segments)
 
     return room
   }
 }
 
-const updateContact = async (url, headers, contact, room) => {
+const updateContact = async (url, headers, contact, room, segments) => {
   const body = {
     nickname: `${contact.name} - ${contact.number} - WhatsApp`,
     email: contact.email ? `${contact.email}` : `${contact.number}${contact.type}`,
     phone: contact.number,
   }
+
+  if (segments) {
+    body.segments = segments.split(',')
+  }
+
   await request.patch(`https://api.crisp.chat/v1/website/${url}/conversation/${room}/meta`, {
+    headers,
+    body,
+  })
+}
+
+const updateSegments = async (url, headers, segments, room) => {
+  const body = {
+    segments: segments.split(','),
+  }
+
+  await request.patch(`https://api.crisp.chat/v1/website/${url}/conversation/${room.roomId}/meta`, {
     headers,
     body,
   })
@@ -137,27 +154,54 @@ class Crisp {
         responseBody.data.type === 'file' ||
         responseBody.data.type === 'audio'
       ) {
-        const messageToSend = new Message({
-          number: uuidv4(),
-          kind: 'text',
-          licensee: this.licensee._id,
-          contact: contact._id,
-          room: room._id,
-          destination: 'to-messenger',
-        })
-
         if (responseBody.data.type === 'text') {
-          const text = responseBody.data.content
-          messageToSend.text = text ? emoji.replace(text) : ''
-        }
+          const text = responseBody.data.content ? emoji.replace(responseBody.data.content) : ''
 
-        if (responseBody.data.type === 'file' || responseBody.data.type === 'audio') {
+          const triggers = await Trigger.find({ expression: text, licensee: this.licensee._id }).sort({ order: 'asc' })
+          if (triggers.length > 0) {
+            for (const trigger of triggers) {
+              const messageToSend = new Message({
+                number: uuidv4(),
+                kind: 'interactive',
+                text,
+                licensee: this.licensee._id,
+                contact: contact._id,
+                room: room._id,
+                destination: 'to-messenger',
+                trigger: trigger._id,
+              })
+
+              processedMessages.push(await messageToSend.save())
+            }
+          } else {
+            const messageToSend = new Message({
+              number: uuidv4(),
+              kind: 'text',
+              text,
+              licensee: this.licensee._id,
+              contact: contact._id,
+              room: room._id,
+              destination: 'to-messenger',
+            })
+
+            processedMessages.push(await messageToSend.save())
+          }
+        } else if (responseBody.data.type === 'file' || responseBody.data.type === 'audio') {
+          const messageToSend = new Message({
+            number: uuidv4(),
+            kind: 'text',
+            licensee: this.licensee._id,
+            contact: contact._id,
+            room: room._id,
+            destination: 'to-messenger',
+          })
+
           messageToSend.kind = 'file'
           messageToSend.fileName = responseBody.data.content.name
           messageToSend.url = responseBody.data.content.url
-        }
 
-        processedMessages.push(await messageToSend.save())
+          processedMessages.push(await messageToSend.save())
+        }
       } else {
         return []
       }
@@ -184,9 +228,13 @@ class Crisp {
     let room = openRoom
 
     if (!room) {
-      room = await createSession(url, headers, messageToSend.contact)
+      room = await createSession(url, headers, messageToSend.contact, messageToSend.departament)
       if (!room) {
         return
+      }
+    } else {
+      if (messageToSend.departament) {
+        await updateSegments(url, headers, messageToSend.departament, room)
       }
     }
 
@@ -206,10 +254,6 @@ class Crisp {
     const message = await Message.findById(messageId).populate('contact').populate('licensee').populate('room')
     const licensee = message.licensee
     const contact = await Contact.findById(message.contact._id)
-    const room = await Room.findById(message.room._id)
-
-    room.closed = true
-    await room.save()
 
     if (licensee.useChatbot) {
       contact.talkingWithChatBot = true

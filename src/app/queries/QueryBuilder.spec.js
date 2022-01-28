@@ -44,4 +44,46 @@ describe('QueryBuilder', () => {
       })
     })
   })
+
+  describe('filterByExpression', () => {
+    describe('when filter fields is an array', () => {
+      it('should return a query filtered by all fields', () => {
+        const query = new QueryBuilder(Message)
+        query.filterByExpression(['name', 'email'], 'alan')
+
+        expect(query.getQuery()._conditions).toEqual({ $or: [{ name: /alan/i }, { email: /alan/i }] })
+      })
+
+      describe('when value has a blank space', () => {
+        it('should return a query filtered by all fields and all values', () => {
+          const query = new QueryBuilder(Message)
+          query.filterByExpression(['name', 'email'], 'alan facc')
+
+          expect(query.getQuery()._conditions).toEqual({
+            $or: [{ name: /alan/i }, { name: /facc/i }, { email: /alan/i }, { email: /facc/i }],
+          })
+        })
+      })
+    })
+
+    describe('when filter field has a one string', () => {
+      it('should return a query filtered by field', () => {
+        const query = new QueryBuilder(Message)
+        query.filterByExpression('name', 'alan')
+
+        expect(query.getQuery()._conditions).toEqual({ name: /alan/i })
+      })
+
+      describe('when value has a blank space', () => {
+        it('should return a query filtered by field and all values', () => {
+          const query = new QueryBuilder(Message)
+          query.filterByExpression('name', 'alan facc')
+
+          expect(query.getQuery()._conditions).toEqual({
+            $or: [{ name: /alan/i }, { name: /facc/i }],
+          })
+        })
+      })
+    })
+  })
 })

@@ -1,11 +1,15 @@
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
-const NormalizePhone = require('../../helpers/NormalizePhone')
+const Trigger = require('@models/Trigger')
+const Cart = require('@models/Cart')
+const NormalizePhone = require('@helpers/NormalizePhone')
 const { v4: uuidv4 } = require('uuid')
 const S3 = require('../storage/S3')
 const request = require('../../services/request')
-const files = require('../../helpers/Files')
+const files = require('@helpers/Files')
 const mime = require('mime-types')
+const cartFactory = require('../../plugins/carts/factory')
+const parseText = require('@helpers/ParseTriggerText')
 
 const getMediaURL = async (licensee, mediaId, contact) => {
   const response = await downloadMedia(mediaId, licensee.whatsappToken)
@@ -56,6 +60,8 @@ class Dialog {
   action(messageDestination) {
     if (messageDestination === 'to-chat') {
       return 'send-message-to-chat'
+    } else if (messageDestination === 'to-messenger') {
+      return 'send-message-to-messenger'
     } else {
       return 'send-message-to-chatbot'
     }
@@ -82,6 +88,8 @@ class Dialog {
 
     if (!responseBody.messages) return []
 
+    const processedMessages = []
+
     const chatId = responseBody.messages[0].from
     const normalizePhone = new NormalizePhone(chatId)
     let contact = await Contact.findOne({
@@ -101,7 +109,10 @@ class Dialog {
       })
       await contact.save()
     } else {
-      if (contact.name !== responseBody.contacts[0].profile.name || contact.waId !== responseBody.contacts[0].wa_id) {
+      if (
+        (responseBody.contacts[0].profile.name && contact.name !== responseBody.contacts[0].profile.name) ||
+        (responseBody.contacts[0].wa_id && contact.waId !== responseBody.contacts[0].wa_id)
+      ) {
         contact.name = responseBody.contacts[0].profile.name
         contact.waId = responseBody.contacts[0].wa_id
         contact.talkingWithChatBot = this.licensee.useChatbot
@@ -109,40 +120,104 @@ class Dialog {
       }
     }
 
-    const messageToSend = new Message({
-      number: uuidv4(),
-      messageWaId: responseBody.messages[0].id,
-      licensee: this.licensee._id,
-      contact: contact._id,
-      destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
-    })
+    if (responseBody.messages[0].type === 'interactive') {
+      const expression = responseBody.messages[0].interactive.list_reply
+        ? responseBody.messages[0].interactive.list_reply.id
+        : responseBody.messages[0].interactive.button_reply.id
 
-    if (responseBody.messages[0].type === 'text') {
-      messageToSend.kind = 'text'
-      messageToSend.text = responseBody.messages[0].text.body
+      const triggers = await Trigger.find({ expression, licensee: this.licensee._id }).sort({ order: 'asc' })
+      if (triggers.length > 0) {
+        for (const trigger of triggers) {
+          const messageToSend = new Message({
+            number: uuidv4(),
+            messageWaId: responseBody.messages[0].id,
+            licensee: this.licensee._id,
+            contact: contact._id,
+            destination: 'to-messenger',
+            kind: 'interactive',
+            trigger: trigger._id,
+          })
+
+          processedMessages.push(await messageToSend.save())
+        }
+      } else {
+        const messageToSend = new Message({
+          number: uuidv4(),
+          messageWaId: responseBody.messages[0].id,
+          licensee: this.licensee._id,
+          contact: contact._id,
+          destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
+          text: expression,
+        })
+
+        processedMessages.push(await messageToSend.save())
+      }
     } else {
-      if (responseBody.messages[0].type === 'image') {
-        messageToSend.attachmentWaId = responseBody.messages[0].image.id
-        messageToSend.fileName = responseBody.messages[0].image.sha256
-      } else if (responseBody.messages[0].type === 'video') {
-        messageToSend.attachmentWaId = responseBody.messages[0].video.id
-        messageToSend.fileName = responseBody.messages[0].video.sha256
-      } else if (responseBody.messages[0].type === 'voice') {
-        messageToSend.attachmentWaId = responseBody.messages[0].voice.id
-        messageToSend.fileName = responseBody.messages[0].voice.sha256
-      } else if (responseBody.messages[0].type === 'audio') {
-        messageToSend.attachmentWaId = responseBody.messages[0].audio.id
-        messageToSend.fileName = responseBody.messages[0].audio.sha256
-      } else if (responseBody.messages[0].type === 'document') {
-        messageToSend.attachmentWaId = responseBody.messages[0].document.id
-        messageToSend.fileName = responseBody.messages[0].document.filename
+      const messageToSend = new Message({
+        number: uuidv4(),
+        messageWaId: responseBody.messages[0].id,
+        licensee: this.licensee._id,
+        contact: contact._id,
+        destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
+      })
+
+      if (responseBody.messages[0].type === 'text') {
+        messageToSend.kind = 'text'
+        messageToSend.text = responseBody.messages[0].text.body
+      } else if (responseBody.messages[0].type === 'order') {
+        let cart = await Cart.findOne({ contact, concluded: false })
+        if (!cart) {
+          cart = new Cart({
+            licensee: this.licensee._id,
+            contact: contact._id,
+          })
+        }
+
+        const products = []
+        for (const item of responseBody.messages[0].order.product_items) {
+          products.push({
+            unit_price: item.item_price,
+            product_retailer_id: item.product_retailer_id,
+            quantity: item.quantity,
+          })
+        }
+
+        cart.delivery_tax = 0
+        cart.catalog = responseBody.messages[0].order.catalog_id
+        cart.note = responseBody.messages[0].order.text
+        cart.products = products
+
+        await cart.save()
+
+        messageToSend.kind = 'cart'
+        messageToSend.cart = cart._id
+        messageToSend.destination = 'to-chatbot'
+      } else {
+        if (responseBody.messages[0].type === 'image') {
+          messageToSend.attachmentWaId = responseBody.messages[0].image.id
+          messageToSend.fileName = responseBody.messages[0].image.sha256
+        } else if (responseBody.messages[0].type === 'video') {
+          messageToSend.attachmentWaId = responseBody.messages[0].video.id
+          messageToSend.fileName = responseBody.messages[0].video.sha256
+        } else if (responseBody.messages[0].type === 'voice') {
+          messageToSend.attachmentWaId = responseBody.messages[0].voice.id
+          messageToSend.fileName = responseBody.messages[0].voice.sha256
+        } else if (responseBody.messages[0].type === 'audio') {
+          messageToSend.attachmentWaId = responseBody.messages[0].audio.id
+          messageToSend.fileName = responseBody.messages[0].audio.sha256
+        } else if (responseBody.messages[0].type === 'document') {
+          messageToSend.attachmentWaId = responseBody.messages[0].document.id
+          messageToSend.fileName = responseBody.messages[0].document.filename
+        }
+
+        messageToSend.kind = 'file'
+        messageToSend.url = await getMediaURL(this.licensee, messageToSend.attachmentWaId, contact)
       }
 
-      messageToSend.kind = 'file'
-      messageToSend.url = await getMediaURL(this.licensee, messageToSend.attachmentWaId, contact)
+      processedMessages.push(await messageToSend.save())
     }
 
-    return [await messageToSend.save()]
+    return processedMessages
   }
 
   async sendMessage(messageId, url, token) {
@@ -161,6 +236,36 @@ class Dialog {
         messageBody.type = 'text'
         messageBody.text = {
           body: messageToSend.text,
+        }
+      }
+
+      if (messageToSend.kind === 'interactive') {
+        const trigger = await Trigger.findById(messageToSend.trigger)
+        if (trigger) {
+          messageBody.type = 'interactive'
+          if (trigger.triggerKind === 'multi_product') {
+            messageBody.interactive = JSON.parse(trigger.catalogMulti)
+          }
+          if (trigger.triggerKind === 'single_product') {
+            messageBody.interactive = JSON.parse(trigger.catalogSingle)
+          }
+          if (trigger.triggerKind === 'reply_button') {
+            messageBody.interactive = JSON.parse(trigger.textReplyButton)
+          }
+          if (trigger.triggerKind === 'list_message') {
+            messageBody.interactive = JSON.parse(trigger.messagesList)
+          }
+          if (trigger.triggerKind === 'text') {
+            messageBody.type = 'text'
+            messageBody.text = {
+              body: await parseText(trigger.text, messageToSend.contact),
+            }
+          }
+        } else {
+          messageBody.type = 'text'
+          messageBody.text = {
+            body: messageToSend.text,
+          }
         }
       }
 
@@ -194,6 +299,16 @@ class Dialog {
         messageBody.location = {
           longitude: messageToSend.longitude,
           latitude: messageToSend.latitude,
+        }
+      }
+
+      if (messageToSend.kind === 'cart') {
+        const cartPlugin = cartFactory(this.licensee)
+        const cartTransformed = await cartPlugin.transformCart(this.licensee, messageToSend.cart)
+
+        messageBody.type = 'text'
+        messageBody.text = {
+          body: JSON.stringify(cartTransformed),
         }
       }
 

@@ -1,16 +1,17 @@
-import LicenseeNew from ".";
+import LicenseeNew from '.'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
-import { createLicensee } from '../services/licensee'
+import { createLicensee } from '../../../../services/licensee'
 
-jest.mock('../services/licensee')
+jest.mock('../../../../services/licensee')
 
 describe('<LicenseeNew />', () => {
   function mount() {
     render(
       <MemoryRouter>
         <LicenseeNew />
-      </MemoryRouter>)
+      </MemoryRouter>
+    )
   }
 
   it('creates a new licensee when the backend returns success', async () => {
@@ -43,6 +44,9 @@ describe('<LicenseeNew />', () => {
       awsId: '',
       awsSecret: '',
       bucketName: '',
+      cartDefault: '',
+      unidadeId: '',
+      statusId: '',
     }))
   })
 

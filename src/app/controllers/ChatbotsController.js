@@ -21,6 +21,14 @@ class ChatbotsController {
 
     res.status(200).send({ body: 'Solicitação de transferência do chatbot para a plataforma de chat agendado' })
   }
+
+  async reset(_, res) {
+    console.info('Agendando para resetar chatbots abandonados')
+
+    await queueServer.addJob('reset-chatbots', {})
+
+    res.status(200).send({ body: 'Solicitação para resetar os chatbots abandonados agendado' })
+  }
 }
 
 module.exports = ChatbotsController

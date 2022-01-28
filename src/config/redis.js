@@ -8,12 +8,19 @@ const createRedis = function () {
       tls: {
         rejectUnauthorized: false,
       },
+      enableReadyCheck: false,
+      maxRetriesPerRequest: null,
     })
   } else {
-    return new Redis(REDIS_URL)
+    return new Redis(REDIS_URL, {
+      enableReadyCheck: false,
+      maxRetriesPerRequest: null,
+    })
   }
 }
 
 const redisConnection = createRedis()
+
+redisConnection.setMaxListeners(redisConnection.getMaxListeners() + 1)
 
 module.exports = { redisConnection }

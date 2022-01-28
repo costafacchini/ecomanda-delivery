@@ -2,21 +2,29 @@ const Jivochat = require('./Jivochat')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Licensee = require('@models/Licensee')
+const Trigger = require('@models/Trigger')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
 const emoji = require('../../helpers/Emoji')
+const { licensee: licenseeFactory } = require('@factories/licensee')
+const { contact: contactFactory } = require('@factories/contact')
+const { message: messageFactory } = require('@factories/message')
+const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
 describe('Jivochat plugin', () => {
+  let licensee
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
   const emojiReplaceSpy = jest.spyOn(emoji, 'replace')
 
   beforeEach(async () => {
+    await mongoServer.connect()
     jest.clearAllMocks()
     fetchMock.reset()
-    await mongoServer.connect()
+
+    licensee = await Licensee.create(licenseeFactory.build())
   })
 
   afterEach(async () => {
@@ -25,22 +33,20 @@ describe('Jivochat plugin', () => {
 
   describe('#responseToMessages', () => {
     it('returns the response body transformed in messages', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-      const contact = await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: true,
-        licensee: licensee,
-      })
+      const contact = await Contact.create(
+        contactFactory.build({
+          name: 'John Doe',
+          talkingWithChatBot: true,
+          licensee,
+        })
+      )
 
       const responseBody = {
         sender: {
           name: 'Mary Jane',
         },
         recipient: {
-          id: '5593165392832@c.us',
+          id: '5511990283745@c.us',
         },
         message: {
           type: 'text',
@@ -72,8 +78,6 @@ describe('Jivochat plugin', () => {
     })
 
     it('return the empty data if body is blank', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const responseBody = {}
 
       const jivochat = new Jivochat(licensee)
@@ -83,14 +87,12 @@ describe('Jivochat plugin', () => {
     })
 
     it('return the empty data if body does not have a message', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const responseBody = {
         sender: {
           name: 'Mary Jane',
         },
         recipient: {
-          id: '5593165392832@c.us',
+          id: '5511990283745@c.us',
         },
       }
 
@@ -101,8 +103,6 @@ describe('Jivochat plugin', () => {
     })
 
     it('return the empty data if body does not have a recipient', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const responseBody = {
         sender: {
           name: 'Mary Jane',
@@ -121,14 +121,12 @@ describe('Jivochat plugin', () => {
     })
 
     it('return the empty data if type is typein', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const responseBody = {
         sender: {
           name: 'Mary Jane',
         },
         recipient: {
-          id: '5593165392832@c.us',
+          id: '5511990283745@c.us',
         },
         message: {
           type: 'typein',
@@ -144,14 +142,12 @@ describe('Jivochat plugin', () => {
     })
 
     it('return the empty data if type is typeout', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const responseBody = {
         sender: {
           name: 'Mary Jane',
         },
         recipient: {
-          id: '5593165392832@c.us',
+          id: '5511990283745@c.us',
         },
         message: {
           type: 'typeout',
@@ -167,14 +163,12 @@ describe('Jivochat plugin', () => {
     })
 
     it('return the empty data if type is stop', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
       const responseBody = {
         sender: {
           name: 'Mary Jane',
         },
         recipient: {
-          id: '5593165392832@c.us',
+          id: '5511990283745@c.us',
         },
         message: {
           type: 'stop',
@@ -191,22 +185,20 @@ describe('Jivochat plugin', () => {
 
     describe('message types', () => {
       it('returns messages with file data if it is file', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
+        await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            licensee,
+          })
+        )
 
         const responseBody = {
           sender: {
             name: 'Mary Jane',
           },
           recipient: {
-            id: '5593165392832@c.us',
+            id: '5511990283745@c.us',
           },
           message: {
             type: 'video',
@@ -227,22 +219,20 @@ describe('Jivochat plugin', () => {
       })
 
       it('returns messages with coordinates data if it is location', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
-        await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
+        await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            licensee,
+          })
+        )
 
         const responseBody = {
           sender: {
             name: 'Mary Jane',
           },
           recipient: {
-            id: '5593165392832@c.us',
+            id: '5511990283745@c.us',
           },
           message: {
             type: 'location',
@@ -263,14 +253,12 @@ describe('Jivochat plugin', () => {
       })
 
       it('logs the info and return empty data if kind is unknown', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
         const responseBody = {
           sender: {
             name: 'Mary Jane',
           },
           recipient: {
-            id: '5593165392832@c.us',
+            id: '5511990283745@c.us',
           },
           message: {
             type: 'any',
@@ -286,38 +274,96 @@ describe('Jivochat plugin', () => {
 
         expect(message).toEqual([])
       })
+
+      it('returns messages with interactive data if it is text with trigger expression', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            licensee,
+          })
+        )
+
+        const triggerOrder2 = await Trigger.create(triggerReplyButtonFactory.build({ licensee, order: 2 }))
+        const trigger = await Trigger.create(triggerReplyButtonFactory.build({ licensee }))
+
+        const responseBody = {
+          sender: {
+            name: 'Mary Jane',
+          },
+          recipient: {
+            id: '5511990283745@c.us',
+          },
+          message: {
+            type: 'text',
+            id: 'jivo_message_id',
+            text: 'send_reply_buttons',
+          },
+        }
+
+        const jivochat = new Jivochat(licensee)
+        const messages = await jivochat.responseToMessages(responseBody)
+
+        expect(messages[0]).toBeInstanceOf(Message)
+        expect(messages[0].licensee).toEqual(licensee._id)
+        expect(messages[0].contact).toEqual(contact._id)
+        expect(messages[0].kind).toEqual('interactive')
+        expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+        expect(messages[0].destination).toEqual('to-messenger')
+        expect(messages[0].text).toEqual('send_reply_buttons')
+        expect(messages[0].trigger).toEqual(trigger._id)
+        expect(messages[0].url).toEqual(undefined)
+        expect(messages[0].fileName).toEqual(undefined)
+        expect(messages[0].latitude).toEqual(undefined)
+        expect(messages[0].longitude).toEqual(undefined)
+        expect(messages[0].departament).toEqual(undefined)
+
+        expect(messages[1]).toBeInstanceOf(Message)
+        expect(messages[1].licensee).toEqual(licensee._id)
+        expect(messages[1].contact).toEqual(contact._id)
+        expect(messages[1].kind).toEqual('interactive')
+        expect(messages[1].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+        expect(messages[1].destination).toEqual('to-messenger')
+        expect(messages[1].text).toEqual('send_reply_buttons')
+        expect(messages[1].trigger).toEqual(triggerOrder2._id)
+        expect(messages[1].url).toEqual(undefined)
+        expect(messages[1].fileName).toEqual(undefined)
+        expect(messages[1].latitude).toEqual(undefined)
+        expect(messages[1].longitude).toEqual(undefined)
+        expect(messages[1].departament).toEqual(undefined)
+
+        expect(messages.length).toEqual(2)
+      })
     })
   })
 
   describe('#sendMessage', () => {
     describe('when response status is 200', () => {
       it('marks the message with sended', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            email: 'john@doe.com',
+            licensee,
+          })
+        )
 
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          email: 'john@doe.com',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-chatbot',
-          sended: false,
-        })
+        const message = await Message.create(
+          messageFactory.build({
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
 
         const expectedBody = {
           sender: {
-            id: '5593165392832@c.us',
+            id: '5511990283745@c.us',
             name: 'John Doe',
             email: 'john@doe.com',
-            phone: '5593165392832',
+            phone: '5511990283745',
           },
           message: {
             id: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
@@ -344,33 +390,31 @@ describe('Jivochat plugin', () => {
       })
 
       it('logs the success message', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            email: 'john@doe.com',
+            licensee,
+          })
+        )
 
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          talkingWithChatBot: true,
-          email: 'john@doe.com',
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-chatbot',
-          sended: false,
-        })
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
 
         const expectedBody = {
           sender: {
-            id: '5593165392832@c.us',
+            id: '5511990283745@c.us',
             name: 'John Doe',
             email: 'john@doe.com',
-            phone: '5593165392832',
+            phone: '5511990283745',
           },
           message: {
             id: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
@@ -399,26 +443,24 @@ describe('Jivochat plugin', () => {
 
       describe('when message is for group', () => {
         it('send message formatted to group', async () => {
-          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
           const contact = await Contact.create({
             name: 'Grupo Teste',
             number: '5511989187726-1622497000@g.us',
             type: '@g.us',
-            email: 'john@doe.com',
             talkingWithChatBot: true,
+            email: 'john@doe.com',
             licensee: licensee,
           })
 
-          const message = await Message.create({
-            text: 'Message to send',
-            number: 'jhd7879a7d9',
-            contact: contact,
-            licensee: licensee,
-            destination: 'to-chatbot',
-            senderName: 'John Doe',
-            sended: false,
-          })
+          const message = await Message.create(
+            messageFactory.build({
+              text: 'Message to send',
+              contact,
+              licensee,
+              sended: false,
+              senderName: 'John Doe',
+            })
+          )
 
           const expectedBody = {
             sender: {
@@ -454,33 +496,31 @@ describe('Jivochat plugin', () => {
 
     describe('when response is not 200', () => {
       it('logs the error message and save error on message', async () => {
-        const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            email: 'john@doe.com',
+            licensee,
+          })
+        )
 
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832',
-          type: '@c.us',
-          email: 'john@doe.com',
-          talkingWithChatBot: true,
-          licensee: licensee,
-        })
-
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-chatbot',
-          sended: false,
-        })
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
 
         const expectedBody = {
           sender: {
-            id: '5593165392832@c.us',
+            id: '5511990283745@c.us',
             name: 'John Doe',
             email: 'john@doe.com',
-            phone: '5593165392832',
+            phone: '5511990283745',
           },
           message: {
             id: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
@@ -520,35 +560,33 @@ describe('Jivochat plugin', () => {
     describe('message types', () => {
       describe('when message is location', () => {
         it('sends the message with location', async () => {
-          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              talkingWithChatBot: true,
+              email: 'john@doe.com',
+              licensee,
+            })
+          )
 
-          const contact = await Contact.create({
-            name: 'John Doe',
-            number: '5593165392832',
-            type: '@c.us',
-            email: 'john@doe.com',
-            talkingWithChatBot: true,
-            licensee: licensee,
-          })
-
-          const message = await Message.create({
-            text: 'Message to send',
-            number: 'jhd7879a7d9',
-            contact: contact,
-            licensee: licensee,
-            destination: 'to-chatbot',
-            kind: 'location',
-            latitude: 10.2,
-            longitude: 123.45,
-            sended: false,
-          })
+          const message = await Message.create(
+            messageFactory.build({
+              text: 'Message to send',
+              contact,
+              licensee,
+              sended: false,
+              kind: 'location',
+              latitude: 10.2,
+              longitude: 123.45,
+            })
+          )
 
           const expectedBody = {
             sender: {
-              id: '5593165392832@c.us',
+              id: '5511990283745@c.us',
               name: 'John Doe',
               email: 'john@doe.com',
-              phone: '5593165392832',
+              phone: '5511990283745',
             },
             message: {
               id: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
@@ -573,32 +611,30 @@ describe('Jivochat plugin', () => {
 
       describe('when message is text', () => {
         it('sends the message with text', async () => {
-          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              talkingWithChatBot: true,
+              email: 'john@doe.com',
+              licensee,
+            })
+          )
 
-          const contact = await Contact.create({
-            name: 'John Doe',
-            number: '5593165392832',
-            type: '@c.us',
-            email: 'john@doe.com',
-            talkingWithChatBot: true,
-            licensee: licensee,
-          })
-
-          const message = await Message.create({
-            text: 'Message to send',
-            number: 'jhd7879a7d9',
-            contact: contact,
-            licensee: licensee,
-            destination: 'to-chatbot',
-            sended: false,
-          })
+          const message = await Message.create(
+            messageFactory.build({
+              text: 'Message to send',
+              contact,
+              licensee,
+              sended: false,
+            })
+          )
 
           const expectedBody = {
             sender: {
-              id: '5593165392832@c.us',
+              id: '5511990283745@c.us',
               name: 'John Doe',
               email: 'john@doe.com',
-              phone: '5593165392832',
+              phone: '5511990283745',
             },
             message: {
               id: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
@@ -624,35 +660,33 @@ describe('Jivochat plugin', () => {
 
       describe('when message is file', () => {
         it('sends the message with file', async () => {
-          const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              talkingWithChatBot: true,
+              email: 'john@doe.com',
+              licensee,
+            })
+          )
 
-          const contact = await Contact.create({
-            name: 'John Doe',
-            number: '5593165392832',
-            type: '@c.us',
-            email: 'john@doe.com',
-            talkingWithChatBot: true,
-            licensee: licensee,
-          })
-
-          const message = await Message.create({
-            text: 'Message to send',
-            number: 'jhd7879a7d9',
-            contact: contact,
-            licensee: licensee,
-            destination: 'to-chatbot',
-            kind: 'file',
-            url: 'https://message.with.file.com/file.txt',
-            fileName: 'file.txt',
-            sended: false,
-          })
+          const message = await Message.create(
+            messageFactory.build({
+              text: 'Message to send',
+              contact,
+              licensee,
+              sended: false,
+              kind: 'file',
+              url: 'https://message.with.file.com/file.txt',
+              fileName: 'file.txt',
+            })
+          )
 
           const expectedBody = {
             sender: {
-              id: '5593165392832@c.us',
+              id: '5511990283745@c.us',
               name: 'John Doe',
               email: 'john@doe.com',
-              phone: '5593165392832',
+              phone: '5511990283745',
             },
             message: {
               id: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
@@ -682,25 +716,23 @@ describe('Jivochat plugin', () => {
   describe('#transfer', () => {
     it('changes the talking with chatbot in contact to false', async () => {
       jest.spyOn(Jivochat.prototype, 'sendMessage').mockImplementation()
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+      const contact = await Contact.create(
+        contactFactory.build({
+          name: 'John Doe',
+          talkingWithChatBot: true,
+          licensee,
+        })
+      )
 
-      const contact = await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: true,
-        licensee: licensee,
-      })
-
-      const message = await Message.create({
-        _id: '60958703f415ed4008748637',
-        text: 'Message to send',
-        number: 'jhd7879a7d9',
-        contact: contact,
-        licensee: licensee,
-        destination: 'to-chatbot',
-        sended: false,
-      })
+      const message = await Message.create(
+        messageFactory.build({
+          _id: '60958703f415ed4008748637',
+          text: 'Message to send',
+          contact,
+          licensee,
+          sended: false,
+        })
+      )
 
       expect(contact.talkingWithChatBot).toEqual(true)
 
@@ -713,25 +745,23 @@ describe('Jivochat plugin', () => {
 
     it('sends message to chat', async () => {
       const sendMessageSpy = jest.spyOn(Jivochat.prototype, 'sendMessage').mockImplementation()
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
+      const contact = await Contact.create(
+        contactFactory.build({
+          name: 'John Doe',
+          talkingWithChatBot: true,
+          licensee,
+        })
+      )
 
-      const contact = await Contact.create({
-        name: 'John Doe',
-        number: '5593165392832@c.us',
-        type: '@c.us',
-        talkingWithChatBot: true,
-        licensee: licensee,
-      })
-
-      const message = await Message.create({
-        _id: '60958703f415ed4008748637',
-        text: 'Message to send',
-        number: 'jhd7879a7d9',
-        contact: contact,
-        licensee: licensee,
-        destination: 'to-chatbot',
-        sended: false,
-      })
+      const message = await Message.create(
+        messageFactory.build({
+          _id: '60958703f415ed4008748637',
+          text: 'Message to send',
+          contact,
+          licensee,
+          sended: false,
+        })
+      )
 
       const jivochat = new Jivochat(licensee)
       await jivochat.transfer(message._id.toString(), 'url')
@@ -744,34 +774,34 @@ describe('Jivochat plugin', () => {
   describe('#closeChat', () => {
     describe('when the licensee use chatbot', () => {
       it('changes the talking with chatbot in contact to true', async () => {
-        const licensee = await Licensee.create({
-          name: 'Alcateia Ltds',
-          active: true,
-          licenseKind: 'demo',
-          useChatbot: true,
-          chatbotDefault: 'landbot',
-          chatbotUrl: 'https://url.com',
-          chatbotAuthorizationToken: 'token',
-        })
+        const licensee = await Licensee.create(
+          licenseeFactory.build({
+            useChatbot: true,
+            chatbotDefault: 'landbot',
+            chatbotUrl: 'https://url.com',
+            chatbotAuthorizationToken: 'token',
+          })
+        )
 
-        const contact = await Contact.create({
-          name: 'John Doe',
-          number: '5593165392832@c.us',
-          type: '@c.us',
-          talkingWithChatBot: false,
-          licensee: licensee,
-          roomId: 'ka3DiV9CuHD765',
-        })
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            email: 'john@doe.com',
+            roomId: 'ka3DiV9CuHD765',
+            licensee,
+          })
+        )
 
-        const message = await Message.create({
-          _id: '60958703f415ed4008748637',
-          text: 'Message to send',
-          number: 'jhd7879a7d9',
-          contact: contact,
-          licensee: licensee,
-          destination: 'to-chatbot',
-          sended: false,
-        })
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
 
         expect(contact.talkingWithChatBot).toEqual(false)
 
@@ -785,9 +815,7 @@ describe('Jivochat plugin', () => {
   })
 
   describe('#action', () => {
-    it('returns "close-chat" if message is "Chat encerrado pelo agente"', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
+    it('returns "close-chat" if message is "Chat encerrado pelo agente"', () => {
       const responseBody = {
         message: {
           text: 'Chat encerrado pelo agente',
@@ -798,9 +826,7 @@ describe('Jivochat plugin', () => {
       expect(jivochat.action(responseBody)).toEqual('close-chat')
     })
 
-    it('returns "close-chat" if message is "Chat closed by agent"', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
+    it('returns "close-chat" if message is "Chat closed by agent"', () => {
       const responseBody = {
         message: {
           text: 'Chat closed by agent',
@@ -811,9 +837,7 @@ describe('Jivochat plugin', () => {
       expect(jivochat.action(responseBody)).toEqual('close-chat')
     })
 
-    it('returns "send-message-to-messenger" if message is not "Chat closed by agent" and "Chat closed by agent"', async () => {
-      const licensee = await Licensee.create({ name: 'Alcateia Ltds', active: true, licenseKind: 'demo' })
-
+    it('returns "send-message-to-messenger" if message is not "Chat closed by agent" and "Chat closed by agent"', () => {
       const responseBody = {
         message: {
           text: 'Message',
