@@ -6,6 +6,7 @@ const Message = require('@models/Message')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
+const moment = require('moment-timezone')
 
 describe('BillingQuery', () => {
   beforeEach(async () => {
@@ -17,106 +18,130 @@ describe('BillingQuery', () => {
   })
 
   it('returns the billed data for licensees', async () => {
-    const licensee1 = await Licensee.create(licenseeFactory.build({ createdAt: new Date(2020, 1, 1, 0, 0, 0) }))
+    const licensee1 = await Licensee.create(licenseeFactory.build({ createdAt: '2020-01-01T00:00:00-03:00' }))
     const contact1 = await Contact.create(contactFactory.build({ licensee: licensee1 }))
     await Message.create(
       messageFactory.build({
         contact: contact1,
         licensee: licensee1,
-        createdAt: new Date(2021, 11, 30, 0, 0, 0),
+        createdAt: '2020-11-30T00:00:00-03:00',
       })
     )
     await Message.create(
       messageFactory.build({
         contact: contact1,
         licensee: licensee1,
-        createdAt: new Date(2021, 12, 1, 0, 0, 0),
+        createdAt: '2021-12-01T00:00:00-03:00',
       })
     )
     await Message.create(
       messageFactory.build({
         contact: contact1,
         licensee: licensee1,
-        createdAt: new Date(2021, 12, 31, 0, 0, 0),
+        createdAt: '2021-12-31T00:00:00-03:00',
       })
     )
     await Message.create(
       messageFactory.build({
         contact: contact1,
         licensee: licensee1,
-        createdAt: new Date(2022, 1, 1, 0, 0, 0),
+        createdAt: '2022-01-01T00:00:00-03:00',
       })
     )
     await Message.create(
       messageFactory.build({
         contact: contact1,
         licensee: licensee1,
-        createdAt: new Date(2022, 1, 31, 0, 0, 0),
+        createdAt: '2022-01-31T00:00:00-03:00',
       })
     )
     await Message.create(
       messageFactory.build({
         contact: contact1,
         licensee: licensee1,
-        createdAt: new Date(2022, 2, 1, 0, 0, 0),
+        createdAt: '2022-02-01T00:00:00-03:00',
       })
     )
 
-    const licensee2 = await Licensee.create(licenseeFactory.build({ createdAt: new Date(2022, 1, 1, 0, 0, 0) }))
+    const licensee2 = await Licensee.create(licenseeFactory.build({ createdAt: '2022-01-01T00:00:00-03:00' }))
     const contact2 = await Contact.create(contactFactory.build({ licensee: licensee2 }))
     await Message.create(
       messageFactory.build({
         contact: contact2,
         licensee: licensee2,
-        createdAt: new Date(2022, 1, 1, 0, 0, 0),
+        createdAt: '2022-01-01T00:00:00-03:00',
       })
     )
     await Message.create(
       messageFactory.build({
         contact: contact2,
         licensee: licensee2,
-        createdAt: new Date(2022, 1, 31, 0, 0, 0),
+        createdAt: '2022-01-31T00:00:00-03:00',
       })
     )
 
-    const licensee3 = await Licensee.create(licenseeFactory.build({ createdAt: new Date(2019, 1, 1, 0, 0, 0) }))
+    const licensee3 = await Licensee.create(licenseeFactory.build({ createdAt: '2019-01-01T00:00:00-03:00' }))
     const contact3 = await Contact.create(contactFactory.build({ licensee: licensee2 }))
     await Message.create(
       messageFactory.build({
         contact: contact3,
         licensee: licensee3,
-        createdAt: new Date(2019, 5, 1, 0, 0, 0),
+        createdAt: '2019-05-01T00:00:00-03:00',
       })
     )
     await Message.create(
       messageFactory.build({
         contact: contact3,
         licensee: licensee3,
-        createdAt: new Date(2019, 12, 15, 0, 0, 0),
+        createdAt: '2019-12-15T00:00:00-03:00',
       })
     )
 
-    const billingQuery = new BillingQuery(new Date(2022, 2, 10, 0, 0, 0))
+    const licensee4 = await Licensee.create(licenseeFactory.build({ createdAt: '2020-05-01T00:00:00-03:00' }))
+    const contact4 = await Contact.create(contactFactory.build({ licensee: licensee2 }))
+    await Message.create(
+      messageFactory.build({
+        contact: contact4,
+        licensee: licensee4,
+        createdAt: '2020-05-01T00:00:00-03:00',
+      })
+    )
+    await Message.create(
+      messageFactory.build({
+        contact: contact4,
+        licensee: licensee4,
+        createdAt: '2021-12-01T00:00:00-03:00',
+      })
+    )
+    await Message.create(
+      messageFactory.build({
+        contact: contact4,
+        licensee: licensee4,
+        createdAt: '2021-12-15T00:00:00-03:00',
+      })
+    )
+
+    const billingQuery = new BillingQuery(moment('2022-02-10T00:00:00Z').toDate())
     const records = await billingQuery.all()
 
-    expect(records.length).toEqual(3)
+    expect(records.length).toEqual(4)
 
     expect(records[0]).toEqual(
       expect.objectContaining({
         _id: licensee1._id,
-        createdAt: licensee1.createdAt,
-        firstMessageDate: '2021-12-01T00:00:00.000Z',
-        lastMessageDate: '2022-01-15T00:00:00.000Z',
+        createdAt: moment('2020-01-01T00:00:00-03:00').toDate(),
+        firstMessageDate: moment('2020-11-30T03:00:00.000Z').toDate(),
+        lastMessageDate: moment('2022-02-01T03:00:00.000Z').toDate(),
         billing: true,
         messages: [
           {
-            month: 12,
-            year: 2021,
+            month: '12',
+            year: '2021',
             count: 2,
           },
           {
-            month: 1,
-            year: 2022,
+            month: '01',
+            year: '2022',
             count: 2,
           },
         ],
@@ -125,19 +150,19 @@ describe('BillingQuery', () => {
     expect(records[1]).toEqual(
       expect.objectContaining({
         _id: licensee2._id,
-        createdAt: licensee2.createdAt,
-        firstMessageDate: '2022-01-01T00:00:00.000Z',
-        lastMessageDate: '2022-01-17T00:00:00.000Z',
+        createdAt: moment('2022-01-01T00:00:00-03:00').toDate(),
+        firstMessageDate: moment('2022-01-01T03:00:00.000Z').toDate(),
+        lastMessageDate: moment('2022-01-31T03:00:00.000Z').toDate(),
         billing: false,
         messages: [
           {
-            month: 12,
-            year: 2021,
+            month: '12',
+            year: '2021',
             count: 0,
           },
           {
-            month: 1,
-            year: 2022,
+            month: '01',
+            year: '2022',
             count: 2,
           },
         ],
@@ -146,84 +171,44 @@ describe('BillingQuery', () => {
     expect(records[2]).toEqual(
       expect.objectContaining({
         _id: licensee3._id,
-        createdAt: licensee3.createdAt,
-        firstMessageDate: '2019-05-01T00:00:00.000Z',
-        lastMessageDate: '2019-12-15T00:00:00.000Z',
+        createdAt: moment('2019-01-01T00:00:00-03:00').toDate(),
+        firstMessageDate: moment('2019-05-01T03:00:00.000Z').toDate(),
+        lastMessageDate: moment('2019-12-15T03:00:00.000Z').toDate(),
         billing: false,
         messages: [
           {
-            month: 12,
-            year: 2021,
+            month: '12',
+            year: '2021',
             count: 0,
           },
           {
-            month: 1,
-            year: 2022,
+            month: '01',
+            year: '2022',
             count: 0,
           },
         ],
       })
     )
-
-    //  [
-    //    {
-    //      _id: 23434n78y286,
-    //      creationDate: '2020-01-01T00:00:00.000Z',
-    //      firstMessageDate: '2021-12-01T00:00:00.000Z',
-    //      lastMessageDate: '2022-01-15T00:00:00.000Z',
-    //      billing: true,
-    //      messages: [
-    //        {
-    //          month: 12,
-    //          year: 2021,
-    //          count: 5,
-    //        },
-    //        {
-    //          month: 1,
-    //          year: 2022,
-    //          count: 4,
-    //        }
-    //      ]
-    //    },
-    //    {
-    //      _id: 2903462jvc234,
-    //      creationDate: '2022--01T00:00:00.000Z',
-    //      firstMessageDate: '2022-01-01T00:00:00.000Z',
-    //      lastMessageDate: '2022-01-17T00:00:00.000Z',
-    //      billing: false,
-    //      messages: [
-    //        {
-    //          month: 12,
-    //          year: 2021,
-    //          count: 0,
-    //        },
-    //        {
-    //          month: 1,
-    //          year: 2022,
-    //          count: 10,
-    //        }
-    //      ]
-    //    },
-    //    {
-    //      _id: 2903462jvc234,
-    //      creationDate: '2019-01-01T00:00:00.000Z',
-    //      firstMessageDate: '2019-05-01T00:00:00.000Z',
-    //      lastMessageDate: '2019-12-15T00:00:00.000Z',
-    //      billing: false,
-    //      messages: [
-    //        {
-    //          month: 12,
-    //          year: 2021,
-    //          count: 0,
-    //        },
-    //        {
-    //          month: 1,
-    //          year: 2022,
-    //          count: 0,
-    //        }
-    //      ]
-    //    }
-    //  ]
-    //
+    expect(records[3]).toEqual(
+      expect.objectContaining({
+        _id: licensee4._id,
+        createdAt: moment('2020-05-01T00:00:00-03:00').toDate(),
+        firstMessageDate: moment('2020-05-01T03:00:00.000Z').toDate(),
+        lastMessageDate: moment('2021-12-15T03:00:00.000Z').toDate(),
+        billing: false,
+        messages: [
+          {
+            month: '12',
+            year: '2021',
+            count: 2,
+          },
+          {
+            month: '01',
+            year: '2022',
+            count: 0,
+          },
+        ],
+      })
+    )
   })
 })
