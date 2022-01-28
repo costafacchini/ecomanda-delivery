@@ -2,17 +2,14 @@ require('dotenv').config()
 
 if (process.env.NODE_ENV === 'production') require('newrelic')
 
-const app = require('./src/config/app')
-const http = require('http')
+const { server } = require('./src/config/http')
 const debug = require('debug')('ecomanda-delivery:server')
 
 const PORT = process.env.PORT || '5000'
-app.set('port', PORT)
-
-const server = http.createServer(app)
 
 server.listen(PORT)
 server.on('error', onError)
+
 server.on('listening', onListening)
 
 function onError(error) {
