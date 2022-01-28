@@ -52,6 +52,6 @@ if (process.env.ROLLBAR_ACCESS_TOKEN) {
 const server = http.createServer(app)
 
 const io = new Server(server)
-io.on('connection', (socket) => {})
+io.on('connection', () => {})
 
 module.exports = { server, io }
