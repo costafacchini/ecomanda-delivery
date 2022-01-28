@@ -6,6 +6,7 @@ import LicenseesRoutes from './Licensees/routes'
 import ContactsRoutes from './Contacts/routes'
 import TriggersRoutes from './Triggers/routes'
 import MessagesRoutes from './Messages/routes'
+import ReportsRoutes from './Reports/routes'
 import Dashboard from './Dashboard'
 import { isAuthenticated, fetchLoggedUser } from '../services/auth'
 import { loadLoggedUser } from './SignIn/slice'
@@ -66,6 +67,14 @@ function RootRoutes() {
           element={
             <PrivateRoute redirectTo='/'>
               <MessagesRoutes />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path='/reports/*'
+          element={
+            <PrivateRoute redirectTo='/'>
+              <ReportsRoutes />
             </PrivateRoute>
           }
         />
