@@ -8,6 +8,8 @@ const logger = require('morgan')
 const connect = require('./database')
 const enableCors = require('./cors')
 const routes = require('./routes')
+const http = require('http')
+const { Server } = require('socket.io')
 
 const app = express()
 
@@ -47,4 +49,9 @@ if (process.env.ROLLBAR_ACCESS_TOKEN) {
   })
 }
 
-module.exports = app
+const server = http.createServer(app)
+
+const io = new Server(server)
+io.on('connection', () => {})
+
+module.exports = { server, io }

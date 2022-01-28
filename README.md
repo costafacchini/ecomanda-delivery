@@ -20,10 +20,6 @@ In the project directory, you should run docker to prepare database:
 
 ## `docker-compose up --build`
 
-## `docker-compose run redis redis-cli -h ecomanda-delivery_redis_1`
-
-Run to connect on redis. (List all keys  KEYS * )
-
 # Available Scripts (backend)
 
 In the project directory, you can run:
@@ -47,10 +43,6 @@ Runs the tests with coverage (low).\
 ## `yarn watch`
 
 Watchs the tests without coverage.\
-
-## `yarn build`
-
-Builds the app for production.\
 
 ## `linter`
 
