@@ -29,12 +29,12 @@ export default function Navbar({ loggedUser }) {
               </li>
               {loggedUser && loggedUser.isAdmin && (
                 <li className='nav-item dropdown'>
-                  <a className='nav-link dropdown-toggle' id='navbarDropdown' role='button' data-bs-toggle='dropdown' aria-expanded='false'>
+                  <a className='nav-link dropdown-toggle' id='reports-menu' role='button' data-bs-toggle='dropdown'>
                     Relatórios
                   </a>
-                  <ul className='dropdown-menu' aria-labelledby='navbarDropdown'>
-                    <li><a className='dropdown-item' href='/#/reports/billing'>Faturamento</a></li>
-                  </ul>
+                  <div className='dropdown-menu' aria-labelledby='reports-menu'>
+                    <a className='dropdown-item' href='/#/reports/billing'>Faturamento</a>
+                  </div>
                 </li>
               )}
             </ul>

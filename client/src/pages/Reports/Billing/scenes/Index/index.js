@@ -1,12 +1,29 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
-import { fetchBilling } from './slice'
+import { loadData } from './slice'
 import styles from './styles.module.scss'
+import { io } from 'socket.io-client'
+import moment from 'moment'
+
+function totalBilling(licensees) {
+  return licensees.reduce((sum, licensee) => licensee.billing ? sum + 40 : sum, 0)
+}
 
 function BillingIndex({ licensees, dispatch }) {
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [filters, setFilters] = useState({
     reportDate: '',
   })
+
+  useEffect(() => {
+    const socket = io()
+    socket.on('send_billing_report', data => {
+      dispatch(loadData(data.data))
+      setIsSubmitting(false)
+    })
+
+    return () => socket.disconnect()
+  }, [dispatch])
 
   function handleChange({ target }) {
     setFilters({ ...filters, [target.name]: target.value })
@@ -15,19 +32,9 @@ function BillingIndex({ licensees, dispatch }) {
   function handleSubmitSearch(e) {
     e.preventDefault()
 
-    let abortController = new AbortController()
-
-    try {
-      dispatch(fetchBilling({ ...filters }))
-    } catch (error) {
-      if (error.name === 'AbortError') {
-        // Handling error thrown by aborting request
-      }
-    }
-
-    return () => {
-      abortController.abort()
-    }
+    const socket = io()
+    socket.emit('load_billing_report', filters)
+    setIsSubmitting(true)
   }
 
   return (
@@ -49,7 +56,7 @@ function BillingIndex({ licensees, dispatch }) {
 
       <div className='row justify-content-end'>
         <div className='col-1'>
-          <button type='button' className='btn btn-primary' onClick={handleSubmitSearch} >Pesquisar</button>
+          <button type='button' disabled={isSubmitting} className='btn btn-primary' onClick={handleSubmitSearch} >Pesquisar</button>
         </div>
       </div>
 
@@ -58,28 +65,35 @@ function BillingIndex({ licensees, dispatch }) {
           <thead>
             <tr>
               <th scope='col'>Licenciado</th>
+              <th scope='col'>Situação</th>
+              <th scope='col'>Embarque</th>
+              <th scope='col'>Primeira mensagem</th>
+              <th scope='col'>Última mensagem</th>
+              <th scope='col'>{moment().subtract(1, 'month').format('MM/YY')}</th>
+              <th scope='col'>{moment().subtract(2, 'month').format('MM/YY')}</th>
             </tr>
           </thead>
           <tbody>
             {licensees.map((licensee) => (
               <tr key={licensee._id.toString()}>
-                <td>
-                  <div>
-                    {licensee.contact?.name}
-                  </div>
-                  {licensee.error && (
-                    <div>
-                      <details className='mt-1'>
-                        <summary className='text-muted'>Visualizar erro</summary>
-                        <p>
-                          {licensee.error}
-                        </p>
-                      </details>
-                    </div>
-                  )}
-                </td>
+                <td>{licensee.name}</td>
+                <td>{licensee.billing ? 'Ativo' : 'Inativo'}</td>
+                <td>{licensee.createdAt ? moment(licensee.createdAt).format('DD/MM/YYYY') : ''}</td>
+                <td>{licensee.firstMessageDate ? moment(licensee.firstMessageDate).format('DD/MM/YYYY') : ''}</td>
+                <td>{licensee.lastMessageDate ? moment(licensee.lastMessageDate).format('DD/MM/YYYY') : ''}</td>
+                <td>{licensee.messages[0].count}</td>
+                <td>{licensee.messages[1].count}</td>
               </tr>
             ))}
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>Total</td>
+              <td>R$ {totalBilling(licensees)},00</td>
+            </tr>
           </tbody>
         </table>
       </div>

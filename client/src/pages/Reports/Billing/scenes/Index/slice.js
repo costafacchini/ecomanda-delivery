@@ -1,13 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { getBilling } from '../../../../../services/report'
-
-const fetchBilling = createAsyncThunk(
-  'users/fetchReportBillingStatus',
-  async (filters) => {
-    const response = await getBilling(filters)
-    return response.data
-  }
-)
+import { createSlice } from '@reduxjs/toolkit'
 
 export const slice = createSlice({
   name: 'billingIndex',
@@ -16,13 +7,11 @@ export const slice = createSlice({
     licensees: []
   },
   reducers: {
-  },
-  extraReducers: (builder) => {
-    builder.addCase(fetchBilling.fulfilled, (state, action) => {
+    loadData: (state, action) => {
       state.licensees = action.payload
-    })
-  }
+    }
+  },
 })
 
-export { fetchBilling }
+export const { loadData } = slice.actions
 export default slice.reducer

@@ -129,6 +129,7 @@ describe('BillingQuery', () => {
     expect(records[0]).toEqual(
       expect.objectContaining({
         _id: licensee1._id,
+        name: licensee1.name,
         createdAt: moment('2020-01-01T00:00:00-03:00').toDate(),
         firstMessageDate: moment('2020-11-30T03:00:00.000Z').toDate(),
         lastMessageDate: moment('2022-02-01T03:00:00.000Z').toDate(),
@@ -150,6 +151,7 @@ describe('BillingQuery', () => {
     expect(records[1]).toEqual(
       expect.objectContaining({
         _id: licensee2._id,
+        name: licensee2.name,
         createdAt: moment('2022-01-01T00:00:00-03:00').toDate(),
         firstMessageDate: moment('2022-01-01T03:00:00.000Z').toDate(),
         lastMessageDate: moment('2022-01-31T03:00:00.000Z').toDate(),
@@ -171,6 +173,7 @@ describe('BillingQuery', () => {
     expect(records[2]).toEqual(
       expect.objectContaining({
         _id: licensee3._id,
+        name: licensee3.name,
         createdAt: moment('2019-01-01T00:00:00-03:00').toDate(),
         firstMessageDate: moment('2019-05-01T03:00:00.000Z').toDate(),
         lastMessageDate: moment('2019-12-15T03:00:00.000Z').toDate(),
@@ -192,6 +195,7 @@ describe('BillingQuery', () => {
     expect(records[3]).toEqual(
       expect.objectContaining({
         _id: licensee4._id,
+        name: licensee4.name,
         createdAt: moment('2020-05-01T00:00:00-03:00').toDate(),
         firstMessageDate: moment('2020-05-01T03:00:00.000Z').toDate(),
         lastMessageDate: moment('2021-12-15T03:00:00.000Z').toDate(),

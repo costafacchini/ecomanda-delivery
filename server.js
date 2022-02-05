@@ -5,6 +5,8 @@ if (process.env.NODE_ENV === 'production') require('newrelic')
 const { server } = require('./src/config/http')
 const debug = require('debug')('ecomanda-delivery:server')
 
+require('./src/app/websockets/index')
+
 const PORT = process.env.PORT || '5000'
 
 server.listen(PORT)

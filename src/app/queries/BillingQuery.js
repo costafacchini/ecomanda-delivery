@@ -76,6 +76,7 @@ class BillingQuery {
 
       result.push({
         _id: licensee._id,
+        name: licensee.name,
         createdAt: licensee.createdAt,
         firstMessageDate: firstMessage ? firstMessage.createdAt : null,
         lastMessageDate: lastMessage ? lastMessage.createdAt : null,
