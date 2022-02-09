@@ -6,11 +6,11 @@ import LicenseesRoutes from './Licensees/routes'
 import ContactsRoutes from './Contacts/routes'
 import TriggersRoutes from './Triggers/routes'
 import MessagesRoutes from './Messages/routes'
+import ReportsRoutes from './Reports/routes'
 import Dashboard from './Dashboard'
 import { isAuthenticated, fetchLoggedUser } from '../services/auth'
 import { loadLoggedUser } from './SignIn/slice'
 import BaseLayout from './BaseLayout/index'
-import Configurations from './Configurations/index'
 import PrivateRoute from './PrivateRoute/index'
 
 function RootRoutes() {
@@ -71,10 +71,10 @@ function RootRoutes() {
           }
         />
         <Route
-          exact path='/configurations'
+          path='/reports/*'
           element={
             <PrivateRoute redirectTo='/'>
-              <Configurations />
+              <ReportsRoutes />
             </PrivateRoute>
           }
         />
