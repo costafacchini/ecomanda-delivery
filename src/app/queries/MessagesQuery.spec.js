@@ -289,6 +289,33 @@ describe('MessagesQuery', () => {
         expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: message2._id })]))
       })
     })
+
+    describe('sortBy', () => {
+      it('returns all messages ordered by using sortBy clause', async () => {
+        const message1 = await Message.create(
+          messageFactory.build({
+            contact,
+            licensee,
+            createdAt: new Date(2021, 6, 3, 0, 0, 0),
+          })
+        )
+        const message2 = await Message.create(
+          messageFactory.build({
+            contact,
+            licensee,
+            createdAt: new Date(2021, 6, 3, 0, 0, 1),
+          })
+        )
+
+        const messagesQuery = new MessagesQuery()
+        messagesQuery.sortBy('createdAt', 'asc')
+        const records = await messagesQuery.all()
+
+        expect(records.length).toEqual(2)
+        expect(records[0]).toEqual(expect.objectContaining({ _id: message1._id }))
+        expect(records[1]).toEqual(expect.objectContaining({ _id: message2._id }))
+      })
+    })
   })
 
   describe('#count', () => {

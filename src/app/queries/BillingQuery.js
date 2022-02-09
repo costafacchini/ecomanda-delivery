@@ -60,7 +60,6 @@ async function getMessagesCountedByMonth(licensee, startDate, endDate) {
 }
 
 class BillingQuery {
-  // This report considers licensee with billing only when sent messages in two months ago and in one month ago
   constructor(reportDate) {
     this.reportDate = reportDate
   }
