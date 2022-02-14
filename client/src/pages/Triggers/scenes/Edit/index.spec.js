@@ -2,7 +2,7 @@ import mountWithRedux, { createStore } from '../../../../.jest/redux-testing'
 import TriggerEdit from './'
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { getTrigger, updateTrigger } from '../../../../services/trigger'
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter } from 'react-router'
 
 jest.mock('../../../../services/trigger')
 
@@ -20,7 +20,7 @@ describe('<TriggerEdit />', () => {
 
     mount()
 
-    await waitFor(() => expect(screen.getByDisplayValue('Gatilho')).toBeInTheDocument())
+    await screen.findByDisplayValue('Gatilho')
   })
 
   it('edits the trigger', async () => {
@@ -28,7 +28,7 @@ describe('<TriggerEdit />', () => {
 
     mount()
 
-    await waitFor(() => expect(screen.getByDisplayValue('Gatilho')).toBeInTheDocument())
+    await screen.findByDisplayValue('Gatilho')
 
     fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'New Name' } })
 
