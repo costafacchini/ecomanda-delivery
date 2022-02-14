@@ -78,6 +78,24 @@ describe('Trigger', () => {
       })
     })
 
+    describe('catalogId', () => {
+      it('is not required if triggerKind is not multi_product', () => {
+        const trigger = new Trigger({ triggerKind: 'single_product', catalogId: '' })
+        const validation = trigger.validateSync()
+
+        expect(validation.errors['catalogId']).not.toBeDefined()
+      })
+
+      it('is required if triggerKind is multi_product', () => {
+        const trigger = new Trigger({ triggerKind: 'multi_product', catalogId: '' })
+        const validation = trigger.validateSync()
+
+        expect(validation.errors['catalogId'].message).toEqual(
+          'Id Catalogo: deve ser preenchido quando o gatilho é do tipo vários produtos'
+        )
+      })
+    })
+
     describe('catalogSingle', () => {
       it('is not required if triggerKind is not single_product', () => {
         const trigger = new Trigger({ triggerKind: 'multi_product', catalogSingle: '' })

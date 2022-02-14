@@ -48,6 +48,7 @@ router.post('/triggers/', triggersController.create)
 router.post('/triggers/:id', triggersController.update)
 router.get('/triggers/:id', triggersController.show)
 router.get('/triggers/', triggersController.index)
+router.post('/triggers/:id/importation', triggersController.importation)
 
 router.post('/licensees/:id/dialogwebhook', licenseesController.setDialogWebhook)
 

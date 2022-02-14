@@ -51,12 +51,14 @@ describe('<TriggerForm />', () => {
       const trigger = {
         triggerKind: 'multi_product',
         catalogMulti: 'product',
+        catalogId: '123457'
       }
 
       mount({ initialValues: trigger })
 
       expect(screen.getByLabelText('Tipo')).toHaveValue('multi_product')
       expect(screen.getByLabelText('Catálogo')).toHaveValue('product')
+      expect(screen.getByLabelText('Id do catálogo')).toHaveValue('123457')
     })
 
     it('renders fields if kind is single_product', () => {
@@ -127,6 +129,7 @@ describe('<TriggerForm />', () => {
         name: '',
         triggerKind: 'multi_product',
         expression: '',
+        catalogId: '',
         catalogMulti: '',
         licensee: '',
         catalogSingle: '',

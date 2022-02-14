@@ -15,6 +15,15 @@ const triggerSchema = new Schema(
       type: String,
       required: [true, 'Expressão: Você deve preencher o campo'],
     },
+    catalogId: {
+      type: String,
+      required: [
+        function () {
+          return this.triggerKind === 'multi_product'
+        },
+        'Id Catalogo: deve ser preenchido quando o gatilho é do tipo vários produtos',
+      ],
+    },
     catalogMulti: {
       type: String,
       required: [
