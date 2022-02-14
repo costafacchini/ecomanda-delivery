@@ -22,4 +22,8 @@ function updateTrigger(trigger) {
   return api().post(`resources/triggers/${trigger.id}`, { headers, body: trigger })
 }
 
-export { createTrigger, getTriggers, getTrigger, updateTrigger }
+function importTriggerMultiProduct(triggerId, values) {
+  return api().post(`resources/triggers/${triggerId}/importation/`, { headers, body: values })
+}
+
+export { createTrigger, getTriggers, getTrigger, updateTrigger, importTriggerMultiProduct }

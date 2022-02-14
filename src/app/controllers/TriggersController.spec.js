@@ -287,4 +287,44 @@ describe('trigger controller', () => {
       })
     })
   })
+
+  describe('importation', () => {
+    describe('response', () => {
+      it('returns status 201 if the importation is successful', async () => {
+        const trigger = await Trigger.create(triggerFactory.build({ licensee }))
+
+        await request(expressServer)
+          .post(`/resources/triggers/${trigger._id}/importation`)
+          .set('x-access-token', token)
+          .send({
+            text: `id	title	description	section
+83863	Double Monster Bacon + Refri	2 Monster Bacon Artesanais + 2 Refri Lata 350ml + Entrega grátis.Hamburguer`,
+          })
+          .expect('Content-Type', /json/)
+          .expect(201)
+      })
+
+      it('returns status 500 and message if the some error ocurre when update the trigger', async () => {
+        const triggerFindOneSpy = jest.spyOn(Trigger, 'findOne').mockImplementation(() => {
+          throw new Error('some error')
+        })
+
+        const trigger = await Trigger.create(triggerFactory.build({ licensee }))
+
+        await request(expressServer)
+          .post(`/resources/triggers/${trigger._id}/importation`)
+          .set('x-access-token', token)
+          .send({
+            text: `id	title	description	section
+83863	Double Monster Bacon + Refri	2 Monster Bacon Artesanais + 2 Refri Lata 350ml + Entrega grátis.Hamburguer`,
+          })
+          .expect('Content-Type', /json/)
+          .expect(500, {
+            errors: { message: 'Error: some error' },
+          })
+
+        triggerFindOneSpy.mockRestore()
+      })
+    })
+  })
 })

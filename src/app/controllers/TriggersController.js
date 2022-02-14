@@ -1,8 +1,9 @@
 const Trigger = require('@models/Trigger')
 const { validationResult } = require('express-validator')
-const { sanitizeExpressErrors, sanitizeModelErrors } = require('../helpers/SanitizeErrors')
+const { sanitizeExpressErrors, sanitizeModelErrors } = require('@helpers/SanitizeErrors')
 const _ = require('lodash')
 const TriggersQuery = require('@queries/TriggersQuery')
+const FacebookCatalogImporter = require('@plugins/importers/facebook_catalog/index')
 
 function permit(fields) {
   const permitedFields = [
@@ -16,6 +17,7 @@ function permit(fields) {
     'licensee',
     'order',
     'text',
+    'catalogId',
   ]
 
   return _.pick(fields, permitedFields)
@@ -39,6 +41,7 @@ class TriggersController {
       licensee,
       order,
       text,
+      catalogId,
     } = req.body
 
     const trigger = new Trigger({
@@ -52,6 +55,7 @@ class TriggersController {
       licensee,
       order,
       text,
+      catalogId,
     })
 
     const validation = trigger.validateSync()
@@ -127,6 +131,18 @@ class TriggersController {
       const triggers = await triggersQuery.all()
 
       res.status(200).send(triggers)
+    } catch (err) {
+      res.status(500).send({ errors: { message: err.toString() } })
+    }
+  }
+
+  async importation(req, res) {
+    const data = req.body.text
+    try {
+      const facebookCatalogImporter = new FacebookCatalogImporter(req.params.id)
+      await facebookCatalogImporter.importCatalog(data)
+
+      res.status(201).send({ body: 'OK' })
     } catch (err) {
       res.status(500).send({ errors: { message: err.toString() } })
     }

@@ -17,6 +17,7 @@ const triggerInitialValues = {
   catalogSingle: '',
   textReplyButton: '',
   messagesList: '',
+  catalogId: '',
   order: 1,
 }
 
@@ -106,22 +107,38 @@ function TriggerForm({ onSubmit, errors, initialValues, loggedUser }) {
               </div>
 
               { props.values.triggerKind === 'multi_product' && (
-                <div className='row'>
-                  <div className='form-group col-5'>
-                    <label htmlFor='catalogMulti'>Catálogo</label>
-                    <div className='pb-2'>
-                      <textarea
-                        id='catalogMulti'
-                        name='catalogMulti'
-                        className='form-control'
-                        rows={10}
+                <>
+                  <div className='row'>
+                    <div className='form-group col-5'>
+                      <label htmlFor='catalogId'>Id do catálogo</label>
+                      <FieldWithError
+                        id='catalogId'
+                        type='text'
                         onChange={props.handleChange}
                         onBlur={props.handleBlur}
-                        value={props.values.catalogMulti}
+                        value={props.values.catalogId}
+                        name='catalogId'
                       />
                     </div>
                   </div>
-                </div>
+
+                  <div className='row'>
+                    <div className='form-group col-5'>
+                      <label htmlFor='catalogMulti'>Catálogo</label>
+                      <div className='pb-2'>
+                        <textarea
+                          id='catalogMulti'
+                          name='catalogMulti'
+                          className='form-control'
+                          rows={10}
+                          onChange={props.handleChange}
+                          onBlur={props.handleBlur}
+                          value={props.values.catalogMulti}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </>
               )}
 
               {props.values.triggerKind === 'single_product' && (

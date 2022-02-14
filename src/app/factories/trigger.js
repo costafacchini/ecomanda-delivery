@@ -6,6 +6,7 @@ const triggerMultiProduct = Factory.define(() => ({
   expression: 'send_multi_product',
   triggerKind: 'multi_product',
   catalogMulti: 'catalog',
+  catalogId: 'id',
   licensee: licensee.build(),
   order: 1,
 }))

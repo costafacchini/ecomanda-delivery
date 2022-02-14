@@ -115,7 +115,10 @@ function TriggersIndex({ triggers, dispatch, loggedUser }) {
                 {trigger.triggerKind === 'reply_button' && (<td>{trigger.textReplyButton}</td>)}
                 {trigger.triggerKind === 'list_message' && (<td>{trigger.messagesList}</td>)}
                 {trigger.triggerKind === 'text' && (<td>{trigger.text}</td>)}
-                <td><Link to={`/triggers/${trigger._id}`}><i className='bi bi-pencil' /></Link></td>
+                <td>
+                  <Link to={`/triggers/${trigger._id}`}><i className='bi bi-pencil' /></Link>
+                  {trigger.triggerKind === 'multi_product' && (<Link to={`/triggers/${trigger._id}/importation`}><i className='bi bi-filetype-csv' /></Link>)}
+                </td>
               </tr>
             ))}
           </tbody>
