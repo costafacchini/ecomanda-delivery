@@ -293,8 +293,6 @@ describe('trigger controller', () => {
       it('returns status 201 if the importation is successful', async () => {
         const trigger = await Trigger.create(triggerFactory.build({ licensee }))
 
-        const licenseeNew = await Licensee.create(licenseeFactory.build())
-
         await request(expressServer)
           .post(`/resources/triggers/${trigger._id}/importation`)
           .set('x-access-token', token)
