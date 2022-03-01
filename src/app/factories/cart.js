@@ -1,6 +1,7 @@
 const { Factory } = require('fishery')
 const { licensee } = require('./licensee')
 const { contact } = require('./contact')
+const moment = require('moment')
 
 const cart = Factory.define(() => ({
   products: [
@@ -29,7 +30,7 @@ const cart = Factory.define(() => ({
   delivery_tal: 0.5,
   contact: contact.build(),
   licensee: licensee.build(),
-  createdAt: new Date(2021, 6, 3, 0, 0, 0),
+  createdAt: moment('2021-07-03T00:00:00-03:00').toDate(),
 }))
 
 module.exports = { cart }
