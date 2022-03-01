@@ -19,7 +19,7 @@ describe('ParseTriggerText', () => {
   describe('#parseText', () => {
     it('replaces the $last_cart_resume', async () => {
       const licensee = await Licensee.create(licenseeFactory.build())
-      const contact = await Contact.create(contactFactory.build({ licensee }))
+      const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
       await Cart.create(cartFactory.build({ licensee, contact, concluded: true }))
       await Cart.create(
         cartFactory.build({
@@ -39,17 +39,39 @@ describe('ParseTriggerText', () => {
       expect(await parseText('This is your cart \n $last_cart_resume', contact)).toEqual(
         'This is your cart ' +
           '\n' +
-          ' 2 - 0123 - $7.80' +
+          ' Data: 03/07/2021 00:00' +
           '\n' +
-          'Taxa Entrega: $0.00' +
+          ' ' +
           '\n' +
-          'Total: $17.80' +
+          'Cliente: John Doe' +
           '\n' +
-          'Concluído: Não' +
+          'Telefone: 5511990283745' +
           '\n' +
           'Entrega: Rua do Contato, 123, 123 - Apto. 123' +
           '\n' +
-          '         Centro - São Paulo/SP - 01234567'
+          '         Centro - São Paulo/SP - 01234567' +
+          '\n' +
+          '______________' +
+          '\n' +
+          ' ' +
+          '\n' +
+          'PEDIDO' +
+          '\n' +
+          'QTD		PRODUTO' +
+          '\n' +
+          '______________' +
+          '\n' +
+          ' ' +
+          '\n' +
+          '2 - 0123 - $7.80' +
+          '\n' +
+          '______________' +
+          '\n' +
+          'Subtotal: $17.80' +
+          '\n' +
+          'Taxa Entrega: $0.00' +
+          '\n' +
+          'Total: $17.80'
       )
     })
 

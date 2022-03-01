@@ -1,4 +1,5 @@
 const Cart = require('@models/Cart')
+const moment = require('moment-timezone')
 
 async function parseText(text, contact) {
   return text
@@ -20,24 +21,35 @@ function parseAddressComplete(contact) {
 }
 
 async function parseLastCart(contact) {
-  const last_cart = await Cart.findOne({ contact: contact._id, concluded: false })
+  const last_cart = await Cart.findOne({ contact: contact._id, concluded: false }).populate('contact')
   return last_cart ? cartDescription(last_cart) : ''
 }
 
 function cartDescription(cart) {
   const description = []
 
-  if (cart.products.length > 0) {
-    productsDescription(cart.products, description)
-  }
-  description.push(`Taxa Entrega: ${formatNumber(cart.delivery_tax)}`)
-  description.push(`Total: ${formatNumber(cart.total)}`)
-  description.push(`Concluído: ${concludedDescription(cart.concluded)}`)
-
+  description.push(`Data: ${moment.tz(cart.createdAt, 'America/Sao_Paulo').format('DD/MM/YYYY HH:mm')}`)
+  description.push(` `)
+  description.push(`Cliente: ${cart.contact.name}`)
+  description.push(`Telefone: ${cart.contact.number}`)
   if (cart.address) {
     description.push(`Entrega: ${cart.address}, ${cart.address_number} - ${cart.address_complement}`)
     description.push(`         ${cart.neighborhood} - ${cart.city}/${cart.uf} - ${cart.cep}`)
   }
+  description.push(`______________`)
+  description.push(` `)
+  description.push(`PEDIDO`)
+  description.push(`QTD		PRODUTO`)
+  description.push(`______________`)
+
+  if (cart.products.length > 0) {
+    description.push(` `)
+    productsDescription(cart.products, description)
+    description.push(`______________`)
+  }
+  description.push(`Subtotal: ${formatNumber(cart.total - cart.delivery_tax)}`)
+  description.push(`Taxa Entrega: ${formatNumber(cart.delivery_tax)}`)
+  description.push(`Total: ${formatNumber(cart.total)}`)
 
   if (cart.note) {
     description.push(`Obs: ${cart.note}`)
@@ -50,10 +62,6 @@ function productsDescription(products, description) {
   return products.map((item) =>
     description.push(`${item.quantity} - ${item.product_retailer_id} - ${formatNumber(item.unit_price)}`)
   )
-}
-
-function concludedDescription(concluded) {
-  return concluded ? 'Sim' : 'Não'
 }
 
 function formatNumber(value, decimal = 2) {
