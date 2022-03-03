@@ -19,6 +19,7 @@ describe('FacebookCatalogImporter', () => {
   it('imports csv catalog on whatsapp catalog', async () => {
     const licensee = await Licensee.create(licenseeFactory.build())
     const trigger = await Trigger.create(triggerFactory.build({ licensee }))
+    await Product.create(productFactory.build({ licensee, product_retailer_id: '83863' }))
 
     const facebookCatalogImporter = new FacebookCatalogImporter(trigger._id)
     await facebookCatalogImporter.importCatalog(
@@ -66,21 +67,6 @@ describe('FacebookCatalogImporter', () => {
 }`
 
     expect(triggerImported.catalogMulti).toBe(catalog)
-  })
-
-  it('imports inexistent products', async () => {
-    const licensee = await Licensee.create(licenseeFactory.build())
-    const trigger = await Trigger.create(triggerFactory.build({ licensee }))
-    await Product.create(productFactory.build({ licensee, product_retailer_id: '83863' }))
-
-    const facebookCatalogImporter = new FacebookCatalogImporter(trigger._id)
-    await facebookCatalogImporter.importCatalog(
-      `id	title	description	section
-83863	Double Monster Bacon + Refri	2 Monster Bacon Artesanais + 2 Refri Lata 350ml + Entrega grátis.	Hamburguer
-83864	Double Atomic Barbecue + Refri	2 Atomic Barbecue Artesanais + 2 Refri Lata 350ml + Entrega grátis.	Hamburguer
-83877	Guaraná Antárctica Lata	Guaraná Antarctica lata de 350ml.	Bebidas`
-    )
-
     expect(await Product.where({ licensee }).count()).toEqual(3)
   })
 })

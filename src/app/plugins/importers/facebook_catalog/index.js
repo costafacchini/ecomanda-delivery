@@ -7,8 +7,7 @@ async function importProducts(products, licensee) {
     const productExists = await Product.findOne({ product_retailer_id: product.id, licensee })
     if (productExists) return
 
-    const newProduct = new Product({ product_retailer_id: product.id, name: product.title, licensee })
-    await newProduct.save()
+    await Product.create({ product_retailer_id: product.id, name: product.title, licensee })
   })
 }
 
