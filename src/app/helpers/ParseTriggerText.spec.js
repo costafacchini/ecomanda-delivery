@@ -1,11 +1,13 @@
 const Cart = require('@models/Cart')
 const Contact = require('@models/Contact')
 const Licensee = require('@models/Licensee')
+const Product = require('@models/Product')
 const mongoServer = require('../../../.jest/utils')
 const parseText = require('./ParseTriggerText')
-const { contact: contactFactory } = require('../factories/contact')
-const { licensee: licenseeFactory } = require('../factories/licensee')
-const { cart: cartFactory } = require('../factories/cart')
+const { contact: contactFactory } = require('@factories/contact')
+const { licensee: licenseeFactory } = require('@factories/licensee')
+const { cart: cartFactory } = require('@factories/cart')
+const { product: productFactory } = require('@factories/product')
 
 describe('ParseTriggerText', () => {
   beforeEach(async () => {
@@ -21,10 +23,28 @@ describe('ParseTriggerText', () => {
       const licensee = await Licensee.create(licenseeFactory.build())
       const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
       await Cart.create(cartFactory.build({ licensee, contact, concluded: true }))
+
+      // product: product.build({ product_retailer_id: '0123' }),
+      const product = await Product.create(productFactory.build({ name: 'Product 1', licensee }))
       await Cart.create(
         cartFactory.build({
           licensee,
           contact,
+          products: [
+            {
+              product_retailer_id: '0123',
+              name: 'Product',
+              quantity: 2,
+              unit_price: 7.8,
+            },
+            {
+              product_retailer_id: '0456',
+              quantity: 1,
+              unit_price: 3.5,
+              product,
+            },
+          ],
+          delivery_tax: 0.5,
           concluded: false,
           address: 'Rua do Contato, 123',
           address_number: '123',
@@ -63,15 +83,17 @@ describe('ParseTriggerText', () => {
           '\n' +
           ' ' +
           '\n' +
-          '2 - 0123 - $7.80' +
+          '2 - Product - $7.80' +
+          '\n' +
+          '1 - Product 1 - $3.50' +
           '\n' +
           '______________' +
           '\n' +
-          'Subtotal: $17.80' +
+          'Subtotal: $19.10' +
           '\n' +
-          'Taxa Entrega: $0.00' +
+          'Taxa Entrega: $0.50' +
           '\n' +
-          'Total: $17.80'
+          'Total: $19.60'
       )
     })
 

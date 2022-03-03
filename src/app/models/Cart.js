@@ -25,6 +25,10 @@ const productsSchema = new Schema({
   unit_price: Number,
   additionals: [additionalSchema],
   note: String,
+  product: {
+    type: ObjectId,
+    ref: 'Product',
+  },
 })
 
 const cartSchema = new Schema(

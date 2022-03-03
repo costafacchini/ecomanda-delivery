@@ -27,7 +27,7 @@ const cart = Factory.define(() => ({
     },
   ],
   concluded: false,
-  delivery_tal: 0.5,
+  delivery_tax: 0.5,
   contact: contact.build(),
   licensee: licensee.build(),
   createdAt: moment('2021-07-03T00:00:00-03:00').toDate(),

@@ -1,5 +1,15 @@
 const Trigger = require('@models/Trigger')
+const Product = require('@models/Product')
 const _ = require('lodash')
+
+async function importProducts(products, licensee) {
+  await products.forEach(async (product) => {
+    const productExists = await Product.findOne({ product_retailer_id: product.id, licensee })
+    if (productExists) return
+
+    await Product.create({ product_retailer_id: product.id, name: product.title, licensee })
+  })
+}
 
 function generateCatalog(catalogId, sections, products) {
   return `
@@ -60,6 +70,7 @@ class FacebookCatalogImporter {
 
     const indexOfId = columns.indexOf('id')
     const indexOfSection = columns.indexOf('section')
+    const indexOfTitle = columns.indexOf('title')
 
     delete lines[0]
     lines.forEach((line) => {
@@ -67,8 +78,11 @@ class FacebookCatalogImporter {
       products.push({
         id: values[indexOfId],
         section: values[indexOfSection],
+        title: values[indexOfTitle],
       })
     })
+
+    await importProducts(products, trigger.licensee)
 
     const sections = _.uniqBy(products, 'section').map((product) => product.section)
 
