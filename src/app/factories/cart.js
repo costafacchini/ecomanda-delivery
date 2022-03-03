@@ -1,7 +1,6 @@
 const { Factory } = require('fishery')
 const { licensee } = require('./licensee')
 const { contact } = require('./contact')
-const { product } = require('./product')
 const moment = require('moment')
 
 const cart = Factory.define(() => ({
