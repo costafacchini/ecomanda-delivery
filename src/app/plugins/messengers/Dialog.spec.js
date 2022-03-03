@@ -4,6 +4,7 @@ const Contact = require('@models/Contact')
 const Licensee = require('@models/Licensee')
 const Trigger = require('@models/Trigger')
 const Cart = require('@models/Cart')
+const Product = require('@models/Product')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
 const S3 = require('../storage/S3')
@@ -18,6 +19,7 @@ const {
   triggerText: triggerTextFactory,
 } = require('@factories/trigger')
 const { cart: cartFactory } = require('@factories/cart')
+const { product: productFactory } = require('@factories/product')
 const { advanceTo, clear } = require('jest-date-mock')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
@@ -728,6 +730,8 @@ describe('Dialog plugin', () => {
           })
         )
 
+        const product = await Product.create(productFactory.build({ product_retailer_id: '1011', licensee }))
+
         const cartConcluded = await Cart.create(cartFactory.build({ contact, licensee, concluded: true }))
 
         const responseBody = {
@@ -780,9 +784,11 @@ describe('Dialog plugin', () => {
         expect(cart.products[0].unit_price).toEqual(25.8)
         expect(cart.products[0].quantity).toEqual(1)
         expect(cart.products[0].product_retailer_id).toEqual('1011')
+        expect(cart.products[0].product).toEqual(product._id)
         expect(cart.products[1].unit_price).toEqual(5)
         expect(cart.products[1].quantity).toEqual(2)
         expect(cart.products[1].product_retailer_id).toEqual('1016')
+        expect(cart.products[1].product).toEqual(null)
       })
 
       it('returns the response body transformed in messages and updates the cart if contact has cart opened', async () => {
@@ -2451,7 +2457,7 @@ describe('Dialog plugin', () => {
             to: '553165392832',
             type: 'text',
             text: {
-              body: '{"order":{"origemId":0,"deliveryMode":"MERCHANT","refPedido":"Ecommerce","refOrigem":"Ecommerce","refCurtaOrigem":"","docNotaFiscal":false,"valorDocNotaFiscal":"","nomeCliente":"John Doe","endEntrega":"","dataPedido":"2021-01-05T10:25:47.000Z","subTotal":17.8,"impostos":0,"voucher":0,"dataEntrega":"2021-01-05T10:25:47.000Z","taxaEntrega":0,"totalPedido":17.8,"documento":"","flagIntegrado":"NaoIntegrado","valorPagar":17.8,"telefonePedido":"5511990283745","pagamentos":[{"tipo":"","valor":17.8,"observacao":"","codigoResposta":"","bandeira":0,"troco":0,"nsu":0,"status":"NaoInformado","descontoId":0,"prePago":false,"transactionId":0}],"entrega":{"retiraLoja":false,"data":"","retirada":"Hoje","endereco":{"id":37025,"pais":"Brasil","padrao":false}},"itens":[{"produtoId":"0123","quantidade":2,"precoTotal":8.9,"adicionalPedidoItems":[{"produtoId":"Additional 1","atributoValorId":"Detail 1","quantidade":1,"precoTotal":0.5}]}]}}',
+              body: '{"order":{"origemId":0,"deliveryMode":"MERCHANT","refPedido":"Ecommerce","refOrigem":"Ecommerce","refCurtaOrigem":"","docNotaFiscal":false,"valorDocNotaFiscal":"","nomeCliente":"John Doe","endEntrega":"","dataPedido":"2021-01-05T10:25:47.000Z","subTotal":17.8,"impostos":0,"voucher":0,"dataEntrega":"2021-01-05T10:25:47.000Z","taxaEntrega":0.5,"totalPedido":18.3,"documento":"","flagIntegrado":"NaoIntegrado","valorPagar":18.3,"telefonePedido":"5511990283745","pagamentos":[{"tipo":"","valor":18.3,"observacao":"","codigoResposta":"","bandeira":0,"troco":0,"nsu":0,"status":"NaoInformado","descontoId":0,"prePago":false,"transactionId":0}],"entrega":{"retiraLoja":false,"data":"","retirada":"Hoje","endereco":{"id":37025,"pais":"Brasil","padrao":false}},"itens":[{"produtoId":"0123","quantidade":2,"precoTotal":8.9,"adicionalPedidoItems":[{"produtoId":"Additional 1","atributoValorId":"Detail 1","quantidade":1,"precoTotal":0.5}]}]}}',
             },
           }
 

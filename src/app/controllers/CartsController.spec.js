@@ -51,7 +51,7 @@ describe('carts controller', () => {
           .expect('Content-Type', /json/)
           .expect(201)
           .then((response) => {
-            expect(response.body.total).toEqual(17.8)
+            expect(response.body.total).toEqual(18.3)
             expect(response.body.concluded).toEqual(false)
             expect(response.body.contact).toEqual(contact._id.toString())
             expect(response.body.licensee).toEqual(licensee._id.toString())
@@ -224,7 +224,7 @@ describe('carts controller', () => {
           .expect('Content-Type', /json/)
           .expect(200)
           .then((response) => {
-            expect(response.body.total).toEqual(17.8)
+            expect(response.body.total).toEqual(18.3)
             expect(response.body.concluded).toEqual(false)
             expect(response.body.contact._id.toString()).toEqual(contact._id.toString())
             expect(response.body.licensee._id.toString()).toEqual(licensee._id.toString())
@@ -380,7 +380,7 @@ describe('carts controller', () => {
           .expect('Content-Type', /json/)
           .expect(200)
           .then((response) => {
-            expect(response.body.total).toEqual(23.4)
+            expect(response.body.total).toEqual(23.9)
             expect(response.body.concluded).toEqual(false)
             expect(response.body.contact).toEqual(contact._id.toString())
             expect(response.body.licensee).toEqual(licensee._id.toString())
@@ -463,7 +463,7 @@ describe('carts controller', () => {
           .expect('Content-Type', /json/)
           .expect(200)
           .then((response) => {
-            expect(response.body.total).toEqual(0)
+            expect(response.body.total).toEqual(0.5)
             expect(response.body.concluded).toEqual(false)
             expect(response.body.contact).toEqual(contact._id.toString())
             expect(response.body.licensee).toEqual(licensee._id.toString())

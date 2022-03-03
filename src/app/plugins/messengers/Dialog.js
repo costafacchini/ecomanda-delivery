@@ -2,6 +2,7 @@ const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Trigger = require('@models/Trigger')
 const Cart = require('@models/Cart')
+const Product = require('@models/Product')
 const NormalizePhone = require('@helpers/NormalizePhone')
 const { v4: uuidv4 } = require('uuid')
 const S3 = require('../storage/S3')
@@ -175,10 +176,17 @@ class Dialog {
 
         const products = []
         for (const item of responseBody.messages[0].order.product_items) {
+          const product = await Product.findOne({
+            product_retailer_id: item.product_retailer_id,
+            licensee: this.licensee._id,
+          })
+
           products.push({
             unit_price: item.item_price,
+            name: product?.name,
             product_retailer_id: item.product_retailer_id,
             quantity: item.quantity,
+            product,
           })
         }
 

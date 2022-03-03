@@ -21,7 +21,9 @@ function parseAddressComplete(contact) {
 }
 
 async function parseLastCart(contact) {
-  const last_cart = await Cart.findOne({ contact: contact._id, concluded: false }).populate('contact')
+  const last_cart = await Cart.findOne({ contact: contact._id, concluded: false })
+    .populate('contact')
+    .populate('products.product')
   return last_cart ? cartDescription(last_cart) : ''
 }
 
@@ -59,9 +61,10 @@ function cartDescription(cart) {
 }
 
 function productsDescription(products, description) {
-  return products.map((item) =>
-    description.push(`${item.quantity} - ${item.product_retailer_id} - ${formatNumber(item.unit_price)}`)
-  )
+  return products.map((item) => {
+    const productName = item.name || item.product?.name
+    description.push(`${item.quantity} - ${productName} - ${formatNumber(item.unit_price)}`)
+  })
 }
 
 function formatNumber(value, decimal = 2) {
