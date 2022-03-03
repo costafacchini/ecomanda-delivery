@@ -4830,28 +4830,6 @@ mongodb-connection-string-url@^2.5.2:
     "@types/whatwg-url" "^8.2.1"
     whatwg-url "^11.0.0"
 
-mongodb-memory-server-core@8.3.0:
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-8.3.0.tgz#40bdd3754a64a20d05c37e36cf1fbd34f6c6911b"
-  integrity sha512-wbHV2PWzE7OmO9KX8gM8W2xY0n1KrrBatqztYRvBcQUMxILYzvAxwieR1flRUx5npIpS3VWTIkac+7sJwd2mCw==
-  dependencies:
-    "@types/tmp" "^0.2.3"
-    async-mutex "^0.3.2"
-    camelcase "^6.3.0"
-    debug "^4.3.3"
-    find-cache-dir "^3.3.2"
-    get-port "^5.1.1"
-    https-proxy-agent "^5.0.0"
-    md5-file "^5.0.0"
-    mongodb "^4.3.1"
-    new-find-package-json "^1.1.0"
-    semver "^7.3.5"
-    tar-stream "^2.1.4"
-    tmp "^0.2.1"
-    tslib "^2.3.1"
-    uuid "^8.3.1"
-    yauzl "^2.10.0"
-
 mongodb-memory-server-core@8.4.0:
   version "8.4.0"
   resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-8.4.0.tgz#1a9c7cb0ee9bfea2613985240865392a22689333"
@@ -4874,12 +4852,12 @@ mongodb-memory-server-core@8.4.0:
     uuid "^8.3.1"
     yauzl "^2.10.0"
 
-mongodb-memory-server-global@8.3.0:
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/mongodb-memory-server-global/-/mongodb-memory-server-global-8.3.0.tgz#ed4448d07cd7e49807d0ba057aa27ae0f7ef9646"
-  integrity sha512-towD1VjI7Jp5XELI1xb8CRqzWlfJhALk4eqh+Xhag/Ua7kCy3EnXUMvMX/C5MpbmqmLxPpcQ3OCyQSJty9gH5A==
+mongodb-memory-server-global@8.4.0:
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server-global/-/mongodb-memory-server-global-8.4.0.tgz#55d2f08a663ef60b6e28af899508968d09bcdc90"
+  integrity sha512-3de738VlmDGDagC5AzCvcF9MXSBleLzRif8Ki/af75A1GGBdMlEZ1UNTE7bNKktidVfTUYIg6MQfK39Lc+jYag==
   dependencies:
-    mongodb-memory-server-core "8.3.0"
+    mongodb-memory-server-core "8.4.0"
     tslib "^2.3.1"
 
 mongodb-memory-server@8.4.0:
@@ -4890,7 +4868,7 @@ mongodb-memory-server@8.4.0:
     mongodb-memory-server-core "8.4.0"
     tslib "^2.3.1"
 
-mongodb@4.3.1, mongodb@^4.3.1:
+mongodb@4.3.1:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-4.3.1.tgz#e346f76e421ec6f47ddea5c8f5140e6181aaeb94"
   integrity sha512-sNa8APSIk+r4x31ZwctKjuPSaeKuvUeNb/fu/3B6dRM02HpEgig7hTHM8A/PJQTlxuC/KFWlDlQjhsk/S43tBg==
