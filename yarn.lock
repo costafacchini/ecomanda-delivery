@@ -4830,28 +4830,6 @@ mongodb-connection-string-url@^2.5.2:
     "@types/whatwg-url" "^8.2.1"
     whatwg-url "^11.0.0"
 
-mongodb-memory-server-core@8.4.0:
-  version "8.4.0"
-  resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-8.4.0.tgz#1a9c7cb0ee9bfea2613985240865392a22689333"
-  integrity sha512-xagSOsx+E1ZxT5j4BMci8U3qAHG7o4PGLiwUDavTF6aKTPEAXVQZE8VNR/0Z1cl0nXSOoOO65XhqNSKM7svXng==
-  dependencies:
-    "@types/tmp" "^0.2.3"
-    async-mutex "^0.3.2"
-    camelcase "^6.3.0"
-    debug "^4.3.3"
-    find-cache-dir "^3.3.2"
-    get-port "^5.1.1"
-    https-proxy-agent "^5.0.0"
-    md5-file "^5.0.0"
-    mongodb "^4.4.0"
-    new-find-package-json "^1.1.0"
-    semver "^7.3.5"
-    tar-stream "^2.1.4"
-    tmp "^0.2.1"
-    tslib "^2.3.1"
-    uuid "^8.3.1"
-    yauzl "^2.10.0"
-
 mongodb-memory-server-core@8.4.1:
   version "8.4.1"
   resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-8.4.1.tgz#3cb853b104c80202e558e5aaea722c5ff3db3134"
@@ -4874,12 +4852,12 @@ mongodb-memory-server-core@8.4.1:
     uuid "^8.3.1"
     yauzl "^2.10.0"
 
-mongodb-memory-server-global@8.4.0:
-  version "8.4.0"
-  resolved "https://registry.yarnpkg.com/mongodb-memory-server-global/-/mongodb-memory-server-global-8.4.0.tgz#55d2f08a663ef60b6e28af899508968d09bcdc90"
-  integrity sha512-3de738VlmDGDagC5AzCvcF9MXSBleLzRif8Ki/af75A1GGBdMlEZ1UNTE7bNKktidVfTUYIg6MQfK39Lc+jYag==
+mongodb-memory-server-global@8.4.1:
+  version "8.4.1"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server-global/-/mongodb-memory-server-global-8.4.1.tgz#4cb9f4aad64caf5dbaaa3b4a64cf9bcd286646a7"
+  integrity sha512-1o9elxkOqZsXe1QrNR9If1Mgql0rMGlLEhaa25hq+hbQdSUJIN4mRq+HNDSywBCMJyX76FKidEWZ8pgPmsAA1w==
   dependencies:
-    mongodb-memory-server-core "8.4.0"
+    mongodb-memory-server-core "8.4.1"
     tslib "^2.3.1"
 
 mongodb-memory-server@8.4.1:
