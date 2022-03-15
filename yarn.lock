@@ -1752,10 +1752,10 @@ bull-board@2.1.3:
     express "4.17.1"
     redis-info "^3.0.8"
 
-bullmq@1.76.4:
-  version "1.76.4"
-  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-1.76.4.tgz#93e7fa8689372156e21aa8e54b081c2ec50bdd79"
-  integrity sha512-qEshcctimOTS/VZ5mZ6xxwD2+mg/rtbVprqPiqK948JoGwnknzmRL7Re6WwDXAM+JTw3X8wPTj6E+lIVBYorOw==
+bullmq@1.76.6:
+  version "1.76.6"
+  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-1.76.6.tgz#1b39cae9f86aaaa28e63d16ed03dae89bd89ea21"
+  integrity sha512-IfOcaYFm1RLOGRRNsOibVJL5kSvWZ6/Zyu1rSrRr2Pe4UqGES6HoJwCqtWsdIXf/LcT6JCKnY9fR+zzvfm9quw==
   dependencies:
     cron-parser "^2.18.0"
     get-port "^5.1.1"
