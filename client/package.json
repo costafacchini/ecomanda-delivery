@@ -54,6 +54,6 @@
     ]
   },
   "devDependencies": {
-    "@testing-library/dom": "8.11.3"
+    "@testing-library/dom": "8.11.4"
   }
 }
