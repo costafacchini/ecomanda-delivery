@@ -765,10 +765,10 @@
   dependencies:
     semver "^7.3.5"
 
-"@newrelic/koa@^6.1.0":
-  version "6.1.1"
-  resolved "https://registry.yarnpkg.com/@newrelic/koa/-/koa-6.1.1.tgz#64f9895850a86c0bf1159660a16dc3e9e873bf44"
-  integrity sha512-vWwMMuaU5qDualtIPYssrIcjA4Jfq2qWJ5LZ4VJL/BNU/xvFmKBNTdJU9UeKd7S2VAwXHqczEdPVcestdg5x/A==
+"@newrelic/koa@^6.1.1":
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/@newrelic/koa/-/koa-6.1.2.tgz#98e8e24ea0bee97197f02030e3ad09912dadacf2"
+  integrity sha512-nmjr5hv+nRDC2NaRF4+iex41K6iJ/UCujgnj8oyht1grazJXQHq0dJZdMxUVNMMO+m4ukTeisSlI4d/H/W9JUw==
 
 "@newrelic/native-metrics@^7.1.1":
   version "7.1.2"
@@ -5005,15 +5005,15 @@ new-find-package-json@^1.1.0:
     debug "^4.3.2"
     tslib "^2.3.0"
 
-newrelic@8.8.0:
-  version "8.8.0"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-8.8.0.tgz#bb8aa8915ec402709be300d1ba4a19a23f0176fa"
-  integrity sha512-1aaI7WigG2drbNWWfPITdwKWfVCbjdlHfsNa3AWk4mt9KahU/O0iS0R/OvWNInYIQNQ1hwMTGue5N2PfPKGxBw==
+newrelic@8.9.1:
+  version "8.9.1"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-8.9.1.tgz#64c0afa05e9e8e21915b13659de288e08a2d912f"
+  integrity sha512-t11Maq7kCdn5DziSS84m9+OcTeWKHImk/942FC1/8gbcQwLrkiFLdAI6pRkSi+RXZ5JsnZ+iEiL4ungiEVO71A==
   dependencies:
     "@grpc/grpc-js" "^1.5.5"
     "@grpc/proto-loader" "^0.6.9"
     "@newrelic/aws-sdk" "^4.1.1"
-    "@newrelic/koa" "^6.1.0"
+    "@newrelic/koa" "^6.1.1"
     "@newrelic/superagent" "^5.1.0"
     "@tyriar/fibonacci-heap" "^2.0.7"
     async "^3.2.3"
