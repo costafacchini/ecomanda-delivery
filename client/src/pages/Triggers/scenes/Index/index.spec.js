@@ -50,7 +50,7 @@ describe('<TriggersIndex />', () => {
       licensee: '',
     })
 
-    expect(screen.getByText('Gatilho')).toBeInTheDocument()
+    expect(await screen.findByText('Gatilho')).toBeInTheDocument()
     expect(screen.getByText('hello-trigger')).toBeInTheDocument()
     expect(screen.getAllByText('1').length).toEqual(5)
     expect(screen.getByText('multi_product')).toBeInTheDocument()
