@@ -27,6 +27,8 @@ function LicenseesIndex({ licensees, dispatch }) {
     setExpression(event.target.value)
   }
 
+  if (!licensees) return null
+
   return (
     <>
       <div className='row'>

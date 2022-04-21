@@ -2,17 +2,23 @@ import mountWithRedux, { createStore } from '../../../../.jest/redux-testing'
 import TriggersIndex from './'
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { getTriggers } from '../../../../services/trigger'
+import { getLicensees } from '../../../../services/licensee'
 import { MemoryRouter } from 'react-router'
 import { triggerFactory, triggerSingleProduct, triggerReplyButton, triggerListMessage, triggerText } from '../../../../factories/trigger'
 
 jest.mock('../../../../services/trigger')
+jest.mock('../../../../services/licensee')
 
 describe('<TriggersIndex />', () => {
   function mount() {
+    const loggedUser = {
+      isSuper: true
+    }
+
     const store = createStore()
     mountWithRedux(store)(
       <MemoryRouter>
-        <TriggersIndex  />
+        <TriggersIndex loggedUser={loggedUser} />
       </MemoryRouter>)
 
     return store
@@ -36,13 +42,15 @@ describe('<TriggersIndex />', () => {
 
     await waitFor(() => expect(getTriggers).toHaveBeenCalled())
 
+    await screen.findByText('Gatilhos')
+
     expect(getTriggers).toHaveBeenCalledWith({
       page: 1,
       expression: '',
       licensee: '',
     })
 
-    expect(screen.getByText('Gatilho')).toBeInTheDocument()
+    expect(await screen.findByText('Gatilho')).toBeInTheDocument()
     expect(screen.getByText('hello-trigger')).toBeInTheDocument()
     expect(screen.getAllByText('1').length).toEqual(5)
     expect(screen.getByText('multi_product')).toBeInTheDocument()
@@ -61,6 +69,8 @@ describe('<TriggersIndex />', () => {
     getTriggers.mockResolvedValue({ status: 201, data: triggerFactory.buildList(30) })
 
     mount()
+
+    await screen.findByText('Gatilhos')
 
     getTriggers.mockResolvedValue({ status: 201, data: [triggerFactory.build({ name: 'Trigger from new page' })] })
 
@@ -97,5 +107,50 @@ describe('<TriggersIndex />', () => {
     })
   })
 
-  // Testar a alteração do licenciado pelo componente da tela
+  describe('licensee select filter', () => {
+    it('does not show the licensee if logged user is not super', async () => {
+      const loggedUser = {
+        isSuper: false
+      }
+
+      const store = createStore()
+      mountWithRedux(store)(
+        <MemoryRouter>
+          <TriggersIndex loggedUser={loggedUser} />
+        </MemoryRouter>)
+
+      await screen.findByText('Gatilhos')
+
+      expect(screen.queryByLabelText('Licenciado')).not.toBeInTheDocument()
+    })
+
+    it('changes the filters to get the triggers', async () => {
+      getLicensees.mockResolvedValueOnce({ status: 201, data: [{ _id: '12345678', name: 'Alcateia' }] })
+
+      getTriggers.mockResolvedValue(
+        {
+          status: 201,
+          data: [
+            triggerFactory.build({ _id: 1 }),
+            triggerSingleProduct.build({ _id: 2 }),
+            triggerReplyButton.build({ _id: 3 }),
+            triggerListMessage.build({ _id: 4 }),
+            triggerText.build({ _id: 5 })
+          ]
+        }
+      )
+
+      mount()
+
+      await screen.findByText('Gatilhos')
+
+      fireEvent.change(screen.getByLabelText('Licenciado'), { target: { value: 'alca' } })
+
+      fireEvent.click(await screen.findByText('Alcateia'))
+
+      await screen.findByText('Gatilho')
+
+      expect(getTriggers).toHaveBeenCalledWith(expect.objectContaining({ licensee: '12345678' }))
+    })
+  })
 })
