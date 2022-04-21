@@ -2,17 +2,23 @@ import mountWithRedux, { createStore } from '../../../../.jest/redux-testing'
 import ContactsIndex from './'
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { getContacts } from '../../../../services/contact'
+import { getLicensees } from '../../../../services/licensee'
 import { MemoryRouter } from 'react-router'
 import { contactFactory } from '../../../../factories/contact'
 
 jest.mock('../../../../services/contact')
+jest.mock('../../../../services/licensee')
 
 describe('<ContactsIndex />', () => {
   function mount() {
+    const loggedUser = {
+      isSuper: true
+    }
+
     const store = createStore()
     mountWithRedux(store)(
       <MemoryRouter>
-        <ContactsIndex />
+        <ContactsIndex loggedUser={loggedUser} />
       </MemoryRouter>)
 
     return store
@@ -31,7 +37,7 @@ describe('<ContactsIndex />', () => {
       licensee: '',
     })
 
-    expect(screen.getByText('Contato')).toBeInTheDocument()
+    expect(await screen.findByText('Contato')).toBeInTheDocument()
   })
 
   it('paginates the contacts', async () => {
@@ -74,5 +80,39 @@ describe('<ContactsIndex />', () => {
     })
   })
 
-  // Testar a alteração do licenciado pelo componente da tela
+  describe('licensee select filter', () => {
+    it('does not show the licensee if logged user is not super', async () => {
+      const loggedUser = {
+        isSuper: false
+      }
+
+      const store = createStore()
+      mountWithRedux(store)(
+        <MemoryRouter>
+          <ContactsIndex loggedUser={loggedUser} />
+        </MemoryRouter>)
+
+      await screen.findByText('Contatos')
+
+      expect(screen.queryByLabelText('Licenciado')).not.toBeInTheDocument()
+    })
+
+    it('changes the filters to get the contacts', async () => {
+      getLicensees.mockResolvedValueOnce({ status: 201, data: [{ _id: '12345678', name: 'Alcateia' }] })
+
+      getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'Contact' })] })
+
+      mount()
+
+      await screen.findByText('Contatos')
+
+      fireEvent.change(screen.getByLabelText('Licenciado'), { target: { value: 'alca' } })
+
+      fireEvent.click(await screen.findByText('Alcateia'))
+
+      await screen.findByText('Contact')
+
+      expect(getContacts).toHaveBeenCalledWith(expect.objectContaining({ licensee: '12345678' }))
+    })
+  })
 })

@@ -34,6 +34,8 @@ function ContactsIndex({ contacts, dispatch, loggedUser }) {
     setExpression(event.target.value)
   }
 
+  if (!contacts) return null
+
   return (
     <>
       <div className='row'>
@@ -51,11 +53,11 @@ function ContactsIndex({ contacts, dispatch, loggedUser }) {
           <div className='flex-column w-50'>
             {loggedUser && loggedUser.isSuper && (
               <div className='form-group'>
-                <label htmlFor='licensee'>Licenciado</label>
+                <label htmlFor='licensee' id='licensee'>Licenciado</label>
                 <SelectLicenseesWithFilter
-                  selectedItem={filters.licensee}
                   name='licensee'
-                  id='licensee'
+                  aria-labelledby='licensee'
+                  selectedItem={filters.licensee}
                   onChange={(e) => {
                     const inputValue = e && e.value ? e.value : ''
                     setFilters({ ...filters, licensee: inputValue })

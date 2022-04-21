@@ -30,7 +30,7 @@ describe('<LicenseeIndex />', () => {
       expression: '',
     })
 
-    expect(screen.getByText('Licenciado')).toBeInTheDocument()
+    expect(await screen.findByText('Licenciado')).toBeInTheDocument()
   })
 
   it('paginates the licensees', async () => {
