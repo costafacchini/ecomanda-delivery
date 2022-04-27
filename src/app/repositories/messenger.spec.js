@@ -4,9 +4,14 @@ const queueServer = require('@config/queue')
 describe('#scheduleSendMessageToMessenger', () => {
   const queueSendMessageToMessenger = queueServer.queues.find((queue) => queue.name === 'send-message-to-messenger')
 
-  afterEach(() => {
-    queueSendMessageToMessenger.bull.obliterate({ force: true })
+  beforeEach(async () => {
+    await queueSendMessageToMessenger.bull.obliterate({ force: true })
   })
+
+  afterEach(async () => {
+    await queueSendMessageToMessenger.bull.obliterate({ force: true })
+  })
+
   it('schedules a job to send message to messenger', async () => {
     await scheduleSendMessageToMessenger({ messageId: 'messageId', url: 'url', token: 'token' })
 
