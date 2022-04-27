@@ -37,5 +37,6 @@ router.delete('/carts/:contact', cartsController.close)
 router.get('/carts/:contact', cartsController.show)
 router.post('/carts/:contact/item', cartsController.addItem)
 router.delete('/carts/:contact/item', cartsController.removeItem)
+router.post('/carts/:cart/send', cartsController.send)
 
 module.exports = router

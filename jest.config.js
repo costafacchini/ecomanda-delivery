@@ -14,6 +14,7 @@ const jest = {
     '@reports(.*)$': '<rootDir>/src/app/reports$1',
     '@factories(.*)$': '<rootDir>/src/app/factories$1',
     '@plugins(.*)$': '<rootDir>/src/app/plugins$1',
+    '@repositories(.*)$': '<rootDir>/src/app/repositories$1',
   },
   collectCoverage: true,
   collectCoverageFrom: [

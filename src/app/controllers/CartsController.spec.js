@@ -7,6 +7,9 @@ const { expressServer } = require('../../../.jest/server-express')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { cart: cartFactory } = require('@factories/cart')
+const { createMessage } = require('@repositories/message')
+
+jest.mock('@repositories/message')
 
 describe('carts controller', () => {
   let licensee, contact
@@ -502,6 +505,49 @@ describe('carts controller', () => {
           })
 
         contactFindOneSpy.mockRestore()
+      })
+    })
+  })
+
+  describe('send', () => {
+    describe('response', () => {
+      it('returns status 200 and schedules to send message if the item removed with successful', async () => {
+        const cart = await Cart.create(cartFactory.build({ contact, licensee }))
+
+        createMessage.mockResolvedValue({ _id: 'id' })
+
+        await request(expressServer)
+          .post(`/api/v1/carts/${cart._id}/send?token=${licensee.apiToken}`)
+          .expect('Content-Type', /json/)
+          .expect(200, {
+            message: 'Carrinho agendado para envio',
+          })
+      })
+
+      it('returns status 404 and message if the cart is not founded', async () => {
+        await Cart.deleteMany({})
+
+        await request(expressServer)
+          .post(`/api/v1/carts/5511990283745/send?token=${licensee.apiToken}`)
+          .expect('Content-Type', /json/)
+          .expect(404, { errors: { message: 'Carrinho não encontrado' } })
+      })
+
+      it('returns status 500 and message if the some error ocurred when update the cart', async () => {
+        const cart = await Cart.create(cartFactory.build({ contact, licensee }))
+
+        createMessage.mockImplementation(() => {
+          throw new Error('some error')
+        })
+
+        await request(expressServer)
+          .post(`/api/v1/carts/${cart._id}/send?token=${licensee.apiToken}`)
+          .expect('Content-Type', /json/)
+          .expect(500, {
+            errors: { message: 'Error: some error' },
+          })
+
+        createMessage.mockRestore()
       })
     })
   })
