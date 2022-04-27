@@ -265,7 +265,7 @@ class CartsController {
         text: '$last_cart_resume',
         kind: 'interactive',
         licensee: req.licensee._id,
-        contact: cart.contact._id,
+        contact: cart.contact,
         destination: 'to-messenger',
       })
 
