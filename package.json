@@ -30,7 +30,7 @@
     "eslint-plugin-prettier": "4.0.0",
     "eslint-plugin-promise": "6.0.0",
     "fetch-mock": "9.11.0",
-    "jest": "28.0.1",
+    "jest": "28.0.2",
     "jest-date-mock": "1.0.8",
     "mongodb-memory-server": "8.5.1",
     "mongodb-memory-server-global": "8.5.1",
