@@ -3,6 +3,8 @@ const { sanitizeModelErrors } = require('../helpers/SanitizeErrors')
 const _ = require('lodash')
 const Contact = require('@models/Contact')
 const NormalizePhone = require('@helpers/NormalizePhone')
+const { createMessage } = require('@repositories/message')
+const { scheduleSendMessageToMessenger } = require('@repositories/messenger')
 
 async function getContact(number, licenseeId) {
   const normalizedPhone = new NormalizePhone(number)
@@ -27,6 +29,7 @@ function permit(fields) {
     'city',
     'cep',
     'uf',
+    'note',
   ]
 
   return _.pick(fields, permitedFields)
@@ -47,6 +50,7 @@ class CartsController {
       city,
       cep,
       uf,
+      note,
     } = req.body
 
     try {
@@ -69,6 +73,7 @@ class CartsController {
         city,
         cep,
         uf,
+        note,
       })
 
       const validation = cart.validateSync()
@@ -242,6 +247,35 @@ class CartsController {
       cart = await Cart.findOne({ _id: cart._id })
 
       res.status(200).send(cart)
+    } catch (err) {
+      res.status(500).send({ errors: { message: err.toString() } })
+    }
+  }
+
+  async send(req, res) {
+    try {
+      let cart
+      try {
+        cart = await Cart.findOne({ _id: req.params.cart }).populate('contact')
+      } catch (err) {
+        return res.status(404).send({ errors: { message: `Carrinho não encontrado` } })
+      }
+
+      const message = await createMessage({
+        text: '$last_cart_resume',
+        kind: 'interactive',
+        licensee: req.licensee._id,
+        contact: cart.contact._id,
+        destination: 'to-messenger',
+      })
+
+      await scheduleSendMessageToMessenger({
+        messageId: message._id,
+        url: req.licensee.whatsappUrl,
+        token: req.licensee.whatsappToken,
+      })
+
+      res.status(200).send({ message: 'Carrinho agendado para envio' })
     } catch (err) {
       res.status(500).send({ errors: { message: err.toString() } })
     }
