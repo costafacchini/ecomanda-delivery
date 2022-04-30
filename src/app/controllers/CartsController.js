@@ -30,6 +30,11 @@ function permit(fields) {
     'cep',
     'uf',
     'note',
+    'change',
+    'partner_key',
+    'payment_method',
+    'points',
+    'discount',
   ]
 
   return _.pick(fields, permitedFields)
@@ -51,6 +56,11 @@ class CartsController {
       cep,
       uf,
       note,
+      change,
+      partner_key,
+      payment_method,
+      points,
+      discount,
     } = req.body
 
     try {
@@ -74,6 +84,11 @@ class CartsController {
         cep,
         uf,
         note,
+        change,
+        partner_key,
+        payment_method,
+        points,
+        discount,
       })
 
       const validation = cart.validateSync()
