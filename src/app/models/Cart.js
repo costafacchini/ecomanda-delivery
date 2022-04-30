@@ -63,6 +63,17 @@ const cartSchema = new Schema(
     cep: String,
     uf: String,
     note: String,
+    change: {
+      type: Number,
+      default: 0,
+    },
+    partner_key: String,
+    payment_method: String,
+    points: { type: Boolean, default: false },
+    discount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 )
