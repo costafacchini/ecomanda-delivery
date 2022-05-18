@@ -944,6 +944,11 @@
   resolved "https://registry.yarnpkg.com/@newrelic/superagent/-/superagent-5.1.0.tgz#4acbb9a7245d9f16a171532aa41278563f91c989"
   integrity sha512-2akEsdymaDlV3GEReNTXaSbweaOJNuazrw+C/MhiogdBk97PCs6+MgIVxR+o/i+eftOVyGd3f+3lubqNm3/0Nw==
 
+"@newrelic/winston-enricher@^3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@newrelic/winston-enricher/-/winston-enricher-3.1.1.tgz#05aa0385b15546d8d4d8bbd9cdd32a56e5a688ab"
+  integrity sha512-ioLw2H10CTPknd9kUvAAjMeg3n32WsEfW/N+gTGEOs1OhK9wB1ZWOYOEj54Zkas/ATwQsl4V/m6AAcJp891Pww==
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
@@ -4942,16 +4947,17 @@ new-find-package-json@^1.1.0:
     debug "^4.3.2"
     tslib "^2.3.0"
 
-newrelic@8.10.0:
-  version "8.10.0"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-8.10.0.tgz#b3e9531e0690cc241588c953601ea6cd1634318c"
-  integrity sha512-7gBtVsdblR074M262zuyMIrkOCIzJ+uJsmKrRfqkoqFos0ck/SpnahNSp+Q5LDiVq3Q+03G3sBVErK2yShv6iQ==
+newrelic@8.11.1:
+  version "8.11.1"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-8.11.1.tgz#dca90da33539b51a3037872e0542e6e9f2ddc91e"
+  integrity sha512-AWXYdOHuzT58k4/q5QdWPzaLVz4IdEjjJ78aGnU4w3PV4uV909HxiszGd/t23BWrIVlDQrHVrsY+k5VOTzNr0A==
   dependencies:
     "@grpc/grpc-js" "^1.5.5"
     "@grpc/proto-loader" "^0.6.9"
     "@newrelic/aws-sdk" "^4.1.1"
     "@newrelic/koa" "^6.1.1"
     "@newrelic/superagent" "^5.1.0"
+    "@newrelic/winston-enricher" "^3.1.1"
     "@tyriar/fibonacci-heap" "^2.0.7"
     async "^3.2.3"
     concat-stream "^2.0.0"
