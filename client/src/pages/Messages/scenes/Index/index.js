@@ -79,14 +79,14 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
         <div className='col-3'>
           <div className='form-group'>
             <label htmlFor='startDate'>Data inicial</label>
-            <input value={filters.startDate} onChange={handleChange} className='form-control' type='date' name='startDate' id='startDate' />
+            <input value={filters.startDate} onChange={handleChange} className='form-control' type='datetime-local' name='startDate' id='startDate' />
           </div>
         </div>
 
         <div className='col-3'>
           <div className='form-group'>
             <label htmlFor='endDate'>Data final</label>
-            <input value={filters.endDate} onChange={handleChange} className='form-control' type='date' name='endDate' id='endDate' />
+            <input value={filters.endDate} onChange={handleChange} className='form-control' type='datetime-local' name='endDate' id='endDate' />
           </div>
         </div>
 

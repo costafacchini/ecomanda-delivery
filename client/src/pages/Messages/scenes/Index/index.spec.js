@@ -91,13 +91,13 @@ describe('<MessageIndex />', () => {
 
       mount()
 
-      fireEvent.change(screen.getByLabelText('Data inicial'), { target: { value: '2012-12-12' } })
+      fireEvent.change(screen.getByLabelText('Data inicial'), { target: { value: '2012-12-12T10:25:12' } })
 
       fireEvent.click(screen.getByText('Pesquisar'))
 
       await screen.findByText('Contact')
 
-      expect(getMessages).toHaveBeenCalledWith(expect.objectContaining({ startDate: '2012-12-12' }))
+      expect(getMessages).toHaveBeenCalledWith(expect.objectContaining({ startDate: '2012-12-12T10:25:12.000' }))
 
     })
   })
@@ -108,13 +108,13 @@ describe('<MessageIndex />', () => {
 
       mount()
 
-      fireEvent.change(screen.getByLabelText('Data final'), { target: { value: '2012-12-12' } })
+      fireEvent.change(screen.getByLabelText('Data final'), { target: { value: '2012-12-12T18:14:37' } })
 
       fireEvent.click(screen.getByText('Pesquisar'))
 
       await screen.findByText('Contact')
 
-      expect(getMessages).toHaveBeenCalledWith(expect.objectContaining({ endDate: '2012-12-12' }))
+      expect(getMessages).toHaveBeenCalledWith(expect.objectContaining({ endDate: '2012-12-12T18:14:37.000' }))
 
     })
   })
