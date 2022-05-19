@@ -11,8 +11,8 @@ class MessagesController {
       messagesQuery.page(page)
       messagesQuery.limit(limit)
 
-      if (req.query.initialDate && req.query.endDate) {
-        messagesQuery.filterByCreatedAt(new Date(req.query.initialDate), new Date(req.query.endDate))
+      if (req.query.startDate && req.query.endDate) {
+        messagesQuery.filterByCreatedAt(new Date(req.query.startDate), new Date(req.query.endDate))
       }
 
       if (req.query.licensee) {
