@@ -4822,13 +4822,35 @@ mongodb-memory-server-core@8.5.2:
     uuid "^8.3.1"
     yauzl "^2.10.0"
 
-mongodb-memory-server-global@8.5.2:
-  version "8.5.2"
-  resolved "https://registry.yarnpkg.com/mongodb-memory-server-global/-/mongodb-memory-server-global-8.5.2.tgz#800cf831d48d59484040e6c728766f4eeda8c0cb"
-  integrity sha512-6bgjdXOD+KW9ieiZG8xVb6f2jbuKMISDrorqUgxBGVqL8cKLDsT57Hwua7HDvxOURPcJ3ulsux//6N1AhY3kvg==
+mongodb-memory-server-core@8.6.0:
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-8.6.0.tgz#3c5c656544d4e36fe0e2aa63184f88ff64662782"
+  integrity sha512-vuJfoK1TUPKwmspRxvkMUod34BInHmWF6li3nXlQ9bvaA2Xg4p3GsTkplyuwTBkLgeLL9AwIU0rk3CDwKpym1w==
   dependencies:
-    mongodb-memory-server-core "8.5.2"
-    tslib "^2.3.1"
+    "@types/tmp" "^0.2.3"
+    async-mutex "^0.3.2"
+    camelcase "^6.3.0"
+    debug "^4.3.4"
+    find-cache-dir "^3.3.2"
+    get-port "^5.1.1"
+    https-proxy-agent "^5.0.1"
+    md5-file "^5.0.0"
+    mongodb "^4.5.0"
+    new-find-package-json "^1.1.0"
+    semver "^7.3.7"
+    tar-stream "^2.1.4"
+    tmp "^0.2.1"
+    tslib "^2.4.0"
+    uuid "^8.3.1"
+    yauzl "^2.10.0"
+
+mongodb-memory-server-global@8.6.0:
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server-global/-/mongodb-memory-server-global-8.6.0.tgz#431907df15350614b297d376551205305e7f94c7"
+  integrity sha512-jarJrnNI4KSM2sXzVGTCMrTzYCVdVEj/QvS/m04Jl9mtBbD2kiprdrUMDya6npBJpekDH8rzDJ3pIpip8hSnQg==
+  dependencies:
+    mongodb-memory-server-core "8.6.0"
+    tslib "^2.4.0"
 
 mongodb-memory-server@8.5.2:
   version "8.5.2"
@@ -6532,6 +6554,11 @@ tslib@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.1.tgz#e8a335add5ceae51aa261d32a490158ef042ef01"
   integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==
+
+tslib@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.0.tgz#7cecaa7f073ce680a05847aa77be941098f36dc3"
+  integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
 
 tsutils@^3.21.0:
   version "3.21.0"
