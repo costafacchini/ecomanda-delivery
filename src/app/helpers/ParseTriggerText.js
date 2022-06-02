@@ -67,7 +67,7 @@ function cartDescription(cart) {
     description.push(`${cart.payment_method}`)
     description.push(` `)
   }
-  description.push(`*TROCO:* ${formatNumber(cart.change)}`)
+  description.push(`*TROCO PARA:* ${formatNumber(cart.change)}`)
   description.push(`______________`)
 
   if (cart.note) {
@@ -103,4 +103,9 @@ function phoneWithoutCountryCode(phone) {
   return phone.length === 13 ? phone.substr(2, 11) : phone
 }
 
-module.exports = parseText
+async function parseCart(cartId) {
+  const cart = await Cart.findById(cartId).populate('contact').populate('licensee').populate('products.product')
+  return cart ? cartDescription(cart) : ''
+}
+
+module.exports = { parseText, parseCart }

@@ -3,7 +3,7 @@ const Contact = require('@models/Contact')
 const Licensee = require('@models/Licensee')
 const Product = require('@models/Product')
 const mongoServer = require('../../../.jest/utils')
-const parseText = require('./ParseTriggerText')
+const { parseText, parseCart } = require('./ParseTriggerText')
 const { contact: contactFactory } = require('@factories/contact')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { cart: cartFactory } = require('@factories/cart')
@@ -117,7 +117,7 @@ describe('ParseTriggerText', () => {
             '\n' +
             ' ' +
             '\n' +
-            '*TROCO:* R$ 0.00' +
+            '*TROCO PARA:* R$ 0.00' +
             '\n' +
             '______________' +
             '\n' +
@@ -394,6 +394,114 @@ describe('ParseTriggerText', () => {
             'São Paulo - SP'
         )
       })
+    })
+  })
+
+  describe('#parseCart', () => {
+    it('returns cart data', async () => {
+      const licensee = await Licensee.create(licenseeFactory.build())
+      const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
+
+      const product = await Product.create(productFactory.build({ name: 'Product 1', licensee }))
+      const cart = await Cart.create(
+        cartFactory.build({
+          licensee,
+          contact,
+          products: [
+            {
+              product_retailer_id: '0123',
+              name: 'Product',
+              quantity: 2,
+              unit_price: 7.8,
+              additionals: [{ name: 'Adicional 1', quantity: 1 }],
+              note: 'Without suggar',
+            },
+            {
+              product_retailer_id: '0456',
+              quantity: 1,
+              unit_price: 3.5,
+              product,
+            },
+          ],
+          delivery_tax: 0.5,
+          concluded: false,
+          address: 'Rua do Contato, 123',
+          address_number: '123',
+          address_complement: 'Apto. 123',
+          neighborhood: 'Centro',
+          city: 'São Paulo',
+          uf: 'SP',
+          cep: '01234567',
+          partner_key: '9164',
+          payment_method: 'Cartão de crédito - Master',
+          note: 'Deliver in hands',
+          points: true,
+        })
+      )
+
+      expect(await parseCart(cart._id)).toEqual(
+        '*ALCATEIA LTDS - PEDIDO 9164*' +
+          '\n' +
+          'Data: 03/07/2021 00:00' +
+          '\n' +
+          ' ' +
+          '\n' +
+          '*Cliente:* John Doe' +
+          '\n' +
+          '*Telefone:* 11990283745' +
+          '\n' +
+          '*Entrega:* Rua do Contato, 123, 123 - Apto. 123' +
+          '\n' +
+          '         Centro - São Paulo/SP - 01234567' +
+          '\n' +
+          '______________' +
+          '\n' +
+          ' ' +
+          '\n' +
+          '*ITENS DO PEDIDO*' +
+          '\n' +
+          ' ' +
+          '\n' +
+          ' ' +
+          '\n' +
+          '2x Product - R$ 7.80' +
+          '\n' +
+          '   2x Adicional 1' +
+          '\n' +
+          '   Obs: Without suggar' +
+          '\n' +
+          '1x Product 1 - R$ 3.50' +
+          '\n' +
+          '______________' +
+          '\n' +
+          ' ' +
+          '\n' +
+          'Subtotal: R$ 19.10' +
+          '\n' +
+          'Taxa Entrega: R$ 0.50' +
+          '\n' +
+          'Desconto: R$ 0.00' +
+          '\n' +
+          '*TOTAL:* R$ 19.60' +
+          '\n' +
+          ' ' +
+          '\n' +
+          '*FORMA DE PAGAMENTO*' +
+          '\n' +
+          'Cartão de crédito - Master' +
+          '\n' +
+          ' ' +
+          '\n' +
+          '*TROCO PARA:* R$ 0.00' +
+          '\n' +
+          '______________' +
+          '\n' +
+          '*OBSERVACOES*' +
+          '\n' +
+          'Deliver in hands' +
+          '\n' +
+          'Pontos Ganhos Fidelidade: 19'
+      )
     })
   })
 })

@@ -5,6 +5,7 @@ const Contact = require('@models/Contact')
 const NormalizePhone = require('@helpers/NormalizePhone')
 const { createMessage } = require('@repositories/message')
 const { scheduleSendMessageToMessenger } = require('@repositories/messenger')
+const { parseCart } = require('@helpers/ParseTriggerText')
 
 async function getContact(number, licenseeId) {
   const normalizedPhone = new NormalizePhone(number)
@@ -276,9 +277,10 @@ class CartsController {
         return res.status(404).send({ errors: { message: `Carrinho não encontrado` } })
       }
 
+      const cartDescription = await parseCart(cart._id)
       const message = await createMessage({
-        text: '$last_cart_resume',
-        kind: 'interactive',
+        text: cartDescription,
+        kind: 'text',
         licensee: req.licensee._id,
         contact: cart.contact,
         destination: 'to-messenger',

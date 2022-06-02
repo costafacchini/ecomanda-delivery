@@ -10,7 +10,7 @@ const request = require('../../services/request')
 const files = require('@helpers/Files')
 const mime = require('mime-types')
 const cartFactory = require('../../plugins/carts/factory')
-const parseText = require('@helpers/ParseTriggerText')
+const { parseText } = require('@helpers/ParseTriggerText')
 
 const getMediaURL = async (licensee, mediaId, contact) => {
   const response = await downloadMedia(mediaId, licensee.whatsappToken)
