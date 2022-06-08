@@ -80,6 +80,19 @@ describe('carts controller', () => {
           })
       })
 
+      it('returns status 201, create contact and the cart data if the name are in params', async () => {
+        await request(expressServer)
+          .post(`/api/v1/carts?token=${licensee.apiToken}`)
+          .send(cartFactory.build({ contact: '47890283745', name: 'Contact Name' }))
+          .expect('Content-Type', /json/)
+          .expect(201)
+          .then((response) => {
+            expect(response.body.contact).toBeDefined()
+            expect(response.body.contact).not.toEqual(contact._id.toString())
+            expect(response.body.contact).not.toEqual(anotherContact._id.toString())
+          })
+      })
+
       it('returns status 404 and message if the cart is not valid', async () => {
         await request(expressServer)
           .post(`/api/v1/carts?token=${licensee.apiToken}`)

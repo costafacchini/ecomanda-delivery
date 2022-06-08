@@ -4,6 +4,7 @@ const _ = require('lodash')
 const Contact = require('@models/Contact')
 const NormalizePhone = require('@helpers/NormalizePhone')
 const { createMessage } = require('@repositories/message')
+const { createContact } = require('@repositories/contact')
 const { scheduleSendMessageToMessenger } = require('@repositories/messenger')
 const { parseCart } = require('@helpers/ParseTriggerText')
 
@@ -62,12 +63,23 @@ class CartsController {
       payment_method,
       points,
       discount,
+      name,
     } = req.body
 
     try {
-      const cartContact = await getContact(contact, req.licensee._id)
+      let cartContact = await getContact(contact, req.licensee._id)
       if (!cartContact) {
-        return res.status(404).send({ errors: { message: `Contato ${contact} não encontrado` } })
+        if (!name) return res.status(404).send({ errors: { message: `Contato ${contact} não encontrado` } })
+
+        const normalizedPhone = new NormalizePhone(contact)
+
+        cartContact = await createContact({
+          licensee: req.licensee._id,
+          number: normalizedPhone.number,
+          type: normalizedPhone.type,
+          name,
+          talkingWithChatBot: req.licensee.useChatbot,
+        })
       }
 
       const cart = new Cart({
