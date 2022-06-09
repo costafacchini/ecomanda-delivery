@@ -646,15 +646,15 @@
     "@grpc/proto-loader" "^0.6.4"
     "@types/node" ">=12.12.47"
 
-"@grpc/proto-loader@^0.6.12":
-  version "0.6.12"
-  resolved "https://registry.yarnpkg.com/@grpc/proto-loader/-/proto-loader-0.6.12.tgz#459b619b8b9b67794bf0d1cb819653a38c63e164"
-  integrity sha512-filTVbETFnxb9CyRX98zN18ilChTuf/C5scZ2xyaOTp0EHGq0/ufX8rjqXUcSb1Gpv7eZq4M2jDvbh9BogKnrg==
+"@grpc/proto-loader@^0.6.13":
+  version "0.6.13"
+  resolved "https://registry.yarnpkg.com/@grpc/proto-loader/-/proto-loader-0.6.13.tgz#008f989b72a40c60c96cd4088522f09b05ac66bc"
+  integrity sha512-FjxPYDRTn6Ec3V0arm1FtSpmP6V50wuph2yILpyvTKzjc76oDdoihXqM1DzOW5ubvCC8GivfCnNtfaRE8myJ7g==
   dependencies:
     "@types/long" "^4.0.1"
     lodash.camelcase "^4.3.0"
     long "^4.0.0"
-    protobufjs "^6.10.0"
+    protobufjs "^6.11.3"
     yargs "^16.2.0"
 
 "@grpc/proto-loader@^0.6.4":
@@ -4995,13 +4995,13 @@ new-find-package-json@^1.1.0:
     debug "^4.3.2"
     tslib "^2.3.0"
 
-newrelic@8.14.0:
-  version "8.14.0"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-8.14.0.tgz#d626eb1b8589bb2e575bfac94d4fe3ff51c6b4c3"
-  integrity sha512-QKKHd3Ycu3mrvypwSrN6AHzjhgkiUZsH7Xul+q9rXQ7YRc8lYyzV/1ROAeOrwFMshxBmysTtsbgYlOp8PB3qgQ==
+newrelic@8.14.1:
+  version "8.14.1"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-8.14.1.tgz#83db54901915c45121b60a75734e0f55d214c9f6"
+  integrity sha512-k/DLwqrvKYyuK+ESp9m5baInyhnvqrFL7k8GFLFzAxGksypcU3E+sVv/hHNZv7I16uKC47KqmXhPKDhWLzJ9sg==
   dependencies:
     "@grpc/grpc-js" "^1.5.5"
-    "@grpc/proto-loader" "^0.6.12"
+    "@grpc/proto-loader" "^0.6.13"
     "@newrelic/aws-sdk" "^4.1.1"
     "@newrelic/koa" "^6.1.1"
     "@newrelic/superagent" "^5.1.0"
@@ -5553,6 +5553,25 @@ protobufjs@^6.10.0:
   version "6.11.2"
   resolved "https://registry.yarnpkg.com/protobufjs/-/protobufjs-6.11.2.tgz#de39fabd4ed32beaa08e9bb1e30d08544c1edf8b"
   integrity sha512-4BQJoPooKJl2G9j3XftkIXjoC9C0Av2NOrWmbLWT1vH32GcSUHjM0Arra6UfTsVyfMAuFzaLucXn1sadxJydAw==
+  dependencies:
+    "@protobufjs/aspromise" "^1.1.2"
+    "@protobufjs/base64" "^1.1.2"
+    "@protobufjs/codegen" "^2.0.4"
+    "@protobufjs/eventemitter" "^1.1.0"
+    "@protobufjs/fetch" "^1.1.0"
+    "@protobufjs/float" "^1.0.2"
+    "@protobufjs/inquire" "^1.1.0"
+    "@protobufjs/path" "^1.1.2"
+    "@protobufjs/pool" "^1.1.0"
+    "@protobufjs/utf8" "^1.1.0"
+    "@types/long" "^4.0.1"
+    "@types/node" ">=13.7.0"
+    long "^4.0.0"
+
+protobufjs@^6.11.3:
+  version "6.11.3"
+  resolved "https://registry.yarnpkg.com/protobufjs/-/protobufjs-6.11.3.tgz#637a527205a35caa4f3e2a9a4a13ddffe0e7af74"
+  integrity sha512-xL96WDdCZYdU7Slin569tFX712BxsxslWwAfAhCYjQKGTq7dAU91Lomy6nLLhh/dyGhk/YH4TwTSRxTzhuHyZg==
   dependencies:
     "@protobufjs/aspromise" "^1.1.2"
     "@protobufjs/base64" "^1.1.2"
