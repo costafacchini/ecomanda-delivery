@@ -67,10 +67,13 @@ function cartDescription(cart) {
     description.push(`${cart.payment_method}`)
     description.push(` `)
   }
-  description.push(`*TROCO PARA:* ${formatNumber(cart.change)}`)
-  description.push(`______________`)
+
+  const cardPayment = cart.payment_method && 'crédito,credito,visa,master,mastercard,elo'.includes(cart.payment_method)
+
+  if (!cardPayment) description.push(`*TROCO PARA:* ${formatNumber(cart.change)}`)
 
   if (cart.note) {
+    description.push(`______________`)
     description.push(`*OBSERVACOES*`)
     description.push(`${cart.note}`)
   }
