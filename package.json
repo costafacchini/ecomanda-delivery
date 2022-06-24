@@ -63,7 +63,7 @@
     "morgan": "1.10.0",
     "newrelic": "8.14.1",
     "node-notifier": "10.0.1",
-    "nodemon": "2.0.16",
+    "nodemon": "2.0.18",
     "pg": "8.7.3",
     "redis": "4.1.0",
     "rollbar": "2.25.0",
