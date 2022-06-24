@@ -349,6 +349,41 @@ describe('ParseTriggerText', () => {
           )
         })
       })
+
+      describe('when the payment method is cart', () => {
+        it('replaces by cart data without change', async () => {
+          const licensee = await Licensee.create(licenseeFactory.build())
+          const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
+          await Cart.create(cartFactory.build({ licensee, contact, concluded: true }))
+
+          const product = await Product.create(productFactory.build({ name: 'Product 1', licensee }))
+          await Cart.create(
+            cartFactory.build({
+              licensee,
+              contact,
+              products: [
+                {
+                  product_retailer_id: '0123',
+                  name: 'Product',
+                  quantity: 2,
+                  unit_price: 7.8,
+                },
+                {
+                  product_retailer_id: '0456',
+                  quantity: 1,
+                  unit_price: 3.5,
+                  product,
+                },
+              ],
+              delivery_tax: 0.5,
+              concluded: false,
+              payment_method: 'master',
+            })
+          )
+
+          expect(await parseText('This is your cart \n $last_cart_resume', contact)).not.toContain('*TROCO PARA:*')
+        })
+      })
     })
 
     describe('$contact_name', () => {
