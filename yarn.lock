@@ -4856,12 +4856,34 @@ mongodb-memory-server-core@8.6.1:
     uuid "^8.3.1"
     yauzl "^2.10.0"
 
-mongodb-memory-server-global@8.6.1:
-  version "8.6.1"
-  resolved "https://registry.yarnpkg.com/mongodb-memory-server-global/-/mongodb-memory-server-global-8.6.1.tgz#5c7c1152c96d1d65427e6b1ec490b171c052fee8"
-  integrity sha512-cIEB23Ldgfz2jhX1XU9h0WKUErR6kL4DwjC02c/sgLNh0VtnKbM8Wyv7AQFS/dBeyjnOXu+xRzMBl8Dq0I7pLQ==
+mongodb-memory-server-core@8.7.1:
+  version "8.7.1"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-8.7.1.tgz#6ee68b5ed3a0b7527258775e50377e936d1c811e"
+  integrity sha512-ysMg0G8EqvjkWjO1i7s7mLSJDgLUdq5rms9IhpHX9TkiuRz475j7EUPSvdJGBby7qvgEockZCyEBOil7GlvZSg==
   dependencies:
-    mongodb-memory-server-core "8.6.1"
+    "@types/tmp" "^0.2.3"
+    async-mutex "^0.3.2"
+    camelcase "^6.3.0"
+    debug "^4.3.4"
+    find-cache-dir "^3.3.2"
+    get-port "^5.1.1"
+    https-proxy-agent "^5.0.1"
+    md5-file "^5.0.0"
+    mongodb "^4.7.0"
+    new-find-package-json "^2.0.0"
+    semver "^7.3.7"
+    tar-stream "^2.1.4"
+    tmp "^0.2.1"
+    tslib "^2.4.0"
+    uuid "^8.3.1"
+    yauzl "^2.10.0"
+
+mongodb-memory-server-global@8.7.1:
+  version "8.7.1"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server-global/-/mongodb-memory-server-global-8.7.1.tgz#9de2f31464de4ff5f578d4a16fc311ff2c05ee39"
+  integrity sha512-qxHzhdImhSLJSvw08qlx6r07LK9lhlFLXtrICZoPiLwvUWoX6e+XJlCrw1yvxM7RSKT9UuybojUwjO30To3NPQ==
+  dependencies:
+    mongodb-memory-server-core "8.7.1"
     tslib "^2.4.0"
 
 mongodb-memory-server@8.6.1:
@@ -4884,7 +4906,7 @@ mongodb@4.5.0, mongodb@^4.5.0:
   optionalDependencies:
     saslprep "^1.0.3"
 
-mongodb@4.7.0:
+mongodb@4.7.0, mongodb@^4.7.0:
   version "4.7.0"
   resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-4.7.0.tgz#99f7323271d93659067695b60e7b4efee2de9bf0"
   integrity sha512-HhVar6hsUeMAVlIbwQwWtV36iyjKd9qdhY+s4wcU8K6TOj4Q331iiMy+FoPuxEntDIijTYWivwFJkLv8q/ZgvA==
@@ -4994,6 +5016,13 @@ new-find-package-json@^1.1.0:
   dependencies:
     debug "^4.3.2"
     tslib "^2.3.0"
+
+new-find-package-json@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/new-find-package-json/-/new-find-package-json-2.0.0.tgz#96553638781db35061f351e8ccb4d07126b6407d"
+  integrity sha512-lDcBsjBSMlj3LXH2v/FW3txlh2pYTjmbOXPYJD93HI5EwuLzI11tdHSIpUMmfq/IOsldj4Ps8M8flhm+pCK4Ew==
+  dependencies:
+    debug "^4.3.4"
 
 newrelic@8.14.1:
   version "8.14.1"
