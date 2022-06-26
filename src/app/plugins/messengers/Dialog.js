@@ -53,6 +53,51 @@ const getContact = async (number, url, token) => {
   }
 }
 
+const getTemplates = async (url, token) => {
+  const headers = { 'D360-API-KEY': token }
+
+  const response = await request.get(`${url}v1/configs/templates`, { headers })
+
+  return response.data
+}
+
+const parseTemplates = (dialogTemplates, licenseeId) => {
+  const templates = []
+  for (const template of dialogTemplates.waba_templates) {
+    const templateValues = {
+      name: template.name,
+      namespace: template.namespace,
+      licensee: licenseeId,
+      language: template.language,
+      active: template.status === 'approved',
+      category: template.category,
+      headerParams: [],
+      bodyParams: [],
+      footerParams: [],
+    }
+    template.components.forEach((component) => {
+      const type = component.type.toLowerCase()
+      if (component.format) {
+        const format = component.format
+        templateValues[`${type}Params`].push({ format })
+      } else if (component.text) {
+        const regex = /\{\{([0-9]*)\}\}/g
+        const matches = component.text.match(regex)
+        if (matches) {
+          matches.forEach((match) => {
+            const number = match.replace(/\D/g, '')
+            templateValues[`${type}Params`].push({ number, format: 'text' })
+          })
+        }
+      }
+    })
+
+    templates.push(templateValues)
+  }
+
+  return templates
+}
+
 class Dialog {
   constructor(licensee) {
     this.licensee = licensee
@@ -350,6 +395,13 @@ class Dialog {
     const response = await request.post(`${url}v1/configs/webhook`, { headers, body })
 
     return response.status === 200
+  }
+
+  async searchTemplates(url, token) {
+    const dialogTemplates = await getTemplates(url, token)
+    const templates = parseTemplates(dialogTemplates, this.licensee._id)
+
+    return templates
   }
 }
 

@@ -1,7 +1,7 @@
 import { FieldWithError, Form } from '../../../../components/form'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router-dom'
-import { setLicenseeWebhook } from '../../../../services/licensee'
+import { setLicenseeWebhook, importLicenseeTemplate } from '../../../../services/licensee'
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string()
@@ -342,7 +342,7 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
 
               {props.values.whatsappDefault === 'dialog' && props.values.apiToken && (
                 <div className='row pb-4'>
-                  <div className='form-group col-5'>
+                  <div className='form-group col-3'>
                     <button
                       onClick={async (event) => {
                         event.preventDefault()
@@ -350,6 +350,17 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                       }}
                       className='btn btn-info'>
                         Configurar Webhook na Dialog360
+                    </button>
+                  </div>
+
+                  <div className='form-group col-2'>
+                    <button
+                      onClick={async (event) => {
+                        event.preventDefault()
+                        await importLicenseeTemplate(props.values)
+                      }}
+                      className='btn btn-info'>
+                      Importar templates
                     </button>
                   </div>
                 </div>

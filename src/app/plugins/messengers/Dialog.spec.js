@@ -2650,6 +2650,142 @@ describe('Dialog plugin', () => {
     })
   })
 
+  describe('#searchTemplates', () => {
+    it('returns the templates to licensee', async () => {
+      fetchMock.getOnce(
+        (url, { headers }) => {
+          return url === 'https://waba.360dialog.io/v1/configs/templates' && headers['D360-API-KEY'] === 'token-dialog'
+        },
+        {
+          status: 201,
+          body: {
+            count: 25,
+            filters: {},
+            limit: 1000,
+            offset: 0,
+            sort: ['id'],
+            total: 25,
+            waba_templates: [
+              {
+                category: 'TICKET_UPDATE',
+                components: [
+                  {
+                    format: 'IMAGE',
+                    type: 'HEADER',
+                  },
+                  {
+                    text: 'Tiket Anda untuk *{{1}}*\n*Waktu* - {{2}}\n*Tempat* - {{3}}\n*Kursi* - {{4}}',
+                    type: 'BODY',
+                  },
+                  {
+                    text: 'Pesan ini berasal dari bisnis yang tidak terverifikasi.',
+                    type: 'FOOTER',
+                  },
+                ],
+                language: 'pt_BR',
+                name: 'sample_movie_ticket_confirmation',
+                namespace: '93aa6bf3_3bfc_4840_a76c_0f43073739e2',
+                rejected_reason: 'NONE',
+                status: 'approved',
+              },
+              {
+                category: 'ISSUE_RESOLUTION',
+                components: [
+                  {
+                    format: 'DOCUMENT',
+                    type: 'HEADER',
+                  },
+                  {
+                    text: 'Ini merupakan konfirmasi penerbangan Anda untuk {{1}}-{{2}} di {{3}}.',
+                    type: 'BODY',
+                  },
+                  {
+                    text: 'This message is from an unverified business.',
+                    type: 'FOOTER',
+                  },
+                ],
+                language: 'es',
+                name: 'sample_purchase_feedback',
+                namespace: '93aa6bf3_3bfc_4840_a76c_0f43073739e2',
+                rejected_reason: 'NONE',
+                status: 'approved',
+              },
+              {
+                category: 'TICKET_UPDATE',
+                components: [
+                  {
+                    text: 'Ini merupakan konfirmasi penerbangan Anda untuk {{1}}-{{2}}.',
+                    type: 'BODY',
+                  },
+                  {
+                    text: 'This message is from an unverified business.',
+                    type: 'FOOTER',
+                  },
+                ],
+                language: 'pt_BR',
+                name: 'sample_purchase_feedback_2',
+                namespace: '93aa6bf3_3bfc_4840_a76c_0f43073739e2',
+                rejected_reason: 'Not aproval',
+                status: 'rejected',
+              },
+            ],
+          },
+        }
+      )
+
+      const dialog = new Dialog(licensee)
+      const templates = await dialog.searchTemplates('https://waba.360dialog.io/', 'token-dialog')
+      await fetchMock.flush(true)
+
+      expect(templates[0].name).toEqual('sample_movie_ticket_confirmation')
+      expect(templates[0].namespace).toEqual('93aa6bf3_3bfc_4840_a76c_0f43073739e2')
+      expect(templates[0].licensee).toEqual(licensee._id)
+      expect(templates[0].language).toEqual('pt_BR')
+      expect(templates[0].active).toEqual(true)
+      expect(templates[0].category).toEqual('TICKET_UPDATE')
+      expect(templates[0].headerParams[0].format).toEqual('IMAGE')
+      expect(templates[0].bodyParams[0].format).toEqual('text')
+      expect(templates[0].bodyParams[0].number).toEqual('1')
+      expect(templates[0].bodyParams[1].format).toEqual('text')
+      expect(templates[0].bodyParams[1].number).toEqual('2')
+      expect(templates[0].bodyParams[2].format).toEqual('text')
+      expect(templates[0].bodyParams[2].number).toEqual('3')
+      expect(templates[0].bodyParams[3].format).toEqual('text')
+      expect(templates[0].bodyParams[3].number).toEqual('4')
+      expect(templates[0].footerParams.length).toEqual(0)
+
+      expect(templates[1].name).toEqual('sample_purchase_feedback')
+      expect(templates[1].namespace).toEqual('93aa6bf3_3bfc_4840_a76c_0f43073739e2')
+      expect(templates[1].licensee).toEqual(licensee._id)
+      expect(templates[1].language).toEqual('es')
+      expect(templates[1].active).toEqual(true)
+      expect(templates[1].category).toEqual('ISSUE_RESOLUTION')
+      expect(templates[1].headerParams[0].format).toEqual('DOCUMENT')
+      expect(templates[1].bodyParams[0].format).toEqual('text')
+      expect(templates[1].bodyParams[0].number).toEqual('1')
+      expect(templates[1].bodyParams[1].format).toEqual('text')
+      expect(templates[1].bodyParams[1].number).toEqual('2')
+      expect(templates[1].bodyParams[2].format).toEqual('text')
+      expect(templates[1].bodyParams[2].number).toEqual('3')
+      expect(templates[1].footerParams.length).toEqual(0)
+
+      expect(templates[2].name).toEqual('sample_purchase_feedback_2')
+      expect(templates[2].namespace).toEqual('93aa6bf3_3bfc_4840_a76c_0f43073739e2')
+      expect(templates[2].licensee).toEqual(licensee._id)
+      expect(templates[2].language).toEqual('pt_BR')
+      expect(templates[2].active).toEqual(false)
+      expect(templates[2].category).toEqual('TICKET_UPDATE')
+      expect(templates[2].headerParams.length).toEqual(0)
+      expect(templates[2].bodyParams[0].format).toEqual('text')
+      expect(templates[2].bodyParams[0].number).toEqual('1')
+      expect(templates[2].bodyParams[1].format).toEqual('text')
+      expect(templates[2].bodyParams[1].number).toEqual('2')
+      expect(templates[2].footerParams.length).toEqual(0)
+
+      expect(templates.length).toEqual(3)
+    })
+  })
+
   describe('.action', () => {
     it('returns send-message-to-chat if message destination is to chat', () => {
       const dialog = new Dialog(licensee)
