@@ -1,6 +1,7 @@
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Trigger = require('@models/Trigger')
+const Template = require('@models/Template')
 const Cart = require('@models/Cart')
 const Product = require('@models/Product')
 const NormalizePhone = require('@helpers/NormalizePhone')
@@ -96,6 +97,65 @@ const parseTemplates = (dialogTemplates, licenseeId) => {
   }
 
   return templates
+}
+
+const parseComponents = (template, parameters) => {
+  const components = []
+  let paramCounter = 1
+
+  if (template.headerParams.length > 0) {
+    const header = []
+    template.headerParams.forEach((param, index) => {
+      header.push(parseComponentParam(param, parameters[index + paramCounter]))
+    })
+    components.push({
+      type: 'header',
+      parameters: header,
+    })
+    paramCounter += template.headerParams.length
+  }
+
+  if (template.bodyParams.length > 0) {
+    const body = []
+    template.bodyParams.forEach((param, index) => {
+      body.push(parseComponentParam(param, parameters[index + paramCounter]))
+    })
+    components.push({
+      type: 'body',
+      parameters: body,
+    })
+    paramCounter += template.bodyParams.length
+  }
+
+  if (template.footerParams.length > 0) {
+    const footer = []
+    template.footerParams.forEach((param, index) => {
+      footer.push(parseComponentParam(param, parameters[index + paramCounter]))
+    })
+    components.push({
+      type: 'footer',
+      parameters: footer,
+    })
+  }
+
+  return components
+}
+
+const parseComponentParam = (param, value) => {
+  if (param.format === 'IMAGE') {
+    return {
+      type: 'image',
+      image: {
+        link: value.replace('{{', '').replace('}}', ''),
+      },
+    }
+  }
+  if (param.format === 'TEXT') {
+    return {
+      type: 'text',
+      text: value.replace('{{', '').replace('}}', ''),
+    }
+  }
 }
 
 class Dialog {
@@ -293,6 +353,26 @@ class Dialog {
         messageBody.text = {
           body: messageToSend.text,
         }
+      }
+
+      if (messageToSend.kind === 'template') {
+        const parameters = messageToSend.text.match(/\{\{[^}]+\}\}/g)
+        const templateName = parameters[0].replace('{{', '').replace('}}', '')
+
+        const template = await Template.findOne({ name: templateName })
+
+        messageBody.type = 'template'
+        messageBody.template = {
+          namespace: template.namespace,
+          name: template.name,
+          language: {
+            code: template.language,
+            policy: 'deterministic',
+          },
+          components: [],
+        }
+
+        messageBody.template.components = parseComponents(template, parameters)
       }
 
       if (messageToSend.kind === 'interactive') {
