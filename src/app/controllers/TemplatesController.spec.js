@@ -4,6 +4,7 @@ const User = require('@models/User')
 const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
+const Dialog = require('@plugins/messengers/Dialog')
 const { userSuper: userSuperFactory } = require('@factories/user')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { template: templateFactory } = require('@factories/template')
@@ -283,10 +284,10 @@ describe('template controller', () => {
   describe('importation', () => {
     describe('response', () => {
       it('returns status 201 if the importation is successful', async () => {
-        const template = await Template.create(templateFactory.build({ licensee }))
+        jest.spyOn(Dialog.prototype, 'searchTemplates').mockImplementation(() => {})
 
         await request(expressServer)
-          .post(`/resources/templates/${template._id}/importation`)
+          .post(`/resources/templates/${licensee._id}/importation`)
           .set('x-access-token', token)
           .expect(201)
       })
@@ -296,10 +297,8 @@ describe('template controller', () => {
           throw new Error('some error')
         })
 
-        const template = await Template.create(templateFactory.build({ licensee }))
-
         await request(expressServer)
-          .post(`/resources/templates/${template._id}/importation`)
+          .post(`/resources/templates/${licensee._id}/importation`)
           .set('x-access-token', token)
           .expect(500, {
             errors: { message: 'Error: some error' },

@@ -39,7 +39,7 @@ const messageSchema = new Schema(
     },
     kind: {
       type: String,
-      enum: ['text', 'file', 'location', 'interactive', 'cart'],
+      enum: ['text', 'file', 'location', 'interactive', 'cart', 'template'],
       default: 'text',
     },
     destination: {

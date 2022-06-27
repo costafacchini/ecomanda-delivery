@@ -208,8 +208,11 @@ class Dialog {
       })
 
       if (responseBody.messages[0].type === 'text') {
-        messageToSend.kind = 'text'
         messageToSend.text = responseBody.messages[0].text.body
+        messageToSend.kind = 'text'
+        if (messageToSend.text.includes('{{') && messageToSend.text.includes('}}')) {
+          messageToSend.kind = 'template'
+        }
       } else if (responseBody.messages[0].type === 'order') {
         let cart = await Cart.findOne({ contact, concluded: false })
         if (!cart) {
