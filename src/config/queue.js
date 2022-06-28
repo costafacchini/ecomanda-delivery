@@ -32,7 +32,7 @@ class QueueServer {
   async addJob(name, body) {
     const queue = this.queues.find((queue) => queue.name === name)
 
-    return await queue.bull.add(name, { body }, { attempts: 3 })
+    return await queue.bull.add(name, { body }, { attempts: 1 })
   }
 }
 
