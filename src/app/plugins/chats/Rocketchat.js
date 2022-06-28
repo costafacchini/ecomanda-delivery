@@ -156,6 +156,10 @@ class Rocketchat {
               destination: 'to-messenger',
             })
 
+            if (messageToSend.text.includes('{{') && messageToSend.text.includes('}}')) {
+              messageToSend.kind = 'template'
+            }
+
             processedMessages.push(await messageToSend.save())
           }
         }

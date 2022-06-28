@@ -99,57 +99,6 @@ describe('Dialog plugin', () => {
 
         expect(messages.length).toEqual(1)
       })
-
-      it('returns the messages with kind template if text has {{ and }}', async () => {
-        const contact = await Contact.create(
-          contactFactory.build({
-            name: 'John Doe',
-            talkingWithChatBot: false,
-            licensee,
-          })
-        )
-
-        const responseBody = {
-          contacts: [
-            {
-              profile: {
-                name: 'John Doe',
-              },
-              wa_id: '5511990283745',
-            },
-          ],
-          messages: [
-            {
-              from: '5511990283745',
-              id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
-              text: {
-                body: 'Message {{name}}',
-              },
-              timestamp: '1632784639',
-              type: 'text',
-            },
-          ],
-        }
-
-        const dialog = new Dialog(licensee)
-        const messages = await dialog.responseToMessages(responseBody)
-
-        expect(messages[0]).toBeInstanceOf(Message)
-        expect(messages[0].licensee).toEqual(licensee._id)
-        expect(messages[0].contact).toEqual(contact._id)
-        expect(messages[0].kind).toEqual('template')
-        expect(messages[0].messageWaId).toEqual('ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC')
-        expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
-        expect(messages[0].destination).toEqual('to-chat')
-        expect(messages[0].text).toEqual('Message {{name}}')
-        expect(messages[0].url).toEqual(undefined)
-        expect(messages[0].fileName).toEqual(undefined)
-        expect(messages[0].latitude).toEqual(undefined)
-        expect(messages[0].longitude).toEqual(undefined)
-        expect(messages[0].departament).toEqual(undefined)
-
-        expect(messages.length).toEqual(1)
-      })
     })
 
     describe('image', () => {

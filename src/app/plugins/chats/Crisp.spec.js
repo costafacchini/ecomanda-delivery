@@ -464,6 +464,52 @@ describe('Crisp plugin', () => {
 
         expect(messages.length).toEqual(2)
       })
+
+      it('returns message of kind template if type is text and has {{ and }}', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            licensee,
+          })
+        )
+
+        await Room.create(
+          roomFactory.build({
+            roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
+            contact,
+          })
+        )
+
+        const responseBody = {
+          website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
+          event: 'message:received',
+          data: {
+            website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
+            type: 'text',
+            from: 'operator',
+            origin: 'chat',
+            content: '{{name}}',
+            fingerprint: 163239623329114,
+            user: {
+              nickname: 'John Doe',
+              user_id: '440ac64d-fee9-4935-b7a8-4c8cb44bb13c',
+            },
+            mentions: [],
+            timestamp: 1632396233539,
+            stamped: true,
+            session_id: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
+          },
+          timestamp: 1632396233588,
+        }
+
+        const crisp = new Crisp(licensee)
+        const messages = await crisp.responseToMessages(responseBody)
+
+        expect(messages[0]).toBeInstanceOf(Message)
+        expect(messages[0].kind).toEqual('template')
+        expect(messages[0].text).toEqual('{{name}}')
+      })
     })
   })
 
