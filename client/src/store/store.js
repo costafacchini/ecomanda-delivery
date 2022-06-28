@@ -5,6 +5,7 @@ import contactsIndex from '../pages/Contacts/scenes/Index/slice'
 import triggersIndex from '../pages/Triggers/scenes/Index/slice'
 import messagesIndex from '../pages/Messages/scenes/Index/slice'
 import billingIndex from '../pages/Reports/Billing/scenes/Index/slice'
+import templatesIndex from '../pages/Templates/scenes/Index/slice'
 
 export default configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export default configureStore({
     licenseesIndex,
     contactsIndex,
     triggersIndex,
+    templatesIndex,
     messagesIndex,
     reports: combineReducers({
       billingIndex,
