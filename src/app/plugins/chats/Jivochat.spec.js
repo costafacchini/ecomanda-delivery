@@ -336,7 +336,7 @@ describe('Jivochat plugin', () => {
       })
 
       it('returns message of kind template if type is text and has {{ and }}', async () => {
-        const contact = await Contact.create(
+        await Contact.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
