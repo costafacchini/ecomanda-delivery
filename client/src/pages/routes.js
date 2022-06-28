@@ -5,6 +5,7 @@ import SignIn from './SignIn'
 import LicenseesRoutes from './Licensees/routes'
 import ContactsRoutes from './Contacts/routes'
 import TriggersRoutes from './Triggers/routes'
+import TemplatesRoutes from './Templates/routes'
 import MessagesRoutes from './Messages/routes'
 import ReportsRoutes from './Reports/routes'
 import Dashboard from './Dashboard'
@@ -59,6 +60,14 @@ function RootRoutes() {
           element={
             <PrivateRoute redirectTo='/'>
               <TriggersRoutes />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path='/templates/*'
+          element={
+            <PrivateRoute redirectTo='/'>
+              <TemplatesRoutes />
             </PrivateRoute>
           }
         />

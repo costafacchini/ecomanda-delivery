@@ -25,6 +25,9 @@ export default function Navbar({ loggedUser }) {
                 <a className='nav-link' href='/#/triggers'>Gatilhos</a>
               </li>
               <li className='nav-item'>
+                <a className='nav-link' href='/#/templates'>Templates</a>
+              </li>
+              <li className='nav-item'>
                 <a className='nav-link' href='/#/messages'>Mensagens</a>
               </li>
               {loggedUser && loggedUser.isAdmin && (
