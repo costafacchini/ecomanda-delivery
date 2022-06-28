@@ -1,0 +1,52 @@
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const ObjectId = Schema.ObjectId
+
+const paramsSchema = new Schema({
+  number: String,
+  format: String,
+})
+const templateSchema = new Schema(
+  {
+    _id: ObjectId,
+    name: {
+      type: String,
+      required: [true, 'Nome: Você deve preencher o campo'],
+    }, // Apenas alfanuméricos minúsculos e underline, sem espaços
+    namespace: {
+      type: String,
+      required: [true, 'Namespace: Você deve preencher o campo'],
+    },
+    language: String,
+    category: String,
+    waId: String,
+    licensee: {
+      type: ObjectId,
+      ref: 'Licensee',
+      required: [true, 'Licensee: Você deve preencher o campo'],
+    },
+    headerParams: [paramsSchema],
+    bodyParams: [paramsSchema],
+    footerParams: [paramsSchema],
+    active: { type: Boolean, default: false },
+  },
+  { timestamps: true }
+)
+
+templateSchema.pre('save', function (next) {
+  const template = this
+
+  if (!template._id) {
+    template._id = new mongoose.Types.ObjectId()
+  }
+
+  next()
+})
+
+templateSchema.set('toJSON', {
+  virtuals: true,
+})
+
+const Template = mongoose.model('Template', templateSchema)
+
+module.exports = Template

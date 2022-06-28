@@ -1,6 +1,7 @@
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Trigger = require('@models/Trigger')
+const Template = require('@models/Template')
 const Cart = require('@models/Cart')
 const Product = require('@models/Product')
 const NormalizePhone = require('@helpers/NormalizePhone')
@@ -50,6 +51,110 @@ const getContact = async (number, url, token) => {
     valid: response.status === 200 && response.data.contacts[0].status === 'valid',
     waId: response.data.contacts[0].wa_id,
     data: response.data,
+  }
+}
+
+const getTemplates = async (url, token) => {
+  const headers = { 'D360-API-KEY': token }
+
+  const response = await request.get(`${url}v1/configs/templates`, { headers })
+
+  return response.data
+}
+
+const parseTemplates = (dialogTemplates, licenseeId) => {
+  const templates = []
+  for (const template of dialogTemplates.waba_templates) {
+    const templateValues = {
+      name: template.name,
+      namespace: template.namespace,
+      licensee: licenseeId,
+      language: template.language,
+      active: template.status === 'approved',
+      category: template.category,
+      headerParams: [],
+      bodyParams: [],
+      footerParams: [],
+    }
+    template.components.forEach((component) => {
+      const type = component.type.toLowerCase()
+      if (component.format) {
+        const format = component.format
+        templateValues[`${type}Params`].push({ format })
+      } else if (component.text) {
+        const regex = /\{\{([0-9]*)\}\}/g
+        const matches = component.text.match(regex)
+        if (matches) {
+          matches.forEach((match) => {
+            const number = match.replace(/\D/g, '')
+            templateValues[`${type}Params`].push({ number, format: 'text' })
+          })
+        }
+      }
+    })
+
+    templates.push(templateValues)
+  }
+
+  return templates
+}
+
+const parseComponents = (template, parameters) => {
+  const components = []
+  let paramCounter = 1
+
+  if (template.headerParams.length > 0) {
+    const header = []
+    template.headerParams.forEach((param, index) => {
+      header.push(parseComponentParam(param, parameters[index + paramCounter]))
+    })
+    components.push({
+      type: 'header',
+      parameters: header,
+    })
+    paramCounter += template.headerParams.length
+  }
+
+  if (template.bodyParams.length > 0) {
+    const body = []
+    template.bodyParams.forEach((param, index) => {
+      body.push(parseComponentParam(param, parameters[index + paramCounter]))
+    })
+    components.push({
+      type: 'body',
+      parameters: body,
+    })
+    paramCounter += template.bodyParams.length
+  }
+
+  if (template.footerParams.length > 0) {
+    const footer = []
+    template.footerParams.forEach((param, index) => {
+      footer.push(parseComponentParam(param, parameters[index + paramCounter]))
+    })
+    components.push({
+      type: 'footer',
+      parameters: footer,
+    })
+  }
+
+  return components
+}
+
+const parseComponentParam = (param, value) => {
+  if (param.format.toUpperCase() === 'IMAGE') {
+    return {
+      type: 'image',
+      image: {
+        link: value.replace('{{', '').replace('}}', ''),
+      },
+    }
+  }
+  if (param.format.toUpperCase() === 'TEXT') {
+    return {
+      type: 'text',
+      text: value.replace('{{', '').replace('}}', ''),
+    }
   }
 }
 
@@ -163,8 +268,8 @@ class Dialog {
       })
 
       if (responseBody.messages[0].type === 'text') {
-        messageToSend.kind = 'text'
         messageToSend.text = responseBody.messages[0].text.body
+        messageToSend.kind = 'text'
       } else if (responseBody.messages[0].type === 'order') {
         let cart = await Cart.findOne({ contact, concluded: false })
         if (!cart) {
@@ -245,6 +350,26 @@ class Dialog {
         messageBody.text = {
           body: messageToSend.text,
         }
+      }
+
+      if (messageToSend.kind === 'template') {
+        const parameters = messageToSend.text.match(/\{\{[^}]+\}\}/g)
+        const templateName = parameters[0].replace('{{', '').replace('}}', '')
+
+        const template = await Template.findOne({ name: templateName })
+
+        messageBody.type = 'template'
+        messageBody.template = {
+          namespace: template.namespace,
+          name: template.name,
+          language: {
+            code: template.language,
+            policy: 'deterministic',
+          },
+          components: [],
+        }
+
+        messageBody.template.components = parseComponents(template, parameters)
       }
 
       if (messageToSend.kind === 'interactive') {
@@ -350,6 +475,13 @@ class Dialog {
     const response = await request.post(`${url}v1/configs/webhook`, { headers, body })
 
     return response.status === 200
+  }
+
+  async searchTemplates(url, token) {
+    const dialogTemplates = await getTemplates(url, token)
+    const templates = parseTemplates(dialogTemplates, this.licensee._id)
+
+    return templates
   }
 }
 

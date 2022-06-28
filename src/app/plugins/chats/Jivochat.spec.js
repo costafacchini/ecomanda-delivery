@@ -334,6 +334,37 @@ describe('Jivochat plugin', () => {
 
         expect(messages.length).toEqual(2)
       })
+
+      it('returns message of kind template if type is text and has {{ and }}', async () => {
+        await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            licensee,
+          })
+        )
+
+        const responseBody = {
+          sender: {
+            name: 'Mary Jane',
+          },
+          recipient: {
+            id: '5511990283745@c.us',
+          },
+          message: {
+            type: 'text',
+            id: 'jivo_message_id',
+            text: '{{name}}',
+          },
+        }
+
+        const jivochat = new Jivochat(licensee)
+        const messages = await jivochat.responseToMessages(responseBody)
+
+        expect(messages[0]).toBeInstanceOf(Message)
+        expect(messages[0].kind).toEqual('template')
+        expect(messages[0].text).toEqual('{{name}}')
+      })
     })
   })
 

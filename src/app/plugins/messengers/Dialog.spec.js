@@ -3,6 +3,7 @@ const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Licensee = require('@models/Licensee')
 const Trigger = require('@models/Trigger')
+const Template = require('@models/Template')
 const Cart = require('@models/Cart')
 const Product = require('@models/Product')
 const fetchMock = require('fetch-mock')
@@ -18,6 +19,7 @@ const {
   triggerSingleProduct: triggerSingleProductFactory,
   triggerText: triggerTextFactory,
 } = require('@factories/trigger')
+const { template: templateFactory } = require('@factories/template')
 const { cart: cartFactory } = require('@factories/cart')
 const { product: productFactory } = require('@factories/product')
 const { advanceTo, clear } = require('jest-date-mock')
@@ -2495,6 +2497,135 @@ describe('Dialog plugin', () => {
           clear()
         })
       })
+
+      describe('when the message is template', () => {
+        it('marks the message with was sent and logs the success message', async () => {
+          await Template.create(
+            templateFactory.build({
+              name: 'template-number-one',
+              namespace: 'namespace',
+              language: 'pt_BR',
+              headerParams: [{ format: 'IMAGE' }],
+              bodyParams: [
+                { format: 'TEXT', number: '1' },
+                { format: 'TEXT', number: '2' },
+              ],
+              footerParams: [{ format: 'TEXT', number: '1' }],
+              licensee,
+            })
+          )
+
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              talkingWithChatBot: true,
+              waId: '5593165392997',
+              licensee,
+            })
+          )
+
+          const message = await Message.create(
+            messageFactory.build({
+              _id: '60958703f415ed4008748637',
+              kind: 'template',
+              text: 'name {{template-number-one}} image {{https://image.url/image.png}} text {{1}}-{{Produto x}} obrigado {{John Doe}}',
+              contact,
+              licensee,
+              sended: false,
+            })
+          )
+
+          fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+            status: 200,
+            body: {
+              contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
+              meta: { api_status: 'stable', version: '2.35.4' },
+            },
+          })
+
+          const expectedBodySendMessage = {
+            recipient_type: 'individual',
+            to: '553165392832',
+            type: 'template',
+            template: {
+              namespace: 'namespace',
+              name: 'template-number-one',
+              language: {
+                code: 'pt_BR',
+                policy: 'deterministic',
+              },
+              components: [
+                {
+                  type: 'header',
+                  parameters: [
+                    {
+                      type: 'image',
+                      image: {
+                        link: 'https://image.url/image.png',
+                      },
+                    },
+                  ],
+                },
+                {
+                  type: 'body',
+                  parameters: [
+                    {
+                      type: 'text',
+                      text: '1',
+                    },
+                    {
+                      type: 'text',
+                      text: 'Produto x',
+                    },
+                  ],
+                },
+                {
+                  type: 'footer',
+                  parameters: [
+                    {
+                      type: 'text',
+                      text: 'John Doe',
+                    },
+                  ],
+                },
+              ],
+            },
+          }
+
+          fetchMock.postOnce(
+            (url, { body, headers }) => {
+              return (
+                url === 'https://waba.360dialog.io/v1/messages/' &&
+                body === JSON.stringify(expectedBodySendMessage) &&
+                headers['D360-API-KEY'] === 'token-dialog'
+              )
+            },
+            {
+              status: 201,
+              body: {
+                messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
+              },
+            }
+          )
+
+          expect(message.sended).toEqual(false)
+
+          const dialog = new Dialog(licensee)
+          await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
+          await fetchMock.flush(true)
+
+          expect(fetchMock.done()).toBe(true)
+          expect(fetchMock.calls()).toHaveLength(2)
+
+          const messageUpdated = await Message.findById(message._id)
+          expect(messageUpdated.sended).toEqual(true)
+          expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
+          expect(consoleInfoSpy).toHaveBeenCalledWith(
+            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+          )
+        })
+      })
     })
 
     describe('when contact is invalid', () => {
@@ -2647,6 +2778,142 @@ describe('Dialog plugin', () => {
       expect(fetchMock.done()).toBe(true)
       expect(fetchMock.calls()).toHaveLength(1)
       expect(setted).toEqual(true)
+    })
+  })
+
+  describe('#searchTemplates', () => {
+    it('returns the templates to licensee', async () => {
+      fetchMock.getOnce(
+        (url, { headers }) => {
+          return url === 'https://waba.360dialog.io/v1/configs/templates' && headers['D360-API-KEY'] === 'token-dialog'
+        },
+        {
+          status: 201,
+          body: {
+            count: 25,
+            filters: {},
+            limit: 1000,
+            offset: 0,
+            sort: ['id'],
+            total: 25,
+            waba_templates: [
+              {
+                category: 'TICKET_UPDATE',
+                components: [
+                  {
+                    format: 'IMAGE',
+                    type: 'HEADER',
+                  },
+                  {
+                    text: 'Tiket Anda untuk *{{1}}*\n*Waktu* - {{2}}\n*Tempat* - {{3}}\n*Kursi* - {{4}}',
+                    type: 'BODY',
+                  },
+                  {
+                    text: 'Pesan ini berasal dari bisnis yang tidak terverifikasi.',
+                    type: 'FOOTER',
+                  },
+                ],
+                language: 'pt_BR',
+                name: 'sample_movie_ticket_confirmation',
+                namespace: '93aa6bf3_3bfc_4840_a76c_0f43073739e2',
+                rejected_reason: 'NONE',
+                status: 'approved',
+              },
+              {
+                category: 'ISSUE_RESOLUTION',
+                components: [
+                  {
+                    format: 'DOCUMENT',
+                    type: 'HEADER',
+                  },
+                  {
+                    text: 'Ini merupakan konfirmasi penerbangan Anda untuk {{1}}-{{2}} di {{3}}.',
+                    type: 'BODY',
+                  },
+                  {
+                    text: 'This message is from an unverified business.',
+                    type: 'FOOTER',
+                  },
+                ],
+                language: 'es',
+                name: 'sample_purchase_feedback',
+                namespace: '93aa6bf3_3bfc_4840_a76c_0f43073739e2',
+                rejected_reason: 'NONE',
+                status: 'approved',
+              },
+              {
+                category: 'TICKET_UPDATE',
+                components: [
+                  {
+                    text: 'Ini merupakan konfirmasi penerbangan Anda untuk {{1}}-{{2}}.',
+                    type: 'BODY',
+                  },
+                  {
+                    text: 'This message is from an unverified business.',
+                    type: 'FOOTER',
+                  },
+                ],
+                language: 'pt_BR',
+                name: 'sample_purchase_feedback_2',
+                namespace: '93aa6bf3_3bfc_4840_a76c_0f43073739e2',
+                rejected_reason: 'Not aproval',
+                status: 'rejected',
+              },
+            ],
+          },
+        }
+      )
+
+      const dialog = new Dialog(licensee)
+      const templates = await dialog.searchTemplates('https://waba.360dialog.io/', 'token-dialog')
+      await fetchMock.flush(true)
+
+      expect(templates[0].name).toEqual('sample_movie_ticket_confirmation')
+      expect(templates[0].namespace).toEqual('93aa6bf3_3bfc_4840_a76c_0f43073739e2')
+      expect(templates[0].licensee).toEqual(licensee._id)
+      expect(templates[0].language).toEqual('pt_BR')
+      expect(templates[0].active).toEqual(true)
+      expect(templates[0].category).toEqual('TICKET_UPDATE')
+      expect(templates[0].headerParams[0].format).toEqual('IMAGE')
+      expect(templates[0].bodyParams[0].format).toEqual('text')
+      expect(templates[0].bodyParams[0].number).toEqual('1')
+      expect(templates[0].bodyParams[1].format).toEqual('text')
+      expect(templates[0].bodyParams[1].number).toEqual('2')
+      expect(templates[0].bodyParams[2].format).toEqual('text')
+      expect(templates[0].bodyParams[2].number).toEqual('3')
+      expect(templates[0].bodyParams[3].format).toEqual('text')
+      expect(templates[0].bodyParams[3].number).toEqual('4')
+      expect(templates[0].footerParams.length).toEqual(0)
+
+      expect(templates[1].name).toEqual('sample_purchase_feedback')
+      expect(templates[1].namespace).toEqual('93aa6bf3_3bfc_4840_a76c_0f43073739e2')
+      expect(templates[1].licensee).toEqual(licensee._id)
+      expect(templates[1].language).toEqual('es')
+      expect(templates[1].active).toEqual(true)
+      expect(templates[1].category).toEqual('ISSUE_RESOLUTION')
+      expect(templates[1].headerParams[0].format).toEqual('DOCUMENT')
+      expect(templates[1].bodyParams[0].format).toEqual('text')
+      expect(templates[1].bodyParams[0].number).toEqual('1')
+      expect(templates[1].bodyParams[1].format).toEqual('text')
+      expect(templates[1].bodyParams[1].number).toEqual('2')
+      expect(templates[1].bodyParams[2].format).toEqual('text')
+      expect(templates[1].bodyParams[2].number).toEqual('3')
+      expect(templates[1].footerParams.length).toEqual(0)
+
+      expect(templates[2].name).toEqual('sample_purchase_feedback_2')
+      expect(templates[2].namespace).toEqual('93aa6bf3_3bfc_4840_a76c_0f43073739e2')
+      expect(templates[2].licensee).toEqual(licensee._id)
+      expect(templates[2].language).toEqual('pt_BR')
+      expect(templates[2].active).toEqual(false)
+      expect(templates[2].category).toEqual('TICKET_UPDATE')
+      expect(templates[2].headerParams.length).toEqual(0)
+      expect(templates[2].bodyParams[0].format).toEqual('text')
+      expect(templates[2].bodyParams[0].number).toEqual('1')
+      expect(templates[2].bodyParams[1].format).toEqual('text')
+      expect(templates[2].bodyParams[1].number).toEqual('2')
+      expect(templates[2].footerParams.length).toEqual(0)
+
+      expect(templates.length).toEqual(3)
     })
   })
 

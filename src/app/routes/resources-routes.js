@@ -6,12 +6,14 @@ const LicenseesController = require('@controllers/LicenseesController')
 const ContactsController = require('@controllers/ContactsController')
 const TriggersController = require('@controllers/TriggersController')
 const MessagesController = require('@controllers/MessagesController')
+const TemplatesController = require('@controllers/TemplatesController')
 
 const usersController = new UsersController()
 const licenseesController = new LicenseesController()
 const contactsController = new ContactsController()
 const triggersController = new TriggersController()
 const messagesController = new MessagesController()
+const templatesController = new TemplatesController()
 
 router.route('*').all(authenticate, (req, res, next) => {
   next()
@@ -49,6 +51,12 @@ router.post('/triggers/:id', triggersController.update)
 router.get('/triggers/:id', triggersController.show)
 router.get('/triggers/', triggersController.index)
 router.post('/triggers/:id/importation', triggersController.importation)
+
+router.post('/templates/', templatesController.create)
+router.post('/templates/:id', templatesController.update)
+router.get('/templates/:id', templatesController.show)
+router.get('/templates/', templatesController.index)
+router.post('/templates/:id/importation', templatesController.importation)
 
 router.post('/licensees/:id/dialogwebhook', licenseesController.setDialogWebhook)
 

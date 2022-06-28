@@ -74,13 +74,16 @@ describe('Rocketchat plugin', () => {
           {
             msg: 'send_reply_buttons',
           },
+          {
+            msg: '{{name}}',
+          },
         ],
       }
 
       const rocketchat = new Rocketchat(licensee)
       const messages = await rocketchat.responseToMessages(responseBody)
 
-      expect(messages.length).toEqual(4)
+      expect(messages.length).toEqual(5)
 
       expect(messages[0]).toBeInstanceOf(Message)
       expect(messages[0].licensee).toEqual(licensee._id)
@@ -142,7 +145,11 @@ describe('Rocketchat plugin', () => {
       expect(messages[3].longitude).toEqual(undefined)
       expect(messages[3].departament).toEqual(undefined)
 
-      expect(emojiReplaceSpy).toHaveBeenCalledTimes(3)
+      expect(messages[4]).toBeInstanceOf(Message)
+      expect(messages[4].kind).toEqual('template')
+      expect(messages[4].text).toEqual('{{name}}')
+
+      expect(emojiReplaceSpy).toHaveBeenCalledTimes(4)
       expect(emojiReplaceSpy).toHaveBeenCalledWith('Hello message')
       expect(emojiReplaceSpy).toHaveBeenCalledWith('Message with image')
     })

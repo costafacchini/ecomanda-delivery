@@ -184,6 +184,10 @@ class Crisp {
               destination: 'to-messenger',
             })
 
+            if (messageToSend.text.includes('{{') && messageToSend.text.includes('}}')) {
+              messageToSend.kind = 'template'
+            }
+
             processedMessages.push(await messageToSend.save())
           }
         } else if (responseBody.data.type === 'file' || responseBody.data.type === 'audio') {
