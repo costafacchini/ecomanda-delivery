@@ -18,6 +18,11 @@ export default function Navbar({ loggedUser }) {
                   <a className='nav-link' href='/#/licensees'>Licenciados</a>
                 </li>
               )}
+              {loggedUser && loggedUser.isAdmin && (
+                <li className='nav-item'>
+                  <a className='nav-link' href='/#/users'>Usuários</a>
+                </li>
+              )}
               <li className='nav-item'>
                 <a className='nav-link' href='/#/contacts'>Contatos</a>
               </li>
@@ -30,7 +35,7 @@ export default function Navbar({ loggedUser }) {
               <li className='nav-item'>
                 <a className='nav-link' href='/#/messages'>Mensagens</a>
               </li>
-              {loggedUser && loggedUser.isAdmin && (
+              {loggedUser && loggedUser.isAdmin && loggedUser.isSuper && (
                 <li className='nav-item dropdown'>
                   <a className='nav-link dropdown-toggle' id='reports-menu' role='button' data-bs-toggle='dropdown'>
                     Relatórios
