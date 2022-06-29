@@ -92,7 +92,7 @@ function UserForm({ onSubmit, errors, initialValues, loggedUser }) {
 
               {loggedUser && (loggedUser.isAdmin || loggedUser.isSuper) && (
                 <div className='row pb-2'>
-                  <div className='col-3'>
+                  <div className='col-5'>
                     <div className='form-check'>
                       <input
                         type='checkbox'
@@ -103,6 +103,7 @@ function UserForm({ onSubmit, errors, initialValues, loggedUser }) {
                         checked={props.values.isAdmin}
                       />
                       <label className='form-check-label' htmlFor='isAdmin'>Tem diretos de administrador?</label>
+                      <p><b>Administradores podem gerenciar os usuários do licenciado</b></p>
                     </div>
                   </div>
                 </div>
@@ -110,7 +111,7 @@ function UserForm({ onSubmit, errors, initialValues, loggedUser }) {
 
               {loggedUser && loggedUser.isSuper && (
                 <div className='row pb-2'>
-                  <div className='col-3'>
+                  <div className='col-5'>
                     <div className='form-check'>
                       <input
                         type='checkbox'
@@ -121,6 +122,7 @@ function UserForm({ onSubmit, errors, initialValues, loggedUser }) {
                         checked={props.values.isSuper}
                       />
                       <label className='form-check-label' htmlFor='isSuper'>Tem diretos de super usuário?</label>
+                      <p><b>Libera direitos de acesso a funcionar sem Licenciado e dá acesso a algumas rotinas especiais</b></p>
                     </div>
                   </div>
                 </div>
