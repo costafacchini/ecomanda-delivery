@@ -137,13 +137,13 @@ describe('user controller', () => {
             expect(response.body.name).toEqual('Bruno Mars')
             expect(response.body.active).toEqual(false)
             expect(response.body._id).not.toEqual(123)
-            expect(response.body.email).not.toEqual('bruno@mars.com')
+            expect(response.body.email).toEqual('bruno@mars.com')
             expect(response.body.password).not.toBeDefined()
           })
       })
 
       it('returns status 422 and message if the some error ocurre when update the user', async () => {
-        const user = await User.findOne({ email: 'john@doe.com' })
+        const user = await User.findOne({ email: 'bruno@mars.com' })
 
         await request(expressServer)
           .post(`/resources/users/${user._id}`)
@@ -163,7 +163,7 @@ describe('user controller', () => {
           throw new Error('some error')
         })
 
-        const user = await User.find({ email: 'john@doe.com' })
+        const user = await User.find({ email: 'bruno@mars.com' })
 
         await request(expressServer)
           .post(`/resources/users/${user[0]._id}`)
@@ -179,7 +179,7 @@ describe('user controller', () => {
 
       describe('validations', () => {
         it('returns status 422 and message if the email is invalid', async () => {
-          const user = await User.findOne({ email: 'john@doe.com' })
+          const user = await User.findOne({ email: 'silfer@tape.com' })
 
           await request(expressServer)
             .post(`/resources/users/${user._id}`)
@@ -219,23 +219,31 @@ describe('user controller', () => {
             expect(response.body.isSuper).toEqual(false)
             expect(response.body.active).toEqual(true)
             expect(response.body._id).toMatch(user._id.toString())
-            expect(response.body.password).not.toBeDefined()
           })
       })
 
       it('returns status 200 and message if user id does not exists and user email exists', async () => {
+        const licensee = await Licensee.create(licenseeFactory.build())
+
+        await User.create(
+          userFactory.build({
+            name: 'Willy Wonka',
+            email: 'willy@wonka.com',
+            licensee,
+          })
+        )
+
         await request(expressServer)
-          .get('/resources/users/john@doe.com')
+          .get('/resources/users/willy@wonka.com')
           .set('x-access-token', token)
           .expect('Content-Type', /json/)
           .expect(200)
           .then((response) => {
-            expect(response.body.name).toEqual('Silfer')
-            expect(response.body.email).toEqual('john@doe.com')
+            expect(response.body.name).toEqual('Willy Wonka')
+            expect(response.body.email).toEqual('willy@wonka.com')
             expect(response.body.isAdmin).toEqual(false)
-            expect(response.body.active).toEqual(false)
+            expect(response.body.active).toEqual(true)
             expect(response.body._id).toBeDefined()
-            expect(response.body.password).not.toBeDefined()
           })
       })
 
@@ -277,7 +285,7 @@ describe('user controller', () => {
           .expect(200)
           .then((response) => {
             expect(Array.isArray(response.body)).toEqual(true)
-            expect(response.body.length).toEqual(3)
+            expect(response.body.length).toEqual(4)
             expect(response.body[2].name).toEqual('Jonny Walker')
             expect(response.body[2].email).toEqual('jonny@walker.com')
             expect(response.body[2].active).toEqual(true)

@@ -3,6 +3,7 @@ import { HashRouter, Route, Routes } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import SignIn from './SignIn'
 import LicenseesRoutes from './Licensees/routes'
+import UsersRoutes from './Users/routes'
 import ContactsRoutes from './Contacts/routes'
 import TriggersRoutes from './Triggers/routes'
 import TemplatesRoutes from './Templates/routes'
@@ -44,6 +45,14 @@ function RootRoutes() {
           element={
             <PrivateRoute redirectTo='/'>
               <LicenseesRoutes />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path='/users/*'
+          element={
+            <PrivateRoute redirectTo='/'>
+              <UsersRoutes />
             </PrivateRoute>
           }
         />

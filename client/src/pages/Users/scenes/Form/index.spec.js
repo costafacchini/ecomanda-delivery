@@ -1,0 +1,124 @@
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
+import UserForm from './'
+
+describe('<UserForm />', () => {
+  const onSubmit = jest.fn()
+
+  function mount(props = {}) {
+    render(
+      <MemoryRouter>
+        <UserForm onSubmit={onSubmit} {...props} />
+      </MemoryRouter>)
+  }
+
+  it('is rendered with the default initial values', () => {
+    mount()
+
+    expect(screen.getByLabelText('Nome')).toHaveValue('')
+    expect(screen.getByLabelText('Ativo')).toBeChecked()
+    expect(screen.getByLabelText('E-email')).toHaveValue('')
+    expect(screen.getByLabelText('Senha')).toHaveValue('')
+  })
+
+  it('can receive initial values', () => {
+    const user = {
+      name: 'Name',
+      active: false,
+      email: 'email@gmail.com',
+      password: '12345',
+      isAdmin: false,
+      isSuper: false,
+    }
+
+    const loggedUser = {
+      isAdmin: true,
+      isSuper: true,
+    }
+    mount({ initialValues: user, loggedUser: loggedUser })
+
+    expect(screen.getByLabelText('Nome')).toHaveValue('Name')
+    expect(screen.getByLabelText('Ativo')).not.toBeChecked()
+    expect(screen.getByLabelText('E-email')).toHaveValue('email@gmail.com')
+    expect(screen.getByLabelText('Senha')).toHaveValue('12345')
+    expect(screen.getByLabelText('Tem diretos de administrador?')).not.toBeChecked()
+    expect(screen.getByLabelText('Tem diretos de super usuário?')).not.toBeChecked()
+  })
+
+  describe('isAdmin', () => {
+    it('is rendered when loggedUser isAdmin', () => {
+      mount()
+
+      expect(screen.queryByLabelText('Tem diretos de administrador?')).not.toBeInTheDocument()
+      expect(screen.queryByLabelText('Tem diretos de super usuário?')).not.toBeInTheDocument()
+
+      cleanup()
+
+      const loggedUser = {
+        isAdmin: true,
+      }
+      mount({ loggedUser: loggedUser })
+
+      expect(screen.getByLabelText('Tem diretos de administrador?')).toBeInTheDocument()
+      expect(screen.queryByLabelText('Tem diretos de super usuário?')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('isSuper', () => {
+    it('is rendered when loggedUser isSuper', () => {
+      mount()
+
+      expect(screen.queryByLabelText('Tem diretos de administrador?')).not.toBeInTheDocument()
+      expect(screen.queryByLabelText('Tem diretos de super usuário?')).not.toBeInTheDocument()
+
+      cleanup()
+
+      const loggedUser = {
+        isSuper: true,
+      }
+      mount({ loggedUser: loggedUser })
+
+      expect(screen.getByLabelText('Tem diretos de administrador?')).toBeInTheDocument()
+      expect(screen.getByLabelText('Tem diretos de super usuário?')).toBeInTheDocument()
+    })
+  })
+
+  describe('licensee', () => {
+    it('is rendered when loggedUser isSuper', () => {
+      mount()
+
+      expect(screen.queryByLabelText('Licenciado')).not.toBeInTheDocument()
+
+      cleanup()
+
+      const loggedUser = {
+        isSuper: true,
+      }
+      mount({ loggedUser: loggedUser })
+
+      expect(screen.getByText('Licenciado')).toBeInTheDocument()
+    })
+  })
+
+  describe('submit', () => {
+    it('is called when the user submits the form', async () => {
+      mount()
+
+      expect(onSubmit).not.toHaveBeenCalled()
+
+      fireEvent.click(screen.getByText('Salvar'))
+
+      await waitFor(() => expect(onSubmit).toHaveBeenCalled())
+
+      expect(onSubmit).toHaveBeenCalledWith({
+        name: '',
+        active: true,
+        email: '',
+        isAdmin: false,
+        isSuper: false,
+        licensee: '',
+        password: '',
+      })
+    })
+  })
+})
