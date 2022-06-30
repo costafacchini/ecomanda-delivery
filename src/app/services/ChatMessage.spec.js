@@ -5,6 +5,9 @@ const Jivochat = require('../plugins/chats/Jivochat')
 const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { body: bodyFactory } = require('@factories/body')
+const { contactWithWhatsappWindowClosed } = require('@repositories/contact')
+
+jest.mock('@repositories/contact')
 
 describe('transformChatBody', () => {
   let licensee
@@ -30,8 +33,13 @@ describe('transformChatBody', () => {
 
   it('responds with action to dispatcher action of plugin and delete body', async () => {
     const chatPluginResponseToMessages = jest.spyOn(Jivochat.prototype, 'responseToMessages').mockImplementation(() => {
-      return [{ _id: 'KSDF656DSD91NSE' }, { _id: 'OAR8Q54LDN02T' }]
+      return [
+        { _id: 'KSDF656DSD91NSE', contact: { _id: 'id-contact-1' } },
+        { _id: 'OAR8Q54LDN02T', contact: { _id: 'id-contact-1' } },
+      ]
     })
+
+    contactWithWhatsappWindowClosed.mockResolvedValue(false)
 
     const body = await Body.create(
       bodyFactory.build({
@@ -57,6 +65,80 @@ describe('transformChatBody', () => {
     expect(actions[1].body).toEqual({ messageId: 'OAR8Q54LDN02T', url: 'https://chat.url', token: 'token' })
 
     expect(actions.length).toEqual(2)
+  })
+
+  it('responds message to chat if contact with whatsapp window closed and message is not template', async () => {
+    const chatPluginResponseToMessages = jest.spyOn(Jivochat.prototype, 'responseToMessages').mockImplementation(() => {
+      return [
+        { _id: 'KSDF656DSD91NSE', contact: { _id: 'id-contact-1' }, kind: 'text' },
+        { _id: 'OAR8Q54LDN02T', contact: { _id: 'id-contact-1' } },
+      ]
+    })
+
+    contactWithWhatsappWindowClosed.mockResolvedValue(true)
+
+    const licensee = await Licensee.create(
+      licenseeFactory.build({
+        chatDefault: 'jivochat',
+        chatUrl: 'https://www.jivo.chat.com',
+        whatsappDefault: 'chatapi',
+        whatsappUrl: 'https://chat.url',
+        whatsappToken: 'token',
+        useWhatsappWindow: true,
+      })
+    )
+
+    const body = await Body.create(
+      bodyFactory.build({
+        licensee: licensee,
+      })
+    )
+
+    const data = {
+      bodyId: body._id,
+    }
+
+    const actions = await transformChatBody(data)
+
+    expect(chatPluginResponseToMessages).toHaveBeenCalledWith(body.content)
+
+    const bodyDeleted = await Body.findById(body._id)
+    expect(bodyDeleted).toEqual(null)
+
+    expect(actions[0].action).toEqual('send-message-to-chat')
+    expect(actions[0].body).toEqual(expect.objectContaining({ url: 'https://www.jivo.chat.com', token: '' }))
+
+    expect(actions.length).toEqual(1)
+  })
+
+  it('responds with action to dispatcher action of plugin if contact with whatsapp window closed and message is template', async () => {
+    const chatPluginResponseToMessages = jest.spyOn(Jivochat.prototype, 'responseToMessages').mockImplementation(() => {
+      return [{ _id: 'KSDF656DSD91NSE', contact: { _id: 'id-contact-1' }, kind: 'template' }]
+    })
+
+    contactWithWhatsappWindowClosed.mockResolvedValue(true)
+
+    const body = await Body.create(
+      bodyFactory.build({
+        licensee: licensee,
+      })
+    )
+
+    const data = {
+      bodyId: body._id,
+    }
+
+    const actions = await transformChatBody(data)
+
+    expect(chatPluginResponseToMessages).toHaveBeenCalledWith(body.content)
+
+    const bodyDeleted = await Body.findById(body._id)
+    expect(bodyDeleted).toEqual(null)
+
+    expect(actions[0].action).toEqual('send-message-to-messenger')
+    expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://chat.url', token: 'token' })
+
+    expect(actions.length).toEqual(1)
   })
 
   it('responds with blank actions if body is invalid and delete body', async () => {

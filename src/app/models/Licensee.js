@@ -139,6 +139,7 @@ const licenseeSchema = new Schema(
     },
     unidadeId: String,
     statusId: String,
+    useWhatsappWindow: { type: Boolean, default: false },
   },
   { timestamps: true }
 )
