@@ -18,4 +18,18 @@ async function createMessage(fields) {
   return messageSaved
 }
 
-module.exports = { createMessage }
+async function createMessageToWarnAboutWindowOfWhatsassClosed(contact, licensee) {
+  const message = new Message({
+    number: uuidv4(),
+    kind: 'text',
+    contact,
+    licensee,
+    destination: 'to-chat',
+    text: '🚨 ATENÇÃO\nO período de 24h para manter conversas expirou.Envie um Template para voltar a interagir com esse contato.',
+  })
+
+  const messageSaved = await message.save()
+  return messageSaved
+}
+
+module.exports = { createMessage, createMessageToWarnAboutWindowOfWhatsassClosed }
