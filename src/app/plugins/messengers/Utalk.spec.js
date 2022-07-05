@@ -125,14 +125,6 @@ describe('Utalk plugin', () => {
       })
 
       it('return the empty data if dir is o', async () => {
-        const contact = await Contact.create(
-          contactFactory.build({
-            name: 'John Doe',
-            talkingWithChatBot: false,
-            licensee,
-          })
-        )
-
         const responseBody = {
           event: 'file',
           token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',

@@ -1,5 +1,4 @@
 const Cart = require('@models/Cart')
-const { sanitizeModelErrors } = require('../helpers/SanitizeErrors')
 const _ = require('lodash')
 const Contact = require('@models/Contact')
 const NormalizePhone = require('@helpers/NormalizePhone')

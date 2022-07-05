@@ -9,7 +9,6 @@ const { userSuper: userSuperFactory } = require('@factories/user')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
-const MessagesQuery = require('@queries/MessagesQuery')
 
 describe('messengers controller', () => {
   let token
