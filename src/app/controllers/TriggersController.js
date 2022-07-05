@@ -1,6 +1,5 @@
 const Trigger = require('@models/Trigger')
-const { validationResult } = require('express-validator')
-const { sanitizeExpressErrors, sanitizeModelErrors } = require('@helpers/SanitizeErrors')
+const { sanitizeModelErrors } = require('@helpers/SanitizeErrors')
 const _ = require('lodash')
 const TriggersQuery = require('@queries/TriggersQuery')
 const FacebookCatalogImporter = require('@plugins/importers/facebook_catalog/index')
@@ -25,11 +24,6 @@ function permit(fields) {
 
 class TriggersController {
   async create(req, res) {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
-    }
-
     const {
       name,
       triggerKind,
@@ -117,7 +111,7 @@ class TriggersController {
       triggersQuery.limit(limit)
 
       if (req.query.kind) {
-        triggersQuery.filterByType(req.query.type)
+        triggersQuery.filterByKind(req.query.type)
       }
 
       if (req.query.licensee) {

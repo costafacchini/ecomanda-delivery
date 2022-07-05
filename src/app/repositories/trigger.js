@@ -1,4 +1,5 @@
 const Trigger = require('@models/Trigger')
+const isEmpty = require('lodash/isEmpty')
 
 async function createTrigger(fields) {
   const trigger = new Trigger({
@@ -9,10 +10,10 @@ async function createTrigger(fields) {
 }
 
 async function getAllTriggerBy(filters, order = {}) {
-  if (order) {
-    return await Trigger.find(filters).sort(order)
-  } else {
+  if (isEmpty(order)) {
     return await Trigger.find(filters)
+  } else {
+    return await Trigger.find(filters).sort(order)
   }
 }
 

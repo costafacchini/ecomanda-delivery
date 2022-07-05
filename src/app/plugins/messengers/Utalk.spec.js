@@ -123,6 +123,32 @@ describe('Utalk plugin', () => {
         expect(uploadFileS3Spy).toHaveBeenCalledTimes(1)
         expect(presignedUrlS3Spy).toHaveBeenCalledTimes(1)
       })
+
+      it('return the empty data if dir is o', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
+
+        const responseBody = {
+          event: 'file',
+          token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
+          fn: '1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg',
+          blob: 'data:image/jpeg;base64,/9j/4AAQSkZJRgA...',
+          dir: 'o',
+          user: '5511940650658',
+          number: '5511990283745',
+          uid: '3EB016638A2AD49A9ECE',
+        }
+
+        const utalk = new Utalk(licensee)
+        const messages = await utalk.responseToMessages(responseBody)
+
+        expect(messages.length).toEqual(0)
+      })
     })
 
     describe('text', () => {
