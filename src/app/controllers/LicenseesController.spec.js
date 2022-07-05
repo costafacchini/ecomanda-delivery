@@ -64,9 +64,7 @@ describe('licensee controller', () => {
         await request(expressServer)
           .post('/resources/licensees/')
           .set('x-access-token', token)
-          .send(
-            licenseeCompleteFactory.build({ whatsappDefault: 'winzap', whatsappUrl: 'https://api.winzap.com.br/send/' })
-          )
+          .send(licenseeCompleteFactory.build({ whatsappDefault: 'utalk', whatsappUrl: 'https://v1.utalk.chat/send/' }))
           .expect('Content-Type', /json/)
           .expect(201)
           .then((response) => {
@@ -77,12 +75,12 @@ describe('licensee controller', () => {
             expect(response.body.licenseKind).toEqual('demo')
             expect(response.body.useChatbot).toEqual(true)
             expect(response.body.chatbotDefault).toEqual('landbot')
-            expect(response.body.whatsappDefault).toEqual('winzap')
+            expect(response.body.whatsappDefault).toEqual('utalk')
             expect(response.body.chatDefault).toEqual('rocketchat')
             expect(response.body.chatbotUrl).toEqual('https://chatbot.url')
             expect(response.body.chatbotAuthorizationToken).toEqual('chat-bot-token')
             expect(response.body.whatsappToken).toEqual('whatsapp-token')
-            expect(response.body.whatsappUrl).toEqual('https://api.winzap.com.br/send/')
+            expect(response.body.whatsappUrl).toEqual('https://v1.utalk.chat/send/')
             expect(response.body.chatUrl).toEqual('https://chat.url')
             expect(response.body.awsId).toEqual('aws-id')
             expect(response.body.awsSecret).toEqual('aws-secret')
@@ -310,7 +308,7 @@ describe('licensee controller', () => {
           licenseeCompleteFactory.build({
             chatDefault: 'jivochat',
             chatbotDefault: 'landbot',
-            whatsappDefault: 'winzap',
+            whatsappDefault: 'utalk',
             name: 'Alcalina',
           })
         )
@@ -318,7 +316,7 @@ describe('licensee controller', () => {
           licenseeCompleteFactory.build({
             chatDefault: 'jivochat',
             chatbotDefault: 'landbot',
-            whatsappDefault: 'winzap',
+            whatsappDefault: 'utalk',
             name: 'Alcateia ltds',
           })
         )
@@ -326,7 +324,7 @@ describe('licensee controller', () => {
           licenseeCompleteFactory.build({
             chatDefault: 'jivochat',
             chatbotDefault: 'landbot',
-            whatsappDefault: 'winzap',
+            whatsappDefault: 'utalk',
             name: 'Alcachofra',
           })
         )
@@ -335,14 +333,14 @@ describe('licensee controller', () => {
             active: false,
             chatDefault: 'jivochat',
             chatbotDefault: 'landbot',
-            whatsappDefault: 'winzap',
+            whatsappDefault: 'utalk',
             name: 'Alcachofra',
           })
         )
 
         await request(expressServer)
           .get(
-            '/resources/licensees/?chatDefault=jivochat&chatbotDefault=landbot&whatsappDefault=winzap&expression=Alca&page=1&limit=3&active=false'
+            '/resources/licensees/?chatDefault=jivochat&chatbotDefault=landbot&whatsappDefault=utalk&expression=Alca&page=1&limit=3&active=false'
           )
           .set('x-access-token', token)
           .expect('Content-Type', /json/)
@@ -357,12 +355,12 @@ describe('licensee controller', () => {
             expect(response.body[1].licenseKind).toEqual('demo')
             expect(response.body[1].useChatbot).toEqual(true)
             expect(response.body[1].chatbotDefault).toEqual('landbot')
-            expect(response.body[1].whatsappDefault).toEqual('winzap')
+            expect(response.body[1].whatsappDefault).toEqual('utalk')
             expect(response.body[1].chatDefault).toEqual('jivochat')
             expect(response.body[1].chatbotUrl).toEqual('https://chatbot.url')
             expect(response.body[1].chatbotAuthorizationToken).toEqual('chat-bot-token')
             expect(response.body[1].whatsappToken).toEqual('whatsapp-token')
-            expect(response.body[1].whatsappUrl).toEqual('https://api.winzap.com.br/send/')
+            expect(response.body[1].whatsappUrl).toEqual('https://v1.utalk.chat/send/')
             expect(response.body[1].chatUrl).toEqual('https://chat.url')
             expect(response.body[1].awsId).toEqual('aws-id')
             expect(response.body[1].awsSecret).toEqual('aws-secret')

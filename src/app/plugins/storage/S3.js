@@ -11,7 +11,7 @@ const getBucketPath = (number) => {
 const base64ToBuffer = (fileBase64) => {
   let streamFileBase64 = fileBase64
 
-  //O base64 da winzap e utalk tem umas informações do arquivo que deves ser removidas.
+  //O base64 da utalk tem umas informações do arquivo que deves ser removidas.
   // Essas informações vão até a ",".
   if (streamFileBase64.indexOf(',') > -1) {
     streamFileBase64 = streamFileBase64.substr(streamFileBase64.indexOf(',') + 1)

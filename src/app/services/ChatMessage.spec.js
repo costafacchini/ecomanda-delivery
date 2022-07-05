@@ -20,8 +20,8 @@ describe('transformChatBody', () => {
       licenseeFactory.build({
         chatDefault: 'jivochat',
         chatUrl: 'https://www.jivo.chat.com',
-        whatsappDefault: 'chatapi',
-        whatsappUrl: 'https://chat.url',
+        whatsappDefault: 'dialog',
+        whatsappUrl: 'https://waba.360dialog.io/',
         whatsappToken: 'token',
       })
     )
@@ -59,10 +59,10 @@ describe('transformChatBody', () => {
     expect(bodyDeleted).toEqual(null)
 
     expect(actions[0].action).toEqual('send-message-to-messenger')
-    expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://chat.url', token: 'token' })
+    expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://waba.360dialog.io/', token: 'token' })
 
     expect(actions[1].action).toEqual('send-message-to-messenger')
-    expect(actions[1].body).toEqual({ messageId: 'OAR8Q54LDN02T', url: 'https://chat.url', token: 'token' })
+    expect(actions[1].body).toEqual({ messageId: 'OAR8Q54LDN02T', url: 'https://waba.360dialog.io/', token: 'token' })
 
     expect(actions.length).toEqual(2)
   })
@@ -81,8 +81,8 @@ describe('transformChatBody', () => {
       licenseeFactory.build({
         chatDefault: 'jivochat',
         chatUrl: 'https://www.jivo.chat.com',
-        whatsappDefault: 'chatapi',
-        whatsappUrl: 'https://chat.url',
+        whatsappDefault: 'dialog',
+        whatsappUrl: 'https://waba.360dialog.io/',
         whatsappToken: 'token',
         useWhatsappWindow: true,
       })
@@ -136,7 +136,7 @@ describe('transformChatBody', () => {
     expect(bodyDeleted).toEqual(null)
 
     expect(actions[0].action).toEqual('send-message-to-messenger')
-    expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://chat.url', token: 'token' })
+    expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://waba.360dialog.io/', token: 'token' })
 
     expect(actions.length).toEqual(1)
   })
