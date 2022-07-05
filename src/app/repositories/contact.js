@@ -7,9 +7,11 @@ async function createContact(fields) {
     ...fields,
   })
 
-  const contactSaved = await contact.save()
+  return await contact.save()
+}
 
-  return contactSaved
+async function getContactBy(filter) {
+  return await Contact.findOne(filter)
 }
 
 async function contactWithWhatsappWindowClosed(contactId) {
@@ -30,4 +32,4 @@ async function contactWithWhatsappWindowClosed(contactId) {
   return diff >= twentyFourhoursInMinutes
 }
 
-module.exports = { createContact, contactWithWhatsappWindowClosed }
+module.exports = { createContact, contactWithWhatsappWindowClosed, getContactBy }

@@ -222,9 +222,23 @@ describe('Utalk plugin', () => {
     })
 
     describe('ack', () => {
-      it('returns the response body transformed in message ignoring the message from me', async () => {
+      it('returns messages empty if message kind is ack', async () => {
         const responseBody = {
           event: 'ack',
+          token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
+        }
+
+        const utalk = new Utalk(licensee)
+        const messages = await utalk.responseToMessages(responseBody)
+
+        expect(messages.length).toEqual(0)
+      })
+    })
+
+    describe('login', () => {
+      it('returns messages empty if message kind is login', async () => {
+        const responseBody = {
+          event: 'login',
           token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
         }
 
@@ -242,6 +256,7 @@ describe('Utalk plugin', () => {
           chatbotDefault: 'landbot',
           chatbotUrl: 'https://teste-url.com',
           chatbotAuthorizationToken: 'token',
+          apiToken: '12346554',
         })
       )
 

@@ -1,66 +1,11 @@
 const Message = require('@models/Message')
-const Contact = require('@models/Contact')
 const NormalizePhone = require('../../helpers/NormalizePhone')
-const { v4: uuidv4 } = require('uuid')
-const S3 = require('../storage/S3')
 const request = require('../../services/request')
+const MessengersBase = require('./Base')
 
-const parseBody = (responseBody) => {
-  if (responseBody.event === 'chat' && responseBody['chat[type]'] !== 'chat' && !responseBody['caption']) {
-    return {
-      dir: 'o',
-    }
-  }
-
-  if (responseBody.event === 'chat') {
-    const chatNumber =
-      responseBody['contact[server]'] === 'g.us'
-        ? responseBody['contact[groupNumber]']
-        : responseBody['contact[number]']
-    const chatName =
-      responseBody['contact[server]'] === 'g.us' ? responseBody['contact[groupName]'] : responseBody['contact[name]']
-
-    return {
-      name: chatName,
-      type: 'text',
-      server: responseBody['contact[server]'],
-      number: chatNumber,
-      dir: responseBody['chat[dir]'],
-      text: responseBody['chat[type]'] === 'chat' ? responseBody['chat[body]'] : responseBody['caption'],
-      sender: responseBody['contact[server]'] === 'g.us' ? responseBody['contact[name]'] : '',
-    }
-  }
-
-  if (responseBody.event === 'file') {
-    return {
-      name: responseBody['number'],
-      type: 'file',
-      server: '',
-      number: responseBody['number'],
-      dir: responseBody['dir'],
-      fileName: responseBody['fn'],
-      blob: responseBody['blob'],
-      sender: responseBody['contact[server]'] === 'g.us' ? responseBody['contact[name]'] : '',
-    }
-  }
-
-  if (responseBody.event === 'ack') {
-    return {
-      dir: 'o',
-    }
-  }
-}
-
-const uploadFile = (licensee, contact, fileName, fileBase64) => {
-  const s3 = new S3(licensee, contact, fileName, fileBase64)
-  s3.uploadFile()
-
-  return s3.presignedUrl()
-}
-
-class Utalk {
+class Utalk extends MessengersBase {
   constructor(licensee) {
-    this.licensee = licensee
+    super(licensee)
   }
 
   action(messageDestination) {
@@ -71,59 +16,91 @@ class Utalk {
     }
   }
 
-  async responseToMessages(responseBody) {
-    if (!responseBody.event) return []
+  parseMessageStatus() {
+    this.messageStatus = null
+  }
 
-    const bodyParsed = parseBody(responseBody)
-
-    if (bodyParsed.dir === 'o') {
-      return []
+  parseMessage(responseBody) {
+    if (!responseBody.event) {
+      this.messageData = null
+      return
     }
 
-    const chatId = bodyParsed.number + '@' + bodyParsed.server
-    const normalizePhone = new NormalizePhone(chatId)
+    if (responseBody.event === 'ack' || responseBody.event === 'login') {
+      this.messageData = null
+      return
+    }
 
-    let contact = await Contact.findOne({
-      number: normalizePhone.number,
-      type: normalizePhone.type,
-      licensee: this.licensee._id,
-    })
+    if (responseBody.event === 'chat' && responseBody['chat[type]'] !== 'chat' && !responseBody['caption']) {
+      this.messageData = null
+      return
+    }
 
-    if (!contact) {
-      contact = new Contact({
-        name: bodyParsed.name,
-        number: normalizePhone.number,
-        type: normalizePhone.type,
-        talkingWithChatBot: this.licensee.useChatbot,
-        licensee: this.licensee._id,
-      })
+    if (responseBody.event === 'chat') {
+      if (responseBody['chat[dir]'] === 'o') {
+        this.messageData = null
+        return
+      }
 
-      await contact.save()
-    } else {
-      if (contact.name !== bodyParsed.name && bodyParsed.type !== 'file' && bodyParsed.name) {
-        contact.name = bodyParsed.name
-        contact.talkingWithChatBot = this.licensee.useChatbot
-        await contact.save()
+      const chatNumber =
+        responseBody['contact[server]'] === 'g.us'
+          ? responseBody['contact[groupNumber]']
+          : responseBody['contact[number]']
+      const chatName =
+        responseBody['contact[server]'] === 'g.us' ? responseBody['contact[groupName]'] : responseBody['contact[name]']
+
+      this.messageData = {
+        waId: null,
+        sender: responseBody['contact[server]'] === 'g.us' ? responseBody['contact[name]'] : '',
+        contact: {
+          name: chatName,
+          server: responseBody['contact[server]'],
+          number: chatNumber,
+          chatId: chatNumber + '@' + responseBody['contact[server]'],
+        },
+        kind: 'text',
+        text: { body: responseBody['chat[type]'] === 'chat' ? responseBody['chat[body]'] : responseBody['caption'] },
       }
     }
 
-    const messageToSend = new Message({
-      number: uuidv4(),
-      kind: bodyParsed.type,
-      licensee: this.licensee._id,
-      contact: contact._id,
-      text: bodyParsed.text,
-      destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
-    })
+    if (responseBody.event === 'file') {
+      if (responseBody['dir'] === 'o') {
+        this.messageData = null
+        return
+      }
 
-    if (bodyParsed.sender) messageToSend.senderName = bodyParsed.sender
-
-    if (messageToSend.kind === 'file') {
-      messageToSend.fileName = bodyParsed.fileName
-      messageToSend.url = uploadFile(this.licensee, contact, messageToSend.fileName, bodyParsed.blob)
+      this.messageData = {
+        waId: null,
+        sender: responseBody['contact[server]'] === 'g.us' ? responseBody['contact[name]'] : '',
+        contact: {
+          name: responseBody['number'],
+          server: '',
+          number: responseBody['number'],
+          chatId: responseBody['number'],
+        },
+        kind: 'file',
+        file: {
+          id: null,
+          fileName: responseBody['fn'],
+          fileBase64: responseBody['blob'],
+        },
+      }
     }
+  }
 
-    return [await messageToSend.save()]
+  parseContactData() {
+    const chatId = this.messageData.contact.chatId
+    const normalizePhone = new NormalizePhone(chatId)
+    this.contactData = {
+      number: normalizePhone.number,
+      type: normalizePhone.type,
+      name: this.messageData.contact.name,
+      waId: null,
+    }
+  }
+
+  contactWithDifferentData(contact) {
+    return contact.name !== this.contactData.name && this.messageData.kind !== 'file' && this.contactData.name
   }
 
   async sendMessage(messageId, url, token) {

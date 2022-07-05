@@ -3,7 +3,7 @@ const { sanitizeModelErrors } = require('../helpers/SanitizeErrors')
 const _ = require('lodash')
 const Contact = require('@models/Contact')
 const NormalizePhone = require('@helpers/NormalizePhone')
-const { createMessage } = require('@repositories/message')
+const { createTextMessageInsteadInteractive } = require('@repositories/message')
 const { createContact } = require('@repositories/contact')
 const { scheduleSendMessageToMessenger } = require('@repositories/messenger')
 const { parseCart } = require('@helpers/ParseTriggerText')
@@ -290,7 +290,7 @@ class CartsController {
       }
 
       const cartDescription = await parseCart(cart._id)
-      const message = await createMessage({
+      const message = await createTextMessageInsteadInteractive({
         text: cartDescription,
         kind: 'text',
         licensee: req.licensee._id,
