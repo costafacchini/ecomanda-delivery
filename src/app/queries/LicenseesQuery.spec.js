@@ -133,21 +133,24 @@ describe('LicenseesQuery', () => {
     it('returns licensees filtered by whatsapp default', async () => {
       const licensee1 = await Licensee.create(
         licenseeFactory.build({
-          whatsappDefault: 'dialog',
-          whatsappUrl: 'http://whats.com',
+          whatsappDefault: 'utalk',
+          whatsappUrl: 'https://v1.utalk.chat/send/',
           whatsappToken: 'key',
+          bucketName: 'bucket',
+          awsId: 'id',
+          awsSecret: 'secret',
         })
       )
       const licensee2 = await Licensee.create(
         licenseeFactory.build({
-          whatsappDefault: 'chatapi',
-          whatsappUrl: 'http://whats.com',
+          whatsappDefault: 'dialog',
+          whatsappUrl: 'https://waba.360dialog.io/',
           whatsappToken: 'key',
         })
       )
 
       const licenseesQuery = new LicenseesQuery()
-      licenseesQuery.filterByWhatsappDefault('dialog')
+      licenseesQuery.filterByWhatsappDefault('utalk')
       const records = await licenseesQuery.all()
 
       expect(records.length).toEqual(1)
