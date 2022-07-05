@@ -180,21 +180,11 @@ describe('Licensee', () => {
         expect(validation.errors['whatsappDefault']).not.toBeDefined()
       })
 
-      it('accepts "utalk", "winzap", "chatapi" and "dialog" values', () => {
+      it('accepts "utalk" and "dialog" values', () => {
         let validation
         const licensee = new Licensee()
 
         licensee.whatsappDefault = 'utalk'
-        validation = licensee.validateSync()
-
-        expect(validation.errors['whatsappDefault']).not.toBeDefined()
-
-        licensee.whatsappDefault = 'winzap'
-        validation = licensee.validateSync()
-
-        expect(validation.errors['whatsappDefault']).not.toBeDefined()
-
-        licensee.whatsappDefault = 'chatapi'
         validation = licensee.validateSync()
 
         expect(validation.errors['whatsappDefault']).not.toBeDefined()
@@ -224,7 +214,7 @@ describe('Licensee', () => {
       })
 
       it('is required if whatsappDefault', () => {
-        const licensee = new Licensee({ whatsappDefault: 'chatapi', whatsappToken: '' })
+        const licensee = new Licensee({ whatsappDefault: 'dialog', whatsappToken: '' })
         const validation = licensee.validateSync()
 
         expect(validation.errors['whatsappToken'].message).toEqual(
@@ -242,7 +232,7 @@ describe('Licensee', () => {
       })
 
       it('is required if whatsappDefault', () => {
-        const licensee = new Licensee({ whatsappDefault: 'chatapi', whatsappUrl: '' })
+        const licensee = new Licensee({ whatsappDefault: 'dialog', whatsappUrl: '' })
         const validation = licensee.validateSync()
 
         expect(validation.errors['whatsappUrl'].message).toEqual(
@@ -340,7 +330,7 @@ describe('Licensee', () => {
       })
 
       it('is required if chatDefault', () => {
-        const licensee = new Licensee({ chatDefault: 'chatapi', chatUrl: '' })
+        const licensee = new Licensee({ chatDefault: 'dialog', chatUrl: '' })
         const validation = licensee.validateSync()
 
         expect(validation.errors['chatUrl'].message).toEqual(
@@ -386,8 +376,8 @@ describe('Licensee', () => {
     })
 
     describe('awsId', () => {
-      it('is not required if whatsappDefault is chatapi', () => {
-        const licensee = new Licensee({ whatsappDefault: 'chatapi', awsId: '' })
+      it('is not required if whatsappDefault is dialog', () => {
+        const licensee = new Licensee({ whatsappDefault: 'dialog', awsId: '' })
         const validation = licensee.validateSync()
 
         expect(validation.errors['awsId']).not.toBeDefined()
@@ -405,23 +395,14 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['awsId'].message).toEqual(
-          'Id da AWS: deve ser preenchido quando utilizar os plugins da uTalk ou Winzap'
-        )
-      })
-
-      it('is required if whatsappDefault is winzap', () => {
-        const licensee = new Licensee({ whatsappDefault: 'winzap', awsId: '' })
-        const validation = licensee.validateSync()
-
-        expect(validation.errors['awsId'].message).toEqual(
-          'Id da AWS: deve ser preenchido quando utilizar os plugins da uTalk ou Winzap'
+          'Id da AWS: deve ser preenchido quando utilizar os plugins da uTalk'
         )
       })
     })
 
     describe('awsSecret', () => {
-      it('is not required if whatsappDefault is chatapi', () => {
-        const licensee = new Licensee({ whatsappDefault: 'chatapi', awsSecret: '' })
+      it('is not required if whatsappDefault is dialog', () => {
+        const licensee = new Licensee({ whatsappDefault: 'dialog', awsSecret: '' })
         const validation = licensee.validateSync()
 
         expect(validation.errors['awsSecret']).not.toBeDefined()
@@ -439,23 +420,14 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['awsSecret'].message).toEqual(
-          'Senha da AWS: deve ser preenchido quando utilizar os plugins da uTalk ou Winzap'
-        )
-      })
-
-      it('is required if whatsappDefault is winzap', () => {
-        const licensee = new Licensee({ whatsappDefault: 'winzap', awsSecret: '' })
-        const validation = licensee.validateSync()
-
-        expect(validation.errors['awsSecret'].message).toEqual(
-          'Senha da AWS: deve ser preenchido quando utilizar os plugins da uTalk ou Winzap'
+          'Senha da AWS: deve ser preenchido quando utilizar os plugins da uTalk'
         )
       })
     })
 
     describe('bucketName', () => {
-      it('is not required if whatsappDefault is chatapi', () => {
-        const licensee = new Licensee({ whatsappDefault: 'chatapi', bucketName: '' })
+      it('is not required if whatsappDefault is dialog', () => {
+        const licensee = new Licensee({ whatsappDefault: 'dialog', bucketName: '' })
         const validation = licensee.validateSync()
 
         expect(validation.errors['bucketName']).not.toBeDefined()
@@ -473,16 +445,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['bucketName'].message).toEqual(
-          'Nome do Bucket da AWS: deve ser preenchido quando utilizar os plugins da uTalk ou Winzap'
-        )
-      })
-
-      it('is required if whatsappDefault is winzap', () => {
-        const licensee = new Licensee({ whatsappDefault: 'winzap', bucketName: '' })
-        const validation = licensee.validateSync()
-
-        expect(validation.errors['bucketName'].message).toEqual(
-          'Nome do Bucket da AWS: deve ser preenchido quando utilizar os plugins da uTalk ou Winzap'
+          'Nome do Bucket da AWS: deve ser preenchido quando utilizar os plugins da uTalk'
         )
       })
     })

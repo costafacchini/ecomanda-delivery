@@ -55,7 +55,7 @@ const licenseeSchema = new Schema(
     },
     whatsappDefault: {
       type: String,
-      enum: ['utalk', 'winzap', 'chatapi', 'dialog', ''],
+      enum: ['utalk', 'dialog', ''],
     },
     whatsappToken: {
       type: String,
@@ -110,27 +110,27 @@ const licenseeSchema = new Schema(
       type: String,
       required: [
         function () {
-          return this.whatsappDefault === 'utalk' || this.whatsappDefault === 'winzap'
+          return this.whatsappDefault === 'utalk'
         },
-        'Id da AWS: deve ser preenchido quando utilizar os plugins da uTalk ou Winzap',
+        'Id da AWS: deve ser preenchido quando utilizar os plugins da uTalk',
       ],
     },
     awsSecret: {
       type: String,
       required: [
         function () {
-          return this.whatsappDefault === 'utalk' || this.whatsappDefault === 'winzap'
+          return this.whatsappDefault === 'utalk'
         },
-        'Senha da AWS: deve ser preenchido quando utilizar os plugins da uTalk ou Winzap',
+        'Senha da AWS: deve ser preenchido quando utilizar os plugins da uTalk',
       ],
     },
     bucketName: {
       type: String,
       required: [
         function () {
-          return this.whatsappDefault === 'utalk' || this.whatsappDefault === 'winzap'
+          return this.whatsappDefault === 'utalk'
         },
-        'Nome do Bucket da AWS: deve ser preenchido quando utilizar os plugins da uTalk ou Winzap',
+        'Nome do Bucket da AWS: deve ser preenchido quando utilizar os plugins da uTalk',
       ],
     },
     cartDefault: {
@@ -149,10 +149,6 @@ licenseeSchema.pre('save', function (next) {
 
   if (licensee.whatsappDefault === 'utalk') {
     licensee.whatsappUrl = 'https://v1.utalk.chat/send/'
-  }
-
-  if (licensee.whatsappDefault === 'winzap') {
-    licensee.whatsappUrl = 'https://api.winzap.com.br/send/'
   }
 
   if (licensee.whatsappDefault === 'dialog') {

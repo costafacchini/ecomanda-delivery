@@ -16,8 +16,8 @@ describe('transformChatbotBody', () => {
     licensee = await Licensee.create(
       licenseeFactory.build({
         chatbotDefault: 'landbot',
-        whatsappDefault: 'chatapi',
-        whatsappUrl: 'https://chat.url',
+        whatsappDefault: 'dialog',
+        whatsappUrl: 'https://waba.360dialog.io/',
         whatsappToken: 'token',
       })
     )
@@ -52,10 +52,10 @@ describe('transformChatbotBody', () => {
     expect(bodyDeleted).toEqual(null)
 
     expect(actions[0].action).toEqual('send-message-to-messenger')
-    expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://chat.url', token: 'token' })
+    expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://waba.360dialog.io/', token: 'token' })
 
     expect(actions[1].action).toEqual('send-message-to-messenger')
-    expect(actions[1].body).toEqual({ messageId: 'OAR8Q54LDN02T', url: 'https://chat.url', token: 'token' })
+    expect(actions[1].body).toEqual({ messageId: 'OAR8Q54LDN02T', url: 'https://waba.360dialog.io/', token: 'token' })
 
     expect(actions.length).toEqual(2)
   })
