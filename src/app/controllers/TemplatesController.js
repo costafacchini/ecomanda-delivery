@@ -1,6 +1,5 @@
 const Template = require('@models/Template')
-const { validationResult } = require('express-validator')
-const { sanitizeExpressErrors, sanitizeModelErrors } = require('@helpers/SanitizeErrors')
+const { sanitizeModelErrors } = require('@helpers/SanitizeErrors')
 const _ = require('lodash')
 const TemplatesQuery = require('@queries/TemplatesQuery')
 const TemplatesImporter = require('@plugins/importers/template/index')
@@ -13,11 +12,6 @@ function permit(fields) {
 
 class TemplatesController {
   async create(req, res) {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
-    }
-
     const { name, namespace, licensee } = req.body
 
     const template = new Template({

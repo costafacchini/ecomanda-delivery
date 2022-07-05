@@ -7,7 +7,7 @@ const { expressServer } = require('../../../.jest/server-express')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { cart: cartFactory } = require('@factories/cart')
-const { createMessage } = require('@repositories/message')
+const { createTextMessageInsteadInteractive } = require('@repositories/message')
 
 jest.mock('@repositories/message')
 
@@ -93,12 +93,12 @@ describe('carts controller', () => {
           })
       })
 
-      it('returns status 404 and message if the cart is not valid', async () => {
+      it('returns status 422 and message if the cart is not valid', async () => {
         await request(expressServer)
           .post(`/api/v1/carts?token=${licensee.apiToken}`)
           .send(cartFactory.build({ contact: '5568902938567' }))
           .expect('Content-Type', /json/)
-          .expect(404, {
+          .expect(422, {
             errors: { message: 'Contato 5568902938567 não encontrado' },
           })
       })
@@ -196,20 +196,20 @@ describe('carts controller', () => {
           })
       })
 
-      it('returns status 404 and message if the cart is not founded', async () => {
+      it('returns status 422 and message if the cart is not founded', async () => {
         await Cart.deleteMany({})
 
         await request(expressServer)
           .post(`/api/v1/carts/5511990283745?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
-          .expect(404, { errors: { message: 'Carrinho não encontrado' } })
+          .expect(422, { errors: { message: 'Carrinho não encontrado' } })
       })
 
-      it('returns status 404 and message if the contact is not founded', async () => {
+      it('returns status 422 and message if the contact is not founded', async () => {
         await request(expressServer)
           .post(`/api/v1/carts/551164646464?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
-          .expect(404, { errors: { message: 'Contato 551164646464 não encontrado' } })
+          .expect(422, { errors: { message: 'Contato 551164646464 não encontrado' } })
       })
 
       it('returns status 500 and message if the some error ocurred when update the cart', async () => {
@@ -263,20 +263,20 @@ describe('carts controller', () => {
           })
       })
 
-      it('returns status 404 and message if the cart is not founded', async () => {
+      it('returns status 422 and message if the cart is not founded', async () => {
         await Cart.deleteMany({})
 
         await request(expressServer)
           .get(`/api/v1/carts/5511990283745?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
-          .expect(404, { errors: { message: 'Carrinho não encontrado' } })
+          .expect(422, { errors: { message: 'Carrinho não encontrado' } })
       })
 
-      it('returns status 404 and message if the contact is not founded', async () => {
+      it('returns status 422 and message if the contact is not founded', async () => {
         await request(expressServer)
           .get(`/api/v1/carts/551164646464?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
-          .expect(404, { errors: { message: 'Contato 551164646464 não encontrado' } })
+          .expect(422, { errors: { message: 'Contato 551164646464 não encontrado' } })
       })
 
       it('returns status 500 and message if occurs another error', async () => {
@@ -328,20 +328,20 @@ describe('carts controller', () => {
           })
       })
 
-      it('returns status 404 and message if the cart is not founded', async () => {
+      it('returns status 422 and message if the cart is not founded', async () => {
         await Cart.deleteMany({})
 
         await request(expressServer)
           .delete(`/api/v1/carts/5511990283745?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
-          .expect(404, { errors: { message: 'Carrinho não encontrado' } })
+          .expect(422, { errors: { message: 'Carrinho não encontrado' } })
       })
 
-      it('returns status 404 and message if the contact is not founded', async () => {
+      it('returns status 422 and message if the contact is not founded', async () => {
         await request(expressServer)
           .delete(`/api/v1/carts/551164646464?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
-          .expect(404, { errors: { message: 'Contato 551164646464 não encontrado' } })
+          .expect(422, { errors: { message: 'Contato 551164646464 não encontrado' } })
       })
 
       it('returns status 500 and message if the some error ocurred when update the cart', async () => {
@@ -434,20 +434,20 @@ describe('carts controller', () => {
           })
       })
 
-      it('returns status 404 and message if the cart is not founded', async () => {
+      it('returns status 422 and message if the cart is not founded', async () => {
         await Cart.deleteMany({})
 
         await request(expressServer)
           .post(`/api/v1/carts/5511990283745/item?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
-          .expect(404, { errors: { message: 'Carrinho não encontrado' } })
+          .expect(422, { errors: { message: 'Carrinho não encontrado' } })
       })
 
-      it('returns status 404 and message if the contact is not founded', async () => {
+      it('returns status 422 and message if the contact is not founded', async () => {
         await request(expressServer)
           .post(`/api/v1/carts/551164646464/item?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
-          .expect(404, { errors: { message: 'Contato 551164646464 não encontrado' } })
+          .expect(422, { errors: { message: 'Contato 551164646464 não encontrado' } })
       })
 
       it('returns status 500 and message if the some error ocurred when update the cart', async () => {
@@ -488,20 +488,20 @@ describe('carts controller', () => {
           })
       })
 
-      it('returns status 404 and message if the cart is not founded', async () => {
+      it('returns status 422 and message if the cart is not founded', async () => {
         await Cart.deleteMany({})
 
         await request(expressServer)
           .delete(`/api/v1/carts/5511990283745/item?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
-          .expect(404, { errors: { message: 'Carrinho não encontrado' } })
+          .expect(422, { errors: { message: 'Carrinho não encontrado' } })
       })
 
-      it('returns status 404 and message if the contact is not founded', async () => {
+      it('returns status 422 and message if the contact is not founded', async () => {
         await request(expressServer)
           .delete(`/api/v1/carts/551164646464/item?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
-          .expect(404, { errors: { message: 'Contato 551164646464 não encontrado' } })
+          .expect(422, { errors: { message: 'Contato 551164646464 não encontrado' } })
       })
 
       it('returns status 500 and message if the some error ocurred when update the cart', async () => {
@@ -527,7 +527,7 @@ describe('carts controller', () => {
       it('returns status 200 and schedules to send message if the item removed with successful', async () => {
         const cart = await Cart.create(cartFactory.build({ contact, licensee }))
 
-        createMessage.mockResolvedValue({ _id: 'id' })
+        createTextMessageInsteadInteractive.mockResolvedValue({ _id: 'id' })
 
         await request(expressServer)
           .post(`/api/v1/carts/${cart._id}/send?token=${licensee.apiToken}`)
@@ -537,19 +537,19 @@ describe('carts controller', () => {
           })
       })
 
-      it('returns status 404 and message if the cart is not founded', async () => {
+      it('returns status 422 and message if the cart is not founded', async () => {
         await Cart.deleteMany({})
 
         await request(expressServer)
           .post(`/api/v1/carts/5511990283745/send?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
-          .expect(404, { errors: { message: 'Carrinho não encontrado' } })
+          .expect(422, { errors: { message: 'Carrinho não encontrado' } })
       })
 
       it('returns status 500 and message if the some error ocurred when update the cart', async () => {
         const cart = await Cart.create(cartFactory.build({ contact, licensee }))
 
-        createMessage.mockImplementation(() => {
+        createTextMessageInsteadInteractive.mockImplementation(() => {
           throw new Error('some error')
         })
 
@@ -560,7 +560,7 @@ describe('carts controller', () => {
             errors: { message: 'Error: some error' },
           })
 
-        createMessage.mockRestore()
+        createTextMessageInsteadInteractive.mockRestore()
       })
     })
   })

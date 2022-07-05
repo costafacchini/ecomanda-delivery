@@ -255,7 +255,7 @@ describe('trigger controller', () => {
     describe('response', () => {
       it('returns status 200 and message if trigger exists', async () => {
         await request(expressServer)
-          .get(`/resources/triggers/?expression=products&page=1&limit=3`)
+          .get(`/resources/triggers/?expression=products&page=1&limit=3&kind=single_product`)
           .set('x-access-token', token)
           .expect('Content-Type', /json/)
           .expect(200)

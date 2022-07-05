@@ -8,6 +8,17 @@ async function createMessage(fields) {
     ...fields,
   })
 
+  const messageSaved = await message.save()
+
+  return messageSaved
+}
+
+async function createTextMessageInsteadInteractive(fields) {
+  const message = new Message({
+    number: uuidv4(),
+    ...fields,
+  })
+
   if (message.kind === 'interactive') {
     message.kind = 'text'
     message.text = await parseText(message.text, message.contact)
@@ -32,4 +43,4 @@ async function createMessageToWarnAboutWindowOfWhatsassClosed(contact, licensee)
   return messageSaved
 }
 
-module.exports = { createMessage, createMessageToWarnAboutWindowOfWhatsassClosed }
+module.exports = { createMessage, createMessageToWarnAboutWindowOfWhatsassClosed, createTextMessageInsteadInteractive }

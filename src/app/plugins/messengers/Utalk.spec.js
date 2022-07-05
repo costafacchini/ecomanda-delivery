@@ -123,6 +123,24 @@ describe('Utalk plugin', () => {
         expect(uploadFileS3Spy).toHaveBeenCalledTimes(1)
         expect(presignedUrlS3Spy).toHaveBeenCalledTimes(1)
       })
+
+      it('return the empty data if dir is o', async () => {
+        const responseBody = {
+          event: 'file',
+          token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
+          fn: '1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg',
+          blob: 'data:image/jpeg;base64,/9j/4AAQSkZJRgA...',
+          dir: 'o',
+          user: '5511940650658',
+          number: '5511990283745',
+          uid: '3EB016638A2AD49A9ECE',
+        }
+
+        const utalk = new Utalk(licensee)
+        const messages = await utalk.responseToMessages(responseBody)
+
+        expect(messages.length).toEqual(0)
+      })
     })
 
     describe('text', () => {
@@ -222,9 +240,23 @@ describe('Utalk plugin', () => {
     })
 
     describe('ack', () => {
-      it('returns the response body transformed in message ignoring the message from me', async () => {
+      it('returns messages empty if message kind is ack', async () => {
         const responseBody = {
           event: 'ack',
+          token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
+        }
+
+        const utalk = new Utalk(licensee)
+        const messages = await utalk.responseToMessages(responseBody)
+
+        expect(messages.length).toEqual(0)
+      })
+    })
+
+    describe('login', () => {
+      it('returns messages empty if message kind is login', async () => {
+        const responseBody = {
+          event: 'login',
           token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
         }
 
@@ -242,6 +274,7 @@ describe('Utalk plugin', () => {
           chatbotDefault: 'landbot',
           chatbotUrl: 'https://teste-url.com',
           chatbotAuthorizationToken: 'token',
+          apiToken: '12346554',
         })
       )
 

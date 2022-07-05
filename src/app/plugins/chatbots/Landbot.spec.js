@@ -238,6 +238,75 @@ describe('Landbot plugin', () => {
       expect(messages.length).toEqual(0)
     })
 
+    it('return the empty array if contact does not exists', async () => {
+      const responseBody = {
+        messages: [
+          {
+            type: 'text',
+            timestamp: '1234567890',
+            message: 'Hello world',
+          },
+          {
+            type: 'image',
+            timestamp: '1234567890',
+            url: 'https://octodex.github.com/images/dojocat.jpg',
+            message: 'Text with image',
+          },
+          {
+            type: 'multiple_images',
+            timestamp: '1234567890',
+            urls: [
+              'https://octodex.github.com/images/dojocat.jpg',
+              'https://www.helloumi.com/wp-content/uploads/2016/07/logo-helloumi-web.png',
+            ],
+            message: 'Hello',
+          },
+          {
+            type: 'location',
+            timestamp: '1234567890',
+            latitude: 3.15,
+            longitude: 101.75,
+            message: 'It is here',
+          },
+          {
+            type: 'text',
+            timestamp: '1234567347',
+            message: 'send_reply_buttons',
+          },
+          {
+            type: 'dialog',
+            timestamp: '1234567890',
+            title: 'Hi there',
+            buttons: ['Hey', 'Bye'],
+            payloads: ['$0', '$1'],
+          },
+        ],
+        customer: {
+          id: 2000,
+          name: 'John',
+          number: '5511990283745',
+        },
+        agent: {
+          id: 1,
+          type: 'human',
+        },
+        channel: {
+          id: 100,
+          name: 'Android App',
+        },
+      }
+
+      const landbot = new Landbot(licensee)
+      const messages = await landbot.responseToMessages(responseBody)
+
+      expect(messages.length).toEqual(0)
+
+      expect(consoleInfoSpy).toHaveBeenCalledTimes(1)
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
+        `Contato com telefone 5511990283745 e licenciado ${licensee._id} não encontrado`
+      )
+    })
+
     it('return the empty array if body does not have a customer', async () => {
       const responseBody = {
         messages: [
@@ -309,6 +378,24 @@ describe('Landbot plugin', () => {
       const message = await landbot.responseTransferToMessage(responseBody)
 
       expect(message).toEqual(undefined)
+    })
+
+    it('return the empty message if contact is not exists', async () => {
+      const responseBody = {
+        number: '5511990283745@c.us',
+        observacao: 'Message to send chat',
+        id_departamento_rocketchat: '100',
+      }
+
+      const landbot = new Landbot(licensee)
+      const message = await landbot.responseTransferToMessage(responseBody)
+
+      expect(message).toEqual(undefined)
+
+      expect(consoleInfoSpy).toHaveBeenCalledTimes(1)
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
+        `Contato com telefone 5511990283745 e licenciado ${licensee._id} não encontrado`
+      )
     })
 
     it('close room if the body has a iniciar_nova_conversa with true', async () => {

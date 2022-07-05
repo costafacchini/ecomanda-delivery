@@ -1,42 +1,14 @@
 const Message = require('@models/Message')
-const Contact = require('@models/Contact')
 const Trigger = require('@models/Trigger')
 const Template = require('@models/Template')
-const Cart = require('@models/Cart')
-const Product = require('@models/Product')
 const NormalizePhone = require('@helpers/NormalizePhone')
-const { v4: uuidv4 } = require('uuid')
-const S3 = require('../storage/S3')
 const request = require('../../services/request')
 const files = require('@helpers/Files')
-const mime = require('mime-types')
 const cartFactory = require('../../plugins/carts/factory')
 const { parseText } = require('@helpers/ParseTriggerText')
+const MessengersBase = require('./Base')
 
-const getMediaURL = async (licensee, mediaId, contact) => {
-  const response = await downloadMedia(mediaId, licensee.whatsappToken)
-  const extension = mime.extension(response.headers.get('content-type'))
-
-  return uploadFile(licensee, contact, `${mediaId}.${extension}`, Buffer.from(response.data).toString('base64'))
-}
-
-const downloadMedia = async (mediaId, whatsappToken) => {
-  const headers = { 'D360-API-KEY': whatsappToken }
-  const response = await request.download(`https://waba.360dialog.io/v1/media/${mediaId}`, {
-    headers,
-  })
-
-  return response
-}
-
-const uploadFile = (licensee, contact, fileName, fileBase64) => {
-  const s3 = new S3(licensee, contact, fileName, fileBase64)
-  s3.uploadFile()
-
-  return s3.presignedUrl()
-}
-
-const getContact = async (number, url, token) => {
+const getWaIdContact = async (number, url, token) => {
   const headers = { 'D360-API-KEY': token }
 
   const body = {
@@ -158,9 +130,9 @@ const parseComponentParam = (param, value) => {
   }
 }
 
-class Dialog {
+class Dialog extends MessengersBase {
   constructor(licensee) {
-    this.licensee = licensee
+    super(licensee)
   }
 
   action(messageDestination) {
@@ -173,170 +145,95 @@ class Dialog {
     }
   }
 
-  async responseToMessages(responseBody) {
-    if (responseBody.statuses) {
-      const status = responseBody.statuses[0]
-      const message = await Message.findOne({
-        licensee: this.licensee._id,
-        messageWaId: status.id,
-      })
+  parseMessageStatus(responseBody) {
+    this.messageStatus = responseBody.statuses ? responseBody.statuses[0] : null
+  }
 
-      if (message) {
-        if (status.status === 'sent') message.sendedAt = new Date()
-        if (status.status === 'delivered') message.deliveredAt = new Date()
-        if (status.status === 'read') message.readAt = new Date()
-
-        await message.save()
-      }
-
-      return []
+  parseMessage(responseBody) {
+    if (!responseBody.messages) {
+      this.messageData = null
+      return
     }
 
-    if (!responseBody.messages) return []
-
-    const processedMessages = []
-
-    const chatId = responseBody.messages[0].from
-    const normalizePhone = new NormalizePhone(chatId)
-    let contact = await Contact.findOne({
-      number: normalizePhone.number,
-      type: normalizePhone.type,
-      licensee: this.licensee._id,
-    })
-
-    if (!contact) {
-      contact = new Contact({
-        name: responseBody.contacts[0].profile.name,
-        number: normalizePhone.number,
-        type: normalizePhone.type,
-        talkingWithChatBot: this.licensee.useChatbot,
-        waId: responseBody.contacts[0].wa_id,
-        licensee: this.licensee._id,
-      })
-      await contact.save()
-    } else {
-      if (
-        (responseBody.contacts[0].profile.name && contact.name !== responseBody.contacts[0].profile.name) ||
-        (responseBody.contacts[0].wa_id && contact.waId !== responseBody.contacts[0].wa_id)
-      ) {
-        contact.name = responseBody.contacts[0].profile.name
-        contact.waId = responseBody.contacts[0].wa_id
-        contact.talkingWithChatBot = this.licensee.useChatbot
-        await contact.save()
-      }
+    this.messageData = {
+      kind: responseBody.messages[0].type,
+      waId: responseBody.messages[0].id,
     }
 
-    if (responseBody.messages[0].type === 'interactive') {
+    if (this.messageData.kind === 'interactive') {
       const expression = responseBody.messages[0].interactive.list_reply
         ? responseBody.messages[0].interactive.list_reply.id
         : responseBody.messages[0].interactive.button_reply.id
 
-      const triggers = await Trigger.find({ expression, licensee: this.licensee._id }).sort({ order: 'asc' })
-      if (triggers.length > 0) {
-        for (const trigger of triggers) {
-          const messageToSend = new Message({
-            number: uuidv4(),
-            messageWaId: responseBody.messages[0].id,
-            licensee: this.licensee._id,
-            contact: contact._id,
-            destination: 'to-messenger',
-            kind: 'interactive',
-            trigger: trigger._id,
-          })
-
-          processedMessages.push(await messageToSend.save())
-        }
-      } else {
-        const messageToSend = new Message({
-          number: uuidv4(),
-          messageWaId: responseBody.messages[0].id,
-          licensee: this.licensee._id,
-          contact: contact._id,
-          destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
-          text: expression,
-        })
-
-        processedMessages.push(await messageToSend.save())
+      this.messageData.interactive = { expression }
+    } else if (this.messageData.kind === 'text') {
+      this.messageData.text = { body: responseBody.messages[0].text.body }
+    } else if (responseBody.messages[0].type === 'order') {
+      this.messageData.order = {
+        catalogId: responseBody.messages[0].order.catalog_id,
+        text: responseBody.messages[0].order.text,
+        productItems: responseBody.messages[0].order.product_items,
       }
-    } else {
-      const messageToSend = new Message({
-        number: uuidv4(),
-        messageWaId: responseBody.messages[0].id,
-        licensee: this.licensee._id,
-        contact: contact._id,
-        destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
-      })
-
-      if (responseBody.messages[0].type === 'text') {
-        messageToSend.text = responseBody.messages[0].text.body
-        messageToSend.kind = 'text'
-      } else if (responseBody.messages[0].type === 'order') {
-        let cart = await Cart.findOne({ contact, concluded: false })
-        if (!cart) {
-          cart = new Cart({
-            licensee: this.licensee._id,
-            contact: contact._id,
-          })
-        }
-
-        const products = []
-        for (const item of responseBody.messages[0].order.product_items) {
-          const product = await Product.findOne({
-            product_retailer_id: item.product_retailer_id,
-            licensee: this.licensee._id,
-          })
-
-          products.push({
-            unit_price: item.item_price,
-            name: product?.name,
-            product_retailer_id: item.product_retailer_id,
-            quantity: item.quantity,
-            product,
-          })
-        }
-
-        cart.delivery_tax = 0
-        cart.catalog = responseBody.messages[0].order.catalog_id
-        cart.note = responseBody.messages[0].order.text
-        cart.products = products
-
-        await cart.save()
-
-        messageToSend.kind = 'cart'
-        messageToSend.cart = cart._id
-        messageToSend.destination = 'to-chatbot'
-      } else {
-        if (responseBody.messages[0].type === 'image') {
-          messageToSend.attachmentWaId = responseBody.messages[0].image.id
-          messageToSend.fileName = responseBody.messages[0].image.sha256
-        } else if (responseBody.messages[0].type === 'video') {
-          messageToSend.attachmentWaId = responseBody.messages[0].video.id
-          messageToSend.fileName = responseBody.messages[0].video.sha256
-        } else if (responseBody.messages[0].type === 'voice') {
-          messageToSend.attachmentWaId = responseBody.messages[0].voice.id
-          messageToSend.fileName = responseBody.messages[0].voice.sha256
-        } else if (responseBody.messages[0].type === 'audio') {
-          messageToSend.attachmentWaId = responseBody.messages[0].audio.id
-          messageToSend.fileName = responseBody.messages[0].audio.sha256
-        } else if (responseBody.messages[0].type === 'document') {
-          messageToSend.attachmentWaId = responseBody.messages[0].document.id
-          messageToSend.fileName = responseBody.messages[0].document.filename
-        }
-
-        messageToSend.kind = 'file'
-        messageToSend.url = await getMediaURL(this.licensee, messageToSend.attachmentWaId, contact)
+    } else if (responseBody.messages[0].type === 'image') {
+      this.messageData.kind = 'file'
+      this.messageData.file = {
+        id: responseBody.messages[0].image.id,
+        fileName: responseBody.messages[0].image.sha256,
+        fileBase64: null,
       }
-
-      processedMessages.push(await messageToSend.save())
+    } else if (responseBody.messages[0].type === 'video') {
+      this.messageData.kind = 'file'
+      this.messageData.file = {
+        id: responseBody.messages[0].video.id,
+        fileName: responseBody.messages[0].video.sha256,
+        fileBase64: null,
+      }
+    } else if (responseBody.messages[0].type === 'voice') {
+      this.messageData.kind = 'file'
+      this.messageData.file = {
+        id: responseBody.messages[0].voice.id,
+        fileName: responseBody.messages[0].voice.sha256,
+        fileBase64: null,
+      }
+    } else if (responseBody.messages[0].type === 'audio') {
+      this.messageData.kind = 'file'
+      this.messageData.file = {
+        id: responseBody.messages[0].audio.id,
+        fileName: responseBody.messages[0].audio.sha256,
+        fileBase64: null,
+      }
+    } else if (responseBody.messages[0].type === 'document') {
+      this.messageData.kind = 'file'
+      this.messageData.file = {
+        id: responseBody.messages[0].document.id,
+        fileName: responseBody.messages[0].document.filename,
+        fileBase64: null,
+      }
     }
+  }
 
-    return processedMessages
+  parseContactData(responseBody) {
+    const chatId = responseBody.messages[0].from
+    const normalizePhone = new NormalizePhone(chatId)
+    this.contactData = {
+      number: normalizePhone.number,
+      type: normalizePhone.type,
+      waId: responseBody.contacts[0].wa_id,
+      name: responseBody.contacts[0].profile.name,
+    }
+  }
+
+  contactWithDifferentData(contact) {
+    return (
+      (this.contactData.name && this.contactData.name !== contact.name) ||
+      (this.contactData.waId && this.contactData.waId !== contact.waId)
+    )
   }
 
   async sendMessage(messageId, url, token) {
     const messageToSend = await Message.findById(messageId).populate('contact')
 
-    const waContact = await getContact(messageToSend.contact.number, url, token)
+    const waContact = await getWaIdContact(messageToSend.contact.number, url, token)
     if (waContact.valid) {
       const headers = { 'D360-API-KEY': token }
 
