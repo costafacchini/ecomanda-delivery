@@ -118,7 +118,7 @@ describe('Crisp plugin', () => {
     it('return the empty data if room is not exists', async () => {
       const responseBody = {
         website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
-        event: 'message:send',
+        event: 'message:received',
         data: {
           website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
           type: 'text',
