@@ -213,7 +213,7 @@ describe('Jivochat plugin', () => {
 
         expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].kind).toEqual('file')
-        expect(messages[0].text).toEqual('')
+        expect(messages[0].text).toEqual(undefined)
         expect(messages[0].url).toEqual('https://octodex.github.com/images/dojocat.jpg')
         expect(messages[0].fileName).toEqual('dojocat.jpg')
       })
@@ -247,7 +247,7 @@ describe('Jivochat plugin', () => {
 
         expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].kind).toEqual('location')
-        expect(messages[0].text).toEqual('')
+        expect(messages[0].text).toEqual(undefined)
         expect(messages[0].latitude).toEqual(123.93)
         expect(messages[0].longitude).toEqual(12.0)
       })

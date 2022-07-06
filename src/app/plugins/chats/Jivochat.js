@@ -4,12 +4,12 @@ const NormalizePhone = require('../../helpers/NormalizePhone')
 const { v4: uuidv4 } = require('uuid')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
-const Trigger = require('@models/Trigger')
 const request = require('../../services/request')
+const ChatsBase = require('./Base')
 
-class Jivochat {
+class Jivochat extends ChatsBase {
   constructor(licensee) {
-    this.licensee = licensee
+    super(licensee)
   }
 
   action(responseBody) {
@@ -22,86 +22,50 @@ class Jivochat {
     }
   }
 
-  async responseToMessages(responseBody) {
+  async parseMessage(responseBody) {
     const { recipient, message } = responseBody
 
-    if (!message || !recipient) return []
-    if (message.type === 'typein' || message.type === 'typeout' || message.type === 'stop') return []
+    if (!message || !recipient) {
+      this.messageParsed = null
+      return []
+    }
+
+    if (message.type === 'typein' || message.type === 'typeout' || message.type === 'stop') {
+      this.messageParsed = null
+      return []
+    }
+
+    this.messageParsed = { room: null }
 
     const normalizePhone = new NormalizePhone(recipient.id)
-
-    const contact = await Contact.findOne({
+    this.messageParsed.contact = await this.findContact({
       number: normalizePhone.number,
       type: normalizePhone.type,
       licensee: this.licensee._id,
     })
 
-    const processedMessages = []
-    const kind = Jivochat.kindToMessageKind(message.type)
+    const messageToSend = {}
+    messageToSend.kind = Jivochat.kindToMessageKind(message.type)
 
-    if (!kind) {
+    if (!messageToSend.kind) {
       console.info(`Tipo de mensagem retornado pela Jivochat não reconhecido: ${message.type}`)
+      this.messageParsed = null
       return []
     }
 
-    const text = message.type === 'text' ? emoji.replace(message.text) : ''
-
-    if (kind === 'text') {
-      const triggers = await Trigger.find({ expression: text, licensee: this.licensee._id }).sort({ order: 'asc' })
-      if (triggers.length > 0) {
-        for (const trigger of triggers) {
-          const messageToSend = new Message({
-            number: uuidv4(),
-            text,
-            kind: 'interactive',
-            licensee: this.licensee._id,
-            contact: contact._id,
-            destination: 'to-messenger',
-            trigger: trigger._id,
-          })
-
-          processedMessages.push(await messageToSend.save())
-        }
-      } else {
-        const messageToSend = new Message({
-          number: uuidv4(),
-          text,
-          kind,
-          licensee: this.licensee._id,
-          contact: contact._id,
-          destination: 'to-messenger',
-        })
-
-        if (messageToSend.text.includes('{{') && messageToSend.text.includes('}}')) {
-          messageToSend.kind = 'template'
-        }
-
-        processedMessages.push(await messageToSend.save())
-      }
+    if (messageToSend.kind === 'text') {
+      messageToSend.text = { body: emoji.replace(message.text) }
+    } else if (messageToSend.kind === 'location') {
+      messageToSend.location = { latitude: message.latitude, longitude: message.longitude }
     } else {
-      const messageToSend = new Message({
-        number: uuidv4(),
-        text,
-        kind,
-        licensee: this.licensee._id,
-        contact: contact._id,
-        destination: 'to-messenger',
-      })
-
-      if (kind === 'file') {
-        messageToSend.url = message.file
-        messageToSend.fileName = message.file_name
+      messageToSend.kind = 'file'
+      messageToSend.file = {
+        fileName: message.file_name,
+        url: message.file,
       }
-
-      if (kind === 'location') {
-        messageToSend.latitude = message.latitude
-        messageToSend.longitude = message.longitude
-      }
-
-      processedMessages.push(await messageToSend.save())
     }
 
-    return processedMessages
+    this.messageParsed.messages = [messageToSend]
   }
 
   static kindToMessageKind(kind) {

@@ -1,12 +1,10 @@
-const emoji = require('../../helpers/Emoji')
 const files = require('../../helpers/Files')
-const { v4: uuidv4 } = require('uuid')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Room = require('@models/Room')
-const Trigger = require('@models/Trigger')
 const request = require('../../services/request')
 const mime = require('mime-types')
+const ChatsBase = require('./Base')
 
 const createSession = async (url, headers, contact, segments) => {
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })
@@ -110,9 +108,9 @@ const formatMessage = (message, contact) => {
   return contact.type === '@c.us' ? text : `*${message.senderName}:*\n${text}`
 }
 
-class Crisp {
+class Crisp extends ChatsBase {
   constructor(licensee) {
-    this.licensee = licensee
+    super(licensee)
   }
 
   action(responseBody) {
@@ -126,92 +124,35 @@ class Crisp {
     }
   }
 
-  async responseToMessages(responseBody) {
-    if (responseBody.event !== 'session:removed' && responseBody.event !== 'message:received') return []
+  async parseMessage(responseBody) {
+    if (responseBody.event !== 'session:removed' && responseBody.event !== 'message:received') {
+      this.messageParsed = null
+      return
+    }
 
     const room = await Room.findOne({ roomId: responseBody.data.session_id }).populate('contact')
-    if (!room) return []
+    if (!room) {
+      this.messageParsed = null
+      return
+    }
 
-    const contact = await Contact.findOne({ _id: room.contact._id })
+    this.messageParsed = { room }
+    this.messageParsed.contact = await this.findContact({ _id: room.contact._id })
+    this.messageParsed.action = this.action(responseBody)
 
-    const processedMessages = []
-
-    if (this.action(responseBody) === 'close-chat') {
-      const messageToSend = new Message({
-        number: uuidv4(),
-        text: 'Chat encerrado pelo agente',
-        kind: 'text',
-        licensee: this.licensee._id,
-        contact: contact._id,
-        room: room._id,
-        destination: 'to-messenger',
-      })
-
-      processedMessages.push(await messageToSend.save())
-    } else {
-      if (
-        responseBody.data.type === 'text' ||
-        responseBody.data.type === 'file' ||
-        responseBody.data.type === 'audio'
-      ) {
-        if (responseBody.data.type === 'text') {
-          const text = responseBody.data.content ? emoji.replace(responseBody.data.content) : ''
-
-          const triggers = await Trigger.find({ expression: text, licensee: this.licensee._id }).sort({ order: 'asc' })
-          if (triggers.length > 0) {
-            for (const trigger of triggers) {
-              const messageToSend = new Message({
-                number: uuidv4(),
-                kind: 'interactive',
-                text,
-                licensee: this.licensee._id,
-                contact: contact._id,
-                room: room._id,
-                destination: 'to-messenger',
-                trigger: trigger._id,
-              })
-
-              processedMessages.push(await messageToSend.save())
-            }
-          } else {
-            const messageToSend = new Message({
-              number: uuidv4(),
-              kind: 'text',
-              text,
-              licensee: this.licensee._id,
-              contact: contact._id,
-              room: room._id,
-              destination: 'to-messenger',
-            })
-
-            if (messageToSend.text.includes('{{') && messageToSend.text.includes('}}')) {
-              messageToSend.kind = 'template'
-            }
-
-            processedMessages.push(await messageToSend.save())
-          }
-        } else if (responseBody.data.type === 'file' || responseBody.data.type === 'audio') {
-          const messageToSend = new Message({
-            number: uuidv4(),
-            kind: 'text',
-            licensee: this.licensee._id,
-            contact: contact._id,
-            room: room._id,
-            destination: 'to-messenger',
-          })
-
-          messageToSend.kind = 'file'
-          messageToSend.fileName = responseBody.data.content.name
-          messageToSend.url = responseBody.data.content.url
-
-          processedMessages.push(await messageToSend.save())
-        }
-      } else {
-        return []
+    const messageToSend = {}
+    messageToSend.kind = responseBody.data.type
+    if (responseBody.data.type === 'text') {
+      messageToSend.text = { body: responseBody.data.content }
+    } else if (responseBody.data.type === 'file' || responseBody.data.type === 'audio') {
+      messageToSend.kind = 'file'
+      messageToSend.file = {
+        fileName: responseBody.data.content.name,
+        url: responseBody.data.content.url,
       }
     }
 
-    return processedMessages
+    this.messageParsed.messages = [messageToSend]
   }
 
   async transfer(messageId, url) {

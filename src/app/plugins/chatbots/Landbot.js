@@ -7,6 +7,7 @@ const request = require('../../services/request')
 const Room = require('@models/Room')
 const Trigger = require('@models/Trigger')
 const cartFactory = require('@plugins/carts/factory')
+const { createMessage } = require('@repositories/message')
 
 const closeRoom = async (contact) => {
   const room = await Room.findOne({ contact: contact._id, closed: false })
@@ -59,39 +60,39 @@ class Landbot {
         const triggers = await Trigger.find({ expression: text, licensee: this.licensee._id }).sort({ order: 'asc' })
         if (triggers.length > 0) {
           for (const trigger of triggers) {
-            const messageToSend = new Message({
+            processedMessages.push(
+              await createMessage({
+                number: uuidv4(),
+                text,
+                kind: 'interactive',
+                licensee: this.licensee._id,
+                contact: contact._id,
+                destination: 'to-messenger',
+                trigger: trigger._id,
+              })
+            )
+          }
+        } else {
+          processedMessages.push(
+            await createMessage({
               number: uuidv4(),
               text,
-              kind: 'interactive',
+              kind,
               licensee: this.licensee._id,
               contact: contact._id,
               destination: 'to-messenger',
-              trigger: trigger._id,
             })
-
-            processedMessages.push(await messageToSend.save())
-          }
-        } else {
-          const messageToSend = new Message({
-            number: uuidv4(),
-            text,
-            kind,
-            licensee: this.licensee._id,
-            contact: contact._id,
-            destination: 'to-messenger',
-          })
-
-          processedMessages.push(await messageToSend.save())
+          )
         }
       } else {
-        const messageToSend = new Message({
+        const messageToSend = {
           number: uuidv4(),
           text,
           kind,
           licensee: this.licensee._id,
           contact: contact._id,
           destination: 'to-messenger',
-        })
+        }
 
         if (kind === 'file') {
           messageToSend.url = message.url
@@ -103,7 +104,7 @@ class Landbot {
           messageToSend.longitude = message.longitude
         }
 
-        processedMessages.push(await messageToSend.save())
+        processedMessages.push(await createMessage(messageToSend))
       }
     }
 
@@ -159,7 +160,7 @@ class Landbot {
       await closeRoom(contact)
     }
 
-    const message = new Message({
+    return await createMessage({
       number: uuidv4(),
       text: observacao,
       kind: 'text',
@@ -168,8 +169,6 @@ class Landbot {
       destination: 'to-transfer',
       departament: id_departamento_rocketchat,
     })
-
-    return await message.save()
   }
 
   async sendMessage(messageId, url, token) {
