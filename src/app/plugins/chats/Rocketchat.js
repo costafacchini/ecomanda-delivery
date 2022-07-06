@@ -1,10 +1,9 @@
 const emoji = require('../../helpers/Emoji')
-const { v4: uuidv4 } = require('uuid')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Room = require('@models/Room')
-const Trigger = require('@models/Trigger')
 const request = require('../../services/request')
+const ChatsBase = require('./Base')
 
 const createVisitor = async (contact, token, url) => {
   const body = {
@@ -70,9 +69,9 @@ const formatMessage = (message, contact) => {
   return contact.type === '@c.us' ? text : `*${message.senderName}:*\n${text}`
 }
 
-class Rocketchat {
+class Rocketchat extends ChatsBase {
   constructor(licensee) {
-    this.licensee = licensee
+    super(licensee)
   }
 
   action(responseBody) {
@@ -87,86 +86,39 @@ class Rocketchat {
     }
   }
 
-  async responseToMessages(responseBody) {
-    if (!responseBody._id) return []
-
-    const room = await Room.findOne({ roomId: responseBody._id }).populate('contact')
-    if (!room) return []
-
-    const contact = await Contact.findOne({ _id: room.contact._id })
-
-    const processedMessages = []
-
-    if (this.action(responseBody) === 'close-chat') {
-      const messageToSend = new Message({
-        number: uuidv4(),
-        text: 'Chat encerrado pelo agente',
-        kind: 'text',
-        licensee: this.licensee._id,
-        contact: contact._id,
-        room: room._id,
-        destination: 'to-messenger',
-      })
-
-      processedMessages.push(await messageToSend.save())
-    } else {
-      for (const message of responseBody.messages) {
-        let text = message.attachments ? message.attachments[0].description : message.msg
-        text = text ? emoji.replace(text) : ''
-
-        if (message.attachments) {
-          const messageToSend = new Message({
-            number: uuidv4(),
-            text,
-            kind: 'file',
-            licensee: this.licensee._id,
-            contact: contact._id,
-            room: room._id,
-            destination: 'to-messenger',
-            url: message.fileUpload.publicFilePath,
-            fileName: message.attachments[0].title,
-          })
-
-          processedMessages.push(await messageToSend.save())
-        } else {
-          const triggers = await Trigger.find({ expression: text, licensee: this.licensee._id }).sort({ order: 'asc' })
-          if (triggers.length > 0) {
-            for (const trigger of triggers) {
-              const messageToSend = new Message({
-                number: uuidv4(),
-                text,
-                kind: 'interactive',
-                licensee: this.licensee._id,
-                contact: contact._id,
-                room: room._id,
-                destination: 'to-messenger',
-                trigger: trigger._id,
-              })
-
-              processedMessages.push(await messageToSend.save())
-            }
-          } else {
-            const messageToSend = new Message({
-              number: uuidv4(),
-              text,
-              kind: 'text',
-              licensee: this.licensee._id,
-              contact: contact._id,
-              room: room._id,
-              destination: 'to-messenger',
-            })
-
-            if (messageToSend.text.includes('{{') && messageToSend.text.includes('}}')) {
-              messageToSend.kind = 'template'
-            }
-
-            processedMessages.push(await messageToSend.save())
-          }
-        }
-      }
+  async parseMessage(responseBody) {
+    if (!responseBody._id) {
+      this.messageParsed = null
+      return []
     }
 
-    return processedMessages
+    const room = await Room.findOne({ roomId: responseBody._id }).populate('contact')
+    if (!room) {
+      this.messageParsed = null
+      return
+    }
+
+    this.messageParsed = { room }
+    this.messageParsed.contact = await this.findContact({ _id: room.contact._id })
+    this.messageParsed.action = this.action(responseBody)
+    this.messageParsed.messages = []
+    for (const message of responseBody.messages) {
+      const messageToSend = {}
+
+      if (message.attachments) {
+        messageToSend.kind = 'file'
+        messageToSend.file = {
+          text: emoji.replace(message.attachments[0].description),
+          url: message.fileUpload.publicFilePath,
+          fileName: message.attachments[0].title,
+        }
+      } else {
+        messageToSend.kind = 'text'
+        messageToSend.text = { body: message.msg }
+      }
+
+      this.messageParsed.messages.push(messageToSend)
+    }
   }
 
   async transfer(messageId, url) {

@@ -78,7 +78,7 @@ describe('Crisp plugin', () => {
       expect(messages[0]).toBeInstanceOf(Message)
       expect(messages[0].licensee).toEqual(licensee._id)
       expect(messages[0].contact).toEqual(contact._id)
-      expect(messages[0].room).toEqual(room._id)
+      expect(messages[0].room._id).toEqual(room._id)
       expect(messages[0].kind).toEqual('text')
       expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
       expect(messages[0].destination).toEqual('to-messenger')
@@ -118,7 +118,7 @@ describe('Crisp plugin', () => {
     it('return the empty data if room is not exists', async () => {
       const responseBody = {
         website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
-        event: 'message:send',
+        event: 'message:received',
         data: {
           website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
           type: 'text',
@@ -175,7 +175,7 @@ describe('Crisp plugin', () => {
       expect(messages[0]).toBeInstanceOf(Message)
       expect(messages[0].licensee).toEqual(licensee._id)
       expect(messages[0].contact).toEqual(contact._id)
-      expect(messages[0].room).toEqual(room._id)
+      expect(messages[0].room._id).toEqual(room._id)
       expect(messages[0].kind).toEqual('text')
       expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
       expect(messages[0].destination).toEqual('to-messenger')
@@ -224,7 +224,7 @@ describe('Crisp plugin', () => {
       expect(messages[0]).toBeInstanceOf(Message)
       expect(messages[0].licensee).toEqual(licensee._id)
       expect(messages[0].contact).toEqual(contact._id)
-      expect(messages[0].room).toEqual(room._id)
+      expect(messages[0].room._id).toEqual(room._id)
       expect(messages[0].kind).toEqual('text')
       expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
       expect(messages[0].destination).toEqual('to-messenger')
