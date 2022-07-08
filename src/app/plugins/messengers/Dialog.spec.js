@@ -1274,7 +1274,7 @@ describe('Dialog plugin', () => {
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
-            waId: '5593165392997',
+            waId: '553165392832',
             licensee,
           })
         )
@@ -1287,29 +1287,6 @@ describe('Dialog plugin', () => {
             licensee,
             sended: false,
           })
-        )
-
-        const expectedBodyGetContact = {
-          blocking: 'wait',
-          contacts: ['+5511990283745'],
-          force_check: true,
-        }
-
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://waba.360dialog.io/v1/contacts/' &&
-              body === JSON.stringify(expectedBodyGetContact) &&
-              headers['D360-API-KEY'] === 'token-dialog'
-            )
-          },
-          {
-            status: 200,
-            body: {
-              contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
-              meta: { api_status: 'stable', version: '2.35.4' },
-            },
-          }
         )
 
         const expectedBodySendMessage = {
@@ -1345,7 +1322,7 @@ describe('Dialog plugin', () => {
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(2)
+        expect(fetchMock.calls()).toHaveLength(1)
 
         const messageUpdated = await Message.findById(message._id)
         expect(messageUpdated.sended).toEqual(true)
@@ -1361,7 +1338,6 @@ describe('Dialog plugin', () => {
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
-              waId: '5593165392997',
               licensee,
             })
           )
@@ -1438,7 +1414,6 @@ describe('Dialog plugin', () => {
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
-              waId: '5593165392997',
               licensee,
             })
           )
@@ -1516,7 +1491,6 @@ describe('Dialog plugin', () => {
               name: 'John Doe',
               talkingWithChatBot: true,
               email: 'john@doe.com',
-              waId: '5593165392997',
               licensee,
             })
           )
@@ -1593,7 +1567,6 @@ describe('Dialog plugin', () => {
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
-              waId: '5593165392997',
               email: 'john@doe.com',
               licensee,
             })
@@ -1672,7 +1645,6 @@ describe('Dialog plugin', () => {
               contactFactory.build({
                 name: 'John Doe',
                 talkingWithChatBot: true,
-                waId: '5593165392997',
                 email: 'john@doe.com',
                 licensee,
               })
@@ -1828,7 +1800,6 @@ describe('Dialog plugin', () => {
               contactFactory.build({
                 name: 'John Doe',
                 talkingWithChatBot: true,
-                waId: '5593165392997',
                 email: 'john@doe.com',
                 licensee,
               })
@@ -1940,7 +1911,6 @@ describe('Dialog plugin', () => {
               contactFactory.build({
                 name: 'John Doe',
                 talkingWithChatBot: true,
-                waId: '5593165392997',
                 email: 'john@doe.com',
                 licensee,
               })
@@ -2092,7 +2062,6 @@ describe('Dialog plugin', () => {
               contactFactory.build({
                 name: 'John Doe',
                 talkingWithChatBot: true,
-                waId: '5593165392997',
                 email: 'john@doe.com',
                 licensee,
               })
@@ -2254,7 +2223,6 @@ describe('Dialog plugin', () => {
               contactFactory.build({
                 name: 'John Doe',
                 talkingWithChatBot: true,
-                waId: '5593165392997',
                 email: 'john@doe.com',
                 licensee,
               })
@@ -2332,7 +2300,6 @@ describe('Dialog plugin', () => {
               contactFactory.build({
                 name: 'John Doe',
                 talkingWithChatBot: true,
-                waId: '5593165392997',
                 email: 'john@doe.com',
                 licensee,
               })
@@ -2423,7 +2390,6 @@ describe('Dialog plugin', () => {
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
-              waId: '5593165392997',
               licensee,
             })
           )
@@ -2519,7 +2485,6 @@ describe('Dialog plugin', () => {
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
-              waId: '5593165392997',
               licensee,
             })
           )
@@ -2634,7 +2599,6 @@ describe('Dialog plugin', () => {
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
-            waId: '5593165392997',
             licensee,
           })
         )
@@ -2678,7 +2642,6 @@ describe('Dialog plugin', () => {
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
-            waId: '5593165392997',
             licensee,
           })
         )
