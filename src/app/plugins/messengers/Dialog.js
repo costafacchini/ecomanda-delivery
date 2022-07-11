@@ -233,132 +233,136 @@ class Dialog extends MessengersBase {
   async sendMessage(messageId, url, token) {
     const messageToSend = await Message.findById(messageId).populate('contact')
 
-    const waContact = await getWaIdContact(messageToSend.contact.number, url, token)
-    if (waContact.valid) {
-      const headers = { 'D360-API-KEY': token }
+    let waId = messageToSend.contact.waId
+    if (!waId) {
+      const waContact = await getWaIdContact(messageToSend.contact.number, url, token)
+      if (waContact.valid) {
+        waId = waContact.waId
+      } else {
+        console.error(
+          `A mensagem não foi enviada para a Dialog pois o contato não é válido ${JSON.stringify(waContact.data)}`
+        )
+        return
+      }
+    }
 
-      const messageBody = {
-        recipient_type: 'individual',
-        to: waContact.waId,
+    const headers = { 'D360-API-KEY': token }
+
+    const messageBody = {
+      recipient_type: 'individual',
+      to: waId,
+    }
+
+    if (messageToSend.kind === 'text') {
+      messageBody.type = 'text'
+      messageBody.text = {
+        body: messageToSend.text,
+      }
+    }
+
+    if (messageToSend.kind === 'template') {
+      const parameters = messageToSend.text.match(/\{\{[^}]+\}\}/g)
+      const templateName = parameters[0].replace('{{', '').replace('}}', '')
+
+      const template = await Template.findOne({ name: templateName })
+
+      messageBody.type = 'template'
+      messageBody.template = {
+        namespace: template.namespace,
+        name: template.name,
+        language: {
+          code: template.language,
+          policy: 'deterministic',
+        },
+        components: [],
       }
 
-      if (messageToSend.kind === 'text') {
+      messageBody.template.components = parseComponents(template, parameters)
+    }
+
+    if (messageToSend.kind === 'interactive') {
+      const trigger = await Trigger.findById(messageToSend.trigger)
+      if (trigger) {
+        messageBody.type = 'interactive'
+        if (trigger.triggerKind === 'multi_product') {
+          messageBody.interactive = JSON.parse(trigger.catalogMulti)
+        }
+        if (trigger.triggerKind === 'single_product') {
+          messageBody.interactive = JSON.parse(trigger.catalogSingle)
+        }
+        if (trigger.triggerKind === 'reply_button') {
+          messageBody.interactive = JSON.parse(trigger.textReplyButton)
+        }
+        if (trigger.triggerKind === 'list_message') {
+          messageBody.interactive = JSON.parse(trigger.messagesList)
+        }
+        if (trigger.triggerKind === 'text') {
+          messageBody.type = 'text'
+          messageBody.text = {
+            body: await parseText(trigger.text, messageToSend.contact),
+          }
+        }
+      } else {
         messageBody.type = 'text'
         messageBody.text = {
           body: messageToSend.text,
         }
       }
+    }
 
-      if (messageToSend.kind === 'template') {
-        const parameters = messageToSend.text.match(/\{\{[^}]+\}\}/g)
-        const templateName = parameters[0].replace('{{', '').replace('}}', '')
-
-        const template = await Template.findOne({ name: templateName })
-
-        messageBody.type = 'template'
-        messageBody.template = {
-          namespace: template.namespace,
-          name: template.name,
-          language: {
-            code: template.language,
-            policy: 'deterministic',
-          },
-          components: [],
+    if (messageToSend.kind === 'file') {
+      if (files.isPhoto(messageToSend.url)) {
+        messageBody.type = 'image'
+        messageBody.image = {
+          link: messageToSend.url,
         }
-
-        messageBody.template.components = parseComponents(template, parameters)
-      }
-
-      if (messageToSend.kind === 'interactive') {
-        const trigger = await Trigger.findById(messageToSend.trigger)
-        if (trigger) {
-          messageBody.type = 'interactive'
-          if (trigger.triggerKind === 'multi_product') {
-            messageBody.interactive = JSON.parse(trigger.catalogMulti)
-          }
-          if (trigger.triggerKind === 'single_product') {
-            messageBody.interactive = JSON.parse(trigger.catalogSingle)
-          }
-          if (trigger.triggerKind === 'reply_button') {
-            messageBody.interactive = JSON.parse(trigger.textReplyButton)
-          }
-          if (trigger.triggerKind === 'list_message') {
-            messageBody.interactive = JSON.parse(trigger.messagesList)
-          }
-          if (trigger.triggerKind === 'text') {
-            messageBody.type = 'text'
-            messageBody.text = {
-              body: await parseText(trigger.text, messageToSend.contact),
-            }
-          }
-        } else {
-          messageBody.type = 'text'
-          messageBody.text = {
-            body: messageToSend.text,
-          }
+      } else if (files.isVideo(messageToSend.url)) {
+        messageBody.type = 'video'
+        messageBody.video = {
+          link: messageToSend.url,
         }
-      }
-
-      if (messageToSend.kind === 'file') {
-        if (files.isPhoto(messageToSend.url)) {
-          messageBody.type = 'image'
-          messageBody.image = {
-            link: messageToSend.url,
-          }
-        } else if (files.isVideo(messageToSend.url)) {
-          messageBody.type = 'video'
-          messageBody.video = {
-            link: messageToSend.url,
-          }
-        } else if (files.isMidia(messageToSend.url) || files.isVoice(messageToSend.url)) {
-          messageBody.type = 'audio'
-          messageBody.audio = {
-            link: messageToSend.url,
-          }
-        } else {
-          messageBody.type = 'document'
-          messageBody.document = {
-            link: messageToSend.url,
-            filename: messageToSend.fileName,
-          }
+      } else if (files.isMidia(messageToSend.url) || files.isVoice(messageToSend.url)) {
+        messageBody.type = 'audio'
+        messageBody.audio = {
+          link: messageToSend.url,
         }
-      }
-
-      if (messageToSend.kind === 'location') {
-        messageBody.type = 'location'
-        messageBody.location = {
-          longitude: messageToSend.longitude,
-          latitude: messageToSend.latitude,
-        }
-      }
-
-      if (messageToSend.kind === 'cart') {
-        const cartPlugin = cartFactory(this.licensee)
-        const cartTransformed = await cartPlugin.transformCart(this.licensee, messageToSend.cart)
-
-        messageBody.type = 'text'
-        messageBody.text = {
-          body: JSON.stringify(cartTransformed),
-        }
-      }
-
-      const messageResponse = await request.post(`${url}v1/messages/`, { headers, body: messageBody })
-      if (messageResponse.status === 201) {
-        messageToSend.messageWaId = messageResponse.data.messages[0].id
-        messageToSend.sended = true
-        await messageToSend.save()
-        console.info(
-          `Mensagem ${messageId} enviada para Dialog360 com sucesso! ${JSON.stringify(messageResponse.data)}`
-        )
       } else {
-        messageToSend.error = JSON.stringify(messageResponse.data)
-        await messageToSend.save()
-        console.error(`Mensagem ${messageId} não enviada para Dialog360. ${JSON.stringify(messageResponse.data)}`)
+        messageBody.type = 'document'
+        messageBody.document = {
+          link: messageToSend.url,
+          filename: messageToSend.fileName,
+        }
       }
+    }
+
+    if (messageToSend.kind === 'location') {
+      messageBody.type = 'location'
+      messageBody.location = {
+        longitude: messageToSend.longitude,
+        latitude: messageToSend.latitude,
+      }
+    }
+
+    if (messageToSend.kind === 'cart') {
+      const cartPlugin = cartFactory(this.licensee)
+      const cartTransformed = await cartPlugin.transformCart(this.licensee, messageToSend.cart)
+
+      messageBody.type = 'text'
+      messageBody.text = {
+        body: JSON.stringify(cartTransformed),
+      }
+    }
+
+    const messageResponse = await request.post(`${url}v1/messages/`, { headers, body: messageBody })
+    if (messageResponse.status === 201) {
+      messageToSend.messageWaId = messageResponse.data.messages[0].id
+      messageToSend.sended = true
+      await messageToSend.save()
+      console.info(`Mensagem ${messageId} enviada para Dialog360 com sucesso! ${JSON.stringify(messageResponse.data)}`)
     } else {
-      console.error(
-        `A mensagem não foi enviada para a Dialog pois o contato não é válido ${JSON.stringify(waContact.data)}`
-      )
+      messageToSend.error = JSON.stringify(messageResponse.data)
+      await messageToSend.save()
+      console.error(`Mensagem ${messageId} não enviada para Dialog360. ${JSON.stringify(messageResponse.data)}`)
     }
   }
 
