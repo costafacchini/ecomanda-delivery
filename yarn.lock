@@ -4729,10 +4729,10 @@ new-find-package-json@^2.0.0:
   dependencies:
     debug "^4.3.4"
 
-newrelic@8.14.1:
-  version "8.14.1"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-8.14.1.tgz#83db54901915c45121b60a75734e0f55d214c9f6"
-  integrity sha512-k/DLwqrvKYyuK+ESp9m5baInyhnvqrFL7k8GFLFzAxGksypcU3E+sVv/hHNZv7I16uKC47KqmXhPKDhWLzJ9sg==
+newrelic@8.15.0:
+  version "8.15.0"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-8.15.0.tgz#ee1c6f60eeb089c3d5dc06408d4b31246b57d6b0"
+  integrity sha512-3B1tpzAqYNO9zuNANbEiPw2TP43Na1VQSASxbzmWUWKCoW4+jUMjd9eYfBVdNtb0kc9SLKCJuvvbqauHJiSdBA==
   dependencies:
     "@grpc/grpc-js" "^1.5.5"
     "@grpc/proto-loader" "^0.6.13"
