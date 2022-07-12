@@ -343,6 +343,56 @@ describe('Crisp plugin', () => {
         expect(messages[0].fileName).toEqual('dojocat.ogg')
       })
 
+      it('returns messages with file data if it is audio [filename = url]', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            licensee,
+          })
+        )
+
+        await Room.create(
+          roomFactory.build({
+            roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
+            contact,
+          })
+        )
+
+        const responseBody = {
+          website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
+          event: 'message:received',
+          data: {
+            website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
+            type: 'audio',
+            from: 'operator',
+            origin: 'chat',
+            content: {
+              url: 'https://octodex.github.com/images/dojocat.ogg',
+            },
+            fingerprint: 163239623329114,
+            user: {
+              nickname: 'John Doe',
+              user_id: '440ac64d-fee9-4935-b7a8-4c8cb44bb13c',
+            },
+            mentions: [],
+            timestamp: 1632396233539,
+            stamped: true,
+            session_id: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
+          },
+          timestamp: 1632396233588,
+        }
+
+        const crisp = new Crisp(licensee)
+        const messages = await crisp.responseToMessages(responseBody)
+
+        expect(messages[0]).toBeInstanceOf(Message)
+        expect(messages[0].kind).toEqual('file')
+        expect(messages[0].text).toEqual(undefined)
+        expect(messages[0].url).toEqual('https://octodex.github.com/images/dojocat.ogg')
+        expect(messages[0].fileName).toEqual('https://octodex.github.com/images/dojocat.ogg')
+      })
+
       it('returns empty data if kind is unknown', async () => {
         const contact = await Contact.create(
           contactFactory.build({

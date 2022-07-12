@@ -1,10 +1,10 @@
 const files = require('../../helpers/Files')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
-const Room = require('@models/Room')
 const request = require('../../services/request')
 const mime = require('mime-types')
 const ChatsBase = require('./Base')
+const { createRoom, getRoomBy } = require('@repositories/room')
 
 const createSession = async (url, headers, contact, segments) => {
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })
@@ -13,7 +13,7 @@ const createSession = async (url, headers, contact, segments) => {
     console.error(`Não foi possível criar a sessão na Crisp ${JSON.stringify(response.data)}`)
     return
   } else {
-    const room = await Room.create({
+    const room = await createRoom({
       roomId: response.data.data.session_id,
       contact: contact._id,
     })
@@ -130,8 +130,9 @@ class Crisp extends ChatsBase {
       return
     }
 
-    const room = await Room.findOne({ roomId: responseBody.data.session_id }).populate('contact')
+    const room = await getRoomBy({ roomId: responseBody.data.session_id })
     if (!room) {
+      // room = await createRoom({ roomId: responseBody.data.session_id, contact })
       this.messageParsed = null
       return
     }
@@ -144,10 +145,16 @@ class Crisp extends ChatsBase {
     messageToSend.kind = responseBody.data.type
     if (responseBody.data.type === 'text') {
       messageToSend.text = { body: responseBody.data.content }
-    } else if (responseBody.data.type === 'file' || responseBody.data.type === 'audio') {
+    } else if (responseBody.data.type === 'file') {
       messageToSend.kind = 'file'
       messageToSend.file = {
         fileName: responseBody.data.content.name,
+        url: responseBody.data.content.url,
+      }
+    } else if (responseBody.data.type === 'audio') {
+      messageToSend.kind = 'file'
+      messageToSend.file = {
+        fileName: responseBody.data.content.name || responseBody.data.content.url,
         url: responseBody.data.content.url,
       }
     }
@@ -169,7 +176,7 @@ class Crisp extends ChatsBase {
     const messageToSend = await Message.findById(messageId).populate('contact')
     const basicToken = Buffer.from(`${this.licensee.chatIdentifier}:${this.licensee.chatKey}`).toString('base64')
     const headers = { Authorization: `Basic ${basicToken}`, 'X-Crisp-Tier': 'plugin' }
-    const openRoom = await Room.findOne({ contact: messageToSend.contact, closed: false })
+    const openRoom = await getRoomBy({ contact: messageToSend.contact, closed: false })
     let room = openRoom
 
     if (!room) {
