@@ -150,7 +150,7 @@ class Dialog extends MessengersBase {
   }
 
   parseMessage(responseBody) {
-    if (!responseBody.messages) {
+    if (!responseBody.messages || responseBody.messages[0].type === 'sticker') {
       this.messageData = null
       return
     }
