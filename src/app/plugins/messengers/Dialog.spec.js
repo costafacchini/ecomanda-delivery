@@ -1195,6 +1195,37 @@ describe('Dialog plugin', () => {
       expect(messages.length).toEqual(0)
     })
 
+    it('return the empty data if message kind is sticker', async () => {
+      const responseBody = {
+        contacts: [
+          {
+            profile: {
+              name: 'John Doe',
+            },
+            wa_id: '5511990283745',
+          },
+        ],
+        messages: [
+          {
+            from: '5511990283745',
+            id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
+            sticker: {
+              id: '52ab76ae-219d-4ed4-9514-dbe949351491',
+              mime_type: 'image/webp',
+              sha256: '95f7ae53f5306f4c7e92b1d866d9acf80f2b9b790b8854275fa9778ed6a03f6b',
+            },
+            timestamp: '1632784639',
+            type: 'sticker',
+          },
+        ],
+      }
+
+      const dialog = new Dialog(licensee)
+      const messages = await dialog.responseToMessages(responseBody)
+
+      expect(messages.length).toEqual(0)
+    })
+
     describe('when the body has statuses', () => {
       it('fills the message sendedAt if status is sent', async () => {
         const contact = await Contact.create(
