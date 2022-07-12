@@ -168,6 +168,9 @@ class Dialog extends MessengersBase {
       this.messageData.interactive = { expression }
     } else if (this.messageData.kind === 'text') {
       this.messageData.text = { body: responseBody.messages[0].text.body }
+    } else if (this.messageData.kind === 'button') {
+      this.messageData.kind = 'text'
+      this.messageData.text = { body: responseBody.messages[0].button.text }
     } else if (responseBody.messages[0].type === 'order') {
       this.messageData.order = {
         catalogId: responseBody.messages[0].order.catalog_id,
