@@ -37,7 +37,6 @@ describe('<MessageIndex />', () => {
             kind: 'text',
             text: 'First message',
             destination: 'to-chat',
-            departament: 'departament',
             sended: true,
           }
         ]
@@ -52,7 +51,6 @@ describe('<MessageIndex />', () => {
     expect(screen.getByText('First message')).toBeInTheDocument()
     expect(screen.getByText('text')).toBeInTheDocument()
     expect(screen.getByText('to-chat')).toBeInTheDocument()
-    expect(screen.getByText('departament')).toBeInTheDocument()
     expect(screen.getByText('Sim')).toBeInTheDocument()
 
     expect(getMessages).toHaveBeenCalledWith({

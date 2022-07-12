@@ -5,6 +5,7 @@ import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWit
 import SelectContactsWithFilter from '../../../../components/SelectContactsWithFilter'
 import CartDescription from './components/cart'
 import styles from './styles.module.scss'
+import moment from 'moment-timezone'
 
 function MessagesIndex({ messages, loggedUser, dispatch }) {
   const [filters, setFilters] = useState({
@@ -182,7 +183,7 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
               <th scope='col'>Texto</th>
               <th scope='col'>Tipo</th>
               <th scope='col'>Destino</th>
-              <th scope='col'>Departamento</th>
+              <th scope='col'>Data</th>
               <th scope='col'>Enviada?</th>
             </tr>
           </thead>
@@ -238,7 +239,7 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
                   </div>
                 </td>
                 <td>{message.destination}</td>
-                <td>{message.departament}</td>
+                <td>{moment(message.createdAt).tz('America/Sao_Paulo').format('DD/MM/YYYY hh:mm:ss')}</td>
                 <td>{message.sended ? 'Sim' : 'Não'}</td>
               </tr>
             ))}
