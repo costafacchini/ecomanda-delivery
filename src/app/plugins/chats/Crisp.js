@@ -5,6 +5,7 @@ const request = require('../../services/request')
 const mime = require('mime-types')
 const ChatsBase = require('./Base')
 const { createRoom, getRoomBy } = require('@repositories/room')
+const NormalizePhone = require('@helpers/NormalizePhone')
 
 const createSession = async (url, headers, contact, segments) => {
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })
@@ -108,6 +109,24 @@ const formatMessage = (message, contact) => {
   return contact.type === '@c.us' ? text : `*${message.senderName}:*\n${text}`
 }
 
+const getSessionData = async (licensee, sesionId) => {
+  const websiteId = licensee.chatUrl
+  const basicToken = Buffer.from(`${licensee.chatIdentifier}:${licensee.chatKey}`).toString('base64')
+  const headers = { Authorization: `Basic ${basicToken}`, 'X-Crisp-Tier': 'plugin' }
+
+  return await request.get(`https://api.crisp.chat/v1/website/${websiteId}/conversation/${sesionId}/meta`, { headers })
+}
+
+const parseContactPhone = (phoneNumber) => {
+  const chatId = phoneNumber
+  const normalizePhone = new NormalizePhone(chatId)
+
+  return {
+    number: normalizePhone.number,
+    type: normalizePhone.type,
+  }
+}
+
 class Crisp extends ChatsBase {
   constructor(licensee) {
     super(licensee)
@@ -130,11 +149,32 @@ class Crisp extends ChatsBase {
       return
     }
 
-    const room = await getRoomBy({ roomId: responseBody.data.session_id })
+    let room = await getRoomBy({ roomId: responseBody.data.session_id })
     if (!room) {
-      // room = await createRoom({ roomId: responseBody.data.session_id, contact })
-      this.messageParsed = null
-      return
+      const response = await getSessionData(this.licensee, responseBody.data.session_id)
+      if (response.status !== 200) {
+        console.error(
+          `Não foi possível obter os dados da sessão na Crisp para criar uma nova sala ${JSON.stringify(response.data)}`
+        )
+
+        this.messageParsed = null
+        return
+      }
+
+      const sessionData = response.data
+      const contactPhone = parseContactPhone(sessionData.data.phone)
+      const contact = await this.findContact({ number: contactPhone.number, type: contactPhone.type })
+
+      if (contact) {
+        room = await createRoom({ roomId: responseBody.data.session_id, contact })
+      } else {
+        console.error(
+          `Não foi possível encontrar um contato com o telefone ${contactPhone.number} para iniciar uma conversa através da Crisp`
+        )
+
+        this.messageParsed = null
+        return
+      }
     }
 
     this.messageParsed = { room }

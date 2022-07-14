@@ -12,6 +12,7 @@ const { contact: contactFactory } = require('@factories/contact')
 const { room: roomFactory } = require('@factories/room')
 const { message: messageFactory } = require('@factories/message')
 const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
+const { getRoomBy } = require('@repositories/room')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -104,7 +105,7 @@ describe('Crisp plugin', () => {
       expect(message).toEqual([])
     })
 
-    it('return the empty data if body event is no "message:send" or "message:received" or "session:removed"', async () => {
+    it('return the empty data if body event is no "message:received" or "session:removed"', async () => {
       const responseBody = {
         event: 'message:another',
       }
@@ -115,33 +116,190 @@ describe('Crisp plugin', () => {
       expect(message).toEqual([])
     })
 
-    it('return the empty data if room is not exists', async () => {
-      const responseBody = {
-        website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
-        event: 'message:received',
-        data: {
+    describe('if the room does not exists', () => {
+      it('return the empty data and logs message if the session is invalid on crisp', async () => {
+        const responseBody = {
           website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
-          type: 'text',
-          from: 'operator',
-          origin: 'chat',
-          content: 'Hello world',
-          fingerprint: 163239623329114,
-          user: {
-            nickname: 'John Doe',
-            user_id: '440ac64d-fee9-4935-b7a8-4c8cb44bb13c',
+          event: 'message:received',
+          data: {
+            website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
+            type: 'text',
+            from: 'operator',
+            origin: 'chat',
+            content: 'Hello world',
+            fingerprint: 163239623329114,
+            user: {
+              nickname: 'John Doe',
+              user_id: '440ac64d-fee9-4935-b7a8-4c8cb44bb13c',
+            },
+            mentions: [],
+            timestamp: 1632396233539,
+            stamped: true,
+            session_id: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
           },
-          mentions: [],
-          timestamp: 1632396233539,
-          stamped: true,
-          session_id: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
-        },
-        timestamp: 1632396233588,
-      }
+          timestamp: 1632396233588,
+        }
 
-      const crisp = new Crisp(licensee)
-      const messages = await crisp.responseToMessages(responseBody)
+        fetchMock.getOnce(
+          (url, { headers }) => {
+            return (
+              url ===
+                'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_94e30081-c1ff-4656-b612-9c6e18d70ffb/meta' &&
+              JSON.stringify(headers).includes('Authorization') &&
+              JSON.stringify(headers).includes('X-Crisp-Tier')
+            )
+          },
+          {
+            status: 422,
+            body: {
+              error: false,
+              reason: 'error',
+              data: {},
+            },
+          }
+        )
 
-      expect(messages.length).toEqual(0)
+        licensee.chatUrl = '631d631e-2047-453e-9989-93edda91b945'
+        const crisp = new Crisp(licensee)
+        const messages = await crisp.responseToMessages(responseBody)
+
+        expect(messages.length).toEqual(0)
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          'Não foi possível obter os dados da sessão na Crisp para criar uma nova sala {"error":false,"reason":"error","data":{}}'
+        )
+      })
+
+      it('return the empty data and logs message if the contact is not founded', async () => {
+        const responseBody = {
+          website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
+          event: 'message:received',
+          data: {
+            website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
+            type: 'text',
+            from: 'operator',
+            origin: 'chat',
+            content: 'Hello world',
+            fingerprint: 163239623329114,
+            user: {
+              nickname: 'John Doe',
+              user_id: '440ac64d-fee9-4935-b7a8-4c8cb44bb13c',
+            },
+            mentions: [],
+            timestamp: 1632396233539,
+            stamped: true,
+            session_id: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
+          },
+          timestamp: 1632396233588,
+        }
+
+        fetchMock.getOnce(
+          (url, { headers }) => {
+            return (
+              url ===
+                'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_94e30081-c1ff-4656-b612-9c6e18d70ffb/meta' &&
+              JSON.stringify(headers).includes('Authorization') &&
+              JSON.stringify(headers).includes('X-Crisp-Tier')
+            )
+          },
+          {
+            status: 200,
+            body: {
+              error: false,
+              reason: 'success',
+              data: {
+                phone: '5511999999999',
+              },
+            },
+          }
+        )
+
+        licensee.chatUrl = '631d631e-2047-453e-9989-93edda91b945'
+        const crisp = new Crisp(licensee)
+        const messages = await crisp.responseToMessages(responseBody)
+
+        expect(messages.length).toEqual(0)
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          'Não foi possível encontrar um contato com o telefone 5511999999999 para iniciar uma conversa através da Crisp'
+        )
+      })
+
+      it('returns the response body transformed in messages and create room', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: true,
+            licensee,
+          })
+        )
+
+        const responseBody = {
+          website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
+          event: 'message:received',
+          data: {
+            website_id: 'e93e073a-1f69-4cbc-8934-f9e1611e65bb',
+            type: 'text',
+            from: 'operator',
+            origin: 'chat',
+            content: 'Hello world',
+            fingerprint: 163239623329114,
+            user: {
+              nickname: 'John Doe',
+              user_id: '440ac64d-fee9-4935-b7a8-4c8cb44bb13c',
+            },
+            mentions: [],
+            timestamp: 1632396233539,
+            stamped: true,
+            session_id: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
+          },
+          timestamp: 1632396233588,
+        }
+
+        fetchMock.getOnce(
+          (url, { headers }) => {
+            return (
+              url ===
+                'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_94e30081-c1ff-4656-b612-9c6e18d70ffb/meta' &&
+              JSON.stringify(headers).includes('Authorization') &&
+              JSON.stringify(headers).includes('X-Crisp-Tier')
+            )
+          },
+          {
+            status: 200,
+            body: {
+              error: false,
+              reason: 'success',
+              data: {
+                phone: '5511990283745',
+              },
+            },
+          }
+        )
+
+        licensee.chatUrl = '631d631e-2047-453e-9989-93edda91b945'
+        const crisp = new Crisp(licensee)
+        const messages = await crisp.responseToMessages(responseBody)
+
+        const room = await getRoomBy({ roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb' })
+
+        expect(messages[0]).toBeInstanceOf(Message)
+        expect(messages[0].licensee).toEqual(licensee._id)
+        expect(messages[0].contact).toEqual(contact._id)
+        expect(messages[0].room._id).toEqual(room._id)
+        expect(messages[0].kind).toEqual('text')
+        expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
+        expect(messages[0].destination).toEqual('to-messenger')
+        expect(messages[0].text).toEqual('Hello world')
+        expect(messages[0].url).toEqual(undefined)
+        expect(messages[0].fileName).toEqual(undefined)
+        expect(messages[0].latitude).toEqual(undefined)
+        expect(messages[0].longitude).toEqual(undefined)
+        expect(messages[0].departament).toEqual(undefined)
+
+        expect(emojiReplaceSpy).toHaveBeenCalled()
+        expect(emojiReplaceSpy).toHaveBeenCalledWith('Hello world')
+
+        expect(messages.length).toEqual(1)
+      })
     })
 
     it('returns the response body transformed in message to close-chat if event is "session:removed"', async () => {
