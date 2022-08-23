@@ -238,15 +238,16 @@ class Dialog extends MessengersBase {
 
     let waId = messageToSend.contact.waId
     if (!waId) {
-      const waContact = await getWaIdContact(messageToSend.contact.number, url, token)
-      if (waContact.valid) {
-        waId = waContact.waId
-      } else {
-        console.error(
-          `A mensagem não foi enviada para a Dialog pois o contato não é válido ${JSON.stringify(waContact.data)}`
-        )
-        return
-      }
+      waId = messageToSend.contact.number
+      // const waContact = await getWaIdContact(messageToSend.contact.number, url, token)
+      // if (waContact.valid) {
+      //   waId = waContact.waId
+      // } else {
+      //   console.error(
+      //     `A mensagem não foi enviada para a Dialog pois o contato não é válido ${JSON.stringify(waContact.data)}`
+      //   )
+      //   return
+      // }
     }
 
     const headers = { 'D360-API-KEY': token }
