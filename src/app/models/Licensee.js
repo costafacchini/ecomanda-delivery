@@ -77,7 +77,7 @@ const licenseeSchema = new Schema(
     },
     chatDefault: {
       type: String,
-      enum: ['jivochat', 'rocketchat', 'crisp', ''],
+      enum: ['jivochat', 'rocketchat', 'crisp', 'cubouop', ''],
     },
     chatUrl: {
       type: String,

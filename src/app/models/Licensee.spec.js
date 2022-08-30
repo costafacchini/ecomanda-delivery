@@ -274,6 +274,11 @@ describe('Licensee', () => {
         validation = licensee.validateSync()
 
         expect(validation.errors['chatDefault']).not.toBeDefined()
+
+        licensee.chatDefault = 'cuboup'
+        validation = licensee.validateSync()
+
+        expect(validation.errors['chatDefault']).not.toBeDefined()
       })
 
       it('does not accepts another values', () => {

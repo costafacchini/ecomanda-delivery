@@ -240,6 +240,7 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                   <option value='jivochat'>Jivochat</option>
                   <option value='rocketchat'>Rocketchat</option>
                   <option value='crisp'>Crisp</option>
+                  <option value='cuboup'>CuboUp</option>
                 </select>
               </div>
             </div>
