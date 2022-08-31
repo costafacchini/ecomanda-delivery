@@ -270,7 +270,7 @@ describe('Cuboup plugin', () => {
         const jivochat = new Cuboup(licensee)
         const message = await jivochat.responseToMessages(responseBody)
 
-        expect(consoleInfoSpy).toHaveBeenCalledWith('Tipo de mensagem retornado pela Cuboup não reconhecido: any')
+        expect(consoleInfoSpy).toHaveBeenCalledWith('Tipo de mensagem retornado pela CuboUp não reconhecido: any')
 
         expect(message).toEqual([])
       })
@@ -468,7 +468,7 @@ describe('Cuboup plugin', () => {
         expect(fetchMock.calls()).toHaveLength(1)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 enviada para Cuboup com sucesso!'
+          'Mensagem 60958703f415ed4008748637 enviada para CuboUp com sucesso!'
         )
       })
 
@@ -581,7 +581,7 @@ describe('Cuboup plugin', () => {
         expect(fetchMock.calls()).toHaveLength(1)
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          `Mensagem 60958703f415ed4008748637 não enviada para Cuboup.
+          `Mensagem 60958703f415ed4008748637 não enviada para CuboUp.
            status: 404
            mensagem: {"error":"Error message"}`
         )
