@@ -1,41 +1,35 @@
-import mountWithRedux, { createStore } from '../../../../.jest/redux-testing'
 import ContactsIndex from './'
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor, render } from '@testing-library/react'
 import { getContacts } from '../../../../services/contact'
 import { getLicensees } from '../../../../services/licensee'
 import { MemoryRouter } from 'react-router'
 import { contactFactory } from '../../../../factories/contact'
+import { SimpleCrudContextProvider } from '../../../../contexts/SimpleCrud'
 
 jest.mock('../../../../services/contact')
 jest.mock('../../../../services/licensee')
 
 describe('<ContactsIndex />', () => {
-  function mount() {
-    const loggedUser = {
-      isSuper: true
-    }
+  const currentUser = { isSuper: true }
 
-    const store = createStore()
-    mountWithRedux(store)(
-      <MemoryRouter>
-        <ContactsIndex loggedUser={loggedUser} />
-      </MemoryRouter>)
-
-    return store
+  function mount({ currentUser }) {
+    render(
+      <SimpleCrudContextProvider>
+        <MemoryRouter>
+          <ContactsIndex currentUser={currentUser} />
+        </MemoryRouter>
+      </SimpleCrudContextProvider>
+    )
   }
 
   it('filters for all contacts on it is opened and there is no previous applied filters', async () => {
     getContacts.mockResolvedValue({ status: 201, data: [{ id: '1', name: 'Contato' }] })
 
-    mount()
+    mount({ currentUser })
 
     await waitFor(() => expect(getContacts).toHaveBeenCalled())
 
-    expect(getContacts).toHaveBeenCalledWith({
-      page: 1,
-      expression: '',
-      licensee: '',
-    })
+    expect(getContacts).toHaveBeenCalledWith({ page: 1 })
 
     expect(await screen.findByText('Contato')).toBeInTheDocument()
   })
@@ -43,7 +37,7 @@ describe('<ContactsIndex />', () => {
   it('paginates the contacts', async () => {
     getContacts.mockResolvedValue({ status: 201, data: contactFactory.buildList(30) })
 
-    mount()
+    mount({ currentUser })
 
     getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'Contact from new page' })] })
 
@@ -51,17 +45,13 @@ describe('<ContactsIndex />', () => {
 
     expect(await screen.findByText('Contact from new page')).toBeInTheDocument()
 
-    expect(getContacts).toHaveBeenCalledWith({
-      page: 2,
-      expression: '',
-      licensee: '',
-    })
+    expect(getContacts).toHaveBeenCalledWith({ page: 2 })
   })
 
   it('filters the contacts by expression', async () => {
     getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'Contact' })] })
 
-    mount()
+    mount({ currentUser })
 
     await screen.findByText('Contact')
 
@@ -73,26 +63,20 @@ describe('<ContactsIndex />', () => {
 
     expect(await screen.findByText('A contact filtered by expression')).toBeInTheDocument()
 
-    expect(getContacts).toHaveBeenNthCalledWith(2, {
-      page: 1,
-      expression: 'expression',
-      licensee: '',
-    })
+    expect(getContacts).toHaveBeenNthCalledWith(2, { page: 1, expression: 'expression' })
   })
 
   describe('licensee select filter', () => {
     it('does not show the licensee if logged user is not super', async () => {
-      const loggedUser = {
-        isSuper: false
-      }
+      getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'Contact' })] })
 
-      const store = createStore()
-      mountWithRedux(store)(
-        <MemoryRouter>
-          <ContactsIndex loggedUser={loggedUser} />
-        </MemoryRouter>)
+      const currentUser = { isSuper: false }
+
+      mount({ currentUser })
 
       await screen.findByText('Contatos')
+
+      await screen.findByText('Contact')
 
       expect(screen.queryByLabelText('Licenciado')).not.toBeInTheDocument()
     })
@@ -100,17 +84,20 @@ describe('<ContactsIndex />', () => {
     it('changes the filters to get the contacts', async () => {
       getLicensees.mockResolvedValueOnce({ status: 201, data: [{ _id: '12345678', name: 'Alcateia' }] })
 
-      getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'Contact' })] })
+      getContacts.mockResolvedValueOnce({ status: 201, data: [contactFactory.build({ name: 'Contact' })] })
+      getContacts.mockResolvedValueOnce({ status: 201, data: [contactFactory.build({ name: 'Another' })] })
 
-      mount()
+      mount({ currentUser })
 
       await screen.findByText('Contatos')
+
+      await screen.findByText('Licenciado')
 
       fireEvent.change(screen.getByLabelText('Licenciado'), { target: { value: 'alca' } })
 
       fireEvent.click(await screen.findByText('Alcateia'))
 
-      await screen.findByText('Contact')
+      await screen.findByText('Another')
 
       expect(getContacts).toHaveBeenCalledWith(expect.objectContaining({ licensee: '12345678' }))
     })

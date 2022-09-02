@@ -26,7 +26,7 @@ const contactInitialValues = {
   plugin_cart_id: ''
 }
 
-function ContactForm({ onSubmit, errors, initialValues, loggedUser }) {
+function ContactForm({ onSubmit, errors, initialValues, currentUser }) {
   let navigate = useNavigate()
 
   return (
@@ -99,7 +99,7 @@ function ContactForm({ onSubmit, errors, initialValues, loggedUser }) {
                 </div>
               </div>
 
-              {loggedUser && loggedUser.isSuper && (
+              {currentUser && currentUser.isSuper && (
                 <div className='row'>
                   <div className='form-group col-5'>
                     <label htmlFor='waId'>Licenciado</label>

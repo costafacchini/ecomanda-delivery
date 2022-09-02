@@ -6,7 +6,7 @@ import { createContact } from '../../../../services/contact'
 jest.mock('../../../../services/contact')
 
 describe('<ContactNew />', () => {
-  let loggedUser = {
+  let currentUser = {
     isSuper: false,
     licensee: 'id'
   }
@@ -14,7 +14,7 @@ describe('<ContactNew />', () => {
   function mount() {
     render(
       <MemoryRouter>
-        <ContactNew loggedUser={loggedUser} />
+        <ContactNew currentUser={currentUser} />
       </MemoryRouter>)
   }
 
@@ -46,7 +46,7 @@ describe('<ContactNew />', () => {
 
     cleanup()
 
-    loggedUser = {
+    currentUser = {
       isSuper: true,
     }
     mount()

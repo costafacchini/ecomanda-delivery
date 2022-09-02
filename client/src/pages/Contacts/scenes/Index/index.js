@@ -1,18 +1,32 @@
+import { useEffect, useState, useCallback, useContext } from 'react'
 import { Link } from 'react-router-dom'
-import { connect } from 'react-redux'
-import { fetchContacts } from './slice'
-import { useEffect, useState } from 'react'
+import { getContacts } from '../../../../services/contact'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
+import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'
+import isEmpty from 'lodash/isEmpty'
 
-function ContactsIndex({ contacts, dispatch, loggedUser }) {
-  const [filters, setFilters] = useState({ expression: '', page: 1, licensee: '' })
-  const [expression, setExpression] = useState('')
+function ContactsIndex({ currentUser }) {
+  const { filters, setFilters, cache } = useContext(SimpleCrudContext)
+  const { addPage } = cache
+  const [expression, setExpression] = useState(filters?.expression || '')
+
+  const onFilter = useCallback(
+    async (changedFilters) => {
+      const newFilters = { ...filters, ...changedFilters }
+      setFilters(newFilters)
+      const { data: users } = await getContacts(newFilters)
+      addPage(users, newFilters)
+    },
+    [filters, setFilters, addPage]
+  )
 
   useEffect(() => {
     let abortController = new AbortController()
 
     try {
-      dispatch(fetchContacts(filters))
+      if (!isEmpty(filters)) return
+
+      onFilter({ page: 1 })
     } catch (error) {
       if (error.name === 'AbortError') {
         // Handling error thrown by aborting request
@@ -22,19 +36,25 @@ function ContactsIndex({ contacts, dispatch, loggedUser }) {
     return () => {
       abortController.abort()
     }
-  }, [dispatch, filters])
+  }, [filters, onFilter])
 
   useEffect(() => {
-    if (loggedUser && !loggedUser.isSuper && filters.licensee !== loggedUser.licensee) {
-      setFilters({ ...filters, licensee: loggedUser.licensee })
+    if (isEmpty(filters)) return
+
+    if (currentUser && !currentUser.isSuper && filters?.licensee !== currentUser.licensee) {
+      const newFilters = { ...filters, licensee: currentUser.licensee, page: 1 }
+      onFilter(newFilters)
     }
-  }, [loggedUser, filters])
+  }, [currentUser, filters, onFilter])
 
   function changeExpression(event) {
     setExpression(event.target.value)
   }
 
-  if (!contacts) return null
+  function nextPage() {
+    const newFilters = { ...filters, page: filters.page + 1 }
+    onFilter(newFilters)
+  }
 
   return (
     <>
@@ -51,16 +71,17 @@ function ContactsIndex({ contacts, dispatch, loggedUser }) {
       <div className='row'>
         <div className='d-flex flex-row justify-content-end pb-2'>
           <div className='flex-column w-50'>
-            {loggedUser && loggedUser.isSuper && (
+            {currentUser && currentUser.isSuper && (
               <div className='form-group'>
                 <label htmlFor='licensee' id='licensee'>Licenciado</label>
                 <SelectLicenseesWithFilter
                   name='licensee'
                   aria-labelledby='licensee'
-                  selectedItem={filters.licensee}
+                  selectedItem={filters?.licensee}
                   onChange={(e) => {
                     const inputValue = e && e.value ? e.value : ''
-                    setFilters({ ...filters, licensee: inputValue })
+                    const newFilters = { ...filters, licensee: inputValue, page: 1 }
+                    onFilter(newFilters)
                   }}
                 />
               </div>
@@ -84,7 +105,8 @@ function ContactsIndex({ contacts, dispatch, loggedUser }) {
               />
               <div className='input-group-append'>
                 <button className='btn btn-primary' title='Filtre pelo contato' onClick={() => {
-                  setFilters({ ...filters, expression })
+                  const newFilters = { ...filters, expression: expression, page: 1 }
+                  onFilter(newFilters)
                 }}>
                   <i className='bi bi-search'></i>
                 </button>
@@ -105,7 +127,7 @@ function ContactsIndex({ contacts, dispatch, loggedUser }) {
             </tr>
           </thead>
           <tbody>
-            {contacts.map((contact) => (
+            {cache.records.map((contact) => (
               <tr key={contact.id}>
                 <td>{contact.name}</td>
                 <td>{contact.number}</td>
@@ -120,13 +142,13 @@ function ContactsIndex({ contacts, dispatch, loggedUser }) {
 
       <section>
         <div className='container'>
-          {expression === '' && (contacts.length > 29) && (
+          {!cache.lastPage && (
             <div className='row'>
               <div className='col text-center mt-3'>
                 <button
                   type='button'
                   className='btn btn-outline-primary d-print-none'
-                  onClick={() => setFilters({ ...filters, page: filters.page + 1 })}
+                  onClick={nextPage}
                 >
                   Carregar mais
                 </button>
@@ -139,10 +161,4 @@ function ContactsIndex({ contacts, dispatch, loggedUser }) {
   )
 }
 
-const mapStateToProps = (state) => {
-  return {
-    contacts: state.contactsIndex.contacts
-  }
-}
-
-export default connect(mapStateToProps)(ContactsIndex)
+export default ContactsIndex
