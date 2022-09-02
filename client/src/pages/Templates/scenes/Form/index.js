@@ -14,7 +14,7 @@ const templateInitialValues = {
   namespace: '',
 }
 
-function TemplateForm({ onSubmit, errors, initialValues, loggedUser }) {
+function TemplateForm({ onSubmit, errors, initialValues, currentUser }) {
   let navigate = useNavigate()
 
   return (
@@ -57,7 +57,7 @@ function TemplateForm({ onSubmit, errors, initialValues, loggedUser }) {
                 </div>
               </div>
 
-              {loggedUser && loggedUser.isSuper && (
+              {currentUser && currentUser.isSuper && (
                 <div className='row'>
                   <div className='form-group col-5'>
                     <label htmlFor='licensee'>Licenciado</label>

@@ -1,6 +1,5 @@
-import mountWithRedux, { createStore } from '../../../../.jest/redux-testing'
 import TemplateShow from '.'
-import { screen } from '@testing-library/react'
+import { screen, render } from '@testing-library/react'
 import { getTemplate } from '../../../../services/template'
 import { MemoryRouter } from 'react-router'
 
@@ -8,11 +7,11 @@ jest.mock('../../../../services/template')
 
 describe('<TemplateShow />', () => {
   function mount() {
-    const store = createStore()
-    mountWithRedux(store)(
+    render(
       <MemoryRouter>
         <TemplateShow />
-      </MemoryRouter>)
+      </MemoryRouter>
+    )
   }
 
   it('renders the form with the received template', async () => {

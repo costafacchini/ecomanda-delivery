@@ -4,7 +4,7 @@ import { getTemplate } from '../../../../services/template'
 import { useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 
-function TemplateShow({ loggedUser }) {
+function TemplateShow({ currentUser }) {
   let { id } = useParams()
   const [template, setTemplate] = useState(null)
 
@@ -38,7 +38,7 @@ function TemplateShow({ loggedUser }) {
         <h3>Template consultando</h3>
         <Form
           initialValues={template}
-          loggedUser={loggedUser}
+          currentUser={currentUser}
         />
       </div>
     </div>
