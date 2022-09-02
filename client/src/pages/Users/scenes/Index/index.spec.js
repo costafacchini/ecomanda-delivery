@@ -4,7 +4,7 @@ import { getUsers } from '../../../../services/user'
 import { getLicensees } from '../../../../services/licensee'
 import { MemoryRouter } from 'react-router'
 import { userFactory } from '../../../../factories/user'
-import { LicenseeContextProvider } from '../../../../contexts/Licensees'
+import { SimpleCrudContextProvider } from '../../../../contexts/SimpleCrud'
 
 jest.mock('../../../../services/user')
 jest.mock('../../../../services/licensee')
@@ -14,11 +14,11 @@ describe('<UsersIndex />', () => {
 
   function mount({ currentUser }) {
     render(
-      <LicenseeContextProvider>
+      <SimpleCrudContextProvider>
         <MemoryRouter>
           <UsersIndex currentUser={currentUser} />
         </MemoryRouter>
-      </LicenseeContextProvider>
+      </SimpleCrudContextProvider>
     )
   }
 

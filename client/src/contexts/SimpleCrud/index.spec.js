@@ -2,9 +2,9 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import isEmpty from 'lodash/isEmpty'
 import { useContext, useEffect } from 'react'
 import { licenseeFactory } from '../../factories/licensee'
-import { LicenseeContext, LicenseeContextProvider } from '.'
+import { SimpleCrudContext, SimpleCrudContextProvider } from '.'
 
-describe('<LicenseeContextProvider />', () => {
+describe('<SimpleCrudContextProvider />', () => {
   describe('#updateRecord', () => {
     it("finds and updates the record in the page's records cache", () => {
       const record1 = licenseeFactory.build({ name: 'Licensee 1' })
@@ -12,7 +12,7 @@ describe('<LicenseeContextProvider />', () => {
       const record3 = licenseeFactory.build({ name: 'Licensee 3' })
 
       function Sandbox() {
-        const { cache } = useContext(LicenseeContext)
+        const { cache } = useContext(SimpleCrudContext)
         const { addPage } = cache
 
         useEffect(() => {
@@ -33,9 +33,9 @@ describe('<LicenseeContextProvider />', () => {
       }
 
       render(
-        <LicenseeContextProvider>
+        <SimpleCrudContextProvider>
           <Sandbox />
-        </LicenseeContextProvider>
+        </SimpleCrudContextProvider>
       )
 
       expect(screen.getByText(record1.name)).toBeInTheDocument()
@@ -56,7 +56,7 @@ describe('<LicenseeContextProvider />', () => {
       const record2 = licenseeFactory.build()
 
       function Sandbox() {
-        const { cache } = useContext(LicenseeContext)
+        const { cache } = useContext(SimpleCrudContext)
         const { addPage } = cache
 
         useEffect(() => {
@@ -77,9 +77,9 @@ describe('<LicenseeContextProvider />', () => {
       }
 
       const { container } = render(
-        <LicenseeContextProvider>
+        <SimpleCrudContextProvider>
           <Sandbox />
-        </LicenseeContextProvider>
+        </SimpleCrudContextProvider>
       )
 
       expect(screen.getByText(`Record ${record1.id}`)).toBeInTheDocument()
@@ -99,7 +99,7 @@ describe('<LicenseeContextProvider />', () => {
       const record3 = licenseeFactory.build()
 
       function Sandbox() {
-        const { cache } = useContext(LicenseeContext)
+        const { cache } = useContext(SimpleCrudContext)
         const { addPage } = cache
 
         useEffect(() => {
@@ -120,9 +120,9 @@ describe('<LicenseeContextProvider />', () => {
       }
 
       render(
-        <LicenseeContextProvider>
+        <SimpleCrudContextProvider>
           <Sandbox />
-        </LicenseeContextProvider>
+        </SimpleCrudContextProvider>
       )
 
       expect(screen.getByText(`Record ${record1.id}`)).toBeInTheDocument()
@@ -146,7 +146,7 @@ describe('<LicenseeContextProvider />', () => {
         const record4 = licenseeFactory.build()
 
         function Sandbox() {
-          const { cache, setFilters, filters } = useContext(LicenseeContext)
+          const { cache, setFilters, filters } = useContext(SimpleCrudContext)
           const { addPage } = cache
 
           useEffect(() => {
@@ -169,9 +169,9 @@ describe('<LicenseeContextProvider />', () => {
         }
 
         render(
-          <LicenseeContextProvider>
+          <SimpleCrudContextProvider>
             <Sandbox />
-          </LicenseeContextProvider>
+          </SimpleCrudContextProvider>
         )
 
         expect(screen.getByText(`Record ${record1.id}`)).toBeInTheDocument()
@@ -198,7 +198,7 @@ describe('<LicenseeContextProvider />', () => {
         const record4 = licenseeFactory.build()
 
         function Sandbox() {
-          const { cache, filters, setFilters } = useContext(LicenseeContext)
+          const { cache, filters, setFilters } = useContext(SimpleCrudContext)
           const { addPage } = cache
 
           useEffect(() => {
@@ -222,9 +222,9 @@ describe('<LicenseeContextProvider />', () => {
         }
 
         render(
-          <LicenseeContextProvider>
+          <SimpleCrudContextProvider>
             <Sandbox />
-          </LicenseeContextProvider>
+          </SimpleCrudContextProvider>
         )
 
         expect(screen.getByText(`Record ${record1.id}`)).toBeInTheDocument()
@@ -249,7 +249,7 @@ describe('<LicenseeContextProvider />', () => {
       const callback = jest.fn()
 
       function Sandbox() {
-        const { filters, setFilters } = useContext(LicenseeContext)
+        const { filters, setFilters } = useContext(SimpleCrudContext)
 
         callback(filters)
 
@@ -260,9 +260,9 @@ describe('<LicenseeContextProvider />', () => {
       }
 
       render(
-        <LicenseeContextProvider>
+        <SimpleCrudContextProvider>
           <Sandbox />
-        </LicenseeContextProvider>
+        </SimpleCrudContextProvider>
       )
 
       expect(callback).toHaveBeenNthCalledWith(1, undefined)
@@ -275,7 +275,7 @@ describe('<LicenseeContextProvider />', () => {
       const callback = jest.fn()
 
       function Sandbox() {
-        const { cache } = useContext(LicenseeContext)
+        const { cache } = useContext(SimpleCrudContext)
 
         callback(cache.lastPage)
 
@@ -283,9 +283,9 @@ describe('<LicenseeContextProvider />', () => {
       }
 
       render(
-        <LicenseeContextProvider>
+        <SimpleCrudContextProvider>
           <Sandbox />
-        </LicenseeContextProvider>
+        </SimpleCrudContextProvider>
       )
 
       expect(callback).toHaveBeenCalledWith(false)
@@ -295,7 +295,7 @@ describe('<LicenseeContextProvider />', () => {
       const callback = jest.fn()
 
       function Sandbox() {
-        const { cache } = useContext(LicenseeContext)
+        const { cache } = useContext(SimpleCrudContext)
         const { addPage } = cache
 
         callback(cache.lastPage)
@@ -309,9 +309,9 @@ describe('<LicenseeContextProvider />', () => {
       }
 
       render(
-        <LicenseeContextProvider>
+        <SimpleCrudContextProvider>
           <Sandbox />
-        </LicenseeContextProvider>
+        </SimpleCrudContextProvider>
       )
 
       expect(callback).toHaveBeenNthCalledWith(1, false)

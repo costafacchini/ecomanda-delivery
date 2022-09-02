@@ -3,18 +3,18 @@ import { fireEvent, screen, render, waitFor } from '@testing-library/react'
 import { getLicensees } from '../../../../services/licensee'
 import { MemoryRouter } from 'react-router'
 import { licenseeFactory } from '../../../../factories/licensee'
-import { LicenseeContextProvider } from '../../../../contexts/Licensees'
+import { SimpleCrudContextProvider } from '../../../../contexts/SimpleCrud'
 
 jest.mock('../../../../services/licensee')
 
 describe('<LicenseeIndex />', () => {
   function mount() {
     render(
-      <LicenseeContextProvider>
+      <SimpleCrudContextProvider>
         <MemoryRouter>
           <LicenseeIndex />
         </MemoryRouter>
-      </LicenseeContextProvider>
+      </SimpleCrudContextProvider>
     )
   }
 

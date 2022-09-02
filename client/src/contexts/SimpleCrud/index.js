@@ -1,9 +1,9 @@
 import { createContext, useCallback, useState } from 'react'
 import isEmpty from 'lodash/isEmpty'
 
-const LicenseeContext = createContext(null)
+const SimpleCrudContext = createContext(null)
 
-const LicenseeContextProvider = ({ children }) => {
+const SimpleCrudContextProvider = ({ children }) => {
   const [records, setRecords] = useState([])
   const [filters, setFilters] = useState()
   const [lastPage, setLastPage] = useState(false)
@@ -45,7 +45,7 @@ const LicenseeContextProvider = ({ children }) => {
     lastPage,
   }
 
-  return <LicenseeContext.Provider value={{ cache, filters, setFilters }}>{children}</LicenseeContext.Provider>
+  return <SimpleCrudContext.Provider value={{ cache, filters, setFilters }}>{children}</SimpleCrudContext.Provider>
 }
 
-export { LicenseeContextProvider, LicenseeContext }
+export { SimpleCrudContextProvider, SimpleCrudContext }

@@ -2,11 +2,11 @@ import { useEffect, useState, useContext, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { getUsers } from '../../../../services/user'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
-import { LicenseeContext } from '../../../../contexts/Licensees'
+import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'
 import isEmpty from 'lodash/isEmpty'
 
 function UsersIndex({ currentUser }) {
-  const { filters, setFilters, cache } = useContext(LicenseeContext)
+  const { filters, setFilters, cache } = useContext(SimpleCrudContext)
   const { addPage } = cache
   const [expression, setExpression] = useState(filters?.expression || '')
 
