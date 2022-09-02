@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import { HashRouter, Route, Routes } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import SignIn from './SignIn'
 import LicenseesRoutes from './Licensees/routes'
 import UsersRoutes from './Users/routes'
@@ -11,21 +11,20 @@ import MessagesRoutes from './Messages/routes'
 import ReportsRoutes from './Reports/routes'
 import Dashboard from './Dashboard'
 import { isAuthenticated, fetchLoggedUser } from '../services/auth'
-import { loadLoggedUser } from './SignIn/slice'
 import BaseLayout from './BaseLayout/index'
 import PrivateRoute from './PrivateRoute/index'
+import { AppContext } from '../contexts/App'
 
 function RootRoutes() {
-  const dispatch = useDispatch()
-  const loggedUser = useSelector(state => state.signin.loggedUser)
+  const { currentUser, setCurrentUser } = useContext(AppContext)
 
   useEffect(() => {
-    if (isAuthenticated() && !loggedUser) {
+    if (isAuthenticated() && !currentUser) {
       fetchLoggedUser().then(user => {
-        dispatch(loadLoggedUser(user))
+        setCurrentUser(user)
       })
     }
-  }, [dispatch, loggedUser])
+  }, [currentUser, setCurrentUser])
 
   return (
     <HashRouter>

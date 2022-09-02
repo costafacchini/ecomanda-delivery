@@ -1,17 +1,31 @@
+import { useEffect, useState, useContext, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { connect } from 'react-redux'
-import { fetchLicensees } from './slice'
-import { useEffect, useState } from 'react'
+import { getLicensees } from '../../../../services/licensee'
+import { LicenseeContext } from '../../../../contexts/Licensees'
+import isEmpty from 'lodash/isEmpty'
 
-function LicenseesIndex({ licensees, dispatch }) {
-  const [filters, setFilters] = useState({ expression: '', page: 1 })
-  const [expression, setExpression] = useState('')
+function LicenseesIndex() {
+  const { filters, setFilters, cache } = useContext(LicenseeContext)
+  const { addPage } = cache
+  const [expression, setExpression] = useState(filters?.expression || '')
+
+  const onFilter = useCallback(
+    async (changedFilters) => {
+      const newFilters = { ...filters, ...changedFilters }
+      setFilters(newFilters)
+      const { data: licensees } = await getLicensees(newFilters)
+      addPage(licensees, newFilters)
+    },
+    [filters, setFilters, addPage]
+  )
 
   useEffect(() => {
     let abortController = new AbortController()
 
     try {
-      dispatch(fetchLicensees(filters))
+      if (!isEmpty(filters)) return
+
+      onFilter({ page: 1 })
     } catch (error) {
       if (error.name === 'AbortError') {
         // Handling error thrown by aborting request
@@ -21,13 +35,17 @@ function LicenseesIndex({ licensees, dispatch }) {
     return () => {
       abortController.abort()
     }
-  }, [dispatch, filters])
+  }, [filters, onFilter])
 
   function changeExpression(event) {
+
     setExpression(event.target.value)
   }
 
-  if (!licensees) return null
+  function nextPage() {
+    const newFilters = { ...filters, page: filters.page + 1 }
+    onFilter(newFilters)
+  }
 
   return (
     <>
@@ -57,7 +75,8 @@ function LicenseesIndex({ licensees, dispatch }) {
               />
               <div className='input-group-append'>
                 <button className='btn btn-primary' title='Filtre pelo licenciado' onClick={() => {
-                  setFilters({ ...filters, expression })
+                  const newFilters = { ...filters, expression: expression, page: 1 }
+                  onFilter(newFilters)
                 }}>
                   <i className='bi bi-search'></i>
                 </button>
@@ -79,7 +98,7 @@ function LicenseesIndex({ licensees, dispatch }) {
             </tr>
           </thead>
           <tbody>
-            {licensees.map((licensee) => (
+            {cache.records.map((licensee) => (
               <tr key={licensee.id}>
                 <td>{licensee.name}</td>
                 <td>{licensee.email}</td>
@@ -95,13 +114,13 @@ function LicenseesIndex({ licensees, dispatch }) {
 
       <section>
         <div className='container'>
-          {expression === '' && (licensees.length > 29) && (
+          {!cache.lastPage && (
             <div className='row'>
               <div className='col text-center mt-3'>
                 <button
                   type='button'
                   className='btn btn-outline-primary d-print-none'
-                  onClick={() => setFilters({ ...filters, page: filters.page + 1 })}
+                  onClick={nextPage}
                 >
                   Carregar mais
                 </button>
@@ -114,10 +133,4 @@ function LicenseesIndex({ licensees, dispatch }) {
   )
 }
 
-const mapStateToProps = (state) => {
-  return {
-    licensees: state.licenseesIndex.licensees
-  }
-}
-
-export default connect(mapStateToProps)(LicenseesIndex)
+export default LicenseesIndex

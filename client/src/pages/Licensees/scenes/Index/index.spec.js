@@ -1,21 +1,20 @@
-import mountWithRedux, { createStore } from '../../../../.jest/redux-testing'
 import LicenseeIndex from './'
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, render, waitFor } from '@testing-library/react'
 import { getLicensees } from '../../../../services/licensee'
 import { MemoryRouter } from 'react-router'
 import { licenseeFactory } from '../../../../factories/licensee'
+import { LicenseeContextProvider } from '../../../../contexts/Licensees'
 
 jest.mock('../../../../services/licensee')
 
 describe('<LicenseeIndex />', () => {
   function mount() {
-    const store = createStore()
-    mountWithRedux(store)(
-      <MemoryRouter>
-        <LicenseeIndex />
-      </MemoryRouter>)
-
-    return store
+    render(
+      <LicenseeContextProvider>
+        <MemoryRouter>
+          <LicenseeIndex />
+        </MemoryRouter>
+      </LicenseeContextProvider>)
   }
 
   it('filters for all licensees on it is opened and there is no previous applied filters', async () => {
@@ -27,7 +26,6 @@ describe('<LicenseeIndex />', () => {
 
     expect(getLicensees).toHaveBeenCalledWith({
       page: 1,
-      expression: '',
     })
 
     expect(await screen.findByText('Licenciado')).toBeInTheDocument()
@@ -46,7 +44,6 @@ describe('<LicenseeIndex />', () => {
 
     expect(getLicensees).toHaveBeenCalledWith({
       page: 2,
-      expression: '',
     })
   })
 
