@@ -14,8 +14,8 @@ function TriggersIndex({ currentUser }) {
     async (changedFilters) => {
       const newFilters = { ...filters, ...changedFilters }
       setFilters(newFilters)
-      const { data: users } = await getTriggers(newFilters)
-      addPage(users, newFilters)
+      const { data: records } = await getTriggers(newFilters)
+      addPage(records, newFilters)
     },
     [filters, setFilters, addPage]
   )

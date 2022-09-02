@@ -109,7 +109,7 @@ describe('<TriggersIndex />', () => {
     })
 
     it('changes the filters to get the triggers', async () => {
-      getLicensees.mockResolvedValueOnce({ status: 201, data: [{ id: '12345678', name: 'Alcateia' }] })
+      getLicensees.mockResolvedValueOnce({ status: 201, data: [{ _id: '12345678', name: 'Alcateia' }] })
 
       getTriggers.mockResolvedValueOnce({ status: 201, data: [triggerFactory.build({ name: 'Trigger' })] })
       getTriggers.mockResolvedValueOnce({ status: 201, data: [triggerFactory.build({ name: 'Another' })] })
