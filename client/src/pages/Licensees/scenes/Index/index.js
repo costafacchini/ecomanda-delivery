@@ -38,7 +38,6 @@ function LicenseesIndex() {
   }, [filters, onFilter])
 
   function changeExpression(event) {
-
     setExpression(event.target.value)
   }
 

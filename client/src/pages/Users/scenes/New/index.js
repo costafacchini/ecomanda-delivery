@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { createUser } from '../../../../services/user'
 import { useNavigate } from 'react-router-dom'
 
-function UserNew({ loggedUser }) {
+function UserNew({ currentUser }) {
   let navigate = useNavigate()
   const [errors, setErrors] = useState(null)
 
@@ -12,9 +12,9 @@ function UserNew({ loggedUser }) {
     <div className='row'>
       <div className='col'>
         <h3>Usuário criando</h3>
-        <Form errors={errors} loggedUser={loggedUser} onSubmit={async (values) => {
-          if (values.licensee === '' && !loggedUser.isSuper) {
-            values.licensee = loggedUser.licensee
+        <Form errors={errors} currentUser={currentUser} onSubmit={async (values) => {
+          if (values.licensee === '' && !currentUser.isSuper) {
+            values.licensee = currentUser.licensee
           }
           const response = await createUser(values)
 

@@ -14,7 +14,8 @@ describe('<LicenseeIndex />', () => {
         <MemoryRouter>
           <LicenseeIndex />
         </MemoryRouter>
-      </LicenseeContextProvider>)
+      </LicenseeContextProvider>
+    )
   }
 
   it('filters for all licensees on it is opened and there is no previous applied filters', async () => {

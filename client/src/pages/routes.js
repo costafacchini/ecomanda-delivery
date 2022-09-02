@@ -1,6 +1,5 @@
 import React, { useEffect, useContext } from 'react'
 import { HashRouter, Route, Routes } from 'react-router-dom'
-import { useSelector } from 'react-redux'
 import SignIn from './SignIn'
 import LicenseesRoutes from './Licensees/routes'
 import UsersRoutes from './Users/routes'
