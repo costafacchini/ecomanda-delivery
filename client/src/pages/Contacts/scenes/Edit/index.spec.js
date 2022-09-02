@@ -1,6 +1,5 @@
-import mountWithRedux, { createStore } from '../../../../.jest/redux-testing'
 import ContactEdit from './'
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor, render } from '@testing-library/react'
 import { getContact, updateContact } from '../../../../services/contact'
 import { MemoryRouter } from 'react-router';
 
@@ -8,11 +7,11 @@ jest.mock('../../../../services/contact')
 
 describe('<ContactEdit />', () => {
   function mount() {
-    const store = createStore()
-    mountWithRedux(store)(
+    render(
       <MemoryRouter>
         <ContactEdit />
-      </MemoryRouter>)
+      </MemoryRouter>
+    )
   }
 
   it('renders the form with the received contact', async () => {
@@ -20,7 +19,7 @@ describe('<ContactEdit />', () => {
 
     mount()
 
-    await waitFor(() => expect(screen.getByDisplayValue('Contato')).toBeInTheDocument())
+    await screen.findByDisplayValue('Contato')
   })
 
   it('edits the contact', async () => {
@@ -28,7 +27,7 @@ describe('<ContactEdit />', () => {
 
     mount()
 
-    await waitFor(() => expect(screen.getByDisplayValue('Contato')).toBeInTheDocument())
+    await screen.findByDisplayValue('Contato')
 
     fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'New Name' } })
 

@@ -1,27 +1,25 @@
-import mountWithRedux, { createStore } from '../../../../.jest/redux-testing'
 import TriggersIndex from './'
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor, render } from '@testing-library/react'
 import { getTriggers } from '../../../../services/trigger'
 import { getLicensees } from '../../../../services/licensee'
 import { MemoryRouter } from 'react-router'
 import { triggerFactory, triggerSingleProduct, triggerReplyButton, triggerListMessage, triggerText } from '../../../../factories/trigger'
+import { SimpleCrudContextProvider } from '../../../../contexts/SimpleCrud'
 
 jest.mock('../../../../services/trigger')
 jest.mock('../../../../services/licensee')
 
 describe('<TriggersIndex />', () => {
-  function mount() {
-    const loggedUser = {
-      isSuper: true
-    }
+  const currentUser = { isSuper: true }
 
-    const store = createStore()
-    mountWithRedux(store)(
-      <MemoryRouter>
-        <TriggersIndex loggedUser={loggedUser} />
-      </MemoryRouter>)
-
-    return store
+  function mount({ currentUser }) {
+    render(
+      <SimpleCrudContextProvider>
+        <MemoryRouter>
+          <TriggersIndex currentUser={currentUser} />
+        </MemoryRouter>
+      </SimpleCrudContextProvider>
+    )
   }
 
   it('filters for all triggers on it is opened and there is no previous applied filters', async () => {
@@ -29,26 +27,22 @@ describe('<TriggersIndex />', () => {
       {
         status: 201,
         data: [
-          triggerFactory.build({ _id: 1 }),
-          triggerSingleProduct.build({ _id: 2 }),
-          triggerReplyButton.build({ _id: 3 }),
-          triggerListMessage.build({ _id: 4 }),
-          triggerText.build({ _id: 5 })
+          triggerFactory.build({ id: 1 }),
+          triggerSingleProduct.build({ id: 2 }),
+          triggerReplyButton.build({ id: 3 }),
+          triggerListMessage.build({ id: 4 }),
+          triggerText.build({ id: 5 })
         ]
       }
     )
 
-    mount()
+    mount({ currentUser })
 
     await waitFor(() => expect(getTriggers).toHaveBeenCalled())
 
     await screen.findByText('Gatilhos')
 
-    expect(getTriggers).toHaveBeenCalledWith({
-      page: 1,
-      expression: '',
-      licensee: '',
-    })
+    expect(getTriggers).toHaveBeenCalledWith({ page: 1 })
 
     expect(await screen.findByText('Gatilho')).toBeInTheDocument()
     expect(screen.getByText('hello-trigger')).toBeInTheDocument()
@@ -68,7 +62,7 @@ describe('<TriggersIndex />', () => {
   it('paginates the triggers', async () => {
     getTriggers.mockResolvedValue({ status: 201, data: triggerFactory.buildList(30) })
 
-    mount()
+    mount({ currentUser })
 
     await screen.findByText('Gatilhos')
 
@@ -78,17 +72,13 @@ describe('<TriggersIndex />', () => {
 
     expect(await screen.findByText('Trigger from new page')).toBeInTheDocument()
 
-    expect(getTriggers).toHaveBeenCalledWith({
-      page: 2,
-      expression: '',
-      licensee: '',
-    })
+    expect(getTriggers).toHaveBeenCalledWith({ page: 2 })
   })
 
   it('filters the triggers by expression', async () => {
     getTriggers.mockResolvedValue({ status: 201, data: [triggerFactory.build({ name: 'Trigger' })] })
 
-    mount()
+    mount({ currentUser })
 
     await screen.findByText('Trigger')
 
@@ -100,55 +90,41 @@ describe('<TriggersIndex />', () => {
 
     expect(await screen.findByText('A trigger filtered by expression')).toBeInTheDocument()
 
-    expect(getTriggers).toHaveBeenNthCalledWith(2, {
-      page: 1,
-      expression: 'expression',
-      licensee: '',
-    })
+    expect(getTriggers).toHaveBeenNthCalledWith(2, { page: 1, expression: 'expression' })
   })
 
   describe('licensee select filter', () => {
     it('does not show the licensee if logged user is not super', async () => {
-      const loggedUser = {
-        isSuper: false
-      }
+      getTriggers.mockResolvedValue({ status: 201, data: [triggerFactory.build({ name: 'Trigger' })] })
 
-      const store = createStore()
-      mountWithRedux(store)(
-        <MemoryRouter>
-          <TriggersIndex loggedUser={loggedUser} />
-        </MemoryRouter>)
+      const currentUser = { isSuper: false }
+
+      mount({ currentUser })
 
       await screen.findByText('Gatilhos')
+
+      await screen.findByText('Trigger')
 
       expect(screen.queryByLabelText('Licenciado')).not.toBeInTheDocument()
     })
 
     it('changes the filters to get the triggers', async () => {
-      getLicensees.mockResolvedValueOnce({ status: 201, data: [{ _id: '12345678', name: 'Alcateia' }] })
+      getLicensees.mockResolvedValueOnce({ status: 201, data: [{ id: '12345678', name: 'Alcateia' }] })
 
-      getTriggers.mockResolvedValue(
-        {
-          status: 201,
-          data: [
-            triggerFactory.build({ _id: 1 }),
-            triggerSingleProduct.build({ _id: 2 }),
-            triggerReplyButton.build({ _id: 3 }),
-            triggerListMessage.build({ _id: 4 }),
-            triggerText.build({ _id: 5 })
-          ]
-        }
-      )
+      getTriggers.mockResolvedValueOnce({ status: 201, data: [triggerFactory.build({ name: 'Trigger' })] })
+      getTriggers.mockResolvedValueOnce({ status: 201, data: [triggerFactory.build({ name: 'Another' })] })
 
-      mount()
+      mount({ currentUser })
 
       await screen.findByText('Gatilhos')
+
+      await screen.findByText('Licenciado')
 
       fireEvent.change(screen.getByLabelText('Licenciado'), { target: { value: 'alca' } })
 
       fireEvent.click(await screen.findByText('Alcateia'))
 
-      await screen.findByText('Gatilho')
+      await screen.findByText('Another')
 
       expect(getTriggers).toHaveBeenCalledWith(expect.objectContaining({ licensee: '12345678' }))
     })

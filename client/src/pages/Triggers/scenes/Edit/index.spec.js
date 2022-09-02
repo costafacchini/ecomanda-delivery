@@ -1,6 +1,5 @@
-import mountWithRedux, { createStore } from '../../../../.jest/redux-testing'
 import TriggerEdit from './'
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor, render } from '@testing-library/react'
 import { getTrigger, updateTrigger } from '../../../../services/trigger'
 import { MemoryRouter } from 'react-router'
 
@@ -8,11 +7,11 @@ jest.mock('../../../../services/trigger')
 
 describe('<TriggerEdit />', () => {
   function mount() {
-    const store = createStore()
-    mountWithRedux(store)(
+    render(
       <MemoryRouter>
         <TriggerEdit />
-      </MemoryRouter>)
+      </MemoryRouter>
+    )
   }
 
   it('renders the form with the received trigger', async () => {

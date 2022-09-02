@@ -6,7 +6,7 @@ import { createTrigger } from '../../../../services/trigger'
 jest.mock('../../../../services/trigger')
 
 describe('<TriggerNew />', () => {
-  let loggedUser = {
+  let currentUser = {
     isSuper: false,
     licensee: 'id'
   }
@@ -14,7 +14,7 @@ describe('<TriggerNew />', () => {
   function mount() {
     render(
       <MemoryRouter>
-        <TriggerNew loggedUser={loggedUser} />
+        <TriggerNew currentUser={currentUser} />
       </MemoryRouter>)
   }
 
@@ -40,7 +40,7 @@ describe('<TriggerNew />', () => {
 
     cleanup()
 
-    loggedUser = {
+    currentUser = {
       isSuper: true,
     }
     mount()

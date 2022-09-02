@@ -21,7 +21,7 @@ const triggerInitialValues = {
   order: 1,
 }
 
-function TriggerForm({ onSubmit, errors, initialValues, loggedUser }) {
+function TriggerForm({ onSubmit, errors, initialValues, currentUser }) {
   let navigate = useNavigate()
 
   return (
@@ -76,7 +76,7 @@ function TriggerForm({ onSubmit, errors, initialValues, loggedUser }) {
                 </div>
               </div>
 
-              {loggedUser && loggedUser.isSuper && (
+              {currentUser && currentUser.isSuper && (
                 <div className='row'>
                   <div className='form-group col-5'>
                     <label htmlFor='licensee'>Licenciado</label>
