@@ -2,6 +2,7 @@ import { screen } from '@testing-library/react'
 import RootRoutes from '../pages/routes'
 import mountWithRedux, { createStore } from '../.jest/redux-testing'
 import * as auth from '../services/auth'
+import { AppContextProvider } from '../contexts/App'
 
 describe('<RootRoutes>', () => {
   let store
@@ -18,7 +19,11 @@ describe('<RootRoutes>', () => {
     const isAuthenticatedSpy = jest.spyOn(auth, 'isAuthenticated').mockImplementation(() => false)
 
     store = createStore()
-    mountWithRedux(store)(<RootRoutes />)
+    mountWithRedux(store)(
+      <AppContextProvider>
+        <RootRoutes />
+      </AppContextProvider>
+    )
 
     const title = screen.getByText(/e-comanda/i)
     const emailField = screen.getByText(/email/i)
@@ -36,7 +41,11 @@ describe('<RootRoutes>', () => {
     const isAuthenticatedSpy = jest.spyOn(auth, 'isAuthenticated').mockImplementation(() => true)
 
     store = createStore()
-    mountWithRedux(store)(<RootRoutes />)
+    mountWithRedux(store)(
+      <AppContextProvider>
+        <RootRoutes />
+      </AppContextProvider>
+    )
 
     const title = screen.getByRole('heading', { name: 'Dashboard' })
     const navbar = screen.getByRole('navigation')
