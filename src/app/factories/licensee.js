@@ -1,9 +1,10 @@
 const { Factory } = require('fishery')
 
-const licensee = Factory.define(() => ({
+const licensee = Factory.define(({ sequence }) => ({
   name: 'Alcateia Ltds',
   active: true,
   licenseKind: 'demo',
+  apiToken: sequence,
 }))
 
 const licenseeComplete = Factory.define(() => ({
