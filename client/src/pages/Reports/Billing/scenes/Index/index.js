@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react'
-import { connect } from 'react-redux'
-import { loadData } from './slice'
 import styles from './styles.module.scss'
 import { io } from 'socket.io-client'
 import moment from 'moment'
@@ -9,21 +7,20 @@ function totalBilling(licensees) {
   return licensees.reduce((sum, licensee) => licensee.billing ? sum + 40 : sum, 0)
 }
 
-function BillingIndex({ licensees, dispatch }) {
+function BillingIndex() {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [filters, setFilters] = useState({
-    reportDate: '',
-  })
+  const [records, setRecords] = useState(null)
+  const [filters, setFilters] = useState({ reportDate: '' })
 
   useEffect(() => {
     const socket = io()
     socket.on('send_billing_report', data => {
-      dispatch(loadData(data.data))
+      setRecords(data.data)
       setIsSubmitting(false)
     })
 
     return () => socket.disconnect()
-  }, [dispatch])
+  }, [setRecords])
 
   function handleChange({ target }) {
     setFilters({ ...filters, [target.name]: target.value })
@@ -74,7 +71,7 @@ function BillingIndex({ licensees, dispatch }) {
             </tr>
           </thead>
           <tbody>
-            {licensees.map((licensee) => (
+            {records.map((licensee) => (
               <tr key={licensee._id.toString()}>
                 <td>{licensee.name}</td>
                 <td>{licensee.billing ? 'Ativo' : 'Inativo'}</td>
@@ -92,7 +89,7 @@ function BillingIndex({ licensees, dispatch }) {
               <td></td>
               <td></td>
               <td>Total</td>
-              <td>R$ {totalBilling(licensees)},00</td>
+              <td>R$ {totalBilling(records)},00</td>
             </tr>
           </tbody>
         </table>
@@ -101,10 +98,4 @@ function BillingIndex({ licensees, dispatch }) {
   )
 }
 
-const mapStateToProps = (state) => {
-  return {
-    licensees: state.reports.billingIndex.licensees
-  }
-}
-
-export default connect(mapStateToProps)(BillingIndex)
+export default BillingIndex

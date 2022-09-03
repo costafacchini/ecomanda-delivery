@@ -1,15 +1,18 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import MessagesIndex from './scenes/Index'
-import { useSelector } from 'react-redux'
+import { SimpleCrudContextProvider } from '../../contexts/SimpleCrud'
+import { AppContext } from '../../contexts/App'
 
 function MessagesRoutes() {
-  const loggedUser = useSelector(state => state.signin.loggedUser)
+  const { currentUser } = useContext(AppContext)
 
   return (
-    <Routes>
-      <Route path='/' element={<MessagesIndex loggedUser={loggedUser} />} />
-    </Routes>
+    <SimpleCrudContextProvider>
+      <Routes>
+        <Route path='/' element={<MessagesIndex currentUser={currentUser} />} />
+      </Routes>
+    </SimpleCrudContextProvider>
   )
 }
 

@@ -1,13 +1,13 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useContext } from 'react'
 import Navbar from '../Navbar'
+import { AppContext } from '../../contexts/App'
 
 export default function BaseLayout({ children }) {
-  const loggedUser = useSelector(state => state.signin.loggedUser)
+  const { currentUser } = useContext(AppContext)
 
   return (
     <>
-      <Navbar loggedUser={loggedUser} />
+      <Navbar currentUser={currentUser} />
       <div className='container'>
         <div className='row'>
           <div className='col pb-5 mt-3'>{children}</div>

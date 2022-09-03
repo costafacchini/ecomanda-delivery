@@ -1,10 +1,8 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import TemplateForm from './'
 
 describe('<TemplateForm />', () => {
-  const onSubmit = jest.fn()
-
   function mount(props = {}) {
     render(
       <MemoryRouter>

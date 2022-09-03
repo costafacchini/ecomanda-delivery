@@ -1,18 +1,32 @@
+import { useEffect, useState, useContext, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { connect } from 'react-redux'
-import { fetchUsers } from './slice'
-import { useEffect, useState } from 'react'
+import { getUsers } from '../../../../services/user'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
+import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'
+import isEmpty from 'lodash/isEmpty'
 
-function UsersIndex({ users, dispatch, loggedUser }) {
-  const [filters, setFilters] = useState({ expression: '', page: 1, licensee: '' })
-  const [expression, setExpression] = useState('')
+function UsersIndex({ currentUser }) {
+  const { filters, setFilters, cache } = useContext(SimpleCrudContext)
+  const { addPage } = cache
+  const [expression, setExpression] = useState(filters?.expression || '')
+
+  const onFilter = useCallback(
+    async (changedFilters) => {
+      const newFilters = { ...filters, ...changedFilters }
+      setFilters(newFilters)
+      const { data: users } = await getUsers(newFilters)
+      addPage(users, newFilters)
+    },
+    [filters, setFilters, addPage]
+  )
 
   useEffect(() => {
     let abortController = new AbortController()
 
     try {
-      dispatch(fetchUsers(filters))
+      if (!isEmpty(filters)) return
+
+      onFilter({ page: 1 })
     } catch (error) {
       if (error.name === 'AbortError') {
         // Handling error thrown by aborting request
@@ -22,19 +36,25 @@ function UsersIndex({ users, dispatch, loggedUser }) {
     return () => {
       abortController.abort()
     }
-  }, [dispatch, filters])
+  }, [filters, onFilter])
 
   useEffect(() => {
-    if (loggedUser && !loggedUser.isSuper && filters.licensee !== loggedUser.licensee) {
-      setFilters({ ...filters, licensee: loggedUser.licensee })
+    if (isEmpty(filters)) return
+
+    if (currentUser && !currentUser.isSuper && filters?.licensee !== currentUser.licensee) {
+      const newFilters = { ...filters, licensee: currentUser.licensee, page: 1 }
+      onFilter(newFilters)
     }
-  }, [loggedUser, filters])
+  }, [currentUser, filters, onFilter])
 
   function changeExpression(event) {
     setExpression(event.target.value)
   }
 
-  if (!users) return null
+  function nextPage() {
+    const newFilters = { ...filters, page: filters.page + 1 }
+    onFilter(newFilters)
+  }
 
   return (
     <>
@@ -51,16 +71,17 @@ function UsersIndex({ users, dispatch, loggedUser }) {
       <div className='row'>
         <div className='d-flex flex-row justify-content-end pb-2'>
           <div className='flex-column w-50'>
-            {loggedUser && loggedUser.isSuper && (
+            {currentUser && currentUser.isSuper && (
               <div className='form-group'>
                 <label htmlFor='licensee' id='licensee'>Licenciado</label>
                 <SelectLicenseesWithFilter
                   name='licensee'
                   aria-labelledby='licensee'
-                  selectedItem={filters.licensee}
+                  selectedItem={filters?.licensee}
                   onChange={(e) => {
                     const inputValue = e && e.value ? e.value : ''
-                    setFilters({ ...filters, licensee: inputValue })
+                    const newFilters = { ...filters, licensee: inputValue, page: 1 }
+                    onFilter(newFilters)
                   }}
                 />
               </div>
@@ -84,7 +105,8 @@ function UsersIndex({ users, dispatch, loggedUser }) {
               />
               <div className='input-group-append'>
                 <button className='btn btn-primary' title='Filtre pelo usuário' onClick={() => {
-                  setFilters({ ...filters, expression })
+                  const newFilters = { ...filters, expression: expression, page: 1 }
+                  onFilter(newFilters)
                 }}>
                   <i className='bi bi-search'></i>
                 </button>
@@ -104,7 +126,7 @@ function UsersIndex({ users, dispatch, loggedUser }) {
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
+            {cache.records.map((user) => (
               <tr key={user.id}>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
@@ -118,13 +140,13 @@ function UsersIndex({ users, dispatch, loggedUser }) {
 
       <section>
         <div className='container'>
-          {expression === '' && (users.length > 29) && (
+          {!cache.lastPage && (
             <div className='row'>
               <div className='col text-center mt-3'>
                 <button
                   type='button'
                   className='btn btn-outline-primary d-print-none'
-                  onClick={() => setFilters({ ...filters, page: filters.page + 1 })}
+                  onClick={nextPage}
                 >
                   Carregar mais
                 </button>
@@ -137,10 +159,4 @@ function UsersIndex({ users, dispatch, loggedUser }) {
   )
 }
 
-const mapStateToProps = (state) => {
-  return {
-    users: state.usersIndex.users
-  }
-}
-
-export default connect(mapStateToProps)(UsersIndex)
+export default UsersIndex

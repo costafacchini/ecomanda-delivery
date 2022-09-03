@@ -1,18 +1,32 @@
+import { useEffect, useState, useCallback, useContext } from 'react'
 import { Link } from 'react-router-dom'
-import { connect } from 'react-redux'
-import { fetchTriggers } from './slice'
-import { useEffect, useState } from 'react'
+import { getTriggers } from '../../../../services/trigger'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
+import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'
+import isEmpty from 'lodash/isEmpty'
 
-function TriggersIndex({ triggers, dispatch, loggedUser }) {
-  const [filters, setFilters] = useState({ expression: '', page: 1, licensee: '' })
-  const [expression, setExpression] = useState('')
+function TriggersIndex({ currentUser }) {
+  const { filters, setFilters, cache } = useContext(SimpleCrudContext)
+  const { addPage } = cache
+  const [expression, setExpression] = useState(filters?.expression || '')
+
+  const onFilter = useCallback(
+    async (changedFilters) => {
+      const newFilters = { ...filters, ...changedFilters }
+      setFilters(newFilters)
+      const { data: records } = await getTriggers(newFilters)
+      addPage(records, newFilters)
+    },
+    [filters, setFilters, addPage]
+  )
 
   useEffect(() => {
     let abortController = new AbortController()
 
     try {
-      dispatch(fetchTriggers(filters))
+      if (!isEmpty(filters)) return
+
+      onFilter({ page: 1 })
     } catch (error) {
       if (error.name === 'AbortError') {
         // Handling error thrown by aborting request
@@ -22,19 +36,25 @@ function TriggersIndex({ triggers, dispatch, loggedUser }) {
     return () => {
       abortController.abort()
     }
-  }, [dispatch, filters])
+  }, [filters, onFilter])
 
   useEffect(() => {
-    if (loggedUser && !loggedUser.isSuper && filters.licensee !== loggedUser.licensee) {
-      setFilters({ ...filters, licensee: loggedUser.licensee })
+    if (isEmpty(filters)) return
+
+    if (currentUser && !currentUser.isSuper && filters?.licensee !== currentUser.licensee) {
+      const newFilters = { ...filters, licensee: currentUser.licensee, page: 1 }
+      onFilter(newFilters)
     }
-  }, [loggedUser, filters])
+  }, [currentUser, filters, onFilter])
 
   function changeExpression(event) {
     setExpression(event.target.value)
   }
 
-  if (!triggers) return null
+  function nextPage() {
+    const newFilters = { ...filters, page: filters.page + 1 }
+    onFilter(newFilters)
+  }
 
   return (
     <>
@@ -51,16 +71,17 @@ function TriggersIndex({ triggers, dispatch, loggedUser }) {
       <div className='row'>
         <div className='d-flex flex-row justify-content-end pb-2'>
           <div className='flex-column w-50'>
-            {loggedUser && loggedUser.isSuper && (
+            {currentUser && currentUser.isSuper && (
               <div className='form-group'>
                 <label htmlFor='licensee' id='licensee'>Licenciado</label>
                 <SelectLicenseesWithFilter
                   name='licensee'
                   aria-labelledby='licensee'
-                  selectedItem={filters.licensee}
+                  selectedItem={filters?.licensee}
                   onChange={(e) => {
                     const inputValue = e && e.value ? e.value : ''
-                    setFilters({ ...filters, licensee: inputValue })
+                    const newFilters = { ...filters, licensee: inputValue, page: 1 }
+                    onFilter(newFilters)
                   }}
                 />
               </div>
@@ -84,7 +105,8 @@ function TriggersIndex({ triggers, dispatch, loggedUser }) {
               />
               <div className='input-group-append'>
                 <button className='btn btn-primary' title='Filtre pelo gatilho' onClick={() => {
-                  setFilters({ ...filters, expression })
+                  const newFilters = { ...filters, expression: expression, page: 1 }
+                  onFilter(newFilters)
                 }}>
                   <i className='bi bi-search'></i>
                 </button>
@@ -106,8 +128,8 @@ function TriggersIndex({ triggers, dispatch, loggedUser }) {
             </tr>
           </thead>
           <tbody>
-            {triggers.map((trigger) => (
-              <tr key={trigger._id}>
+            {cache.records.map((trigger) => (
+              <tr key={trigger.id}>
                 <td>{trigger.name}</td>
                 <td>{trigger.expression}</td>
                 <td>{trigger.order}</td>
@@ -119,7 +141,7 @@ function TriggersIndex({ triggers, dispatch, loggedUser }) {
                 {trigger.triggerKind === 'text' && (<td>{trigger.text}</td>)}
                 <td>
                   <Link to={`/triggers/${trigger._id}`}><i className='bi bi-pencil' /></Link>
-                  {trigger.triggerKind === 'multi_product' && (<Link to={`/triggers/${trigger._id}/importation`}><i className='bi bi-filetype-csv' /></Link>)}
+                  {trigger.triggerKind === 'multi_product' && (<Link to={`/triggers/${trigger.id}/importation`}><i className='bi bi-filetype-csv' /></Link>)}
                 </td>
               </tr>
             ))}
@@ -129,13 +151,13 @@ function TriggersIndex({ triggers, dispatch, loggedUser }) {
 
       <section>
         <div className='container'>
-          {expression === '' && (triggers.length > 29) && (
+          {!cache.lastPage && (
             <div className='row'>
               <div className='col text-center mt-3'>
                 <button
                   type='button'
                   className='btn btn-outline-primary d-print-none'
-                  onClick={() => setFilters({ ...filters, page: filters.page + 1 })}
+                  onClick={nextPage}
                 >
                   Carregar mais
                 </button>
@@ -148,10 +170,4 @@ function TriggersIndex({ triggers, dispatch, loggedUser }) {
   )
 }
 
-const mapStateToProps = (state) => {
-  return {
-    triggers: state.triggersIndex.triggers
-  }
-}
-
-export default connect(mapStateToProps)(TriggersIndex)
+export default TriggersIndex

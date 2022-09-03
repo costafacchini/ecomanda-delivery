@@ -16,7 +16,7 @@ describe('<Navbar>', () => {
   })
 
   it('renders the navbar options for admins', () => {
-    render(<Navbar loggedUser={{ isAdmin: true }} />)
+    render(<Navbar currentUser={{ isAdmin: true }} />)
 
     expect(screen.getByText(/Licenciados/i)).toBeInTheDocument()
     expect(screen.getByText(/Usuários/i)).toBeInTheDocument()
@@ -24,7 +24,7 @@ describe('<Navbar>', () => {
   })
 
   it('renders the navbar options for admins and super users', () => {
-    render(<Navbar loggedUser={{ isAdmin: true, isSuper: true }} />)
+    render(<Navbar currentUser={{ isAdmin: true, isSuper: true }} />)
     expect(screen.getByText(/Relatórios/i)).toBeInTheDocument()
   })
 })

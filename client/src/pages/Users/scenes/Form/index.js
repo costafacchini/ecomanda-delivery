@@ -19,7 +19,7 @@ const userInitialValues = {
   isSuper: false,
 }
 
-function UserForm({ onSubmit, errors, initialValues, loggedUser }) {
+function UserForm({ onSubmit, errors, initialValues, currentUser }) {
   let navigate = useNavigate()
 
   return (
@@ -90,7 +90,7 @@ function UserForm({ onSubmit, errors, initialValues, loggedUser }) {
                 </div>
               </div>
 
-              {loggedUser && (loggedUser.isAdmin || loggedUser.isSuper) && (
+              {currentUser && (currentUser.isAdmin || currentUser.isSuper) && (
                 <div className='row pb-2'>
                   <div className='col-5'>
                     <div className='form-check'>
@@ -109,7 +109,7 @@ function UserForm({ onSubmit, errors, initialValues, loggedUser }) {
                 </div>
               )}
 
-              {loggedUser && loggedUser.isSuper && (
+              {currentUser && currentUser.isSuper && (
                 <div className='row pb-2'>
                   <div className='col-5'>
                     <div className='form-check'>
@@ -128,7 +128,7 @@ function UserForm({ onSubmit, errors, initialValues, loggedUser }) {
                 </div>
               )}
 
-              {loggedUser && loggedUser.isSuper && (
+              {currentUser && currentUser.isSuper && (
                 <div className='row'>
                   <div className='form-group col-5'>
                     <label htmlFor='waId'>Licenciado</label>

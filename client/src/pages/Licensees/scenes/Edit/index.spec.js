@@ -1,6 +1,5 @@
-import mountWithRedux, { createStore } from '../../../../.jest/redux-testing'
 import LicenseeEdit from './';
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor, render } from '@testing-library/react'
 import { getLicensee, updateLicensee } from '../../../../services/licensee'
 import { MemoryRouter } from 'react-router';
 
@@ -8,11 +7,11 @@ jest.mock('../../../../services/licensee')
 
 describe('<LicenseeEdit />', () => {
   function mount() {
-    const store = createStore()
-    mountWithRedux(store)(
+    render(
       <MemoryRouter>
         <LicenseeEdit />
-      </MemoryRouter>)
+      </MemoryRouter>
+    )
   }
 
   it('renders the form with the received licensee', async () => {
@@ -20,7 +19,7 @@ describe('<LicenseeEdit />', () => {
 
     mount()
 
-    await waitFor(() => expect(screen.getByDisplayValue('Licenciado')).toBeInTheDocument())
+    await screen.findByDisplayValue('Licenciado')
   })
 
   it('edits the licensees', async () => {
@@ -28,7 +27,7 @@ describe('<LicenseeEdit />', () => {
 
     mount()
 
-    await waitFor(() => expect(screen.getByDisplayValue('Licenciado')).toBeInTheDocument())
+    await screen.findByDisplayValue('Licenciado')
 
     fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'New Name' } })
 

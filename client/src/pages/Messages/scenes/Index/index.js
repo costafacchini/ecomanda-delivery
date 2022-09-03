@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react'
-import { connect } from 'react-redux'
-import { fetchMessages } from './slice'
+import { useEffect, useState, useCallback } from 'react'
+import { getMessages } from '../../../../services/message'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 import SelectContactsWithFilter from '../../../../components/SelectContactsWithFilter'
 import CartDescription from './components/cart'
 import styles from './styles.module.scss'
 import moment from 'moment-timezone'
+import isEmpty from 'lodash/isEmpty'
 
-function MessagesIndex({ messages, loggedUser, dispatch }) {
+function MessagesIndex({ currentUser}) {
   const [filters, setFilters] = useState({
     startDate: '',
     endDate: '',
@@ -15,26 +15,44 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
     onlyErrors: false,
     contact: '',
     kind: '',
-    destination: ''
+    destination: '',
+    page: 1
   })
 
-  const [page, setPage] = useState(1)
+  const [records, setRecords] = useState([])
+  const [lastPage, setLastPage] = useState(false)
+
+  const addPage = useCallback(
+    (records, filters) => {
+      if (filters?.page === 1) {
+        setRecords(records)
+      } else {
+        setRecords((prevRecords) => [...prevRecords, ...records])
+      }
+
+      setLastPage(isEmpty(records))
+    },
+    [setRecords]
+  )
+
+  const onFilter = useCallback(
+    async (changedFilters) => {
+      const newFilters = { ...filters, ...changedFilters }
+      setFilters(newFilters)
+      const { data: messages } = await getMessages(newFilters)
+      addPage(messages, newFilters)
+    },
+    [filters, setFilters, addPage]
+  )
 
   useEffect(() => {
-    if (page !== 1) {
-      dispatch(fetchMessages({ ...filters, page: page }))
+    if (currentUser && !currentUser.isSuper && filters.licensee !== currentUser.licensee) {
+      setFilters({ ...filters, licensee: currentUser.licensee })
     }
-  }, [dispatch, page, filters])
-
-  useEffect(() => {
-    if (loggedUser && !loggedUser.isSuper && filters.licensee !== loggedUser.licensee) {
-      setFilters({ ...filters, licensee: loggedUser.licensee })
-    }
-  }, [loggedUser, filters])
+  }, [currentUser, filters, setFilters])
 
   function handleChange({ target }) {
-    setPage(1)
-    setFilters({ ...filters, [target.name]: target.value })
+    setFilters({ ...filters, [target.name]: target.value, page: 1 })
   }
 
   function handleChangeOnlyErrors({ target }) {
@@ -56,7 +74,7 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
     let abortController = new AbortController()
 
     try {
-      dispatch(fetchMessages({ ...filters, page: page }))
+      onFilter(filters)
     } catch (error) {
       if (error.name === 'AbortError') {
         // Handling error thrown by aborting request
@@ -128,7 +146,7 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
       </div>
 
       <div className='row'>
-        {loggedUser && loggedUser.isSuper && (
+        {currentUser && currentUser.isSuper && (
           <div className='col-6'>
             <div className='form-group'>
               <label htmlFor='licensee' id='licensee'>Licenciado</label>
@@ -138,7 +156,8 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
                 selectedItem={filters.licensee}
                 onChange={(e) => {
                   const inputValue = e && e.value ? e.value : ''
-                  setFilters({ ...filters, licensee: inputValue })
+                  const newFilters = { ...filters, licensee: inputValue, page: 1 }
+                  setFilters(newFilters)
                 }}
               />
             </div>
@@ -154,7 +173,8 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
               selectedItem={filters.contact}
               onChange={(e) => {
                 const inputValue = e && e.value ? e.value : ''
-                setFilters({ ...filters, contact: inputValue })
+                const newFilters = { ...filters, contact: inputValue, page: 1 }
+                setFilters(newFilters)
               }}
               licensee={filters.licensee}
             />
@@ -188,8 +208,8 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
             </tr>
           </thead>
           <tbody>
-            {messages.map((message) => (
-              <tr key={message._id.toString()}>
+            {records.map((message) => (
+              <tr key={message.id}>
                 <td>
                   <div>
                     {message.contact?.name}
@@ -247,14 +267,14 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
         </table>
         <section>
           <div className='container'>
-            {messages.length > 29 && (
+            {!lastPage && (
               <div className='row'>
                 <div className='col text-center mt-3'>
                   <button
                     type='button'
                     className='btn btn-outline-primary d-print-none'
                     onClick={() => {
-                      setPage(page + 1)
+                      onFilter({ ...filters, page: filters.page + 1})
                     }}
                   >
                     Carregar mais
@@ -269,10 +289,4 @@ function MessagesIndex({ messages, loggedUser, dispatch }) {
   )
 }
 
-const mapStateToProps = (state) => {
-  return {
-    messages: state.messagesIndex.messages
-  }
-}
-
-export default connect(mapStateToProps)(MessagesIndex)
+export default MessagesIndex

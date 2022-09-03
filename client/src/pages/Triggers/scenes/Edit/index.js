@@ -5,7 +5,7 @@ import { getTrigger, updateTrigger } from '../../../../services/trigger'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 
-function TriggerEdit({ loggedUser }) {
+function TriggerEdit({ currentUser }) {
   const navigate = useNavigate()
   let { id } = useParams()
   const [errors, setErrors] = useState(null)
@@ -41,7 +41,7 @@ function TriggerEdit({ loggedUser }) {
         <h3>Gatilho editando</h3>
         <Form
           initialValues={trigger}
-          loggedUser={loggedUser}
+          currentUser={currentUser}
           errors={errors}
           onSubmit={async (values) => {
             const response = await updateTrigger(values)

@@ -1,17 +1,20 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import TemplatesIndex from './scenes/Index'
 import TemplateShow from './scenes/Show'
-import { useSelector } from 'react-redux'
+import { SimpleCrudContextProvider } from '../../contexts/SimpleCrud'
+import { AppContext } from '../../contexts/App'
 
 function TemplatesRoutes() {
-  const loggedUser = useSelector(state => state.signin.loggedUser)
+  const { currentUser } = useContext(AppContext)
 
   return (
-    <Routes>
-      <Route path=':id' element={<TemplateShow loggedUser={loggedUser} />} />
-      <Route path='/' element={<TemplatesIndex loggedUser={loggedUser} />} />
-    </Routes>
+    <SimpleCrudContextProvider>
+      <Routes>
+        <Route path=':id' element={<TemplateShow currentUser={currentUser} />} />
+        <Route path='/' element={<TemplatesIndex currentUser={currentUser} />} />
+      </Routes>
+    </SimpleCrudContextProvider>
   )
 }
 

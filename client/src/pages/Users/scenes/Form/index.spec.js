@@ -31,11 +31,11 @@ describe('<UserForm />', () => {
       isSuper: false,
     }
 
-    const loggedUser = {
+    const currentUser = {
       isAdmin: true,
       isSuper: true,
     }
-    mount({ initialValues: user, loggedUser: loggedUser })
+    mount({ initialValues: user, currentUser: currentUser })
 
     expect(screen.getByLabelText('Nome')).toHaveValue('Name')
     expect(screen.getByLabelText('Ativo')).not.toBeChecked()
@@ -46,7 +46,7 @@ describe('<UserForm />', () => {
   })
 
   describe('isAdmin', () => {
-    it('is rendered when loggedUser isAdmin', () => {
+    it('is rendered when currentUser isAdmin', () => {
       mount()
 
       expect(screen.queryByLabelText('Tem diretos de administrador?')).not.toBeInTheDocument()
@@ -54,10 +54,10 @@ describe('<UserForm />', () => {
 
       cleanup()
 
-      const loggedUser = {
+      const currentUser = {
         isAdmin: true,
       }
-      mount({ loggedUser: loggedUser })
+      mount({ currentUser: currentUser })
 
       expect(screen.getByLabelText('Tem diretos de administrador?')).toBeInTheDocument()
       expect(screen.queryByLabelText('Tem diretos de super usuário?')).not.toBeInTheDocument()
@@ -65,7 +65,7 @@ describe('<UserForm />', () => {
   })
 
   describe('isSuper', () => {
-    it('is rendered when loggedUser isSuper', () => {
+    it('is rendered when currentUser isSuper', () => {
       mount()
 
       expect(screen.queryByLabelText('Tem diretos de administrador?')).not.toBeInTheDocument()
@@ -73,10 +73,10 @@ describe('<UserForm />', () => {
 
       cleanup()
 
-      const loggedUser = {
+      const currentUser = {
         isSuper: true,
       }
-      mount({ loggedUser: loggedUser })
+      mount({ currentUser: currentUser })
 
       expect(screen.getByLabelText('Tem diretos de administrador?')).toBeInTheDocument()
       expect(screen.getByLabelText('Tem diretos de super usuário?')).toBeInTheDocument()
@@ -84,17 +84,17 @@ describe('<UserForm />', () => {
   })
 
   describe('licensee', () => {
-    it('is rendered when loggedUser isSuper', () => {
+    it('is rendered when currentUser isSuper', () => {
       mount()
 
       expect(screen.queryByLabelText('Licenciado')).not.toBeInTheDocument()
 
       cleanup()
 
-      const loggedUser = {
+      const currentUser = {
         isSuper: true,
       }
-      mount({ loggedUser: loggedUser })
+      mount({ currentUser: currentUser })
 
       expect(screen.getByText('Licenciado')).toBeInTheDocument()
     })

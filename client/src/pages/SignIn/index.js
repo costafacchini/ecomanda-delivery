@@ -1,17 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../services/api'
 import { login, fetchLoggedUser } from '../../services/auth'
 import styles from './index.module.scss'
-import { loadLoggedUser } from '../SignIn/slice'
-import { useDispatch } from 'react-redux'
+import { AppContext } from '../../contexts/App'
 
 function SignIn() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const dispatch = useDispatch()
   let navigate = useNavigate()
+  const { setCurrentUser } = useContext(AppContext)
 
   async function handleSignIn(e) {
     e.preventDefault()
@@ -25,7 +24,7 @@ function SignIn() {
         login(email, response.data.token)
 
         fetchLoggedUser().then(user => {
-          dispatch(loadLoggedUser(user))
+          setCurrentUser(user)
         })
 
         navigate('/#/')

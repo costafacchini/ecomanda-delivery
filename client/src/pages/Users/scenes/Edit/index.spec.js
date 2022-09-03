@@ -1,6 +1,5 @@
-import mountWithRedux, { createStore } from '../../../../.jest/redux-testing'
 import UserEdit from './'
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor, render } from '@testing-library/react'
 import { getUser, updateUser } from '../../../../services/user'
 import { MemoryRouter } from 'react-router';
 
@@ -8,8 +7,7 @@ jest.mock('../../../../services/user')
 
 describe('<UserEdit />', () => {
   function mount() {
-    const store = createStore()
-    mountWithRedux(store)(
+    render(
       <MemoryRouter>
         <UserEdit />
       </MemoryRouter>)

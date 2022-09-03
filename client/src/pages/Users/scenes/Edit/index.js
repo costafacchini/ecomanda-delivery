@@ -5,7 +5,7 @@ import { getUser, updateUser } from '../../../../services/user'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 
-function UserEdit({ loggedUser }) {
+function UserEdit({ currentUser }) {
   const navigate = useNavigate()
   let { id } = useParams()
   const [errors, setErrors] = useState(null)
@@ -41,7 +41,7 @@ function UserEdit({ loggedUser }) {
         <h3>Usuário editando</h3>
         <Form
           initialValues={user}
-          loggedUser={loggedUser}
+          currentUser={currentUser}
           errors={errors}
           onSubmit={async (values) => {
             const response = await updateUser(values)

@@ -1,19 +1,22 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import UsersIndex from './scenes/Index'
 import UserNew from './scenes/New'
 import UserEdit from './scenes/Edit'
-import { useSelector } from 'react-redux'
+import { SimpleCrudContextProvider } from '../../contexts/SimpleCrud'
+import { AppContext } from '../../contexts/App'
 
 function UsersRoutes() {
-  const loggedUser = useSelector(state => state.signin.loggedUser)
+  const { currentUser } = useContext(AppContext)
 
   return (
-    <Routes>
-      <Route path="/new" element={<UserNew loggedUser={loggedUser} />} />
-      <Route path=":id" element={<UserEdit loggedUser={loggedUser} />} />
-      <Route exact path="/" element={<UsersIndex loggedUser={loggedUser} />} />
-    </Routes>
+    <SimpleCrudContextProvider>
+      <Routes>
+        <Route path="/new" element={<UserNew currentUser={currentUser} />} />
+        <Route path=":id" element={<UserEdit currentUser={currentUser} />} />
+        <Route exact path="/" element={<UsersIndex currentUser={currentUser} />} />
+      </Routes>
+    </SimpleCrudContextProvider>
   )
 }
 
