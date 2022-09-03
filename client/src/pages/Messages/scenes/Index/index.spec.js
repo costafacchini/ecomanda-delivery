@@ -1,6 +1,5 @@
-import mountWithRedux, { createStore } from '../../../../.jest/redux-testing'
 import MessageIndex from './'
-import { fireEvent, screen, cleanup } from '@testing-library/react'
+import { fireEvent, screen, cleanup, render } from '@testing-library/react'
 import { getMessages } from '../../../../services/message'
 import { MemoryRouter } from 'react-router'
 import { getLicensees } from '../../../../services/licensee'
@@ -12,16 +11,14 @@ jest.mock('../../../../services/licensee')
 jest.mock('../../../../services/contact')
 
 describe('<MessageIndex />', () => {
-  function mount() {
-    const loggedUser = {
-      isSuper: true
-    }
+  const currentUser = { isSuper: true }
 
-    const store = createStore()
-    mountWithRedux(store)(
+  function mount({ currentUser }) {
+    render(
       <MemoryRouter>
-        <MessageIndex loggedUser={loggedUser} />
-      </MemoryRouter>)
+        <MessageIndex currentUser={currentUser} />
+      </MemoryRouter>
+    )
   }
 
   it('renders the messages when the user clicks on the search button', async () => {
@@ -30,7 +27,7 @@ describe('<MessageIndex />', () => {
         status: 201,
         data: [
           {
-            _id: '1',
+            id: '1',
             contact: {
               name: 'Contact',
             },
@@ -43,7 +40,7 @@ describe('<MessageIndex />', () => {
       }
     )
 
-    mount()
+    mount({ currentUser })
 
     fireEvent.click(screen.getByText('Pesquisar'))
 
@@ -69,7 +66,7 @@ describe('<MessageIndex />', () => {
     it('paginates the messages', async () => {
       getMessages.mockResolvedValue({ status: 201, data: messageFactory.buildList(30) })
 
-      mount()
+      mount({ currentUser })
 
       fireEvent.click(screen.getByText('Pesquisar'))
       expect(await screen.findByText('Carregar mais')).toBeInTheDocument()
@@ -85,9 +82,9 @@ describe('<MessageIndex />', () => {
 
   describe('startDate filter', () => {
     it('changes the filters to get the messages', async () => {
-      getMessages.mockResolvedValue({ status: 201, data: [{ _id: '1', contact: { name: 'Contact' } }] })
+      getMessages.mockResolvedValue({ status: 201, data: [{ id: '1', contact: { name: 'Contact' } }] })
 
-      mount()
+      mount({ currentUser })
 
       fireEvent.change(screen.getByLabelText('Data inicial'), { target: { value: '2012-12-12T10:25:12' } })
 
@@ -102,9 +99,9 @@ describe('<MessageIndex />', () => {
 
   describe('endDate filter', () => {
     it('changes the filters to get the messages', async () => {
-      getMessages.mockResolvedValue({ status: 201, data: [{ _id: '1', contact: { name: 'Contact' } }] })
+      getMessages.mockResolvedValue({ status: 201, data: [{ id: '1', contact: { name: 'Contact' } }] })
 
-      mount()
+      mount({ currentUser })
 
       fireEvent.change(screen.getByLabelText('Data final'), { target: { value: '2012-12-12T18:14:37' } })
 
@@ -119,9 +116,9 @@ describe('<MessageIndex />', () => {
 
   describe('kind filter', () => {
     it('changes the filters to get the messages', async () => {
-      getMessages.mockResolvedValue({ status: 201, data: [{ _id: '1', contact: { name: 'Contact' } }] })
+      getMessages.mockResolvedValue({ status: 201, data: [{ id: '1', contact: { name: 'Contact' } }] })
 
-      mount()
+      mount({ currentUser })
 
       fireEvent.change(screen.getByLabelText('Tipo'), { target: { value: 'text' } })
 
@@ -135,9 +132,9 @@ describe('<MessageIndex />', () => {
 
   describe('destination filter', () => {
     it('changes the filters to get the messages', async () => {
-      getMessages.mockResolvedValue({ status: 201, data: [{ _id: '1', contact: { name: 'Contact' } }] })
+      getMessages.mockResolvedValue({ status: 201, data: [{ id: '1', contact: { name: 'Contact' } }] })
 
-      mount()
+      mount({ currentUser })
 
       fireEvent.change(screen.getByLabelText('Destino'), { target: { value: 'to-chat' } })
 
@@ -151,30 +148,29 @@ describe('<MessageIndex />', () => {
 
   describe('licensee select filter', () => {
     it('does not show the licensee if logged user is not super', async () => {
-      const loggedUser = {
-        isSuper: false
-      }
+      const currentUser = { isSuper: false }
 
-      const store = createStore()
-      mountWithRedux(store)(
-        <MemoryRouter>
-          <MessageIndex loggedUser={loggedUser} />
-        </MemoryRouter>)
+      mount({ currentUser })
 
-      expect(screen.getByLabelText('Contato')).toBeInTheDocument()
+      await screen.findByLabelText('Contato')
+
       expect(screen.queryByLabelText('Licenciado')).not.toBeInTheDocument()
     })
 
     it('changes the filters to get the messages', async () => {
       getLicensees.mockResolvedValueOnce({ status: 201, data: [{ _id: '12345678', name: 'Alcateia' }] })
 
-      getMessages.mockResolvedValueOnce({ status: 201, data: [{ _id: '1', contact: { name: 'Contact' } }] })
+      getMessages.mockResolvedValueOnce({ status: 201, data: [{ id: '1', contact: { name: 'Contact' } }] })
 
-      mount()
+      mount({ currentUser })
+
+      await screen.findByLabelText('Contato')
 
       fireEvent.change(screen.getByLabelText('Licenciado'), { target: { value: 'alca' } })
 
       fireEvent.click(await screen.findByText('Alcateia'))
+
+      await screen.findByText('Alcateia')
 
       fireEvent.click(screen.getByText('Pesquisar'))
 
@@ -188,9 +184,9 @@ describe('<MessageIndex />', () => {
     it('changes the filters to get the messages', async () => {
       getContacts.mockResolvedValueOnce({ status: 201, data: [{ _id: '9876543', name: 'John Doe', number: '12345' }] })
 
-      getMessages.mockResolvedValueOnce({ status: 201, data: [{ _id: '1', contact: { name: 'John Doe' } }] })
+      getMessages.mockResolvedValueOnce({ status: 201, data: [{ id: '2', contact: { name: 'John Doe' } }] })
 
-      mount()
+      mount({ currentUser })
 
       fireEvent.change(screen.getByLabelText('Contato'), { target: { value: 'john' } })
 
@@ -211,7 +207,7 @@ describe('<MessageIndex />', () => {
           status: 201,
           data: [
             {
-              _id: '1',
+              id: '1',
               contact: {
                 name: 'Contact',
               },
@@ -221,7 +217,7 @@ describe('<MessageIndex />', () => {
         }
       )
 
-      mount()
+      mount({ currentUser })
 
       fireEvent.click(screen.getByText('Pesquisar'))
 
@@ -236,7 +232,7 @@ describe('<MessageIndex />', () => {
           status: 201,
           data: [
             {
-              _id: '1',
+              id: '1',
               contact: {
                 name: 'Contact',
               },
@@ -245,7 +241,7 @@ describe('<MessageIndex />', () => {
         }
       )
 
-      mount()
+      mount({ currentUser })
 
       fireEvent.click(screen.getByText('Pesquisar'))
 
@@ -263,7 +259,7 @@ describe('<MessageIndex />', () => {
           status: 201,
           data: [
             {
-              _id: '1',
+              id: '1',
               contact: {
                 name: 'Contact',
               },
@@ -274,7 +270,7 @@ describe('<MessageIndex />', () => {
         }
       )
 
-      mount()
+      mount({ currentUser })
 
       fireEvent.click(screen.getByText('Pesquisar'))
 
@@ -289,7 +285,7 @@ describe('<MessageIndex />', () => {
           status: 201,
           data: [
             {
-              _id: '1',
+              id: '1',
               contact: {
                 name: 'Contact',
               },
@@ -298,7 +294,7 @@ describe('<MessageIndex />', () => {
         }
       )
 
-      mount()
+      mount({ currentUser })
 
       fireEvent.click(screen.getByText('Pesquisar'))
 
@@ -315,7 +311,7 @@ describe('<MessageIndex />', () => {
           status: 201,
           data: [
             {
-              _id: '1',
+              id: '1',
               contact: {
                 name: 'Contact',
               },
@@ -326,7 +322,7 @@ describe('<MessageIndex />', () => {
         }
       )
 
-      mount()
+      mount({ currentUser })
 
       fireEvent.click(screen.getByText('Pesquisar'))
 
@@ -345,7 +341,7 @@ describe('<MessageIndex />', () => {
           status: 201,
           data: [
             {
-              _id: '1',
+              id: '1',
               contact: {
                 name: 'Contact',
               },
@@ -359,7 +355,7 @@ describe('<MessageIndex />', () => {
         }
       )
 
-      mount()
+      mount({ currentUser })
 
       fireEvent.click(screen.getByText('Pesquisar'))
 
@@ -378,7 +374,7 @@ describe('<MessageIndex />', () => {
           status: 201,
           data: [
             {
-              _id: '1',
+              id: '1',
               contact: {
                 name: 'Contact',
               },
@@ -392,7 +388,7 @@ describe('<MessageIndex />', () => {
         }
       )
 
-      mount()
+      mount({ currentUser })
 
       fireEvent.click(screen.getByText('Pesquisar'))
 
