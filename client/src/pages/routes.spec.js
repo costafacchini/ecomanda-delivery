@@ -1,25 +1,17 @@
-import { screen } from '@testing-library/react'
+import { screen, render } from '@testing-library/react'
 import RootRoutes from '../pages/routes'
-import mountWithRedux, { createStore } from '../.jest/redux-testing'
 import * as auth from '../services/auth'
 import { AppContextProvider } from '../contexts/App'
 
 describe('<RootRoutes>', () => {
-  let store
+  beforeEach(() => { jest.clearAllMocks() })
 
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
-
-  afterEach(() => {
-    window.location.hash = ''
-  })
+  afterEach(() => { window.location.hash = '' })
 
   it('renders the login page if user is not logged in', () => {
     const isAuthenticatedSpy = jest.spyOn(auth, 'isAuthenticated').mockImplementation(() => false)
 
-    store = createStore()
-    mountWithRedux(store)(
+    render(
       <AppContextProvider>
         <RootRoutes />
       </AppContextProvider>
@@ -37,15 +29,16 @@ describe('<RootRoutes>', () => {
     expect(isAuthenticatedSpy).toHaveBeenCalled()
   })
 
-  it('renders the dashboard if user is logged in', () => {
+  it('renders the dashboard if user is logged in', async () => {
     const isAuthenticatedSpy = jest.spyOn(auth, 'isAuthenticated').mockImplementation(() => true)
 
-    store = createStore()
-    mountWithRedux(store)(
+    render(
       <AppContextProvider>
         <RootRoutes />
       </AppContextProvider>
     )
+
+    await screen.findByText('Contatos')
 
     const title = screen.getByRole('heading', { name: 'Dashboard' })
     const navbar = screen.getByRole('navigation')

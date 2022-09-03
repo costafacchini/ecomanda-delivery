@@ -1,12 +1,9 @@
 import { createContext, useCallback, useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { loadLoggedUser } from '../../pages/SignIn/slice'
 
 const AppContext = createContext(null)
 
 const AppContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState()
-  const dispatch = useDispatch()
 
   return (
     <AppContext.Provider
@@ -15,9 +12,8 @@ const AppContextProvider = ({ children }) => {
         setCurrentUser: useCallback(
           (user) => {
             setCurrentUser(user)
-            dispatch(loadLoggedUser(user))
           },
-          [dispatch]
+          []
         ),
       }}
     >

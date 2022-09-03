@@ -1,7 +1,7 @@
 import React from 'react'
 import { logout } from '../../services/auth'
 
-export default function Navbar({ loggedUser }) {
+export default function Navbar({ currentUser }) {
   return (
       <nav className='navbar navbar-expand-lg navbar-dark bg-primary'>
         <div className='container-fluid'>
@@ -13,12 +13,12 @@ export default function Navbar({ loggedUser }) {
               <li className='nav-item'>
                 <a className='nav-link active' aria-current='page' href='/#/'>Dashboard</a>
               </li>
-              {loggedUser && loggedUser.isAdmin && (
+              {currentUser && currentUser.isAdmin && (
                 <li className='nav-item'>
                   <a className='nav-link' href='/#/licensees'>Licenciados</a>
                 </li>
               )}
-              {loggedUser && loggedUser.isAdmin && (
+              {currentUser && currentUser.isAdmin && (
                 <li className='nav-item'>
                   <a className='nav-link' href='/#/users'>Usuários</a>
                 </li>
@@ -35,7 +35,7 @@ export default function Navbar({ loggedUser }) {
               <li className='nav-item'>
                 <a className='nav-link' href='/#/messages'>Mensagens</a>
               </li>
-              {loggedUser && loggedUser.isAdmin && loggedUser.isSuper && (
+              {currentUser && currentUser.isAdmin && currentUser.isSuper && (
                 <li className='nav-item dropdown'>
                   <a className='nav-link dropdown-toggle' id='reports-menu' role='button' data-bs-toggle='dropdown'>
                     Relatórios

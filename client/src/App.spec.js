@@ -1,12 +1,10 @@
-import { screen } from '@testing-library/react'
+import { screen, render } from '@testing-library/react'
 import App from './App'
-import mountWithRedux, { createStore } from './.jest/redux-testing'
 import { AppContextProvider } from './contexts/App'
 
 describe('<App>', () => {
   test('renders the login page', () => {
-    const store = createStore()
-    mountWithRedux(store)(
+    render(
       <AppContextProvider>
         <App />
         </AppContextProvider>

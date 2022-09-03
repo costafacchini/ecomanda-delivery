@@ -1,8 +1,7 @@
-import { fireEvent, screen } from '@testing-library/react'
+import { fireEvent, screen, render } from '@testing-library/react'
 import { useContext, useEffect } from 'react'
 import { AppContext, AppContextProvider } from '.'
 import { userFactory } from '../../factories/user'
-import mountWithRedux, { createStore } from '../../.jest/redux-testing'
 
 describe('<AppContextProvider />', () => {
   describe('#setCurrentUser', () => {
@@ -23,11 +22,11 @@ describe('<AppContextProvider />', () => {
         return <button onClick={() => setCurrentUser(user2)}>Action</button>
       }
 
-      const store = createStore()
-      mountWithRedux(store)(
+      render(
         <AppContextProvider>
           <Sandbox />
-        </AppContextProvider>)
+        </AppContextProvider>
+      )
 
       expect(callback).toHaveBeenNthCalledWith(1, undefined)
       expect(callback).toHaveBeenNthCalledWith(2, user)
