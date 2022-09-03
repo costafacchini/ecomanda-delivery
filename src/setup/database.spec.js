@@ -34,6 +34,6 @@ describe('#createDefaultUser', () => {
       throw new Error('Erro')
     })
 
-    await expect(createDefaultUser()).rejects.toThrowError('Não foi possível criar o usuário padrão. Erro: Error: Erro')
+    await expect(createDefaultUser()).rejects.toThrow('Não foi possível criar o usuário padrão. Erro: Error: Erro')
   })
 })
