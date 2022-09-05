@@ -1,14 +1,37 @@
-// import SelectLicenseesWithFilter from '../../components/SelectLicenseesWithFilter'
+import { Box, Container, Grid } from '@mui/material'
+import { DashboardLayout } from './components/dashboard-layout'
+import { MonthMessages } from './components/month-messages'
 
 export default function Dashboard() {
-  // const [valor, setValor] = useState('olá')
-  // const marcela = { id: 4, name: 'Marcela' }
-
   return (
     <>
-      <h1>Dashboard</h1>
-      {/* <p>{valor}</p>
-      <SelectLicenseesWithFilter isDisabled={false} selectedItem={marcela} onChange={(e) => setValor(JSON.stringify(e))} /> */}
+      <h1>Dashboard 1</h1>
+      <Box
+        component='main'
+        sx={{
+          flexGrow: 1,
+          py: 8,
+        }}
+      >
+        <DashboardLayout>
+          <Container maxWidth={false}>
+            <Grid container spacing={3}>
+              <Grid item lg={3} sm={6} xl={3} xs={12}>
+                <MonthMessages/>
+              </Grid>
+              <Grid item xl={3} lg={3} sm={6} xs={12}>
+
+              </Grid>
+              <Grid item xl={3} lg={3} sm={6} xs={12}>
+
+              </Grid>
+              <Grid item xl={3} lg={3} sm={6} xs={12}>
+
+              </Grid>
+            </Grid>
+          </Container>
+        </DashboardLayout>
+      </Box>
     </>
   )
 }
