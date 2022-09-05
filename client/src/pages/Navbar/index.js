@@ -14,23 +14,40 @@ export default function Navbar({ currentUser }) {
                 <a className='nav-link active' aria-current='page' href='/#/'>Dashboard</a>
               </li>
               {currentUser && currentUser.isAdmin && (
-                <li className='nav-item'>
-                  <a className='nav-link' href='/#/licensees'>Licenciados</a>
+                <li className='nav-item dropdown'>
+                  <a className='nav-link dropdown-toggle' role='button' data-bs-toggle='dropdown' id='admin-dropdown'>
+                    Admin
+                  </a>
+
+                  <div className='dropdown-menu' aria-labelledby='admin-dropdown'>
+                    <a href='/#/licensees' className='dropdown-item'>
+                      Licenciados
+                    </a>
+
+                    <a href='/#/users' className='dropdown-item'>
+                      Usuários
+                    </a>
+                  </div>
                 </li>
               )}
-              {currentUser && currentUser.isAdmin && (
-                <li className='nav-item'>
-                  <a className='nav-link' href='/#/users'>Usuários</a>
-                </li>
-              )}
-              <li className='nav-item'>
-                <a className='nav-link' href='/#/contacts'>Contatos</a>
-              </li>
-              <li className='nav-item'>
-                <a className='nav-link' href='/#/triggers'>Gatilhos</a>
-              </li>
-              <li className='nav-item'>
-                <a className='nav-link' href='/#/templates'>Templates</a>
+              <li className='nav-item dropdown'>
+                <a className='nav-link dropdown-toggle' role='button' data-bs-toggle='dropdown' id='cadastros-dropdown'>
+                  Cadastros
+                </a>
+
+                <div className='dropdown-menu' aria-labelledby='cadastros-dropdown'>
+                  <a className='dropdown-item' href='/#/contacts'>
+                    Contatos
+                  </a>
+
+                  <a className='dropdown-item' href='/#/triggers'>
+                    Gatilhos
+                  </a>
+
+                  <a className='dropdown-item' href='/#/templates'>
+                    Templates
+                  </a>
+                </div>
               </li>
               <li className='nav-item'>
                 <a className='nav-link' href='/#/messages'>Mensagens</a>
