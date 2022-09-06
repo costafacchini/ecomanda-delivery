@@ -31,6 +31,13 @@ services:
     volumes:
       - redis_data:/var/lib/redis/data
 
+  rabbitmq:
+    restart: always
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
 volumes:
   mongo_data:
   redis_data:
