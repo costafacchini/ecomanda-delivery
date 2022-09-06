@@ -13,6 +13,8 @@ function publishMessage(payload) {
 
       channel.sendToQueue('main', Buffer.from(payload))
     })
+
+    connection.close()
   })
 }
 
