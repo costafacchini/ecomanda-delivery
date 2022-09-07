@@ -1,10 +1,11 @@
 const queueServer = require('@config/queue')
+const { publishMessage } = require('@config/rabbitmq')
 
 class BackupsController {
-  async schedule(_, res) {
+  schedule(_, res) {
     console.info('Agendando backup')
 
-    await queueServer.addJob('backup', {})
+    publishMessage({ key: 'backup', body: {} })
 
     res.status(200).send({ body: 'Backup agendado' })
   }

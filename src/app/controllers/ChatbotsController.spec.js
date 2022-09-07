@@ -141,7 +141,7 @@ describe('chatbots controller', () => {
             expect(response.body).toEqual({
               body: 'Solicitação para resetar os chatbots abandonados agendado',
             })
-            expect(publishMessage).toHaveBeenCalledWith('')
+            expect(publishMessage).toHaveBeenCalledWith({ key: 'reset-chatbots', body: {} })
           })
       })
     })

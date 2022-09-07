@@ -26,7 +26,7 @@ class ChatbotsController {
   reset(_, res) {
     console.info('Agendando para resetar chatbots abandonados')
 
-    publishMessage('')
+    publishMessage({ key: 'reset-chatbots', body: {} })
 
     res.status(200).send({ body: 'Solicitação para resetar os chatbots abandonados agendado' })
   }
