@@ -4,6 +4,9 @@ const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
 const queueServer = require('@config/queue')
 const { licensee: licenseeFactory } = require('@factories/licensee')
+const { publishMessage } = require('@config/rabbitmq')
+
+jest.mock('@config/rabbitmq')
 
 describe('backups controller', () => {
   let apiToken, licensee
@@ -50,8 +53,7 @@ describe('backups controller', () => {
             expect(response.body).toEqual({
               body: 'Backup agendado',
             })
-            expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('backup', {})
+            expect(publishMessage).toHaveBeenCalledWith({ key: 'backup', body: {} })
           })
       })
     })

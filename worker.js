@@ -7,6 +7,8 @@ const queueServer = require('@config/queue')
 const { Worker } = require('bullmq')
 const connect = require('./src/config/database')
 connect()
+const { consumeChannel } = require('@config/rabbitmq')
+consumeChannel()
 
 queueServer.queues.forEach((queue) => {
   const worker = new Worker(

@@ -1,5 +1,6 @@
 const Body = require('@models/Body')
 const queueServer = require('@config/queue')
+const { publishMessage } = require('@config/rabbitmq')
 
 class ChatbotsController {
   async message(req, res) {
@@ -22,10 +23,10 @@ class ChatbotsController {
     res.status(200).send({ body: 'Solicitação de transferência do chatbot para a plataforma de chat agendado' })
   }
 
-  async reset(_, res) {
+  reset(_, res) {
     console.info('Agendando para resetar chatbots abandonados')
 
-    await queueServer.addJob('reset-chatbots', {})
+    publishMessage({ key: 'reset-chatbots', body: {} })
 
     res.status(200).send({ body: 'Solicitação para resetar os chatbots abandonados agendado' })
   }
