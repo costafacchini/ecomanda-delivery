@@ -5,6 +5,9 @@ const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
 const queueServer = require('@config/queue')
 const { licensee: licenseeFactory } = require('@factories/licensee')
+const { publishMessage } = require('@config/rabbitmq')
+
+jest.mock('@config/rabbitmq')
 
 describe('chatbots controller', () => {
   let apiToken
@@ -138,8 +141,7 @@ describe('chatbots controller', () => {
             expect(response.body).toEqual({
               body: 'Solicitação para resetar os chatbots abandonados agendado',
             })
-            expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('reset-chatbots', {})
+            expect(publishMessage).toHaveBeenCalledWith('')
           })
       })
     })

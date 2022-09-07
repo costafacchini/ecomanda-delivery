@@ -9,9 +9,9 @@ function publishMessage(payload) {
     connection.createChannel(function (errorOnCreateChannel, channel) {
       if (errorOnCreateChannel) throw errorOnCreateChannel
 
-      channel.assertQueue('main', { durable: false })
+      channel.assertQueue('main', { durable: true })
 
-      channel.sendToQueue('main', Buffer.from(payload))
+      channel.sendToQueue('main', Buffer.from(payload), { persistent: true })
     })
 
     setTimeout(function () {
@@ -27,14 +27,20 @@ function consumeChannel() {
     connection.createChannel(function (errorOnCreateChannel, channel) {
       if (errorOnCreateChannel) throw errorOnCreateChannel
 
-      channel.assertQueue('main', { durable: false })
+      channel.assertQueue('main', { durable: true })
+
+      channel.prefetch(1)
 
       channel.consume(
         'main',
-        async function (_) {
-          await resetChatbots()
+        async function (payload) {
+          try {
+            await resetChatbots()
+          } finally {
+            channel.ack(payload)
+          }
         },
-        { noAck: true }
+        { noAck: false }
       )
     })
   })
