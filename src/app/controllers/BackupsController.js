@@ -1,4 +1,3 @@
-const queueServer = require('@config/queue')
 const { publishMessage } = require('@config/rabbitmq')
 
 class BackupsController {
@@ -13,7 +12,7 @@ class BackupsController {
   async clear(_, res) {
     console.info('Agendar limpeza de backups antigos')
 
-    await queueServer.addJob('clear-backups', {})
+    publishMessage({ key: 'clear-backups', body: {} })
 
     res.status(200).send({ body: 'Limpeza de backups antigos agendados' })
   }

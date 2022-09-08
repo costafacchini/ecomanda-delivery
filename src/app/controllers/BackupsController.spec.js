@@ -70,8 +70,7 @@ describe('backups controller', () => {
             expect(response.body).toEqual({
               body: 'Limpeza de backups antigos agendados',
             })
-            expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('clear-backups', {})
+            expect(publishMessage).toHaveBeenCalledWith({ key: 'clear-backups', body: {} })
           })
       })
     })
