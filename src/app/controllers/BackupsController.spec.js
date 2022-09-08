@@ -2,7 +2,6 @@ const Licensee = require('@models/Licensee')
 const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
-const queueServer = require('@config/queue')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { publishMessage } = require('@config/rabbitmq')
 
@@ -11,7 +10,6 @@ jest.mock('@config/rabbitmq')
 describe('backups controller', () => {
   let apiToken, licensee
 
-  const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
   jest.spyOn(global.console, 'info').mockImplementation()
 
   beforeAll(async () => {
@@ -70,8 +68,7 @@ describe('backups controller', () => {
             expect(response.body).toEqual({
               body: 'Limpeza de backups antigos agendados',
             })
-            expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('clear-backups', {})
+            expect(publishMessage).toHaveBeenCalledWith({ key: 'clear-backups', body: {} })
           })
       })
     })
