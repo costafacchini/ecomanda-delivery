@@ -24,7 +24,6 @@ const jest = {
     '!<rootDir>/src/app/models/index.js',
     '!<rootDir>/src/app/plugins/storage/S3.js',
     '!<rootDir>/src/app/jobs/*.js',
-    '!<rootDir>/src/app/plugins/importers/ecomanda_old/index.js',
     '!<rootDir>/src/app/services/Backup.js',
     '!<rootDir>/src/app/services/ClearBackups.js',
   ],
