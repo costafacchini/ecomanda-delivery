@@ -9,7 +9,7 @@ class BackupsController {
     res.status(200).send({ body: 'Backup agendado' })
   }
 
-  async clear(_, res) {
+  clear(_, res) {
     console.info('Agendar limpeza de backups antigos')
 
     publishMessage({ key: 'clear-backups', body: {} })
