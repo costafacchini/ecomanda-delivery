@@ -26,8 +26,6 @@ queueServer.queues.forEach((queue) => {
     { connection: redisConnection }
   )
 
-  redisConnection.setMaxListeners(redisConnection.getMaxListeners() + 1)
-
   worker.on('failed', (job, failedReason) => {
     console.error(`Fail process job ${JSON.stringify(job)} `, failedReason)
   })

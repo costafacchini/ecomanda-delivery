@@ -38,7 +38,8 @@ function consumeChannel() {
             const payload = JSON.parse(payloadBuffer.content.toString())
             const job = Object.values(jobs).find((job) => job.key === payload.key)
 
-            await job.handle({ body: payload.body })
+            const result = await job.handle({ body: payload.body })
+            console.log(`Resultado do processamento do job: ${result}`)
           } finally {
             channel.ack(payloadBuffer)
           }
