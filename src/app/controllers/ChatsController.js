@@ -1,5 +1,6 @@
 const Body = require('@models/Body')
 const queueServer = require('@config/queue')
+const logger = require('@config/logger')
 
 class ChatsController {
   async message(req, res) {
@@ -7,7 +8,7 @@ class ChatsController {
     // Remove crmData because of Rocketchat send a higher history inside the body
     delete body['crmData']
 
-    console.info(`Mensagem chegando do plugin de chat: ${JSON.stringify(body)}`)
+    logger.info(`Mensagem chegando do plugin de chat: ${JSON.stringify(body)}`)
     const bodySaved = await Body.create({ content: body, licensee: req.licensee._id })
 
     await queueServer.addJob('chat-message', { bodyId: bodySaved._id })

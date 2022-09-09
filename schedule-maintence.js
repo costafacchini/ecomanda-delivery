@@ -6,7 +6,8 @@ const moment = require('moment')
 const request = require('./src/app/services/request')
 const Body = require('@models/Body')
 const Room = require('@models/Room')
-const connect = require('./src/config/database')
+const logger = require('@config/logger')
+const connect = require('@config/database')
 connect()
 
 async function schedule() {
@@ -18,12 +19,12 @@ async function schedule() {
     const end = moment(yesterday).endOf('day')
 
     let res = await Body.deleteMany({ createdAt: { $gte: start, $lt: end } })
-    console.log(`Bodies concluded destroyed: ${res.deletedCount}`)
+    logger.info(`Bodies concluded destroyed: ${res.deletedCount}`)
 
     res = await Room.deleteMany({ closed: true })
-    console.log(`Rooms concluded destroyed: ${res.deletedCount}`)
+    logger.info(`Rooms concluded destroyed: ${res.deletedCount}`)
   } catch (err) {
-    console.log(err)
+    logger.error(err)
   }
 
   // This command is necessary to wake up the heroku application

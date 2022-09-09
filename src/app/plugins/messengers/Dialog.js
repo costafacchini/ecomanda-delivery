@@ -7,6 +7,7 @@ const files = require('@helpers/Files')
 const cartFactory = require('../../plugins/carts/factory')
 const { parseText } = require('@helpers/ParseTriggerText')
 const MessengersBase = require('./Base')
+const logger = require('@config/logger')
 
 const getWaIdContact = async (number, url, token) => {
   const headers = { 'D360-API-KEY': token }
@@ -242,7 +243,7 @@ class Dialog extends MessengersBase {
       if (waContact.valid) {
         waId = waContact.waId
       } else {
-        console.error(
+        logger.error(
           `A mensagem não foi enviada para a Dialog pois o contato não é válido ${JSON.stringify(waContact.data)}`
         )
         return
@@ -361,11 +362,11 @@ class Dialog extends MessengersBase {
       messageToSend.messageWaId = messageResponse.data.messages[0].id
       messageToSend.sended = true
       await messageToSend.save()
-      console.info(`Mensagem ${messageId} enviada para Dialog360 com sucesso! ${JSON.stringify(messageResponse.data)}`)
+      logger.info(`Mensagem ${messageId} enviada para Dialog360 com sucesso! ${JSON.stringify(messageResponse.data)}`)
     } else {
       messageToSend.error = JSON.stringify(messageResponse.data)
       await messageToSend.save()
-      console.error(`Mensagem ${messageId} não enviada para Dialog360. ${JSON.stringify(messageResponse.data)}`)
+      logger.error(`Mensagem ${messageId} não enviada para Dialog360. ${JSON.stringify(messageResponse.data)}`)
     }
   }
 

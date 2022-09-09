@@ -5,7 +5,8 @@ require('@models/index')
 const { redisConnection } = require('@config/redis')
 const queueServer = require('@config/queue')
 const { Worker } = require('bullmq')
-const connect = require('./src/config/database')
+const logger = require('@config/logger')
+const connect = require('@config/database')
 connect()
 const { consumeChannel } = require('@config/rabbitmq')
 consumeChannel()
@@ -29,6 +30,6 @@ queueServer.queues.forEach((queue) => {
   redisConnection.setMaxListeners(redisConnection.getMaxListeners() + 1)
 
   worker.on('failed', (job, failedReason) => {
-    console.error(`Fail process job ${JSON.stringify(job)} `, failedReason)
+    logger.error(`Fail process job ${JSON.stringify(job)} `, failedReason)
   })
 })

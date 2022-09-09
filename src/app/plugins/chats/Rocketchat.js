@@ -4,6 +4,7 @@ const Contact = require('@models/Contact')
 const Room = require('@models/Room')
 const request = require('../../services/request')
 const ChatsBase = require('./Base')
+const logger = require('@config/logger')
 
 const createVisitor = async (contact, token, url) => {
   const body = {
@@ -17,7 +18,7 @@ const createVisitor = async (contact, token, url) => {
   const response = await request.post(`${url}/api/v1/livechat/visitor`, { body })
 
   if (response.data.success !== true) {
-    console.error(`Não foi possível criar o visitante na Rocketchat ${JSON.stringify(response.data)}`)
+    logger.error(`Não foi possível criar o visitante na Rocketchat ${JSON.stringify(response.data)}`)
   }
 
   return response.data.success === true
@@ -27,7 +28,7 @@ const createRoom = async (contact, token, url) => {
   const response = await request.get(`${url}/api/v1/livechat/room?token=${token}`)
 
   if (response.data.success !== true) {
-    console.error(`Não foi possível criar a sala na Rocketchat ${JSON.stringify(response.data)}`)
+    logger.error(`Não foi possível criar a sala na Rocketchat ${JSON.stringify(response.data)}`)
     return
   }
 
@@ -160,7 +161,7 @@ class Rocketchat extends ChatsBase {
       messageToSend.sended = true
       await messageToSend.save()
 
-      console.info(`Mensagem ${messageToSend._id} enviada para Rocketchat com sucesso!`)
+      logger.info(`Mensagem ${messageToSend._id} enviada para Rocketchat com sucesso!`)
     } else {
       messageToSend.error = messageToSend.error
         ? `${messageToSend.error} | ${JSON.stringify(response.data)}`
@@ -175,7 +176,7 @@ class Rocketchat extends ChatsBase {
       if (messageToSend.error.includes('room-closed')) {
         await this.sendMessage(messageToSend._id, url)
       } else {
-        console.error(`Mensagem ${messageToSend._id} não enviada para a Rocketchat ${JSON.stringify(response.data)}`)
+        logger.error(`Mensagem ${messageToSend._id} não enviada para a Rocketchat ${JSON.stringify(response.data)}`)
       }
     }
 

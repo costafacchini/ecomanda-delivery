@@ -1,9 +1,10 @@
 const Body = require('@models/Body')
 const queueServer = require('@config/queue')
+const logger = require('@config/logger')
 
 class MessengersController {
   async message(req, res) {
-    console.info(`Mensagem chegando do plugin de whatsapp: ${JSON.stringify(req.body)}`)
+    logger.info(`Mensagem chegando do plugin de whatsapp: ${JSON.stringify(req.body)}`)
     const body = new Body({ content: req.body, licensee: req.licensee._id })
     await body.save()
 

@@ -3,7 +3,7 @@ require('dotenv').config()
 if (process.env.NODE_ENV === 'production') require('newrelic')
 
 const { server } = require('./src/config/http')
-const debug = require('debug')('ecomanda-delivery:server')
+const logger = require('./src/config/logger')
 
 require('./src/app/websockets/index')
 
@@ -23,11 +23,11 @@ function onError(error) {
 
   switch (error.code) {
     case 'EACCES':
-      console.error(bind + ' requires elevated privileges')
+      logger.error(bind + ' requires elevated privileges')
       process.exit(1)
       break
     case 'EADDRINUSE':
-      console.error(bind + ' is already in use')
+      logger.error(bind + ' is already in use')
       process.exit(1)
       break
     default:
@@ -38,5 +38,5 @@ function onError(error) {
 function onListening() {
   const addr = server.address()
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'PORT ' + addr.PORT
-  debug('Listening on ' + bind)
+  logger.info('Listening on ' + bind)
 }

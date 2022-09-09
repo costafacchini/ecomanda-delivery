@@ -1,5 +1,6 @@
 const aws = require('aws-sdk')
 const mime = require('mime-types')
+const logger = require('@config/logger')
 
 const getBucketPath = (number) => {
   const date = new Date()
@@ -63,7 +64,7 @@ class S3 {
       if (err) {
         throw err
       }
-      console.info(`Arquivo enviado para S3 com sucesso. ${data.Location}`)
+      logger.info(`Arquivo enviado para S3 com sucesso. ${data.Location}`)
     })
   }
 }

@@ -6,6 +6,7 @@ const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const request = require('../../services/request')
 const ChatsBase = require('./Base')
+const logger = require('@config/logger')
 
 class Jivochat extends ChatsBase {
   constructor(licensee) {
@@ -48,7 +49,7 @@ class Jivochat extends ChatsBase {
     messageToSend.kind = Jivochat.kindToMessageKind(message.type)
 
     if (!messageToSend.kind) {
-      console.info(`Tipo de mensagem retornado pela Jivochat não reconhecido: ${message.type}`)
+      logger.info(`Tipo de mensagem retornado pela Jivochat não reconhecido: ${message.type}`)
       this.messageParsed = null
       return []
     }
@@ -145,11 +146,11 @@ class Jivochat extends ChatsBase {
     if (response.status === 200) {
       messageToSend.sended = true
       await messageToSend.save()
-      console.info(`Mensagem ${messageToSend._id} enviada para Jivochat com sucesso!`)
+      logger.info(`Mensagem ${messageToSend._id} enviada para Jivochat com sucesso!`)
     } else {
       messageToSend.error = `mensagem: ${JSON.stringify(response.data)}`
       await messageToSend.save()
-      console.error(
+      logger.error(
         `Mensagem ${messageToSend._id} não enviada para Jivochat.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}`

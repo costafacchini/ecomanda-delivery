@@ -5,6 +5,7 @@ const spawn = require('child_process').spawn
 const archiver = require('archiver')
 const mime = require('mime-types')
 const aws = require('aws-sdk')
+const logger = require('@config/logger')
 
 async function backup() {
   const mongoURI = process.env.MONGODB_URI
@@ -21,9 +22,9 @@ async function backup() {
 
     await upload(archive, filename)
 
-    console.info('Backup efetuado com sucesso!')
+    logger.info('Backup efetuado com sucesso!')
   } catch (err) {
-    console.info(`Erro ao tentar efetuar o backup ${err.toString()}`)
+    logger.info(`Erro ao tentar efetuar o backup ${err.toString()}`)
   }
 }
 
@@ -40,7 +41,7 @@ function doBackup(mongoURI) {
 
     mongodump.stdout.pipe(fs.createWriteStream(output))
     mongodump.stderr.on('data', function (data) {
-      console.log(data.toString('ascii'))
+      logger.info(data.toString('ascii'))
     })
     mongodump.on('error', reject)
 

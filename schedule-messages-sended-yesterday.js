@@ -4,7 +4,8 @@ require('@models/index')
 const MessagesSendedYesterday = require('@reports/MessagesSendedYesterday')
 
 const request = require('./src/app/services/request')
-const connect = require('./src/config/database')
+const logger = require('@config/logger')
+const connect = require('@config/database')
 connect()
 
 async function schedule() {
@@ -13,7 +14,7 @@ async function schedule() {
   const reportData = await messagesSendedYesterday.report()
 
   for (const data of reportData) {
-    console.log(
+    logger.info(
       `Licenciado - ${data.licensee.name}\nMensagens disparadas com sucesso: ${data.success.count}\nMensagens não disparadas: ${data.error.count}\n\n`
     )
   }
