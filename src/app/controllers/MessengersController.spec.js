@@ -3,12 +3,13 @@ const Body = require('@models/Body')
 const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
-const queueServer = require('@config/queue')
+const { publishMessage } = require('@config/rabbitmq')
 const { licensee: licenseeFactory } = require('@factories/licensee')
+
+jest.mock('@config/rabbitmq')
 
 describe('messengers controller', () => {
   let apiToken
-  const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
   jest.spyOn(global.console, 'info').mockImplementation()
 
   beforeAll(async () => {
@@ -61,8 +62,7 @@ describe('messengers controller', () => {
             expect(response.body).toEqual({
               body: 'Solicitação de mensagem para a plataforma de messenger agendado',
             })
-            expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('messenger-message', { bodyId: body._id })
+            expect(publishMessage).toHaveBeenCalledWith({ key: 'messenger-message', body: { bodyId: body._id } })
           })
       })
     })

@@ -1,22 +1,15 @@
 const { scheduleSendMessageToMessenger } = require('@repositories/messenger')
-const queueServer = require('@config/queue')
+const { publishMessage } = require('@config/rabbitmq')
+
+jest.mock('@config/rabbitmq')
 
 describe('#scheduleSendMessageToMessenger', () => {
-  const queueSendMessageToMessenger = queueServer.queues.find((queue) => queue.name === 'send-message-to-messenger')
+  it('schedules a job to send message to messenger', () => {
+    scheduleSendMessageToMessenger({ messageId: 'messageId', url: 'url', token: 'token' })
 
-  beforeEach(async () => {
-    await queueSendMessageToMessenger.bull.obliterate({ force: true })
-  })
-
-  afterEach(async () => {
-    await queueSendMessageToMessenger.bull.obliterate({ force: true })
-  })
-
-  it('schedules a job to send message to messenger', async () => {
-    await scheduleSendMessageToMessenger({ messageId: 'messageId', url: 'url', token: 'token' })
-
-    const counts = await queueSendMessageToMessenger.bull.getJobCounts('wait')
-
-    expect(counts.wait).toEqual(1)
+    expect(publishMessage).toHaveBeenCalledWith({
+      key: 'send-message-to-messenger',
+      body: { messageId: 'messageId', url: 'url', token: 'token' },
+    })
   })
 })

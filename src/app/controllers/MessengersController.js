@@ -1,5 +1,5 @@
 const Body = require('@models/Body')
-const queueServer = require('@config/queue')
+const { publishMessage } = require('@config/rabbitmq')
 
 class MessengersController {
   async message(req, res) {
@@ -7,7 +7,7 @@ class MessengersController {
     const body = new Body({ content: req.body, licensee: req.licensee._id })
     await body.save()
 
-    await queueServer.addJob('messenger-message', { bodyId: body._id })
+    publishMessage({ key: 'messenger-message', body: { bodyId: body._id } })
 
     res.status(200).send({ body: 'Solicitação de mensagem para a plataforma de messenger agendado' })
   }

@@ -38,8 +38,14 @@ function consumeChannel() {
             const payload = JSON.parse(payloadBuffer.content.toString())
             const job = Object.values(jobs).find((job) => job.key === payload.key)
 
-            const result = await job.handle({ body: payload.body })
-            console.log(`Resultado do processamento do job: ${result}`)
+            const handleResult = await job.handle({ body: payload.body })
+            if (handleResult) {
+              for (const result of handleResult) {
+                const { action, body } = result
+
+                channel.sendToQueue('main', Buffer.from(JSON.stringify({ key: action, body })), { persistent: true })
+              }
+            }
           } finally {
             channel.ack(payloadBuffer)
           }

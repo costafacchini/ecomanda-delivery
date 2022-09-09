@@ -1,5 +1,5 @@
 const Body = require('@models/Body')
-const queueServer = require('@config/queue')
+const { publishMessage } = require('@config/rabbitmq')
 
 class ChatsController {
   async message(req, res) {
@@ -10,7 +10,7 @@ class ChatsController {
     console.info(`Mensagem chegando do plugin de chat: ${JSON.stringify(body)}`)
     const bodySaved = await Body.create({ content: body, licensee: req.licensee._id })
 
-    await queueServer.addJob('chat-message', { bodyId: bodySaved._id })
+    publishMessage({ key: 'chat-message', body: { bodyId: bodySaved._id } })
 
     res.status(200).send({ body: 'Solicitação de mensagem para a plataforma de chat agendado' })
   }
