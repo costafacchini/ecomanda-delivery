@@ -1,13 +1,12 @@
 const Licensee = require('@models/Licensee')
 const MessagesSendedQuery = require('@queries/MessagesSended')
 const MessagesFailedQuery = require('@queries/MessagesFailed')
-const moment = require('moment')
 
-class MessagesSendedYesterday {
-  constructor() {
-    const yesterday = moment().subtract(1, 'days')
-    this.startDate = moment(yesterday).startOf('day')
-    this.endDate = moment(yesterday).endOf('day')
+class MessagesSended {
+  constructor(startDate, endDate, licensee) {
+    this.startDate = startDate
+    this.endDate = endDate
+    this.licensee = licensee
   }
 
   async report() {
@@ -41,4 +40,4 @@ class MessagesSendedYesterday {
   }
 }
 
-module.exports = MessagesSendedYesterday
+module.exports = MessagesSended

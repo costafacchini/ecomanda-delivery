@@ -7,6 +7,7 @@ const ContactsController = require('@controllers/ContactsController')
 const TriggersController = require('@controllers/TriggersController')
 const MessagesController = require('@controllers/MessagesController')
 const TemplatesController = require('@controllers/TemplatesController')
+const ReportsController = require('@controllers/ReportsController')
 
 const usersController = new UsersController()
 const licenseesController = new LicenseesController()
@@ -14,6 +15,7 @@ const contactsController = new ContactsController()
 const triggersController = new TriggersController()
 const messagesController = new MessagesController()
 const templatesController = new TemplatesController()
+const reportsController = new ReportsController()
 
 router.route('*').all(authenticate, (req, res, next) => {
   next()
@@ -62,5 +64,7 @@ router.post('/licensees/:id/dialogwebhook', licenseesController.setDialogWebhook
 router.post('/licensees/:id/integration/pagarme', licenseesController.sendToPagarMe)
 
 router.get('/messages/', messagesController.index)
+
+router.get('/reports/messagessendedyesterday', reportsController.messagesSendedYesterday)
 
 module.exports = router
