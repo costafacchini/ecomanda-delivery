@@ -1,5 +1,6 @@
 const Message = require('@models/Message')
 const createChatPlugin = require('../plugins/chats/factory')
+const { scheduleSendMessageToMessengerRabbit } = require('@repositories/messenger')
 
 async function closeChat(data) {
   const { messageId } = data
@@ -8,7 +9,17 @@ async function closeChat(data) {
 
   const chatPlugin = createChatPlugin(licensee)
 
-  await chatPlugin.closeChat(messageId)
+  const messagesOnCloseChat = await chatPlugin.closeChat(messageId)
+
+  if (messagesOnCloseChat.length > 0 && licensee.name === 'Hyper Burguer') {
+    for (const messageCloseChat of messagesOnCloseChat) {
+      scheduleSendMessageToMessengerRabbit({
+        messageId: messageCloseChat._id,
+        url: licensee.whatsappUrl,
+        token: licensee.whatsappToken,
+      })
+    }
+  }
 }
 
 module.exports = closeChat

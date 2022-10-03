@@ -7,10 +7,11 @@ const mongoServer = require('../../../.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
+const { scheduleSendMessageToMessengerRabbit } = require('@repositories/messenger')
+
+jest.mock('@repositories/messenger')
 
 describe('closeChat', () => {
-  const jivochatCloseChatSpy = jest.spyOn(Jivochat.prototype, 'closeChat')
-
   beforeEach(async () => {
     jest.clearAllMocks()
     await mongoServer.connect()
@@ -21,6 +22,8 @@ describe('closeChat', () => {
   })
 
   it('asks the plugin to close the chat', async () => {
+    const jivochatCloseChatSpy = jest.spyOn(Jivochat.prototype, 'closeChat').mockImplementation(() => [])
+
     const licensee = await Licensee.create(
       licenseeFactory.build({
         chatDefault: 'jivochat',
@@ -45,5 +48,50 @@ describe('closeChat', () => {
     await closeChat({ messageId: '609dcb059f560046cde64748' })
 
     expect(jivochatCloseChatSpy).toHaveBeenCalledWith('609dcb059f560046cde64748')
+
+    jivochatCloseChatSpy.mockRestore()
+  })
+
+  describe('when the licensee has a message on close chat', () => {
+    it('schedules to send message to whatsapp', async () => {
+      const jivochatCloseChatSpy = jest.spyOn(Jivochat.prototype, 'closeChat').mockImplementation(() => {
+        return [{ _id: 'KSDF656DSD91NSE' }, { _id: 'OAR8Q54LDN02T' }]
+      })
+
+      const licensee = await Licensee.create(
+        licenseeFactory.build({
+          chatDefault: 'jivochat',
+          chatUrl: 'https://chat.url',
+          whatsappToken: 'token-whats',
+          whatsappUrl: 'www.whatsappurl.com',
+          messageOnCloseChat: 'Send on close chat',
+        })
+      )
+
+      const contact = await Contact.create(
+        contactFactory.build({
+          licensee: licensee,
+        })
+      )
+
+      await Message.create(
+        messageFactory.build({
+          contact,
+          licensee,
+          _id: '609dcb059f560046cde64748',
+        })
+      )
+
+      await closeChat({ messageId: '609dcb059f560046cde64748' })
+
+      expect(scheduleSendMessageToMessengerRabbit).toHaveBeenCalledTimes(2)
+      expect(scheduleSendMessageToMessengerRabbit).toHaveBeenCalledWith({
+        messageId: 'KSDF656DSD91NSE',
+        token: 'token-whats',
+        url: 'www.whatsappurl.com',
+      })
+
+      jivochatCloseChatSpy.mockRestore()
+    })
   })
 })

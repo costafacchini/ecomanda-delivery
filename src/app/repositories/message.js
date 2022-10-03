@@ -1,6 +1,8 @@
 const { v4: uuidv4 } = require('uuid')
 const Message = require('@models/Message')
+const Trigger = require('@models/Trigger')
 const { parseText } = require('@helpers/ParseTriggerText')
+const emoji = require('@helpers/Emoji')
 
 async function createMessage(fields) {
   const message = new Message({
@@ -11,6 +13,36 @@ async function createMessage(fields) {
   const messageSaved = await message.save()
 
   return messageSaved
+}
+
+async function createInteractiveMessages(fields) {
+  const messages = []
+
+  const text = emoji.replace(fields.text)
+
+  const triggers = await Trigger.find({ expression: text, licensee: fields.licensee }).sort({ order: 'asc' })
+  if (triggers.length > 0) {
+    for (const trigger of triggers) {
+      messages.push(
+        await createMessage({
+          ...fields,
+          kind: 'interactive',
+          text,
+          trigger: trigger._id,
+        })
+      )
+    }
+  } else {
+    messages.push(
+      await createMessage({
+        ...fields,
+        kind: 'text',
+        text,
+      })
+    )
+  }
+
+  return messages
 }
 
 async function createTextMessageInsteadInteractive(fields) {
@@ -43,4 +75,9 @@ async function createMessageToWarnAboutWindowOfWhatsassClosed(contact, licensee)
   return messageSaved
 }
 
-module.exports = { createMessage, createMessageToWarnAboutWindowOfWhatsassClosed, createTextMessageInsteadInteractive }
+module.exports = {
+  createMessage,
+  createMessageToWarnAboutWindowOfWhatsassClosed,
+  createTextMessageInsteadInteractive,
+  createInteractiveMessages,
+}

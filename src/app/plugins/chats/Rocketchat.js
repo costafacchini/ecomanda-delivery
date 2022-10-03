@@ -1,9 +1,10 @@
-const emoji = require('../../helpers/Emoji')
+const emoji = require('@helpers/Emoji')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Room = require('@models/Room')
 const request = require('../../services/request')
 const ChatsBase = require('./Base')
+const { createInteractiveMessages } = require('@repositories/message')
 
 const createVisitor = async (contact, token, url) => {
   const body = {
@@ -187,14 +188,29 @@ class Rocketchat extends ChatsBase {
     const licensee = message.licensee
     const contact = await Contact.findById(message.contact._id)
     const room = await Room.findById(message.room._id)
+    const messages = []
 
     room.closed = true
     await room.save()
+
+    if (licensee.messageOnCloseChat) {
+      const messagesCloseChat = await createInteractiveMessages({
+        kind: 'text',
+        text: licensee.messageOnCloseChat,
+        licensee,
+        contact,
+        destination: 'to-messenger',
+      })
+
+      messages.push(...messagesCloseChat)
+    }
 
     if (licensee.useChatbot) {
       contact.talkingWithChatBot = true
       await contact.save()
     }
+
+    return messages
   }
 }
 

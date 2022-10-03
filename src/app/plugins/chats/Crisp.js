@@ -1,10 +1,11 @@
-const files = require('../../helpers/Files')
+const files = require('@helpers/Files')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const request = require('../../services/request')
 const mime = require('mime-types')
 const ChatsBase = require('./Base')
 const { createRoom, getRoomBy } = require('@repositories/room')
+const { createInteractiveMessages } = require('@repositories/message')
 
 const createSession = async (url, headers, contact, segments) => {
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })
@@ -206,11 +207,26 @@ class Crisp extends ChatsBase {
     const message = await Message.findById(messageId).populate('contact').populate('licensee').populate('room')
     const licensee = message.licensee
     const contact = await Contact.findById(message.contact._id)
+    const messages = []
+
+    if (licensee.messageOnCloseChat) {
+      const messagesCloseChat = await createInteractiveMessages({
+        kind: 'text',
+        text: licensee.messageOnCloseChat,
+        licensee,
+        contact,
+        destination: 'to-messenger',
+      })
+
+      messages.push(...messagesCloseChat)
+    }
 
     if (licensee.useChatbot) {
       contact.talkingWithChatBot = true
       await contact.save()
     }
+
+    return messages
   }
 }
 

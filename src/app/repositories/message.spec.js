@@ -1,13 +1,16 @@
 const Contact = require('@models/Contact')
 const Licensee = require('@models/Licensee')
+const Trigger = require('@models/Trigger')
 const mongoServer = require('../../../.jest/utils')
 const {
   createMessage,
   createMessageToWarnAboutWindowOfWhatsassClosed,
   createTextMessageInsteadInteractive,
+  createInteractiveMessages,
 } = require('@repositories/message')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
+const { triggerText } = require('@factories/trigger')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -44,6 +47,80 @@ describe('message repository', () => {
           contact,
         })
       )
+    })
+  })
+
+  describe('#createInteractiveMessages', () => {
+    describe('when has trigger with expression equal to text', () => {
+      it('creates a list of interactive messages', async () => {
+        const licensee = await Licensee.create(licenseeFactory.build())
+        const contact = await Contact.create(contactFactory.build({ licensee: licensee._id }))
+        const trigger1 = await Trigger.create(
+          triggerText.build({ licensee, expression: 'hello_world', text: 'Hello world 1' })
+        )
+        const trigger2 = await Trigger.create(
+          triggerText.build({ licensee, expression: 'hello_world', text: 'Hello world 2' })
+        )
+
+        const messages = await createInteractiveMessages({
+          destination: 'to-chatbot',
+          kind: 'text',
+          text: 'hello_world',
+          contact,
+          licensee,
+        })
+
+        expect(messages.length).toEqual(2)
+        expect(messages[0]).toEqual(
+          expect.objectContaining({
+            number: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
+            kind: 'interactive',
+            text: 'hello_world',
+            destination: 'to-chatbot',
+            licensee,
+            contact,
+            trigger: trigger1._id,
+          })
+        )
+        expect(messages[1]).toEqual(
+          expect.objectContaining({
+            number: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
+            kind: 'interactive',
+            text: 'hello_world',
+            destination: 'to-chatbot',
+            licensee,
+            contact,
+            trigger: trigger2._id,
+          })
+        )
+      })
+    })
+
+    describe('when has no trigger with expression equal to text', () => {
+      it('create a list of messages with one text message', async () => {
+        const licensee = await Licensee.create(licenseeFactory.build())
+        const contact = await Contact.create(contactFactory.build({ licensee: licensee._id }))
+
+        const messages = await createInteractiveMessages({
+          destination: 'to-chatbot',
+          kind: 'text',
+          text: 'hello_world',
+          contact,
+          licensee,
+        })
+
+        expect(messages.length).toEqual(1)
+        expect(messages[0]).toEqual(
+          expect.objectContaining({
+            number: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
+            kind: 'text',
+            text: 'hello_world',
+            destination: 'to-chatbot',
+            licensee,
+            contact,
+          })
+        )
+      })
     })
   })
 

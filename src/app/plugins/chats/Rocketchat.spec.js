@@ -1248,6 +1248,55 @@ describe('Rocketchat plugin', () => {
         expect(modifiedContact.talkingWithChatBot).toEqual(true)
       })
     })
+
+    describe('when the licensee has a message on close chat', () => {
+      it('creates the messages to send to messenger before close chat', async () => {
+        const licensee = await Licensee.create(
+          licenseeFactory.build({
+            useChatbot: true,
+            chatbotDefault: 'landbot',
+            chatbotUrl: 'https://url.com',
+            chatbotAuthorizationToken: 'token',
+            messageOnCloseChat: 'Send on close chat',
+          })
+        )
+
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
+
+        const room = await Room.create(
+          roomFactory.build({
+            roomId: 'ka3DiV9CuHD765',
+            token: contact._id.toString(),
+            contact: contact,
+          })
+        )
+
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            room,
+            sended: false,
+          })
+        )
+
+        expect(contact.talkingWithChatBot).toEqual(false)
+
+        const rocketchat = new Rocketchat(licensee)
+        const messages = await rocketchat.closeChat(message._id)
+
+        expect(messages.length).toEqual(1)
+        expect(messages[0].text).toEqual('Send on close chat')
+      })
+    })
   })
 
   describe('#action', () => {

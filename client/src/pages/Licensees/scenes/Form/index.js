@@ -32,7 +32,8 @@ const licenseeInitialValues = {
   chatIdentifier: '',
   cartDefault: '',
   unidadeId: '',
-  statusId: ''
+  statusId: '',
+  messageOnCloseChat: ''
 }
 
 function LicenseeForm({ onSubmit, errors, initialValues }) {
@@ -221,6 +222,20 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                     onChange={props.handleChange}
                     onBlur={props.handleBlur}
                     value={props.values.messageOnResetChatbot}
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-5'>
+                  <label htmlFor='messageOnCloseChat'>Mensagem de encerramento de chat</label>
+                  <textarea className='form-control' rows={4}
+                    id='messageOnCloseChat'
+                    name='messageOnCloseChat'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.messageOnCloseChat}
                   />
                 </div>
               </div>
