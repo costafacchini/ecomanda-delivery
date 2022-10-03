@@ -11,7 +11,7 @@ async function closeChat(data) {
 
   const messagesOnCloseChat = await chatPlugin.closeChat(messageId)
 
-  if (messagesOnCloseChat.length > 0 && licensee.name === 'Hyper Burguer') {
+  if (messagesOnCloseChat.length > 0) {
     for (const messageCloseChat of messagesOnCloseChat) {
       scheduleSendMessageToMessengerRabbit({
         messageId: messageCloseChat._id,
