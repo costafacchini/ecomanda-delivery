@@ -13,7 +13,7 @@ async function closeChat(data) {
 
   if (messagesOnCloseChat.length > 0) {
     for (const messageCloseChat of messagesOnCloseChat) {
-      scheduleSendMessageToMessenger({
+      await scheduleSendMessageToMessenger({
         messageId: messageCloseChat._id,
         url: licensee.whatsappUrl,
         token: licensee.whatsappToken,
