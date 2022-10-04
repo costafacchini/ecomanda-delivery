@@ -54,6 +54,10 @@ class Landbot {
         continue
       }
 
+      if (kind === 'text' && !message.message) {
+        continue
+      }
+
       const text = emoji.replace(message.message)
 
       if (kind === 'text') {

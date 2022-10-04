@@ -334,6 +334,36 @@ describe('Landbot plugin', () => {
 
       expect(messages.length).toEqual(0)
     })
+
+    it('return the empty array if message type is text and message is blank', async () => {
+      const responseBody = {
+        messages: [
+          {
+            type: 'text',
+            timestamp: '1234567890',
+            message: null,
+          },
+        ],
+        customer: {
+          id: 2000,
+          name: 'John',
+          number: '5511990283745',
+        },
+        agent: {
+          id: 1,
+          type: 'human',
+        },
+        channel: {
+          id: 100,
+          name: 'Android App',
+        },
+      }
+
+      const landbot = new Landbot(licensee)
+      const messages = await landbot.responseToMessages(responseBody)
+
+      expect(messages.length).toEqual(0)
+    })
   })
 
   describe('#responseTransferToMessage', () => {

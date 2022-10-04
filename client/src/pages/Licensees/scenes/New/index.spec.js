@@ -47,6 +47,7 @@ describe('<LicenseeNew />', () => {
       cartDefault: '',
       unidadeId: '',
       statusId: '',
+      messageOnCloseChat: '',
     }))
   })
 
