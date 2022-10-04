@@ -1,6 +1,6 @@
 const amqp = require('amqplib/callback_api')
 const RABBIT_URL = process.env.CLOUDAMQP_URL
-const jobs = require('../app/jobs/index')
+const jobs = require('../app/jobs')
 
 function publishMessage(payload) {
   amqp.connect(RABBIT_URL, function (errorOnConnect, connection) {
@@ -36,17 +36,9 @@ function consumeChannel() {
         async function (payloadBuffer) {
           try {
             const payload = JSON.parse(payloadBuffer.content.toString())
-            console.log('jobs', jobs)
             const job = Object.values(jobs).find((job) => job.key === payload.key)
 
-            const handleResult = await job.handle({ body: payload.body })
-            if (handleResult) {
-              for (const result of handleResult) {
-                const { action, body } = result
-
-                channel.sendToQueue('main', Buffer.from(JSON.stringify({ key: action, body })), { persistent: true })
-              }
-            }
+            await job.handle({ body: payload.body })
           } finally {
             channel.ack(payloadBuffer)
           }
