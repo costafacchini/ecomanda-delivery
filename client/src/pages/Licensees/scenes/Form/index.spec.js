@@ -30,6 +30,7 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Token do chatbot')).toHaveValue('')
     expect(screen.getByLabelText('Token de acesso via API do chatbot')).toHaveValue('')
     expect(screen.getByLabelText('Mensagem de encerramento de chatbot abandonado')).toHaveValue('')
+    expect(screen.getByLabelText('Mensagem de encerramento de chat')).toHaveValue('')
     expect(screen.getByLabelText('Chat padrão')).toHaveValue('')
     expect(screen.getByLabelText('Url do chat')).toHaveValue('')
     expect(screen.getByLabelText('Whatsapp padrão')).toHaveValue('')
@@ -60,6 +61,7 @@ describe('<LicenseeForm />', () => {
       chatbotUrl: 'URL chatbot',
       chatbotAuthorizationToken: 'token chatbot',
       messageOnResetChatbot: 'message',
+      messageOnCloseChat: 'on chat',
       chatbotApiToken: 'token api chatbot',
       whatsappDefault: 'utalk',
       whatsappToken: 'token whats',
@@ -95,6 +97,7 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Token do chatbot')).toHaveValue('token chatbot')
     expect(screen.getByLabelText('Token de acesso via API do chatbot')).toHaveValue('token api chatbot')
     expect(screen.getByLabelText('Mensagem de encerramento de chatbot abandonado')).toHaveValue('message')
+    expect(screen.getByLabelText('Mensagem de encerramento de chat')).toHaveValue('on chat')
     expect(screen.getByLabelText('Token do whatsapp')).toHaveValue('token whats')
     expect(screen.getByLabelText('Url do whatsapp')).toHaveValue('URL do whats')
     expect(screen.getByLabelText('Chat padrão')).toHaveValue('crisp')
@@ -236,7 +239,8 @@ describe('<LicenseeForm />', () => {
         bucketName: '',
         cartDefault: '',
         unidadeId: '',
-        statusId: ''
+        statusId: '',
+        messageOnCloseChat: '',
       })
     })
   })
