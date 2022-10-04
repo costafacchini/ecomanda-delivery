@@ -1,11 +1,12 @@
-const emoji = require('../../helpers/Emoji')
-const files = require('../../helpers/Files')
+const emoji = require('@helpers/Emoji')
+const files = require('@helpers/Files')
 const NormalizePhone = require('../../helpers/NormalizePhone')
 const { v4: uuidv4 } = require('uuid')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const request = require('../../services/request')
 const ChatsBase = require('./Base')
+const { createInteractiveMessages } = require('@repositories/message')
 
 class Cuboup extends ChatsBase {
   constructor(licensee) {
@@ -182,11 +183,26 @@ class Cuboup extends ChatsBase {
     const message = await Message.findById(messageId).populate('contact').populate('licensee')
     const licensee = message.licensee
     const contact = await Contact.findById(message.contact._id)
+    const messages = []
+
+    if (licensee.messageOnCloseChat) {
+      const messagesCloseChat = await createInteractiveMessages({
+        kind: 'text',
+        text: licensee.messageOnCloseChat,
+        licensee,
+        contact,
+        destination: 'to-messenger',
+      })
+
+      messages.push(...messagesCloseChat)
+    }
 
     if (licensee.useChatbot) {
       contact.talkingWithChatBot = true
       await contact.save()
     }
+
+    return messages
   }
 }
 

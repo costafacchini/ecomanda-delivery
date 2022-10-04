@@ -1491,10 +1491,64 @@ describe('Crisp plugin', () => {
         expect(contact.talkingWithChatBot).toEqual(false)
 
         const crisp = new Crisp(licensee)
-        await crisp.closeChat(message._id)
+        const messages = await crisp.closeChat(message._id)
 
         const modifiedContact = await Contact.findById(contact._id)
         expect(modifiedContact.talkingWithChatBot).toEqual(true)
+
+        expect(messages.length).toEqual(0)
+      })
+    })
+
+    describe('when the licensee has a message on close chat', () => {
+      it('creates the messages to send to messenger before close chat', async () => {
+        const licensee = await Licensee.create(
+          licenseeFactory.build({
+            useChatbot: true,
+            chatbotDefault: 'landbot',
+            chatbotUrl: 'https://url.com',
+            chatbotAuthorizationToken: 'token',
+            messageOnCloseChat: 'Send on close chat',
+          })
+        )
+
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            email: 'john@doe.com',
+            talkingWithChatBot: false,
+            licensee,
+          })
+        )
+
+        const room = await Room.create(
+          roomFactory.build({
+            roomId: 'ka3DiV9CuHD765',
+            contact,
+          })
+        )
+
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            room,
+            sended: false,
+          })
+        )
+
+        expect(contact.talkingWithChatBot).toEqual(false)
+
+        const crisp = new Crisp(licensee)
+        const messages = await crisp.closeChat(message._id)
+
+        const modifiedContact = await Contact.findById(contact._id)
+        expect(modifiedContact.talkingWithChatBot).toEqual(true)
+
+        expect(messages.length).toEqual(1)
+        expect(messages[0].text).toEqual('Send on close chat')
       })
     })
   })

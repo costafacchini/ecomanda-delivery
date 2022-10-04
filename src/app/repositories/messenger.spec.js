@@ -1,6 +1,8 @@
 const { scheduleSendMessageToMessenger } = require('@repositories/messenger')
 const queueServer = require('@config/queue')
 
+jest.mock('@config/rabbitmq')
+
 describe('#scheduleSendMessageToMessenger', () => {
   const queueSendMessageToMessenger = queueServer.queues.find((queue) => queue.name === 'send-message-to-messenger')
 

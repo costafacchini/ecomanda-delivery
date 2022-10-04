@@ -843,6 +843,51 @@ describe('Jivochat plugin', () => {
         expect(modifiedContact.talkingWithChatBot).toEqual(true)
       })
     })
+
+    describe('when the licensee has a message on close chat', () => {
+      it('creates the messages to send to messenger before close chat', async () => {
+        const licensee = await Licensee.create(
+          licenseeFactory.build({
+            useChatbot: true,
+            chatbotDefault: 'landbot',
+            chatbotUrl: 'https://url.com',
+            chatbotAuthorizationToken: 'token',
+            messageOnCloseChat: 'Send on close chat',
+          })
+        )
+
+        const contact = await Contact.create(
+          contactFactory.build({
+            name: 'John Doe',
+            talkingWithChatBot: false,
+            email: 'john@doe.com',
+            roomId: 'ka3DiV9CuHD765',
+            licensee,
+          })
+        )
+
+        const message = await Message.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          })
+        )
+
+        expect(contact.talkingWithChatBot).toEqual(false)
+
+        const jivochat = new Jivochat(licensee)
+        const messages = await jivochat.closeChat(message._id)
+
+        const modifiedContact = await Contact.findById(contact._id)
+        expect(modifiedContact.talkingWithChatBot).toEqual(true)
+
+        expect(messages.length).toEqual(1)
+        expect(messages[0].text).toEqual('Send on close chat')
+      })
+    })
   })
 
   describe('#action', () => {
