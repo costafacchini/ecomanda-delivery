@@ -103,7 +103,7 @@ class Cuboup extends ChatsBase {
   }
 
   async sendMessage(messageId, url) {
-    const messageToSend = await Message.findById(messageId).populate('contact')
+    const messageToSend = await Message.findById(messageId).populate('contact').populate('licensee')
 
     const sender = {
       id: messageToSend.contact.number + messageToSend.contact.type,
@@ -111,9 +111,15 @@ class Cuboup extends ChatsBase {
       email: messageToSend.contact.email,
     }
 
+    const licenseePhone = new NormalizePhone(messageToSend.licensee.phone)
+    const recipient = {
+      id: licenseePhone.number,
+    }
+
     if (messageToSend.contact.type === '@c.us') sender.phone = messageToSend.contact.number
 
     const body = {
+      recipient,
       sender,
       message: {
         id: uuidv4(),

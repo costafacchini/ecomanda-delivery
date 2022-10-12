@@ -24,7 +24,7 @@ describe('Cuboup plugin', () => {
     jest.clearAllMocks()
     fetchMock.reset()
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    licensee = await Licensee.create(licenseeFactory.build({ phone: '554891231231' }))
   })
 
   afterEach(async () => {
@@ -390,6 +390,9 @@ describe('Cuboup plugin', () => {
         )
 
         const expectedBody = {
+          recipient: {
+            id: '5548991231231',
+          },
           sender: {
             id: '5511990283745@c.us',
             name: 'John Doe',
@@ -441,6 +444,9 @@ describe('Cuboup plugin', () => {
         )
 
         const expectedBody = {
+          recipient: {
+            id: '5548991231231',
+          },
           sender: {
             id: '5511990283745@c.us',
             name: 'John Doe',
@@ -494,6 +500,9 @@ describe('Cuboup plugin', () => {
           )
 
           const expectedBody = {
+            recipient: {
+              id: '5548991231231',
+            },
             sender: {
               id: '5511989187726-1622497000@g.us',
               name: 'Grupo Teste',
@@ -547,6 +556,9 @@ describe('Cuboup plugin', () => {
         )
 
         const expectedBody = {
+          recipient: {
+            id: '5548991231231',
+          },
           sender: {
             id: '5511990283745@c.us',
             name: 'John Doe',
@@ -613,6 +625,9 @@ describe('Cuboup plugin', () => {
           )
 
           const expectedBody = {
+            recipient: {
+              id: '5548991231231',
+            },
             sender: {
               id: '5511990283745@c.us',
               name: 'John Doe',
@@ -661,6 +676,9 @@ describe('Cuboup plugin', () => {
           )
 
           const expectedBody = {
+            recipient: {
+              id: '5548991231231',
+            },
             sender: {
               id: '5511990283745@c.us',
               name: 'John Doe',
@@ -713,6 +731,9 @@ describe('Cuboup plugin', () => {
           )
 
           const expectedBody = {
+            recipient: {
+              id: '5548991231231',
+            },
             sender: {
               id: '5511990283745@c.us',
               name: 'John Doe',
