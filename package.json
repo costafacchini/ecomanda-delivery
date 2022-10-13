@@ -45,7 +45,7 @@
     "aws-sdk": "2.1228.0",
     "bcrypt": "5.0.1",
     "bull-board": "2.1.3",
-    "bullmq": "2.1.3",
+    "bullmq": "2.3.0",
     "cors": "2.8.5",
     "debug": "4.3.4",
     "dotenv": "16.0.3",
