@@ -5003,10 +5003,10 @@ new-find-package-json@^2.0.0:
   dependencies:
     debug "^4.3.4"
 
-newrelic@9.1.0:
-  version "9.1.0"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-9.1.0.tgz#e0fce72f49379b323b6ffb3de3bda02b6758a893"
-  integrity sha512-LAxJAJ7sN554FidgjPZwc9dyoMmLNKVi5HH+2E2d3ldr0jQywImzrJhrVa0T2jtO6flVYkXFtitl3UyQnFh8Ew==
+newrelic@9.2.0:
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-9.2.0.tgz#dfbe5536def5395dd613186b6f0af531541e1b08"
+  integrity sha512-O366jVTIxiYCNIDBluwISyuhAZZLomsmvoBkHEKqNH9D95ysp2zxTMKok5meNnmRAnMMp0eWGLUidQ3SY4gsBw==
   dependencies:
     "@grpc/grpc-js" "^1.5.5"
     "@grpc/proto-loader" "^0.6.13"
