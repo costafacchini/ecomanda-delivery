@@ -5,6 +5,7 @@ const MessengersController = require('@controllers/MessengersController')
 const BackupsController = require('@controllers/BackupsController')
 const AdressesController = require('@controllers/Contacts/AdressesController')
 const CartsController = require('@controllers/CartsController')
+const DelayController = require('@controllers/DelayController')
 
 const chatsController = new ChatsController()
 const chatbotsController = new ChatbotsController()
@@ -12,6 +13,7 @@ const messengersController = new MessengersController()
 const backupsController = new BackupsController()
 const adressesController = new AdressesController()
 const cartsController = new CartsController()
+const delayController = new DelayController()
 
 router.post('/chat/message', chatsController.message)
 
@@ -34,5 +36,7 @@ router.get('/carts/:contact', cartsController.show)
 router.post('/carts/:contact/item', cartsController.addItem)
 router.delete('/carts/:contact/item', cartsController.removeItem)
 router.post('/carts/:cart/send', cartsController.send)
+
+router.get('/delay/:time', delayController.time)
 
 module.exports = router
