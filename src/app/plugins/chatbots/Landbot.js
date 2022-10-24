@@ -8,7 +8,7 @@ const Room = require('@models/Room')
 const Trigger = require('@models/Trigger')
 const cartFactory = require('@plugins/carts/factory')
 const { createMessage } = require('@repositories/message')
-const { isPhoto, isVideo, isMidia, isVoice } = require('@helpers/files')
+const files = require('@helpers/Files')
 
 const closeRoom = async (contact) => {
   const room = await Room.findOne({ contact: contact._id, closed: false })
@@ -195,9 +195,9 @@ class Landbot {
     if (messageToSend.kind === 'file') {
       body.message.url = messageToSend.url
 
-      if (isPhoto(messageToSend.url)) body.message.type = 'image'
-      if (isVideo(messageToSend.url)) body.message.type = 'video'
-      if (isMidia(messageToSend.url) || isVoice(messageToSend.url)) body.message.type = 'audio'
+      if (files.isPhoto(messageToSend.url)) body.message.type = 'image'
+      if (files.isVideo(messageToSend.url)) body.message.type = 'video'
+      if (files.isMidia(messageToSend.url) || files.isVoice(messageToSend.url)) body.message.type = 'audio'
       if (!body.message.type) body.message.type = 'document'
     } else if (messageToSend.kind === 'location') {
       body.message.type = 'location'
