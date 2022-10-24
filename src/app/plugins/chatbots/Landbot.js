@@ -8,6 +8,7 @@ const Room = require('@models/Room')
 const Trigger = require('@models/Trigger')
 const cartFactory = require('@plugins/carts/factory')
 const { createMessage } = require('@repositories/message')
+const files = require('@helpers/Files')
 
 const closeRoom = async (contact) => {
   const room = await Room.findOne({ contact: contact._id, closed: false })
@@ -188,18 +189,31 @@ class Landbot {
 
     const body = {
       customer,
-      message: {
-        type: 'text',
-        message: messageToSend.text,
-        payload: '$1',
-      },
+      message: {},
     }
 
-    if (messageToSend.kind === 'cart') {
-      const cartPlugin = cartFactory(this.licensee)
-      const cartTransformed = await cartPlugin.transformCart(this.licensee, messageToSend.cart)
+    if (messageToSend.kind === 'file') {
+      body.message.url = messageToSend.url
 
-      body.message.message = JSON.stringify(cartTransformed)
+      if (files.isPhoto(messageToSend.url)) body.message.type = 'image'
+      if (files.isVideo(messageToSend.url)) body.message.type = 'video'
+      if (files.isMidia(messageToSend.url) || files.isVoice(messageToSend.url)) body.message.type = 'audio'
+      if (!body.message.type) body.message.type = 'document'
+    } else if (messageToSend.kind === 'location') {
+      body.message.type = 'location'
+      body.message.latitude = messageToSend.latitude
+      body.message.longitude = messageToSend.longitude
+    } else {
+      body.message.type = 'text'
+      body.message.message = messageToSend.text
+      body.message.payload = '$1'
+
+      if (messageToSend.kind === 'cart') {
+        const cartPlugin = cartFactory(this.licensee)
+        const cartTransformed = await cartPlugin.transformCart(this.licensee, messageToSend.cart)
+
+        body.message.message = JSON.stringify(cartTransformed)
+      }
     }
 
     const headers = {
