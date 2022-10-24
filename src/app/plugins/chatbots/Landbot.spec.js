@@ -709,6 +709,359 @@ describe('Landbot plugin', () => {
           clear()
         })
       })
+
+      describe('when message is location', () => {
+        it('sends the message', async () => {
+          const contact = await Contact.create(
+            contactFactory.build({
+              name: 'John Doe',
+              talkingWithChatBot: true,
+              licensee,
+            })
+          )
+
+          const message = await Message.create(
+            messageFactory.build({
+              kind: 'location',
+              latitude: 1,
+              longitude: 2,
+              contact,
+              licensee,
+              sended: false,
+            })
+          )
+
+          const expectedBody = {
+            customer: {
+              name: 'John Doe',
+              number: '5511990283745',
+              type: '@c.us',
+              licensee: licensee._id,
+            },
+            message: {
+              type: 'location',
+              latitude: 1,
+              longitude: 2,
+            },
+          }
+
+          fetchMock.postOnce(
+            (url, { body, headers }) => {
+              return (
+                url === 'https://url.com.br/5511990283745/' &&
+                body === JSON.stringify(expectedBody) &&
+                headers['Authorization'] === 'Token token'
+              )
+            },
+            {
+              status: 201,
+              body: {
+                success: true,
+                customer: {
+                  id: 42,
+                  name: 'John Doe',
+                  phone: '5511990283745@c.us',
+                  token: 'token',
+                },
+              },
+            }
+          )
+
+          expect(message.sended).toEqual(false)
+
+          const landbot = new Landbot(licensee)
+          await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
+          await fetchMock.flush(true)
+
+          expect(fetchMock.done()).toBe(true)
+          expect(fetchMock.calls()).toHaveLength(1)
+
+          const messageUpdated = await Message.findById(message._id)
+          expect(messageUpdated.sended).toEqual(true)
+        })
+      })
+
+      describe('when message is file', () => {
+        describe('when is image', () => {
+          it('sends the message', async () => {
+            const contact = await Contact.create(
+              contactFactory.build({
+                name: 'John Doe',
+                talkingWithChatBot: true,
+                licensee,
+              })
+            )
+
+            const message = await Message.create(
+              messageFactory.build({
+                kind: 'file',
+                fileName: 'dojocat.jpg',
+                url: 'https://octodex.github.com/images/dojocat.jpg',
+                contact,
+                licensee,
+                sended: false,
+              })
+            )
+
+            const expectedBody = {
+              customer: {
+                name: 'John Doe',
+                number: '5511990283745',
+                type: '@c.us',
+                licensee: licensee._id,
+              },
+              message: {
+                url: 'https://octodex.github.com/images/dojocat.jpg',
+                type: 'image',
+              },
+            }
+
+            fetchMock.postOnce(
+              (url, { body, headers }) => {
+                return (
+                  url === 'https://url.com.br/5511990283745/' &&
+                  body === JSON.stringify(expectedBody) &&
+                  headers['Authorization'] === 'Token token'
+                )
+              },
+              {
+                status: 201,
+                body: {
+                  success: true,
+                  customer: {
+                    id: 42,
+                    name: 'John Doe',
+                    phone: '5511990283745@c.us',
+                    token: 'token',
+                  },
+                },
+              }
+            )
+
+            expect(message.sended).toEqual(false)
+
+            const landbot = new Landbot(licensee)
+            await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
+            await fetchMock.flush(true)
+
+            expect(fetchMock.done()).toBe(true)
+            expect(fetchMock.calls()).toHaveLength(1)
+
+            const messageUpdated = await Message.findById(message._id)
+            expect(messageUpdated.sended).toEqual(true)
+          })
+        })
+
+        describe('when is video', () => {
+          it('sends the message', async () => {
+            const contact = await Contact.create(
+              contactFactory.build({
+                name: 'John Doe',
+                talkingWithChatBot: true,
+                licensee,
+              })
+            )
+
+            const message = await Message.create(
+              messageFactory.build({
+                kind: 'file',
+                fileName: 'dojocat.mp4',
+                url: 'https://octodex.github.com/images/dojocat.mp4',
+                contact,
+                licensee,
+                sended: false,
+              })
+            )
+
+            const expectedBody = {
+              customer: {
+                name: 'John Doe',
+                number: '5511990283745',
+                type: '@c.us',
+                licensee: licensee._id,
+              },
+              message: {
+                url: 'https://octodex.github.com/images/dojocat.mp4',
+                type: 'video',
+              },
+            }
+
+            fetchMock.postOnce(
+              (url, { body, headers }) => {
+                return (
+                  url === 'https://url.com.br/5511990283745/' &&
+                  body === JSON.stringify(expectedBody) &&
+                  headers['Authorization'] === 'Token token'
+                )
+              },
+              {
+                status: 201,
+                body: {
+                  success: true,
+                  customer: {
+                    id: 42,
+                    name: 'John Doe',
+                    phone: '5511990283745@c.us',
+                    token: 'token',
+                  },
+                },
+              }
+            )
+
+            expect(message.sended).toEqual(false)
+
+            const landbot = new Landbot(licensee)
+            await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
+            await fetchMock.flush(true)
+
+            expect(fetchMock.done()).toBe(true)
+            expect(fetchMock.calls()).toHaveLength(1)
+
+            const messageUpdated = await Message.findById(message._id)
+            expect(messageUpdated.sended).toEqual(true)
+          })
+        })
+
+        describe('when is audio', () => {
+          it('sends the message', async () => {
+            const contact = await Contact.create(
+              contactFactory.build({
+                name: 'John Doe',
+                talkingWithChatBot: true,
+                licensee,
+              })
+            )
+
+            const message = await Message.create(
+              messageFactory.build({
+                kind: 'file',
+                fileName: 'dojocat.ogg',
+                url: 'https://octodex.github.com/images/dojocat.ogg',
+                contact,
+                licensee,
+                sended: false,
+              })
+            )
+
+            const expectedBody = {
+              customer: {
+                name: 'John Doe',
+                number: '5511990283745',
+                type: '@c.us',
+                licensee: licensee._id,
+              },
+              message: {
+                url: 'https://octodex.github.com/images/dojocat.ogg',
+                type: 'audio',
+              },
+            }
+
+            fetchMock.postOnce(
+              (url, { body, headers }) => {
+                return (
+                  url === 'https://url.com.br/5511990283745/' &&
+                  body === JSON.stringify(expectedBody) &&
+                  headers['Authorization'] === 'Token token'
+                )
+              },
+              {
+                status: 201,
+                body: {
+                  success: true,
+                  customer: {
+                    id: 42,
+                    name: 'John Doe',
+                    phone: '5511990283745@c.us',
+                    token: 'token',
+                  },
+                },
+              }
+            )
+
+            expect(message.sended).toEqual(false)
+
+            const landbot = new Landbot(licensee)
+            await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
+            await fetchMock.flush(true)
+
+            expect(fetchMock.done()).toBe(true)
+            expect(fetchMock.calls()).toHaveLength(1)
+
+            const messageUpdated = await Message.findById(message._id)
+            expect(messageUpdated.sended).toEqual(true)
+          })
+        })
+
+        describe('when is document', () => {
+          it('sends the message', async () => {
+            const contact = await Contact.create(
+              contactFactory.build({
+                name: 'John Doe',
+                talkingWithChatBot: true,
+                licensee,
+              })
+            )
+
+            const message = await Message.create(
+              messageFactory.build({
+                kind: 'file',
+                fileName: 'dojocat.pdf',
+                url: 'https://octodex.github.com/images/dojocat.pdf',
+                contact,
+                licensee,
+                sended: false,
+              })
+            )
+
+            const expectedBody = {
+              customer: {
+                name: 'John Doe',
+                number: '5511990283745',
+                type: '@c.us',
+                licensee: licensee._id,
+              },
+              message: {
+                url: 'https://octodex.github.com/images/dojocat.pdf',
+                type: 'document',
+              },
+            }
+
+            fetchMock.postOnce(
+              (url, { body, headers }) => {
+                return (
+                  url === 'https://url.com.br/5511990283745/' &&
+                  body === JSON.stringify(expectedBody) &&
+                  headers['Authorization'] === 'Token token'
+                )
+              },
+              {
+                status: 201,
+                body: {
+                  success: true,
+                  customer: {
+                    id: 42,
+                    name: 'John Doe',
+                    phone: '5511990283745@c.us',
+                    token: 'token',
+                  },
+                },
+              }
+            )
+
+            expect(message.sended).toEqual(false)
+
+            const landbot = new Landbot(licensee)
+            await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
+            await fetchMock.flush(true)
+
+            expect(fetchMock.done()).toBe(true)
+            expect(fetchMock.calls()).toHaveLength(1)
+
+            const messageUpdated = await Message.findById(message._id)
+            expect(messageUpdated.sended).toEqual(true)
+          })
+        })
+      })
     })
 
     describe('when response is not 201', () => {
