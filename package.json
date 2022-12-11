@@ -58,7 +58,7 @@
     "lodash": "4.17.21",
     "module-alias": "2.2.2",
     "moment": "2.29.4",
-    "moment-timezone": "0.5.39",
+    "moment-timezone": "0.5.40",
     "mongodb": "4.12.1",
     "mongoose": "6.7.5",
     "morgan": "1.10.0",
