@@ -54,7 +54,7 @@
     "fishery": "2.2.2",
     "http-errors": "2.0.0",
     "isomorphic-fetch": "3.0.0",
-    "jsonwebtoken": "8.5.1",
+    "jsonwebtoken": "9.0.0",
     "lodash": "4.17.21",
     "module-alias": "2.2.2",
     "moment": "2.29.4",
