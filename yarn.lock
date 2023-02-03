@@ -2645,14 +2645,14 @@ bull-board@2.1.3:
     express "4.17.1"
     redis-info "^3.0.8"
 
-bullmq@3.5.11:
-  version "3.5.11"
-  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-3.5.11.tgz#341ebef53cc2e3685276c6deeffbc6350e474ba0"
-  integrity sha512-dhj5FXeAcPh3P+TnMOCCXKVn+TMcT88c4N1BL7La7dZ1VkmdNbuXFP+iGC5sqkVuN5Ga1/8jof1gYHaBqL4i1Q==
+bullmq@3.6.2:
+  version "3.6.2"
+  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-3.6.2.tgz#3a067e3dc11207e4e62958c957bc30b8f832cbcf"
+  integrity sha512-Nea7OWtdg6V47HP2vp0V2RUhG02KHCJE+VzbwpOFRONHS+1M6IehAVjEhfN3N036BNoPU776sMKCVxaegG0reA==
   dependencies:
     cron-parser "^4.6.0"
     glob "^8.0.3"
-    ioredis "^5.2.2"
+    ioredis "^5.3.0"
     lodash "^4.17.21"
     msgpackr "^1.6.2"
     semver "^7.3.7"
@@ -3075,10 +3075,10 @@ delegates@^1.0.0:
   resolved "https://registry.yarnpkg.com/delegates/-/delegates-1.0.0.tgz#84c6e159b81904fdca59a0ef44cd870d31250f9a"
   integrity sha1-hMbhWbgZBP3KWaDvRM2HDTElD5o=
 
-denque@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/denque/-/denque-2.0.1.tgz#bcef4c1b80dc32efe97515744f21a4229ab8934a"
-  integrity sha512-tfiWc6BQLXNLpNiR5iGd0Ocu3P3VpxfzFiqubLgMfhfOw9WyvgJBd46CClNn9k3qfbjvT//0cf7AlYRX/OslMQ==
+denque@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/denque/-/denque-2.1.0.tgz#e93e1a6569fb5e66f16a3c2a2964617d349d6ab1"
+  integrity sha512-HVQE3AAb/pxF8fQAoiqpvg9i3evqug3hoiwakOyZAwJm+6vZehbkYXZ0l4JxS+I3QxM97v5aaRNhj8v5oBhekw==
 
 depd@2.0.0, depd@~2.0.0:
   version "2.0.0"
@@ -4433,15 +4433,15 @@ internal-slot@^1.0.4:
     has "^1.0.3"
     side-channel "^1.0.4"
 
-ioredis@^5.2.2:
-  version "5.2.3"
-  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-5.2.3.tgz#d5b37eb13e643241660d6cee4eeb41a026cda8c0"
-  integrity sha512-gQNcMF23/NpvjCaa1b5YycUyQJ9rBNH2xP94LWinNpodMWVUPP5Ai/xXANn/SM7gfIvI62B5CCvZxhg5pOgyMw==
+ioredis@^5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-5.3.0.tgz#b5469f0fd374648ef074840c00c1d8eed42fca3f"
+  integrity sha512-Id9jKHhsILuIZpHc61QkagfVdUj2Rag5GzG1TGEvRNeM7dtTOjICgjC+tvqYxi//PuX2wjQ+Xjva2ONBuf92Pw==
   dependencies:
     "@ioredis/commands" "^1.1.1"
     cluster-key-slot "^1.1.0"
     debug "^4.3.4"
-    denque "^2.0.1"
+    denque "^2.1.0"
     lodash.defaults "^4.2.0"
     lodash.isarguments "^3.1.0"
     redis-errors "^1.2.0"
