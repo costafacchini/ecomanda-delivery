@@ -123,7 +123,7 @@ class Jivochat extends ChatsBase {
     if (messageToSend.kind === 'text') {
       body.message.type = 'text'
       if (messageToSend.contact.type === '@g.us') {
-        body.message.text = `${messageToSend.senderName}:\n${messageToSend.text}\n.`
+        body.message.text = `${messageToSend.senderName - messageToSend.contact.number}:\n${messageToSend.text}\n.`
       } else {
         body.message.text = messageToSend.text
       }

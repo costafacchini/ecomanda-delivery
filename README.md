@@ -10,10 +10,10 @@ After installation you need to follow these steps:
 $ asdf plugin add nodejs
 
 # Install nodejs plugin
-$ asdf install nodejs 14.17.0
+$ asdf install nodejs 14.20.1
 
 # Set the default nodejs for the project
-$ asdf local nodejs 14.17.0
+$ asdf local nodejs 14.20.1
 
 # install Yarn
 $ npm install --global yarn
