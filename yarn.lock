@@ -5814,10 +5814,10 @@ new-find-package-json@^2.0.0:
   dependencies:
     debug "^4.3.4"
 
-newrelic@9.14.0:
-  version "9.14.0"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-9.14.0.tgz#e591241be983172d9f230dae9e6f581d65440393"
-  integrity sha512-rIPyhgwTGR6B87wdfzCbbQSkBxsB3U8xSlVnoimHtR1rr4PfEQFc5jjN1p7jSPi0RWEc+RDXMpq0YYzvfAxUpg==
+newrelic@9.14.1:
+  version "9.14.1"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-9.14.1.tgz#d2563deee48524f31dd53d832501dcaa31e9dd6b"
+  integrity sha512-0r2J9noQTcgLMQIXhDQYopomnSjFy0D8oExdPk9dyoP/VJ4dDQy0qXZy7SDIP2acMgDOwVi9HUKd0X3KNXFZFA==
   dependencies:
     "@grpc/grpc-js" "^1.8.10"
     "@grpc/proto-loader" "^0.7.5"
