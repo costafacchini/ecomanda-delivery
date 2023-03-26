@@ -316,6 +316,16 @@ describe('Licensee', () => {
         expect(validation.errors['chatDefault']).not.toBeDefined()
       })
 
+      it('accepts "gallabox" values', () => {
+        let validation
+        const licensee = new Licensee()
+
+        licensee.cartDefault = 'gallabox'
+        validation = licensee.validateSync()
+
+        expect(validation.errors['chatDefault']).not.toBeDefined()
+      })
+
       it('does not accepts another values', () => {
         const licensee = new Licensee({ cartDefault: 'some' })
         const validation = licensee.validateSync()
