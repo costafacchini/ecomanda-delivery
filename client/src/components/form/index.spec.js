@@ -23,7 +23,7 @@ describe('FieldWithError', () => {
     })
 
     render(
-      <Formik initialValues={{ field: '' }} initialErrors={{ field: 'Too Short!' }} validationSchema={Validation} >
+      <Formik initialValues={{ field: '' }} initialErrors={{ field: 'Required' }} validationSchema={Validation} noValidate>
         {props => (
           <>
             <FieldWithError
@@ -38,14 +38,14 @@ describe('FieldWithError', () => {
       </Formik>
     )
 
-    expect(screen.queryByText('Too Short!')).not.toBeInTheDocument()
+    expect(screen.queryByText('Required')).not.toBeInTheDocument()
 
     fireEvent.change(screen.getByRole('textbox'), { target: { value: '921873281921' } })
     fireEvent.change(screen.getByRole('textbox'), { target: { value: '' } })
     fireEvent.blur(screen.getByRole('textbox'))
 
-    await waitFor(() => {
-      expect(screen.getByText('Required')).toBeInTheDocument()
+    await waitFor(async () => {
+      expect(await screen.findByText('Required')).toBeInTheDocument()
     })
   })
 })
