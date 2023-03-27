@@ -32,6 +32,7 @@ function permit(fields) {
     'unidadeId',
     'statusId',
     'messageOnCloseChat',
+    'useCartGallabox',
   ]
 
   return _.pick(fields, permitedFields)
@@ -79,6 +80,7 @@ class LicenseesController {
       unidadeId,
       statusId,
       messageOnCloseChat,
+      useCartGallabox,
     } = req.body
 
     const licensee = new Licensee({
@@ -107,6 +109,7 @@ class LicenseesController {
       unidadeId,
       statusId,
       messageOnCloseChat,
+      useCartGallabox,
     })
 
     const validation = licensee.validateSync()

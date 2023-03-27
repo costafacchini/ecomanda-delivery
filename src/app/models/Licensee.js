@@ -136,8 +136,9 @@ const licenseeSchema = new Schema(
     },
     cartDefault: {
       type: String,
-      enum: ['go2go', ''],
+      enum: ['go2go', 'go2go_v2', ''],
     },
+    useCartGallabox: { type: Boolean, default: false },
     unidadeId: String,
     statusId: String,
     useWhatsappWindow: { type: Boolean, default: false },

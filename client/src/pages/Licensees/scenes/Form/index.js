@@ -438,7 +438,24 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                   >
                     <option value=''></option>
                     <option value='go2go'>Go2Go</option>
+                    <option value='go2go_v2'>Go2Go v2</option>
                   </select>
+                </div>
+              </div>
+
+              <div className='row pb-2'>
+                <div className='col-3'>
+                  <div className='form-check'>
+                    <input
+                      type='checkbox'
+                      className='form-check-input'
+                      id='useCartGallabox'
+                      onChange={props.handleChange}
+                      onBlur={props.handleBlur}
+                      checked={props.values.useCartGallabox}
+                    />
+                    <label className='form-check-label' htmlFor='useCartGallabox'>Usa gallabox?</label>
+                  </div>
                 </div>
               </div>
 

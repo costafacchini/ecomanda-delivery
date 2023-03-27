@@ -6,6 +6,7 @@ const { createTextMessageInsteadInteractive } = require('@repositories/message')
 const { createContact } = require('@repositories/contact')
 const { scheduleSendMessageToMessenger } = require('@repositories/messenger')
 const { parseCart } = require('@helpers/ParseTriggerText')
+const createCartAdapter = require('../plugins/carts/adapters/factory')
 
 async function getContact(number, licenseeId) {
   const normalizedPhone = new NormalizePhone(number)
@@ -43,27 +44,7 @@ function permit(fields) {
 
 class CartsController {
   async create(req, res) {
-    const {
-      delivery_tax,
-      products,
-      contact,
-      concluded,
-      catalog,
-      address,
-      address_number,
-      address_complement,
-      neighborhood,
-      city,
-      cep,
-      uf,
-      note,
-      change,
-      partner_key,
-      payment_method,
-      points,
-      discount,
-      name,
-    } = req.body
+    const { contact, name } = req.body
 
     try {
       let cartContact = await getContact(contact, req.licensee._id)
@@ -80,6 +61,28 @@ class CartsController {
           talkingWithChatBot: req.licensee.useChatbot,
         })
       }
+
+      const cartPlugin = createCartAdapter(req.licensee)
+
+      const {
+        delivery_tax,
+        products,
+        concluded,
+        catalog,
+        address,
+        address_number,
+        address_complement,
+        neighborhood,
+        city,
+        cep,
+        uf,
+        note,
+        change,
+        partner_key,
+        payment_method,
+        points,
+        discount,
+      } = cartPlugin.parseCart(req.licensee, contact, req.body)
 
       const cart = new Cart({
         delivery_tax,

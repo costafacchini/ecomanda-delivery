@@ -25,6 +25,7 @@ const productsSchema = new Schema({
   unit_price: Number,
   additionals: [additionalSchema],
   note: String,
+  product_fb_id: String,
   product: {
     type: ObjectId,
     ref: 'Product',
