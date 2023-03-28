@@ -3,12 +3,14 @@ const Product = require('@models/Product')
 const _ = require('lodash')
 
 async function importProducts(products, licensee) {
-  await products.forEach(async (product) => {
+  const importedProductsPromises = await products.map(async (product) => {
     const productExists = await Product.findOne({ product_retailer_id: product.id, licensee })
-    if (productExists) return
+    if (productExists) return productExists
 
-    await Product.create({ product_retailer_id: product.id, name: product.title, licensee })
+    return await Product.create({ product_retailer_id: product.id, name: product.title, licensee })
   })
+
+  return await Promise.all(importedProductsPromises)
 }
 
 function generateCatalog(catalogId, sections, products) {

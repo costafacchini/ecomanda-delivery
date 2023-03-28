@@ -249,8 +249,7 @@ class CartsController {
         return res.status(422).send({ errors: { message: `Carrinho não encontrado` } })
       }
 
-      const item = cart.products[req.body.item - 1]
-      item.remove()
+      cart.products.splice(req.body.item - 1)
       await cart.save()
 
       cart = await Cart.findOne({ _id: cart._id })
