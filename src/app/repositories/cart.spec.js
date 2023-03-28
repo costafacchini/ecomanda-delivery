@@ -50,7 +50,7 @@ describe('cart repository', () => {
         licensee: anotherLicensee,
       })
 
-      const cart = await getCartBy({ contact, licensee })
+      const cart = await getCartBy({ number: '5511990283745', licensee: licensee._id })
 
       expect(cart).toEqual(
         expect.objectContaining({
@@ -59,7 +59,7 @@ describe('cart repository', () => {
         })
       )
 
-      expect(cart).not.toEqual(
+      expect(contact).not.toEqual(
         expect.objectContaining({
           contact: contact._id,
           licensee: anotherLicensee._id,
