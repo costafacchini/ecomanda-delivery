@@ -38,5 +38,6 @@ router.delete('/carts/:contact/item', cartsController.removeItem)
 router.post('/carts/:cart/send', cartsController.send)
 
 router.get('/delay/:time', delayController.time)
+router.post('/delay/:time', delayController.time)
 
 module.exports = router
