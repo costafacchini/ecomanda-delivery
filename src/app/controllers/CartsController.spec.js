@@ -80,6 +80,41 @@ describe('carts controller', () => {
           })
       })
 
+      it('returns status 201 and the cart data if the contact send by url param', async () => {
+        const cartWithoutContact = cartFactory.build({ contact: null })
+
+        await request(expressServer)
+          .post(`/api/v1/carts?token=${licensee.apiToken}&contact=${contact.number}`)
+          .send(cartWithoutContact)
+          .expect('Content-Type', /json/)
+          .expect(201)
+          .then((response) => {
+            expect(response.body.total).toEqual(18.3)
+            expect(response.body.concluded).toEqual(false)
+            expect(response.body.contact).toEqual(contact._id.toString())
+            expect(response.body.licensee).toEqual(licensee._id.toString())
+
+            expect(response.body.products.length).toEqual(1)
+            expect(response.body.products[0].product_retailer_id).toEqual('0123')
+            expect(response.body.products[0].name).toEqual('Product 1')
+            expect(response.body.products[0].quantity).toEqual(2)
+            expect(response.body.products[0].unit_price).toEqual(7.8)
+
+            expect(response.body.products[0].additionals.length).toEqual(1)
+            expect(response.body.products[0].additionals[0].name).toEqual('Additional 1')
+            expect(response.body.products[0].additionals[0].quantity).toEqual(1)
+            expect(response.body.products[0].additionals[0].unit_price).toEqual(0.5)
+
+            expect(response.body.products[0].additionals[0].details.length).toEqual(1)
+            expect(response.body.products[0].additionals[0].details[0].name).toEqual('Detail 1')
+            expect(response.body.products[0].additionals[0].details[0].quantity).toEqual(1)
+            expect(response.body.products[0].additionals[0].details[0].unit_price).toEqual(0.6)
+
+            expect(response.body._id).toBeDefined()
+            expect(response.body.contact).not.toEqual(anotherContact._id.toString())
+          })
+      })
+
       it('returns status 201, create contact and the cart data if the name are in params', async () => {
         await request(expressServer)
           .post(`/api/v1/carts?token=${licensee.apiToken}`)
