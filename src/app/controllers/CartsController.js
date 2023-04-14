@@ -44,7 +44,9 @@ function permit(fields) {
 
 class CartsController {
   async create(req, res) {
-    const { contact, name } = req.body
+    const { name } = req.body
+    let { contact } = req.body
+    if (!contact) contact = req.query.contact
 
     try {
       let cartContact = await getContact(contact, req.licensee._id)
