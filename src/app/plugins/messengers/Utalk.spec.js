@@ -412,6 +412,7 @@ describe('Utalk plugin', () => {
         expect(contact.type).toEqual('@c.us')
         expect(contact.talkingWithChatBot).toEqual(licensee.useChatbot)
         expect(contact.licensee).toEqual(licensee._id)
+        expect(contact.wa_start_chat).toEqual(undefined)
 
         expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)

@@ -33,6 +33,7 @@ const contactSchema = new Schema(
     uf: String,
     delivery_tax: Number,
     plugin_cart_id: String,
+    wa_start_chat: Date,
   },
   { timestamps: true }
 )

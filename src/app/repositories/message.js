@@ -61,14 +61,28 @@ async function createTextMessageInsteadInteractive(fields) {
   return messageSaved
 }
 
-async function createMessageToWarnAboutWindowOfWhatsassClosed(contact, licensee) {
+async function createMessageToWarnAboutWindowOfWhatsassHasExpired(contact, licensee) {
   const message = new Message({
     number: uuidv4(),
     kind: 'text',
     contact,
     licensee,
     destination: 'to-chat',
-    text: '🚨 ATENÇÃO\nO período de 24h para manter conversas expirou.Envie um Template para voltar a interagir com esse contato.',
+    text: '🚨 ATENÇÃO\nO período de 24h para manter conversas expirou. Envie um Template para voltar a interagir com esse contato.',
+  })
+
+  const messageSaved = await message.save()
+  return messageSaved
+}
+
+async function createMessageToWarnAboutWindowOfWhatsassIsEnding(contact, licensee) {
+  const message = new Message({
+    number: uuidv4(),
+    kind: 'text',
+    contact,
+    licensee,
+    destination: 'to-chat',
+    text: '🚨 ATENÇÃO\nO período de 24h para manter conversas está quase expirando. Faltam apenas 10 minutos para encerrar.',
   })
 
   const messageSaved = await message.save()
@@ -77,7 +91,8 @@ async function createMessageToWarnAboutWindowOfWhatsassClosed(contact, licensee)
 
 module.exports = {
   createMessage,
-  createMessageToWarnAboutWindowOfWhatsassClosed,
+  createMessageToWarnAboutWindowOfWhatsassHasExpired,
+  createMessageToWarnAboutWindowOfWhatsassIsEnding,
   createTextMessageInsteadInteractive,
   createInteractiveMessages,
 }
