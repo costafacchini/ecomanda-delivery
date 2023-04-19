@@ -5,6 +5,9 @@ const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
 const queueServer = require('@config/queue')
 const { licensee: licenseeFactory } = require('@factories/licensee')
+const { publishMessage } = require('@config/rabbitmq')
+
+jest.mock('@config/rabbitmq')
 
 describe('chats controller', () => {
   let apiToken
@@ -45,13 +48,14 @@ describe('chats controller', () => {
     })
   })
 
-  describe('create', () => {
+  describe('message', () => {
     describe('response', () => {
       it('returns status 200 and schedule job to process chat message', async () => {
         await request(expressServer)
           .post(`/api/v1/chat/message/?token=${apiToken}`)
           .send({
             field: 'test',
+            crmData: '',
           })
           .expect('Content-Type', /json/)
           .expect(200)
@@ -61,8 +65,26 @@ describe('chats controller', () => {
             expect(response.body).toEqual({
               body: 'Solicitação de mensagem para a plataforma de chat agendado',
             })
+            expect(body.content).not.toEqual(expect.objectContaining({ crmData: '' }))
             expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
             expect(queueServerAddJobSpy).toHaveBeenCalledWith('chat-message', { bodyId: body._id })
+          })
+      })
+    })
+  })
+
+  describe('reset', () => {
+    describe('response', () => {
+      it('returns status 200 and schedule job to reset whatsapp window', async () => {
+        await request(expressServer)
+          .post(`/api/v1/chat/reset/?token=${apiToken}`)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .then((response) => {
+            expect(response.body).toEqual({
+              body: 'Solicitação para avisar os chats com janela vencendo agendado com sucesso',
+            })
+            expect(publishMessage).toHaveBeenCalledWith({ key: 'reset-chats', body: {} })
           })
       })
     })

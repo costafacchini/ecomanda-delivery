@@ -16,6 +16,7 @@ const cartsController = new CartsController()
 const delayController = new DelayController()
 
 router.post('/chat/message', chatsController.message)
+router.post('/chat/reset', chatsController.reset)
 
 router.post('/chatbot/message', chatbotsController.message)
 router.post('/chatbot/transfer', chatbotsController.transfer)

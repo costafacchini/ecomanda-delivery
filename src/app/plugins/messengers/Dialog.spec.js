@@ -1088,6 +1088,93 @@ describe('Dialog plugin', () => {
       expect(contactUpdated.waId).toEqual('5511990283745')
     })
 
+    it('updates the contact whatsapp start chat if field not filled', async () => {
+      await Contact.create(
+        contactFactory.build({
+          name: 'John Doe',
+          talkingWithChatBot: false,
+          waId: '5511990283745',
+          licensee,
+          wa_start_chat: null,
+        })
+      )
+
+      const responseBody = {
+        contacts: [
+          {
+            profile: {},
+            wa_id: '5511990283745',
+          },
+        ],
+        messages: [
+          {
+            from: '5511990283745',
+            id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
+            text: {
+              body: 'Message',
+            },
+            timestamp: '1632784639',
+            type: 'text',
+          },
+        ],
+      }
+
+      const dialog = new Dialog(licensee)
+      await dialog.responseToMessages(responseBody)
+
+      const contactUpdated = await Contact.findOne({
+        number: '5511990283745',
+        type: '@c.us',
+        licensee: licensee._id,
+      })
+
+      expect(contactUpdated.wa_start_chat).not.toEqual(null)
+    })
+
+    it('does not update the contact whatsapp start chat if field already filled', async () => {
+      await Contact.create(
+        contactFactory.build({
+          name: 'John Doe',
+          talkingWithChatBot: false,
+          waId: '5511990283745',
+          licensee,
+          wa_start_chat: new Date('2023-04-15T12:36:10.018Z'),
+        })
+      )
+
+      const responseBody = {
+        contacts: [
+          {
+            profile: {
+              name: 'John Doe',
+            },
+          },
+        ],
+        messages: [
+          {
+            from: '5511990283745',
+            id: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC',
+            text: {
+              body: 'Message',
+            },
+            timestamp: '1632784639',
+            type: 'text',
+          },
+        ],
+      }
+
+      const dialog = new Dialog(licensee)
+      await dialog.responseToMessages(responseBody)
+
+      const contactUpdated = await Contact.findOne({
+        number: '5511990283745',
+        type: '@c.us',
+        licensee: licensee._id,
+      })
+
+      expect(contactUpdated.wa_start_chat).toEqual(new Date('2023-04-15T12:36:10.018Z'))
+    })
+
     describe('when the contact does not exists', () => {
       it('registers the contact and return the response body transformed in messages', async () => {
         const responseBody = {
@@ -1127,6 +1214,7 @@ describe('Dialog plugin', () => {
         expect(contact.waId).toEqual('5593165392999')
         expect(contact.talkingWithChatBot).toEqual(licensee.useChatbot)
         expect(contact.licensee).toEqual(licensee._id)
+        expect(contact.wa_start_chat).not.toEqual(null)
 
         expect(messages.length).toEqual(1)
       })

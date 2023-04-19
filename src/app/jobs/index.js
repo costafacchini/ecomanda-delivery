@@ -10,6 +10,7 @@ const transferToChat = require('./TransferToChat')
 const backup = require('./Backup')
 const clearBackups = require('./ClearBackups')
 const resetChatbots = require('./ResetChatbots')
+const resetChats = require('./ResetChats')
 
 const jobs = [
   chatMessage,
@@ -22,6 +23,7 @@ const jobs = [
   sendMessageToMessenger,
   transferToChat,
   resetChatbots,
+  resetChats,
   backup,
   clearBackups,
 ]
