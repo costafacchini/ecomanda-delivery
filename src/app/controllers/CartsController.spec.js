@@ -47,6 +47,10 @@ describe('carts controller', () => {
 
   describe('create', () => {
     describe('response', () => {
+      beforeEach(async () => {
+        await Cart.deleteMany()
+      })
+
       it('returns status 201 and the cart data if the create is successful', async () => {
         await request(expressServer)
           .post(`/api/v1/carts?token=${licensee.apiToken}`)
@@ -125,6 +129,79 @@ describe('carts controller', () => {
             expect(response.body.contact).toBeDefined()
             expect(response.body.contact).not.toEqual(contact._id.toString())
             expect(response.body.contact).not.toEqual(anotherContact._id.toString())
+          })
+      })
+
+      it('returns status 201 and update cart data if the cart already exists', async () => {
+        await Cart.create(cartFactory.build({ contact, licensee }))
+
+        await request(expressServer)
+          .post(`/api/v1/carts?token=${licensee.apiToken}&contact=${contact.number}`)
+          .send({
+            products: [
+              {
+                product_retailer_id: '0124',
+                name: 'Product 2',
+                quantity: 1,
+                unit_price: 1.0,
+                additionals: [
+                  {
+                    name: 'Additional 2',
+                    quantity: 2,
+                    unit_price: 0.7,
+                    details: [
+                      {
+                        name: 'Detail 2',
+                        quantity: 2,
+                        unit_price: 0.8,
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+            total: 5.5,
+            delivery_tax: 1.5,
+            concluded: true,
+          })
+          .expect('Content-Type', /json/)
+          .expect(201)
+          .then((response) => {
+            expect(response.body.total).toEqual(24.9)
+            expect(response.body.concluded).toEqual(false)
+            expect(response.body.contact).toEqual(contact._id.toString())
+            expect(response.body.licensee).toEqual(licensee._id.toString())
+
+            expect(response.body.products.length).toEqual(2)
+            expect(response.body.products[0].product_retailer_id).toEqual('0123')
+            expect(response.body.products[0].name).toEqual('Product 1')
+            expect(response.body.products[0].quantity).toEqual(2)
+            expect(response.body.products[0].unit_price).toEqual(7.8)
+
+            expect(response.body.products[0].additionals.length).toEqual(1)
+            expect(response.body.products[0].additionals[0].name).toEqual('Additional 1')
+            expect(response.body.products[0].additionals[0].quantity).toEqual(1)
+            expect(response.body.products[0].additionals[0].unit_price).toEqual(0.5)
+
+            expect(response.body.products[0].additionals[0].details.length).toEqual(1)
+            expect(response.body.products[0].additionals[0].details[0].name).toEqual('Detail 1')
+            expect(response.body.products[0].additionals[0].details[0].quantity).toEqual(1)
+            expect(response.body.products[0].additionals[0].details[0].unit_price).toEqual(0.6)
+
+            expect(response.body.products[1].product_retailer_id).toEqual('0124')
+            expect(response.body.products[1].name).toEqual('Product 2')
+            expect(response.body.products[1].quantity).toEqual(1)
+            expect(response.body.products[1].unit_price).toEqual(1.0)
+
+            expect(response.body.products[1].additionals.length).toEqual(1)
+            expect(response.body.products[1].additionals[0].name).toEqual('Additional 2')
+            expect(response.body.products[1].additionals[0].quantity).toEqual(2)
+            expect(response.body.products[1].additionals[0].unit_price).toEqual(0.7)
+
+            expect(response.body.products[1].additionals[0].details.length).toEqual(1)
+            expect(response.body.products[1].additionals[0].details[0].name).toEqual('Detail 2')
+            expect(response.body.products[1].additionals[0].details[0].quantity).toEqual(2)
+            expect(response.body.products[1].additionals[0].details[0].unit_price).toEqual(0.8)
           })
       })
 

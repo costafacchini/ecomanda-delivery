@@ -86,27 +86,54 @@ class CartsController {
         discount,
       } = cartPlugin.parseCart(req.licensee, contact, req.body)
 
-      const cart = new Cart({
-        delivery_tax,
+      let cart = await Cart.findOne({
         contact: cartContact._id,
-        licensee: req.licensee._id,
-        products,
-        concluded,
-        catalog,
-        address,
-        address_number,
-        address_complement,
-        neighborhood,
-        city,
-        cep,
-        uf,
-        note,
-        change,
-        partner_key,
-        payment_method,
-        points,
-        discount,
+        concluded: false,
       })
+
+      if (!cart) {
+        cart = new Cart({
+          delivery_tax,
+          contact: cartContact._id,
+          licensee: req.licensee._id,
+          products,
+          concluded,
+          catalog,
+          address,
+          address_number,
+          address_complement,
+          neighborhood,
+          city,
+          cep,
+          uf,
+          note,
+          change,
+          partner_key,
+          payment_method,
+          points,
+          discount,
+        })
+      } else {
+        cart.delivery_tax = delivery_tax
+        cart.catalog = catalog
+        cart.address = address
+        cart.address_number = address_number
+        cart.address_complement = address_complement
+        cart.neighborhood = neighborhood
+        cart.city = city
+        cart.cep = cep
+        cart.uf = uf
+        cart.note = note
+        cart.change = change
+        cart.partner_key = partner_key
+        cart.payment_method = payment_method
+        cart.points = points
+        cart.discount = discount
+
+        products.forEach((item) => {
+          cart.products.push(item)
+        })
+      }
 
       await cart.save()
 
