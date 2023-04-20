@@ -22,6 +22,8 @@ async function clearWaStartChatOnContact(contact) {
 }
 
 async function warningAboutChatsEnding(licensee) {
+  if (!licensee.useWhatsappWindow === true) return
+
   let query = Contact.find({})
   query = query
     .where('licensee', licensee)
@@ -43,11 +45,13 @@ async function warningAboutChatsExpired(licensee) {
 
   const contacts = await query.exec()
   for (const contact of contacts) {
-    const messageToSend = await createMessageToWarnAboutWindowOfWhatsassHasExpired(contact, licensee)
-
     await clearWaStartChatOnContact(contact)
 
-    await sendMessageToChat(licensee, messageToSend)
+    if (licensee.useWhatsappWindow === true) {
+      const messageToSend = await createMessageToWarnAboutWindowOfWhatsassHasExpired(contact, licensee)
+
+      await sendMessageToChat(licensee, messageToSend)
+    }
   }
 }
 
