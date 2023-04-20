@@ -1,5 +1,6 @@
-const aws = require('aws-sdk')
 const mime = require('mime-types')
+const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3')
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
 
 const getBucketPath = (number) => {
   const date = new Date()
@@ -27,27 +28,27 @@ class S3 {
     this.fileName = fileName
     this.fileBase64 = fileBase64
 
-    this.aws = new aws.S3({
-      accessKeyId: licensee.awsId,
-      secretAccessKey: licensee.awsSecret,
+    this.aws = new S3Client({
       region: 'us-east-1',
+      credentials: {
+        accessKeyId: licensee.awsId,
+        secretAccessKey: licensee.awsSecret,
+      },
     })
 
     this.bucketName = this.licensee.bucketName
   }
 
-  presignedUrl() {
+  async presignedUrl() {
     const fileFullPath = getBucketPath(this.contact.number) + this.fileName
 
-    const fileURL = this.aws.getSignedUrl('putObject', {
-      Bucket: this.bucketName,
-      Key: fileFullPath,
-    })
+    const command = new GetObjectCommand({ Bucket: this.bucketName, Key: fileFullPath })
+    const fileURL = await getSignedUrl(this.aws, command, { expiresIn: 3600 })
 
     return fileURL.substr(0, fileURL.indexOf('?'))
   }
 
-  uploadFile() {
+  async uploadFile() {
     const fileFullPath = getBucketPath(this.contact.number) + this.fileName
     const buffer = base64ToBuffer(this.fileBase64)
 
@@ -59,12 +60,10 @@ class S3 {
       ContentType: mime.lookup(fileFullPath),
     }
 
-    this.aws.upload(params, function (err, data) {
-      if (err) {
-        throw err
-      }
-      console.info(`Arquivo enviado para S3 com sucesso. ${data.Location}`)
-    })
+    const results = await this.aws.send(new PutObjectCommand(params))
+    console.info(`Arquivo enviado para S3 com sucesso. ${results}`)
+
+    return results
   }
 }
 
