@@ -7,6 +7,7 @@ const { createContact } = require('@repositories/contact')
 const { scheduleSendMessageToMessenger } = require('@repositories/messenger')
 const { parseCart } = require('@helpers/ParseTriggerText')
 const createCartAdapter = require('../plugins/carts/adapters/factory')
+const cartFactory = require('@plugins/carts/factory')
 
 async function getContact(number, licenseeId) {
   const normalizedPhone = new NormalizePhone(number)
@@ -314,6 +315,32 @@ class CartsController {
       })
 
       res.status(200).send({ message: 'Carrinho agendado para envio' })
+    } catch (err) {
+      res.status(500).send({ errors: { message: err.toString() } })
+    }
+  }
+
+  async getCart(req, res) {
+    try {
+      const contact = await getContact(req.params.contact, req.licensee._id)
+
+      if (!contact) {
+        return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
+      }
+
+      const cart = await Cart.findOne({
+        contact: contact._id,
+        concluded: false,
+      })
+
+      if (!cart) {
+        return res.status(422).send({ errors: { message: `Carrinho não encontrado` } })
+      }
+
+      const cartPlugin = cartFactory(req.licensee)
+      const cartTransformed = await cartPlugin.transformCart(req.licensee, cart)
+
+      res.status(200).send(cartTransformed)
     } catch (err) {
       res.status(500).send({ errors: { message: err.toString() } })
     }

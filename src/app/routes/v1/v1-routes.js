@@ -37,6 +37,7 @@ router.get('/carts/:contact', cartsController.show)
 router.post('/carts/:contact/item', cartsController.addItem)
 router.delete('/carts/:contact/item', cartsController.removeItem)
 router.post('/carts/:cart/send', cartsController.send)
+router.get('/carts/:contact/cart', cartsController.getCart)
 
 router.get('/delay/:time', delayController.time)
 router.post('/delay/:time', delayController.time)

@@ -18,7 +18,7 @@ describe('carts controller', () => {
   beforeAll(async () => {
     await mongoServer.connect()
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    licensee = await Licensee.create(licenseeFactory.build({ cartDefault: 'go2go' }))
     contact = await Contact.create(contactFactory.build({ licensee }))
 
     anotherLicensee = await Licensee.create(licenseeFactory.build())
@@ -673,6 +673,96 @@ describe('carts controller', () => {
           })
 
         createTextMessageInsteadInteractive.mockRestore()
+      })
+    })
+  })
+
+  describe('getCart', () => {
+    describe('response', () => {
+      it('returns status 200 and message if cart exists', async () => {
+        await Cart.create(cartFactory.build({ contact, licensee }))
+
+        await request(expressServer)
+          .get(`/api/v1/carts/5511990283745/cart?token=${licensee.apiToken}`)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .then((response) => {
+            expect(response.body.order.deliveryMode).toEqual('MERCHANT')
+            expect(response.body.order.docNotaFiscal).toEqual(false)
+            expect(response.body.order.documento).toEqual('')
+            expect(response.body.order.endEntrega).toEqual('')
+            expect(response.body.order.flagIntegrado).toEqual('NaoIntegrado')
+            expect(response.body.order.impostos).toEqual(0)
+            expect(response.body.order.origemId).toEqual(0)
+            expect(response.body.order.refCurtaOrigem).toEqual('')
+            expect(response.body.order.refOrigem).toEqual('Ecommerce')
+            expect(response.body.order.refPedido).toEqual('Ecommerce')
+            expect(response.body.order.subTotal).toEqual(17.8)
+            expect(response.body.order.taxaEntrega).toEqual(0.5)
+            expect(response.body.order.telefonePedido).toEqual('5511990283745')
+            expect(response.body.order.totalPedido).toEqual(18.3)
+            expect(response.body.order.valorDocNotaFiscal).toEqual('')
+            expect(response.body.order.valorPagar).toEqual(18.3)
+            expect(response.body.order.voucher).toEqual(0)
+
+            expect(response.body.order.entrega.data).toEqual('')
+            expect(response.body.order.entrega.endereco.id).toEqual(37025)
+            expect(response.body.order.entrega.endereco.padrao).toEqual(false)
+            expect(response.body.order.entrega.endereco.pais).toEqual('Brasil')
+            expect(response.body.order.entrega.retiraLoja).toEqual(false)
+            expect(response.body.order.entrega.retirada).toEqual('Hoje')
+
+            expect(response.body.order.itens[0].precoTotal).toEqual(8.9)
+            expect(response.body.order.itens[0].produtoId).toEqual('0123')
+            expect(response.body.order.itens[0].quantidade).toEqual(2)
+            expect(response.body.order.itens[0].adicionalPedidoItems[0].atributoValorId).toEqual('Detail 1')
+            expect(response.body.order.itens[0].adicionalPedidoItems[0].precoTotal).toEqual(0.5)
+            expect(response.body.order.itens[0].adicionalPedidoItems[0].produtoId).toEqual('Additional 1')
+            expect(response.body.order.itens[0].adicionalPedidoItems[0].quantidade).toEqual(1)
+
+            expect(response.body.order.pagamentos[0].bandeira).toEqual(0)
+            expect(response.body.order.pagamentos[0].codigoResposta).toEqual('')
+            expect(response.body.order.pagamentos[0].descontoId).toEqual(0)
+            expect(response.body.order.pagamentos[0].nsu).toEqual(0)
+            expect(response.body.order.pagamentos[0].observacao).toEqual('')
+            expect(response.body.order.pagamentos[0].prePago).toEqual(false)
+            expect(response.body.order.pagamentos[0].status).toEqual('NaoInformado')
+            expect(response.body.order.pagamentos[0].tipo).toEqual('')
+            expect(response.body.order.pagamentos[0].transactionId).toEqual(0)
+            expect(response.body.order.pagamentos[0].troco).toEqual(0)
+            expect(response.body.order.pagamentos[0].valor).toEqual(18.3)
+          })
+      })
+
+      it('returns status 422 and message if the cart is not founded', async () => {
+        await Cart.deleteMany({})
+
+        await request(expressServer)
+          .get(`/api/v1/carts/5511990283745?token=${licensee.apiToken}`)
+          .expect('Content-Type', /json/)
+          .expect(422, { errors: { message: 'Carrinho não encontrado' } })
+      })
+
+      it('returns status 422 and message if the contact is not founded', async () => {
+        await request(expressServer)
+          .get(`/api/v1/carts/551164646464?token=${licensee.apiToken}`)
+          .expect('Content-Type', /json/)
+          .expect(422, { errors: { message: 'Contato 551164646464 não encontrado' } })
+      })
+
+      it('returns status 500 and message if occurs another error', async () => {
+        const contactFindOneSpy = jest.spyOn(Contact, 'findOne').mockImplementation(() => {
+          throw new Error('some error')
+        })
+
+        await request(expressServer)
+          .get(`/api/v1/carts/551164646464?token=${licensee.apiToken}`)
+          .expect('Content-Type', /json/)
+          .expect(500, {
+            errors: { message: 'Error: some error' },
+          })
+
+        contactFindOneSpy.mockRestore()
       })
     })
   })
