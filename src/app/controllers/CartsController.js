@@ -293,11 +293,24 @@ class CartsController {
 
   async send(req, res) {
     try {
+      const contact = await getContact(req.params.contact, req.licensee._id)
+
+      if (!contact) {
+        return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
+      }
+
       let cart
       try {
-        cart = await Cart.findOne({ _id: req.params.cart }).populate('contact')
+        cart = await Cart.findOne({
+          contact: contact._id,
+          concluded: false,
+        }).populate('contact')
       } catch (err) {
-        return res.status(422).send({ errors: { message: `Carrinho não encontrado` } })
+        return res.status(422).send({ errors: { message: 'Carrinho não encontrado' } })
+      }
+
+      if (!cart) {
+        return res.status(422).send({ errors: { message: 'Carrinho não encontrado' } })
       }
 
       const cartDescription = await parseCart(cart._id)

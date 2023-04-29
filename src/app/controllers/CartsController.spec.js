@@ -639,12 +639,12 @@ describe('carts controller', () => {
   describe('send', () => {
     describe('response', () => {
       it('returns status 200 and schedules to send message if the item removed with successful', async () => {
-        const cart = await Cart.create(cartFactory.build({ contact, licensee }))
+        await Cart.create(cartFactory.build({ contact, licensee }))
 
         createTextMessageInsteadInteractive.mockResolvedValue({ _id: 'id' })
 
         await request(expressServer)
-          .post(`/api/v1/carts/${cart._id}/send?token=${licensee.apiToken}`)
+          .post(`/api/v1/carts/5511990283745/send?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
           .expect(200, {
             message: 'Carrinho agendado para envio',
@@ -661,14 +661,14 @@ describe('carts controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurred when update the cart', async () => {
-        const cart = await Cart.create(cartFactory.build({ contact, licensee }))
+        await Cart.create(cartFactory.build({ contact, licensee }))
 
         createTextMessageInsteadInteractive.mockImplementation(() => {
           throw new Error('some error')
         })
 
         await request(expressServer)
-          .post(`/api/v1/carts/${cart._id}/send?token=${licensee.apiToken}`)
+          .post(`/api/v1/carts/5511990283745/send?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
           .expect(500, {
             errors: { message: 'Error: some error' },
