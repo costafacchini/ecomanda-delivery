@@ -8,6 +8,7 @@ const { scheduleSendMessageToMessenger } = require('@repositories/messenger')
 const { parseCart } = require('@helpers/ParseTriggerText')
 const createCartAdapter = require('../plugins/carts/adapters/factory')
 const cartFactory = require('@plugins/carts/factory')
+const { publishMessage } = require('@config/rabbitmq')
 
 async function getContact(number, licenseeId) {
   const normalizedPhone = new NormalizePhone(number)
@@ -344,6 +345,14 @@ class CartsController {
     } catch (err) {
       res.status(500).send({ errors: { message: err.toString() } })
     }
+  }
+
+  reset(_, res) {
+    console.info('Agendando para resetar carts expirando')
+
+    publishMessage({ key: 'reset-carts', body: {} })
+
+    res.status(200).send({ body: 'Solicitação para avisar os carts com janela vencendo agendado com sucesso' })
   }
 }
 

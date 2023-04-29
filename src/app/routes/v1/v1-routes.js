@@ -30,6 +30,7 @@ router.post('/backups/clear', backupsController.clear)
 router.get('/contacts/address/:number', adressesController.show)
 router.post('/contacts/address/:number', adressesController.update)
 
+router.post('/carts/reset', cartsController.reset)
 router.post('/carts/', cartsController.create)
 router.post('/carts/:contact', cartsController.update)
 router.delete('/carts/:contact', cartsController.close)

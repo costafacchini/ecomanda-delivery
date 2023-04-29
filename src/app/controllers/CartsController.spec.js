@@ -8,7 +8,9 @@ const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { cart: cartFactory } = require('@factories/cart')
 const { createTextMessageInsteadInteractive } = require('@repositories/message')
+const { publishMessage } = require('@config/rabbitmq')
 
+jest.mock('@config/rabbitmq')
 jest.mock('@repositories/message')
 
 describe('carts controller', () => {
@@ -763,6 +765,23 @@ describe('carts controller', () => {
           })
 
         contactFindOneSpy.mockRestore()
+      })
+    })
+  })
+
+  describe('reset', () => {
+    describe('response', () => {
+      it('returns status 200 and schedule job to reset chat window', async () => {
+        await request(expressServer)
+          .post(`/api/v1/carts/reset?token=${licensee.apiToken}`)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .then((response) => {
+            expect(response.body).toEqual({
+              body: 'Solicitação para avisar os carts com janela vencendo agendado com sucesso',
+            })
+            expect(publishMessage).toHaveBeenCalledWith({ key: 'reset-carts', body: {} })
+          })
       })
     })
   })
