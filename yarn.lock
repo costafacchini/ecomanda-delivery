@@ -6740,10 +6740,10 @@ new-find-package-json@^2.0.0:
   dependencies:
     debug "^4.3.4"
 
-newrelic@10.0.0:
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-10.0.0.tgz#01cd7744323e6ba5ce780f4ba097978d79671b67"
-  integrity sha512-FyXsJMUApTVG+neypymDIDcBAdy8CwAmVmaa2gqLektLuX6Z77pKSLOBfpanhTgFEe/XS23tgsnEqx2eOF+GDw==
+newrelic@10.1.0:
+  version "10.1.0"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-10.1.0.tgz#a07011a621cbd5746b2b33a2d033775fb8eafe3e"
+  integrity sha512-KSUeN4QlmZEfOWfXM3Uv128a8KyRG1kgdoCd0vSk4hDLfo4VD/uN8skzf5jfAt3dbqllB2Wrdljoe6duoITVEw==
   dependencies:
     "@grpc/grpc-js" "^1.8.10"
     "@grpc/proto-loader" "^0.7.5"
