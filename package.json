@@ -39,7 +39,7 @@
     "supertest": "6.3.3"
   },
   "dependencies": {
-    "@sinonjs/fake-timers": "10.0.2",
+    "@sinonjs/fake-timers": "10.1.0",
     "amqplib": "0.10.3",
     "archiver": "5.3.1",
     "@aws-sdk/client-s3": "^3.32.0",
