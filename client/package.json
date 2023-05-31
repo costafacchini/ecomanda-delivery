@@ -10,7 +10,7 @@
     "bootstrap": "5.2.3",
     "bootstrap-icons": "1.8.3",
     "fishery": "2.2.2",
-    "formik": "2.2.9",
+    "formik": "2.4.1",
     "loadash": "1.0.0",
     "moment": "2.29.4",
     "node-sass": "8.0.0",
