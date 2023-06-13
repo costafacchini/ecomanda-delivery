@@ -174,19 +174,19 @@ licenseeSchema.set('toJSON', {
 })
 
 licenseeSchema.virtual('urlChatWebhook').get(function () {
-  return `https://ecomanda-delivery.herokuapp.com/api/v1/chat/message/?token=${this.apiToken}`
+  return `https://clave-digital.herokuapp.com/api/v1/chat/message/?token=${this.apiToken}`
 })
 
 licenseeSchema.virtual('urlChatbotWebhook').get(function () {
-  return `https://ecomanda-delivery.herokuapp.com/api/v1/chatbot/message/?token=${this.apiToken}`
+  return `https://clave-digital.herokuapp.com/api/v1/chatbot/message/?token=${this.apiToken}`
 })
 
 licenseeSchema.virtual('urlChatbotTransfer').get(function () {
-  return `https://ecomanda-delivery.herokuapp.com/api/v1/chatbot/transfer/?token=${this.apiToken}`
+  return `https://clave-digital.herokuapp.com/api/v1/chatbot/transfer/?token=${this.apiToken}`
 })
 
 licenseeSchema.virtual('urlWhatsappWebhook').get(function () {
-  return `https://ecomanda-delivery.herokuapp.com/api/v1/messenger/message/?token=${this.apiToken}`
+  return `https://clave-digital.herokuapp.com/api/v1/messenger/message/?token=${this.apiToken}`
 })
 
 const Licensee = mongoose.model('Licensee', licenseeSchema)
