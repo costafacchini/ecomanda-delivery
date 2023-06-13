@@ -27,7 +27,7 @@ async function schedule() {
   }
 
   // This command is necessary to wake up the heroku application
-  await request.get('https://ecomanda-delivery.herokuapp.com/resources')
+  await request.get('https://clave-digital.herokuapp.com/resources')
   // process.exit()
 }
 

@@ -472,7 +472,7 @@ describe('Licensee', () => {
         const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
 
         expect(licensee.urlChatWebhook).toEqual(
-          `https://ecomanda-delivery.herokuapp.com/api/v1/chat/message/?token=${licensee.apiToken}`
+          `https://clave-digital.herokuapp.com/api/v1/chat/message/?token=${licensee.apiToken}`
         )
       })
     })
@@ -482,7 +482,7 @@ describe('Licensee', () => {
         const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
 
         expect(licensee.urlChatbotWebhook).toEqual(
-          `https://ecomanda-delivery.herokuapp.com/api/v1/chatbot/message/?token=${licensee.apiToken}`
+          `https://clave-digital.herokuapp.com/api/v1/chatbot/message/?token=${licensee.apiToken}`
         )
       })
     })
@@ -492,7 +492,7 @@ describe('Licensee', () => {
         const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
 
         expect(licensee.urlChatbotTransfer).toEqual(
-          `https://ecomanda-delivery.herokuapp.com/api/v1/chatbot/transfer/?token=${licensee.apiToken}`
+          `https://clave-digital.herokuapp.com/api/v1/chatbot/transfer/?token=${licensee.apiToken}`
         )
       })
     })
@@ -502,7 +502,7 @@ describe('Licensee', () => {
         const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
 
         expect(licensee.urlWhatsappWebhook).toEqual(
-          `https://ecomanda-delivery.herokuapp.com/api/v1/messenger/message/?token=${licensee.apiToken}`
+          `https://clave-digital.herokuapp.com/api/v1/messenger/message/?token=${licensee.apiToken}`
         )
       })
     })
