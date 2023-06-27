@@ -15,7 +15,7 @@ async function request(url, method, { headers, body, isDownload }) {
   try {
     // eslint-disable-next-line no-undef
     const response = await fetch(url, requestOptions)
-    const data = isDownload ? await response.arrayBuffer() : await response.text()
+    const data = isDownload ? await response.buffer() : await response.text()
 
     result = {
       status: response.status,

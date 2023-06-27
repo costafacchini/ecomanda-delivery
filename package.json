@@ -4,7 +4,7 @@
   "private": true,
   "author": "Alan Costa Facchini",
   "engines": {
-    "node": "18.x"
+    "node": "14.x"
   },
   "scripts": {
     "start": "node server.js",
