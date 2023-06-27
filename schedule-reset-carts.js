@@ -10,7 +10,7 @@ connect()
 async function schedule() {
   const licensee = await Licensee.findOne()
 
-  await request.post(`https://clave-digital.herokuapp.com/api/v1/backups/clear?token=${licensee.apiToken}`)
+  await request.post(`https://clave-digital.herokuapp.com/api/v1/carts/reset?token=${licensee.apiToken}`)
 
   // process.exit()
 }

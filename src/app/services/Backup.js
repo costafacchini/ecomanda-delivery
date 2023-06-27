@@ -4,7 +4,7 @@ const path = require('path')
 const spawn = require('child_process').spawn
 const archiver = require('archiver')
 const mime = require('mime-types')
-const aws = require('aws-sdk')
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
 
 async function backup() {
   const mongoURI = process.env.MONGODB_URI
@@ -53,15 +53,17 @@ function doBackup(mongoURI) {
   })
 }
 
-function upload(content, fileName) {
+async function upload(content, fileName) {
   const backupAccessKeyId = process.env.AWS_ACCESS_KEY_ID
   const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
   const bucketName = process.env.AWS_BUCKET_NAME
 
-  const s3 = new aws.S3({
-    accessKeyId: backupAccessKeyId,
-    secretAccessKey: secretAccessKey,
+  const s3 = new S3Client({
     region: 'us-east-1',
+    credentials: {
+      accessKeyId: backupAccessKeyId,
+      secretAccessKey: secretAccessKey,
+    },
   })
 
   const params = {
@@ -71,7 +73,10 @@ function upload(content, fileName) {
     ACL: 'public-read',
     ContentType: mime.lookup(fileName),
   }
-  return s3.upload(params).promise()
+
+  const results = await s3.send(new PutObjectCommand(params))
+
+  return results
 }
 
 module.exports = backup

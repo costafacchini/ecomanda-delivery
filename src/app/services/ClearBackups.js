@@ -1,6 +1,6 @@
-const aws = require('aws-sdk')
+const { S3Client, ListObjectsCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3')
 
-function clearBackups() {
+async function clearBackups() {
   const accessKeyId = process.env.AWS_ACCESS_KEY_ID
   const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
   const bucketName = process.env.AWS_BUCKET_NAME
@@ -9,10 +9,12 @@ function clearBackups() {
   date.setDate(date.getDate() - 1)
   const folderDate = `backups-ecomanda/${date.getFullYear()}-${date.getMonth()}-${date.getDate()}/`
 
-  const pluginAWS = new aws.S3({
-    accessKeyId,
-    secretAccessKey,
+  const pluginAWS = new S3Client({
     region: 'us-east-1',
+    credentials: {
+      accessKeyId,
+      secretAccessKey,
+    },
   })
 
   const params = {
@@ -20,24 +22,17 @@ function clearBackups() {
     Prefix: folderDate,
   }
 
-  pluginAWS.listObjects(params, function (err, data) {
-    if (err) {
-      throw err
+  const listCommand = new ListObjectsCommand(params)
+  const response = await pluginAWS.send(listCommand)
+  for (const obj of response.Contents) {
+    const paramsDrop = {
+      Bucket: bucketName,
+      Key: obj.Key,
     }
 
-    for (const obj of data.Contents) {
-      const paramsDrop = {
-        Bucket: bucketName,
-        Key: obj.Key,
-      }
-
-      pluginAWS.deleteObject(paramsDrop, function (err, _) {
-        if (err) {
-          throw err
-        }
-      })
-    }
-  })
+    const deleteCommand = new DeleteObjectCommand(paramsDrop)
+    await pluginAWS.send(deleteCommand)
+  }
 }
 
 module.exports = clearBackups

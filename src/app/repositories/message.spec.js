@@ -4,7 +4,8 @@ const Trigger = require('@models/Trigger')
 const mongoServer = require('../../../.jest/utils')
 const {
   createMessage,
-  createMessageToWarnAboutWindowOfWhatsassClosed,
+  createMessageToWarnAboutWindowOfWhatsassHasExpired,
+  createMessageToWarnAboutWindowOfWhatsassIsEnding,
   createTextMessageInsteadInteractive,
   createInteractiveMessages,
 } = require('@repositories/message')
@@ -171,18 +172,38 @@ describe('message repository', () => {
     })
   })
 
-  describe('#createMessageToWarnAboutWindowOfWhatsassClosed', () => {
+  describe('#createMessageToWarnAboutWindowOfWhatsassHasExpired', () => {
     it('creates a message with warn about window of whatsapp to the chat', async () => {
       const licensee = await Licensee.create(licenseeFactory.build())
       const contact = await Contact.create(contactFactory.build({ licensee: licensee._id }))
 
-      const message = await createMessageToWarnAboutWindowOfWhatsassClosed(contact, licensee)
+      const message = await createMessageToWarnAboutWindowOfWhatsassHasExpired(contact, licensee)
 
       expect(message).toEqual(
         expect.objectContaining({
           number: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
           kind: 'text',
-          text: '🚨 ATENÇÃO\nO período de 24h para manter conversas expirou.Envie um Template para voltar a interagir com esse contato.',
+          text: '🚨 ATENÇÃO\nO período de 24h para manter conversas expirou. Envie um Template para voltar a interagir com esse contato.',
+          destination: 'to-chat',
+          licensee,
+          contact,
+        })
+      )
+    })
+  })
+
+  describe('#createMessageToWarnAboutWindowOfWhatsassIsEnding', () => {
+    it('creates a message with warn about window of whatsapp to the chat', async () => {
+      const licensee = await Licensee.create(licenseeFactory.build())
+      const contact = await Contact.create(contactFactory.build({ licensee: licensee._id }))
+
+      const message = await createMessageToWarnAboutWindowOfWhatsassIsEnding(contact, licensee)
+
+      expect(message).toEqual(
+        expect.objectContaining({
+          number: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
+          kind: 'text',
+          text: '🚨 ATENÇÃO\nO período de 24h para manter conversas está quase expirando. Faltam apenas 10 minutos para encerrar.',
           destination: 'to-chat',
           licensee,
           contact,

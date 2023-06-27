@@ -43,12 +43,10 @@ async function resetChatbots() {
     const contacts = await Contact.find({ licensee: licensee._id, talkingWithChatBot: true, landbotId: { $ne: null } })
     for (const contact of contacts) {
       const message = await getLastMessageOfContact(contact._id)
-      if (
-        message &&
-        message.destination === 'to-messenger' &&
-        message.createdAt < getTimeLimit() &&
-        message.sended === true
-      ) {
+
+      if (!message) continue
+
+      if (message.destination === 'to-messenger' && message.createdAt < getTimeLimit() && message.sended === true) {
         const chatPlugin = createChatbotPlugin(licensee)
 
         await chatPlugin.dropConversation(message.contact._id.toString())

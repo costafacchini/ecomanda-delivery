@@ -85,12 +85,18 @@ class MessengersBase {
         talkingWithChatBot: this.licensee.useChatbot,
         waId: this.contactData.waId,
         licensee: this.licensee._id,
+        wa_start_chat: this.contactData.wa_start_chat,
       })
     } else {
       if (this.contactWithDifferentData(contact)) {
         contact.name = this.contactData.name
         contact.waId = this.contactData.waId
         contact.talkingWithChatBot = this.licensee.useChatbot
+
+        await contact.save()
+      }
+      if (this.shouldUpdateWaStartChat(contact)) {
+        contact.wa_start_chat = this.contactData.wa_start_chat
 
         await contact.save()
       }

@@ -7,6 +7,8 @@ const { createContact } = require('@repositories/contact')
 const { scheduleSendMessageToMessenger } = require('@repositories/messenger')
 const { parseCart } = require('@helpers/ParseTriggerText')
 const createCartAdapter = require('../plugins/carts/adapters/factory')
+const cartFactory = require('@plugins/carts/factory')
+const { publishMessage } = require('@config/rabbitmq')
 
 async function getContact(number, licenseeId) {
   const normalizedPhone = new NormalizePhone(number)
@@ -44,7 +46,9 @@ function permit(fields) {
 
 class CartsController {
   async create(req, res) {
-    const { contact, name } = req.body
+    const { name } = req.body
+    let { contact } = req.body
+    if (!contact) contact = req.query.contact
 
     try {
       let cartContact = await getContact(contact, req.licensee._id)
@@ -84,27 +88,54 @@ class CartsController {
         discount,
       } = cartPlugin.parseCart(req.licensee, contact, req.body)
 
-      const cart = new Cart({
-        delivery_tax,
+      let cart = await Cart.findOne({
         contact: cartContact._id,
-        licensee: req.licensee._id,
-        products,
-        concluded,
-        catalog,
-        address,
-        address_number,
-        address_complement,
-        neighborhood,
-        city,
-        cep,
-        uf,
-        note,
-        change,
-        partner_key,
-        payment_method,
-        points,
-        discount,
+        concluded: false,
       })
+
+      if (!cart) {
+        cart = new Cart({
+          delivery_tax,
+          contact: cartContact._id,
+          licensee: req.licensee._id,
+          products,
+          concluded,
+          catalog,
+          address,
+          address_number,
+          address_complement,
+          neighborhood,
+          city,
+          cep,
+          uf,
+          note,
+          change,
+          partner_key,
+          payment_method,
+          points,
+          discount,
+        })
+      } else {
+        cart.delivery_tax = delivery_tax
+        cart.catalog = catalog
+        cart.address = address
+        cart.address_number = address_number
+        cart.address_complement = address_complement
+        cart.neighborhood = neighborhood
+        cart.city = city
+        cart.cep = cep
+        cart.uf = uf
+        cart.note = note
+        cart.change = change
+        cart.partner_key = partner_key
+        cart.payment_method = payment_method
+        cart.points = points
+        cart.discount = discount
+
+        products.forEach((item) => {
+          cart.products.push(item)
+        })
+      }
 
       await cart.save()
 
@@ -262,11 +293,24 @@ class CartsController {
 
   async send(req, res) {
     try {
+      const contact = await getContact(req.params.contact, req.licensee._id)
+
+      if (!contact) {
+        return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
+      }
+
       let cart
       try {
-        cart = await Cart.findOne({ _id: req.params.cart }).populate('contact')
+        cart = await Cart.findOne({
+          contact: contact._id,
+          concluded: false,
+        }).populate('contact')
       } catch (err) {
-        return res.status(422).send({ errors: { message: `Carrinho não encontrado` } })
+        return res.status(422).send({ errors: { message: 'Carrinho não encontrado' } })
+      }
+
+      if (!cart) {
+        return res.status(422).send({ errors: { message: 'Carrinho não encontrado' } })
       }
 
       const cartDescription = await parseCart(cart._id)
@@ -288,6 +332,40 @@ class CartsController {
     } catch (err) {
       res.status(500).send({ errors: { message: err.toString() } })
     }
+  }
+
+  async getCart(req, res) {
+    try {
+      const contact = await getContact(req.params.contact, req.licensee._id)
+
+      if (!contact) {
+        return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
+      }
+
+      const cart = await Cart.findOne({
+        contact: contact._id,
+        concluded: false,
+      })
+
+      if (!cart) {
+        return res.status(422).send({ errors: { message: `Carrinho não encontrado` } })
+      }
+
+      const cartPlugin = cartFactory(req.licensee)
+      const cartTransformed = await cartPlugin.transformCart(req.licensee, cart)
+
+      res.status(200).send(cartTransformed)
+    } catch (err) {
+      res.status(500).send({ errors: { message: err.toString() } })
+    }
+  }
+
+  reset(_, res) {
+    console.info('Agendando para resetar carts expirando')
+
+    publishMessage({ key: 'reset-carts', body: {} })
+
+    res.status(200).send({ body: 'Solicitação para avisar os carts com janela vencendo agendado com sucesso' })
   }
 }
 

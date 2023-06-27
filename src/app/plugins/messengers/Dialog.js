@@ -227,6 +227,7 @@ class Dialog extends MessengersBase {
       type: normalizePhone.type,
       waId: responseBody.contacts[0].wa_id,
       name: responseBody.contacts[0].profile.name,
+      wa_start_chat: new Date(),
     }
   }
 
@@ -235,6 +236,10 @@ class Dialog extends MessengersBase {
       (this.contactData.name && this.contactData.name !== contact.name) ||
       (this.contactData.waId && this.contactData.waId !== contact.waId)
     )
+  }
+
+  shouldUpdateWaStartChat(contact) {
+    return !contact.wa_start_chat
   }
 
   async sendMessage(messageId, url, token) {

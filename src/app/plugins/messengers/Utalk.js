@@ -103,6 +103,10 @@ class Utalk extends MessengersBase {
     return contact.name !== this.contactData.name && this.messageData.kind !== 'file' && this.contactData.name
   }
 
+  shouldUpdateWaStartChat(_) {
+    return false
+  }
+
   async sendMessage(messageId, url, token) {
     const messageToSend = await Message.findById(messageId).populate('contact')
 
