@@ -39,36 +39,55 @@ describe('Gallabox plugin', () => {
       )
 
       const cartGallabox = {
-        '0 Product Retailer Id': '83921',
-        '0 Item Price': 88,
-        '0 Quantity': 1,
-        '0 Currency': 'BRL',
-        '0 FbProductId': '4939381689498702',
-        '0 Retailer Id': '83921',
-        '0 Name': 'Portuguesa Grande',
-        '0 Description': 'Mozzarella Roni coberta com presunto, ovo cozido e rodelas de cebola',
-        '0 Price': 'R$88.00',
-        '0 Image Url': 'https://labraciera.com.br/wp-content/uploads/2022/12/GIU01240-768x748.jpg',
-        '1 Product Retailer Id': '83906',
-        '1 Item Price': 89,
-        '1 Quantity': 1,
-        '1 Currency': 'BRL',
-        '1 FbProductId': '5440587292720086',
-        '1 Retailer Id': '83906',
-        '1 Name': 'Castelões Grande',
-        '1 Description': 'Mozzarela italiana Fior di Latte e calabresa artesanal Cinque',
-        '1 Price': 'R$89.00',
-        '1 Image Url': 'https://labraciera.com.br/wp-content/uploads/2022/06/CASTELOES-Otimizado.jpg',
-        '2 Product Retailer Id': '83908',
-        '2 Item Price': 95,
-        '2 Quantity': 1,
-        '2 Currency': 'BRL',
-        '2 FbProductId': '5676467839108717',
-        '2 Retailer Id': '83908',
-        '2 Name': 'Napoli In Higienopolis Grande',
-        '2 Description': 'Catupiry®, carne seca desfiada e tomates cereja assados',
-        '2 Price': 'R$95.00',
-        '2 Image Url': 'https://labraciera.com.br/wp-content/uploads/2022/06/NAPOLI-IN-HIGIENOPOLIS-Otimizado.jpg',
+        order: {
+          catalog_id: '1321040298747904',
+          product_items: [
+            {
+              product_retailer_id: '83921',
+              item_price: 88,
+              quantity: 1,
+              currency: 'BRL',
+            },
+            {
+              product_retailer_id: '83906',
+              item_price: 89,
+              quantity: 1,
+              currency: 'BRL',
+            },
+            {
+              product_retailer_id: '83908',
+              item_price: 95,
+              quantity: 1,
+              currency: 'BRL',
+            },
+          ],
+          products: [
+            {
+              fbProductId: '4939381689498702',
+              retailer_id: '83921',
+              name: 'Portuguesa Grande',
+              description: 'Mozzarella Roni coberta com presunto, ovo cozido e rodelas de cebola',
+              price: 'R$88.00',
+              image_url: 'https://labraciera.com.br/wp-content/uploads/2022/12/GIU01240-768x748.jpg',
+            },
+            {
+              fbProductId: '5440587292720086',
+              retailer_id: '83906',
+              name: 'Castelões Grande',
+              description: 'Mozzarela italiana Fior di Latte e calabresa artesanal Cinque',
+              price: 'R$89.00',
+              image_url: 'https://labraciera.com.br/wp-content/uploads/2022/06/CASTELOES-Otimizado.jpg',
+            },
+            {
+              fbProductId: '5676467839108717',
+              retailer_id: '83908',
+              name: 'Napoli In Higienopolis Grande',
+              description: 'Catupiry®, carne seca desfiada e tomates cereja assados',
+              price: 'R$95.00',
+              image_url: 'https://labraciera.com.br/wp-content/uploads/2022/06/NAPOLI-IN-HIGIENOPOLIS-Otimizado.jpg',
+            },
+          ],
+        },
       }
 
       const gallabox = new Gallabox()
@@ -80,7 +99,7 @@ describe('Gallabox plugin', () => {
       expect(cart.delivery_tax).toEqual(0)
       expect(cart.discount).toEqual(0)
       expect(cart.concluded).toEqual(false)
-      expect(cart.catalog).toEqual('')
+      expect(cart.catalog).toEqual('1321040298747904')
       expect(cart.address).toEqual('Rua dos Bobos')
       expect(cart.address_number).toEqual('123')
       expect(cart.address_complement).toEqual('Sala 1')
