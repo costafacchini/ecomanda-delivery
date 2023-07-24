@@ -1,14 +1,5 @@
 class Gallabox {
   parseCart(licensee, contact, cart) {
-    const ecomandaKeys = {
-      _product_retailer_id: 'product_retailer_id',
-      _item_price: 'unit_price',
-      _quantity: 'quantity',
-      _fbproductid: 'product_fb_id',
-      _name: 'name',
-      _description: 'note',
-    }
-
     const cartParsed = {
       delivery_tax: 0,
       discount: 0,
