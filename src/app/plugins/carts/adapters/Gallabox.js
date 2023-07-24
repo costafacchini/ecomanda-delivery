@@ -1,21 +1,12 @@
 class Gallabox {
   parseCart(licensee, contact, cart) {
-    const ecomandaKeys = {
-      _product_retailer_id: 'product_retailer_id',
-      _item_price: 'unit_price',
-      _quantity: 'quantity',
-      _fbproductid: 'product_fb_id',
-      _name: 'name',
-      _description: 'note',
-    }
-
     const cartParsed = {
       delivery_tax: 0,
       discount: 0,
       contact: contact._id,
       licensee: licensee._id,
       concluded: false,
-      catalog: '',
+      catalog: cart.order.catalog_id,
       address: contact.address,
       address_number: contact.address_number,
       address_complement: contact.address_complement,
@@ -31,15 +22,24 @@ class Gallabox {
       products: [],
     }
 
-    for (const property in cart) {
-      const index = property.replace(/[^0-9]/g, '')
-      const key = property.replace(/ /g, '_').replace(/[0-9]/g, '').toLowerCase()
-      const value = cart[property]
+    for (const item of cart.order.product_items) {
+      const productParsed = {
+        product_retailer_id: item.product_retailer_id,
+        name: '',
+        quantity: item.quantity,
+        unit_price: item.item_price,
+        note: '',
+        product_fb_id: '',
+      }
 
-      if (!ecomandaKeys[key]) continue
-      if (!cartParsed.products[index]) cartParsed.products[index] = {}
+      cartParsed.products.push(productParsed)
+    }
 
-      cartParsed.products[index][ecomandaKeys[key]] = value
+    for (const product of cart.order.products) {
+      const productParsed = cartParsed.products.find((element) => element.product_retailer_id == product.retailer_id)
+      productParsed.name = product.name
+      productParsed.note = product.description
+      productParsed.product_fb_id = product.fbProductId
     }
 
     return cartParsed
