@@ -214,14 +214,14 @@ class CartsController {
         contact: contact._id,
         concluded: false,
       })
-        .populate('contact')
-        .populate('licensee')
 
       if (!cart) {
         return res.status(422).send({ errors: { message: `Carrinho não encontrado` } })
       }
 
-      res.status(200).send(cart)
+      const cartDescription = await parseCart(cart._id)
+
+      res.status(200).send({ cart: cartDescription })
     } catch (err) {
       return res.status(500).send({ errors: { message: err.toString() } })
     }

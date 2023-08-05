@@ -354,26 +354,55 @@ describe('carts controller', () => {
           .expect('Content-Type', /json/)
           .expect(200)
           .then((response) => {
-            expect(response.body.total).toEqual(18.3)
-            expect(response.body.concluded).toEqual(false)
-            expect(response.body.contact._id.toString()).toEqual(contact._id.toString())
-            expect(response.body.licensee._id.toString()).toEqual(licensee._id.toString())
-
-            expect(response.body.products.length).toEqual(1)
-            expect(response.body.products[0].product_retailer_id).toEqual('0123')
-            expect(response.body.products[0].name).toEqual('Product 1')
-            expect(response.body.products[0].quantity).toEqual(2)
-            expect(response.body.products[0].unit_price).toEqual(7.8)
-
-            expect(response.body.products[0].additionals.length).toEqual(1)
-            expect(response.body.products[0].additionals[0].name).toEqual('Additional 1')
-            expect(response.body.products[0].additionals[0].quantity).toEqual(1)
-            expect(response.body.products[0].additionals[0].unit_price).toEqual(0.5)
-
-            expect(response.body.products[0].additionals[0].details.length).toEqual(1)
-            expect(response.body.products[0].additionals[0].details[0].name).toEqual('Detail 1')
-            expect(response.body.products[0].additionals[0].details[0].quantity).toEqual(1)
-            expect(response.body.products[0].additionals[0].details[0].unit_price).toEqual(0.6)
+            expect(response.body.cart).toEqual(
+              '*ALCATEIA LTDS*' +
+                '\n' +
+                'Data: 03/07/2021 00:00' +
+                '\n' +
+                ' ' +
+                '\n' +
+                '*Cliente:* undefined' +
+                '\n' +
+                '*Telefone:* 11990283745' +
+                '\n' +
+                '______________' +
+                '\n' +
+                ' ' +
+                '\n' +
+                '*ITENS DO PEDIDO*' +
+                '\n' +
+                ' ' +
+                '\n' +
+                ' ' +
+                '\n' +
+                '2x Product 1 - R$ 7.80' +
+                '\n' +
+                '   2x Additional 1' +
+                '\n' +
+                '   Obs: item note' +
+                '\n' +
+                '______________' +
+                '\n' +
+                ' ' +
+                '\n' +
+                'Subtotal: R$ 17.80' +
+                '\n' +
+                'Taxa Entrega: R$ 0.50' +
+                '\n' +
+                'Desconto: R$ 0.00' +
+                '\n' +
+                '*TOTAL:* R$ 18.30' +
+                '\n' +
+                ' ' +
+                '\n' +
+                '*FORMA DE PAGAMENTO*' +
+                '\n' +
+                '0' +
+                '\n' +
+                ' ' +
+                '\n' +
+                '*TROCO PARA:* R$ 0.00'
+            )
           })
       })
 
