@@ -4,11 +4,11 @@ class Go2goV2 {
   getPaymentType(payment_method) {
     if (!payment_method || payment_method === '') return 'Outros'
 
-    if ('dinheiro'.include(payment_method.toLowerCase())) return 'Dinheiro'
-    if ('débito,debito'.include(payment_method.toLowerCase())) return 'Debito'
-    if ('crédito,credito,visa,master,mastercard,elo'.include(payment_method.toLowerCase())) return 'Credito'
-    if ('refeicao,refeição,refeicão,ticket,alimentacao'.include(payment_method.toLowerCase())) return 'Refeicao'
-    if ('fidelidade'.include(payment_method.toLowerCase())) return 'Fidelidade'
+    if ('dinheiro'.includes(payment_method.toLowerCase())) return 'Dinheiro'
+    if ('débito,debito'.includes(payment_method.toLowerCase())) return 'Debito'
+    if ('crédito,credito,visa,master,mastercard,elo'.includes(payment_method.toLowerCase())) return 'Credito'
+    if ('refeicao,refeição,refeicão,ticket,alimentacao'.includes(payment_method.toLowerCase())) return 'Refeicao'
+    if ('fidelidade'.includes(payment_method.toLowerCase())) return 'Fidelidade'
 
     return 'Outros'
   }

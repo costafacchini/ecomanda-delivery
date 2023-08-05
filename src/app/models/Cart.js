@@ -16,6 +16,8 @@ const additionalSchema = new Schema({
   unit_price: Number,
   details: [detailSchema],
   note: String,
+  product_retailer_id: String,
+  product_fb_id: String,
 })
 
 const productsSchema = new Schema({
@@ -64,17 +66,25 @@ const cartSchema = new Schema(
     cep: String,
     uf: String,
     note: String,
+    documento: String,
     change: {
       type: Number,
       default: 0,
     },
     partner_key: String,
-    payment_method: String,
+    payment_method: {
+      type: String,
+      default: '',
+    },
+    delivery_method: String,
     points: { type: Boolean, default: false },
     discount: {
       type: Number,
       default: 0,
     },
+    location: String,
+    latitude: String,
+    longitude: String,
   },
   { timestamps: true }
 )

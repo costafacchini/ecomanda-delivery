@@ -19,6 +19,11 @@ class Default {
       points,
       discount,
       name,
+      latitude,
+      longitude,
+      location,
+      documento,
+      delivery_method,
     } = cart
 
     const cartParsed = {
@@ -42,6 +47,11 @@ class Default {
       points,
       discount,
       name,
+      latitude,
+      longitude,
+      location,
+      documento,
+      delivery_method,
     }
 
     return cartParsed

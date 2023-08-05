@@ -39,6 +39,11 @@ function permit(fields) {
     'payment_method',
     'points',
     'discount',
+    'latitude',
+    'longitude',
+    'location',
+    'documento',
+    'delivery_method',
   ]
 
   return _.pick(fields, permitedFields)
@@ -86,6 +91,11 @@ class CartsController {
         payment_method,
         points,
         discount,
+        latitude,
+        longitude,
+        location,
+        documento,
+        delivery_method,
       } = cartPlugin.parseCart(req.licensee, contact, req.body)
 
       let cart = await Cart.findOne({
@@ -114,6 +124,11 @@ class CartsController {
           payment_method,
           points,
           discount,
+          latitude,
+          longitude,
+          location,
+          documento,
+          delivery_method,
         })
       } else {
         cart.delivery_tax = delivery_tax
@@ -131,6 +146,11 @@ class CartsController {
         cart.payment_method = payment_method
         cart.points = points
         cart.discount = discount
+        cart.latitude = latitude
+        cart.longitude = longitude
+        cart.location = location
+        cart.documento = documento
+        cart.delivery_method = delivery_method
 
         products.forEach((item) => {
           cart.products.push(item)
