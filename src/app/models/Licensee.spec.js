@@ -306,6 +306,16 @@ describe('Licensee', () => {
         expect(validation.errors['cartDefault']).not.toBeDefined()
       })
 
+      it('accepts "alloy" values', () => {
+        let validation
+        const licensee = new Licensee()
+
+        licensee.cartDefault = 'alloy'
+        validation = licensee.validateSync()
+
+        expect(validation.errors['chatDefault']).not.toBeDefined()
+      })
+
       it('accepts "go2go" values', () => {
         let validation
         const licensee = new Licensee()
@@ -316,11 +326,11 @@ describe('Licensee', () => {
         expect(validation.errors['chatDefault']).not.toBeDefined()
       })
 
-      it('accepts "gallabox" values', () => {
+      it('accepts "go2go v2" values', () => {
         let validation
         const licensee = new Licensee()
 
-        licensee.cartDefault = 'gallabox'
+        licensee.cartDefault = 'go2go_v2'
         validation = licensee.validateSync()
 
         expect(validation.errors['chatDefault']).not.toBeDefined()

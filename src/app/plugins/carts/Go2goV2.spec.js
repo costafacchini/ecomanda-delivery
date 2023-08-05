@@ -101,7 +101,6 @@ describe('Go2goV2 plugin', () => {
       expect(cartTransformed.order.itens[0].quantidade).toEqual(2)
       expect(cartTransformed.order.itens[0].precoTotal).toEqual(8.9)
       expect(cartTransformed.order.itens[0].produto.id).toEqual(0)
-      expect(cartTransformed.order.itens[0].produto.id).toEqual(0)
       expect(cartTransformed.order.itens[0].produto.externalCode).toEqual('0123')
       expect(cartTransformed.order.itens[0].produto.sku).toEqual('0123')
       expect(cartTransformed.order.itens[0].adicionalPedidoItems[0].produtoId).toEqual('Additional 1')

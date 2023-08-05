@@ -16,6 +16,8 @@ const additionalSchema = new Schema({
   unit_price: Number,
   details: [detailSchema],
   note: String,
+  product_retailer_id: String,
+  product_fb_id: String,
 })
 
 const productsSchema = new Schema({
@@ -64,6 +66,7 @@ const cartSchema = new Schema(
     cep: String,
     uf: String,
     note: String,
+    documento: String,
     change: {
       type: Number,
       default: 0,
@@ -75,6 +78,9 @@ const cartSchema = new Schema(
       type: Number,
       default: 0,
     },
+    location: String,
+    latitude: String,
+    longitude: String,
   },
   { timestamps: true }
 )

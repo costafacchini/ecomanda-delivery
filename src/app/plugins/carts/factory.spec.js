@@ -2,6 +2,7 @@ const createCartPlugin = require('./factory')
 const Licensee = require('@models/Licensee')
 const Go2go = require('./Go2go')
 const Go2goV2 = require('./Go2goV2')
+const Alloy = require('./Alloy')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 
 describe('createCartPlugin', () => {
@@ -27,6 +28,18 @@ describe('createCartPlugin', () => {
     const plugin = createCartPlugin(licensee)
 
     expect(plugin).toBeInstanceOf(Go2goV2)
+  })
+
+  it('returns the alloy plugin if it is configured on licensee', () => {
+    const licensee = new Licensee(
+      licenseeFactory.build({
+        cartDefault: 'alloy',
+      })
+    )
+
+    const plugin = createCartPlugin(licensee)
+
+    expect(plugin).toBeInstanceOf(Alloy)
   })
 
   it('throws if option plugin is unknow', () => {

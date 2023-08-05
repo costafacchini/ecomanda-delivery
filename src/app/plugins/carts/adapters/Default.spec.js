@@ -47,6 +47,7 @@ describe('Default plugin', () => {
             unit_price: 7.8,
             additionals: [
               {
+                product_retailer_id: '9876',
                 name: 'Additional 1',
                 quantity: 1,
                 unit_price: 0.5,
@@ -67,6 +68,7 @@ describe('Default plugin', () => {
             unit_price: 1.0,
             additionals: [
               {
+                product_retailer_id: '9875',
                 name: 'Additional 2',
                 quantity: 2,
                 unit_price: 0.7,
@@ -84,6 +86,10 @@ describe('Default plugin', () => {
         total: 5.5,
         delivery_tax: 1.5,
         concluded: true,
+        latitude: '-12.3343',
+        longitude: '-09.3343',
+        location: 'next to avenue',
+        documento: '987556544654',
       }
 
       const pluginDefault = new Default()
@@ -92,6 +98,10 @@ describe('Default plugin', () => {
       expect(cart.concluded).toEqual(true)
       expect(cart.contact).toEqual(contact._id)
       expect(cart.licensee).toEqual(licensee._id)
+      expect(cart.latitude).toEqual('-12.3343')
+      expect(cart.longitude).toEqual('-09.3343')
+      expect(cart.location).toEqual('next to avenue')
+      expect(cart.documento).toEqual('987556544654')
 
       expect(cart.products.length).toEqual(2)
       expect(cart.products[0].product_retailer_id).toEqual('0123')
@@ -103,6 +113,7 @@ describe('Default plugin', () => {
       expect(cart.products[0].additionals[0].name).toEqual('Additional 1')
       expect(cart.products[0].additionals[0].quantity).toEqual(1)
       expect(cart.products[0].additionals[0].unit_price).toEqual(0.5)
+      expect(cart.products[0].additionals[0].product_retailer_id).toEqual('9876')
 
       expect(cart.products[0].additionals[0].details.length).toEqual(1)
       expect(cart.products[0].additionals[0].details[0].name).toEqual('Detail 1')
@@ -118,6 +129,7 @@ describe('Default plugin', () => {
       expect(cart.products[1].additionals[0].name).toEqual('Additional 2')
       expect(cart.products[1].additionals[0].quantity).toEqual(2)
       expect(cart.products[1].additionals[0].unit_price).toEqual(0.7)
+      expect(cart.products[1].additionals[0].product_retailer_id).toEqual('9875')
 
       expect(cart.products[1].additionals[0].details.length).toEqual(1)
       expect(cart.products[1].additionals[0].details[0].name).toEqual('Detail 2')

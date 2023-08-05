@@ -136,7 +136,7 @@ const licenseeSchema = new Schema(
     },
     cartDefault: {
       type: String,
-      enum: ['go2go', 'go2go_v2', ''],
+      enum: ['alloy', 'go2go', 'go2go_v2', ''],
     },
     useCartGallabox: { type: Boolean, default: false },
     unidadeId: String,
