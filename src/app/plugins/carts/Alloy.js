@@ -12,14 +12,14 @@ class Alloy {
           pedido: {
             obs: cart.note,
             data_agendamento: '',
-            meio_de_entrega: 'delivery',
+            meio_de_entrega: cart.delivery_method,
             cpf_cnpj: cart.documento,
             agendamento: 0,
             numero_de_pessoas: 0,
           },
           pagamento: [
             {
-              forma_de_pagamento: 0,
+              forma_de_pagamento: Number(cart.payment_method),
               total: cart.total,
               troco_para: 0,
             },

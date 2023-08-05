@@ -90,6 +90,8 @@ describe('Default plugin', () => {
         longitude: '-09.3343',
         location: 'next to avenue',
         documento: '987556544654',
+        delivery_method: 'retirada',
+        payment_method: '0',
       }
 
       const pluginDefault = new Default()
@@ -102,6 +104,8 @@ describe('Default plugin', () => {
       expect(cart.longitude).toEqual('-09.3343')
       expect(cart.location).toEqual('next to avenue')
       expect(cart.documento).toEqual('987556544654')
+      expect(cart.delivery_method).toEqual('retirada')
+      expect(cart.payment_method).toEqual('0')
 
       expect(cart.products.length).toEqual(2)
       expect(cart.products[0].product_retailer_id).toEqual('0123')

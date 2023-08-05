@@ -72,7 +72,11 @@ const cartSchema = new Schema(
       default: 0,
     },
     partner_key: String,
-    payment_method: String,
+    payment_method: {
+      type: String,
+      default: '',
+    },
+    delivery_method: String,
     points: { type: Boolean, default: false },
     discount: {
       type: Number,

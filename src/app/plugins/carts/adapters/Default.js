@@ -23,6 +23,7 @@ class Default {
       longitude,
       location,
       documento,
+      delivery_method,
     } = cart
 
     const cartParsed = {
@@ -50,6 +51,7 @@ class Default {
       longitude,
       location,
       documento,
+      delivery_method,
     }
 
     return cartParsed
