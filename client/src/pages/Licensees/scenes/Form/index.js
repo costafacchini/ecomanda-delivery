@@ -33,7 +33,11 @@ const licenseeInitialValues = {
   cartDefault: '',
   unidadeId: '',
   statusId: '',
-  messageOnCloseChat: ''
+  messageOnCloseChat: '',
+  productFractional2Name: '',
+  productFractional2Id: '',
+  productFractional3Name: '',
+  productFractional3Id: '',
 }
 
 function LicenseeForm({ onSubmit, errors, initialValues }) {
@@ -484,6 +488,58 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                     onChange={props.handleChange}
                     onBlur={props.handleBlur}
                     value={props.values.statusId}
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-4'>
+                  <label htmlFor='productFractional2Name'>Nome do produto fracionado 1/2</label>
+                  <FieldWithError
+                    id='productFractional2Name'
+                    name='productFractional2Name'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.productFractional2Name}
+                  />
+                </div>
+
+                <div className='form-group col-1'>
+                  <label htmlFor='productFractional2Id'>Id 1/2</label>
+                  <FieldWithError
+                    id='productFractional2Id'
+                    name='productFractional2Id'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.productFractional2Id}
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-4'>
+                  <label htmlFor='productFractional3Name'>Nome do produto fracionado 1/3</label>
+                  <FieldWithError
+                    id='productFractional3Name'
+                    name='productFractional3Name'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.productFractional3Name}
+                  />
+                </div>
+
+                <div className='form-group col-1'>
+                  <label htmlFor='productFractional3Id'>Id 1/3</label>
+                  <FieldWithError
+                    id='productFractional3Id'
+                    name='productFractional3Id'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.productFractional3Id}
                   />
                 </div>
               </div>
