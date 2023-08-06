@@ -48,6 +48,10 @@ describe('<LicenseeNew />', () => {
       unidadeId: '',
       statusId: '',
       messageOnCloseChat: '',
+      productFractional2Name: '',
+      productFractional2Id: '',
+      productFractional3Name: '',
+      productFractional3Id: '',
     }))
   })
 

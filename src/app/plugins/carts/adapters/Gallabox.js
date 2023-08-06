@@ -1,3 +1,5 @@
+const FractionalProducts = require('../../../helpers/FractionalProducts.js')
+
 class Gallabox {
   parseCart(licensee, contact, cart) {
     const cartParsed = {
@@ -41,6 +43,9 @@ class Gallabox {
       productParsed.note = product.description
       productParsed.product_fb_id = product.fbProductId
     }
+
+    const fractionalProducts = new FractionalProducts(licensee)
+    cartParsed.products = fractionalProducts.join(cartParsed.products)
 
     return cartParsed
   }
