@@ -182,7 +182,7 @@ class CartsController {
       })
 
       if (!cart) {
-        return res.status(422).send({ errors: { message: `Carrinho não encontrado` } })
+        return res.status(200).send({ errors: { message: `Carrinho não encontrado` } })
       }
 
       Object.keys(fields).forEach((field) => {
@@ -216,7 +216,7 @@ class CartsController {
       })
 
       if (!cart) {
-        return res.status(422).send({ errors: { message: `Carrinho não encontrado` } })
+        return res.status(200).send({ errors: { message: `Carrinho não encontrado` } })
       }
 
       const cartDescription = await parseCart(cart._id)
@@ -241,7 +241,7 @@ class CartsController {
       })
 
       if (!cart) {
-        return res.status(422).send({ errors: { message: `Carrinho não encontrado` } })
+        return res.status(200).send({ errors: { message: `Carrinho não encontrado` } })
       }
 
       await Cart.updateOne({ _id: cart._id }, { concluded: true }, { runValidators: true })
@@ -268,7 +268,7 @@ class CartsController {
       })
 
       if (!cart) {
-        return res.status(422).send({ errors: { message: `Carrinho não encontrado` } })
+        return res.status(200).send({ errors: { message: `Carrinho não encontrado` } })
       }
 
       req.body.products?.forEach((product) => {
@@ -297,7 +297,7 @@ class CartsController {
       })
 
       if (!cart) {
-        return res.status(422).send({ errors: { message: `Carrinho não encontrado` } })
+        return res.status(200).send({ errors: { message: `Carrinho não encontrado` } })
       }
 
       cart.products.splice(req.body.item - 1)
@@ -326,11 +326,11 @@ class CartsController {
           concluded: false,
         }).populate('contact')
       } catch (err) {
-        return res.status(422).send({ errors: { message: 'Carrinho não encontrado' } })
+        return res.status(200).send({ errors: { message: 'Carrinho não encontrado' } })
       }
 
       if (!cart) {
-        return res.status(422).send({ errors: { message: 'Carrinho não encontrado' } })
+        return res.status(200).send({ errors: { message: 'Carrinho não encontrado' } })
       }
 
       const cartDescription = await parseCart(cart._id)
@@ -368,7 +368,7 @@ class CartsController {
       })
 
       if (!cart) {
-        return res.status(422).send({ errors: { message: `Carrinho não encontrado` } })
+        return res.status(200).send({ errors: { message: `Carrinho não encontrado` } })
       }
 
       const cartPlugin = cartFactory(req.licensee)
