@@ -140,32 +140,12 @@ cartSchema.methods.calculateTotal = function () {
   const cart = this
 
   return cart.products?.reduce((summaryProducts, product) => {
-    const additionalsTotal =
-      product.additionals?.reduce((summaryAdditionals, additional) => {
-        const detailsTotal =
-          additional.details?.reduce((summaryDetails, detail) => {
-            return summaryDetails + detail.unit_price * detail.quantity
-          }, 0) || 0
-
-        return summaryAdditionals + (detailsTotal + additional.unit_price) * additional.quantity
-      }, 0) || 0
-
-    return summaryProducts + (product.unit_price + additionalsTotal) * product.quantity
+    return summaryProducts + product.unit_price * product.quantity
   }, cart.delivery_tax || 0)
 }
 
 cartSchema.methods.calculateTotalItem = function (item) {
-  const additionalsTotal =
-    item.additionals?.reduce((summaryAdditionals, additional) => {
-      const detailsTotal =
-        additional.details?.reduce((summaryDetails, detail) => {
-          return summaryDetails + detail.unit_price * detail.quantity
-        }, 0) || 0
-
-      return summaryAdditionals + (detailsTotal + additional.unit_price) * additional.quantity
-    }, 0) || 0
-
-  return (item.unit_price + additionalsTotal) * item.quantity
+  return item.unit_price * item.quantity
 }
 
 const Cart = mongoose.model('Cart', cartSchema)

@@ -223,7 +223,7 @@ describe('Cart', () => {
         },
       ]
 
-      expect(cart.calculateTotal()).toEqual(45.2)
+      expect(cart.calculateTotal()).toEqual(42)
     })
   })
 
@@ -258,7 +258,7 @@ describe('Cart', () => {
         },
       ]
 
-      expect(cart.calculateTotalItem(cart.products[0])).toEqual(23.2)
+      expect(cart.calculateTotalItem(cart.products[0])).toEqual(20)
     })
   })
 })

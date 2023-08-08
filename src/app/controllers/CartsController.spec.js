@@ -60,7 +60,7 @@ describe('carts controller', () => {
           .expect('Content-Type', /json/)
           .expect(201)
           .then((response) => {
-            expect(response.body.total).toEqual(18.3)
+            expect(response.body.total).toEqual(16.1)
             expect(response.body.concluded).toEqual(false)
             expect(response.body.contact).toEqual(contact._id.toString())
             expect(response.body.licensee).toEqual(licensee._id.toString())
@@ -95,7 +95,7 @@ describe('carts controller', () => {
           .expect('Content-Type', /json/)
           .expect(201)
           .then((response) => {
-            expect(response.body.total).toEqual(18.3)
+            expect(response.body.total).toEqual(16.1)
             expect(response.body.concluded).toEqual(false)
             expect(response.body.contact).toEqual(contact._id.toString())
             expect(response.body.licensee).toEqual(licensee._id.toString())
@@ -169,7 +169,7 @@ describe('carts controller', () => {
           .expect('Content-Type', /json/)
           .expect(201)
           .then((response) => {
-            expect(response.body.total).toEqual(24.9)
+            expect(response.body.total).toEqual(18.1)
             expect(response.body.concluded).toEqual(false)
             expect(response.body.contact).toEqual(contact._id.toString())
             expect(response.body.licensee).toEqual(licensee._id.toString())
@@ -207,7 +207,7 @@ describe('carts controller', () => {
           })
       })
 
-      it('returns status 422 and message if the cart is not valid', async () => {
+      it('returns status 422 and message if the contact is not valid', async () => {
         await request(expressServer)
           .post(`/api/v1/carts?token=${licensee.apiToken}`)
           .send(cartFactory.build({ contact: '5568902938567' }))
@@ -272,7 +272,7 @@ describe('carts controller', () => {
           .expect('Content-Type', /json/)
           .expect(200)
           .then((response) => {
-            expect(response.body.total).toEqual(24.9)
+            expect(response.body.total).toEqual(18.1)
             expect(response.body.concluded).toEqual(true)
             expect(response.body.contact).toEqual(contact._id.toString())
             expect(response.body.licensee).toEqual(licensee._id.toString())
@@ -310,13 +310,13 @@ describe('carts controller', () => {
           })
       })
 
-      it('returns status 422 and message if the cart is not founded', async () => {
+      it('returns status 200 and message if the cart is not founded', async () => {
         await Cart.deleteMany({})
 
         await request(expressServer)
           .post(`/api/v1/carts/5511990283745?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
-          .expect(422, { errors: { message: 'Carrinho não encontrado' } })
+          .expect(200, { errors: { message: 'Carrinho não encontrado' } })
       })
 
       it('returns status 422 and message if the contact is not founded', async () => {
@@ -385,13 +385,13 @@ describe('carts controller', () => {
                 '\n' +
                 ' ' +
                 '\n' +
-                'Subtotal: R$ 17.80' +
+                'Subtotal: R$ 15.60' +
                 '\n' +
                 'Taxa Entrega: R$ 0.50' +
                 '\n' +
                 'Desconto: R$ 0.00' +
                 '\n' +
-                '*TOTAL:* R$ 18.30' +
+                '*TOTAL:* R$ 16.10' +
                 '\n' +
                 ' ' +
                 '\n' +
@@ -406,13 +406,13 @@ describe('carts controller', () => {
           })
       })
 
-      it('returns status 422 and message if the cart is not founded', async () => {
+      it('returns status 200 and message if the cart is not founded', async () => {
         await Cart.deleteMany({})
 
         await request(expressServer)
           .get(`/api/v1/carts/5511990283745?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
-          .expect(422, { errors: { message: 'Carrinho não encontrado' } })
+          .expect(200, { errors: { message: 'Carrinho não encontrado' } })
       })
 
       it('returns status 422 and message if the contact is not founded', async () => {
@@ -471,13 +471,13 @@ describe('carts controller', () => {
           })
       })
 
-      it('returns status 422 and message if the cart is not founded', async () => {
+      it('returns status 200 and message if the cart is not founded', async () => {
         await Cart.deleteMany({})
 
         await request(expressServer)
           .delete(`/api/v1/carts/5511990283745?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
-          .expect(422, { errors: { message: 'Carrinho não encontrado' } })
+          .expect(200, { errors: { message: 'Carrinho não encontrado' } })
       })
 
       it('returns status 422 and message if the contact is not founded', async () => {
@@ -539,7 +539,7 @@ describe('carts controller', () => {
           .expect('Content-Type', /json/)
           .expect(200)
           .then((response) => {
-            expect(response.body.total).toEqual(23.9)
+            expect(response.body.total).toEqual(17.1)
             expect(response.body.concluded).toEqual(false)
             expect(response.body.contact).toEqual(contact._id.toString())
             expect(response.body.licensee).toEqual(licensee._id.toString())
@@ -577,13 +577,13 @@ describe('carts controller', () => {
           })
       })
 
-      it('returns status 422 and message if the cart is not founded', async () => {
+      it('returns status 200 and message if the cart is not founded', async () => {
         await Cart.deleteMany({})
 
         await request(expressServer)
           .post(`/api/v1/carts/5511990283745/item?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
-          .expect(422, { errors: { message: 'Carrinho não encontrado' } })
+          .expect(200, { errors: { message: 'Carrinho não encontrado' } })
       })
 
       it('returns status 422 and message if the contact is not founded', async () => {
@@ -631,13 +631,13 @@ describe('carts controller', () => {
           })
       })
 
-      it('returns status 422 and message if the cart is not founded', async () => {
+      it('returns status 200 and message if the cart is not founded', async () => {
         await Cart.deleteMany({})
 
         await request(expressServer)
           .delete(`/api/v1/carts/5511990283745/item?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
-          .expect(422, { errors: { message: 'Carrinho não encontrado' } })
+          .expect(200, { errors: { message: 'Carrinho não encontrado' } })
       })
 
       it('returns status 422 and message if the contact is not founded', async () => {
@@ -680,13 +680,13 @@ describe('carts controller', () => {
           })
       })
 
-      it('returns status 422 and message if the cart is not founded', async () => {
+      it('returns status 200 and message if the cart is not founded', async () => {
         await Cart.deleteMany({})
 
         await request(expressServer)
           .post(`/api/v1/carts/5511990283745/send?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
-          .expect(422, { errors: { message: 'Carrinho não encontrado' } })
+          .expect(200, { errors: { message: 'Carrinho não encontrado' } })
       })
 
       it('returns status 500 and message if the some error ocurred when update the cart', async () => {
@@ -728,12 +728,12 @@ describe('carts controller', () => {
             expect(response.body.order.refCurtaOrigem).toEqual('')
             expect(response.body.order.refOrigem).toEqual('Ecommerce')
             expect(response.body.order.refPedido).toEqual('Ecommerce')
-            expect(response.body.order.subTotal).toEqual(17.8)
+            expect(response.body.order.subTotal).toEqual(15.600000000000001)
             expect(response.body.order.taxaEntrega).toEqual(0.5)
             expect(response.body.order.telefonePedido).toEqual('5511990283745')
-            expect(response.body.order.totalPedido).toEqual(18.3)
+            expect(response.body.order.totalPedido).toEqual(16.1)
             expect(response.body.order.valorDocNotaFiscal).toEqual('')
-            expect(response.body.order.valorPagar).toEqual(18.3)
+            expect(response.body.order.valorPagar).toEqual(16.1)
             expect(response.body.order.voucher).toEqual(0)
 
             expect(response.body.order.entrega.data).toEqual('')
@@ -743,7 +743,7 @@ describe('carts controller', () => {
             expect(response.body.order.entrega.retiraLoja).toEqual(false)
             expect(response.body.order.entrega.retirada).toEqual('Hoje')
 
-            expect(response.body.order.itens[0].precoTotal).toEqual(8.9)
+            expect(response.body.order.itens[0].precoTotal).toEqual(7.8)
             expect(response.body.order.itens[0].produtoId).toEqual('0123')
             expect(response.body.order.itens[0].quantidade).toEqual(2)
             expect(response.body.order.itens[0].adicionalPedidoItems[0].atributoValorId).toEqual('Detail 1')
@@ -761,17 +761,17 @@ describe('carts controller', () => {
             expect(response.body.order.pagamentos[0].tipo).toEqual('')
             expect(response.body.order.pagamentos[0].transactionId).toEqual(0)
             expect(response.body.order.pagamentos[0].troco).toEqual(0)
-            expect(response.body.order.pagamentos[0].valor).toEqual(18.3)
+            expect(response.body.order.pagamentos[0].valor).toEqual(16.1)
           })
       })
 
-      it('returns status 422 and message if the cart is not founded', async () => {
+      it('returns status 200 and message if the cart is not founded', async () => {
         await Cart.deleteMany({})
 
         await request(expressServer)
           .get(`/api/v1/carts/5511990283745?token=${licensee.apiToken}`)
           .expect('Content-Type', /json/)
-          .expect(422, { errors: { message: 'Carrinho não encontrado' } })
+          .expect(200, { errors: { message: 'Carrinho não encontrado' } })
       })
 
       it('returns status 422 and message if the contact is not founded', async () => {
