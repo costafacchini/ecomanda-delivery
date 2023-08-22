@@ -67,7 +67,7 @@
     "newrelic": "10.6.2",
     "node-notifier": "10.0.1",
     "nodemon": "3.0.1",
-    "pg": "8.11.2",
+    "pg": "8.11.3",
     "redis": "4.6.7",
     "rollbar": "2.26.2",
     "socket.io": "4.7.2",
