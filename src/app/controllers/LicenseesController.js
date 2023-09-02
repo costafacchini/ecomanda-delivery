@@ -37,6 +37,18 @@ function permit(fields) {
     'productFractional2Id',
     'productFractional3Name',
     'productFractional3Id',
+    'document',
+    'kind',
+    'financial_player_fee',
+    'holder_name',
+    'bank',
+    'branch_number',
+    'branch_check_digit',
+    'account_number',
+    'account_check_digit',
+    'holder_kind',
+    'holder_document',
+    'account_type',
   ]
 
   return _.pick(fields, permitedFields)
@@ -89,6 +101,18 @@ class LicenseesController {
       productFractional2Id,
       productFractional3Name,
       productFractional3Id,
+      document,
+      kind,
+      financial_player_fee,
+      holder_name,
+      bank,
+      branch_number,
+      branch_check_digit,
+      account_number,
+      account_check_digit,
+      holder_kind,
+      holder_document,
+      account_type,
     } = req.body
 
     const licensee = new Licensee({
@@ -122,6 +146,18 @@ class LicenseesController {
       productFractional2Id,
       productFractional3Name,
       productFractional3Id,
+      document,
+      kind,
+      financial_player_fee,
+      holder_name,
+      bank,
+      branch_number,
+      branch_check_digit,
+      account_number,
+      account_check_digit,
+      holder_kind,
+      holder_document,
+      account_type,
     })
 
     const validation = licensee.validateSync()

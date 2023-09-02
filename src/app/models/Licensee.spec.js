@@ -474,6 +474,239 @@ describe('Licensee', () => {
         )
       })
     })
+
+    describe('kind', () => {
+      it('accepts "individual", "company" and blank values', () => {
+        let validation
+        const licensee = new Licensee()
+
+        licensee.kind = 'individual'
+        validation = licensee.validateSync()
+
+        expect(validation.errors['kind']).not.toBeDefined()
+
+        licensee.kind = 'company'
+        validation = licensee.validateSync()
+
+        expect(validation.errors['kind']).not.toBeDefined()
+
+        licensee.kind = ''
+        validation = licensee.validateSync()
+
+        expect(validation.errors['kind']).not.toBeDefined()
+      })
+
+      it('does not accepts another values', () => {
+        const licensee = new Licensee({ kind: 'some' })
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['kind'].message).toEqual('`some` is not a valid enum value for path `kind`.')
+      })
+    })
+
+    describe('bank', () => {
+      it('accepts blank value', () => {
+        const licensee = new Licensee({ bank: '' })
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['bank']).not.toBeDefined()
+      })
+
+      it('accepts value with 3 chars', () => {
+        const licensee = new Licensee({ bank: '001' })
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['bank']).not.toBeDefined()
+      })
+
+      it('does not accept value less than 3 chars', () => {
+        let validation
+        const licensee = new Licensee({ bank: '0' })
+        validation = licensee.validateSync()
+
+        expect(validation.errors['bank'].message).toEqual('Banco: Informe um valor com 3 caracteres! Atual: 0')
+
+        licensee.bank = '00'
+        validation = licensee.validateSync()
+
+        expect(validation.errors['bank'].message).toEqual('Banco: Informe um valor com 3 caracteres! Atual: 00')
+      })
+
+      it('does not accept value greather than 3 chars', () => {
+        let validation
+        const licensee = new Licensee({ bank: '0011' })
+        validation = licensee.validateSync()
+
+        expect(validation.errors['bank'].message).toEqual('Banco: Informe um valor com 3 caracteres! Atual: 0011')
+
+        licensee.bank = '00111'
+        validation = licensee.validateSync()
+
+        expect(validation.errors['bank'].message).toEqual('Banco: Informe um valor com 3 caracteres! Atual: 00111')
+      })
+    })
+
+    describe('branch_number', () => {
+      it('accepts blank value', () => {
+        const licensee = new Licensee({ branch_number: '' })
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['branch_number']).not.toBeDefined()
+      })
+
+      it('less than 4 characters', () => {
+        let validation
+        const licensee = new Licensee({ branch_number: 'abc' })
+        validation = licensee.validateSync()
+
+        expect(validation.errors['kind']).not.toBeDefined()
+
+        licensee.branch_number = 'abcde'
+        validation = licensee.validateSync()
+
+        expect(validation.errors['branch_number'].message).toEqual(
+          'Agência: Informe um valor com até 4 caracteres! Atual: abcde'
+        )
+      })
+    })
+
+    describe('branch_check_digit', () => {
+      it('accepts blank value', () => {
+        const licensee = new Licensee({ branch_check_digit: '' })
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['branch_check_digit']).not.toBeDefined()
+      })
+
+      it('accepts value with 1 chars', () => {
+        const licensee = new Licensee({ branch_check_digit: '1' })
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['branch_check_digit']).not.toBeDefined()
+      })
+
+      it('does not accept value greather than 1 chars', () => {
+        let validation
+        const licensee = new Licensee({ branch_check_digit: '01' })
+        validation = licensee.validateSync()
+
+        expect(validation.errors['branch_check_digit'].message).toEqual(
+          'Dígito Agência: Informe um valor com até 1 caracter! Atual: 01'
+        )
+      })
+    })
+
+    describe('account_number', () => {
+      it('accepts blank value', () => {
+        const licensee = new Licensee({ account_number: '' })
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['account_number']).not.toBeDefined()
+      })
+
+      it('less than 13 characters', () => {
+        let validation
+        const licensee = new Licensee({ account_number: '1234567890123' })
+        validation = licensee.validateSync()
+
+        expect(validation.errors['account_number']).not.toBeDefined()
+
+        licensee.account_number = '12345678901234'
+        validation = licensee.validateSync()
+
+        expect(validation.errors['account_number'].message).toEqual(
+          'Conta: Informe um valor com até 13 caracteres! Atual: 12345678901234'
+        )
+      })
+    })
+
+    describe('account_check_digit', () => {
+      it('accepts blank value', () => {
+        const licensee = new Licensee({ account_check_digit: '' })
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['account_check_digit']).not.toBeDefined()
+      })
+
+      it('accepts value with 1 chars', () => {
+        const licensee = new Licensee({ account_check_digit: '1' })
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['account_check_digit']).not.toBeDefined()
+      })
+
+      it('does not accept value greather than 1 chars', () => {
+        let validation
+        const licensee = new Licensee({ account_check_digit: '01' })
+        validation = licensee.validateSync()
+
+        expect(validation.errors['account_check_digit'].message).toEqual(
+          'Dígito Conta: Informe um valor com até 1 caracter! Atual: 01'
+        )
+      })
+    })
+
+    describe('holder_kind', () => {
+      it('accepts "individual", "company" and blank values', () => {
+        let validation
+        const licensee = new Licensee()
+
+        licensee.holder_kind = 'individual'
+        validation = licensee.validateSync()
+
+        expect(validation.errors['holder_kind']).not.toBeDefined()
+
+        licensee.holder_kind = 'company'
+        validation = licensee.validateSync()
+
+        expect(validation.errors['holder_kind']).not.toBeDefined()
+
+        licensee.holder_kind = ''
+        validation = licensee.validateSync()
+
+        expect(validation.errors['holder_kind']).not.toBeDefined()
+      })
+
+      it('does not accepts another values', () => {
+        const licensee = new Licensee({ holder_kind: 'some' })
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['holder_kind'].message).toEqual(
+          '`some` is not a valid enum value for path `holder_kind`.'
+        )
+      })
+    })
+
+    describe('account_type', () => {
+      it('accepts "checking", "company" and blank values', () => {
+        let validation
+        const licensee = new Licensee()
+
+        licensee.account_type = 'checking'
+        validation = licensee.validateSync()
+
+        expect(validation.errors['account_type']).not.toBeDefined()
+
+        licensee.account_type = 'savings'
+        validation = licensee.validateSync()
+
+        expect(validation.errors['account_type']).not.toBeDefined()
+
+        licensee.account_type = ''
+        validation = licensee.validateSync()
+
+        expect(validation.errors['account_type']).not.toBeDefined()
+      })
+
+      it('does not accepts another values', () => {
+        const licensee = new Licensee({ account_type: 'some' })
+        const validation = licensee.validateSync()
+
+        expect(validation.errors['account_type'].message).toEqual(
+          '`some` is not a valid enum value for path `account_type`.'
+        )
+      })
+    })
   })
 
   describe('links', () => {
