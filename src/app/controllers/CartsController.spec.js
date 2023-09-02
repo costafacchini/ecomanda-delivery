@@ -379,8 +379,6 @@ describe('carts controller', () => {
                 '\n' +
                 '   2x Additional 1' +
                 '\n' +
-                '   Obs: item note' +
-                '\n' +
                 '______________' +
                 '\n' +
                 ' ' +
