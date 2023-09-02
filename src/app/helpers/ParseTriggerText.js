@@ -68,7 +68,8 @@ function cartDescription(cart) {
     description.push(` `)
   }
 
-  const cardPayment = cart.payment_method && 'crédito,credito,visa,master,mastercard,elo'.includes(cart.payment_method)
+  const cardPayment =
+    cart.payment_method && 'pix,crédito,credito,visa,master,mastercard,elo'.includes(cart.payment_method)
 
   if (!cardPayment) description.push(`*TROCO PARA:* ${formatNumber(cart.change)}`)
 
@@ -94,7 +95,7 @@ function productsDescription(products, description) {
         description.push(`   ${item.quantity}x ${additional.name}`)
       }
     }
-    if (item.note) description.push(`   Obs: ${item.note}`)
+    // if (item.note) description.push(`   Obs: ${item.note}`)
   })
 }
 

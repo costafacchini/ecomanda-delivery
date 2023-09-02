@@ -93,8 +93,6 @@ describe('ParseTriggerText', () => {
             '\n' +
             '   2x Adicional 1' +
             '\n' +
-            '   Obs: Without suggar' +
-            '\n' +
             '1x Product 1 - R$ 3.50' +
             '\n' +
             '______________' +
@@ -502,8 +500,6 @@ describe('ParseTriggerText', () => {
           '2x Product - R$ 7.80' +
           '\n' +
           '   2x Adicional 1' +
-          '\n' +
-          '   Obs: Without suggar' +
           '\n' +
           '1x Product 1 - R$ 3.50' +
           '\n' +
