@@ -5,6 +5,7 @@ const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
 const { licenseeComplete: licenseeCompleteFactory, licensee: licenseeFactory } = require('@factories/licensee')
 const { userSuper: userSuperFactory } = require('@factories/user')
+const Recipient = require('../plugins/payments/PagarMe/Recipient')
 
 describe('licensee controller', () => {
   let token
@@ -422,6 +423,48 @@ describe('licensee controller', () => {
           })
 
         licenseeFindOneSpy.mockRestore()
+      })
+    })
+  })
+
+  describe('sendToPagarMe', () => {
+    describe('response', () => {
+      it('returns status 200 and message if called pagar.me API', async () => {
+        const recipientCreateFnSpy = jest.spyOn(Recipient.prototype, 'create').mockImplementation(() => {})
+        const licensee = await Licensee.create(licenseeCompleteFactory.build())
+
+        await request(expressServer)
+          .post(`/resources/licensees/${licensee._id}/integration/pagarme`)
+          .set('x-access-token', token)
+          .send({ _id: 123 })
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .then((response) => {
+            expect(response.body.message).toEqual('Licenciado enviado para a pagar.me!')
+          })
+
+        recipientCreateFnSpy.mockRestore()
+      })
+
+      it('returns status 500 and message if the some error ocurred', async () => {
+        const recipientCreateFnSpy = jest.spyOn(Recipient.prototype, 'create').mockImplementation(() => {})
+        const licenseeFindOneSpy = jest.spyOn(Licensee, 'findOne').mockImplementation(() => {
+          throw new Error('some error')
+        })
+
+        const licensee = await Licensee.create(licenseeCompleteFactory.build())
+
+        await request(expressServer)
+          .post(`/resources/licensees/${licensee._id}/integration/pagarme`)
+          .set('x-access-token', token)
+          .send({ _id: 123 })
+          .expect('Content-Type', /json/)
+          .expect(500, {
+            errors: { message: 'Error: some error' },
+          })
+
+        licenseeFindOneSpy.mockRestore()
+        recipientCreateFnSpy.mockRestore()
       })
     })
   })

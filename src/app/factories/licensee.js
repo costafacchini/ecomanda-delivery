@@ -27,4 +27,24 @@ const licenseeComplete = Factory.define(() => ({
   bucketName: 'bocket-name',
 }))
 
-module.exports = { licensee, licenseeComplete }
+const licenseeIntegrationPagarMe = Factory.define(() => ({
+  name: 'Alcateia Ltds',
+  email: 'alcateia@alcateia.com',
+  kind: 'company',
+  document: '18325187000169',
+  active: true,
+  licenseKind: 'demo',
+  useChatbot: false,
+  financial_player_fee: 3.1,
+  holder_name: 'John Doe',
+  bank: '001',
+  branch_number: '123',
+  branch_check_digit: '1',
+  account_number: '123456',
+  account_check_digit: '2',
+  holder_kind: 'individual',
+  holder_document: '86596393160',
+  account_type: 'checking',
+}))
+
+module.exports = { licensee, licenseeComplete, licenseeIntegrationPagarMe }
