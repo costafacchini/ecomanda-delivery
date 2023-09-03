@@ -52,6 +52,18 @@ describe('<LicenseeNew />', () => {
       productFractional2Id: '',
       productFractional3Name: '',
       productFractional3Id: '',
+      document: '',
+      kind: '',
+      financial_player_fee: '0.00',
+      holder_name: '',
+      bank: '',
+      branch_number: '',
+      branch_check_digit: '',
+      account_number: '',
+      account_check_digit: '',
+      holder_kind: '',
+      holder_document: '',
+      account_type: '',
     }))
   })
 
