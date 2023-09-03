@@ -429,9 +429,26 @@ describe('licensee controller', () => {
 
   describe('sendToPagarMe', () => {
     describe('response', () => {
-      it('returns status 200 and message if called pagar.me API', async () => {
+      it('returns status 200 and message if create on pagar.me API', async () => {
         const recipientCreateFnSpy = jest.spyOn(Recipient.prototype, 'create').mockImplementation(() => {})
         const licensee = await Licensee.create(licenseeCompleteFactory.build())
+
+        await request(expressServer)
+          .post(`/resources/licensees/${licensee._id}/integration/pagarme`)
+          .set('x-access-token', token)
+          .send({ _id: 123 })
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .then((response) => {
+            expect(response.body.message).toEqual('Licenciado enviado para a pagar.me!')
+          })
+
+        recipientCreateFnSpy.mockRestore()
+      })
+
+      it('returns status 200 and message if update on pagar.me API', async () => {
+        const recipientCreateFnSpy = jest.spyOn(Recipient.prototype, 'update').mockImplementation(() => {})
+        const licensee = await Licensee.create(licenseeCompleteFactory.build({ recipient_id: '1234' }))
 
         await request(expressServer)
           .post(`/resources/licensees/${licensee._id}/integration/pagarme`)

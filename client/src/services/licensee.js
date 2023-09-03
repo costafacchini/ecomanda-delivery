@@ -26,8 +26,12 @@ function setLicenseeWebhook(licensee) {
   return api().post(`resources/licensees/${licensee.id}/dialogwebhook`, { headers, body: licensee })
 }
 
+function sendLicenseePagarMe(licensee) {
+  return api().post(`resources/licensees/${licensee.id}/integration/pagarme`, { headers, body: licensee })
+}
+
 function importLicenseeTemplate(licensee) {
   return api().post(`resources/templates/${licensee.id}/importation/`, { headers })
 }
 
-export { createLicensee, getLicensees, getLicensee, updateLicensee, setLicenseeWebhook, importLicenseeTemplate }
+export { createLicensee, getLicensees, getLicensee, updateLicensee, setLicenseeWebhook, importLicenseeTemplate, sendLicenseePagarMe }

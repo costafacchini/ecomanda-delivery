@@ -1,7 +1,7 @@
 import { FieldWithError, Form } from '../../../../components/form'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router-dom'
-import { setLicenseeWebhook, importLicenseeTemplate } from '../../../../services/licensee'
+import { setLicenseeWebhook, importLicenseeTemplate, sendLicenseePagarMe } from '../../../../services/licensee'
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string()
@@ -706,7 +706,7 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                 </div>
               </div>
 
-              <div className='row'>
+              <div className='row pb-4'>
                 <div className='form-group col-2'>
                   <label htmlFor='account_type'>Tipo da conta</label>
                   <select
@@ -720,6 +720,19 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                     <option value='checking'>Corrente</option>
                     <option value='savings'>Poupança</option>
                   </select>
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-3'>
+                  <button
+                    onClick={async (event) => {
+                      event.preventDefault()
+                      await sendLicenseePagarMe(props.values)
+                    }}
+                    className='btn btn-info'>
+                    Integrar com a Pagar.Me
+                  </button>
                 </div>
               </div>
             </fieldset>
