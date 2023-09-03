@@ -34,6 +34,9 @@ const contactSchema = new Schema(
     delivery_tax: Number,
     plugin_cart_id: String,
     wa_start_chat: Date,
+    document: String,
+    customer_id: String,
+    address_id: String,
   },
   { timestamps: true }
 )

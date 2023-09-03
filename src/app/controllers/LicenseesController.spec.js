@@ -5,7 +5,7 @@ const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
 const { licenseeComplete: licenseeCompleteFactory, licensee: licenseeFactory } = require('@factories/licensee')
 const { userSuper: userSuperFactory } = require('@factories/user')
-const Recipient = require('../plugins/payments/PagarMe/Recipient')
+const Recipient = require('@plugins/payments/PagarMe/Recipient')
 
 describe('licensee controller', () => {
   let token

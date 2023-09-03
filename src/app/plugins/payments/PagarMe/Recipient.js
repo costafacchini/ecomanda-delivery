@@ -55,7 +55,7 @@ class Recipient {
       Authorization: `Basic ${token}`,
     }
 
-    const response = await request.patch(`https://api.pagar.me/core/v5/recipients/${licensee.recipient_id}`, {
+    const response = await request.put(`https://api.pagar.me/core/v5/recipients/${licensee.recipient_id}`, {
       headers,
       body,
     })
