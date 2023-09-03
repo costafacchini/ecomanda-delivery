@@ -4,6 +4,7 @@ const { check, validationResult } = require('express-validator')
 const { sanitizeExpressErrors, sanitizeModelErrors } = require('../helpers/SanitizeErrors')
 const _ = require('lodash')
 const LicenseesQuery = require('@queries/LicenseesQuery')
+const PagarMe = require('../plugins/payments/PagarMe')
 
 function permit(fields) {
   const permitedFields = [
@@ -260,6 +261,23 @@ class LicenseesController {
       }
 
       res.status(200).send({ message: 'Webhook configurado!' })
+    } catch (err) {
+      res.status(500).send({ errors: { message: err.toString() } })
+    }
+  }
+
+  async sendToPagarMe(req, res) {
+    try {
+      const licensee = await Licensee.findOne({ _id: req.params.id })
+      const pagarMe = new PagarMe()
+
+      if (licensee.recipient_id) {
+        pagarMe.recipient.update(licensee, process.env.PAGARME_TOKEN)
+      } else {
+        pagarMe.recipient.create(licensee, process.env.PAGARME_TOKEN)
+      }
+
+      res.status(200).send({ message: 'Licenciado enviado para a pagar.me!' })
     } catch (err) {
       res.status(500).send({ errors: { message: err.toString() } })
     }
