@@ -38,6 +38,18 @@ const licenseeInitialValues = {
   productFractional2Id: '',
   productFractional3Name: '',
   productFractional3Id: '',
+  document: '',
+  kind: '',
+  financial_player_fee: '0.00',
+  holder_name: '',
+  bank: '',
+  branch_number: '',
+  branch_check_digit: '',
+  account_number: '',
+  account_check_digit: '',
+  holder_kind: '',
+  holder_document: '',
+  account_type: '',
 }
 
 function LicenseeForm({ onSubmit, errors, initialValues }) {
@@ -78,6 +90,35 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                   />
                   <label className='form-check-label' htmlFor='active'>Ativo</label>
                 </div>
+              </div>
+            </div>
+
+            <div className='row'>
+              <div className='form-group col-2'>
+                <label htmlFor='kind'>Tipo</label>
+                <select
+                  value={props.values.kind}
+                  className='form-select'
+                  id='kind'
+                  onChange={props.handleChange}
+                  onBlur={props.handleBlur}
+                >
+                  <option value=''></option>
+                  <option value='company'>Jurídica</option>
+                  <option value='individual'>Física</option>
+                </select>
+              </div>
+
+              <div className='form-group col-3'>
+                <label htmlFor='document'>Documento</label>
+                <FieldWithError
+                  id='document'
+                  name='document'
+                  type='text'
+                  onChange={props.handleChange}
+                  onBlur={props.handleBlur}
+                  value={props.values.document}
+                />
               </div>
             </div>
 
@@ -545,6 +586,143 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
               </div>
             </fieldset>
 
+            <fieldset className='pb-4'>
+              <div className='row'>
+                <div className='form-group col-1'>
+                  <label htmlFor='financial_player_fee'>% Taxa</label>
+                  <FieldWithError
+                    id='financial_player_fee'
+                    name='financial_player_fee'
+                    type='number'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.financial_player_fee}
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-5'>
+                  <label htmlFor='holder_name'>Nome do titular da conta</label>
+                  <FieldWithError
+                    id='holder_name'
+                    name='holder_name'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.holder_name}
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-2'>
+                  <label htmlFor='holder_kind'>Tipo titular da conta</label>
+                  <select
+                    value={props.values.holder_kind}
+                    className='form-select'
+                    id='holder_kind'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                  >
+                    <option value=''></option>
+                    <option value='company'>Jurídica</option>
+                    <option value='individual'>Física</option>
+                  </select>
+                </div>
+
+                <div className='form-group col-3'>
+                  <label htmlFor='holder_document'>Documento titular da conta</label>
+                  <FieldWithError
+                    id='holder_document'
+                    name='holder_document'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.holder_document}
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-1'>
+                  <label htmlFor='bank'>Banco</label>
+                  <FieldWithError
+                    id='bank'
+                    name='bank'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.bank}
+                  />
+                </div>
+
+                <div className='form-group col-1'>
+                  <label htmlFor='branch_number'>AG</label>
+                  <FieldWithError
+                    id='branch_number'
+                    name='branch_number'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.branch_number}
+                  />
+                </div>
+
+                <div className='form-group col-1'>
+                  <label htmlFor='branch_check_digit'>DG</label>
+                  <FieldWithError
+                    id='branch_check_digit'
+                    name='branch_check_digit'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.branch_check_digit}
+                  />
+                </div>
+
+                <div className='form-group col-1'>
+                  <label htmlFor='account_number'>Conta</label>
+                  <FieldWithError
+                    id='account_number'
+                    name='account_number'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.account_number}
+                  />
+                </div>
+
+                <div className='form-group col-1'>
+                  <label htmlFor='account_check_digit'>DG</label>
+                  <FieldWithError
+                    id='account_check_digit'
+                    name='account_check_digit'
+                    type='text'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={props.values.account_check_digit}
+                  />
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='form-group col-2'>
+                  <label htmlFor='account_type'>Tipo da conta</label>
+                  <select
+                    value={props.values.account_type}
+                    className='form-select'
+                    id='account_type'
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                  >
+                    <option value=''></option>
+                    <option value='checking'>Corrente</option>
+                    <option value='savings'>Poupança</option>
+                  </select>
+                </div>
+              </div>
+            </fieldset>
 
             <fieldset>
               <div className='row'>

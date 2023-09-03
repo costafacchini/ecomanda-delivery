@@ -146,6 +146,68 @@ const licenseeSchema = new Schema(
     productFractional2Id: String,
     productFractional3Name: String,
     productFractional3Id: String,
+    document: String,
+    kind: {
+      type: String,
+      enum: ['individual', 'company', ''],
+    },
+    financial_player_fee: Number,
+    holder_name: String,
+    bank: {
+      type: String,
+      validate: {
+        validator: (value) => {
+          return value.length == 0 || value.length == 3
+        },
+        message: (props) => `Banco: Informe um valor com 3 caracteres! Atual: ${props.value}`,
+      },
+    },
+    branch_number: {
+      type: String,
+      validate: {
+        validator: (value) => {
+          return value.length <= 4
+        },
+        message: (props) => `Agência: Informe um valor com até 4 caracteres! Atual: ${props.value}`,
+      },
+    },
+    branch_check_digit: {
+      type: String,
+      validate: {
+        validator: (value) => {
+          return value.length <= 1
+        },
+        message: (props) => `Dígito Agência: Informe um valor com até 1 caracter! Atual: ${props.value}`,
+      },
+    },
+    account_number: {
+      type: String,
+      validate: {
+        validator: (value) => {
+          return value.length <= 13
+        },
+        message: (props) => `Conta: Informe um valor com até 13 caracteres! Atual: ${props.value}`,
+      },
+    },
+    account_check_digit: {
+      type: String,
+      validate: {
+        validator: (value) => {
+          return value.length <= 1
+        },
+        message: (props) => `Dígito Conta: Informe um valor com até 1 caracter! Atual: ${props.value}`,
+      },
+    },
+    holder_kind: {
+      type: String,
+      enum: ['individual', 'company', ''],
+    },
+    holder_document: String,
+    account_type: {
+      type: String,
+      enum: ['checking', 'savings', ''],
+    },
+    recipient_id: String,
   },
   { timestamps: true }
 )

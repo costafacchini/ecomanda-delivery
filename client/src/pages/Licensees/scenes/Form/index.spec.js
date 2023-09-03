@@ -19,6 +19,8 @@ describe('<LicenseeForm />', () => {
     mount()
 
     expect(screen.getByLabelText('Nome')).toHaveValue('')
+    expect(screen.getByLabelText('Tipo')).toHaveValue('')
+    expect(screen.getByLabelText('Documento')).toHaveValue('')
     expect(screen.getByLabelText('E-email')).toHaveValue('')
     expect(screen.getByLabelText('Licença')).toHaveValue('demo')
     expect(screen.getByLabelText('Telefone')).toHaveValue('')
@@ -50,6 +52,16 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('URL para webhook de Chatbot')).toHaveValue('')
     expect(screen.getByLabelText('URL de webhook para transferir do Chatbot para o Chat')).toHaveValue('')
     expect(screen.getByLabelText('URL para webhook de whatsapp')).toHaveValue('')
+    expect(screen.getByLabelText('% Taxa')).toHaveValue(0)
+    expect(screen.getByLabelText('Nome do titular da conta')).toHaveValue('')
+    expect(screen.getByLabelText('Tipo titular da conta')).toHaveValue('')
+    expect(screen.getByLabelText('Documento titular da conta')).toHaveValue('')
+    expect(screen.getByLabelText('Banco')).toHaveValue('')
+    expect(screen.getByLabelText('AG')).toHaveValue('')
+    expect(screen.getAllByLabelText('DG')[0]).toHaveValue('')
+    expect(screen.getByLabelText('Conta')).toHaveValue('')
+    expect(screen.getAllByLabelText('DG')[1]).toHaveValue('')
+    expect(screen.getByLabelText('Tipo da conta')).toHaveValue('')
   })
 
   it('can receive initial values', () => {
@@ -88,12 +100,26 @@ describe('<LicenseeForm />', () => {
       urlChatbotWebhook: 'URL para webhook de Chatbot',
       urlChatbotTransfer: 'URL de webhook para transferir do Chatbot para o Chat',
       urlWhatsappWebhook: 'URL para webhook de whatsapp',
+      document: '3692836715156',
+      kind: 'company',
+      financial_player_fee: '2.30',
+      holder_name: 'John Doe',
+      bank: '001',
+      branch_number: '123',
+      branch_check_digit: '1',
+      account_number: '8463',
+      account_check_digit: '2',
+      holder_kind: 'company',
+      holder_document: '0987517651712',
+      account_type: 'savings',
     }
 
     mount({ initialValues: licensee })
 
     expect(screen.getByLabelText('Nome')).toHaveValue('Name')
     expect(screen.getByLabelText('Ativo')).toBeChecked()
+    expect(screen.getByLabelText('Tipo')).toHaveValue('company')
+    expect(screen.getByLabelText('Documento')).toHaveValue('3692836715156')
     expect(screen.getByLabelText('E-email')).toHaveValue('email@gmail.com')
     expect(screen.getByLabelText('Telefone')).toHaveValue('48999999215')
     expect(screen.getByLabelText('API token')).toHaveValue('token')
@@ -126,6 +152,16 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('URL para webhook de Chatbot')).toHaveValue('URL para webhook de Chatbot')
     expect(screen.getByLabelText('URL de webhook para transferir do Chatbot para o Chat')).toHaveValue('URL de webhook para transferir do Chatbot para o Chat')
     expect(screen.getByLabelText('URL para webhook de whatsapp')).toHaveValue('URL para webhook de whatsapp')
+    expect(screen.getByLabelText('% Taxa')).toHaveValue(2.3)
+    expect(screen.getByLabelText('Nome do titular da conta')).toHaveValue('John Doe')
+    expect(screen.getByLabelText('Tipo titular da conta')).toHaveValue('company')
+    expect(screen.getByLabelText('Documento titular da conta')).toHaveValue('0987517651712')
+    expect(screen.getByLabelText('Banco')).toHaveValue('001')
+    expect(screen.getByLabelText('AG')).toHaveValue('123')
+    expect(screen.getAllByLabelText('DG')[0]).toHaveValue('1')
+    expect(screen.getByLabelText('Conta')).toHaveValue('8463')
+    expect(screen.getAllByLabelText('DG')[1]).toHaveValue('2')
+    expect(screen.getByLabelText('Tipo da conta')).toHaveValue('savings')
   })
 
   describe('fields', () => {
@@ -257,6 +293,18 @@ describe('<LicenseeForm />', () => {
         productFractional2Id: '',
         productFractional3Name: '',
         productFractional3Id: '',
+        document: '',
+        kind: '',
+        financial_player_fee: '0.00',
+        holder_name: '',
+        bank: '',
+        branch_number: '',
+        branch_check_digit: '',
+        account_number: '',
+        account_check_digit: '',
+        holder_kind: '',
+        holder_document: '',
+        account_type: '',
       })
     })
   })
