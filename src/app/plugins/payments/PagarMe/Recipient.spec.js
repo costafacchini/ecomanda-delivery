@@ -212,7 +212,7 @@ describe('PagarMe/Recipient plugin', () => {
           type: 'company',
         }
 
-        fetchMock.patchOnce(
+        fetchMock.putOnce(
           (url, { body, headers }) => {
             return (
               url === 'https://api.pagar.me/core/v5/recipients/98765' &&
@@ -247,7 +247,7 @@ describe('PagarMe/Recipient plugin', () => {
           type: 'company',
         }
 
-        fetchMock.patchOnce(
+        fetchMock.putOnce(
           (url, { body, headers }) => {
             return (
               url === 'https://api.pagar.me/core/v5/recipients/98765' &&

@@ -3,6 +3,7 @@ const Contact = require('@models/Contact')
 const User = require('@models/User')
 const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
+const queueServer = require('@config/queue')
 const { expressServer } = require('../../../.jest/server-express')
 const { userSuper: userSuperFactory } = require('@factories/user')
 const { licensee: licenseeFactory } = require('@factories/licensee')
@@ -11,6 +12,8 @@ const { contact: contactFactory } = require('@factories/contact')
 describe('contact controller', () => {
   let token
   let licensee
+
+  const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
 
   beforeAll(async () => {
     await mongoServer.connect()
@@ -83,6 +86,10 @@ describe('contact controller', () => {
             expect(response.body.licensee).toEqual(licensee._id.toString())
             expect(response.body.waId).toEqual('12345')
             expect(response.body.landbotId).toEqual('56477')
+            expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
+            expect(queueServerAddJobSpy).toHaveBeenCalledWith('send-contact-to-pagarme', {
+              contactId: response.body._id,
+            })
           })
       })
 
@@ -175,6 +182,10 @@ describe('contact controller', () => {
 
             expect(response.body._id).not.toEqual(123)
             expect(response.body.licensee).not.toEqual(licenseeNew._id.toString())
+            expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
+            expect(queueServerAddJobSpy).toHaveBeenCalledWith('send-contact-to-pagarme', {
+              contactId: response.body._id,
+            })
           })
       })
 

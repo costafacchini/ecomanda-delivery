@@ -1,10 +1,10 @@
 const Licensee = require('@models/Licensee')
-const createMessengerPlugin = require('../plugins/messengers/factory')
+const createMessengerPlugin = require('@plugins/messengers/factory')
 const { check, validationResult } = require('express-validator')
 const { sanitizeExpressErrors, sanitizeModelErrors } = require('../helpers/SanitizeErrors')
 const _ = require('lodash')
 const LicenseesQuery = require('@queries/LicenseesQuery')
-const PagarMe = require('../plugins/payments/PagarMe')
+const PagarMe = require('@plugins/payments/PagarMe')
 
 function permit(fields) {
   const permitedFields = [

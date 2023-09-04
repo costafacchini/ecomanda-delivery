@@ -3,6 +3,7 @@ const { check, validationResult } = require('express-validator')
 const { sanitizeExpressErrors, sanitizeModelErrors } = require('../helpers/SanitizeErrors')
 const _ = require('lodash')
 const ContactsQuery = require('@queries/ContactsQuery')
+const queueServer = require('@config/queue')
 
 function permit(fields) {
   const permitedFields = [
@@ -93,6 +94,8 @@ class ContactsController {
         await contact.save()
       }
 
+      await queueServer.addJob('send-contact-to-pagarme', { contactId: contact._id.toString() })
+
       res.status(201).send(contact)
     } catch (err) {
       res.status(500).send({ errors: { message: err.toString() } })
@@ -111,6 +114,8 @@ class ContactsController {
 
     try {
       const contact = await Contact.findOne({ _id: req.params.id })
+
+      await queueServer.addJob('send-contact-to-pagarme', { contactId: contact._id.toString() })
 
       res.status(200).send(contact)
     } catch (err) {
