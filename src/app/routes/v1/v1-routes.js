@@ -6,6 +6,7 @@ const BackupsController = require('@controllers/BackupsController')
 const AdressesController = require('@controllers/Contacts/AdressesController')
 const CartsController = require('@controllers/CartsController')
 const DelayController = require('@controllers/DelayController')
+const BackgroundjobsController = require('@controllers/BackgroundjobsController')
 
 const chatsController = new ChatsController()
 const chatbotsController = new ChatbotsController()
@@ -14,6 +15,7 @@ const backupsController = new BackupsController()
 const adressesController = new AdressesController()
 const cartsController = new CartsController()
 const delayController = new DelayController()
+const backgroundjobsController = new BackgroundjobsController()
 
 router.post('/chat/message', chatsController.message)
 router.post('/chat/reset', chatsController.reset)
@@ -42,5 +44,8 @@ router.get('/carts/:contact/cart', cartsController.getCart)
 
 router.get('/delay/:time', delayController.time)
 router.post('/delay/:time', delayController.time)
+
+router.get('/backgroundjobs/:id', backgroundjobsController.show)
+router.post('/backgroundjobs', backgroundjobsController.create)
 
 module.exports = router
