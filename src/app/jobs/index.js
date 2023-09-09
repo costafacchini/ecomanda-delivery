@@ -14,6 +14,7 @@ const resetChats = require('./ResetChats')
 const resetCarts = require('./ResetCarts')
 const sendContactToPagarMe = require('./SendContactToPagarMe')
 const processBackgroundJob = require('./ProcessBackgroundjob')
+const processBackgroundjobGetPix = require('./ProcessBackgroundjobGetPix')
 
 const jobs = [
   chatMessage,
@@ -32,6 +33,7 @@ const jobs = [
   clearBackups,
   sendContactToPagarMe,
   processBackgroundJob,
+  processBackgroundjobGetPix,
 ]
 
 module.exports = jobs
