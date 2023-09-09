@@ -45,12 +45,6 @@ describe('PagarMe/Recipient plugin', () => {
             holder_document: '86596393160',
             type: 'checking',
           },
-          transfer_settings: {
-            enabled: false,
-          },
-          automatic_anticipation_settings: {
-            enabled: false,
-          },
         }
 
         fetchMock.postOnce(
@@ -110,12 +104,6 @@ describe('PagarMe/Recipient plugin', () => {
             holder_document: '86596393160',
             type: 'checking',
           },
-          transfer_settings: {
-            enabled: false,
-          },
-          automatic_anticipation_settings: {
-            enabled: false,
-          },
         }
 
         fetchMock.postOnce(
@@ -169,12 +157,6 @@ describe('PagarMe/Recipient plugin', () => {
             holder_type: 'individual',
             holder_document: '86596393160',
             type: 'checking',
-          },
-          transfer_settings: {
-            enabled: false,
-          },
-          automatic_anticipation_settings: {
-            enabled: false,
           },
         }
 
@@ -236,12 +218,6 @@ describe('PagarMe/Recipient plugin', () => {
             holder_document: '86596393160',
             type: 'checking',
           },
-          transfer_settings: {
-            enabled: false,
-          },
-          automatic_anticipation_settings: {
-            enabled: false,
-          },
         }
 
         fetchMock.postOnce(
@@ -298,12 +274,6 @@ describe('PagarMe/Recipient plugin', () => {
             holder_type: 'individual',
             holder_document: '86596393160',
             type: 'checking',
-          },
-          transfer_settings: {
-            enabled: false,
-          },
-          automatic_anticipation_settings: {
-            enabled: false,
           },
         }
 

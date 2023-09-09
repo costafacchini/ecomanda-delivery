@@ -50,6 +50,13 @@ describe('PagarMe/Customer plugin', () => {
         const expectedBody = {
           name: 'John Doe',
           email: 'john@doe.com',
+          phones: {
+            mobile_phone: {
+              country_code: '55',
+              area_code: '11',
+              number: '990283745',
+            },
+          },
           address: {
             country: 'BR',
             state: 'SP',
@@ -57,13 +64,6 @@ describe('PagarMe/Customer plugin', () => {
             zip_code: '99876222',
             line_1: `10, Rua qualquer da cidade, Bairro`,
             line_2: 'Perto daquela parada lá',
-          },
-          phones: {
-            mobile_phone: {
-              country_code: '55',
-              area_code: '11',
-              number: '990283745',
-            },
           },
         }
 
@@ -110,13 +110,6 @@ describe('PagarMe/Customer plugin', () => {
             name: 'John Doe',
             email: 'john@doe.com',
             number: '5511990283745',
-            uf: 'SP',
-            city: 'Sorocaba',
-            cep: '99876222',
-            address_number: '10',
-            address: 'Rua qualquer da cidade',
-            neighborhood: 'Bairro',
-            address_complement: 'Perto daquela parada lá',
             licensee,
           })
         )
@@ -124,14 +117,6 @@ describe('PagarMe/Customer plugin', () => {
         const expectedBody = {
           name: 'John Doe',
           email: 'john@doe.com',
-          address: {
-            country: 'BR',
-            state: 'SP',
-            city: 'Sorocaba',
-            zip_code: '99876222',
-            line_1: `10, Rua qualquer da cidade, Bairro`,
-            line_2: 'Perto daquela parada lá',
-          },
           phones: {
             mobile_phone: {
               country_code: '55',
@@ -199,6 +184,13 @@ describe('PagarMe/Customer plugin', () => {
         const expectedBody = {
           name: 'John Doe',
           email: 'john@doe.com',
+          phones: {
+            mobile_phone: {
+              country_code: '55',
+              area_code: '11',
+              number: '990283745',
+            },
+          },
           address: {
             country: 'BR',
             state: 'SP',
@@ -206,13 +198,6 @@ describe('PagarMe/Customer plugin', () => {
             zip_code: '99876222',
             line_1: `10, Rua qualquer da cidade, Bairro`,
             line_2: 'Perto daquela parada lá',
-          },
-          phones: {
-            mobile_phone: {
-              country_code: '55',
-              area_code: '11',
-              number: '990283745',
-            },
           },
         }
 
@@ -256,13 +241,6 @@ describe('PagarMe/Customer plugin', () => {
             name: 'John Doe',
             email: 'john@doe.com',
             number: '5511990283745',
-            uf: 'SP',
-            city: 'Sorocaba',
-            cep: '99876222',
-            address_number: '10',
-            address: 'Rua qualquer da cidade',
-            neighborhood: 'Bairro',
-            address_complement: 'Perto daquela parada lá',
             licensee,
           })
         )
@@ -270,14 +248,6 @@ describe('PagarMe/Customer plugin', () => {
         const expectedBody = {
           name: 'John Doe',
           email: 'john@doe.com',
-          address: {
-            country: 'BR',
-            state: 'SP',
-            city: 'Sorocaba',
-            zip_code: '99876222',
-            line_1: `10, Rua qualquer da cidade, Bairro`,
-            line_2: 'Perto daquela parada lá',
-          },
           phones: {
             mobile_phone: {
               country_code: '55',
@@ -334,13 +304,6 @@ describe('PagarMe/Customer plugin', () => {
             name: 'John Doe',
             email: 'john@doe.com',
             number: '5511990283745',
-            uf: 'SP',
-            city: 'Sorocaba',
-            cep: '99876222',
-            address_number: '10',
-            address: 'Rua qualquer da cidade',
-            neighborhood: 'Bairro',
-            address_complement: 'Perto daquela parada lá',
             licensee,
           })
         )
@@ -348,14 +311,6 @@ describe('PagarMe/Customer plugin', () => {
         const expectedBody = {
           name: 'John Doe',
           email: 'john@doe.com',
-          address: {
-            country: 'BR',
-            state: 'SP',
-            city: 'Sorocaba',
-            zip_code: '99876222',
-            line_1: `10, Rua qualquer da cidade, Bairro`,
-            line_2: 'Perto daquela parada lá',
-          },
           phones: {
             mobile_phone: {
               country_code: '55',
@@ -409,13 +364,6 @@ describe('PagarMe/Customer plugin', () => {
             name: 'John Doe',
             email: 'john@doe.com',
             number: '5511990283745',
-            uf: 'SP',
-            city: 'Sorocaba',
-            cep: '99876222',
-            address_number: '10',
-            address: 'Rua qualquer da cidade',
-            neighborhood: 'Bairro',
-            address_complement: 'Perto daquela parada lá',
             licensee,
           })
         )
@@ -423,14 +371,6 @@ describe('PagarMe/Customer plugin', () => {
         const expectedBody = {
           name: 'John Doe',
           email: 'john@doe.com',
-          address: {
-            country: 'BR',
-            state: 'SP',
-            city: 'Sorocaba',
-            zip_code: '99876222',
-            line_1: `10, Rua qualquer da cidade, Bairro`,
-            line_2: 'Perto daquela parada lá',
-          },
           phones: {
             mobile_phone: {
               country_code: '55',

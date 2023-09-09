@@ -6,14 +6,6 @@ class Customer {
     const body = {
       name: contact.name,
       email: contact.email,
-      address: {
-        country: 'BR',
-        state: contact.uf,
-        city: contact.city,
-        zip_code: contact.cep,
-        line_1: `${contact.address_number}, ${contact.address}, ${contact.neighborhood}`,
-        line_2: contact.address_complement,
-      },
       phones: {
         mobile_phone: {
           country_code: contact.number.substring(0, 2),
@@ -21,6 +13,17 @@ class Customer {
           number: contact.number.substring(4),
         },
       },
+    }
+
+    if (contact.address) {
+      body.address = {
+        country: 'BR',
+        state: contact.uf,
+        city: contact.city,
+        zip_code: contact.cep,
+        line_1: `${contact.address_number}, ${contact.address}, ${contact.neighborhood}`,
+        line_2: contact.address_complement,
+      }
     }
 
     const headers = {
@@ -37,7 +40,7 @@ class Customer {
 
     if (response.status === 200) {
       contact.customer_id = response.data.id
-      contact.address_id = response.data.address.id
+      if (contact.address) contact.address_id = response.data.address.id
       await contact.save()
 
       console.info(

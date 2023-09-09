@@ -19,12 +19,6 @@ class Recipient {
         holder_document: licensee.holder_document,
         type: licensee.account_type,
       },
-      transfer_settings: {
-        enabled: false,
-      },
-      automatic_anticipation_settings: {
-        enabled: false,
-      },
     }
 
     const headers = {
