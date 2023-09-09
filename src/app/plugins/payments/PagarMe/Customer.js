@@ -1,3 +1,4 @@
+const Integrationlog = require('@models/Integrationlog')
 const request = require('../../../services/request')
 
 class Customer {
@@ -28,20 +29,30 @@ class Customer {
 
     const response = await request.post('https://api.pagar.me/core/v5/customers/', { headers, body })
 
+    const integrationlog = await Integrationlog.create({
+      licensee: contact.licensee,
+      contact: contact._id,
+      log_payload: response.data,
+    })
+
     if (response.status === 200) {
       contact.customer_id = response.data.id
       contact.address_id = response.data.address.id
       await contact.save()
 
-      console.info(`Contato ${contact.name} criado na pagar.me! ${JSON.stringify(response.data)}`)
+      console.info(
+        `Contato ${contact.name} criado na pagar.me! id: ${contact.customer_id} log_id: ${integrationlog._id}`
+      )
     } else {
       console.error(
         `Contato ${contact.name} não criado na pagar.me.
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}`
+           mensagem: ${JSON.stringify(response.data)}
+           log_id: ${integrationlog._id}`
       )
     }
   }
+
   async update(contact, token) {
     const body = {
       name: contact.name,
@@ -57,13 +68,22 @@ class Customer {
       body,
     })
 
+    const integrationlog = await Integrationlog.create({
+      licensee: contact.licensee,
+      contact: contact._id,
+      log_payload: response.data,
+    })
+
     if (response.status === 200) {
-      console.info(`Contato ${contact.name} atualizado na pagar.me! ${JSON.stringify(response.data)}`)
+      console.info(
+        `Contato ${contact.name} atualizado na pagar.me! id: ${contact.customer_id} log_id: ${integrationlog._id}`
+      )
     } else {
       console.error(
         `Contato ${contact.name} não atualizado na pagar.me.
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}`
+           mensagem: ${JSON.stringify(response.data)}
+           log_id: ${integrationlog._id}`
       )
     }
   }
