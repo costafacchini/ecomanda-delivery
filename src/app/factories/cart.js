@@ -40,6 +40,8 @@ const cart = Factory.define(() => ({
   longitude: '12311',
   delivery_method: 'delivery',
   payment_method: '0',
+  payment_status: 'waiting',
+  integration_status: 'pending',
   createdAt: moment('2021-07-03T00:00:00-03:00').toDate(),
 }))
 

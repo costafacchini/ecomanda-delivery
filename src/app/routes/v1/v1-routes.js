@@ -41,6 +41,7 @@ router.post('/carts/:contact/item', cartsController.addItem)
 router.delete('/carts/:contact/item', cartsController.removeItem)
 router.post('/carts/:contact/send', cartsController.send)
 router.get('/carts/:contact/cart', cartsController.getCart)
+router.get('/carts/:contact/payment', cartsController.getPayment)
 
 router.get('/delay/:time', delayController.time)
 router.post('/delay/:time', delayController.time)
