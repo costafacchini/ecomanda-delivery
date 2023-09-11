@@ -1,3 +1,4 @@
+const Integrationlog = require('@models/Integrationlog')
 const request = require('../../../services/request')
 
 class Recipient {
@@ -18,12 +19,6 @@ class Recipient {
         holder_document: licensee.holder_document,
         type: licensee.account_type,
       },
-      transfer_settings: {
-        enabled: false,
-      },
-      automatic_anticipation_settings: {
-        enabled: false,
-      },
     }
 
     const headers = {
@@ -32,16 +27,24 @@ class Recipient {
 
     const response = await request.post('https://api.pagar.me/core/v5/recipients/', { headers, body })
 
+    const integrationlog = await Integrationlog.create({
+      licensee: licensee,
+      log_payload: response.data,
+    })
+
     if (response.status === 200) {
       licensee.recipient_id = response.data.id
       await licensee.save()
 
-      console.info(`Licenciado ${licensee.name} criado na pagar.me! ${JSON.stringify(response.data)}`)
+      console.info(
+        `Licenciado ${licensee.name} criado na pagar.me! id: ${licensee.recipient_id} log_id: ${integrationlog._id}`
+      )
     } else {
       console.error(
         `Licenciado ${licensee.name} não criado na pagar.me.
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}`
+           mensagem: ${JSON.stringify(response.data)}
+           log_id: ${integrationlog._id}`
       )
     }
   }
@@ -60,13 +63,21 @@ class Recipient {
       body,
     })
 
+    const integrationlog = await Integrationlog.create({
+      licensee: licensee,
+      log_payload: response.data,
+    })
+
     if (response.status === 200) {
-      console.info(`Licenciado ${licensee.name} atualizado na pagar.me! ${JSON.stringify(response.data)}`)
+      console.info(
+        `Licenciado ${licensee.name} atualizado na pagar.me! id: ${licensee.recipient_id} log_id: ${integrationlog._id}`
+      )
     } else {
       console.error(
         `Licenciado ${licensee.name} não atualizado na pagar.me.
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}`
+           mensagem: ${JSON.stringify(response.data)}
+           log_id: ${integrationlog._id}`
       )
     }
   }

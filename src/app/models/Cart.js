@@ -85,6 +85,12 @@ const cartSchema = new Schema(
     location: String,
     latitude: String,
     longitude: String,
+    order_id: String,
+    charge_id: String,
+    pix_url: String,
+    pix_qrcode: String,
+    payment_status: String,
+    integration_status: String,
   },
   { timestamps: true }
 )

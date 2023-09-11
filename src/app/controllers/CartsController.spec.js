@@ -16,6 +16,7 @@ jest.mock('@repositories/message')
 describe('carts controller', () => {
   let licensee, contact
   let anotherLicensee, anotherContact
+  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
 
   beforeAll(async () => {
     await mongoServer.connect()
@@ -808,6 +809,9 @@ describe('carts controller', () => {
               body: 'Solicitação para avisar os carts com janela vencendo agendado com sucesso',
             })
             expect(publishMessage).toHaveBeenCalledWith({ key: 'reset-carts', body: {} })
+
+            expect(consoleInfoSpy).toHaveBeenCalledTimes(1)
+            expect(consoleInfoSpy).toHaveBeenCalledWith('Agendando para resetar carts expirando')
           })
       })
     })

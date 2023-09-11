@@ -1,8 +1,10 @@
 const PagarMe = require('./PagarMe')
 const Recipient = require('./PagarMe/Recipient')
 const Customer = require('./PagarMe/Customer')
+const Payment = require('./PagarMe/Payment')
 const { licenseeIntegrationPagarMe: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
+const { cart: cartFactory } = require('@factories/cart')
 
 describe('PagarMe plugin', () => {
   const recipientCreateFnSpy = jest.spyOn(Recipient.prototype, 'create').mockImplementation(() => {})
@@ -10,6 +12,8 @@ describe('PagarMe plugin', () => {
 
   const customerCreateFnSpy = jest.spyOn(Customer.prototype, 'create').mockImplementation(() => {})
   const customerUpdateFnSpy = jest.spyOn(Customer.prototype, 'update').mockImplementation(() => {})
+
+  const paymentCreateFnSpy = jest.spyOn(Payment.prototype, 'create').mockImplementation(() => {})
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -52,6 +56,17 @@ describe('PagarMe plugin', () => {
       await pagarMe.customer.update(contact, 'token')
 
       expect(customerUpdateFnSpy).toHaveBeenCalledWith(contact, 'token')
+    })
+  })
+
+  describe('payment', () => {
+    it('create', async () => {
+      const cart = cartFactory.build()
+
+      const pagarMe = new PagarMe()
+      await pagarMe.payment.create(cart, 'token')
+
+      expect(paymentCreateFnSpy).toHaveBeenCalledWith(cart, 'token')
     })
   })
 })
