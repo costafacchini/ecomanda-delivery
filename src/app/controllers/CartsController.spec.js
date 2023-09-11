@@ -797,6 +797,55 @@ describe('carts controller', () => {
     })
   })
 
+  describe('getPayment', () => {
+    describe('response', () => {
+      it('returns status 200 and message if cart exists', async () => {
+        await Cart.create(cartFactory.build({ contact, licensee }))
+
+        await request(expressServer)
+          .get(`/api/v1/carts/5511990283745/payment?token=${licensee.apiToken}`)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .then((response) => {
+            expect(response.body.payment_status).toEqual('waiting')
+            expect(response.body.integration_status).toEqual('pending')
+            expect(response.body.cart_id).toBeDefined()
+          })
+      })
+
+      it('returns status 200 and message if the cart is not founded', async () => {
+        await Cart.deleteMany({})
+
+        await request(expressServer)
+          .get(`/api/v1/carts/5511990283745/payment?token=${licensee.apiToken}`)
+          .expect('Content-Type', /json/)
+          .expect(200, { errors: { message: 'Carrinho não encontrado' } })
+      })
+
+      it('returns status 422 and message if the contact is not founded', async () => {
+        await request(expressServer)
+          .get(`/api/v1/carts/551164646464/payment?token=${licensee.apiToken}`)
+          .expect('Content-Type', /json/)
+          .expect(422, { errors: { message: 'Contato 551164646464 não encontrado' } })
+      })
+
+      it('returns status 500 and message if occurs another error', async () => {
+        const contactFindOneSpy = jest.spyOn(Contact, 'findOne').mockImplementation(() => {
+          throw new Error('some error')
+        })
+
+        await request(expressServer)
+          .get(`/api/v1/carts/551164646464/payment?token=${licensee.apiToken}`)
+          .expect('Content-Type', /json/)
+          .expect(500, {
+            errors: { message: 'Error: some error' },
+          })
+
+        contactFindOneSpy.mockRestore()
+      })
+    })
+  })
+
   describe('reset', () => {
     describe('response', () => {
       it('returns status 200 and schedule job to reset chat window', async () => {

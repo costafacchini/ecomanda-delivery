@@ -380,6 +380,31 @@ class CartsController {
     }
   }
 
+  async getPayment(req, res) {
+    try {
+      const contact = await getContact(req.params.contact, req.licensee._id)
+
+      if (!contact) {
+        return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
+      }
+
+      const cart = await Cart.findOne({
+        contact: contact._id,
+        concluded: false,
+      })
+
+      if (!cart) {
+        return res.status(200).send({ errors: { message: `Carrinho não encontrado` } })
+      }
+
+      res
+        .status(200)
+        .send({ cart_id: cart._id, payment_status: cart.payment_status, integration_status: cart.integration_status })
+    } catch (err) {
+      res.status(500).send({ errors: { message: err.toString() } })
+    }
+  }
+
   reset(_, res) {
     console.info('Agendando para resetar carts expirando')
 
