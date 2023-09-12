@@ -71,7 +71,7 @@
     "redis": "4.6.8",
     "rollbar": "2.26.2",
     "socket.io": "4.7.2",
-    "uuid": "9.0.0",
+    "uuid": "9.0.1",
     "yarn": "1.22.19"
   },
   "_moduleAliases": {
