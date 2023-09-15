@@ -58,6 +58,8 @@ describe('messengers controller', () => {
           .then(async (response) => {
             const body = await Body.findOne({ content: { field: 'test' } })
 
+            expect(body.content).toEqual({ field: 'test' })
+            expect(body.kind).toEqual('normal')
             expect(response.body).toEqual({
               body: 'Solicitação de mensagem para a plataforma de messenger agendado',
             })

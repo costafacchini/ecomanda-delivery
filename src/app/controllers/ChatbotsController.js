@@ -5,7 +5,7 @@ const { publishMessage } = require('@config/rabbitmq')
 class ChatbotsController {
   async message(req, res) {
     console.info(`Mensagem chegando do plugin de chatbot: ${JSON.stringify(req.body)}`)
-    const body = new Body({ content: req.body, licensee: req.licensee._id })
+    const body = new Body({ content: req.body, licensee: req.licensee._id, kind: 'normal' })
     await body.save()
 
     await queueServer.addJob('chatbot-message', { bodyId: body._id })
@@ -15,7 +15,7 @@ class ChatbotsController {
 
   async transfer(req, res) {
     console.info(`Transferencia solicitada: ${JSON.stringify(req.body)}`)
-    const body = new Body({ content: req.body, licensee: req.licensee._id })
+    const body = new Body({ content: req.body, licensee: req.licensee._id, kind: 'normal' })
     await body.save()
 
     await queueServer.addJob('chatbot-transfer-to-chat', { bodyId: body._id })
