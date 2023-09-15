@@ -3,7 +3,7 @@ const Parser = require('./Parser')
 describe('PagarMe/Parser plugin', () => {
   describe('#parseOrderPaidEvent', () => {
     describe('when valid', () => {
-      it('response a value object with only important order fields', async () => {
+      it('response a value object with only important order fields', () => {
         const body = {
           id: 'hook_RyEKQO789TRpZjv5',
           account: {
