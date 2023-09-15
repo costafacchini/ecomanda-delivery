@@ -14,6 +14,11 @@ const bodySchema = new Schema(
       ref: 'Licensee',
       required: [true, 'Licensee: Você deve preencher o campo'],
     },
+    kind: {
+      type: String,
+      enum: ['normal', 'webhook'],
+      required: [true, 'Tipo de Body: Você deve informar um valor ( normal | webhook )'],
+    },
     concluded: { type: Boolean, default: false },
   },
   { timestamps: true }

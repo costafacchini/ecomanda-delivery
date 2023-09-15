@@ -19,6 +19,7 @@ describe('Body', () => {
       const body = await Body.create({
         content: JSON.parse('{ "field1": 1, "field2": "text" }'),
         licensee: licensee,
+        kind: 'normal',
       })
 
       expect(body._id).not.toEqual(null)
@@ -30,6 +31,7 @@ describe('Body', () => {
       const body = await Body.create({
         content: JSON.parse('{ "field1": 1, "field2": "text" }'),
         licensee: licensee,
+        kind: 'normal',
       })
 
       body.content = JSON.parse('{ "field1": 1 }')
@@ -56,6 +58,17 @@ describe('Body', () => {
         const validation = body.validateSync()
 
         expect(validation.errors['licensee'].message).toEqual('Licensee: Você deve preencher o campo')
+      })
+    })
+
+    describe('kind', () => {
+      it('is required', () => {
+        const body = new Body()
+        const validation = body.validateSync()
+
+        expect(validation.errors['kind'].message).toEqual(
+          'Tipo de Body: Você deve informar um valor ( normal | webhook )'
+        )
       })
     })
   })

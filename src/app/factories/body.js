@@ -5,6 +5,7 @@ const body = Factory.define(() => ({
   content: {
     message: 'text',
   },
+  kind: 'normal',
   licensee: licensee.build(),
 }))
 

@@ -9,7 +9,7 @@ class ChatsController {
     delete body['crmData']
 
     console.info(`Mensagem chegando do plugin de chat: ${JSON.stringify(body)}`)
-    const bodySaved = await Body.create({ content: body, licensee: req.licensee._id })
+    const bodySaved = await Body.create({ content: body, licensee: req.licensee._id, kind: 'normal' })
 
     await queueServer.addJob('chat-message', { bodyId: bodySaved._id })
 
