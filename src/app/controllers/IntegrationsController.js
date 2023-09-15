@@ -1,10 +1,17 @@
 const Body = require('@models/Body')
+const { publishMessage } = require('@config/rabbitmq')
 
 class IntegrationsController {
   async create(req, res) {
-    const { body } = req
+    const { body, query } = req
 
-    await Body.create({ content: body, licensee: req.licensee._id, kind: 'webhook' })
+    const bodySaved = await Body.create({
+      content: { ...body, provider: query.provider },
+      licensee: req.licensee._id,
+      kind: 'webhook',
+    })
+
+    publishMessage({ key: 'process-webhook-request', body: { bodyId: bodySaved._id } })
 
     res.send(200)
   }

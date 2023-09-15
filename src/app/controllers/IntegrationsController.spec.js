@@ -4,6 +4,9 @@ const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
 const { licensee: licenseeFactory } = require('@factories/licensee')
+const { publishMessage } = require('@config/rabbitmq')
+
+jest.mock('@config/rabbitmq')
 
 describe('integrations controller', () => {
   let apiToken
@@ -46,7 +49,7 @@ describe('integrations controller', () => {
     describe('response', () => {
       it('returns status 200 and schedule job to process payload', async () => {
         await request(expressServer)
-          .post(`/api/v1/integrations/?token=${apiToken}`)
+          .post(`/api/v1/integrations/?token=${apiToken}&provider=pagarme`)
           .send({
             kind: 'get-pix',
             payload: {
@@ -58,12 +61,15 @@ describe('integrations controller', () => {
             const body = await Body.findOne({ kind: 'webhook' })
 
             expect(body.content).toEqual({
+              provider: 'pagarme',
               kind: 'get-pix',
               payload: {
                 cart_id: 'cart-id',
               },
             })
             expect(body.kind).toEqual('webhook')
+
+            expect(publishMessage).toHaveBeenCalledWith({ key: 'process-webhook-request', body: { bodyId: body._id } })
           })
       })
     })

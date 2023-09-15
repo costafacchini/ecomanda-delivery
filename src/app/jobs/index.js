@@ -15,6 +15,8 @@ const resetCarts = require('./ResetCarts')
 const sendContactToPagarMe = require('./SendContactToPagarMe')
 const processBackgroundJob = require('./ProcessBackgroundjob')
 const processBackgroundjobGetPix = require('./ProcessBackgroundjobGetPix')
+const processWebhookRequest = require('./ProcessWebhookRequest')
+const processPagarmeOrderPaid = require('./ProcessPagarmeOrderPaid')
 
 const jobs = [
   chatMessage,
@@ -34,6 +36,8 @@ const jobs = [
   sendContactToPagarMe,
   processBackgroundJob,
   processBackgroundjobGetPix,
+  processWebhookRequest,
+  processPagarmeOrderPaid,
 ]
 
 module.exports = jobs

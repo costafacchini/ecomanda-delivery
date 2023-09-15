@@ -69,4 +69,13 @@ describe('PagarMe plugin', () => {
       expect(paymentCreateFnSpy).toHaveBeenCalledWith(cart, 'token')
     })
   })
+
+  describe('parser', () => {
+    it('parseOrderPaidEvent', () => {
+      const pagarMe = new PagarMe()
+      const event = pagarMe.parser.parseOrderPaidEvent({})
+
+      expect(event).toEqual(expect.objectContaining({ id: '' }))
+    })
+  })
 })
