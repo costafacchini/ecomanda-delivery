@@ -27,7 +27,7 @@ describe('#createTemplate', () => {
         licensee,
         name: 'template',
         namespace: 'Namespace',
-      })
+      }),
     )
   })
 })

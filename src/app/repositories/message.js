@@ -29,7 +29,7 @@ async function createInteractiveMessages(fields) {
           kind: 'interactive',
           text,
           trigger: trigger._id,
-        })
+        }),
       )
     }
   } else {
@@ -38,7 +38,7 @@ async function createInteractiveMessages(fields) {
         ...fields,
         kind: 'text',
         text,
-      })
+      }),
     )
   }
 

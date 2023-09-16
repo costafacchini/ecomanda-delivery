@@ -29,7 +29,7 @@ class ChatsBase {
           contact: this.messageParsed.contact._id,
           room: this.messageParsed.room,
           destination: 'to-messenger',
-        })
+        }),
       )
     } else {
       for (const message of this.messageParsed.messages) {
@@ -49,7 +49,7 @@ class ChatsBase {
                   room: this.messageParsed.room,
                   destination: 'to-messenger',
                   trigger: trigger._id,
-                })
+                }),
               )
             }
           } else {

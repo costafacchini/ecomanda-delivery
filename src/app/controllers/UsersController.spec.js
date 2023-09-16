@@ -204,7 +204,7 @@ describe('user controller', () => {
             name: 'Jonny Walker',
             email: 'jonny@walker.com',
             licensee,
-          })
+          }),
         )
 
         await request(expressServer)
@@ -230,7 +230,7 @@ describe('user controller', () => {
             name: 'Willy Wonka',
             email: 'willy@wonka.com',
             licensee,
-          })
+          }),
         )
 
         await request(expressServer)

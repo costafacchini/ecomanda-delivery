@@ -80,7 +80,7 @@ const triggerSchema = new Schema(
       required: [true, 'Ordem: Você deve preencher o campo'],
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 )
 
 triggerSchema.pre('save', function (next) {

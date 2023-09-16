@@ -35,7 +35,7 @@ describe('Default plugin', () => {
           address_number: '123',
           address_complement: 'Sala 1',
           cep: '12345-678',
-        })
+        }),
       )
 
       const cartDefault = {

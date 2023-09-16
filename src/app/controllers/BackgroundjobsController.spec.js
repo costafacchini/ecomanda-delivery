@@ -123,7 +123,7 @@ describe('backgrounndjobs controller', () => {
           backgroundjobFactory.build({
             licensee,
             status: 'scheduled',
-          })
+          }),
         )
 
         await request(expressServer)
@@ -132,7 +132,7 @@ describe('backgrounndjobs controller', () => {
           .expect(200)
           .then((response) => {
             expect(response.body.message).toEqual(
-              'O job está agendado, mas ainda não está executando. Por favor, volte mais tarde!'
+              'O job está agendado, mas ainda não está executando. Por favor, volte mais tarde!',
             )
           })
       })
@@ -143,7 +143,7 @@ describe('backgrounndjobs controller', () => {
           backgroundjobFactory.build({
             licensee,
             status: 'running',
-          })
+          }),
         )
 
         await request(expressServer)
@@ -152,7 +152,7 @@ describe('backgrounndjobs controller', () => {
           .expect(200)
           .then((response) => {
             expect(response.body.message).toEqual(
-              'O job está em execução, logo deve ficar pronto. Por favor, volte daqui a pouco!'
+              'O job está em execução, logo deve ficar pronto. Por favor, volte daqui a pouco!',
             )
           })
       })
@@ -166,7 +166,7 @@ describe('backgrounndjobs controller', () => {
             response: {
               link: 'https://anything.com',
             },
-          })
+          }),
         )
 
         await request(expressServer)
@@ -188,7 +188,7 @@ describe('backgrounndjobs controller', () => {
             licensee,
             status: 'error',
             error: 'some error',
-          })
+          }),
         )
 
         await request(expressServer)
@@ -210,7 +210,7 @@ describe('backgrounndjobs controller', () => {
             response: {
               link: 'https://anything.com',
             },
-          })
+          }),
         )
 
         await request(expressServer)

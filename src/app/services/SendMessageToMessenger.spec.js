@@ -26,20 +26,20 @@ describe('sendMessageToMessenger', () => {
         whatsappDefault: 'dialog',
         whatsappUrl: 'https://chat.url',
         whatsappToken: 'token',
-      })
+      }),
     )
 
     const contact = await Contact.create(
       contactFactory.build({
         licensee,
-      })
+      }),
     )
 
     const message = await Message.create(
       messageFactory.build({
         contact,
         licensee,
-      })
+      }),
     )
 
     const data = {

@@ -68,7 +68,7 @@ describe('template controller', () => {
           .send(
             templateFactory.build({
               licensee,
-            })
+            }),
           )
           .expect('Content-Type', /json/)
           .expect(201)
@@ -197,7 +197,7 @@ describe('template controller', () => {
             name: 'name',
             namespace: 'test',
             licensee,
-          })
+          }),
         )
 
         await request(expressServer)

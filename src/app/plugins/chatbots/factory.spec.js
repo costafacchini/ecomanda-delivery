@@ -8,7 +8,7 @@ describe('createChatbotPlugin', () => {
     const licensee = new Licensee(
       licenseeFactory.build({
         chatbotDefault: 'landbot',
-      })
+      }),
     )
 
     const plugin = createChatbotPlugin(licensee)
@@ -20,7 +20,7 @@ describe('createChatbotPlugin', () => {
     const licensee = new Licensee(
       licenseeFactory.build({
         chatbotDefault: 'something',
-      })
+      }),
     )
 
     expect(() => {

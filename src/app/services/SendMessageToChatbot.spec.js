@@ -24,14 +24,14 @@ describe('sendMessageToChatbot', () => {
     const licensee = await Licensee.create(
       licenseeFactory.build({
         chatbotDefault: 'landbot',
-      })
+      }),
     )
 
     const contact = await Contact.create(
       contactFactory.build({
         talkingWithChatBot: true,
         licensee,
-      })
+      }),
     )
 
     await Message.create(
@@ -40,7 +40,7 @@ describe('sendMessageToChatbot', () => {
         licensee,
         destination: 'to-chat',
         _id: '609dcb059f560046cde64748',
-      })
+      }),
     )
 
     const data = {

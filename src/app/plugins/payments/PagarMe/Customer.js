@@ -44,14 +44,14 @@ class Customer {
       await contact.save()
 
       console.info(
-        `Contato ${contact.name} criado na pagar.me! id: ${contact.customer_id} log_id: ${integrationlog._id}`
+        `Contato ${contact.name} criado na pagar.me! id: ${contact.customer_id} log_id: ${integrationlog._id}`,
       )
     } else {
       console.error(
         `Contato ${contact.name} não criado na pagar.me.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}
-           log_id: ${integrationlog._id}`
+           log_id: ${integrationlog._id}`,
       )
     }
   }
@@ -79,14 +79,14 @@ class Customer {
 
     if (response.status === 200) {
       console.info(
-        `Contato ${contact.name} atualizado na pagar.me! id: ${contact.customer_id} log_id: ${integrationlog._id}`
+        `Contato ${contact.name} atualizado na pagar.me! id: ${contact.customer_id} log_id: ${integrationlog._id}`,
       )
     } else {
       console.error(
         `Contato ${contact.name} não atualizado na pagar.me.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}
-           log_id: ${integrationlog._id}`
+           log_id: ${integrationlog._id}`,
       )
     }
   }

@@ -209,7 +209,7 @@ const licenseeSchema = new Schema(
     },
     recipient_id: String,
   },
-  { timestamps: true }
+  { timestamps: true },
 )
 
 licenseeSchema.pre('save', function (next) {

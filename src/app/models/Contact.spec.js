@@ -36,7 +36,7 @@ describe('Contact', () => {
 
     it('normalizes the phone number if number contains @', async () => {
       const contact = await Contact.create(
-        contactFactory.build({ licensee, number: '5511990283745@c.us', type: 'g.us' })
+        contactFactory.build({ licensee, number: '5511990283745@c.us', type: 'g.us' }),
       )
 
       expect(contact.number).toEqual('5511990283745')
@@ -48,7 +48,7 @@ describe('Contact', () => {
         contactFactory.build({
           licensee,
           number: '5511902837-4598687665@g.us',
-        })
+        }),
       )
 
       expect(contact.number).toEqual('5511902837-4598687665')
@@ -88,7 +88,7 @@ describe('Contact', () => {
         const validation = contact.validateSync()
 
         expect(validation.errors['talkingWithChatBot'].message).toEqual(
-          'Talking with chatbot: Você deve preencher o campo'
+          'Talking with chatbot: Você deve preencher o campo',
         )
       })
     })

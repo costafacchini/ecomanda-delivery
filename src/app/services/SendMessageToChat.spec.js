@@ -25,14 +25,14 @@ describe('sendMessageToChat', () => {
       licenseeFactory.build({
         chatDefault: 'rocketchat',
         chatUrl: 'https://chat.url',
-      })
+      }),
     )
 
     const contact = await Contact.create(
       contactFactory.build({
         talkingWithChatBot: true,
         licensee,
-      })
+      }),
     )
 
     await Message.create(
@@ -41,7 +41,7 @@ describe('sendMessageToChat', () => {
         licensee,
         destination: 'to-chat',
         _id: '609dcb059f560046cde64748',
-      })
+      }),
     )
 
     const data = {

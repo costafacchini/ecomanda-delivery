@@ -159,7 +159,7 @@ class Cuboup extends ChatsBase {
       console.error(
         `Mensagem ${messageToSend._id} não enviada para CuboUp.
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}`
+           mensagem: ${JSON.stringify(response.data)}`,
       )
     }
   }

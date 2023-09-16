@@ -17,7 +17,7 @@ describe('transformChatbotTransferBody', () => {
       licenseeFactory.build({
         chatbotDefault: 'landbot',
         chatUrl: 'https://chat.url',
-      })
+      }),
     )
   })
 
@@ -35,7 +35,7 @@ describe('transformChatbotTransferBody', () => {
     const body = await Body.create(
       bodyFactory.build({
         licensee: licensee,
-      })
+      }),
     )
 
     const data = {
@@ -68,7 +68,7 @@ describe('transformChatbotTransferBody', () => {
           is: 'invalid',
         },
         licensee: licensee,
-      })
+      }),
     )
 
     const data = {

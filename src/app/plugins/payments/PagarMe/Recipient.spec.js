@@ -66,7 +66,7 @@ describe('PagarMe/Recipient plugin', () => {
                 status: '',
               },
             },
-          }
+          },
         )
 
         const recipient = new Recipient()
@@ -77,7 +77,7 @@ describe('PagarMe/Recipient plugin', () => {
         expect(fetchMock.calls()).toHaveLength(1)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith(
-          'Licenciado Alcateia Ltds criado na pagar.me! id: 23717165 log_id: 1234'
+          'Licenciado Alcateia Ltds criado na pagar.me! id: 23717165 log_id: 1234',
         )
 
         integrationlogCreateSpy.mockRestore()
@@ -125,7 +125,7 @@ describe('PagarMe/Recipient plugin', () => {
                 status: '',
               },
             },
-          }
+          },
         )
 
         const recipient = new Recipient()
@@ -181,7 +181,7 @@ describe('PagarMe/Recipient plugin', () => {
           {
             status: 200,
             body: bodyResponse,
-          }
+          },
         )
 
         const recipient = new Recipient()
@@ -238,7 +238,7 @@ describe('PagarMe/Recipient plugin', () => {
                 ],
               },
             },
-          }
+          },
         )
 
         const recipient = new Recipient()
@@ -252,7 +252,7 @@ describe('PagarMe/Recipient plugin', () => {
           `Licenciado Alcateia Ltds não criado na pagar.me.
            status: 400
            mensagem: {"message":"The request is invalid.","errors":{"recipient.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
-           log_id: 1234`
+           log_id: 1234`,
         )
 
         integrationlogCreateSpy.mockRestore()
@@ -297,7 +297,7 @@ describe('PagarMe/Recipient plugin', () => {
           {
             status: 400,
             body: bodyResponse,
-          }
+          },
         )
 
         const recipient = new Recipient()
@@ -338,7 +338,7 @@ describe('PagarMe/Recipient plugin', () => {
             body: {
               id: 23717165,
             },
-          }
+          },
         )
 
         const recipient = new Recipient()
@@ -350,7 +350,7 @@ describe('PagarMe/Recipient plugin', () => {
         expect(fetchMock.calls()).toHaveLength(1)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith(
-          'Licenciado Alcateia Ltds atualizado na pagar.me! id: 98765 log_id: 1234'
+          'Licenciado Alcateia Ltds atualizado na pagar.me! id: 98765 log_id: 1234',
         )
 
         integrationlogCreateSpy.mockRestore()
@@ -377,7 +377,7 @@ describe('PagarMe/Recipient plugin', () => {
           {
             status: 200,
             body: bodyResponse,
-          }
+          },
         )
 
         const recipient = new Recipient()
@@ -422,7 +422,7 @@ describe('PagarMe/Recipient plugin', () => {
                 ],
               },
             },
-          }
+          },
         )
 
         const recipient = new Recipient()
@@ -437,7 +437,7 @@ describe('PagarMe/Recipient plugin', () => {
           `Licenciado Alcateia Ltds não atualizado na pagar.me.
            status: 400
            mensagem: {"message":"The request is invalid.","errors":{"recipient.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
-           log_id: 1234`
+           log_id: 1234`,
         )
 
         integrationlogCreateSpy.mockRestore()
@@ -469,7 +469,7 @@ describe('PagarMe/Recipient plugin', () => {
           {
             status: 400,
             body: bodyResponse,
-          }
+          },
         )
 
         const recipient = new Recipient()

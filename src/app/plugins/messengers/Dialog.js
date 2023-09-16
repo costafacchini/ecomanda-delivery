@@ -252,7 +252,7 @@ class Dialog extends MessengersBase {
         waId = waContact.waId
       } else {
         console.error(
-          `A mensagem não foi enviada para a Dialog pois o contato não é válido ${JSON.stringify(waContact.data)}`
+          `A mensagem não foi enviada para a Dialog pois o contato não é válido ${JSON.stringify(waContact.data)}`,
         )
         return
       }

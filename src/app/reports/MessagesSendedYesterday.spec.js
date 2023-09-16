@@ -26,7 +26,7 @@ describe('MessagesSendedYesterday', () => {
         licensee: licensee1,
         sended: true,
         createdAt: moment().subtract(1, 'days'),
-      })
+      }),
     )
     const messageOfYesterday2 = await Message.create(
       messageFactory.build({
@@ -34,7 +34,7 @@ describe('MessagesSendedYesterday', () => {
         licensee: licensee1,
         sended: true,
         createdAt: moment().subtract(1, 'days'),
-      })
+      }),
     )
     const messageOfYesterday3 = await Message.create(
       messageFactory.build({
@@ -42,7 +42,7 @@ describe('MessagesSendedYesterday', () => {
         licensee: licensee1,
         sended: false,
         createdAt: moment().subtract(1, 'days'),
-      })
+      }),
     )
     const messageOfTwoDays1 = await Message.create(
       messageFactory.build({
@@ -50,7 +50,7 @@ describe('MessagesSendedYesterday', () => {
         licensee: licensee1,
         sended: true,
         createdAt: moment().subtract(2, 'days'),
-      })
+      }),
     )
     const messageOfToday1 = await Message.create(
       messageFactory.build({
@@ -58,7 +58,7 @@ describe('MessagesSendedYesterday', () => {
         licensee: licensee1,
         sended: true,
         createdAt: moment(),
-      })
+      }),
     )
 
     const licensee2 = await Licensee.create(licenseeFactory.build({ name: 'Alcateia II', licenseKind: 'paid' }))
@@ -69,7 +69,7 @@ describe('MessagesSendedYesterday', () => {
         licensee: licensee2,
         sended: true,
         createdAt: moment().subtract(1, 'days'),
-      })
+      }),
     )
     const messageOfYesterday5 = await Message.create(
       messageFactory.build({
@@ -77,7 +77,7 @@ describe('MessagesSendedYesterday', () => {
         licensee: licensee2,
         sended: true,
         createdAt: moment().subtract(1, 'days'),
-      })
+      }),
     )
     const messageOfYesterday6 = await Message.create(
       messageFactory.build({
@@ -85,7 +85,7 @@ describe('MessagesSendedYesterday', () => {
         licensee: licensee2,
         sended: false,
         createdAt: moment().subtract(1, 'days'),
-      })
+      }),
     )
     const messageOfTwoDays2 = await Message.create(
       messageFactory.build({
@@ -93,7 +93,7 @@ describe('MessagesSendedYesterday', () => {
         licensee: licensee2,
         sended: true,
         createdAt: moment().subtract(2, 'days'),
-      })
+      }),
     )
     const messageOfToday2 = await Message.create(
       messageFactory.build({
@@ -101,7 +101,7 @@ describe('MessagesSendedYesterday', () => {
         licensee: licensee2,
         sended: true,
         createdAt: moment(),
-      })
+      }),
     )
 
     const messagesSendedYesterday = new MessagesSendedYesterday()
@@ -122,13 +122,13 @@ describe('MessagesSendedYesterday', () => {
           count: 1,
           messages: expect.arrayContaining([expect.objectContaining({ _id: messageOfYesterday3._id })]),
         },
-      })
+      }),
     )
     expect(records[0].success.messages).not.toEqual(
       expect.arrayContaining([
         expect.objectContaining({ _id: messageOfTwoDays1._id }),
         expect.objectContaining({ _id: messageOfToday1._id }),
-      ])
+      ]),
     )
 
     expect(records[1]).toEqual(
@@ -145,13 +145,13 @@ describe('MessagesSendedYesterday', () => {
           count: 1,
           messages: expect.arrayContaining([expect.objectContaining({ _id: messageOfYesterday6._id })]),
         },
-      })
+      }),
     )
     expect(records[1].success.messages).not.toEqual(
       expect.arrayContaining([
         expect.objectContaining({ _id: messageOfTwoDays2._id }),
         expect.objectContaining({ _id: messageOfToday2._id }),
-      ])
+      ]),
     )
   })
 })

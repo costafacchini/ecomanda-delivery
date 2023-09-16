@@ -40,7 +40,7 @@ describe('Utalk plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const responseBody = {
@@ -88,7 +88,7 @@ describe('Utalk plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const responseBody = {
@@ -150,7 +150,7 @@ describe('Utalk plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const responseBody = {
@@ -198,7 +198,7 @@ describe('Utalk plugin', () => {
             type: '@g.us',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const responseBody = {
@@ -275,7 +275,7 @@ describe('Utalk plugin', () => {
           chatbotUrl: 'https://teste-url.com',
           chatbotAuthorizationToken: 'token',
           apiToken: '12346554',
-        })
+        }),
       )
 
       await Contact.create(
@@ -283,7 +283,7 @@ describe('Utalk plugin', () => {
           name: 'John Doe',
           talkingWithChatBot: false,
           licensee,
-        })
+        }),
       )
 
       const responseBody = {
@@ -320,7 +320,7 @@ describe('Utalk plugin', () => {
           name: 'John Doe',
           talkingWithChatBot: false,
           licensee,
-        })
+        }),
       )
 
       const responseBody = {
@@ -352,7 +352,7 @@ describe('Utalk plugin', () => {
           name: 'John Doe',
           talkingWithChatBot: false,
           licensee,
-        })
+        }),
       )
 
       const responseBody = {
@@ -483,7 +483,7 @@ describe('Utalk plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         const responseBody = {
@@ -565,7 +565,7 @@ describe('Utalk plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -575,7 +575,7 @@ describe('Utalk plugin', () => {
             contact,
             licensee,
             sended: false,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -600,7 +600,7 @@ describe('Utalk plugin', () => {
               to: '5511990283745@c.us',
               servidor: 'res_utalk',
             },
-          }
+          },
         )
 
         expect(message.sended).toEqual(false)
@@ -622,7 +622,7 @@ describe('Utalk plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -632,7 +632,7 @@ describe('Utalk plugin', () => {
             contact,
             licensee,
             sended: false,
-          })
+          }),
         )
 
         fetchMock.postOnce('https://api.utalk.com.br/send/WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K/', {
@@ -656,7 +656,7 @@ describe('Utalk plugin', () => {
         expect(fetchMock.calls()).toHaveLength(1)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 enviada para Utalk com sucesso! {"type":"send message","cmd":"chat","to":"5511990283745@c.us","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","servidor":"res_utalk"}'
+          'Mensagem 60958703f415ed4008748637 enviada para Utalk com sucesso! {"type":"send message","cmd":"chat","to":"5511990283745@c.us","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","servidor":"res_utalk"}',
         )
       })
 
@@ -667,7 +667,7 @@ describe('Utalk plugin', () => {
               name: 'John Doe',
               talkingWithChatBot: true,
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -680,7 +680,7 @@ describe('Utalk plugin', () => {
               contact,
               licensee,
               sended: false,
-            })
+            }),
           )
 
           const expectedBody = {
@@ -707,7 +707,7 @@ describe('Utalk plugin', () => {
                 token: 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K',
                 servidor: 'res_utalk',
               },
-            }
+            },
           )
 
           expect(message.sended).toEqual(false)
@@ -723,7 +723,7 @@ describe('Utalk plugin', () => {
           expect(messageUpdated.sended).toEqual(true)
 
           expect(consoleInfoSpy).toHaveBeenCalledWith(
-            'Mensagem 60958703f415ed4008748637 enviada para Utalk com sucesso! {"type":"send message","cmd":"chat","to":"5511990283745@c.us","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","servidor":"res_utalk"}'
+            'Mensagem 60958703f415ed4008748637 enviada para Utalk com sucesso! {"type":"send message","cmd":"chat","to":"5511990283745@c.us","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","servidor":"res_utalk"}',
           )
         })
       })
@@ -736,7 +736,7 @@ describe('Utalk plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -746,7 +746,7 @@ describe('Utalk plugin', () => {
             contact,
             licensee,
             sended: false,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -770,7 +770,7 @@ describe('Utalk plugin', () => {
               token: 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K',
               status: 'whatsapp offline',
             },
-          }
+          },
         )
 
         expect(message.sended).toEqual(false)
@@ -785,11 +785,11 @@ describe('Utalk plugin', () => {
         const messageUpdated = await Message.findById(message._id)
         expect(messageUpdated.sended).toEqual(false)
         expect(messageUpdated.error).toEqual(
-          '{"type":"send message","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","status":"whatsapp offline"}'
+          '{"type":"send message","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","status":"whatsapp offline"}',
         )
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 não enviada para Utalk. {"type":"send message","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","status":"whatsapp offline"}'
+          'Mensagem 60958703f415ed4008748637 não enviada para Utalk. {"type":"send message","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","status":"whatsapp offline"}',
         )
       })
     })

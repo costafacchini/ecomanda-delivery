@@ -27,7 +27,7 @@ describe('processWebhookRequest', () => {
             type: 'order.paid',
           },
           licensee,
-        })
+        }),
       )
 
       const data = {
@@ -60,7 +60,7 @@ describe('processWebhookRequest', () => {
             type: 'order.paid',
           },
           licensee,
-        })
+        }),
       )
 
       const data = {
@@ -88,7 +88,7 @@ describe('processWebhookRequest', () => {
             type: 'order.paid',
           },
           licensee,
-        })
+        }),
       )
 
       const data = {

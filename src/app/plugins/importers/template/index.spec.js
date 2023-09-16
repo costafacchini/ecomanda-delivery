@@ -17,7 +17,7 @@ describe('TemplatesImporter', () => {
 
   it('imports the templates of whatsapp', async () => {
     const licensee = await Licensee.create(
-      licenseeFactory.build({ whatsappDefault: 'dialog', whatsappUrl: 'https://dialog.com', whatsappToken: 'token' })
+      licenseeFactory.build({ whatsappDefault: 'dialog', whatsappUrl: 'https://dialog.com', whatsappToken: 'token' }),
     )
     const template = await Template.create(templateFactory.build({ licensee }))
 

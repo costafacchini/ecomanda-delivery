@@ -26,7 +26,7 @@ describe('product repository', () => {
         expect.objectContaining({
           name: 'Product 1',
           licensee,
-        })
+        }),
       )
     })
   })
@@ -51,14 +51,14 @@ describe('product repository', () => {
         expect.objectContaining({
           name: 'Product 1',
           licensee: licensee._id,
-        })
+        }),
       )
 
       expect(product).not.toEqual(
         expect.objectContaining({
           name: 'Product 1',
           licensee: anotherLicensee._id,
-        })
+        }),
       )
     })
   })

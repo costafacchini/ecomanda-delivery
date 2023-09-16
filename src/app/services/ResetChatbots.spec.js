@@ -30,7 +30,7 @@ describe('resetChatbots', () => {
           chatbotAuthorizationToken: 'ljsdf12g',
           useChatbot: true,
           chatbotApiToken: 'api-token',
-        })
+        }),
       )
 
       const contact = await Contact.create(
@@ -38,7 +38,7 @@ describe('resetChatbots', () => {
           talkingWithChatBot: true,
           landbotId: 'landbot-id',
           licensee,
-        })
+        }),
       )
 
       await Message.create(
@@ -47,7 +47,7 @@ describe('resetChatbots', () => {
           licensee,
           destination: 'to-messenger',
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
-        })
+        }),
       )
 
       const contactThatMessageDoesNotCreatedInTimeLimit = await Contact.create(
@@ -55,7 +55,7 @@ describe('resetChatbots', () => {
           talkingWithChatBot: true,
           landbotId: 'landbot-id',
           licensee,
-        })
+        }),
       )
 
       await Message.create(
@@ -64,7 +64,7 @@ describe('resetChatbots', () => {
           licensee,
           destination: 'to-messenger',
           createdAt: new Date(),
-        })
+        }),
       )
 
       const contactThatMessageDoesNotSended = await Contact.create(
@@ -72,7 +72,7 @@ describe('resetChatbots', () => {
           talkingWithChatBot: true,
           landbotId: 'landbot-id',
           licensee,
-        })
+        }),
       )
 
       await Message.create(
@@ -82,7 +82,7 @@ describe('resetChatbots', () => {
           destination: 'to-messenger',
           sended: false,
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
-        })
+        }),
       )
 
       const contactThatNotTalkingWithChatbot = await Contact.create(
@@ -90,7 +90,7 @@ describe('resetChatbots', () => {
           talkingWithChatBot: false,
           landbotId: 'landbot-id',
           licensee,
-        })
+        }),
       )
 
       await Message.create(
@@ -100,14 +100,14 @@ describe('resetChatbots', () => {
           destination: 'to-messenger',
           sended: true,
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
-        })
+        }),
       )
 
       const contactWithoutLandbotId = await Contact.create(
         contactFactory.build({
           talkingWithChatBot: true,
           licensee,
-        })
+        }),
       )
 
       await Message.create(
@@ -117,7 +117,7 @@ describe('resetChatbots', () => {
           destination: 'to-messenger',
           sended: true,
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
-        })
+        }),
       )
 
       const licenseeWhithoutChatbot = await Licensee.create(
@@ -127,7 +127,7 @@ describe('resetChatbots', () => {
           chatbotAuthorizationToken: 'ljsdf12g',
           useChatbot: false,
           chatbotApiToken: 'api-token',
-        })
+        }),
       )
 
       const contact2 = await Contact.create(
@@ -135,7 +135,7 @@ describe('resetChatbots', () => {
           talkingWithChatBot: true,
           landbotId: 'landbot-id',
           licensee: licenseeWhithoutChatbot,
-        })
+        }),
       )
 
       await Message.create(
@@ -145,7 +145,7 @@ describe('resetChatbots', () => {
           destination: 'to-messenger',
           sended: true,
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
-        })
+        }),
       )
 
       const licenseeWithoutChatbotApiToken = await Licensee.create(
@@ -154,7 +154,7 @@ describe('resetChatbots', () => {
           chatbotUrl: 'https://landbot.url',
           chatbotAuthorizationToken: 'ljsdf12g',
           useChatbot: true,
-        })
+        }),
       )
 
       const contact3 = await Contact.create(
@@ -162,7 +162,7 @@ describe('resetChatbots', () => {
           talkingWithChatBot: true,
           landbotId: 'landbot-id',
           licensee: licenseeWithoutChatbotApiToken,
-        })
+        }),
       )
 
       await Message.create(
@@ -172,7 +172,7 @@ describe('resetChatbots', () => {
           destination: 'to-messenger',
           sended: true,
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
-        })
+        }),
       )
 
       fetchMock.deleteOnce((url, { headers }) => {
@@ -189,7 +189,7 @@ describe('resetChatbots', () => {
       expect(contactChanged.landbotId).toEqual(null)
 
       const contactThatMessageDoesNotCreatedInTimeLimitChanged = await Contact.findById(
-        contactThatMessageDoesNotCreatedInTimeLimit._id
+        contactThatMessageDoesNotCreatedInTimeLimit._id,
       )
       expect(contactThatMessageDoesNotCreatedInTimeLimitChanged.landbotId).toEqual('landbot-id')
 
@@ -227,7 +227,7 @@ describe('resetChatbots', () => {
             awsId: 'aws-id',
             awsSecret: 'aws-secret',
             bucketName: 'bucket-name',
-          })
+          }),
         )
 
         const contact = await Contact.create(
@@ -235,7 +235,7 @@ describe('resetChatbots', () => {
             talkingWithChatBot: true,
             landbotId: 'landbot-id',
             licensee,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -245,7 +245,7 @@ describe('resetChatbots', () => {
             destination: 'to-messenger',
             sended: true,
             createdAt: new Date(2021, 6, 3, 0, 0, 0),
-          })
+          }),
         )
 
         fetchMock.deleteOnce((url, { headers }) => {

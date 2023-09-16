@@ -37,7 +37,7 @@ describe('trigger repository', () => {
           catalogId: 'id',
           order: 1,
           licensee,
-        })
+        }),
       )
     })
   })

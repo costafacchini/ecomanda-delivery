@@ -44,7 +44,7 @@ describe('addresses controller', () => {
             name: 'John Doe',
             type: '@c.us',
             licensee,
-          })
+          }),
         )
 
         await request(expressServer)
@@ -120,7 +120,7 @@ describe('addresses controller', () => {
             cep: '98543287',
             uf: 'SP',
             delivery_tax: 10.39,
-          })
+          }),
         )
 
         await request(expressServer)

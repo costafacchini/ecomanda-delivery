@@ -74,7 +74,7 @@ class Landbot {
                 contact: contact._id,
                 destination: 'to-messenger',
                 trigger: trigger._id,
-              })
+              }),
             )
           }
         } else {
@@ -86,7 +86,7 @@ class Landbot {
               licensee: this.licensee._id,
               contact: contact._id,
               destination: 'to-messenger',
-            })
+            }),
           )
         }
       } else {
@@ -228,7 +228,7 @@ class Landbot {
       console.info(
         `Mensagem ${messageToSend._id} enviada para Landbot com sucesso!
            status: ${response.status}
-           body: ${JSON.stringify(response.data)}`
+           body: ${JSON.stringify(response.data)}`,
       )
     } else {
       messageToSend.error = JSON.stringify(response.data)
@@ -236,7 +236,7 @@ class Landbot {
       console.error(
         `Mensagem ${messageToSend._id} não enviada para Landbot.
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}`
+           mensagem: ${JSON.stringify(response.data)}`,
       )
     }
   }

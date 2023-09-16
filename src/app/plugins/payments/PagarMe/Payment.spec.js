@@ -39,7 +39,7 @@ describe('PagarMe/Customer plugin', () => {
             name: 'John Doe',
             number: '5511990283745',
             licensee,
-          })
+          }),
         )
 
         const cart = await Cart.create(
@@ -65,7 +65,7 @@ describe('PagarMe/Customer plugin', () => {
             neighborhood: 'Bairro',
             address_complement: 'Perto daquela parada lá',
             total: 16.1,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -137,7 +137,7 @@ describe('PagarMe/Customer plugin', () => {
               ],
               checkouts: [],
             },
-          }
+          },
         )
 
         const payment = new Payment()
@@ -163,7 +163,7 @@ describe('PagarMe/Customer plugin', () => {
             name: 'John Doe',
             number: '5511990283745',
             licensee,
-          })
+          }),
         )
 
         const cart = await Cart.create(
@@ -189,7 +189,7 @@ describe('PagarMe/Customer plugin', () => {
             neighborhood: 'Bairro',
             address_complement: 'Perto daquela parada lá',
             total: 16.1,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -316,7 +316,7 @@ describe('PagarMe/Customer plugin', () => {
               ],
               checkouts: [],
             },
-          }
+          },
         )
 
         const payment = new Payment()
@@ -330,10 +330,10 @@ describe('PagarMe/Customer plugin', () => {
         expect(cartUpdated.order_id).toEqual('or_56GXnk6T0eU88qMm')
         expect(cartUpdated.charge_id).toEqual('ch_K2rJ5nlHwTE4qRDP')
         expect(cartUpdated.pix_qrcode).toEqual(
-          '00020101021226480019BR.COM.STONE.QRCODE0108A37F8712020912345678927820 014BR.GOV.BCB.PIX2560sandbox-qrcode.stone.com.br/api/v2/qr/sGY7FyVExavqkzFvkQu MXA28580010BR.COM.ELO0104516002151234567890000000308933BB1100401P520400 00530398654041.005802BR5911STONE TESTE6009SAO PAULO62600522sGY7FyVExavqkzFvkQuMXA50300017BR.GOV.BCB.BRCODE01051.0.0 80500010BR.COM.ELO01100915132023020200030201040613202363043BA1'
+          '00020101021226480019BR.COM.STONE.QRCODE0108A37F8712020912345678927820 014BR.GOV.BCB.PIX2560sandbox-qrcode.stone.com.br/api/v2/qr/sGY7FyVExavqkzFvkQu MXA28580010BR.COM.ELO0104516002151234567890000000308933BB1100401P520400 00530398654041.005802BR5911STONE TESTE6009SAO PAULO62600522sGY7FyVExavqkzFvkQuMXA50300017BR.GOV.BCB.BRCODE01051.0.0 80500010BR.COM.ELO01100915132023020200030201040613202363043BA1',
         )
         expect(cartUpdated.pix_url).toEqual(
-          'https://api.pagar.me/core/v1/transactions/tran_bZ0N3DjjUzTW68eq/qrcode.png'
+          'https://api.pagar.me/core/v1/transactions/tran_bZ0N3DjjUzTW68eq/qrcode.png',
         )
         expect(cartUpdated.payment_status).toEqual('waiting_payment')
         expect(cartUpdated.integration_status).toEqual('pending')
@@ -348,7 +348,7 @@ describe('PagarMe/Customer plugin', () => {
             name: 'John Doe',
             number: '5511990283745',
             licensee,
-          })
+          }),
         )
 
         const cart = await Cart.create(
@@ -374,7 +374,7 @@ describe('PagarMe/Customer plugin', () => {
             neighborhood: 'Bairro',
             address_complement: 'Perto daquela parada lá',
             total: 16.1,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -448,7 +448,7 @@ describe('PagarMe/Customer plugin', () => {
           {
             status: 200,
             body: bodyResponse,
-          }
+          },
         )
 
         const payment = new Payment()
@@ -476,7 +476,7 @@ describe('PagarMe/Customer plugin', () => {
             name: 'John Doe',
             number: '5511990283745',
             licensee,
-          })
+          }),
         )
 
         const cart = await Cart.create(
@@ -502,7 +502,7 @@ describe('PagarMe/Customer plugin', () => {
             neighborhood: 'Bairro',
             address_complement: 'Perto daquela parada lá',
             total: 16.1,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -564,7 +564,7 @@ describe('PagarMe/Customer plugin', () => {
                 ],
               },
             },
-          }
+          },
         )
 
         const payment = new Payment()
@@ -578,7 +578,7 @@ describe('PagarMe/Customer plugin', () => {
           `Pedido ${cart._id} não criado na pagar.me.
            status: 422
            mensagem: {"message":"The request is invalid.","errors":{"order.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
-           log_id: 1234`
+           log_id: 1234`,
         )
 
         integrationlogCreateSpy.mockRestore()
@@ -591,7 +591,7 @@ describe('PagarMe/Customer plugin', () => {
             name: 'John Doe',
             number: '5511990283745',
             licensee,
-          })
+          }),
         )
 
         const cart = await Cart.create(
@@ -617,7 +617,7 @@ describe('PagarMe/Customer plugin', () => {
             neighborhood: 'Bairro',
             address_complement: 'Perto daquela parada lá',
             total: 16.1,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -681,7 +681,7 @@ describe('PagarMe/Customer plugin', () => {
           {
             status: 422,
             body: bodyResponse,
-          }
+          },
         )
 
         const payment = new Payment()

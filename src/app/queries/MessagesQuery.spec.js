@@ -29,14 +29,14 @@ describe('MessagesQuery', () => {
           contact,
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
-        })
+        }),
       )
       const message2 = await Message.create(
         messageFactory.build({
           contact,
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 1),
-        })
+        }),
       )
 
       const messagesQuery = new MessagesQuery()
@@ -54,21 +54,21 @@ describe('MessagesQuery', () => {
             contact,
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 0),
-          })
+          }),
         )
         const message2 = await Message.create(
           messageFactory.build({
             contact,
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
         const message3 = await Message.create(
           messageFactory.build({
             contact,
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 2),
-          })
+          }),
         )
 
         const messagesQuery = new MessagesQuery()
@@ -104,28 +104,28 @@ describe('MessagesQuery', () => {
             contact,
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
         const message2 = await Message.create(
           messageFactory.build({
             contact,
             licensee,
             createdAt: new Date(2021, 6, 3, 23, 59, 58),
-          })
+          }),
         )
         const messageBefore = await Message.create(
           messageFactory.build({
             contact,
             licensee,
             createdAt: new Date(2021, 6, 2, 23, 59, 59),
-          })
+          }),
         )
         const messageAfter = await Message.create(
           messageFactory.build({
             contact,
             licensee,
             createdAt: new Date(2021, 6, 4, 0, 0, 0),
-          })
+          }),
         )
 
         const messagesQuery = new MessagesQuery()
@@ -148,7 +148,7 @@ describe('MessagesQuery', () => {
             contact,
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
 
         const anotherLicensee = await Licensee.create(licenseeFactory.build())
@@ -157,7 +157,7 @@ describe('MessagesQuery', () => {
             contact,
             licensee: anotherLicensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
 
         const messagesQuery = new MessagesQuery()
@@ -178,7 +178,7 @@ describe('MessagesQuery', () => {
             contact,
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
 
         const anotherContact = await Contact.create(contactFactory.build({ licensee }))
@@ -187,7 +187,7 @@ describe('MessagesQuery', () => {
             contact: anotherContact,
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
 
         const messagesQuery = new MessagesQuery()
@@ -209,7 +209,7 @@ describe('MessagesQuery', () => {
             contact,
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 0),
-          })
+          }),
         )
         const message2 = await Message.create(
           messageFactory.build({
@@ -220,7 +220,7 @@ describe('MessagesQuery', () => {
             licensee,
             destination: 'to-chatbot',
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
 
         const messagesQuery = new MessagesQuery()
@@ -240,7 +240,7 @@ describe('MessagesQuery', () => {
             contact,
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 0),
-          })
+          }),
         )
         const message2 = await Message.create(
           messageFactory.build({
@@ -248,7 +248,7 @@ describe('MessagesQuery', () => {
             licensee,
             destination: 'to-chatbot',
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
 
         const messagesQuery = new MessagesQuery()
@@ -269,7 +269,7 @@ describe('MessagesQuery', () => {
             licensee,
             sended: true,
             createdAt: new Date(2021, 6, 3, 0, 0, 0),
-          })
+          }),
         )
         const message2 = await Message.create(
           messageFactory.build({
@@ -277,7 +277,7 @@ describe('MessagesQuery', () => {
             licensee,
             sended: false,
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
 
         const messagesQuery = new MessagesQuery()
@@ -297,14 +297,14 @@ describe('MessagesQuery', () => {
             contact,
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 0),
-          })
+          }),
         )
         const message2 = await Message.create(
           messageFactory.build({
             contact,
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
 
         const messagesQuery = new MessagesQuery()
@@ -325,14 +325,14 @@ describe('MessagesQuery', () => {
           contact,
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
-        })
+        }),
       )
       await Message.create(
         messageFactory.build({
           contact,
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 1),
-        })
+        }),
       )
 
       const messagesQuery = new MessagesQuery()
@@ -348,28 +348,28 @@ describe('MessagesQuery', () => {
             contact,
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
         await Message.create(
           messageFactory.build({
             contact,
             licensee,
             createdAt: new Date(2021, 6, 3, 23, 59, 58),
-          })
+          }),
         )
         await Message.create(
           messageFactory.build({
             contact,
             licensee,
             createdAt: new Date(2021, 6, 2, 23, 59, 59),
-          })
+          }),
         )
         await Message.create(
           messageFactory.build({
             contact,
             licensee,
             createdAt: new Date(2021, 6, 4, 0, 0, 0),
-          })
+          }),
         )
 
         const messagesQuery = new MessagesQuery()
@@ -388,7 +388,7 @@ describe('MessagesQuery', () => {
             contact,
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
 
         const anotherLicensee = await Licensee.create(licenseeFactory.build())
@@ -397,7 +397,7 @@ describe('MessagesQuery', () => {
             contact,
             licensee: anotherLicensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
 
         const messagesQuery = new MessagesQuery()
@@ -416,7 +416,7 @@ describe('MessagesQuery', () => {
             contact,
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
 
         const anotherContact = await Contact.create(contactFactory.build({ licensee }))
@@ -425,7 +425,7 @@ describe('MessagesQuery', () => {
             contact: anotherContact,
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
 
         const messagesQuery = new MessagesQuery()
@@ -445,7 +445,7 @@ describe('MessagesQuery', () => {
             contact,
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 0),
-          })
+          }),
         )
         await Message.create(
           messageFactory.build({
@@ -456,7 +456,7 @@ describe('MessagesQuery', () => {
             licensee,
             destination: 'to-chatbot',
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
 
         const messagesQuery = new MessagesQuery()
@@ -474,7 +474,7 @@ describe('MessagesQuery', () => {
             contact,
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 0),
-          })
+          }),
         )
         await Message.create(
           messageFactory.build({
@@ -482,7 +482,7 @@ describe('MessagesQuery', () => {
             licensee,
             destination: 'to-chatbot',
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
 
         const messagesQuery = new MessagesQuery()
@@ -501,7 +501,7 @@ describe('MessagesQuery', () => {
             licensee,
             sended: true,
             createdAt: new Date(2021, 6, 3, 0, 0, 0),
-          })
+          }),
         )
         await Message.create(
           messageFactory.build({
@@ -509,7 +509,7 @@ describe('MessagesQuery', () => {
             licensee,
             sended: false,
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
 
         const messagesQuery = new MessagesQuery()

@@ -52,7 +52,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['name'].message).toEqual(
-          'Nome: Informe um valor com mais que 4 caracteres! Atual: abc'
+          'Nome: Informe um valor com mais que 4 caracteres! Atual: abc',
         )
       })
     })
@@ -63,7 +63,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['licenseKind'].message).toEqual(
-          'Tipo de Licença: Você deve informar um valor ( demo | free | paid)'
+          'Tipo de Licença: Você deve informar um valor ( demo | free | paid)',
         )
       })
 
@@ -92,7 +92,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['licenseKind'].message).toEqual(
-          '`some` is not a valid enum value for path `licenseKind`.'
+          '`some` is not a valid enum value for path `licenseKind`.',
         )
       })
     })
@@ -124,7 +124,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['chatbotDefault'].message).toEqual(
-          '`some` is not a valid enum value for path `chatbotDefault`.'
+          '`some` is not a valid enum value for path `chatbotDefault`.',
         )
       })
     })
@@ -142,7 +142,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['chatbotUrl'].message).toEqual(
-          'URL do Chatbot: deve ser preenchido quando utiliza Chatbot'
+          'URL do Chatbot: deve ser preenchido quando utiliza Chatbot',
         )
       })
     })
@@ -160,7 +160,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['chatbotAuthorizationToken'].message).toEqual(
-          'Token de Autorização do Chatbot: deve ser preenchido quando utiliza Chatbot'
+          'Token de Autorização do Chatbot: deve ser preenchido quando utiliza Chatbot',
         )
       })
     })
@@ -200,7 +200,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['whatsappDefault'].message).toEqual(
-          '`some` is not a valid enum value for path `whatsappDefault`.'
+          '`some` is not a valid enum value for path `whatsappDefault`.',
         )
       })
     })
@@ -218,7 +218,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['whatsappToken'].message).toEqual(
-          'Token de Whatsapp: deve ser preenchido quando tiver um plugin configurado'
+          'Token de Whatsapp: deve ser preenchido quando tiver um plugin configurado',
         )
       })
     })
@@ -236,7 +236,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['whatsappUrl'].message).toEqual(
-          'URL de Whatsapp: deve ser preenchido quando tiver um plugin configurado'
+          'URL de Whatsapp: deve ser preenchido quando tiver um plugin configurado',
         )
       })
     })
@@ -281,7 +281,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['chatDefault'].message).toEqual(
-          '`some` is not a valid enum value for path `chatDefault`.'
+          '`some` is not a valid enum value for path `chatDefault`.',
         )
       })
     })
@@ -336,7 +336,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['cartDefault'].message).toEqual(
-          '`some` is not a valid enum value for path `cartDefault`.'
+          '`some` is not a valid enum value for path `cartDefault`.',
         )
       })
     })
@@ -354,7 +354,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['chatUrl'].message).toEqual(
-          'URL do Chat: deve ser preenchido quando tiver um plugin configurado'
+          'URL do Chat: deve ser preenchido quando tiver um plugin configurado',
         )
       })
     })
@@ -372,7 +372,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['chatKey'].message).toEqual(
-          'Key do Chat: deve ser preenchido quando o plugin de chat for crisp'
+          'Key do Chat: deve ser preenchido quando o plugin de chat for crisp',
         )
       })
     })
@@ -390,7 +390,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['chatIdentifier'].message).toEqual(
-          'Identifier do Chat: deve ser preenchido quando o plugin de chat for crisp'
+          'Identifier do Chat: deve ser preenchido quando o plugin de chat for crisp',
         )
       })
     })
@@ -415,7 +415,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['awsId'].message).toEqual(
-          'Id da AWS: deve ser preenchido quando utilizar os plugins da uTalk'
+          'Id da AWS: deve ser preenchido quando utilizar os plugins da uTalk',
         )
       })
     })
@@ -440,7 +440,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['awsSecret'].message).toEqual(
-          'Senha da AWS: deve ser preenchido quando utilizar os plugins da uTalk'
+          'Senha da AWS: deve ser preenchido quando utilizar os plugins da uTalk',
         )
       })
     })
@@ -465,7 +465,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['bucketName'].message).toEqual(
-          'Nome do Bucket da AWS: deve ser preenchido quando utilizar os plugins da uTalk'
+          'Nome do Bucket da AWS: deve ser preenchido quando utilizar os plugins da uTalk',
         )
       })
     })
@@ -560,7 +560,7 @@ describe('Licensee', () => {
         validation = licensee.validateSync()
 
         expect(validation.errors['branch_number'].message).toEqual(
-          'Agência: Informe um valor com até 4 caracteres! Atual: abcde'
+          'Agência: Informe um valor com até 4 caracteres! Atual: abcde',
         )
       })
     })
@@ -586,7 +586,7 @@ describe('Licensee', () => {
         validation = licensee.validateSync()
 
         expect(validation.errors['branch_check_digit'].message).toEqual(
-          'Dígito Agência: Informe um valor com até 1 caracter! Atual: 01'
+          'Dígito Agência: Informe um valor com até 1 caracter! Atual: 01',
         )
       })
     })
@@ -610,7 +610,7 @@ describe('Licensee', () => {
         validation = licensee.validateSync()
 
         expect(validation.errors['account_number'].message).toEqual(
-          'Conta: Informe um valor com até 13 caracteres! Atual: 12345678901234'
+          'Conta: Informe um valor com até 13 caracteres! Atual: 12345678901234',
         )
       })
     })
@@ -636,7 +636,7 @@ describe('Licensee', () => {
         validation = licensee.validateSync()
 
         expect(validation.errors['account_check_digit'].message).toEqual(
-          'Dígito Conta: Informe um valor com até 1 caracter! Atual: 01'
+          'Dígito Conta: Informe um valor com até 1 caracter! Atual: 01',
         )
       })
     })
@@ -667,7 +667,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['holder_kind'].message).toEqual(
-          '`some` is not a valid enum value for path `holder_kind`.'
+          '`some` is not a valid enum value for path `holder_kind`.',
         )
       })
     })
@@ -698,7 +698,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['account_type'].message).toEqual(
-          '`some` is not a valid enum value for path `account_type`.'
+          '`some` is not a valid enum value for path `account_type`.',
         )
       })
     })
@@ -710,7 +710,7 @@ describe('Licensee', () => {
         const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
 
         expect(licensee.urlChatWebhook).toEqual(
-          `https://clave-digital.herokuapp.com/api/v1/chat/message/?token=${licensee.apiToken}`
+          `https://clave-digital.herokuapp.com/api/v1/chat/message/?token=${licensee.apiToken}`,
         )
       })
     })
@@ -720,7 +720,7 @@ describe('Licensee', () => {
         const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
 
         expect(licensee.urlChatbotWebhook).toEqual(
-          `https://clave-digital.herokuapp.com/api/v1/chatbot/message/?token=${licensee.apiToken}`
+          `https://clave-digital.herokuapp.com/api/v1/chatbot/message/?token=${licensee.apiToken}`,
         )
       })
     })
@@ -730,7 +730,7 @@ describe('Licensee', () => {
         const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
 
         expect(licensee.urlChatbotTransfer).toEqual(
-          `https://clave-digital.herokuapp.com/api/v1/chatbot/transfer/?token=${licensee.apiToken}`
+          `https://clave-digital.herokuapp.com/api/v1/chatbot/transfer/?token=${licensee.apiToken}`,
         )
       })
     })
@@ -740,7 +740,7 @@ describe('Licensee', () => {
         const licensee = await Licensee.create({ name: 'Alcateia', licenseKind: 'demo' })
 
         expect(licensee.urlWhatsappWebhook).toEqual(
-          `https://clave-digital.herokuapp.com/api/v1/messenger/message/?token=${licensee.apiToken}`
+          `https://clave-digital.herokuapp.com/api/v1/messenger/message/?token=${licensee.apiToken}`,
         )
       })
     })

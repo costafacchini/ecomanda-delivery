@@ -46,7 +46,7 @@ describe('message repository', () => {
           destination: 'to-chatbot',
           licensee,
           contact,
-        })
+        }),
       )
     })
   })
@@ -57,10 +57,10 @@ describe('message repository', () => {
         const licensee = await Licensee.create(licenseeFactory.build())
         const contact = await Contact.create(contactFactory.build({ licensee: licensee._id }))
         const trigger1 = await Trigger.create(
-          triggerText.build({ licensee, expression: 'hello_world', text: 'Hello world 1' })
+          triggerText.build({ licensee, expression: 'hello_world', text: 'Hello world 1' }),
         )
         const trigger2 = await Trigger.create(
-          triggerText.build({ licensee, expression: 'hello_world', text: 'Hello world 2' })
+          triggerText.build({ licensee, expression: 'hello_world', text: 'Hello world 2' }),
         )
 
         const messages = await createInteractiveMessages({
@@ -81,7 +81,7 @@ describe('message repository', () => {
             licensee,
             contact,
             trigger: trigger1._id,
-          })
+          }),
         )
         expect(messages[1]).toEqual(
           expect.objectContaining({
@@ -92,7 +92,7 @@ describe('message repository', () => {
             licensee,
             contact,
             trigger: trigger2._id,
-          })
+          }),
         )
       })
     })
@@ -119,7 +119,7 @@ describe('message repository', () => {
             destination: 'to-chatbot',
             licensee,
             contact,
-          })
+          }),
         )
       })
     })
@@ -146,7 +146,7 @@ describe('message repository', () => {
           destination: 'to-chatbot',
           licensee,
           contact,
-        })
+        }),
       )
     })
 
@@ -167,7 +167,7 @@ describe('message repository', () => {
           number: '150bdb15-4c55-42ac-bc6c-970d620fdb6d',
           kind: 'text',
           text: 'John Doe',
-        })
+        }),
       )
     })
   })
@@ -187,7 +187,7 @@ describe('message repository', () => {
           destination: 'to-chat',
           licensee,
           contact,
-        })
+        }),
       )
     })
   })
@@ -207,7 +207,7 @@ describe('message repository', () => {
           destination: 'to-chat',
           licensee,
           contact,
-        })
+        }),
       )
     })
   })

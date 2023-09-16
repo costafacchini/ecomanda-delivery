@@ -87,7 +87,7 @@ describe('Cart', () => {
           city: 'São Paulo',
           cep: '01234567',
           uf: 'SP',
-        })
+        }),
       )
 
       const contactUpdated = await Contact.findById(contact._id)
@@ -120,7 +120,7 @@ describe('Cart', () => {
           city: undefined,
           cep: undefined,
           uf: undefined,
-        })
+        }),
       )
 
       const contactUpdated = await Contact.findById(contact._id)
@@ -153,7 +153,7 @@ describe('Cart', () => {
           city: '',
           cep: '',
           uf: '',
-        })
+        }),
       )
 
       const contactUpdated = await Contact.findById(contact._id)

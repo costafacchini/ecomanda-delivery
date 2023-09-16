@@ -16,12 +16,12 @@ describe('LicenseesQuery', () => {
     const licensee1 = await Licensee.create(
       licenseeFactory.build({
         createdAt: new Date(2021, 6, 3, 0, 0, 0),
-      })
+      }),
     )
     const licensee2 = await Licensee.create(
       licenseeFactory.build({
         createdAt: new Date(2021, 6, 3, 0, 0, 1),
-      })
+      }),
     )
 
     const licenseesQuery = new LicenseesQuery()
@@ -37,17 +37,17 @@ describe('LicenseesQuery', () => {
       const licensee1 = await Licensee.create(
         licenseeFactory.build({
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
-        })
+        }),
       )
       const licensee2 = await Licensee.create(
         licenseeFactory.build({
           createdAt: new Date(2021, 6, 3, 0, 0, 1),
-        })
+        }),
       )
       const licensee3 = await Licensee.create(
         licenseeFactory.build({
           createdAt: new Date(2021, 6, 3, 0, 0, 2),
-        })
+        }),
       )
 
       const licenseesQuery = new LicenseesQuery()
@@ -84,14 +84,14 @@ describe('LicenseesQuery', () => {
           chatUrl: 'http://chat.com',
           chatKey: 'key',
           chatIdentifier: 'identifier',
-        })
+        }),
       )
       const licensee2 = await Licensee.create(
         licenseeFactory.build({
           chatDefault: 'rocketchat',
           chatUrl: 'http://chat.com',
           chatKey: 'key',
-        })
+        }),
       )
 
       const licenseesQuery = new LicenseesQuery()
@@ -112,12 +112,12 @@ describe('LicenseesQuery', () => {
           chatbotDefault: 'landbot',
           chatbotUrl: 'http://chat.com',
           chatbotAuthorizationToken: 'key',
-        })
+        }),
       )
       const licensee2 = await Licensee.create(
         licenseeFactory.build({
           useChatbot: false,
-        })
+        }),
       )
 
       const licenseesQuery = new LicenseesQuery()
@@ -140,14 +140,14 @@ describe('LicenseesQuery', () => {
           bucketName: 'bucket',
           awsId: 'id',
           awsSecret: 'secret',
-        })
+        }),
       )
       const licensee2 = await Licensee.create(
         licenseeFactory.build({
           whatsappDefault: 'dialog',
           whatsappUrl: 'https://waba.360dialog.io/',
           whatsappToken: 'key',
-        })
+        }),
       )
 
       const licenseesQuery = new LicenseesQuery()
@@ -166,21 +166,21 @@ describe('LicenseesQuery', () => {
         licenseeFactory.build({
           email: 'alcateia@gmail.com',
           phone: '551123459',
-        })
+        }),
       )
       const licensee2 = await Licensee.create(
         licenseeFactory.build({
           name: 'Doeland',
           email: 'doeland@china.com',
           phone: '56009234687',
-        })
+        }),
       )
       const licensee3 = await Licensee.create(
         licenseeFactory.build({
           name: 'Mary Ltda',
           email: 'maryltda@china.com',
           phone: '457654635',
-        })
+        }),
       )
 
       const licenseesQuery = new LicenseesQuery()

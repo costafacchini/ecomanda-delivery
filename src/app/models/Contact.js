@@ -38,7 +38,7 @@ const contactSchema = new Schema(
     customer_id: String,
     address_id: String,
   },
-  { timestamps: true }
+  { timestamps: true },
 )
 
 contactSchema.pre('save', function (next) {

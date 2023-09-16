@@ -21,7 +21,7 @@ const bodySchema = new Schema(
     },
     concluded: { type: Boolean, default: false },
   },
-  { timestamps: true }
+  { timestamps: true },
 )
 
 bodySchema.pre('save', function (next) {

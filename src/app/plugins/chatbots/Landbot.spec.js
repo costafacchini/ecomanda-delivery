@@ -42,7 +42,7 @@ describe('Landbot plugin', () => {
         contactFactory.build({
           talkingWithChatBot: true,
           licensee,
-        })
+        }),
       )
 
       const triggerOrder2 = await Trigger.create(triggerReplyButtonFactory.build({ licensee, order: 2 }))
@@ -185,7 +185,7 @@ describe('Landbot plugin', () => {
 
       expect(consoleInfoSpy).toHaveBeenCalledTimes(2)
       expect(consoleInfoSpy).toHaveBeenCalledWith(
-        'Tipo de mensagem retornado pela Landbot não reconhecido: multiple_images'
+        'Tipo de mensagem retornado pela Landbot não reconhecido: multiple_images',
       )
       expect(consoleInfoSpy).toHaveBeenCalledWith('Tipo de mensagem retornado pela Landbot não reconhecido: dialog')
     })
@@ -196,7 +196,7 @@ describe('Landbot plugin', () => {
           talkingWithChatBot: true,
           landbotId: '123',
           licensee,
-        })
+        }),
       )
 
       const responseBody = {
@@ -303,7 +303,7 @@ describe('Landbot plugin', () => {
 
       expect(consoleInfoSpy).toHaveBeenCalledTimes(1)
       expect(consoleInfoSpy).toHaveBeenCalledWith(
-        `Contato com telefone 5511990283745 e licenciado ${licensee._id} não encontrado`
+        `Contato com telefone 5511990283745 e licenciado ${licensee._id} não encontrado`,
       )
     })
 
@@ -372,7 +372,7 @@ describe('Landbot plugin', () => {
         contactFactory.build({
           talkingWithChatBot: true,
           licensee,
-        })
+        }),
       )
 
       const responseBody = {
@@ -424,7 +424,7 @@ describe('Landbot plugin', () => {
 
       expect(consoleInfoSpy).toHaveBeenCalledTimes(1)
       expect(consoleInfoSpy).toHaveBeenCalledWith(
-        `Contato com telefone 5511990283745 e licenciado ${licensee._id} não encontrado`
+        `Contato com telefone 5511990283745 e licenciado ${licensee._id} não encontrado`,
       )
     })
 
@@ -433,13 +433,13 @@ describe('Landbot plugin', () => {
         contactFactory.build({
           talkingWithChatBot: true,
           licensee,
-        })
+        }),
       )
 
       const room = await Room.create(
         roomFactory.build({
           contact,
-        })
+        }),
       )
 
       const responseBody = {
@@ -464,7 +464,7 @@ describe('Landbot plugin', () => {
         contactFactory.build({
           talkingWithChatBot: true,
           licensee,
-        })
+        }),
       )
 
       const responseBody = {
@@ -489,7 +489,7 @@ describe('Landbot plugin', () => {
           talkingWithChatBot: true,
           licensee,
           email: 'john@doe.com',
-        })
+        }),
       )
 
       const responseBody = {
@@ -517,7 +517,7 @@ describe('Landbot plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -526,7 +526,7 @@ describe('Landbot plugin', () => {
             contact,
             licensee,
             sended: false,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -562,7 +562,7 @@ describe('Landbot plugin', () => {
                 token: 'token',
               },
             },
-          }
+          },
         )
 
         expect(message.sended).toEqual(false)
@@ -585,7 +585,7 @@ describe('Landbot plugin', () => {
             talkingWithChatBot: true,
             email: 'john@doe.com',
             licensee,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -595,7 +595,7 @@ describe('Landbot plugin', () => {
             contact,
             licensee,
             sended: false,
-          })
+          }),
         )
 
         fetchMock.postOnce('https://url.com.br/5511990283745/', {
@@ -631,7 +631,7 @@ describe('Landbot plugin', () => {
                email: 'john@doe.com',
                token: 'token',
              },
-           })}`
+           })}`,
         )
       })
 
@@ -646,7 +646,7 @@ describe('Landbot plugin', () => {
               name: 'John Doe',
               talkingWithChatBot: true,
               licensee,
-            })
+            }),
           )
 
           const cart = await Cart.create(cartFactory.build({ contact, licensee }))
@@ -658,7 +658,7 @@ describe('Landbot plugin', () => {
               licensee,
               cart,
               sended: false,
-            })
+            }),
           )
 
           const expectedBody = {
@@ -691,7 +691,7 @@ describe('Landbot plugin', () => {
                   token: 'token',
                 },
               },
-            }
+            },
           )
 
           expect(message.sended).toEqual(false)
@@ -717,7 +717,7 @@ describe('Landbot plugin', () => {
               name: 'John Doe',
               talkingWithChatBot: true,
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -728,7 +728,7 @@ describe('Landbot plugin', () => {
               contact,
               licensee,
               sended: false,
-            })
+            }),
           )
 
           const expectedBody = {
@@ -764,7 +764,7 @@ describe('Landbot plugin', () => {
                   token: 'token',
                 },
               },
-            }
+            },
           )
 
           expect(message.sended).toEqual(false)
@@ -789,7 +789,7 @@ describe('Landbot plugin', () => {
                 name: 'John Doe',
                 talkingWithChatBot: true,
                 licensee,
-              })
+              }),
             )
 
             const message = await Message.create(
@@ -800,7 +800,7 @@ describe('Landbot plugin', () => {
                 contact,
                 licensee,
                 sended: false,
-              })
+              }),
             )
 
             const expectedBody = {
@@ -835,7 +835,7 @@ describe('Landbot plugin', () => {
                     token: 'token',
                   },
                 },
-              }
+              },
             )
 
             expect(message.sended).toEqual(false)
@@ -859,7 +859,7 @@ describe('Landbot plugin', () => {
                 name: 'John Doe',
                 talkingWithChatBot: true,
                 licensee,
-              })
+              }),
             )
 
             const message = await Message.create(
@@ -870,7 +870,7 @@ describe('Landbot plugin', () => {
                 contact,
                 licensee,
                 sended: false,
-              })
+              }),
             )
 
             const expectedBody = {
@@ -905,7 +905,7 @@ describe('Landbot plugin', () => {
                     token: 'token',
                   },
                 },
-              }
+              },
             )
 
             expect(message.sended).toEqual(false)
@@ -929,7 +929,7 @@ describe('Landbot plugin', () => {
                 name: 'John Doe',
                 talkingWithChatBot: true,
                 licensee,
-              })
+              }),
             )
 
             const message = await Message.create(
@@ -940,7 +940,7 @@ describe('Landbot plugin', () => {
                 contact,
                 licensee,
                 sended: false,
-              })
+              }),
             )
 
             const expectedBody = {
@@ -975,7 +975,7 @@ describe('Landbot plugin', () => {
                     token: 'token',
                   },
                 },
-              }
+              },
             )
 
             expect(message.sended).toEqual(false)
@@ -999,7 +999,7 @@ describe('Landbot plugin', () => {
                 name: 'John Doe',
                 talkingWithChatBot: true,
                 licensee,
-              })
+              }),
             )
 
             const message = await Message.create(
@@ -1010,7 +1010,7 @@ describe('Landbot plugin', () => {
                 contact,
                 licensee,
                 sended: false,
-              })
+              }),
             )
 
             const expectedBody = {
@@ -1045,7 +1045,7 @@ describe('Landbot plugin', () => {
                     token: 'token',
                   },
                 },
-              }
+              },
             )
 
             expect(message.sended).toEqual(false)
@@ -1072,7 +1072,7 @@ describe('Landbot plugin', () => {
             email: 'john@doe.com',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -1082,7 +1082,7 @@ describe('Landbot plugin', () => {
             contact,
             licensee,
             sended: false,
-          })
+          }),
         )
 
         fetchMock.postOnce('https://url.com.br/5511990283745/', {
@@ -1108,7 +1108,7 @@ describe('Landbot plugin', () => {
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Mensagem 60958703f415ed4008748637 não enviada para Landbot.
            status: 403
-           mensagem: ${JSON.stringify({ detail: 'invalid token' })}`
+           mensagem: ${JSON.stringify({ detail: 'invalid token' })}`,
         )
       })
     })
@@ -1137,7 +1137,7 @@ describe('Landbot plugin', () => {
       const licensee = await Licensee.create(
         licenseeFactory.build({
           chatbotApiToken: 'token',
-        })
+        }),
       )
 
       const contact = await Contact.create(
@@ -1146,7 +1146,7 @@ describe('Landbot plugin', () => {
           talkingWithChatBot: true,
           licensee,
           landbotId: '20000',
-        })
+        }),
       )
 
       fetchMock.deleteOnce((url, { headers }) => {

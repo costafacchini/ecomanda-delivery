@@ -37,7 +37,7 @@ class TriggersQuery {
     if (this.expressionClause)
       query.filterByExpression(
         ['name', 'expression', 'catalogMulti', 'catalogSingle', 'textReplyButton', 'messagesList', 'text'],
-        this.expressionClause
+        this.expressionClause,
       )
 
     return await query.getQuery().exec()

@@ -19,7 +19,7 @@ describe('transformChatbotBody', () => {
         whatsappDefault: 'dialog',
         whatsappUrl: 'https://waba.360dialog.io/',
         whatsappToken: 'token',
-      })
+      }),
     )
   })
 
@@ -37,7 +37,7 @@ describe('transformChatbotBody', () => {
     const body = await Body.create(
       bodyFactory.build({
         licensee: licensee,
-      })
+      }),
     )
 
     const data = {
@@ -73,7 +73,7 @@ describe('transformChatbotBody', () => {
           is: 'invalid',
         },
         licensee: licensee,
-      })
+      }),
     )
 
     const data = {

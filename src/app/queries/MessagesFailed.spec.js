@@ -29,7 +29,7 @@ describe('MessagesFailedQuery', () => {
         licensee,
         sended: false,
         createdAt: new Date(2021, 6, 3, 0, 0, 0),
-      })
+      }),
     )
     const filteredMessageNotSended2 = await Message.create(
       messageFactory.build({
@@ -37,7 +37,7 @@ describe('MessagesFailedQuery', () => {
         licensee,
         sended: false,
         createdAt: new Date(2021, 6, 3, 23, 59, 58),
-      })
+      }),
     )
     const filteredMessageSended = await Message.create(
       messageFactory.build({
@@ -45,7 +45,7 @@ describe('MessagesFailedQuery', () => {
         licensee,
         sended: true,
         createdAt: new Date(2021, 6, 3, 23, 59, 58),
-      })
+      }),
     )
     const filteredMessageBefore = await Message.create(
       messageFactory.build({
@@ -53,7 +53,7 @@ describe('MessagesFailedQuery', () => {
         licensee,
         sended: false,
         createdAt: new Date(2021, 6, 2, 23, 59, 59),
-      })
+      }),
     )
     const filteredMessageAfter = await Message.create(
       messageFactory.build({
@@ -61,7 +61,7 @@ describe('MessagesFailedQuery', () => {
         licensee,
         sended: false,
         createdAt: new Date(2021, 6, 4, 0, 0, 0),
-      })
+      }),
     )
     const anotherLicensee = await Licensee.create(licenseeFactory.build())
     const messageSendedAnotherLicensee = await Message.create(
@@ -70,7 +70,7 @@ describe('MessagesFailedQuery', () => {
         licensee: anotherLicensee,
         sended: false,
         createdAt: new Date(2021, 6, 3, 0, 0, 0),
-      })
+      }),
     )
     const filteredMessageNotSendedChatEndedByAgent = await Message.create(
       messageFactory.build({
@@ -79,13 +79,13 @@ describe('MessagesFailedQuery', () => {
         licensee,
         sended: false,
         createdAt: new Date(2021, 6, 3, 23, 59, 58),
-      })
+      }),
     )
 
     const messagesFailedQuery = new MessagesFailedQuery(
       new Date(2021, 6, 3, 0, 0, 0),
       new Date(2021, 6, 3, 23, 59, 59),
-      licensee._id
+      licensee._id,
     )
     const records = await messagesFailedQuery.all()
 
@@ -93,13 +93,13 @@ describe('MessagesFailedQuery', () => {
     expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: filteredMessageNotSended1._id })]))
     expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: filteredMessageNotSended2._id })]))
     expect(records).not.toEqual(
-      expect.arrayContaining([expect.objectContaining({ _id: filteredMessageNotSendedChatEndedByAgent._id })])
+      expect.arrayContaining([expect.objectContaining({ _id: filteredMessageNotSendedChatEndedByAgent._id })]),
     )
     expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: filteredMessageSended._id })]))
     expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: filteredMessageBefore._id })]))
     expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: filteredMessageAfter._id })]))
     expect(records).not.toEqual(
-      expect.arrayContaining([expect.objectContaining({ _id: messageSendedAnotherLicensee._id })])
+      expect.arrayContaining([expect.objectContaining({ _id: messageSendedAnotherLicensee._id })]),
     )
   })
 })

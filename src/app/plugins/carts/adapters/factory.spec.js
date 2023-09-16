@@ -9,7 +9,7 @@ describe('createCartAdapter', () => {
     const licensee = new Licensee(
       licenseeFactory.build({
         useCartGallabox: true,
-      })
+      }),
     )
 
     const plugin = createCartAdapter(licensee)
@@ -21,7 +21,7 @@ describe('createCartAdapter', () => {
     const licensee = new Licensee(
       licenseeFactory.build({
         useCartGallabox: false,
-      })
+      }),
     )
 
     const plugin = createCartAdapter(licensee)

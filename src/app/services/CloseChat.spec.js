@@ -25,13 +25,13 @@ describe('closeChat', () => {
       licenseeFactory.build({
         chatDefault: 'rocketchat',
         chatUrl: 'https://chat.url',
-      })
+      }),
     )
 
     const contact = await Contact.create(
       contactFactory.build({
         licensee: licensee,
-      })
+      }),
     )
 
     await Message.create(
@@ -39,7 +39,7 @@ describe('closeChat', () => {
         contact,
         licensee,
         _id: '609dcb059f560046cde64748',
-      })
+      }),
     )
 
     await closeChat({ messageId: '609dcb059f560046cde64748' })
@@ -62,13 +62,13 @@ describe('closeChat', () => {
           whatsappToken: 'token-whats',
           whatsappUrl: 'www.whatsappurl.com',
           messageOnCloseChat: 'Send on close chat',
-        })
+        }),
       )
 
       const contact = await Contact.create(
         contactFactory.build({
           licensee: licensee,
-        })
+        }),
       )
 
       await Message.create(
@@ -76,7 +76,7 @@ describe('closeChat', () => {
           contact,
           licensee,
           _id: '609dcb059f560046cde64748',
-        })
+        }),
       )
 
       const actions = await closeChat({ messageId: '609dcb059f560046cde64748' })
@@ -90,7 +90,7 @@ describe('closeChat', () => {
             token: 'token-whats',
             url: 'www.whatsappurl.com',
           },
-        })
+        }),
       )
 
       rocketchatCloseChatSpy.mockRestore()

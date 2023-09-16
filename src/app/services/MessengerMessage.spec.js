@@ -21,7 +21,7 @@ describe('transformMessengerBody', () => {
         chatbotUrl: 'https://whatsapp.url',
         chatbotAuthorizationToken: 'ljsdf12g',
         chatUrl: 'https://chat.url',
-      })
+      }),
     )
   })
 
@@ -64,7 +64,7 @@ describe('transformMessengerBody', () => {
           ],
         },
         licensee,
-      })
+      }),
     )
 
     const data = {
@@ -105,7 +105,7 @@ describe('transformMessengerBody', () => {
           },
         },
         licensee,
-      })
+      }),
     )
 
     const data = {

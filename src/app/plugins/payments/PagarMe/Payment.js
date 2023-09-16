@@ -78,7 +78,7 @@ class Payment {
         `Pedido ${cart._id} não criado na pagar.me.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}
-           log_id: ${integrationlog._id}`
+           log_id: ${integrationlog._id}`,
       )
     }
   }

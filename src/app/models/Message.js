@@ -84,7 +84,7 @@ const messageSchema = new Schema(
     deliveredAt: Date,
     error: String,
   },
-  { timestamps: true }
+  { timestamps: true },
 )
 
 messageSchema.pre('save', function (next) {

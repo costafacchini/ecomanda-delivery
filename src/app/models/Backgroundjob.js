@@ -25,7 +25,7 @@ const backgroundjobSchema = new Schema(
     body: { type: Object },
     response: { type: Object },
   },
-  { timestamps: true }
+  { timestamps: true },
 )
 
 backgroundjobSchema.pre('save', function (next) {

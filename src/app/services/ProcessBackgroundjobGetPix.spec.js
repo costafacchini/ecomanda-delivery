@@ -31,7 +31,7 @@ describe('processBackgroundjobGetPix', () => {
           cart_id: 'cart-id',
         },
         licensee,
-      })
+      }),
     )
     const contact = await Contact.create(contactFactory.build({ licensee }))
     const cart = await Cart.create(cartFactory.build({ contact, licensee }))
@@ -63,7 +63,7 @@ describe('processBackgroundjobGetPix', () => {
             cart_id: 'cart-id',
           },
           licensee,
-        })
+        }),
       )
 
       const contact = await Contact.create(contactFactory.build({ licensee }))
@@ -99,7 +99,7 @@ describe('processBackgroundjobGetPix', () => {
             cart_id: 'cart-id',
           },
           licensee,
-        })
+        }),
       )
 
       const contact = await Contact.create(contactFactory.build({ licensee }))
