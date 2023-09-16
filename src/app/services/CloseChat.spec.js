@@ -2,7 +2,7 @@ const closeChat = require('./CloseChat')
 const Licensee = require('@models/Licensee')
 const Contact = require('@models/Contact')
 const Message = require('@models/Message')
-const Jivochat = require('../plugins/chats/Jivochat')
+const Rocketchat = require('../plugins/chats/Rocketchat')
 const mongoServer = require('../../../.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
@@ -19,11 +19,11 @@ describe('closeChat', () => {
   })
 
   it('asks the plugin to close the chat', async () => {
-    const jivochatCloseChatSpy = jest.spyOn(Jivochat.prototype, 'closeChat').mockImplementation(() => [])
+    const rocketchatCloseChatSpy = jest.spyOn(Rocketchat.prototype, 'closeChat').mockImplementation(() => [])
 
     const licensee = await Licensee.create(
       licenseeFactory.build({
-        chatDefault: 'jivochat',
+        chatDefault: 'rocketchat',
         chatUrl: 'https://chat.url',
       })
     )
@@ -44,20 +44,20 @@ describe('closeChat', () => {
 
     await closeChat({ messageId: '609dcb059f560046cde64748' })
 
-    expect(jivochatCloseChatSpy).toHaveBeenCalledWith('609dcb059f560046cde64748')
+    expect(rocketchatCloseChatSpy).toHaveBeenCalledWith('609dcb059f560046cde64748')
 
-    jivochatCloseChatSpy.mockRestore()
+    rocketchatCloseChatSpy.mockRestore()
   })
 
   describe('when the licensee has a message on close chat', () => {
     it('returns actions to do after run', async () => {
-      const jivochatCloseChatSpy = jest.spyOn(Jivochat.prototype, 'closeChat').mockImplementation(() => {
+      const rocketchatCloseChatSpy = jest.spyOn(Rocketchat.prototype, 'closeChat').mockImplementation(() => {
         return [{ _id: 'KSDF656DSD91NSE' }, { _id: 'OAR8Q54LDN02T' }]
       })
 
       const licensee = await Licensee.create(
         licenseeFactory.build({
-          chatDefault: 'jivochat',
+          chatDefault: 'rocketchat',
           chatUrl: 'https://chat.url',
           whatsappToken: 'token-whats',
           whatsappUrl: 'www.whatsappurl.com',
@@ -93,7 +93,7 @@ describe('closeChat', () => {
         })
       )
 
-      jivochatCloseChatSpy.mockRestore()
+      rocketchatCloseChatSpy.mockRestore()
     })
   })
 })

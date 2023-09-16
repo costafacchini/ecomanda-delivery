@@ -307,7 +307,7 @@ describe('licensee controller', () => {
       it('returns status 200 and message if licensee exists', async () => {
         await Licensee.create(
           licenseeCompleteFactory.build({
-            chatDefault: 'jivochat',
+            chatDefault: 'rocketchat',
             chatbotDefault: 'landbot',
             whatsappDefault: 'utalk',
             name: 'Alcalina',
@@ -315,7 +315,7 @@ describe('licensee controller', () => {
         )
         await Licensee.create(
           licenseeCompleteFactory.build({
-            chatDefault: 'jivochat',
+            chatDefault: 'rocketchat',
             chatbotDefault: 'landbot',
             whatsappDefault: 'utalk',
             name: 'Alcateia ltds',
@@ -323,7 +323,7 @@ describe('licensee controller', () => {
         )
         await Licensee.create(
           licenseeCompleteFactory.build({
-            chatDefault: 'jivochat',
+            chatDefault: 'rocketchat',
             chatbotDefault: 'landbot',
             whatsappDefault: 'utalk',
             name: 'Alcachofra',
@@ -332,7 +332,7 @@ describe('licensee controller', () => {
         await Licensee.create(
           licenseeCompleteFactory.build({
             active: false,
-            chatDefault: 'jivochat',
+            chatDefault: 'rocketchat',
             chatbotDefault: 'landbot',
             whatsappDefault: 'utalk',
             name: 'Alcachofra',
@@ -341,7 +341,7 @@ describe('licensee controller', () => {
 
         await request(expressServer)
           .get(
-            '/resources/licensees/?chatDefault=jivochat&chatbotDefault=landbot&whatsappDefault=utalk&expression=Alca&page=1&limit=3&active=false'
+            '/resources/licensees/?chatDefault=rocketchat&chatbotDefault=landbot&whatsappDefault=utalk&expression=Alca&page=1&limit=3&active=false'
           )
           .set('x-access-token', token)
           .expect('Content-Type', /json/)
@@ -349,7 +349,7 @@ describe('licensee controller', () => {
           .then((response) => {
             expect(Array.isArray(response.body)).toEqual(true)
             expect(response.body.length).toEqual(3)
-            expect(response.body[1].name).toEqual('Alcateia ltds')
+            expect(response.body[0].name).toEqual('Alcateia Ltds')
             expect(response.body[1].email).toEqual('alcateia@alcateia.com')
             expect(response.body[1].phone).toEqual('11098538273')
             expect(response.body[1].active).toEqual(true)
@@ -357,7 +357,7 @@ describe('licensee controller', () => {
             expect(response.body[1].useChatbot).toEqual(true)
             expect(response.body[1].chatbotDefault).toEqual('landbot')
             expect(response.body[1].whatsappDefault).toEqual('utalk')
-            expect(response.body[1].chatDefault).toEqual('jivochat')
+            expect(response.body[1].chatDefault).toEqual('rocketchat')
             expect(response.body[1].chatbotUrl).toEqual('https://chatbot.url')
             expect(response.body[1].chatbotAuthorizationToken).toEqual('chat-bot-token')
             expect(response.body[1].whatsappToken).toEqual('whatsapp-token')

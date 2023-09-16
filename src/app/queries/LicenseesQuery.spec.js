@@ -80,9 +80,10 @@ describe('LicenseesQuery', () => {
     it('returns licensees filtered by chat default', async () => {
       const licensee1 = await Licensee.create(
         licenseeFactory.build({
-          chatDefault: 'jivochat',
+          chatDefault: 'crisp',
           chatUrl: 'http://chat.com',
           chatKey: 'key',
+          chatIdentifier: 'identifier',
         })
       )
       const licensee2 = await Licensee.create(
@@ -94,7 +95,7 @@ describe('LicenseesQuery', () => {
       )
 
       const licenseesQuery = new LicenseesQuery()
-      licenseesQuery.filterByChatDefault('jivochat')
+      licenseesQuery.filterByChatDefault('crisp')
       const records = await licenseesQuery.all()
 
       expect(records.length).toEqual(1)

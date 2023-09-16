@@ -1,7 +1,7 @@
 const transformChatBody = require('./ChatMessage')
 const Licensee = require('@models/Licensee')
 const Body = require('@models/Body')
-const Jivochat = require('../plugins/chats/Jivochat')
+const Rocketchat = require('../plugins/chats/Rocketchat')
 const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { body: bodyFactory } = require('@factories/body')
@@ -18,7 +18,7 @@ describe('transformChatBody', () => {
 
     licensee = await Licensee.create(
       licenseeFactory.build({
-        chatDefault: 'jivochat',
+        chatDefault: 'rocketchat',
         chatUrl: 'https://www.jivo.chat.com',
         whatsappDefault: 'dialog',
         whatsappUrl: 'https://waba.360dialog.io/',
@@ -32,12 +32,14 @@ describe('transformChatBody', () => {
   })
 
   it('responds with action to dispatcher action of plugin and delete body', async () => {
-    const chatPluginResponseToMessages = jest.spyOn(Jivochat.prototype, 'responseToMessages').mockImplementation(() => {
-      return [
-        { _id: 'KSDF656DSD91NSE', contact: { _id: 'id-contact-1' } },
-        { _id: 'OAR8Q54LDN02T', contact: { _id: 'id-contact-1' } },
-      ]
-    })
+    const chatPluginResponseToMessages = jest
+      .spyOn(Rocketchat.prototype, 'responseToMessages')
+      .mockImplementation(() => {
+        return [
+          { _id: 'KSDF656DSD91NSE', contact: { _id: 'id-contact-1' } },
+          { _id: 'OAR8Q54LDN02T', contact: { _id: 'id-contact-1' } },
+        ]
+      })
 
     contactWithWhatsappWindowClosed.mockResolvedValue(false)
 
@@ -68,18 +70,20 @@ describe('transformChatBody', () => {
   })
 
   it('responds message to chat if contact with whatsapp window closed and message is not template', async () => {
-    const chatPluginResponseToMessages = jest.spyOn(Jivochat.prototype, 'responseToMessages').mockImplementation(() => {
-      return [
-        { _id: 'KSDF656DSD91NSE', contact: { _id: 'id-contact-1' }, kind: 'text' },
-        { _id: 'OAR8Q54LDN02T', contact: { _id: 'id-contact-1' } },
-      ]
-    })
+    const chatPluginResponseToMessages = jest
+      .spyOn(Rocketchat.prototype, 'responseToMessages')
+      .mockImplementation(() => {
+        return [
+          { _id: 'KSDF656DSD91NSE', contact: { _id: 'id-contact-1' }, kind: 'text' },
+          { _id: 'OAR8Q54LDN02T', contact: { _id: 'id-contact-1' } },
+        ]
+      })
 
     contactWithWhatsappWindowClosed.mockResolvedValue(true)
 
     const licensee = await Licensee.create(
       licenseeFactory.build({
-        chatDefault: 'jivochat',
+        chatDefault: 'rocketchat',
         chatUrl: 'https://www.jivo.chat.com',
         whatsappDefault: 'dialog',
         whatsappUrl: 'https://waba.360dialog.io/',
@@ -112,9 +116,11 @@ describe('transformChatBody', () => {
   })
 
   it('responds with action to dispatcher action of plugin if contact with whatsapp window closed and message is template', async () => {
-    const chatPluginResponseToMessages = jest.spyOn(Jivochat.prototype, 'responseToMessages').mockImplementation(() => {
-      return [{ _id: 'KSDF656DSD91NSE', contact: { _id: 'id-contact-1' }, kind: 'template' }]
-    })
+    const chatPluginResponseToMessages = jest
+      .spyOn(Rocketchat.prototype, 'responseToMessages')
+      .mockImplementation(() => {
+        return [{ _id: 'KSDF656DSD91NSE', contact: { _id: 'id-contact-1' }, kind: 'template' }]
+      })
 
     contactWithWhatsappWindowClosed.mockResolvedValue(true)
 
@@ -142,9 +148,11 @@ describe('transformChatBody', () => {
   })
 
   it('responds with blank actions if body is invalid and delete body', async () => {
-    const chatPluginResponseToMessages = jest.spyOn(Jivochat.prototype, 'responseToMessages').mockImplementation(() => {
-      return []
-    })
+    const chatPluginResponseToMessages = jest
+      .spyOn(Rocketchat.prototype, 'responseToMessages')
+      .mockImplementation(() => {
+        return []
+      })
 
     const body = await Body.create(
       bodyFactory.build({

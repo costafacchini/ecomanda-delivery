@@ -256,14 +256,9 @@ describe('Licensee', () => {
         expect(validation.errors['chatDefault']).not.toBeDefined()
       })
 
-      it('accepts "jivochat", "rocketchat" and "crisp" values', () => {
+      it('accepts "rocketchat" and "crisp" values', () => {
         let validation
         const licensee = new Licensee()
-
-        licensee.chatDefault = 'jivochat'
-        validation = licensee.validateSync()
-
-        expect(validation.errors['chatDefault']).not.toBeDefined()
 
         licensee.chatDefault = 'rocketchat'
         validation = licensee.validateSync()
