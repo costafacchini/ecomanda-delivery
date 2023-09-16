@@ -219,7 +219,7 @@ describe('<LicenseeForm />', () => {
       expect(screen.getByLabelText('Key')).toBeEnabled()
 
       cleanup()
-      mount({ initialValues: { chatDefault: 'jivochat' } })
+      mount({ initialValues: { chatDefault: 'rocketchat' } })
 
       expect(screen.queryByLabelText('Identifier')).not.toBeInTheDocument()
       expect(screen.queryByLabelText('Key')).not.toBeInTheDocument()

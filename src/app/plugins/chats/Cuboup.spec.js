@@ -55,8 +55,8 @@ describe('Cuboup plugin', () => {
         },
       }
 
-      const jivochat = new Cuboup(licensee)
-      const messages = await jivochat.responseToMessages(responseBody)
+      const cuboup = new Cuboup(licensee)
+      const messages = await cuboup.responseToMessages(responseBody)
 
       expect(messages[0]).toBeInstanceOf(Message)
       expect(messages[0].licensee).toEqual(licensee._id)
@@ -80,8 +80,8 @@ describe('Cuboup plugin', () => {
     it('return the empty data if body is blank', async () => {
       const responseBody = {}
 
-      const jivochat = new Cuboup(licensee)
-      const message = await jivochat.responseToMessages(responseBody)
+      const cuboup = new Cuboup(licensee)
+      const message = await cuboup.responseToMessages(responseBody)
 
       expect(message).toEqual([])
     })
@@ -96,8 +96,8 @@ describe('Cuboup plugin', () => {
         },
       }
 
-      const jivochat = new Cuboup(licensee)
-      const message = await jivochat.responseToMessages(responseBody)
+      const cuboup = new Cuboup(licensee)
+      const message = await cuboup.responseToMessages(responseBody)
 
       expect(message).toEqual([])
     })
@@ -114,8 +114,8 @@ describe('Cuboup plugin', () => {
         },
       }
 
-      const jivochat = new Cuboup(licensee)
-      const message = await jivochat.responseToMessages(responseBody)
+      const cuboup = new Cuboup(licensee)
+      const message = await cuboup.responseToMessages(responseBody)
 
       expect(message).toEqual([])
     })
@@ -135,8 +135,8 @@ describe('Cuboup plugin', () => {
         },
       }
 
-      const jivochat = new Cuboup(licensee)
-      const message = await jivochat.responseToMessages(responseBody)
+      const cuboup = new Cuboup(licensee)
+      const message = await cuboup.responseToMessages(responseBody)
 
       expect(message).toEqual([])
     })
@@ -156,8 +156,8 @@ describe('Cuboup plugin', () => {
         },
       }
 
-      const jivochat = new Cuboup(licensee)
-      const message = await jivochat.responseToMessages(responseBody)
+      const cuboup = new Cuboup(licensee)
+      const message = await cuboup.responseToMessages(responseBody)
 
       expect(message).toEqual([])
     })
@@ -177,8 +177,8 @@ describe('Cuboup plugin', () => {
         },
       }
 
-      const jivochat = new Cuboup(licensee)
-      const message = await jivochat.responseToMessages(responseBody)
+      const cuboup = new Cuboup(licensee)
+      const message = await cuboup.responseToMessages(responseBody)
 
       expect(message).toEqual([])
     })
@@ -208,8 +208,8 @@ describe('Cuboup plugin', () => {
           },
         }
 
-        const jivochat = new Cuboup(licensee)
-        const messages = await jivochat.responseToMessages(responseBody)
+        const cuboup = new Cuboup(licensee)
+        const messages = await cuboup.responseToMessages(responseBody)
 
         expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].kind).toEqual('file')
@@ -242,8 +242,8 @@ describe('Cuboup plugin', () => {
           },
         }
 
-        const jivochat = new Cuboup(licensee)
-        const messages = await jivochat.responseToMessages(responseBody)
+        const cuboup = new Cuboup(licensee)
+        const messages = await cuboup.responseToMessages(responseBody)
 
         expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].kind).toEqual('location')
@@ -267,8 +267,8 @@ describe('Cuboup plugin', () => {
           },
         }
 
-        const jivochat = new Cuboup(licensee)
-        const message = await jivochat.responseToMessages(responseBody)
+        const cuboup = new Cuboup(licensee)
+        const message = await cuboup.responseToMessages(responseBody)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith('Tipo de mensagem retornado pela CuboUp não reconhecido: any')
 
@@ -301,8 +301,8 @@ describe('Cuboup plugin', () => {
           },
         }
 
-        const jivochat = new Cuboup(licensee)
-        const messages = await jivochat.responseToMessages(responseBody)
+        const cuboup = new Cuboup(licensee)
+        const messages = await cuboup.responseToMessages(responseBody)
 
         expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -358,8 +358,8 @@ describe('Cuboup plugin', () => {
           },
         }
 
-        const jivochat = new Cuboup(licensee)
-        const messages = await jivochat.responseToMessages(responseBody)
+        const cuboup = new Cuboup(licensee)
+        const messages = await cuboup.responseToMessages(responseBody)
 
         expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].kind).toEqual('template')
@@ -412,8 +412,8 @@ describe('Cuboup plugin', () => {
 
         expect(message.sended).toEqual(false)
 
-        const jivochat = new Cuboup(licensee)
-        await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
+        const cuboup = new Cuboup(licensee)
+        await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
@@ -466,8 +466,8 @@ describe('Cuboup plugin', () => {
 
         expect(message.sended).toEqual(false)
 
-        const jivochat = new Cuboup(licensee)
-        await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
+        const cuboup = new Cuboup(licensee)
+        await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
@@ -521,8 +521,8 @@ describe('Cuboup plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const jivochat = new Cuboup(licensee)
-          await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
+          const cuboup = new Cuboup(licensee)
+          await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
           await fetchMock.flush(true)
 
           expect(fetchMock.done()).toBe(true)
@@ -581,8 +581,8 @@ describe('Cuboup plugin', () => {
 
         expect(message.sended).toEqual(false)
 
-        const jivochat = new Cuboup(licensee)
-        await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
+        const cuboup = new Cuboup(licensee)
+        await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
         await fetchMock.flush(true)
 
         const messageUpdated = await Message.findById(message._id)
@@ -646,8 +646,8 @@ describe('Cuboup plugin', () => {
             return url === 'https://url.com.br/jkJGs5a4ea/pAOqw2340' && body === JSON.stringify(expectedBody)
           }, 200)
 
-          const jivochat = new Cuboup(licensee)
-          await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
+          const cuboup = new Cuboup(licensee)
+          await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
           await fetchMock.flush(true)
 
           expect(fetchMock.done()).toBe(true)
@@ -698,8 +698,8 @@ describe('Cuboup plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const jivochat = new Cuboup(licensee)
-          await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
+          const cuboup = new Cuboup(licensee)
+          await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
           await fetchMock.flush(true)
 
           expect(fetchMock.done()).toBe(true)
@@ -754,8 +754,8 @@ describe('Cuboup plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const jivochat = new Cuboup(licensee)
-          await jivochat.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
+          const cuboup = new Cuboup(licensee)
+          await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
           await fetchMock.flush(true)
 
           expect(fetchMock.done()).toBe(true)
@@ -788,8 +788,8 @@ describe('Cuboup plugin', () => {
 
       expect(contact.talkingWithChatBot).toEqual(true)
 
-      const jivochat = new Cuboup(licensee)
-      await jivochat.transfer(message._id, 'url')
+      const cuboup = new Cuboup(licensee)
+      await cuboup.transfer(message._id, 'url')
 
       const modifiedContact = await Contact.findById(contact._id)
       expect(modifiedContact.talkingWithChatBot).toEqual(false)
@@ -815,8 +815,8 @@ describe('Cuboup plugin', () => {
         })
       )
 
-      const jivochat = new Cuboup(licensee)
-      await jivochat.transfer(message._id.toString(), 'url')
+      const cuboup = new Cuboup(licensee)
+      await cuboup.transfer(message._id.toString(), 'url')
 
       expect(sendMessageSpy).toHaveBeenCalledTimes(1)
       expect(sendMessageSpy).toHaveBeenCalledWith('60958703f415ed4008748637', 'url')
@@ -857,8 +857,8 @@ describe('Cuboup plugin', () => {
 
         expect(contact.talkingWithChatBot).toEqual(false)
 
-        const jivochat = new Cuboup(licensee)
-        await jivochat.closeChat(message._id)
+        const cuboup = new Cuboup(licensee)
+        await cuboup.closeChat(message._id)
 
         const modifiedContact = await Contact.findById(contact._id)
         expect(modifiedContact.talkingWithChatBot).toEqual(true)
@@ -899,8 +899,8 @@ describe('Cuboup plugin', () => {
 
         expect(contact.talkingWithChatBot).toEqual(false)
 
-        const jivochat = new Cuboup(licensee)
-        const messages = await jivochat.closeChat(message._id)
+        const cuboup = new Cuboup(licensee)
+        const messages = await cuboup.closeChat(message._id)
 
         const modifiedContact = await Contact.findById(contact._id)
         expect(modifiedContact.talkingWithChatBot).toEqual(true)
@@ -919,8 +919,8 @@ describe('Cuboup plugin', () => {
         },
       }
 
-      const jivochat = new Cuboup(licensee)
-      expect(jivochat.action(responseBody)).toEqual('close-chat')
+      const cuboup = new Cuboup(licensee)
+      expect(cuboup.action(responseBody)).toEqual('close-chat')
     })
 
     it('returns "close-chat" if message is "Chat closed by agent"', () => {
@@ -930,8 +930,8 @@ describe('Cuboup plugin', () => {
         },
       }
 
-      const jivochat = new Cuboup(licensee)
-      expect(jivochat.action(responseBody)).toEqual('close-chat')
+      const cuboup = new Cuboup(licensee)
+      expect(cuboup.action(responseBody)).toEqual('close-chat')
     })
 
     it('returns "send-message-to-messenger" if message is not "Chat closed by agent" and "Chat closed by agent"', () => {
@@ -941,8 +941,8 @@ describe('Cuboup plugin', () => {
         },
       }
 
-      const jivochat = new Cuboup(licensee)
-      expect(jivochat.action(responseBody)).toEqual('send-message-to-messenger')
+      const cuboup = new Cuboup(licensee)
+      expect(cuboup.action(responseBody)).toEqual('send-message-to-messenger')
     })
   })
 

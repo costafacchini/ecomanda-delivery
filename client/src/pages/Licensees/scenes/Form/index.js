@@ -297,7 +297,6 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                   onBlur={props.handleBlur}
                 >
                   <option value=''></option>
-                  <option value='jivochat'>Jivochat</option>
                   <option value='rocketchat'>Rocketchat</option>
                   <option value='crisp'>Crisp</option>
                   <option value='cuboup'>CuboUp</option>

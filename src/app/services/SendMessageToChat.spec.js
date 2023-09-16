@@ -2,14 +2,14 @@ const sendMessageToChat = require('./SendMessageToChat')
 const Licensee = require('@models/Licensee')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
-const Jivochat = require('../plugins/chats/Jivochat')
+const Rocketchat = require('../plugins/chats/Rocketchat')
 const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
 
 describe('sendMessageToChat', () => {
-  const jivochatSendMessageSpy = jest.spyOn(Jivochat.prototype, 'sendMessage').mockImplementation(() => {})
+  const rocketchatSendMessageSpy = jest.spyOn(Rocketchat.prototype, 'sendMessage').mockImplementation(() => {})
 
   beforeEach(async () => {
     jest.clearAllMocks()
@@ -23,7 +23,7 @@ describe('sendMessageToChat', () => {
   it('asks the plugin to send message to chat', async () => {
     const licensee = await Licensee.create(
       licenseeFactory.build({
-        chatDefault: 'jivochat',
+        chatDefault: 'rocketchat',
         chatUrl: 'https://chat.url',
       })
     )
@@ -52,6 +52,6 @@ describe('sendMessageToChat', () => {
 
     await sendMessageToChat(data)
 
-    expect(jivochatSendMessageSpy).toHaveBeenCalledWith('609dcb059f560046cde64748', 'https://messenger.url')
+    expect(rocketchatSendMessageSpy).toHaveBeenCalledWith('609dcb059f560046cde64748', 'https://messenger.url')
   })
 })
