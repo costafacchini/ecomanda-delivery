@@ -14,6 +14,7 @@ describe('PagarMe plugin', () => {
   const customerUpdateFnSpy = jest.spyOn(Customer.prototype, 'update').mockImplementation(() => {})
 
   const paymentCreateFnSpy = jest.spyOn(Payment.prototype, 'create').mockImplementation(() => {})
+  const paymentDeleteFnSpy = jest.spyOn(Payment.prototype, 'delete').mockImplementation(() => {})
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -67,6 +68,15 @@ describe('PagarMe plugin', () => {
       await pagarMe.payment.create(cart, 'token')
 
       expect(paymentCreateFnSpy).toHaveBeenCalledWith(cart, 'token')
+    })
+
+    it('delete', async () => {
+      const cart = cartFactory.build()
+
+      const pagarMe = new PagarMe()
+      await pagarMe.payment.delete(cart, 'token')
+
+      expect(paymentDeleteFnSpy).toHaveBeenCalledWith(cart, 'token')
     })
   })
 

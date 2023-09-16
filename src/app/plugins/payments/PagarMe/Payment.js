@@ -82,6 +82,35 @@ class Payment {
       )
     }
   }
+
+  async delete(cart, token) {
+    const headers = {
+      Authorization: `Basic ${token}`,
+    }
+
+    const response = await request.delete(`https://api.pagar.me/core/v5/charges/${cart.charge_id}`, { headers })
+
+    const integrationlog = await Integrationlog.create({
+      licensee: cart.licensee,
+      cart: cart._id,
+      log_payload: response.data,
+    })
+
+    if (response.status === 200) {
+      cart.payment_status = 'voided'
+      cart.concluded = true
+      await cart.save()
+
+      console.info(`Pagamento cancelado na pagar.me! id: ${cart.charge_id} log_id: ${integrationlog._id}`)
+    } else {
+      console.error(
+        `Pagamento ${cart._id} não cancelado na pagar.me.
+           status: ${response.status}
+           mensagem: ${JSON.stringify(response.data)}
+           log_id: ${integrationlog._id}`,
+      )
+    }
+  }
 }
 
 module.exports = Payment

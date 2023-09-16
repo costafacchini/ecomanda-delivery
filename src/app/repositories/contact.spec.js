@@ -1,6 +1,11 @@
 const Licensee = require('@models/Licensee')
 const mongoServer = require('../../../.jest/utils')
-const { createContact, contactWithWhatsappWindowClosed, getContactBy } = require('@repositories/contact')
+const {
+  createContact,
+  contactWithWhatsappWindowClosed,
+  getContactBy,
+  getContactByNumber,
+} = require('@repositories/contact')
 const { createMessage } = require('@repositories/message')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { message: messageFactory } = require('@factories/message')
@@ -177,6 +182,40 @@ describe('contact repository', () => {
       )
 
       expect(await contactWithWhatsappWindowClosed(contact.id)).toEqual(false)
+    })
+  })
+
+  describe('#getContactByNumber', () => {
+    it('returns one record by filter', async () => {
+      const licensee = await Licensee.create(licenseeFactory.build())
+      await createContact({
+        number: '5511990283745',
+        talkingWithChatBot: false,
+        licensee,
+      })
+
+      const anotherLicensee = await Licensee.create(licenseeFactory.build())
+      await createContact({
+        number: '5511990283745',
+        talkingWithChatBot: false,
+        licensee: anotherLicensee,
+      })
+
+      const contact = await getContactByNumber('11990283745', licensee._id)
+
+      expect(contact).toEqual(
+        expect.objectContaining({
+          number: '5511990283745',
+          licensee: licensee._id,
+        }),
+      )
+
+      expect(contact).not.toEqual(
+        expect.objectContaining({
+          number: '5511990283745',
+          licensee: anotherLicensee._id,
+        }),
+      )
     })
   })
 })

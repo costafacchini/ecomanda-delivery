@@ -697,4 +697,361 @@ describe('PagarMe/Customer plugin', () => {
       })
     })
   })
+
+  describe('#delete', () => {
+    describe('when success', () => {
+      it('cancels a charge on PagarMe API', async () => {
+        const integrationlogCreateSpy = jest.spyOn(Integrationlog, 'create').mockImplementation(() => {
+          return { _id: '1234' }
+        })
+
+        const contact = await Contact.create(
+          contactFactory.build({
+            customer_id: '1234',
+            name: 'John Doe',
+            number: '5511990283745',
+            licensee,
+          }),
+        )
+
+        const cart = await Cart.create(
+          cartFactory.build({
+            products: [
+              {
+                product_retailer_id: '0123',
+                product_fb_id: 'fb_id',
+                name: 'Product 1',
+                quantity: 2,
+                unit_price: 7.8,
+                note: 'item note',
+              },
+            ],
+            delivery_tax: 0.5,
+            contact,
+            licensee,
+            uf: 'SP',
+            city: 'Sorocaba',
+            cep: '99876222',
+            address_number: '10',
+            address: 'Rua qualquer da cidade',
+            neighborhood: 'Bairro',
+            address_complement: 'Perto daquela parada lá',
+            total: 16.1,
+            charge_id: 'charge-id',
+          }),
+        )
+
+        fetchMock.deleteOnce(
+          (url, { headers }) => {
+            return (
+              url === 'https://api.pagar.me/core/v5/charges/charge-id' && headers['Authorization'] === 'Basic token'
+            )
+          },
+          {
+            status: 200,
+            body: {
+              id: 'ch_56GXnk6T0eU88qMm',
+              status: 'canceled',
+            },
+          },
+        )
+
+        const payment = new Payment()
+        await payment.delete(cart, 'token')
+        await fetchMock.flush(true)
+
+        expect(fetchMock.done()).toBe(true)
+        expect(fetchMock.calls()).toHaveLength(1)
+
+        expect(consoleInfoSpy).toHaveBeenCalledWith('Pagamento cancelado na pagar.me! id: charge-id log_id: 1234')
+
+        integrationlogCreateSpy.mockRestore()
+      })
+
+      it('saves the order and payment information', async () => {
+        const integrationlogCreateSpy = jest.spyOn(Integrationlog, 'create').mockImplementation(() => {
+          return { _id: '1234' }
+        })
+
+        const contact = await Contact.create(
+          contactFactory.build({
+            customer_id: '1234',
+            name: 'John Doe',
+            number: '5511990283745',
+            licensee,
+          }),
+        )
+
+        const cart = await Cart.create(
+          cartFactory.build({
+            products: [
+              {
+                product_retailer_id: '0123',
+                product_fb_id: 'fb_id',
+                name: 'Product 1',
+                quantity: 2,
+                unit_price: 7.8,
+                note: 'item note',
+              },
+            ],
+            delivery_tax: 0.5,
+            contact,
+            licensee,
+            uf: 'SP',
+            city: 'Sorocaba',
+            cep: '99876222',
+            address_number: '10',
+            address: 'Rua qualquer da cidade',
+            neighborhood: 'Bairro',
+            address_complement: 'Perto daquela parada lá',
+            total: 16.1,
+            charge_id: 'charge-id',
+          }),
+        )
+
+        fetchMock.deleteOnce(
+          (url, { headers }) => {
+            return (
+              url === 'https://api.pagar.me/core/v5/charges/charge-id' && headers['Authorization'] === 'Basic token'
+            )
+          },
+          {
+            status: 200,
+            body: {
+              id: 'ch_56GXnk6T0eU88qMm',
+              status: 'canceled',
+            },
+          },
+        )
+
+        const payment = new Payment()
+        await payment.delete(cart, 'token')
+        await fetchMock.flush(true)
+
+        expect(fetchMock.done()).toBe(true)
+        expect(fetchMock.calls()).toHaveLength(1)
+
+        const cartUpdated = await Cart.findById(cart._id)
+        expect(cartUpdated.payment_status).toEqual('voided')
+        expect(cartUpdated.concluded).toEqual(true)
+
+        integrationlogCreateSpy.mockRestore()
+      })
+
+      it('creates a record on integrationlog', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({
+            customer_id: '1234',
+            name: 'John Doe',
+            number: '5511990283745',
+            licensee,
+          }),
+        )
+
+        const cart = await Cart.create(
+          cartFactory.build({
+            products: [
+              {
+                product_retailer_id: '0123',
+                product_fb_id: 'fb_id',
+                name: 'Product 1',
+                quantity: 2,
+                unit_price: 7.8,
+                note: 'item note',
+              },
+            ],
+            delivery_tax: 0.5,
+            contact,
+            licensee,
+            uf: 'SP',
+            city: 'Sorocaba',
+            cep: '99876222',
+            address_number: '10',
+            address: 'Rua qualquer da cidade',
+            neighborhood: 'Bairro',
+            address_complement: 'Perto daquela parada lá',
+            total: 16.1,
+            charge_id: 'charge-id',
+          }),
+        )
+
+        const bodyResponse = {
+          id: 'ch_56GXnk6T0eU88qMm',
+          status: 'canceled',
+        }
+
+        fetchMock.deleteOnce(
+          (url, { headers }) => {
+            return (
+              url === 'https://api.pagar.me/core/v5/charges/charge-id' && headers['Authorization'] === 'Basic token'
+            )
+          },
+          {
+            status: 200,
+            body: bodyResponse,
+          },
+        )
+
+        const payment = new Payment()
+        await payment.delete(cart, 'token')
+        await fetchMock.flush(true)
+
+        expect(fetchMock.done()).toBe(true)
+        expect(fetchMock.calls()).toHaveLength(1)
+
+        const integrationlog = await Integrationlog.findOne({ cart: cart._id })
+        expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
+        expect(integrationlog.log_payload).toEqual(bodyResponse)
+      })
+    })
+
+    describe('when error', () => {
+      it('logs the error message', async () => {
+        const integrationlogCreateSpy = jest.spyOn(Integrationlog, 'create').mockImplementation(() => {
+          return { _id: '1234' }
+        })
+
+        const contact = await Contact.create(
+          contactFactory.build({
+            customer_id: '1234',
+            name: 'John Doe',
+            number: '5511990283745',
+            licensee,
+          }),
+        )
+
+        const cart = await Cart.create(
+          cartFactory.build({
+            products: [
+              {
+                product_retailer_id: '0123',
+                product_fb_id: 'fb_id',
+                name: 'Product 1',
+                quantity: 2,
+                unit_price: 7.8,
+                note: 'item note',
+              },
+            ],
+            delivery_tax: 0.5,
+            contact,
+            licensee,
+            uf: 'SP',
+            city: 'Sorocaba',
+            cep: '99876222',
+            address_number: '10',
+            address: 'Rua qualquer da cidade',
+            neighborhood: 'Bairro',
+            address_complement: 'Perto daquela parada lá',
+            total: 16.1,
+            charge_id: 'charge-id',
+          }),
+        )
+
+        fetchMock.deleteOnce(
+          (url, { headers }) => {
+            return (
+              url === 'https://api.pagar.me/core/v5/charges/charge-id' && headers['Authorization'] === 'Basic token'
+            )
+          },
+          {
+            status: 422,
+            body: {
+              message: 'The request is invalid.',
+              errors: {
+                'charge.automaticanticipationsettings.type': [
+                  "The type field is invalid. Possible values are 'full','1025'",
+                ],
+              },
+            },
+          },
+        )
+
+        const payment = new Payment()
+        await payment.delete(cart, 'token')
+        await fetchMock.flush(true)
+
+        expect(fetchMock.done()).toBe(true)
+        expect(fetchMock.calls()).toHaveLength(1)
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          `Pagamento ${cart._id} não cancelado na pagar.me.
+           status: 422
+           mensagem: {"message":"The request is invalid.","errors":{"charge.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
+           log_id: 1234`,
+        )
+
+        integrationlogCreateSpy.mockRestore()
+      })
+
+      it('creates a record on integrationlog', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({
+            customer_id: '1234',
+            name: 'John Doe',
+            number: '5511990283745',
+            licensee,
+          }),
+        )
+
+        const cart = await Cart.create(
+          cartFactory.build({
+            products: [
+              {
+                product_retailer_id: '0123',
+                product_fb_id: 'fb_id',
+                name: 'Product 1',
+                quantity: 2,
+                unit_price: 7.8,
+                note: 'item note',
+              },
+            ],
+            delivery_tax: 0.5,
+            contact,
+            licensee,
+            uf: 'SP',
+            city: 'Sorocaba',
+            cep: '99876222',
+            address_number: '10',
+            address: 'Rua qualquer da cidade',
+            neighborhood: 'Bairro',
+            address_complement: 'Perto daquela parada lá',
+            total: 16.1,
+            charge_id: 'charge-id',
+          }),
+        )
+
+        const bodyResponse = {
+          message: 'The request is invalid.',
+          errors: {
+            'charge.automaticanticipationsettings.type': [
+              "The type field is invalid. Possible values are 'full','1025'",
+            ],
+          },
+        }
+
+        fetchMock.deleteOnce(
+          (url, { headers }) => {
+            return (
+              url === 'https://api.pagar.me/core/v5/charges/charge-id' && headers['Authorization'] === 'Basic token'
+            )
+          },
+          {
+            status: 422,
+            body: bodyResponse,
+          },
+        )
+
+        const payment = new Payment()
+        await payment.delete(cart, 'token')
+        await fetchMock.flush(true)
+
+        expect(fetchMock.done()).toBe(true)
+        expect(fetchMock.calls()).toHaveLength(1)
+
+        const integrationlog = await Integrationlog.findOne({ cart: cart._id })
+        expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
+        expect(integrationlog.log_payload).toEqual(bodyResponse)
+      })
+    })
+  })
 })

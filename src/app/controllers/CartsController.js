@@ -1,6 +1,5 @@
 const Cart = require('@models/Cart')
 const _ = require('lodash')
-const Contact = require('@models/Contact')
 const NormalizePhone = require('@helpers/NormalizePhone')
 const { createTextMessageInsteadInteractive } = require('@repositories/message')
 const { createContact } = require('@repositories/contact')
@@ -9,16 +8,7 @@ const { parseCart } = require('@helpers/ParseTriggerText')
 const createCartAdapter = require('../plugins/carts/adapters/factory')
 const cartFactory = require('@plugins/carts/factory')
 const { publishMessage } = require('@config/rabbitmq')
-
-async function getContact(number, licenseeId) {
-  const normalizedPhone = new NormalizePhone(number)
-  const licensee = licenseeId
-  return await Contact.findOne({
-    number: normalizedPhone.number,
-    licensee: licensee._id,
-    type: normalizedPhone.type,
-  })
-}
+const { getContactByNumber } = require('@repositories/contact')
 
 function permit(fields) {
   const permitedFields = [
@@ -56,7 +46,7 @@ class CartsController {
     if (!contact) contact = req.query.contact
 
     try {
-      let cartContact = await getContact(contact, req.licensee._id)
+      let cartContact = await getContactByNumber(contact, req.licensee._id)
       if (!cartContact) {
         if (!name) return res.status(422).send({ errors: { message: `Contato ${contact} não encontrado` } })
 
@@ -171,7 +161,7 @@ class CartsController {
     delete fields.contact
 
     try {
-      const contact = await getContact(req.params.contact, req.licensee._id)
+      const contact = await getContactByNumber(req.params.contact, req.licensee._id)
       if (!contact) {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
       }
@@ -204,7 +194,7 @@ class CartsController {
 
   async show(req, res) {
     try {
-      const contact = await getContact(req.params.contact, req.licensee._id)
+      const contact = await getContactByNumber(req.params.contact, req.licensee._id)
 
       if (!contact) {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
@@ -229,7 +219,7 @@ class CartsController {
 
   async close(req, res) {
     try {
-      const contact = await getContact(req.params.contact, req.licensee._id)
+      const contact = await getContactByNumber(req.params.contact, req.licensee._id)
 
       if (!contact) {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
@@ -256,7 +246,7 @@ class CartsController {
 
   async addItem(req, res) {
     try {
-      const contact = await getContact(req.params.contact, req.licensee._id)
+      const contact = await getContactByNumber(req.params.contact, req.licensee._id)
 
       if (!contact) {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
@@ -285,7 +275,7 @@ class CartsController {
 
   async removeItem(req, res) {
     try {
-      const contact = await getContact(req.params.contact, req.licensee._id)
+      const contact = await getContactByNumber(req.params.contact, req.licensee._id)
 
       if (!contact) {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
@@ -313,7 +303,7 @@ class CartsController {
 
   async send(req, res) {
     try {
-      const contact = await getContact(req.params.contact, req.licensee._id)
+      const contact = await getContactByNumber(req.params.contact, req.licensee._id)
 
       if (!contact) {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
@@ -356,7 +346,7 @@ class CartsController {
 
   async getCart(req, res) {
     try {
-      const contact = await getContact(req.params.contact, req.licensee._id)
+      const contact = await getContactByNumber(req.params.contact, req.licensee._id)
 
       if (!contact) {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
@@ -382,7 +372,7 @@ class CartsController {
 
   async getPayment(req, res) {
     try {
-      const contact = await getContact(req.params.contact, req.licensee._id)
+      const contact = await getContactByNumber(req.params.contact, req.licensee._id)
 
       if (!contact) {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })

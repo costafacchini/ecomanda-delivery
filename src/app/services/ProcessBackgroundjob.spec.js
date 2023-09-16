@@ -1,8 +1,12 @@
 const processBackgroundjob = require('./ProcessBackgroundjob')
 const Licensee = require('@models/Licensee')
 const Backgroundjob = require('@models/Backgroundjob')
+const Contact = require('@models/Contact')
+const Cart = require('@models/Cart')
 const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
+const { cart: cartFactory } = require('@factories/cart')
+const { contact: contactFactory } = require('@factories/contact')
 const { backgroundjob: backgroundjobFactory } = require('@factories/backgroundjob')
 
 describe('processBackgroundjob', () => {
@@ -15,30 +19,119 @@ describe('processBackgroundjob', () => {
     await mongoServer.disconnect()
   })
 
-  it('responds with action with backgroundjob kind', async () => {
-    const licensee = await Licensee.create(licenseeFactory.build())
-    const backgroundjob = await Backgroundjob.create(
-      backgroundjobFactory.build({
-        kind: 'get-pix',
-        body: {
-          cart_id: 'cart-id',
-        },
-        licensee,
-      }),
-    )
+  describe('when backgroundjob has cart_id', () => {
+    it('responds with action with backgroundjob kind', async () => {
+      const licensee = await Licensee.create(licenseeFactory.build())
+      const backgroundjob = await Backgroundjob.create(
+        backgroundjobFactory.build({
+          kind: 'get-pix',
+          body: {
+            cart_id: 'cart-id',
+          },
+          licensee,
+        }),
+      )
 
-    const data = {
-      jobId: backgroundjob._id,
-    }
+      const data = {
+        jobId: backgroundjob._id,
+      }
 
-    const actions = await processBackgroundjob(data)
+      const actions = await processBackgroundjob(data)
 
-    expect(actions[0].action).toEqual('process-backgroundjob-get-pix')
-    expect(actions[0].body).toEqual({
-      cart_id: 'cart-id',
-      jobId: backgroundjob._id,
+      expect(actions[0].action).toEqual('process-backgroundjob-get-pix')
+      expect(actions[0].body).toEqual({
+        cart_id: 'cart-id',
+        jobId: backgroundjob._id,
+      })
+
+      expect(actions.length).toEqual(1)
+    })
+  })
+
+  describe('when backgroundjob has contact', () => {
+    describe('when contact has cart', () => {
+      it('responds with action with backgroundjob kind and cart_id', async () => {
+        const licensee = await Licensee.create(licenseeFactory.build())
+        const contact = await Contact.create(contactFactory.build({ licensee }))
+        const cart = await Cart.create(cartFactory.build({ contact, licensee }))
+
+        const backgroundjob = await Backgroundjob.create({
+          status: 'scheduled',
+          kind: 'get-pix',
+          body: {
+            contact: '5511990283745',
+          },
+          licensee,
+        })
+
+        const data = {
+          jobId: backgroundjob._id,
+        }
+
+        const actions = await processBackgroundjob(data)
+
+        expect(actions[0].action).toEqual('process-backgroundjob-get-pix')
+        expect(actions[0].body).toEqual({
+          contact: '5511990283745',
+          cart_id: cart._id,
+          jobId: backgroundjob._id,
+        })
+
+        expect(actions.length).toEqual(1)
+      })
     })
 
-    expect(actions.length).toEqual(1)
+    describe('when contact has no cart opened', () => {
+      it('saves error information at backgroundjob', async () => {
+        const licensee = await Licensee.create(licenseeFactory.build())
+        const contact = await Contact.create(contactFactory.build({ licensee }))
+        await Cart.create(cartFactory.build({ contact, licensee, concluded: true }))
+
+        const backgroundjob = await Backgroundjob.create({
+          status: 'scheduled',
+          kind: 'get-pix',
+          body: {
+            contact: '5511990283745',
+          },
+          licensee,
+        })
+
+        const data = {
+          jobId: backgroundjob._id,
+        }
+
+        await processBackgroundjob(data)
+
+        const backgroundjobUpdated = await Backgroundjob.findById(backgroundjob)
+        expect(backgroundjobUpdated.status).toEqual('error')
+        expect(backgroundjobUpdated.error).toEqual('O job precisa ter ou um contato ou um carrinho válido!')
+      })
+    })
+  })
+
+  describe('when backgroundjob has no cart_id and contact', () => {
+    describe('and has no contact', () => {
+      it('saves error information at backgroundjob', async () => {
+        const licensee = await Licensee.create(licenseeFactory.build())
+        const backgroundjob = await Backgroundjob.create({
+          status: 'scheduled',
+          kind: 'get-pix',
+          body: {
+            nothing: 'aaa',
+          },
+          licensee,
+        })
+
+        const data = {
+          jobId: backgroundjob._id,
+        }
+
+        await processBackgroundjob(data)
+
+        const backgroundjobUpdated = await Backgroundjob.findById(backgroundjob)
+        expect(backgroundjobUpdated.status).toEqual('error')
+        expect(backgroundjobUpdated.error).toEqual('O job precisa ter ou um contato ou um carrinho válido!')
+      })
+    })
   })
 })

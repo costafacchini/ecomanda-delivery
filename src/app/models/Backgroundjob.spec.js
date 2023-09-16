@@ -63,7 +63,9 @@ describe('Backgroundjob', () => {
         const backgroundjob = new Backgroundjob({ kind: null })
         const validation = backgroundjob.validateSync()
 
-        expect(validation.errors['kind'].message).toEqual('Tipo do job: Você deve informar um valor ( get-pix )')
+        expect(validation.errors['kind'].message).toEqual(
+          'Tipo do job: Você deve informar um valor ( get-pix | cancel-order )',
+        )
       })
     })
   })

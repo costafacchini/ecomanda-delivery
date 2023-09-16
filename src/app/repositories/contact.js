@@ -1,6 +1,7 @@
 const Contact = require('@models/Contact')
 const MessagesQuery = require('@queries/MessagesQuery')
 const moment = require('moment-timezone')
+const NormalizePhone = require('@helpers/NormalizePhone')
 
 async function createContact(fields) {
   const contact = new Contact({
@@ -32,4 +33,13 @@ async function contactWithWhatsappWindowClosed(contactId) {
   return diff >= twentyFourhoursInMinutes
 }
 
-module.exports = { createContact, contactWithWhatsappWindowClosed, getContactBy }
+async function getContactByNumber(number, licenseeId) {
+  const normalizedPhone = new NormalizePhone(number)
+  return await Contact.findOne({
+    number: normalizedPhone.number,
+    licensee: licenseeId,
+    type: normalizedPhone.type,
+  })
+}
+
+module.exports = { createContact, contactWithWhatsappWindowClosed, getContactBy, getContactByNumber }

@@ -18,8 +18,8 @@ const backgroundjobSchema = new Schema(
     },
     kind: {
       type: String,
-      enum: ['get-pix'],
-      required: [true, 'Tipo do job: Você deve informar um valor ( get-pix )'],
+      enum: ['get-pix', 'cancel-order'],
+      required: [true, 'Tipo do job: Você deve informar um valor ( get-pix | cancel-order )'],
     },
     error: String,
     body: { type: Object },
