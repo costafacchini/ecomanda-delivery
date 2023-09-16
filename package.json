@@ -61,7 +61,7 @@
     "module-alias": "2.2.3",
     "moment": "2.29.4",
     "moment-timezone": "0.5.43",
-    "mongodb": "5.9.0",
+    "mongodb": "6.1.0",
     "mongoose": "7.5.2",
     "morgan": "1.10.0",
     "newrelic": "10.6.2",
