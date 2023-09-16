@@ -4,6 +4,7 @@ const path = require('path')
 const spawn = require('child_process').spawn
 const archiver = require('archiver')
 const mime = require('mime-types')
+const bl = require('bl')
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
 
 async function backup() {
@@ -14,12 +15,19 @@ async function backup() {
   const filename = `${folderDate}/${date.toISOString()}.zip`
 
   try {
+    let buf
+
     const archive = archiver.create('zip', {})
     const file = await doBackup(mongoURI)
     archive.append(fs.createReadStream(file.path), { name: file.name })
+    archive.pipe(
+      bl((_, data) => {
+        buf = data
+      }),
+    )
     archive.finalize()
 
-    await upload(archive, filename)
+    await upload(buf, filename)
 
     console.info('Backup efetuado com sucesso!')
   } catch (err) {

@@ -24,6 +24,9 @@ async function clearBackups() {
 
   const listCommand = new ListObjectsCommand(params)
   const response = await pluginAWS.send(listCommand)
+
+  if (!response.Contents) return
+
   for (const obj of response.Contents) {
     const paramsDrop = {
       Bucket: bucketName,
