@@ -15,7 +15,7 @@ async function request(url, method, { headers, body, isDownload }) {
   try {
     // eslint-disable-next-line no-undef
     const response = await fetch(url, requestOptions)
-    const data = isDownload ? await response.buffer() : await response.text()
+    const data = isDownload ? await response.arrayBuffer() : await response.text()
 
     result = {
       status: response.status,
@@ -40,21 +40,21 @@ function isJSON(response) {
 
 module.exports = {
   get(url, requestOpts = {}) {
-    return request(url, 'get', requestOpts)
+    return request(url, 'GET', requestOpts)
   },
   post(url, requestOpts = {}) {
-    return request(url, 'post', requestOpts)
+    return request(url, 'POST', requestOpts)
   },
   patch(url, requestOpts = {}) {
-    return request(url, 'patch', requestOpts)
+    return request(url, 'PATCH', requestOpts)
   },
   put(url, requestOpts = {}) {
-    return request(url, 'put', requestOpts)
+    return request(url, 'PUT', requestOpts)
   },
   download(url, requestOpts = {}) {
-    return request(url, 'get', Object.assign(requestOpts, { isDownload: true }))
+    return request(url, 'GET', Object.assign(requestOpts, { isDownload: true }))
   },
   delete(url, requestOpts = {}) {
-    return request(url, 'delete', requestOpts)
+    return request(url, 'DELETE', requestOpts)
   },
 }
