@@ -29,7 +29,7 @@ describe('MessagesSendedQuery', () => {
         licensee,
         sended: true,
         createdAt: new Date(2021, 6, 3, 0, 0, 0),
-      })
+      }),
     )
     const filteredMessageSended2 = await Message.create(
       messageFactory.build({
@@ -37,7 +37,7 @@ describe('MessagesSendedQuery', () => {
         licensee,
         sended: true,
         createdAt: new Date(2021, 6, 3, 23, 59, 58),
-      })
+      }),
     )
     const filteredMessageNotSended = await Message.create(
       messageFactory.build({
@@ -45,7 +45,7 @@ describe('MessagesSendedQuery', () => {
         licensee,
         sended: false,
         createdAt: new Date(2021, 6, 3, 23, 59, 58),
-      })
+      }),
     )
     const filteredMessageBefore = await Message.create(
       messageFactory.build({
@@ -53,7 +53,7 @@ describe('MessagesSendedQuery', () => {
         licensee,
         sended: true,
         createdAt: new Date(2021, 6, 2, 23, 59, 59),
-      })
+      }),
     )
     const filteredMessageAfter = await Message.create(
       messageFactory.build({
@@ -61,7 +61,7 @@ describe('MessagesSendedQuery', () => {
         licensee,
         sended: true,
         createdAt: new Date(2021, 6, 4, 0, 0, 0),
-      })
+      }),
     )
 
     const anotherLicensee = await Licensee.create(licenseeFactory.build())
@@ -71,13 +71,13 @@ describe('MessagesSendedQuery', () => {
         licensee: anotherLicensee,
         sended: true,
         createdAt: new Date(2021, 6, 3, 0, 0, 0),
-      })
+      }),
     )
 
     const messagesSendedQuery = new MessagesSendedQuery(
       new Date(2021, 6, 3, 0, 0, 0),
       new Date(2021, 6, 3, 23, 59, 59),
-      licensee._id
+      licensee._id,
     )
     const records = await messagesSendedQuery.all()
 
@@ -85,12 +85,12 @@ describe('MessagesSendedQuery', () => {
     expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: filteredMessageSended1._id })]))
     expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: filteredMessageSended2._id })]))
     expect(records).not.toEqual(
-      expect.arrayContaining([expect.objectContaining({ _id: filteredMessageNotSended._id })])
+      expect.arrayContaining([expect.objectContaining({ _id: filteredMessageNotSended._id })]),
     )
     expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: filteredMessageBefore._id })]))
     expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: filteredMessageAfter._id })]))
     expect(records).not.toEqual(
-      expect.arrayContaining([expect.objectContaining({ _id: messageSendedAnotherLicensee._id })])
+      expect.arrayContaining([expect.objectContaining({ _id: messageSendedAnotherLicensee._id })]),
     )
   })
 })

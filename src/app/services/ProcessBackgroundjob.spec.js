@@ -24,7 +24,7 @@ describe('processBackgroundjob', () => {
           cart_id: 'cart-id',
         },
         licensee,
-      })
+      }),
     )
 
     const data = {

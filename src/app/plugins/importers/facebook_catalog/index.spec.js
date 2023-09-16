@@ -26,7 +26,7 @@ describe('FacebookCatalogImporter', () => {
       `id	title	description	section
 83863	Double Monster Bacon + Refri	2 Monster Bacon Artesanais + 2 Refri Lata 350ml + Entrega grátis.	Hamburguer
 83864	Double Atomic Barbecue + Refri	2 Atomic Barbecue Artesanais + 2 Refri Lata 350ml + Entrega grátis.	Hamburguer
-83877	Guaraná Antárctica Lata	Guaraná Antarctica lata de 350ml.	Bebidas`
+83877	Guaraná Antárctica Lata	Guaraná Antarctica lata de 350ml.	Bebidas`,
     )
 
     const triggerImported = await Trigger.findById(trigger._id)

@@ -40,14 +40,14 @@ describe('Rocketchat plugin', () => {
           name: 'John Doe',
           talkingWithChatBot: true,
           licensee,
-        })
+        }),
       )
 
       const room = await Room.create(
         roomFactory.build({
           roomId: '4sqv8qitNqhgLdvB4',
           contact,
-        })
+        }),
       )
 
       const triggerOrder2 = await Trigger.create(triggerReplyButtonFactory.build({ licensee, order: 2 }))
@@ -181,14 +181,14 @@ describe('Rocketchat plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         const room = await Room.create(
           contactFactory.build({
             roomId: '4sqv8qitNqhgLdvB4',
             contact,
-          })
+          }),
         )
 
         const responseBody = {
@@ -242,7 +242,7 @@ describe('Rocketchat plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -251,7 +251,7 @@ describe('Rocketchat plugin', () => {
             contact,
             licensee,
             sended: false,
-          })
+          }),
         )
 
         const expectedBodyVisitor = {
@@ -282,7 +282,7 @@ describe('Rocketchat plugin', () => {
               },
               success: true,
             },
-          }
+          },
         )
 
         fetchMock.getOnce(`https://rocket.com.br/api/v1/livechat/room?token=${contact._id.toString()}`, {
@@ -339,7 +339,7 @@ describe('Rocketchat plugin', () => {
               },
               success: true,
             },
-          }
+          },
         )
 
         expect(message.sended).toEqual(false)
@@ -362,7 +362,7 @@ describe('Rocketchat plugin', () => {
             talkingWithChatBot: true,
             email: 'john@doe.com',
             licensee,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -372,7 +372,7 @@ describe('Rocketchat plugin', () => {
             contact,
             licensee,
             sended: false,
-          })
+          }),
         )
 
         fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/visitor', {
@@ -447,7 +447,7 @@ describe('Rocketchat plugin', () => {
         expect(fetchMock.calls()).toHaveLength(3)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 enviada para Rocketchat com sucesso!'
+          'Mensagem 60958703f415ed4008748637 enviada para Rocketchat com sucesso!',
         )
       })
 
@@ -461,7 +461,7 @@ describe('Rocketchat plugin', () => {
               talkingWithChatBot: true,
               email: 'john@doe.com',
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -471,7 +471,7 @@ describe('Rocketchat plugin', () => {
               licensee,
               sended: false,
               senderName: 'John Doe',
-            })
+            }),
           )
 
           fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/visitor', {
@@ -561,7 +561,7 @@ describe('Rocketchat plugin', () => {
               name: 'John Doe',
               talkingWithChatBot: true,
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -571,7 +571,7 @@ describe('Rocketchat plugin', () => {
               licensee,
               sended: false,
               departament: 'department',
-            })
+            }),
           )
 
           fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/visitor', {
@@ -677,7 +677,7 @@ describe('Rocketchat plugin', () => {
               talkingWithChatBot: true,
               email: 'john@doe.com',
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -689,7 +689,7 @@ describe('Rocketchat plugin', () => {
               contact,
               licensee,
               sended: false,
-            })
+            }),
           )
 
           fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/visitor', {
@@ -762,7 +762,7 @@ describe('Rocketchat plugin', () => {
                 },
                 success: true,
               },
-            }
+            },
           )
 
           expect(message.sended).toEqual(false)
@@ -787,7 +787,7 @@ describe('Rocketchat plugin', () => {
               email: 'john@doe.com',
               talkingWithChatBot: true,
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -797,7 +797,7 @@ describe('Rocketchat plugin', () => {
               contact,
               licensee,
               sended: false,
-            })
+            }),
           )
 
           fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/visitor', { status: 200, body: { success: false } })
@@ -815,7 +815,7 @@ describe('Rocketchat plugin', () => {
           expect(messageUpdated.sended).toEqual(false)
 
           expect(consoleErrorSpy).toHaveBeenCalledWith(
-            'Não foi possível criar o visitante na Rocketchat {"success":false}'
+            'Não foi possível criar o visitante na Rocketchat {"success":false}',
           )
         })
       })
@@ -828,7 +828,7 @@ describe('Rocketchat plugin', () => {
               email: 'john@doe.com',
               talkingWithChatBot: true,
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -838,7 +838,7 @@ describe('Rocketchat plugin', () => {
               contact,
               licensee,
               sended: false,
-            })
+            }),
           )
 
           fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/visitor', {
@@ -886,7 +886,7 @@ describe('Rocketchat plugin', () => {
               talkingWithChatBot: true,
               email: 'john@doe.com',
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -896,7 +896,7 @@ describe('Rocketchat plugin', () => {
               contact,
               licensee,
               sended: false,
-            })
+            }),
           )
 
           fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/visitor', {
@@ -952,7 +952,7 @@ describe('Rocketchat plugin', () => {
             (url, { body }) => {
               return url === 'https://rocket.com.br/api/v1/livechat/message' && body === JSON.stringify(expectedBody)
             },
-            { status: 200, body: { success: false } }
+            { status: 200, body: { success: false } },
           )
 
           expect(message.sended).toEqual(false)
@@ -969,7 +969,7 @@ describe('Rocketchat plugin', () => {
           expect(messageUpdated.error).toEqual('{"success":false}')
 
           expect(consoleErrorSpy).toHaveBeenCalledWith(
-            'Mensagem 60958703f415ed4008748637 não enviada para a Rocketchat {"success":false}'
+            'Mensagem 60958703f415ed4008748637 não enviada para a Rocketchat {"success":false}',
           )
         })
 
@@ -980,7 +980,7 @@ describe('Rocketchat plugin', () => {
               talkingWithChatBot: true,
               email: 'john@doe.com',
               licensee,
-            })
+            }),
           )
 
           const room = await Room.create(
@@ -988,7 +988,7 @@ describe('Rocketchat plugin', () => {
               roomId: 'room',
               token: contact._id.toString(),
               contact: contact,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -999,7 +999,7 @@ describe('Rocketchat plugin', () => {
               licensee,
               room,
               sended: false,
-            })
+            }),
           )
 
           const expectedBody = {
@@ -1012,7 +1012,7 @@ describe('Rocketchat plugin', () => {
             (url, { body }) => {
               return url === 'https://rocket.com.br/api/v1/livechat/message' && body === JSON.stringify(expectedBody)
             },
-            { status: 200, body: { success: false, error: 'room-closed' } }
+            { status: 200, body: { success: false, error: 'room-closed' } },
           )
 
           fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/visitor', {
@@ -1070,7 +1070,7 @@ describe('Rocketchat plugin', () => {
                 url === 'https://rocket.com.br/api/v1/livechat/message' && body === JSON.stringify(expectedSecondBody)
               )
             },
-            { status: 200, body: { success: true } }
+            { status: 200, body: { success: true } },
           )
 
           expect(message.sended).toEqual(false)
@@ -1093,7 +1093,7 @@ describe('Rocketchat plugin', () => {
           expect(roomClosed.closed).toEqual(true)
 
           expect(consoleInfoSpy).toHaveBeenCalledWith(
-            'Mensagem 60958703f415ed4008748637 enviada para Rocketchat com sucesso!'
+            'Mensagem 60958703f415ed4008748637 enviada para Rocketchat com sucesso!',
           )
         })
       })
@@ -1109,7 +1109,7 @@ describe('Rocketchat plugin', () => {
           name: 'John Doe',
           talkingWithChatBot: true,
           licensee,
-        })
+        }),
       )
 
       const message = await Message.create(
@@ -1119,7 +1119,7 @@ describe('Rocketchat plugin', () => {
           contact,
           licensee,
           sended: false,
-        })
+        }),
       )
 
       expect(contact.talkingWithChatBot).toEqual(true)
@@ -1139,7 +1139,7 @@ describe('Rocketchat plugin', () => {
           name: 'John Doe',
           talkingWithChatBot: true,
           licensee,
-        })
+        }),
       )
 
       const message = await Message.create(
@@ -1149,7 +1149,7 @@ describe('Rocketchat plugin', () => {
           contact,
           licensee,
           sended: false,
-        })
+        }),
       )
 
       const rocketchat = new Rocketchat(licensee)
@@ -1167,7 +1167,7 @@ describe('Rocketchat plugin', () => {
           name: 'John Doe',
           talkingWithChatBot: false,
           licensee,
-        })
+        }),
       )
 
       const room = await Room.create(
@@ -1175,7 +1175,7 @@ describe('Rocketchat plugin', () => {
           roomId: 'ka3DiV9CuHD765',
           token: contact._id.toString(),
           contact: contact,
-        })
+        }),
       )
 
       const message = await Message.create(
@@ -1186,7 +1186,7 @@ describe('Rocketchat plugin', () => {
           licensee,
           room,
           sended: false,
-        })
+        }),
       )
 
       expect(contact.talkingWithChatBot).toEqual(false)
@@ -1209,7 +1209,7 @@ describe('Rocketchat plugin', () => {
             chatbotDefault: 'landbot',
             chatbotUrl: 'https://url.com',
             chatbotAuthorizationToken: 'token',
-          })
+          }),
         )
 
         const contact = await Contact.create(
@@ -1217,7 +1217,7 @@ describe('Rocketchat plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const room = await Room.create(
@@ -1225,7 +1225,7 @@ describe('Rocketchat plugin', () => {
             roomId: 'ka3DiV9CuHD765',
             token: contact._id.toString(),
             contact: contact,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -1236,7 +1236,7 @@ describe('Rocketchat plugin', () => {
             licensee,
             room,
             sended: false,
-          })
+          }),
         )
 
         expect(contact.talkingWithChatBot).toEqual(false)
@@ -1258,7 +1258,7 @@ describe('Rocketchat plugin', () => {
             chatbotUrl: 'https://url.com',
             chatbotAuthorizationToken: 'token',
             messageOnCloseChat: 'Send on close chat',
-          })
+          }),
         )
 
         const contact = await Contact.create(
@@ -1266,7 +1266,7 @@ describe('Rocketchat plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const room = await Room.create(
@@ -1274,7 +1274,7 @@ describe('Rocketchat plugin', () => {
             roomId: 'ka3DiV9CuHD765',
             token: contact._id.toString(),
             contact: contact,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -1285,7 +1285,7 @@ describe('Rocketchat plugin', () => {
             licensee,
             room,
             sended: false,
-          })
+          }),
         )
 
         expect(contact.talkingWithChatBot).toEqual(false)

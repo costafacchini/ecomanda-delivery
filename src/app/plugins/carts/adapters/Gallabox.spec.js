@@ -26,7 +26,7 @@ describe('Gallabox plugin', () => {
           statusId: '743',
           productFractional2Name: 'Pizza Grande 2 Sabores',
           productFractional2Id: '5647',
-        })
+        }),
       )
 
       const contact = await Contact.create(
@@ -42,7 +42,7 @@ describe('Gallabox plugin', () => {
           address_number: '123',
           address_complement: 'Sala 1',
           cep: '12345-678',
-        })
+        }),
       )
 
       const cartGallabox = {
@@ -134,7 +134,7 @@ describe('Gallabox plugin', () => {
       expect(cart.products[0].additionals[0].quantity).toEqual(1)
       expect(cart.products[0].additionals[0].unit_price).toEqual(88)
       expect(cart.products[0].additionals[0].note).toEqual(
-        'Mozzarella Roni coberta com presunto, ovo cozido e rodelas de cebola'
+        'Mozzarella Roni coberta com presunto, ovo cozido e rodelas de cebola',
       )
       expect(cart.products[0].additionals[0].product_fb_id).toEqual('4939381689498702')
 
@@ -143,7 +143,7 @@ describe('Gallabox plugin', () => {
       expect(cart.products[0].additionals[1].quantity).toEqual(1)
       expect(cart.products[0].additionals[1].unit_price).toEqual(89)
       expect(cart.products[0].additionals[1].note).toEqual(
-        'Mozzarela italiana Fior di Latte e calabresa artesanal Cinque'
+        'Mozzarela italiana Fior di Latte e calabresa artesanal Cinque',
       )
       expect(cart.products[0].additionals[1].product_fb_id).toEqual('5440587292720086')
 

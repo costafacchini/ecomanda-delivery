@@ -32,7 +32,7 @@ describe('resetCarts', () => {
           contact,
           concluded: false,
           createdAt: moment().tz('UTC').subtract(59, 'minutes'),
-        })
+        }),
       )
 
       const cartExpired1 = await Cart.create(
@@ -41,7 +41,7 @@ describe('resetCarts', () => {
           contact,
           concluded: false,
           createdAt: moment().tz('UTC').subtract(1, 'hours'),
-        })
+        }),
       )
 
       await resetCarts()

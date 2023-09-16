@@ -92,7 +92,7 @@ const cartSchema = new Schema(
     payment_status: String,
     integration_status: String,
   },
-  { timestamps: true }
+  { timestamps: true },
 )
 
 cartSchema.pre('save', function (next) {

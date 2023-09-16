@@ -9,7 +9,7 @@ describe('createMessengerPlugin', () => {
     const licensee = new Licensee(
       licenseeFactory.build({
         whatsappDefault: 'utalk',
-      })
+      }),
     )
 
     const body = {
@@ -25,7 +25,7 @@ describe('createMessengerPlugin', () => {
     const licensee = new Licensee(
       licenseeFactory.build({
         whatsappDefault: 'dialog',
-      })
+      }),
     )
 
     const body = {
@@ -41,7 +41,7 @@ describe('createMessengerPlugin', () => {
     const licensee = new Licensee(
       licenseeFactory.build({
         whatsappDefault: 'something',
-      })
+      }),
     )
 
     const body = {

@@ -74,7 +74,7 @@ describe('contact controller', () => {
               licensee,
               waId: '12345',
               landbotId: '56477',
-            })
+            }),
           )
           .expect('Content-Type', /json/)
           .expect(201)
@@ -152,7 +152,7 @@ describe('contact controller', () => {
             licensee,
             waId: '12345',
             landbotId: '56477',
-          })
+          }),
         )
 
         const licenseeNew = await Licensee.create(licenseeFactory.build())
@@ -197,7 +197,7 @@ describe('contact controller', () => {
             licensee,
             waId: '12345',
             landbotId: '56477',
-          })
+          }),
         )
 
         await request(expressServer)
@@ -241,7 +241,7 @@ describe('contact controller', () => {
             licensee,
             waId: '12345',
             landbotId: '56477',
-          })
+          }),
         )
 
         await request(expressServer)
@@ -294,7 +294,7 @@ describe('contact controller', () => {
       it('returns status 200 and message if contact exists', async () => {
         await request(expressServer)
           .get(
-            `/resources/contacts/?expression=Doe&talkingWithChatbot=false&licensee=${licensee._id.toString()}&type=@c.us&page=1&limit=3`
+            `/resources/contacts/?expression=Doe&talkingWithChatbot=false&licensee=${licensee._id.toString()}&type=@c.us&page=1&limit=3`,
           )
           .set('x-access-token', token)
           .expect('Content-Type', /json/)

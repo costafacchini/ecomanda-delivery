@@ -40,14 +40,14 @@ describe('Crisp plugin', () => {
           name: 'John Doe',
           talkingWithChatBot: true,
           licensee,
-        })
+        }),
       )
 
       const room = await Room.create(
         roomFactory.build({
           roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
           contact,
-        })
+        }),
       )
 
       const responseBody = {
@@ -150,14 +150,14 @@ describe('Crisp plugin', () => {
           name: 'John Doe',
           talkingWithChatBot: true,
           licensee,
-        })
+        }),
       )
 
       const room = await Room.create(
         roomFactory.build({
           roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
           contact,
-        })
+        }),
       )
 
       const responseBody = {
@@ -197,14 +197,14 @@ describe('Crisp plugin', () => {
           name: 'John Doe',
           talkingWithChatBot: true,
           licensee,
-        })
+        }),
       )
 
       const room = await Room.create(
         roomFactory.build({
           roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
           contact,
-        })
+        }),
       )
 
       const responseBody = {
@@ -247,14 +247,14 @@ describe('Crisp plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         await Room.create(
           roomFactory.build({
             roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
             contact,
-          })
+          }),
         )
 
         const responseBody = {
@@ -298,14 +298,14 @@ describe('Crisp plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         await Room.create(
           roomFactory.build({
             roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
             contact,
-          })
+          }),
         )
 
         const responseBody = {
@@ -349,14 +349,14 @@ describe('Crisp plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         await Room.create(
           roomFactory.build({
             roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
             contact,
-          })
+          }),
         )
 
         const responseBody = {
@@ -399,14 +399,14 @@ describe('Crisp plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         await Room.create(
           roomFactory.build({
             roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
             contact,
-          })
+          }),
         )
 
         const responseBody = {
@@ -446,14 +446,14 @@ describe('Crisp plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         await Room.create(
           roomFactory.build({
             roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
             contact,
-          })
+          }),
         )
 
         const triggerOrder2 = await Trigger.create(triggerReplyButtonFactory.build({ licensee, order: 2 }))
@@ -521,14 +521,14 @@ describe('Crisp plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         await Room.create(
           roomFactory.build({
             roomId: 'session_94e30081-c1ff-4656-b612-9c6e18d70ffb',
             contact,
-          })
+          }),
         )
 
         const responseBody = {
@@ -570,7 +570,7 @@ describe('Crisp plugin', () => {
           licenseeFactory.build({
             chatIdentifier: 'identifier',
             chatKey: 'key',
-          })
+          }),
         )
 
         const contact = await Contact.create(
@@ -579,7 +579,7 @@ describe('Crisp plugin', () => {
             talkingWithChatBot: true,
             email: 'john@doe.com',
             licensee,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -588,7 +588,7 @@ describe('Crisp plugin', () => {
             contact,
             licensee,
             sended: false,
-          })
+          }),
         )
 
         fetchMock.postOnce(
@@ -608,7 +608,7 @@ describe('Crisp plugin', () => {
                 session_id: 'session_a06054de-d9dc-407a-98ea-72c7fb460472',
               },
             },
-          }
+          },
         )
 
         const expectedBodyPatch = {
@@ -634,7 +634,7 @@ describe('Crisp plugin', () => {
               reason: 'updated',
               data: {},
             },
-          }
+          },
         )
 
         const expectedBody = {
@@ -663,7 +663,7 @@ describe('Crisp plugin', () => {
                 fingerprint: 163408807364277,
               },
             },
-          }
+          },
         )
 
         expect(message.sended).toEqual(false)
@@ -684,7 +684,7 @@ describe('Crisp plugin', () => {
           licenseeFactory.build({
             chatIdentifier: 'identifier',
             chatKey: 'key',
-          })
+          }),
         )
 
         const contact = await Contact.create(
@@ -693,7 +693,7 @@ describe('Crisp plugin', () => {
             talkingWithChatBot: true,
             email: 'john@doe.com',
             licensee,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -703,7 +703,7 @@ describe('Crisp plugin', () => {
             contact,
             licensee,
             sended: false,
-          })
+          }),
         )
 
         fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
@@ -726,7 +726,7 @@ describe('Crisp plugin', () => {
               reason: 'updated',
               data: {},
             },
-          }
+          },
         )
 
         fetchMock.postOnce(
@@ -740,7 +740,7 @@ describe('Crisp plugin', () => {
                 fingerprint: 163408807364277,
               },
             },
-          }
+          },
         )
 
         expect(message.sended).toEqual(false)
@@ -761,7 +761,7 @@ describe('Crisp plugin', () => {
             licenseeFactory.build({
               chatIdentifier: 'identifier',
               chatKey: 'key',
-            })
+            }),
           )
 
           const contact = await Contact.create(
@@ -770,7 +770,7 @@ describe('Crisp plugin', () => {
               talkingWithChatBot: true,
               email: 'john@doe.com',
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -780,7 +780,7 @@ describe('Crisp plugin', () => {
               licensee,
               sended: false,
               departament: 'segment1,segment 2',
-            })
+            }),
           )
 
           fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
@@ -803,7 +803,7 @@ describe('Crisp plugin', () => {
                 reason: 'updated',
                 data: {},
               },
-            }
+            },
           )
 
           fetchMock.postOnce(
@@ -817,7 +817,7 @@ describe('Crisp plugin', () => {
                   fingerprint: 163408807364277,
                 },
               },
-            }
+            },
           )
 
           expect(message.sended).toEqual(false)
@@ -843,7 +843,7 @@ describe('Crisp plugin', () => {
               type: '@g.us',
               email: 'john@doe.com',
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -853,7 +853,7 @@ describe('Crisp plugin', () => {
               licensee,
               sended: false,
               senderName: 'John Doe',
-            })
+            }),
           )
 
           fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
@@ -888,7 +888,7 @@ describe('Crisp plugin', () => {
                 reason: 'updated',
                 data: {},
               },
-            }
+            },
           )
 
           const expectedBody = {
@@ -915,7 +915,7 @@ describe('Crisp plugin', () => {
                   fingerprint: 163408807364277,
                 },
               },
-            }
+            },
           )
 
           expect(message.sended).toEqual(false)
@@ -940,7 +940,7 @@ describe('Crisp plugin', () => {
               email: 'john@doe.com',
               talkingWithChatBot: true,
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -950,14 +950,14 @@ describe('Crisp plugin', () => {
               licensee,
               sended: false,
               departament: 'segment1,segment 2',
-            })
+            }),
           )
 
           await Room.create(
             roomFactory.build({
               roomId: 'session_a06054de-d9dc-407a-98ea-72c7fb460472',
               contact,
-            })
+            }),
           )
 
           const expectedBodyPatch = {
@@ -979,7 +979,7 @@ describe('Crisp plugin', () => {
                 reason: 'updated',
                 data: {},
               },
-            }
+            },
           )
 
           fetchMock.postOnce(
@@ -993,7 +993,7 @@ describe('Crisp plugin', () => {
                   fingerprint: 163408807364277,
                 },
               },
-            }
+            },
           )
 
           expect(message.sended).toEqual(false)
@@ -1018,7 +1018,7 @@ describe('Crisp plugin', () => {
               email: 'john@doe.com',
               talkingWithChatBot: true,
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -1028,7 +1028,7 @@ describe('Crisp plugin', () => {
               contact,
               licensee,
               sended: false,
-            })
+            }),
           )
 
           fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
@@ -1053,7 +1053,7 @@ describe('Crisp plugin', () => {
           expect(messageUpdated.sended).toEqual(false)
 
           expect(consoleErrorSpy).toHaveBeenCalledWith(
-            'Não foi possível criar a sessão na Crisp {"error":true,"reason":"invalid_session","data":{}}'
+            'Não foi possível criar a sessão na Crisp {"error":true,"reason":"invalid_session","data":{}}',
           )
         })
       })
@@ -1066,7 +1066,7 @@ describe('Crisp plugin', () => {
               email: 'john@doe.com',
               talkingWithChatBot: true,
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -1076,7 +1076,7 @@ describe('Crisp plugin', () => {
               contact,
               licensee,
               sended: false,
-            })
+            }),
           )
 
           fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
@@ -1099,7 +1099,7 @@ describe('Crisp plugin', () => {
                 reason: 'updated',
                 data: {},
               },
-            }
+            },
           )
 
           fetchMock.postOnce(
@@ -1114,7 +1114,7 @@ describe('Crisp plugin', () => {
                   message: 'data.user.type should be equal to one of the allowed values',
                 },
               },
-            }
+            },
           )
 
           expect(message.sended).toEqual(false)
@@ -1129,13 +1129,13 @@ describe('Crisp plugin', () => {
           const messageUpdated = await Message.findById(message._id)
           expect(messageUpdated.sended).toEqual(false)
           expect(messageUpdated.error).toEqual(
-            'mensagem: {"error":true,"reason":"invalid_data","data":{"namespace":"data","message":"data.user.type should be equal to one of the allowed values"}}'
+            'mensagem: {"error":true,"reason":"invalid_data","data":{"namespace":"data","message":"data.user.type should be equal to one of the allowed values"}}',
           )
 
           expect(consoleErrorSpy).toHaveBeenCalledWith(
             `Mensagem 60958703f415ed4008748637 não enviada para Crisp.
            status: 404
-           mensagem: {"error":true,"reason":"invalid_data","data":{"namespace":"data","message":"data.user.type should be equal to one of the allowed values"}}`
+           mensagem: {"error":true,"reason":"invalid_data","data":{"namespace":"data","message":"data.user.type should be equal to one of the allowed values"}}`,
           )
         })
       })
@@ -1150,7 +1150,7 @@ describe('Crisp plugin', () => {
               email: 'john@doe.com',
               talkingWithChatBot: true,
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -1159,7 +1159,7 @@ describe('Crisp plugin', () => {
               contact,
               licensee,
               sended: false,
-            })
+            }),
           )
 
           fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
@@ -1182,7 +1182,7 @@ describe('Crisp plugin', () => {
                 reason: 'updated',
                 data: {},
               },
-            }
+            },
           )
 
           fetchMock.postOnce(
@@ -1196,7 +1196,7 @@ describe('Crisp plugin', () => {
                   fingerprint: 163408807364277,
                 },
               },
-            }
+            },
           )
 
           expect(message.sended).toEqual(false)
@@ -1218,7 +1218,7 @@ describe('Crisp plugin', () => {
               email: 'john@doe.com',
               talkingWithChatBot: true,
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -1230,7 +1230,7 @@ describe('Crisp plugin', () => {
               kind: 'file',
               url: 'https://message.with.file.com/file.txt',
               fileName: 'file.txt',
-            })
+            }),
           )
 
           fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
@@ -1253,7 +1253,7 @@ describe('Crisp plugin', () => {
                 reason: 'updated',
                 data: {},
               },
-            }
+            },
           )
 
           const expectedBody = {
@@ -1284,7 +1284,7 @@ describe('Crisp plugin', () => {
                   fingerprint: 163408807364277,
                 },
               },
-            }
+            },
           )
 
           expect(message.sended).toEqual(false)
@@ -1306,7 +1306,7 @@ describe('Crisp plugin', () => {
               email: 'john@doe.com',
               talkingWithChatBot: true,
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -1318,7 +1318,7 @@ describe('Crisp plugin', () => {
               kind: 'file',
               url: 'https://message.with.file.com/file.ogg',
               fileName: 'file.ogg',
-            })
+            }),
           )
 
           fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
@@ -1341,7 +1341,7 @@ describe('Crisp plugin', () => {
                 reason: 'updated',
                 data: {},
               },
-            }
+            },
           )
 
           const expectedBody = {
@@ -1373,7 +1373,7 @@ describe('Crisp plugin', () => {
                   fingerprint: 163408807364277,
                 },
               },
-            }
+            },
           )
 
           expect(message.sended).toEqual(false)
@@ -1398,7 +1398,7 @@ describe('Crisp plugin', () => {
           email: 'john@doe.com',
           talkingWithChatBot: true,
           licensee,
-        })
+        }),
       )
 
       const message = await Message.create(
@@ -1408,7 +1408,7 @@ describe('Crisp plugin', () => {
           contact,
           licensee,
           sended: false,
-        })
+        }),
       )
 
       expect(contact.talkingWithChatBot).toEqual(true)
@@ -1428,7 +1428,7 @@ describe('Crisp plugin', () => {
           email: 'john@doe.com',
           talkingWithChatBot: true,
           licensee,
-        })
+        }),
       )
 
       const message = await Message.create(
@@ -1438,7 +1438,7 @@ describe('Crisp plugin', () => {
           contact,
           licensee,
           sended: false,
-        })
+        }),
       )
 
       const crisp = new Crisp(licensee)
@@ -1458,7 +1458,7 @@ describe('Crisp plugin', () => {
             chatbotDefault: 'landbot',
             chatbotUrl: 'https://url.com',
             chatbotAuthorizationToken: 'token',
-          })
+          }),
         )
 
         const contact = await Contact.create(
@@ -1467,14 +1467,14 @@ describe('Crisp plugin', () => {
             email: 'john@doe.com',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const room = await Room.create(
           roomFactory.build({
             roomId: 'ka3DiV9CuHD765',
             contact,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -1485,7 +1485,7 @@ describe('Crisp plugin', () => {
             licensee,
             room,
             sended: false,
-          })
+          }),
         )
 
         expect(contact.talkingWithChatBot).toEqual(false)
@@ -1509,7 +1509,7 @@ describe('Crisp plugin', () => {
             chatbotUrl: 'https://url.com',
             chatbotAuthorizationToken: 'token',
             messageOnCloseChat: 'Send on close chat',
-          })
+          }),
         )
 
         const contact = await Contact.create(
@@ -1518,14 +1518,14 @@ describe('Crisp plugin', () => {
             email: 'john@doe.com',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const room = await Room.create(
           roomFactory.build({
             roomId: 'ka3DiV9CuHD765',
             contact,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -1536,7 +1536,7 @@ describe('Crisp plugin', () => {
             licensee,
             room,
             sended: false,
-          })
+          }),
         )
 
         expect(contact.talkingWithChatBot).toEqual(false)

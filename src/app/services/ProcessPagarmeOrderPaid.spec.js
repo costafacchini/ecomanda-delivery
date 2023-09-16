@@ -27,7 +27,7 @@ describe('processPagarmeOrderPaid', () => {
         order_id: 'pagarme-id',
         payment_status: 'pending',
         integration_status: 'waiting-payment',
-      })
+      }),
     )
 
     const body = {
@@ -70,7 +70,7 @@ describe('processPagarmeOrderPaid', () => {
 
     expect(consoleInfoSpy).toHaveBeenCalledTimes(1)
     expect(consoleInfoSpy).toHaveBeenCalledWith(
-      'Carrinho não encontrado referente ao pagamento pagarme-id da pagar.me!'
+      'Carrinho não encontrado referente ao pagamento pagarme-id da pagar.me!',
     )
 
     consoleInfoSpy.mockRestore()

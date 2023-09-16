@@ -25,42 +25,42 @@ describe('BillingQuery', () => {
         contact: contact1,
         licensee: licensee1,
         createdAt: '2020-11-30T00:00:00-03:00',
-      })
+      }),
     )
     await Message.create(
       messageFactory.build({
         contact: contact1,
         licensee: licensee1,
         createdAt: '2021-12-01T00:00:00-03:00',
-      })
+      }),
     )
     await Message.create(
       messageFactory.build({
         contact: contact1,
         licensee: licensee1,
         createdAt: '2021-12-31T00:00:00-03:00',
-      })
+      }),
     )
     await Message.create(
       messageFactory.build({
         contact: contact1,
         licensee: licensee1,
         createdAt: '2022-01-01T00:00:00-03:00',
-      })
+      }),
     )
     await Message.create(
       messageFactory.build({
         contact: contact1,
         licensee: licensee1,
         createdAt: '2022-01-31T00:00:00-03:00',
-      })
+      }),
     )
     await Message.create(
       messageFactory.build({
         contact: contact1,
         licensee: licensee1,
         createdAt: '2022-02-01T00:00:00-03:00',
-      })
+      }),
     )
 
     const licensee2 = await Licensee.create(licenseeFactory.build({ createdAt: '2022-01-01T00:00:00-03:00' }))
@@ -70,14 +70,14 @@ describe('BillingQuery', () => {
         contact: contact2,
         licensee: licensee2,
         createdAt: '2022-01-01T00:00:00-03:00',
-      })
+      }),
     )
     await Message.create(
       messageFactory.build({
         contact: contact2,
         licensee: licensee2,
         createdAt: '2022-01-31T00:00:00-03:00',
-      })
+      }),
     )
 
     const licensee3 = await Licensee.create(licenseeFactory.build({ createdAt: '2019-01-01T00:00:00-03:00' }))
@@ -87,14 +87,14 @@ describe('BillingQuery', () => {
         contact: contact3,
         licensee: licensee3,
         createdAt: '2019-05-01T00:00:00-03:00',
-      })
+      }),
     )
     await Message.create(
       messageFactory.build({
         contact: contact3,
         licensee: licensee3,
         createdAt: '2019-12-15T00:00:00-03:00',
-      })
+      }),
     )
 
     const licensee4 = await Licensee.create(licenseeFactory.build({ createdAt: '2020-05-01T00:00:00-03:00' }))
@@ -104,21 +104,21 @@ describe('BillingQuery', () => {
         contact: contact4,
         licensee: licensee4,
         createdAt: '2020-05-01T00:00:00-03:00',
-      })
+      }),
     )
     await Message.create(
       messageFactory.build({
         contact: contact4,
         licensee: licensee4,
         createdAt: '2021-12-01T00:00:00-03:00',
-      })
+      }),
     )
     await Message.create(
       messageFactory.build({
         contact: contact4,
         licensee: licensee4,
         createdAt: '2021-12-15T00:00:00-03:00',
-      })
+      }),
     )
 
     const billingQuery = new BillingQuery(moment('2022-02-10T00:00:00Z').toDate())
@@ -146,7 +146,7 @@ describe('BillingQuery', () => {
             count: 2,
           },
         ],
-      })
+      }),
     )
     expect(records[1]).toEqual(
       expect.objectContaining({
@@ -168,7 +168,7 @@ describe('BillingQuery', () => {
             count: 2,
           },
         ],
-      })
+      }),
     )
     expect(records[2]).toEqual(
       expect.objectContaining({
@@ -190,7 +190,7 @@ describe('BillingQuery', () => {
             count: 0,
           },
         ],
-      })
+      }),
     )
     expect(records[3]).toEqual(
       expect.objectContaining({
@@ -212,7 +212,7 @@ describe('BillingQuery', () => {
             count: 0,
           },
         ],
-      })
+      }),
     )
   })
 })

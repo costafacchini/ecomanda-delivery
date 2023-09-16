@@ -50,7 +50,7 @@ function consumeChannel() {
             channel.ack(payloadBuffer)
           }
         },
-        { noAck: false }
+        { noAck: false },
       )
     })
   })

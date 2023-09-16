@@ -63,7 +63,7 @@ describe('Message', () => {
         const validation = message.validateSync()
 
         expect(validation.errors['text'].message).toEqual(
-          'Texto: deve ser preenchido quando o tipo de mensahem é texto'
+          'Texto: deve ser preenchido quando o tipo de mensahem é texto',
         )
       })
 
@@ -81,7 +81,7 @@ describe('Message', () => {
         const validation = message.validateSync()
 
         expect(validation.errors['url'].message).toEqual(
-          'URL do arquivo: deve ser preenchido quando o tipo de mensagem é arquivo'
+          'URL do arquivo: deve ser preenchido quando o tipo de mensagem é arquivo',
         )
       })
 
@@ -99,7 +99,7 @@ describe('Message', () => {
         const validation = message.validateSync()
 
         expect(validation.errors['fileName'].message).toEqual(
-          'Nome do arquivo: deve ser preenchido quando o tipo de mensagem é arquivo'
+          'Nome do arquivo: deve ser preenchido quando o tipo de mensagem é arquivo',
         )
       })
 
@@ -177,7 +177,7 @@ describe('Message', () => {
         const validation = message.validateSync()
 
         expect(validation.errors['destination'].message).toEqual(
-          'Destino: Você deve informar qual o destino da mensagem (to-chatbot | to-chat | to-messenger | to-transfer)'
+          'Destino: Você deve informar qual o destino da mensagem (to-chatbot | to-chat | to-messenger | to-transfer)',
         )
       })
 
@@ -211,7 +211,7 @@ describe('Message', () => {
         const validation = message.validateSync()
 
         expect(validation.errors['destination'].message).toEqual(
-          '`some` is not a valid enum value for path `destination`.'
+          '`some` is not a valid enum value for path `destination`.',
         )
       })
     })

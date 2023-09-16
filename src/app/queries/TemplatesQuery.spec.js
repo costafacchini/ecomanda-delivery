@@ -20,10 +20,10 @@ describe('TemplatesQuery', () => {
 
   it('returns all templates ordered by createdAt asc', async () => {
     const template1 = await Template.create(
-      templateFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 0) })
+      templateFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 0) }),
     )
     const template2 = await Template.create(
-      templateFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 1) })
+      templateFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 1) }),
     )
 
     const templatesQuery = new TemplatesQuery()
@@ -40,19 +40,19 @@ describe('TemplatesQuery', () => {
         templateFactory.build({
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
-        })
+        }),
       )
       const template2 = await Template.create(
         templateFactory.build({
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 1),
-        })
+        }),
       )
       const template3 = await Template.create(
         templateFactory.build({
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 2),
-        })
+        }),
       )
 
       const templatesQuery = new TemplatesQuery()
@@ -84,12 +84,12 @@ describe('TemplatesQuery', () => {
   describe('filterByLicensee', () => {
     it('returns templates filtered by licensee', async () => {
       const template1 = await Template.create(
-        templateFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 0) })
+        templateFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 0) }),
       )
 
       const anotherLicensee = await Licensee.create(licenseeFactory.build({ name: 'Wolf e cia' }))
       const template2 = await Template.create(
-        templateFactory.build({ licensee: anotherLicensee._id, createdAt: new Date(2021, 6, 3, 0, 0, 1) })
+        templateFactory.build({ licensee: anotherLicensee._id, createdAt: new Date(2021, 6, 3, 0, 0, 1) }),
       )
 
       const templatesQuery = new TemplatesQuery()

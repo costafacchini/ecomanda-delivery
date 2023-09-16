@@ -44,7 +44,7 @@ describe('Backgroundjob', () => {
         const validation = backgroundjob.validateSync()
 
         expect(validation.errors['status'].message).toEqual(
-          'Status: Você deve informar um valor ( scheduled | running | done | error)'
+          'Status: Você deve informar um valor ( scheduled | running | done | error)',
         )
       })
     })

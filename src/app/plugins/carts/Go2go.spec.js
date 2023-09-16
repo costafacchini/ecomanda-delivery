@@ -37,7 +37,7 @@ describe('Go2go plugin', () => {
           address_number: '123',
           address_complement: 'Sala 1',
           cep: '12345-678',
-        })
+        }),
       )
 
       const cart = await Cart.create(cartFactory.build({ contact, licensee, delivery_tax: 3.5, note: 'without onion' }))

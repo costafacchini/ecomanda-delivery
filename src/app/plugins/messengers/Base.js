@@ -105,7 +105,7 @@ class MessengersBase {
     if (this.messageData.kind === 'interactive') {
       const triggers = await getAllTriggerBy(
         { expression: this.messageData.interactive.expression, licensee: this.licensee._id },
-        { order: 'asc' }
+        { order: 'asc' },
       )
       if (triggers.length > 0) {
         for (const trigger of triggers) {
@@ -118,7 +118,7 @@ class MessengersBase {
               destination: 'to-messenger',
               kind: 'interactive',
               trigger: trigger._id,
-            })
+            }),
           )
         }
       } else {
@@ -130,7 +130,7 @@ class MessengersBase {
             contact: contact._id,
             destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
             text: this.messageData.interactive.expression,
-          })
+          }),
         )
       }
     } else {

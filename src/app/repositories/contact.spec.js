@@ -31,7 +31,7 @@ describe('contact repository', () => {
           number: '5511990283745',
           talkingWithChatBot: false,
           licensee,
-        })
+        }),
       )
     })
   })
@@ -58,14 +58,14 @@ describe('contact repository', () => {
         expect.objectContaining({
           number: '5511990283745',
           licensee: licensee._id,
-        })
+        }),
       )
 
       expect(contact).not.toEqual(
         expect.objectContaining({
           number: '5511990283745',
           licensee: anotherLicensee._id,
-        })
+        }),
       )
     })
   })
@@ -88,7 +88,7 @@ describe('contact repository', () => {
           contact,
           destination: 'to-chat',
           createdAt: now.subtract('24', 'hours').subtract('1', 'minutes'),
-        })
+        }),
       )
 
       await createMessage(
@@ -97,7 +97,7 @@ describe('contact repository', () => {
           contact,
           destination: 'to-chat',
           createdAt: new Date(2021, 6, 5, 0, 0, 1),
-        })
+        }),
       )
 
       expect(await contactWithWhatsappWindowClosed(contact.id)).toEqual(true)
@@ -120,7 +120,7 @@ describe('contact repository', () => {
           contact,
           destination: 'to-chat',
           createdAt: now.subtract('24', 'hours'),
-        })
+        }),
       )
 
       await createMessage(
@@ -129,7 +129,7 @@ describe('contact repository', () => {
           contact,
           destination: 'to-chat',
           createdAt: new Date(2021, 6, 5, 0, 0, 1),
-        })
+        }),
       )
 
       expect(await contactWithWhatsappWindowClosed(contact.id)).toEqual(true)
@@ -164,7 +164,7 @@ describe('contact repository', () => {
           contact,
           destination: 'to-chat',
           createdAt: now.subtract('23', 'hours').subtract('59', 'minutes'),
-        })
+        }),
       )
 
       await createMessage(
@@ -173,7 +173,7 @@ describe('contact repository', () => {
           contact,
           destination: 'to-chat',
           createdAt: new Date(2021, 6, 5, 0, 0, 1),
-        })
+        }),
       )
 
       expect(await contactWithWhatsappWindowClosed(contact.id)).toEqual(false)

@@ -26,10 +26,10 @@ describe('TriggersQuery', () => {
 
   it('returns all triggers ordered by createdAt asc', async () => {
     const trigger1 = await Trigger.create(
-      triggerMultiProductFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 0) })
+      triggerMultiProductFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 0) }),
     )
     const trigger2 = await Trigger.create(
-      triggerMultiProductFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 1) })
+      triggerMultiProductFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 1) }),
     )
 
     const triggersQuery = new TriggersQuery()
@@ -46,19 +46,19 @@ describe('TriggersQuery', () => {
         triggerMultiProductFactory.build({
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
-        })
+        }),
       )
       const trigger2 = await Trigger.create(
         triggerSingleProductFactory.build({
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 1),
-        })
+        }),
       )
       const trigger3 = await Trigger.create(
         triggerReplyButtonFactory.build({
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 2),
-        })
+        }),
       )
 
       const triggersQuery = new TriggersQuery()
@@ -90,19 +90,19 @@ describe('TriggersQuery', () => {
   describe('filterByKind', () => {
     it('returns triggers filtered by trigger kind', async () => {
       const trigger1 = await Trigger.create(
-        triggerMultiProductFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 0) })
+        triggerMultiProductFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 0) }),
       )
       const trigger2 = await Trigger.create(
-        triggerSingleProductFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 1) })
+        triggerSingleProductFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 1) }),
       )
       const trigger3 = await Trigger.create(
-        triggerReplyButtonFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 1) })
+        triggerReplyButtonFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 1) }),
       )
       const trigger4 = await Trigger.create(
-        triggerListMessageFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 1) })
+        triggerListMessageFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 1) }),
       )
       const trigger5 = await Trigger.create(
-        triggerTextFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 1) })
+        triggerTextFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 1) }),
       )
 
       const triggersQuery = new TriggersQuery()
@@ -161,12 +161,12 @@ describe('TriggersQuery', () => {
   describe('filterByLicensee', () => {
     it('returns triggers filtered by licensee', async () => {
       const trigger1 = await Trigger.create(
-        triggerMultiProductFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 0) })
+        triggerMultiProductFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 0) }),
       )
 
       const anotherLicensee = await Licensee.create(licenseeFactory.build({ name: 'Wolf e cia' }))
       const trigger2 = await Trigger.create(
-        triggerMultiProductFactory.build({ licensee: anotherLicensee._id, createdAt: new Date(2021, 6, 3, 0, 0, 1) })
+        triggerMultiProductFactory.build({ licensee: anotherLicensee._id, createdAt: new Date(2021, 6, 3, 0, 0, 1) }),
       )
 
       const triggersQuery = new TriggersQuery()

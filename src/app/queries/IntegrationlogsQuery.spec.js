@@ -24,13 +24,13 @@ describe('IntegrationlogsQuery', () => {
         integrationlogFactory.build({
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
-        })
+        }),
       )
       const integrationlog2 = await Integrationlog.create(
         integrationlogFactory.build({
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 1),
-        })
+        }),
       )
 
       const integrationlogsQuery = new IntegrationlogsQuery()
@@ -47,25 +47,25 @@ describe('IntegrationlogsQuery', () => {
           integrationlogFactory.build({
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
         const integrationlog2 = await Integrationlog.create(
           integrationlogFactory.build({
             licensee,
             createdAt: new Date(2021, 6, 3, 23, 59, 58),
-          })
+          }),
         )
         const integrationlogBefore = await Integrationlog.create(
           integrationlogFactory.build({
             licensee,
             createdAt: new Date(2021, 6, 2, 23, 59, 59),
-          })
+          }),
         )
         const integrationlogAfter = await Integrationlog.create(
           integrationlogFactory.build({
             licensee,
             createdAt: new Date(2021, 6, 4, 0, 0, 0),
-          })
+          }),
         )
 
         const integrationlogsQuery = new IntegrationlogsQuery()
@@ -77,7 +77,7 @@ describe('IntegrationlogsQuery', () => {
         expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: integrationlog2._id })]))
         expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: integrationlog1._id })]))
         expect(records).not.toEqual(
-          expect.arrayContaining([expect.objectContaining({ _id: integrationlogBefore._id })])
+          expect.arrayContaining([expect.objectContaining({ _id: integrationlogBefore._id })]),
         )
         expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: integrationlogAfter._id })]))
       })
@@ -89,7 +89,7 @@ describe('IntegrationlogsQuery', () => {
           integrationlogFactory.build({
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
 
         const anotherLicensee = await Licensee.create(licenseeFactory.build())
@@ -97,7 +97,7 @@ describe('IntegrationlogsQuery', () => {
           integrationlogFactory.build({
             licensee: anotherLicensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
 
         const integrationlogsQuery = new IntegrationlogsQuery()
@@ -117,13 +117,13 @@ describe('IntegrationlogsQuery', () => {
           integrationlogFactory.build({
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 0),
-          })
+          }),
         )
         const integrationlog2 = await Integrationlog.create(
           integrationlogFactory.build({
             licensee,
             createdAt: new Date(2021, 6, 3, 0, 0, 1),
-          })
+          }),
         )
 
         const integrationlogsQuery = new IntegrationlogsQuery()

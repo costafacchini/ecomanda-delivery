@@ -14,7 +14,7 @@ const roomSchema = new Schema(
       required: [true, 'Contato: Você deve preencher o campo'],
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 )
 
 roomSchema.pre('save', function (next) {

@@ -10,7 +10,7 @@ describe('createCartPlugin', () => {
     const licensee = new Licensee(
       licenseeFactory.build({
         cartDefault: 'go2go',
-      })
+      }),
     )
 
     const plugin = createCartPlugin(licensee)
@@ -22,7 +22,7 @@ describe('createCartPlugin', () => {
     const licensee = new Licensee(
       licenseeFactory.build({
         cartDefault: 'go2go_v2',
-      })
+      }),
     )
 
     const plugin = createCartPlugin(licensee)
@@ -34,7 +34,7 @@ describe('createCartPlugin', () => {
     const licensee = new Licensee(
       licenseeFactory.build({
         cartDefault: 'alloy',
-      })
+      }),
     )
 
     const plugin = createCartPlugin(licensee)
@@ -46,7 +46,7 @@ describe('createCartPlugin', () => {
     const licensee = new Licensee(
       licenseeFactory.build({
         cartDefault: 'something',
-      })
+      }),
     )
 
     expect(() => {

@@ -25,7 +25,7 @@ describe('ContactsQuery', () => {
         number: '551183847642',
         licensee,
         createdAt: new Date(2021, 6, 3, 0, 0, 1),
-      })
+      }),
     )
 
     const contactsQuery = new ContactsQuery()
@@ -42,21 +42,21 @@ describe('ContactsQuery', () => {
         contactFactory.build({
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
-        })
+        }),
       )
       const contact2 = await Contact.create(
         contactFactory.build({
           number: '551183847642',
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 1),
-        })
+        }),
       )
       const contact3 = await Contact.create(
         contactFactory.build({
           number: '551164839723',
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 2),
-        })
+        }),
       )
 
       const contactsQuery = new ContactsQuery()
@@ -92,14 +92,14 @@ describe('ContactsQuery', () => {
           type: '@c.us',
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
-        })
+        }),
       )
       const contact2 = await Contact.create(
         contactFactory.build({
           type: '@g.us',
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 1),
-        })
+        }),
       )
 
       const contactsQuery = new ContactsQuery()
@@ -120,14 +120,14 @@ describe('ContactsQuery', () => {
           talkingWithChatBot: false,
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
-        })
+        }),
       )
       const contact2 = await Contact.create(
         contactFactory.build({
           talkingWithChatBot: true,
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 1),
-        })
+        }),
       )
 
       const contactsQuery = new ContactsQuery()
@@ -146,7 +146,7 @@ describe('ContactsQuery', () => {
         contactFactory.build({
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
-        })
+        }),
       )
 
       const anotherLicensee = await Licensee.create(licenseeFactory.build({ name: 'Wolf e cia' }))
@@ -154,7 +154,7 @@ describe('ContactsQuery', () => {
         contactFactory.build({
           licensee: anotherLicensee._id,
           createdAt: new Date(2021, 6, 3, 0, 0, 1),
-        })
+        }),
       )
 
       const contactsQuery = new ContactsQuery()
@@ -178,7 +178,7 @@ describe('ContactsQuery', () => {
           landbotId: '0987',
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
-        })
+        }),
       )
       const contact2 = await Contact.create(
         contactFactory.build({
@@ -190,7 +190,7 @@ describe('ContactsQuery', () => {
           talkingWithChatBot: true,
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 1),
-        })
+        }),
       )
       const contact3 = await Contact.create(
         contactFactory.build({
@@ -202,7 +202,7 @@ describe('ContactsQuery', () => {
           talkingWithChatBot: true,
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 2),
-        })
+        }),
       )
 
       const contactsQuery = new ContactsQuery()

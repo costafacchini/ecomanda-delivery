@@ -30,7 +30,7 @@ const templateSchema = new Schema(
     footerParams: [paramsSchema],
     active: { type: Boolean, default: false },
   },
-  { timestamps: true }
+  { timestamps: true },
 )
 
 templateSchema.pre('save', function (next) {

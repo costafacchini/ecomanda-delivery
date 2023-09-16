@@ -27,7 +27,7 @@ describe('room repository', () => {
       expect(room).toEqual(
         expect.objectContaining({
           contact,
-        })
+        }),
       )
     })
   })
@@ -56,7 +56,7 @@ describe('room repository', () => {
           contact: expect.objectContaining({
             _id: contact._id,
           }),
-        })
+        }),
       )
 
       expect(room.contact).not.toEqual(
@@ -64,7 +64,7 @@ describe('room repository', () => {
           contact: expect.objectContaining({
             _id: anotherContact._id,
           }),
-        })
+        }),
       )
     })
   })

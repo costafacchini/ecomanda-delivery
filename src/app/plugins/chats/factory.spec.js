@@ -10,7 +10,7 @@ describe('createChatPlugin', () => {
     const licensee = new Licensee(
       licenseeFactory.build({
         chatDefault: 'rocketchat',
-      })
+      }),
     )
 
     const plugin = createChatPlugin(licensee)
@@ -22,7 +22,7 @@ describe('createChatPlugin', () => {
     const licensee = new Licensee(
       licenseeFactory.build({
         chatDefault: 'crisp',
-      })
+      }),
     )
 
     const plugin = createChatPlugin(licensee)
@@ -34,7 +34,7 @@ describe('createChatPlugin', () => {
     const licensee = new Licensee(
       licenseeFactory.build({
         chatDefault: 'cuboup',
-      })
+      }),
     )
 
     const plugin = createChatPlugin(licensee)
@@ -46,7 +46,7 @@ describe('createChatPlugin', () => {
     const licensee = new Licensee(
       licenseeFactory.build({
         chatDefault: 'something',
-      })
+      }),
     )
 
     expect(() => {

@@ -73,7 +73,7 @@ describe('User', () => {
         const validation = user.validateSync()
 
         expect(validation.errors['name'].message).toEqual(
-          'Nome: Informe um valor com mais que 4 caracteres! Atual: abc'
+          'Nome: Informe um valor com mais que 4 caracteres! Atual: abc',
         )
       })
     })

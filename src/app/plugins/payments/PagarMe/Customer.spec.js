@@ -44,7 +44,7 @@ describe('PagarMe/Customer plugin', () => {
             neighborhood: 'Bairro',
             address_complement: 'Perto daquela parada lá',
             licensee,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -85,7 +85,7 @@ describe('PagarMe/Customer plugin', () => {
                 id: 34224,
               },
             },
-          }
+          },
         )
 
         const customer = new Customer()
@@ -111,7 +111,7 @@ describe('PagarMe/Customer plugin', () => {
             email: 'john@doe.com',
             number: '5511990283745',
             licensee,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -144,7 +144,7 @@ describe('PagarMe/Customer plugin', () => {
                 id: 34224,
               },
             },
-          }
+          },
         )
 
         const customer = new Customer()
@@ -178,7 +178,7 @@ describe('PagarMe/Customer plugin', () => {
             neighborhood: 'Bairro',
             address_complement: 'Perto daquela parada lá',
             licensee,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -219,7 +219,7 @@ describe('PagarMe/Customer plugin', () => {
                 id: 34224,
               },
             },
-          }
+          },
         )
 
         const customer = new Customer()
@@ -242,7 +242,7 @@ describe('PagarMe/Customer plugin', () => {
             email: 'john@doe.com',
             number: '5511990283745',
             licensee,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -277,7 +277,7 @@ describe('PagarMe/Customer plugin', () => {
           {
             status: 200,
             body: bodyResponse,
-          }
+          },
         )
 
         const customer = new Customer()
@@ -305,7 +305,7 @@ describe('PagarMe/Customer plugin', () => {
             email: 'john@doe.com',
             number: '5511990283745',
             licensee,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -338,7 +338,7 @@ describe('PagarMe/Customer plugin', () => {
                 ],
               },
             },
-          }
+          },
         )
 
         const customer = new Customer()
@@ -352,7 +352,7 @@ describe('PagarMe/Customer plugin', () => {
           `Contato John Doe não criado na pagar.me.
            status: 422
            mensagem: {"message":"The request is invalid.","errors":{"customer.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
-           log_id: 1234`
+           log_id: 1234`,
         )
 
         integrationlogCreateSpy.mockRestore()
@@ -365,7 +365,7 @@ describe('PagarMe/Customer plugin', () => {
             email: 'john@doe.com',
             number: '5511990283745',
             licensee,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -400,7 +400,7 @@ describe('PagarMe/Customer plugin', () => {
           {
             status: 422,
             body: bodyResponse,
-          }
+          },
         )
 
         const customer = new Customer()
@@ -437,7 +437,7 @@ describe('PagarMe/Customer plugin', () => {
             neighborhood: 'Bairro',
             address_complement: 'Perto daquela parada lá',
             licensee,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -458,7 +458,7 @@ describe('PagarMe/Customer plugin', () => {
             body: {
               id: 23717165,
             },
-          }
+          },
         )
 
         const customer = new Customer()
@@ -488,7 +488,7 @@ describe('PagarMe/Customer plugin', () => {
             neighborhood: 'Bairro',
             address_complement: 'Perto daquela parada lá',
             licensee,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -511,7 +511,7 @@ describe('PagarMe/Customer plugin', () => {
           {
             status: 200,
             body: bodyResponse,
-          }
+          },
         )
 
         const customer = new Customer()
@@ -547,7 +547,7 @@ describe('PagarMe/Customer plugin', () => {
             neighborhood: 'Bairro',
             address_complement: 'Perto daquela parada lá',
             licensee,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -573,7 +573,7 @@ describe('PagarMe/Customer plugin', () => {
                 ],
               },
             },
-          }
+          },
         )
 
         const customer = new Customer()
@@ -588,7 +588,7 @@ describe('PagarMe/Customer plugin', () => {
           `Contato John Doe não atualizado na pagar.me.
            status: 400
            mensagem: {"message":"The request is invalid.","errors":{"customer.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
-           log_id: 1234`
+           log_id: 1234`,
         )
 
         integrationlogCreateSpy.mockRestore()
@@ -608,7 +608,7 @@ describe('PagarMe/Customer plugin', () => {
             neighborhood: 'Bairro',
             address_complement: 'Perto daquela parada lá',
             licensee,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -636,7 +636,7 @@ describe('PagarMe/Customer plugin', () => {
           {
             status: 400,
             body: bodyResponse,
-          }
+          },
         )
 
         const customer = new Customer()

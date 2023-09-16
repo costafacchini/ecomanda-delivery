@@ -21,7 +21,7 @@ const integrationlogSchema = new Schema(
       ref: 'Cart',
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 )
 
 integrationlogSchema.pre('save', function (next) {

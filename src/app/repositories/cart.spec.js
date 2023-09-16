@@ -29,7 +29,7 @@ describe('cart repository', () => {
         expect.objectContaining({
           contact,
           licensee,
-        })
+        }),
       )
     })
   })
@@ -56,14 +56,14 @@ describe('cart repository', () => {
         expect.objectContaining({
           contact: contact._id,
           licensee: licensee._id,
-        })
+        }),
       )
 
       expect(cart).not.toEqual(
         expect.objectContaining({
           contact: contact._id,
           licensee: anotherLicensee._id,
-        })
+        }),
       )
     })
   })

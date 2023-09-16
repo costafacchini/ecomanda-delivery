@@ -37,14 +37,14 @@ class Recipient {
       await licensee.save()
 
       console.info(
-        `Licenciado ${licensee.name} criado na pagar.me! id: ${licensee.recipient_id} log_id: ${integrationlog._id}`
+        `Licenciado ${licensee.name} criado na pagar.me! id: ${licensee.recipient_id} log_id: ${integrationlog._id}`,
       )
     } else {
       console.error(
         `Licenciado ${licensee.name} não criado na pagar.me.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}
-           log_id: ${integrationlog._id}`
+           log_id: ${integrationlog._id}`,
       )
     }
   }
@@ -70,14 +70,14 @@ class Recipient {
 
     if (response.status === 200) {
       console.info(
-        `Licenciado ${licensee.name} atualizado na pagar.me! id: ${licensee.recipient_id} log_id: ${integrationlog._id}`
+        `Licenciado ${licensee.name} atualizado na pagar.me! id: ${licensee.recipient_id} log_id: ${integrationlog._id}`,
       )
     } else {
       console.error(
         `Licenciado ${licensee.name} não atualizado na pagar.me.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}
-           log_id: ${integrationlog._id}`
+           log_id: ${integrationlog._id}`,
       )
     }
   }

@@ -49,7 +49,7 @@ describe('licensee controller', () => {
             email: 'mary@jane.com',
             password: '12345678',
             active: true,
-          })
+          }),
         )
         .expect('Content-Type', /json/)
         .expect(500, {
@@ -311,7 +311,7 @@ describe('licensee controller', () => {
             chatbotDefault: 'landbot',
             whatsappDefault: 'utalk',
             name: 'Alcalina',
-          })
+          }),
         )
         await Licensee.create(
           licenseeCompleteFactory.build({
@@ -319,7 +319,7 @@ describe('licensee controller', () => {
             chatbotDefault: 'landbot',
             whatsappDefault: 'utalk',
             name: 'Alcateia ltds',
-          })
+          }),
         )
         await Licensee.create(
           licenseeCompleteFactory.build({
@@ -327,7 +327,7 @@ describe('licensee controller', () => {
             chatbotDefault: 'landbot',
             whatsappDefault: 'utalk',
             name: 'Alcachofra',
-          })
+          }),
         )
         await Licensee.create(
           licenseeCompleteFactory.build({
@@ -336,12 +336,12 @@ describe('licensee controller', () => {
             chatbotDefault: 'landbot',
             whatsappDefault: 'utalk',
             name: 'Alcachofra',
-          })
+          }),
         )
 
         await request(expressServer)
           .get(
-            '/resources/licensees/?chatDefault=rocketchat&chatbotDefault=landbot&whatsappDefault=utalk&expression=Alca&page=1&limit=3&active=false'
+            '/resources/licensees/?chatDefault=rocketchat&chatbotDefault=landbot&whatsappDefault=utalk&expression=Alca&page=1&limit=3&active=false',
           )
           .set('x-access-token', token)
           .expect('Content-Type', /json/)

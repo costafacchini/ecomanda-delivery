@@ -31,35 +31,35 @@ describe('resetChats', () => {
             whatsappUrl: 'https://waba.360dialog.io/',
             whatsappToken: 'ljsdf12g',
             useWhatsappWindow: true,
-          })
+          }),
         )
 
         const contactWithWhatsappWindowEnding = await Contact.create(
           contactFactory.build({
             licensee,
             wa_start_chat: moment().subtract(23, 'hours').subtract(55, 'minutes'),
-          })
+          }),
         )
 
         const contactWithWhatsappWindowOnLimitEnding1 = await Contact.create(
           contactFactory.build({
             licensee,
             wa_start_chat: moment().subtract(23, 'hours').subtract(50, 'minutes'),
-          })
+          }),
         )
 
         const contactWithWhatsappWindowOnLimitEnding2 = await Contact.create(
           contactFactory.build({
             licensee,
             wa_start_chat: moment().subtract(23, 'hours').subtract(59, 'minutes'),
-          })
+          }),
         )
 
         const contactWithWhatsappWindowExpired1 = await Contact.create(
           contactFactory.build({
             licensee,
             wa_start_chat: moment().subtract(23, 'hours').subtract(49, 'minutes'),
-          })
+          }),
         )
 
         const licenseeWhatsappWindowOff = await Licensee.create(
@@ -68,14 +68,14 @@ describe('resetChats', () => {
             whatsappUrl: 'https://waba.360dialog.io/',
             whatsappToken: 'ljsdf12g',
             useWhatsappWindow: false,
-          })
+          }),
         )
 
         const contactLicenseeWindowOff = await Contact.create(
           contactFactory.build({
             licensee: licenseeWhatsappWindowOff,
             wa_start_chat: moment().subtract(23, 'hours').subtract(55, 'minutes'),
-          })
+          }),
         )
 
         const licenseeThatNotUseDialog = await Licensee.create(
@@ -84,14 +84,14 @@ describe('resetChats', () => {
             whatsappUrl: 'https://utalk.com/',
             whatsappToken: 'ljsdf12g',
             useWhatsappWindow: true,
-          })
+          }),
         )
 
         const contactLicenseeThatNotUseDialog = await Contact.create(
           contactFactory.build({
             licensee: licenseeThatNotUseDialog,
             wa_start_chat: moment().subtract(23, 'hours').subtract(55, 'minutes'),
-          })
+          }),
         )
 
         await resetChats()
@@ -102,22 +102,22 @@ describe('resetChats', () => {
         expect(spySendMessage).toHaveBeenCalledTimes(3)
 
         expect(messages).toEqual(
-          expect.arrayContaining([expect.objectContaining({ contact: contactWithWhatsappWindowEnding._id })])
+          expect.arrayContaining([expect.objectContaining({ contact: contactWithWhatsappWindowEnding._id })]),
         )
         expect(messages).toEqual(
-          expect.arrayContaining([expect.objectContaining({ contact: contactWithWhatsappWindowOnLimitEnding1._id })])
+          expect.arrayContaining([expect.objectContaining({ contact: contactWithWhatsappWindowOnLimitEnding1._id })]),
         )
         expect(messages).toEqual(
-          expect.arrayContaining([expect.objectContaining({ contact: contactWithWhatsappWindowOnLimitEnding2._id })])
+          expect.arrayContaining([expect.objectContaining({ contact: contactWithWhatsappWindowOnLimitEnding2._id })]),
         )
         expect(messages).toEqual(
-          expect.arrayContaining([expect.not.objectContaining({ contact: contactWithWhatsappWindowExpired1._id })])
+          expect.arrayContaining([expect.not.objectContaining({ contact: contactWithWhatsappWindowExpired1._id })]),
         )
         expect(messages).toEqual(
-          expect.arrayContaining([expect.not.objectContaining({ contact: contactLicenseeWindowOff._id })])
+          expect.arrayContaining([expect.not.objectContaining({ contact: contactLicenseeWindowOff._id })]),
         )
         expect(messages).toEqual(
-          expect.arrayContaining([expect.not.objectContaining({ contact: contactLicenseeThatNotUseDialog._id })])
+          expect.arrayContaining([expect.not.objectContaining({ contact: contactLicenseeThatNotUseDialog._id })]),
         )
       })
 
@@ -128,21 +128,21 @@ describe('resetChats', () => {
             whatsappUrl: 'https://waba.360dialog.io/',
             whatsappToken: 'ljsdf12g',
             useWhatsappWindow: true,
-          })
+          }),
         )
 
         const contactWithWhatsappWindowEnding = await Contact.create(
           contactFactory.build({
             licensee,
             wa_start_chat: moment().subtract(24, 'hours').subtract(10, 'minutes'),
-          })
+          }),
         )
 
         const contactWithWhatsappWindowOnLimitEnding1 = await Contact.create(
           contactFactory.build({
             licensee,
             wa_start_chat: moment().subtract(24, 'hours'),
-          })
+          }),
         )
 
         const licenseeWhatsappWindowOff = await Licensee.create(
@@ -151,14 +151,14 @@ describe('resetChats', () => {
             whatsappUrl: 'https://waba.360dialog.io/',
             whatsappToken: 'ljsdf12g',
             useWhatsappWindow: false,
-          })
+          }),
         )
 
         const contactLicenseeWindowOff = await Contact.create(
           contactFactory.build({
             licensee: licenseeWhatsappWindowOff,
             wa_start_chat: moment().subtract(24, 'hours').subtract(10, 'minutes'),
-          })
+          }),
         )
 
         const licenseeThatNotUseDialog = await Licensee.create(
@@ -167,14 +167,14 @@ describe('resetChats', () => {
             whatsappUrl: 'https://utalk.com/',
             whatsappToken: 'ljsdf12g',
             useWhatsappWindow: true,
-          })
+          }),
         )
 
         const contactLicenseeThatNotUseDialog = await Contact.create(
           contactFactory.build({
             licensee: licenseeThatNotUseDialog,
             wa_start_chat: moment().subtract(24, 'hours').subtract(10, 'minutes'),
-          })
+          }),
         )
 
         await resetChats()
@@ -185,23 +185,23 @@ describe('resetChats', () => {
         expect(spySendMessage).toHaveBeenCalledTimes(2)
 
         expect(messages).toEqual(
-          expect.arrayContaining([expect.objectContaining({ contact: contactWithWhatsappWindowEnding._id })])
+          expect.arrayContaining([expect.objectContaining({ contact: contactWithWhatsappWindowEnding._id })]),
         )
         expect(messages).toEqual(
-          expect.arrayContaining([expect.objectContaining({ contact: contactWithWhatsappWindowOnLimitEnding1._id })])
+          expect.arrayContaining([expect.objectContaining({ contact: contactWithWhatsappWindowOnLimitEnding1._id })]),
         )
         expect(messages).toEqual(
-          expect.arrayContaining([expect.not.objectContaining({ contact: contactLicenseeWindowOff._id })])
+          expect.arrayContaining([expect.not.objectContaining({ contact: contactLicenseeWindowOff._id })]),
         )
         expect(messages).toEqual(
-          expect.arrayContaining([expect.not.objectContaining({ contact: contactLicenseeThatNotUseDialog._id })])
+          expect.arrayContaining([expect.not.objectContaining({ contact: contactLicenseeThatNotUseDialog._id })]),
         )
 
         const contactWithWhatsappWindowEndingUpdated = Contact.findById(contactWithWhatsappWindowEnding._id)
         expect(contactWithWhatsappWindowEndingUpdated.wa_start_chat).toEqual(undefined)
 
         const contactWithWhatsappWindowOnLimitEnding1Updated = Contact.findById(
-          contactWithWhatsappWindowOnLimitEnding1._id
+          contactWithWhatsappWindowOnLimitEnding1._id,
         )
         expect(contactWithWhatsappWindowOnLimitEnding1Updated.wa_start_chat).toEqual(undefined)
       })

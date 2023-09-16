@@ -59,7 +59,7 @@ describe('ParseTriggerText', () => {
             payment_method: 'Cartão de crédito - Master',
             note: 'Deliver in hands',
             points: true,
-          })
+          }),
         )
 
         expect(await parseText('This is your cart \n $last_cart_resume', contact)).toEqual(
@@ -123,7 +123,7 @@ describe('ParseTriggerText', () => {
             '\n' +
             'Deliver in hands' +
             '\n' +
-            'Pontos Ganhos Fidelidade: 19'
+            'Pontos Ganhos Fidelidade: 19',
         )
       })
 
@@ -154,7 +154,7 @@ describe('ParseTriggerText', () => {
               ],
               delivery_tax: 0.5,
               concluded: false,
-            })
+            }),
           )
 
           expect(await parseText('This is your cart \n $last_cart_resume', contact)).not.toContain('*Entrega:*')
@@ -195,7 +195,7 @@ describe('ParseTriggerText', () => {
               city: null,
               uf: null,
               cep: null,
-            })
+            }),
           )
 
           const text = await parseText('This is your cart \n $last_cart_resume', contact)
@@ -232,11 +232,11 @@ describe('ParseTriggerText', () => {
               delivery_tax: 0.5,
               concluded: false,
               payment_method: null,
-            })
+            }),
           )
 
           expect(await parseText('This is your cart \n $last_cart_resume', contact)).not.toContain(
-            '*FORMA DE PAGAMENTO*'
+            '*FORMA DE PAGAMENTO*',
           )
         })
       })
@@ -269,7 +269,7 @@ describe('ParseTriggerText', () => {
               delivery_tax: 0.5,
               concluded: false,
               partner_key: null,
-            })
+            }),
           )
 
           expect(await parseText('This is your cart \n $last_cart_resume', contact)).not.toContain('PEDIDO 9164')
@@ -304,7 +304,7 @@ describe('ParseTriggerText', () => {
               delivery_tax: 0.5,
               concluded: false,
               note: null,
-            })
+            }),
           )
 
           expect(await parseText('This is your cart \n $last_cart_resume', contact)).not.toContain('*OBSERVACOES*')
@@ -339,11 +339,11 @@ describe('ParseTriggerText', () => {
               delivery_tax: 0.5,
               concluded: false,
               points: false,
-            })
+            }),
           )
 
           expect(await parseText('This is your cart \n $last_cart_resume', contact)).not.toContain(
-            'Pontos Ganhos Fidelidade:'
+            'Pontos Ganhos Fidelidade:',
           )
         })
       })
@@ -376,7 +376,7 @@ describe('ParseTriggerText', () => {
               delivery_tax: 0.5,
               concluded: false,
               payment_method: 'master',
-            })
+            }),
           )
 
           expect(await parseText('This is your cart \n $last_cart_resume', contact)).not.toContain('*TROCO PARA:*')
@@ -398,7 +398,7 @@ describe('ParseTriggerText', () => {
         const contact = contactFactory.build({ name: 'John Doe', number: '5511990283745' })
 
         expect(await parseText('Text that contains $contact_number that should be changed', contact)).toEqual(
-          'Text that contains 5511990283745 that should be changed'
+          'Text that contains 5511990283745 that should be changed',
         )
       })
     })
@@ -424,7 +424,7 @@ describe('ParseTriggerText', () => {
             '\n' +
             'CEP 01234567' +
             '\n' +
-            'São Paulo - SP'
+            'São Paulo - SP',
         )
       })
     })
@@ -469,7 +469,7 @@ describe('ParseTriggerText', () => {
           payment_method: 'Cartão de crédito - Master',
           note: 'Deliver in hands',
           points: true,
-        })
+        }),
       )
 
       expect(await parseCart(cart._id)).toEqual(
@@ -531,7 +531,7 @@ describe('ParseTriggerText', () => {
           '\n' +
           'Deliver in hands' +
           '\n' +
-          'Pontos Ganhos Fidelidade: 19'
+          'Pontos Ganhos Fidelidade: 19',
       )
     })
   })

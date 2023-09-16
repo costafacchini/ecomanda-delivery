@@ -23,7 +23,7 @@ describe('transformChatBody', () => {
         whatsappDefault: 'dialog',
         whatsappUrl: 'https://waba.360dialog.io/',
         whatsappToken: 'token',
-      })
+      }),
     )
   })
 
@@ -46,7 +46,7 @@ describe('transformChatBody', () => {
     const body = await Body.create(
       bodyFactory.build({
         licensee: licensee,
-      })
+      }),
     )
 
     const data = {
@@ -89,13 +89,13 @@ describe('transformChatBody', () => {
         whatsappUrl: 'https://waba.360dialog.io/',
         whatsappToken: 'token',
         useWhatsappWindow: true,
-      })
+      }),
     )
 
     const body = await Body.create(
       bodyFactory.build({
         licensee: licensee,
-      })
+      }),
     )
 
     const data = {
@@ -127,7 +127,7 @@ describe('transformChatBody', () => {
     const body = await Body.create(
       bodyFactory.build({
         licensee: licensee,
-      })
+      }),
     )
 
     const data = {
@@ -162,7 +162,7 @@ describe('transformChatBody', () => {
           },
         },
         licensee: licensee,
-      })
+      }),
     )
 
     const data = {

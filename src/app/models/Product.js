@@ -13,7 +13,7 @@ const productSchema = new Schema(
       required: [true, 'Licensee: Você deve preencher o campo'],
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 )
 
 productSchema.pre('save', function (next) {

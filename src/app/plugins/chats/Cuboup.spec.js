@@ -38,7 +38,7 @@ describe('Cuboup plugin', () => {
           name: 'John Doe',
           talkingWithChatBot: true,
           licensee,
-        })
+        }),
       )
 
       const responseBody = {
@@ -190,7 +190,7 @@ describe('Cuboup plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         const responseBody = {
@@ -224,7 +224,7 @@ describe('Cuboup plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         const responseBody = {
@@ -281,7 +281,7 @@ describe('Cuboup plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         const triggerOrder2 = await Trigger.create(triggerReplyButtonFactory.build({ licensee, order: 2 }))
@@ -341,7 +341,7 @@ describe('Cuboup plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         const responseBody = {
@@ -377,7 +377,7 @@ describe('Cuboup plugin', () => {
             talkingWithChatBot: true,
             email: 'john@doe.com',
             licensee,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -386,7 +386,7 @@ describe('Cuboup plugin', () => {
             contact,
             licensee,
             sended: false,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -430,7 +430,7 @@ describe('Cuboup plugin', () => {
             talkingWithChatBot: true,
             email: 'john@doe.com',
             licensee,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -440,7 +440,7 @@ describe('Cuboup plugin', () => {
             contact,
             licensee,
             sended: false,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -474,7 +474,7 @@ describe('Cuboup plugin', () => {
         expect(fetchMock.calls()).toHaveLength(1)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 enviada para CuboUp com sucesso!'
+          'Mensagem 60958703f415ed4008748637 enviada para CuboUp com sucesso!',
         )
       })
 
@@ -496,7 +496,7 @@ describe('Cuboup plugin', () => {
               licensee,
               sended: false,
               senderName: 'John Doe',
-            })
+            }),
           )
 
           const expectedBody = {
@@ -542,7 +542,7 @@ describe('Cuboup plugin', () => {
             talkingWithChatBot: true,
             email: 'john@doe.com',
             licensee,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -552,7 +552,7 @@ describe('Cuboup plugin', () => {
             contact,
             licensee,
             sended: false,
-          })
+          }),
         )
 
         const expectedBody = {
@@ -576,7 +576,7 @@ describe('Cuboup plugin', () => {
           (url, { body }) => {
             return url === 'https://url.com.br/jkJGs5a4ea/pAOqw2340' && body === JSON.stringify(expectedBody)
           },
-          { status: 404, body: { error: 'Error message' } }
+          { status: 404, body: { error: 'Error message' } },
         )
 
         expect(message.sended).toEqual(false)
@@ -595,7 +595,7 @@ describe('Cuboup plugin', () => {
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Mensagem 60958703f415ed4008748637 não enviada para CuboUp.
            status: 404
-           mensagem: {"error":"Error message"}`
+           mensagem: {"error":"Error message"}`,
         )
       })
     })
@@ -609,7 +609,7 @@ describe('Cuboup plugin', () => {
               talkingWithChatBot: true,
               email: 'john@doe.com',
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -621,7 +621,7 @@ describe('Cuboup plugin', () => {
               kind: 'location',
               latitude: 10.2,
               longitude: 123.45,
-            })
+            }),
           )
 
           const expectedBody = {
@@ -663,7 +663,7 @@ describe('Cuboup plugin', () => {
               talkingWithChatBot: true,
               email: 'john@doe.com',
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -672,7 +672,7 @@ describe('Cuboup plugin', () => {
               contact,
               licensee,
               sended: false,
-            })
+            }),
           )
 
           const expectedBody = {
@@ -715,7 +715,7 @@ describe('Cuboup plugin', () => {
               talkingWithChatBot: true,
               email: 'john@doe.com',
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -727,7 +727,7 @@ describe('Cuboup plugin', () => {
               kind: 'file',
               url: 'https://message.with.file.com/file.txt',
               fileName: 'file.txt',
-            })
+            }),
           )
 
           const expectedBody = {
@@ -773,7 +773,7 @@ describe('Cuboup plugin', () => {
           name: 'John Doe',
           talkingWithChatBot: true,
           licensee,
-        })
+        }),
       )
 
       const message = await Message.create(
@@ -783,7 +783,7 @@ describe('Cuboup plugin', () => {
           contact,
           licensee,
           sended: false,
-        })
+        }),
       )
 
       expect(contact.talkingWithChatBot).toEqual(true)
@@ -802,7 +802,7 @@ describe('Cuboup plugin', () => {
           name: 'John Doe',
           talkingWithChatBot: true,
           licensee,
-        })
+        }),
       )
 
       const message = await Message.create(
@@ -812,7 +812,7 @@ describe('Cuboup plugin', () => {
           contact,
           licensee,
           sended: false,
-        })
+        }),
       )
 
       const cuboup = new Cuboup(licensee)
@@ -832,7 +832,7 @@ describe('Cuboup plugin', () => {
             chatbotDefault: 'landbot',
             chatbotUrl: 'https://url.com',
             chatbotAuthorizationToken: 'token',
-          })
+          }),
         )
 
         const contact = await Contact.create(
@@ -842,7 +842,7 @@ describe('Cuboup plugin', () => {
             email: 'john@doe.com',
             roomId: 'ka3DiV9CuHD765',
             licensee,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -852,7 +852,7 @@ describe('Cuboup plugin', () => {
             contact,
             licensee,
             sended: false,
-          })
+          }),
         )
 
         expect(contact.talkingWithChatBot).toEqual(false)
@@ -874,7 +874,7 @@ describe('Cuboup plugin', () => {
             chatbotUrl: 'https://url.com',
             chatbotAuthorizationToken: 'token',
             messageOnCloseChat: 'Send on close chat',
-          })
+          }),
         )
 
         const contact = await Contact.create(
@@ -884,7 +884,7 @@ describe('Cuboup plugin', () => {
             email: 'john@doe.com',
             roomId: 'ka3DiV9CuHD765',
             licensee,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -894,7 +894,7 @@ describe('Cuboup plugin', () => {
             contact,
             licensee,
             sended: false,
-          })
+          }),
         )
 
         expect(contact.talkingWithChatBot).toEqual(false)

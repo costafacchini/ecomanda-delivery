@@ -96,7 +96,7 @@ const postMessage = async (url, headers, contact, message, room) => {
     console.error(
       `Mensagem ${message._id} não enviada para Crisp.
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}`
+           mensagem: ${JSON.stringify(response.data)}`,
     )
   }
 

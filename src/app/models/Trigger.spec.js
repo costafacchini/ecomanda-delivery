@@ -73,7 +73,7 @@ describe('Trigger', () => {
         const validation = trigger.validateSync()
 
         expect(validation.errors['catalogMulti'].message).toEqual(
-          'Catalogo: deve ser preenchido quando o gatilho é do tipo vários produtos'
+          'Catalogo: deve ser preenchido quando o gatilho é do tipo vários produtos',
         )
       })
     })
@@ -91,7 +91,7 @@ describe('Trigger', () => {
         const validation = trigger.validateSync()
 
         expect(validation.errors['catalogId'].message).toEqual(
-          'Id Catalogo: deve ser preenchido quando o gatilho é do tipo vários produtos'
+          'Id Catalogo: deve ser preenchido quando o gatilho é do tipo vários produtos',
         )
       })
     })
@@ -109,7 +109,7 @@ describe('Trigger', () => {
         const validation = trigger.validateSync()
 
         expect(validation.errors['catalogSingle'].message).toEqual(
-          'Catalogo: deve ser preenchido quando o gatilho é do tipo produto único'
+          'Catalogo: deve ser preenchido quando o gatilho é do tipo produto único',
         )
       })
     })
@@ -127,7 +127,7 @@ describe('Trigger', () => {
         const validation = trigger.validateSync()
 
         expect(validation.errors['textReplyButton'].message).toEqual(
-          'Script: deve ser preenchido quando o gatilho é do tipo botões de resposta'
+          'Script: deve ser preenchido quando o gatilho é do tipo botões de resposta',
         )
       })
     })
@@ -145,7 +145,7 @@ describe('Trigger', () => {
         const validation = trigger.validateSync()
 
         expect(validation.errors['messagesList'].message).toEqual(
-          'Mensagens: deve ser preenchido quando o gatilho é do tipo lista de mensagens'
+          'Mensagens: deve ser preenchido quando o gatilho é do tipo lista de mensagens',
         )
       })
     })

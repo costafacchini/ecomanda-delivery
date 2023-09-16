@@ -81,7 +81,7 @@ describe('messengers controller', () => {
 
         await request(expressServer)
           .get(
-            `/resources/messages/?page=1&limit=10&destination=to-chat&startDate=2021-07-01T00:00:00.000Z&endDate=2021-07-05T00:00:00.000Z&licensee=${licensee._id}&contact=${contact._id}&kind=text&sended=true`
+            `/resources/messages/?page=1&limit=10&destination=to-chat&startDate=2021-07-01T00:00:00.000Z&endDate=2021-07-05T00:00:00.000Z&licensee=${licensee._id}&contact=${contact._id}&kind=text&sended=true`,
           )
           .set('x-access-token', token)
           .expect('Content-Type', /json/)

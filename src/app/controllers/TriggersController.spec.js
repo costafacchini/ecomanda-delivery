@@ -67,7 +67,7 @@ describe('trigger controller', () => {
           .send(
             triggerFactory.build({
               licensee,
-            })
+            }),
           )
           .expect('Content-Type', /json/)
           .expect(201)
@@ -205,7 +205,7 @@ describe('trigger controller', () => {
             triggerKind: 'single_product',
             catalogSingle: 'product',
             licensee,
-          })
+          }),
         )
 
         await request(expressServer)

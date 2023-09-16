@@ -25,13 +25,13 @@ describe('transferToChat', () => {
       licenseeFactory.build({
         chatDefault: 'rocketchat',
         chatUrl: 'https://chat.url',
-      })
+      }),
     )
 
     const contact = await Contact.create(
       contactFactory.build({
         licensee,
-      })
+      }),
     )
 
     await Message.create(
@@ -39,7 +39,7 @@ describe('transferToChat', () => {
         contact,
         licensee,
         _id: '609dcb059f560046cde64748',
-      })
+      }),
     )
 
     const data = {

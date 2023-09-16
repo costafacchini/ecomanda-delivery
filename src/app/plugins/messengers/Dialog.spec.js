@@ -55,7 +55,7 @@ describe('Dialog plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const responseBody = {
@@ -108,7 +108,7 @@ describe('Dialog plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const responseBody = {
@@ -165,7 +165,7 @@ describe('Dialog plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const responseBody = {
@@ -201,7 +201,7 @@ describe('Dialog plugin', () => {
               'content-type': 'image/jpeg',
             },
             body: Buffer.from('test'),
-          }
+          },
         )
 
         const dialog = new Dialog(licensee)
@@ -236,7 +236,7 @@ describe('Dialog plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const responseBody = {
@@ -272,7 +272,7 @@ describe('Dialog plugin', () => {
               'content-type': 'video/mov',
             },
             body: Buffer.from('test'),
-          }
+          },
         )
 
         const dialog = new Dialog(licensee)
@@ -307,7 +307,7 @@ describe('Dialog plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const responseBody = {
@@ -343,7 +343,7 @@ describe('Dialog plugin', () => {
               'content-type': 'voice/ogg',
             },
             body: Buffer.from('test'),
-          }
+          },
         )
 
         const dialog = new Dialog(licensee)
@@ -378,7 +378,7 @@ describe('Dialog plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const responseBody = {
@@ -414,7 +414,7 @@ describe('Dialog plugin', () => {
               'content-type': 'audio/mp3',
             },
             body: Buffer.from('test'),
-          }
+          },
         )
 
         const dialog = new Dialog(licensee)
@@ -449,7 +449,7 @@ describe('Dialog plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const responseBody = {
@@ -485,7 +485,7 @@ describe('Dialog plugin', () => {
               'content-type': 'application/pdf',
             },
             body: Buffer.from('test'),
-          }
+          },
         )
 
         const dialog = new Dialog(licensee)
@@ -520,7 +520,7 @@ describe('Dialog plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const triggerOrder2 = await Trigger.create(triggerReplyButtonFactory.build({ licensee, order: 2 }))
@@ -595,7 +595,7 @@ describe('Dialog plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const responseBody = {
@@ -654,7 +654,7 @@ describe('Dialog plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const triggerOrder2 = await Trigger.create(triggerReplyButtonFactory.build({ licensee, order: 2 }))
@@ -728,7 +728,7 @@ describe('Dialog plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const responseBody = {
@@ -786,7 +786,7 @@ describe('Dialog plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const product = await Product.create(productFactory.build({ product_retailer_id: '1011', licensee }))
@@ -856,7 +856,7 @@ describe('Dialog plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: false,
             licensee,
-          })
+          }),
         )
 
         const cart = await Cart.create(cartFactory.build({ contact, licensee, concluded: false }))
@@ -923,7 +923,7 @@ describe('Dialog plugin', () => {
           name: 'John Doe',
           talkingWithChatBot: false,
           licensee,
-        })
+        }),
       )
 
       const responseBody = {
@@ -966,7 +966,7 @@ describe('Dialog plugin', () => {
           name: 'John Doe',
           talkingWithChatBot: false,
           licensee,
-        })
+        }),
       )
 
       const responseBody = {
@@ -1010,7 +1010,7 @@ describe('Dialog plugin', () => {
           talkingWithChatBot: false,
           waId: '5511990283745',
           licensee,
-        })
+        }),
       )
 
       const responseBody = {
@@ -1052,7 +1052,7 @@ describe('Dialog plugin', () => {
           talkingWithChatBot: false,
           waId: '5511990283745',
           licensee,
-        })
+        }),
       )
 
       const responseBody = {
@@ -1096,7 +1096,7 @@ describe('Dialog plugin', () => {
           waId: '5511990283745',
           licensee,
           wa_start_chat: null,
-        })
+        }),
       )
 
       const responseBody = {
@@ -1139,7 +1139,7 @@ describe('Dialog plugin', () => {
           waId: '5511990283745',
           licensee,
           wa_start_chat: new Date('2023-04-15T12:36:10.018Z'),
-        })
+        }),
       )
 
       const responseBody = {
@@ -1228,7 +1228,7 @@ describe('Dialog plugin', () => {
             talkingWithChatBot: true,
             licensee,
             waId: '5511990283745',
-          })
+          }),
         )
 
         const responseBody = {
@@ -1322,7 +1322,7 @@ describe('Dialog plugin', () => {
             talkingWithChatBot: false,
             waId: '5593165392997',
             licensee,
-          })
+          }),
         )
 
         await Message.create(
@@ -1332,7 +1332,7 @@ describe('Dialog plugin', () => {
             licensee,
             sended: false,
             messageWaId: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC44',
-          })
+          }),
         )
 
         const responseBody = {
@@ -1364,7 +1364,7 @@ describe('Dialog plugin', () => {
             talkingWithChatBot: true,
             waId: '5593165392997',
             licensee,
-          })
+          }),
         )
 
         await Message.create(
@@ -1374,7 +1374,7 @@ describe('Dialog plugin', () => {
             licensee,
             sended: false,
             messageWaId: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC44',
-          })
+          }),
         )
 
         const responseBody = {
@@ -1406,7 +1406,7 @@ describe('Dialog plugin', () => {
             talkingWithChatBot: true,
             waId: '5593165392997',
             licensee,
-          })
+          }),
         )
 
         await Message.create(
@@ -1416,7 +1416,7 @@ describe('Dialog plugin', () => {
             licensee,
             sended: false,
             messageWaId: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC44',
-          })
+          }),
         )
 
         const responseBody = {
@@ -1452,7 +1452,7 @@ describe('Dialog plugin', () => {
             talkingWithChatBot: true,
             waId: '553165392832',
             licensee,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -1462,7 +1462,7 @@ describe('Dialog plugin', () => {
             contact,
             licensee,
             sended: false,
-          })
+          }),
         )
 
         const expectedBodySendMessage = {
@@ -1488,7 +1488,7 @@ describe('Dialog plugin', () => {
               messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
               meta: { api_status: 'stable', version: '2.35.4' },
             },
-          }
+          },
         )
 
         expect(message.sended).toEqual(false)
@@ -1504,7 +1504,7 @@ describe('Dialog plugin', () => {
         expect(messageUpdated.sended).toEqual(true)
         expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
         expect(consoleInfoSpy).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+          'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
         )
       })
 
@@ -1515,7 +1515,7 @@ describe('Dialog plugin', () => {
               name: 'John Doe',
               talkingWithChatBot: true,
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -1529,7 +1529,7 @@ describe('Dialog plugin', () => {
               licensee,
               sended: false,
               messageWaId: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC44',
-            })
+            }),
           )
 
           fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
@@ -1563,7 +1563,7 @@ describe('Dialog plugin', () => {
                 messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
                 meta: { api_status: 'stable', version: '2.35.4' },
               },
-            }
+            },
           )
 
           expect(message.sended).toEqual(false)
@@ -1579,7 +1579,7 @@ describe('Dialog plugin', () => {
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
           expect(consoleInfoSpy).toHaveBeenCalledWith(
-            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
           )
         })
       })
@@ -1591,7 +1591,7 @@ describe('Dialog plugin', () => {
               name: 'John Doe',
               talkingWithChatBot: true,
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -1605,7 +1605,7 @@ describe('Dialog plugin', () => {
               licensee,
               sended: false,
               messageWaId: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC44',
-            })
+            }),
           )
 
           fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
@@ -1639,7 +1639,7 @@ describe('Dialog plugin', () => {
                 messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
                 meta: { api_status: 'stable', version: '2.35.4' },
               },
-            }
+            },
           )
 
           expect(message.sended).toEqual(false)
@@ -1655,7 +1655,7 @@ describe('Dialog plugin', () => {
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
           expect(consoleInfoSpy).toHaveBeenCalledWith(
-            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
           )
         })
       })
@@ -1668,7 +1668,7 @@ describe('Dialog plugin', () => {
               talkingWithChatBot: true,
               email: 'john@doe.com',
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -1682,7 +1682,7 @@ describe('Dialog plugin', () => {
               licensee,
               sended: false,
               messageWaId: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC44',
-            })
+            }),
           )
 
           fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
@@ -1716,7 +1716,7 @@ describe('Dialog plugin', () => {
                 messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
                 meta: { api_status: 'stable', version: '2.35.4' },
               },
-            }
+            },
           )
 
           expect(message.sended).toEqual(false)
@@ -1732,7 +1732,7 @@ describe('Dialog plugin', () => {
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
           expect(consoleInfoSpy).toHaveBeenCalledWith(
-            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
           )
         })
       })
@@ -1745,7 +1745,7 @@ describe('Dialog plugin', () => {
               talkingWithChatBot: true,
               email: 'john@doe.com',
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -1758,7 +1758,7 @@ describe('Dialog plugin', () => {
               kind: 'file',
               url: 'https://octodex.github.com/images/document.pdf',
               fileName: 'document.pdf',
-            })
+            }),
           )
 
           fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
@@ -1793,7 +1793,7 @@ describe('Dialog plugin', () => {
                 messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
                 meta: { api_status: 'stable', version: '2.35.4' },
               },
-            }
+            },
           )
 
           expect(message.sended).toEqual(false)
@@ -1809,7 +1809,7 @@ describe('Dialog plugin', () => {
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
           expect(consoleInfoSpy).toHaveBeenCalledWith(
-            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
           )
         })
       })
@@ -1823,7 +1823,7 @@ describe('Dialog plugin', () => {
                 talkingWithChatBot: true,
                 email: 'john@doe.com',
                 licensee,
-              })
+              }),
             )
 
             const trigger = await Trigger.create({
@@ -1878,7 +1878,7 @@ describe('Dialog plugin', () => {
                 sended: false,
                 kind: 'interactive',
                 trigger: trigger._id,
-              })
+              }),
             )
 
             fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
@@ -1949,7 +1949,7 @@ describe('Dialog plugin', () => {
                   messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
                   meta: { api_status: 'stable', version: '2.35.4' },
                 },
-              }
+              },
             )
 
             expect(message.sended).toEqual(false)
@@ -1965,7 +1965,7 @@ describe('Dialog plugin', () => {
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
             expect(consoleInfoSpy).toHaveBeenCalledWith(
-              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
             )
           })
         })
@@ -1978,7 +1978,7 @@ describe('Dialog plugin', () => {
                 talkingWithChatBot: true,
                 email: 'john@doe.com',
                 licensee,
-              })
+              }),
             )
 
             const trigger = await Trigger.create({
@@ -2011,7 +2011,7 @@ describe('Dialog plugin', () => {
                 sended: false,
                 kind: 'interactive',
                 trigger: trigger._id,
-              })
+              }),
             )
 
             fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
@@ -2060,7 +2060,7 @@ describe('Dialog plugin', () => {
                   messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
                   meta: { api_status: 'stable', version: '2.35.4' },
                 },
-              }
+              },
             )
 
             expect(message.sended).toEqual(false)
@@ -2076,7 +2076,7 @@ describe('Dialog plugin', () => {
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
             expect(consoleInfoSpy).toHaveBeenCalledWith(
-              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
             )
           })
         })
@@ -2089,7 +2089,7 @@ describe('Dialog plugin', () => {
                 talkingWithChatBot: true,
                 email: 'john@doe.com',
                 licensee,
-              })
+              }),
             )
 
             const trigger = await Trigger.create({
@@ -2142,7 +2142,7 @@ describe('Dialog plugin', () => {
                 sended: false,
                 kind: 'interactive',
                 trigger: trigger._id,
-              })
+              }),
             )
 
             fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
@@ -2211,7 +2211,7 @@ describe('Dialog plugin', () => {
                   messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
                   meta: { api_status: 'stable', version: '2.35.4' },
                 },
-              }
+              },
             )
 
             expect(message.sended).toEqual(false)
@@ -2227,7 +2227,7 @@ describe('Dialog plugin', () => {
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
             expect(consoleInfoSpy).toHaveBeenCalledWith(
-              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
             )
           })
         })
@@ -2240,7 +2240,7 @@ describe('Dialog plugin', () => {
                 talkingWithChatBot: true,
                 email: 'john@doe.com',
                 licensee,
-              })
+              }),
             )
 
             const trigger = await Trigger.create({
@@ -2298,7 +2298,7 @@ describe('Dialog plugin', () => {
                 sended: false,
                 kind: 'interactive',
                 trigger: trigger._id,
-              })
+              }),
             )
 
             fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
@@ -2372,7 +2372,7 @@ describe('Dialog plugin', () => {
                   messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
                   meta: { api_status: 'stable', version: '2.35.4' },
                 },
-              }
+              },
             )
 
             expect(message.sended).toEqual(false)
@@ -2388,7 +2388,7 @@ describe('Dialog plugin', () => {
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
             expect(consoleInfoSpy).toHaveBeenCalledWith(
-              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
             )
           })
         })
@@ -2401,7 +2401,7 @@ describe('Dialog plugin', () => {
                 talkingWithChatBot: true,
                 email: 'john@doe.com',
                 licensee,
-              })
+              }),
             )
 
             const trigger = await Trigger.create({
@@ -2417,7 +2417,7 @@ describe('Dialog plugin', () => {
                 sended: false,
                 kind: 'interactive',
                 trigger: trigger._id,
-              })
+              }),
             )
 
             fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
@@ -2449,7 +2449,7 @@ describe('Dialog plugin', () => {
                   messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
                   meta: { api_status: 'stable', version: '2.35.4' },
                 },
-              }
+              },
             )
 
             expect(message.sended).toEqual(false)
@@ -2465,7 +2465,7 @@ describe('Dialog plugin', () => {
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
             expect(consoleInfoSpy).toHaveBeenCalledWith(
-              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
             )
           })
         })
@@ -2478,7 +2478,7 @@ describe('Dialog plugin', () => {
                 talkingWithChatBot: true,
                 email: 'john@doe.com',
                 licensee,
-              })
+              }),
             )
 
             const message = await Message.create(
@@ -2489,7 +2489,7 @@ describe('Dialog plugin', () => {
                 licensee,
                 sended: false,
                 kind: 'interactive',
-              })
+              }),
             )
 
             const expectedBodyGetContact = {
@@ -2510,7 +2510,7 @@ describe('Dialog plugin', () => {
                   contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
                   meta: { api_status: 'stable', version: '2.35.4' },
                 },
-              }
+              },
             )
 
             const expectedBodySendMessage = {
@@ -2534,7 +2534,7 @@ describe('Dialog plugin', () => {
                   messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
                   meta: { api_status: 'stable', version: '2.35.4' },
                 },
-              }
+              },
             )
 
             expect(message.sended).toEqual(false)
@@ -2550,7 +2550,7 @@ describe('Dialog plugin', () => {
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
             expect(consoleInfoSpy).toHaveBeenCalledWith(
-              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
             )
           })
         })
@@ -2567,7 +2567,7 @@ describe('Dialog plugin', () => {
               name: 'John Doe',
               talkingWithChatBot: true,
               licensee,
-            })
+            }),
           )
 
           const cart = await Cart.create(cartFactory.build({ contact, licensee }))
@@ -2580,7 +2580,7 @@ describe('Dialog plugin', () => {
               licensee,
               cart,
               sended: false,
-            })
+            }),
           )
 
           fetchMock.postOnce(
@@ -2593,7 +2593,7 @@ describe('Dialog plugin', () => {
                 contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
                 meta: { api_status: 'stable', version: '2.35.4' },
               },
-            }
+            },
           )
 
           const expectedBodySendMessage = {
@@ -2617,7 +2617,7 @@ describe('Dialog plugin', () => {
                 messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
                 meta: { api_status: 'stable', version: '2.35.4' },
               },
-            }
+            },
           )
 
           expect(message.sended).toEqual(false)
@@ -2633,7 +2633,7 @@ describe('Dialog plugin', () => {
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
           expect(consoleInfoSpy).toHaveBeenCalledWith(
-            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
           )
 
           clear()
@@ -2654,7 +2654,7 @@ describe('Dialog plugin', () => {
               ],
               footerParams: [{ format: 'TEXT', number: '1' }],
               licensee,
-            })
+            }),
           )
 
           const contact = await Contact.create(
@@ -2662,7 +2662,7 @@ describe('Dialog plugin', () => {
               name: 'John Doe',
               talkingWithChatBot: true,
               licensee,
-            })
+            }),
           )
 
           const message = await Message.create(
@@ -2673,7 +2673,7 @@ describe('Dialog plugin', () => {
               contact,
               licensee,
               sended: false,
-            })
+            }),
           )
 
           fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
@@ -2747,7 +2747,7 @@ describe('Dialog plugin', () => {
                 messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
                 meta: { api_status: 'stable', version: '2.35.4' },
               },
-            }
+            },
           )
 
           expect(message.sended).toEqual(false)
@@ -2763,7 +2763,7 @@ describe('Dialog plugin', () => {
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
           expect(consoleInfoSpy).toHaveBeenCalledWith(
-            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
           )
         })
       })
@@ -2776,7 +2776,7 @@ describe('Dialog plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -2786,7 +2786,7 @@ describe('Dialog plugin', () => {
             contact,
             licensee,
             sended: false,
-          })
+          }),
         )
 
         fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
@@ -2807,7 +2807,7 @@ describe('Dialog plugin', () => {
         expect(fetchMock.calls()).toHaveLength(1)
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'A mensagem não foi enviada para a Dialog pois o contato não é válido {"contacts":[{"input":"+5511990283745","status":"invalid"}],"meta":{"api_status":"stable","version":"2.35.4"}}'
+          'A mensagem não foi enviada para a Dialog pois o contato não é válido {"contacts":[{"input":"+5511990283745","status":"invalid"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
         )
       })
     })
@@ -2819,7 +2819,7 @@ describe('Dialog plugin', () => {
             name: 'John Doe',
             talkingWithChatBot: true,
             licensee,
-          })
+          }),
         )
 
         const message = await Message.create(
@@ -2829,7 +2829,7 @@ describe('Dialog plugin', () => {
             contact,
             licensee,
             sended: false,
-          })
+          }),
         )
 
         fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
@@ -2863,7 +2863,7 @@ describe('Dialog plugin', () => {
               meta: { api_status: 'stable', version: '2.35.4' },
               errors: [{ code: 1021, title: 'Bad user', details: 'cannot send messages to myself' }],
             },
-          }
+          },
         )
 
         expect(message.sended).toEqual(false)
@@ -2878,11 +2878,11 @@ describe('Dialog plugin', () => {
         const messageUpdated = await Message.findById(message._id)
         expect(messageUpdated.sended).toEqual(false)
         expect(messageUpdated.error).toEqual(
-          '{"meta":{"api_status":"stable","version":"2.35.4"},"errors":[{"code":1021,"title":"Bad user","details":"cannot send messages to myself"}]}'
+          '{"meta":{"api_status":"stable","version":"2.35.4"},"errors":[{"code":1021,"title":"Bad user","details":"cannot send messages to myself"}]}',
         )
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 não enviada para Dialog360. {"meta":{"api_status":"stable","version":"2.35.4"},"errors":[{"code":1021,"title":"Bad user","details":"cannot send messages to myself"}]}'
+          'Mensagem 60958703f415ed4008748637 não enviada para Dialog360. {"meta":{"api_status":"stable","version":"2.35.4"},"errors":[{"code":1021,"title":"Bad user","details":"cannot send messages to myself"}]}',
         )
       })
     })
@@ -2907,7 +2907,7 @@ describe('Dialog plugin', () => {
           body: {
             url: `${licensee.urlWhatsappWebhook}`,
           },
-        }
+        },
       )
 
       const dialog = new Dialog(licensee)
@@ -3000,7 +3000,7 @@ describe('Dialog plugin', () => {
               },
             ],
           },
-        }
+        },
       )
 
       const dialog = new Dialog(licensee)

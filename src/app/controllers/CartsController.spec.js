@@ -400,7 +400,7 @@ describe('carts controller', () => {
                 '\n' +
                 ' ' +
                 '\n' +
-                '*TROCO PARA:* R$ 0.00'
+                '*TROCO PARA:* R$ 0.00',
             )
           })
       })
