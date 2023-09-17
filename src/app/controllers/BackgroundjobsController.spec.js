@@ -27,7 +27,7 @@ describe('backgrounndjobs controller', () => {
   describe('about auth', () => {
     it('returns status 401 and message if query param token is not valid', async () => {
       await request(expressServer)
-        .post('/api/v1/chat/message/?token=627365264')
+        .post('/api/v1/backgroundjobs/?token=627365264')
         .send({
           field: 'test',
         })
@@ -37,7 +37,7 @@ describe('backgrounndjobs controller', () => {
 
     it('returns status 401 and message if query param token is informed', async () => {
       await request(expressServer)
-        .post('/api/v1/chat/message')
+        .post('/api/v1/backgroundjobs')
         .send({
           field: 'test',
         })
@@ -108,7 +108,7 @@ describe('backgrounndjobs controller', () => {
             })
             .expect('Content-Type', /json/)
             .expect(422, {
-              errors: [{ message: 'Tipo do job: Você deve informar um valor ( get-pix )' }],
+              errors: [{ message: 'Tipo do job: Você deve informar um valor ( get-pix | cancel-order )' }],
             })
         })
       })
