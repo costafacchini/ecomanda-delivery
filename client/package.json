@@ -52,6 +52,6 @@
     ]
   },
   "devDependencies": {
-    "@testing-library/dom": "9.3.2"
+    "@testing-library/dom": "9.3.3"
   }
 }
