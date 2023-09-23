@@ -125,6 +125,69 @@ describe('processBackgroundjobGetCreditCard', () => {
         ],
       })
     })
+
+    it('saves the credit cards information at contact', async () => {
+      jest.spyOn(Card.prototype, 'list').mockImplementation(() => {
+        return [
+          {
+            id: 'card_3dlyaY6SPSb',
+            first_six_digits: '123412',
+            last_four_digits: '1234',
+            brand: 'Mastercard',
+            holder_name: 'John Doe',
+            exp_month: 5,
+            exp_year: 2025,
+            status: 'active',
+            type: 'credit',
+            created_at: '2023-09-23T13:22:13Z',
+            updated_at: '2023-09-23T13:22:13Z',
+          },
+          {
+            id: 'card_3dlyaP9KWSb',
+            first_six_digits: '987632',
+            last_four_digits: '1234',
+            brand: 'Visa',
+            holder_name: 'John Doe',
+            exp_month: 2,
+            exp_year: 2027,
+            status: 'active',
+            type: 'credit',
+            created_at: '2023-09-23T13:22:13Z',
+            updated_at: '2023-09-23T13:22:13Z',
+          },
+        ]
+      })
+
+      const licensee = await Licensee.create(licenseeFactory.build())
+      const backgroundjob = await Backgroundjob.create(
+        backgroundjobFactory.build({
+          kind: 'get-credit-card',
+          body: {
+            cart_id: 'cart-id',
+          },
+          licensee,
+        }),
+      )
+
+      const contact = await Contact.create(contactFactory.build({ licensee, credit_card_id: 'card_3dlyaP9KWSb' }))
+      const cart = await Cart.create(cartFactory.build({ contact, licensee }))
+
+      const data = {
+        cart_id: cart._id,
+        jobId: backgroundjob._id,
+      }
+
+      await processBackgroundjobGetCreditCard(data)
+
+      const contactUpdated = await Contact.findById(contact)
+
+      expect(contactUpdated.credit_cards.length).toEqual(2)
+
+      expect(contactUpdated.credit_cards[0].brand).toEqual('Mastercard')
+      expect(contactUpdated.credit_cards[0].first_six_digits).toEqual('123412')
+      expect(contactUpdated.credit_cards[0].last_four_digits).toEqual('1234')
+      expect(contactUpdated.credit_cards[0].credit_card_id).toEqual('card_3dlyaY6SPSb')
+    })
   })
 
   describe('when error', () => {
