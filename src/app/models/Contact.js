@@ -3,6 +3,13 @@ const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
 const NormalizePhone = require('@helpers/NormalizePhone')
 
+const cardsSchema = new Schema({
+  credit_card_id: String,
+  first_six_digits: String,
+  last_four_digits: String,
+  brand: String,
+})
+
 const contactSchema = new Schema(
   {
     _id: ObjectId,
@@ -37,6 +44,8 @@ const contactSchema = new Schema(
     document: String,
     customer_id: String,
     address_id: String,
+    credit_card_id: String,
+    credit_cards: [cardsSchema],
   },
   { timestamps: true },
 )

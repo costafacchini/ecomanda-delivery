@@ -208,6 +208,7 @@ const licenseeSchema = new Schema(
       enum: ['checking', 'savings', ''],
     },
     recipient_id: String,
+    card_information_url: String,
   },
   { timestamps: true },
 )

@@ -15,6 +15,7 @@ const resetCarts = require('./ResetCarts')
 const sendContactToPagarMe = require('./SendContactToPagarMe')
 const processBackgroundJob = require('./ProcessBackgroundjob')
 const processBackgroundjobGetPix = require('./ProcessBackgroundjobGetPix')
+const processBackgroundjobGetCreditCard = require('./ProcessBackgroundjobGetCreditCard')
 const processBackgroundjobCancelOrder = require('./ProcessBackgroundjobCancelOrder')
 const processWebhookRequest = require('./ProcessWebhookRequest')
 const processPagarmeOrderPaid = require('./ProcessPagarmeOrderPaid')
@@ -37,6 +38,7 @@ const jobs = [
   sendContactToPagarMe,
   processBackgroundJob,
   processBackgroundjobGetPix,
+  processBackgroundjobGetCreditCard,
   processWebhookRequest,
   processPagarmeOrderPaid,
   processBackgroundjobCancelOrder,
