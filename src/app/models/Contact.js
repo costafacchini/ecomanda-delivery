@@ -37,6 +37,7 @@ const contactSchema = new Schema(
     document: String,
     customer_id: String,
     address_id: String,
+    credit_card_id: String,
   },
   { timestamps: true },
 )
