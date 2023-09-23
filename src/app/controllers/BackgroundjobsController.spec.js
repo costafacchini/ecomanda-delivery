@@ -108,7 +108,9 @@ describe('backgrounndjobs controller', () => {
             })
             .expect('Content-Type', /json/)
             .expect(422, {
-              errors: [{ message: 'Tipo do job: Você deve informar um valor ( get-pix | cancel-order )' }],
+              errors: [
+                { message: 'Tipo do job: Você deve informar um valor ( get-pix | cancel-order | get-credit-card )' },
+              ],
             })
         })
       })
