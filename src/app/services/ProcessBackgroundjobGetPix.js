@@ -11,7 +11,7 @@ async function processBackgroundjobGetPix(data) {
     const cart = await Cart.findById(cartId)
 
     const pagarMe = new PagarMe()
-    await pagarMe.payment.create(cart, process.env.PAGARME_TOKEN)
+    await pagarMe.payment.createPIX(cart, process.env.PAGARME_TOKEN)
 
     const cartUpdated = await Cart.findById(cartId)
 

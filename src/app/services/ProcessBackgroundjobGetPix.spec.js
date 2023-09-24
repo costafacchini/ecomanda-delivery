@@ -21,7 +21,7 @@ describe('processBackgroundjobGetPix', () => {
   })
 
   it('calls to pagar.me API to generate pix', async () => {
-    const paymentCreateFnSpy = jest.spyOn(Payment.prototype, 'create').mockImplementation(() => {})
+    const paymentCreateFnSpy = jest.spyOn(Payment.prototype, 'createPIX').mockImplementation(() => {})
 
     const licensee = await Licensee.create(licenseeFactory.build())
     const backgroundjob = await Backgroundjob.create(
@@ -48,7 +48,7 @@ describe('processBackgroundjobGetPix', () => {
 
   describe('when success', () => {
     it('saves the pix information at backgroundjob', async () => {
-      jest.spyOn(Payment.prototype, 'create').mockImplementation(async () => {
+      jest.spyOn(Payment.prototype, 'createPIX').mockImplementation(async () => {
         cart.pix_qrcode = '00020101021226480019BR.COM.STONE.QRCODE0108A37F8712020912345678927820'
         cart.pix_url = 'https://www.imagem.com.br/pix.jpg'
 
@@ -87,7 +87,7 @@ describe('processBackgroundjobGetPix', () => {
 
   describe('when error', () => {
     it('saves the pix information at backgroundjob', async () => {
-      jest.spyOn(Payment.prototype, 'create').mockImplementation(() => {
+      jest.spyOn(Payment.prototype, 'createPIX').mockImplementation(() => {
         throw new Error('some error')
       })
 

@@ -14,7 +14,8 @@ describe('PagarMe plugin', () => {
   const customerCreateFnSpy = jest.spyOn(Customer.prototype, 'create').mockImplementation(() => {})
   const customerUpdateFnSpy = jest.spyOn(Customer.prototype, 'update').mockImplementation(() => {})
 
-  const paymentCreateFnSpy = jest.spyOn(Payment.prototype, 'create').mockImplementation(() => {})
+  const paymentPixCreateFnSpy = jest.spyOn(Payment.prototype, 'createPIX').mockImplementation(() => {})
+  const paymentCreditCardCreateFnSpy = jest.spyOn(Payment.prototype, 'createCreditCard').mockImplementation(() => {})
   const paymentDeleteFnSpy = jest.spyOn(Payment.prototype, 'delete').mockImplementation(() => {})
 
   const cardCreateFnSpy = jest.spyOn(Card.prototype, 'create').mockImplementation(() => {})
@@ -66,13 +67,22 @@ describe('PagarMe plugin', () => {
   })
 
   describe('payment', () => {
-    it('create', async () => {
+    it('createPIX', async () => {
       const cart = cartFactory.build()
 
       const pagarMe = new PagarMe()
-      await pagarMe.payment.create(cart, 'token')
+      await pagarMe.payment.createPIX(cart, 'token')
 
-      expect(paymentCreateFnSpy).toHaveBeenCalledWith(cart, 'token')
+      expect(paymentPixCreateFnSpy).toHaveBeenCalledWith(cart, 'token')
+    })
+
+    it('createCreditCard', async () => {
+      const cart = cartFactory.build()
+
+      const pagarMe = new PagarMe()
+      await pagarMe.payment.createCreditCard(cart, 'token')
+
+      expect(paymentCreditCardCreateFnSpy).toHaveBeenCalledWith(cart, 'token')
     })
 
     it('delete', async () => {

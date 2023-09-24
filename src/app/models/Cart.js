@@ -91,6 +91,10 @@ const cartSchema = new Schema(
     pix_qrcode: String,
     payment_status: String,
     integration_status: String,
+    operation_key: String,
+    operation_id: String,
+    gateway_id: String,
+    gateway_response_code: String,
   },
   { timestamps: true },
 )
