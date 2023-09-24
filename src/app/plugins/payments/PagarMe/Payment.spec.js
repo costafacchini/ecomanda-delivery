@@ -26,9 +26,9 @@ describe('PagarMe/Customer plugin', () => {
     await mongoServer.disconnect()
   })
 
-  describe('#create', () => {
+  describe('#createPIX', () => {
     describe('when success', () => {
-      it('creates a order with payment on PagarMe API', async () => {
+      it('creates a order with payment PIX on PagarMe API', async () => {
         const integrationlogCreateSpy = jest.spyOn(Integrationlog, 'create').mockImplementation(() => {
           return { _id: '1234' }
         })
@@ -141,7 +141,7 @@ describe('PagarMe/Customer plugin', () => {
         )
 
         const payment = new Payment()
-        await payment.create(cart, 'token')
+        await payment.createPIX(cart, 'token')
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
@@ -320,7 +320,7 @@ describe('PagarMe/Customer plugin', () => {
         )
 
         const payment = new Payment()
-        await payment.create(cart, 'token')
+        await payment.createPIX(cart, 'token')
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
@@ -452,7 +452,7 @@ describe('PagarMe/Customer plugin', () => {
         )
 
         const payment = new Payment()
-        await payment.create(cart, 'token')
+        await payment.createPIX(cart, 'token')
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
@@ -568,7 +568,7 @@ describe('PagarMe/Customer plugin', () => {
         )
 
         const payment = new Payment()
-        await payment.create(cart, 'token')
+        await payment.createPIX(cart, 'token')
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
@@ -685,7 +685,716 @@ describe('PagarMe/Customer plugin', () => {
         )
 
         const payment = new Payment()
-        await payment.create(cart, 'token')
+        await payment.createPIX(cart, 'token')
+        await fetchMock.flush(true)
+
+        expect(fetchMock.done()).toBe(true)
+        expect(fetchMock.calls()).toHaveLength(1)
+
+        const integrationlog = await Integrationlog.findOne({ cart: cart._id })
+        expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
+        expect(integrationlog.log_payload).toEqual(bodyResponse)
+      })
+    })
+  })
+
+  describe('#createCreditCard', () => {
+    describe('when success', () => {
+      it('creates a order with payment Credit Card on PagarMe API', async () => {
+        const integrationlogCreateSpy = jest.spyOn(Integrationlog, 'create').mockImplementation(() => {
+          return { _id: '1234' }
+        })
+
+        const contact = await Contact.create(
+          contactFactory.build({
+            customer_id: '1234',
+            name: 'John Doe',
+            number: '5511990283745',
+            credit_card_id: 'card_3dlyaY6SPSb',
+            licensee,
+          }),
+        )
+
+        const cart = await Cart.create(
+          cartFactory.build({
+            products: [
+              {
+                product_retailer_id: '0123',
+                product_fb_id: 'fb_id',
+                name: 'Product 1',
+                quantity: 2,
+                unit_price: 7.8,
+                note: 'item note',
+              },
+            ],
+            delivery_tax: 0.5,
+            contact,
+            licensee,
+            uf: 'SP',
+            city: 'Sorocaba',
+            cep: '99876222',
+            address_number: '10',
+            address: 'Rua qualquer da cidade',
+            neighborhood: 'Bairro',
+            address_complement: 'Perto daquela parada lá',
+            total: 16.1,
+          }),
+        )
+
+        const expectedBody = {
+          customer_id: '1234',
+          items: [
+            {
+              amount: 780,
+              description: 'Product 1',
+              quantity: 2,
+              code: '0123',
+            },
+          ],
+          shipping: {
+            amount: 50,
+            recipient_name: 'John Doe',
+            recipient_phone: '5511990283745',
+            address: {
+              country: 'BR',
+              state: 'SP',
+              city: 'Sorocaba',
+              zip_code: '99876222',
+              line_1: `10, Rua qualquer da cidade, Bairro`,
+              line_2: 'Perto daquela parada lá',
+            },
+          },
+          payments: [
+            {
+              payment_method: 'credit_card',
+              amount: 1610,
+              credit_card: {
+                recurrence: 'false',
+                installments: 1,
+                statement_descriptor: 'Alcateia Ltds',
+                operation_type: 'auth_and_capture',
+                card_id: 'card_3dlyaY6SPSb',
+              },
+            },
+          ],
+        }
+
+        fetchMock.postOnce(
+          (url, { body, headers }) => {
+            return (
+              url === 'https://api.pagar.me/core/v5/orders/' &&
+              body === JSON.stringify(expectedBody) &&
+              headers['Authorization'] === 'Basic token'
+            )
+          },
+          {
+            status: 200,
+            body: {
+              id: 'or_56GXnk6T0eU88qMm',
+              status: 'pending',
+              charges: [
+                {
+                  id: 'ch_p4lnAGyU0GT1E9MZ',
+                  code: 'GP8KUL0B2D',
+                  status: 'pending',
+                  payment_method: 'credit_card',
+                  funding_source: 'prepaid',
+                  last_transaction: {
+                    operation_key: '830608357',
+                    id: 'tran_ywqNVaxiorcpde8W',
+                    transaction_type: 'credit_card',
+                    gateway_id: 'e98d2459-7b0e-43c1-b5e6-adea2c751427',
+                    amount: 2990,
+                    status: 'authorized_pending_capture',
+                    success: true,
+                    installments: 1,
+                    funding_source: 'prepaid',
+                    statement_descriptor: 'Alcateia Ltds',
+                    acquirer_name: 'simulator',
+                    acquirer_tid: '806863466',
+                    acquirer_nsu: '66184',
+                    acquirer_auth_code: '890',
+                    acquirer_message: 'Transação autorizada com sucesso',
+                    acquirer_return_code: '00',
+                    operation_type: 'auth_only',
+                    payment_type: 'PAN',
+                    created_at: '2023-03-03T19:49:15Z',
+                    updated_at: '2023-03-03T19:49:15Z',
+                    gateway_response: {
+                      code: '200',
+                      errors: [],
+                    },
+                    antifraud_response: {},
+                    metadata: {},
+                  },
+                },
+              ],
+              checkouts: [],
+            },
+          },
+        )
+
+        const payment = new Payment()
+        await payment.createCreditCard(cart, 'token')
+        await fetchMock.flush(true)
+
+        expect(fetchMock.done()).toBe(true)
+        expect(fetchMock.calls()).toHaveLength(1)
+
+        expect(consoleInfoSpy).toHaveBeenCalledWith('Pedido criado na pagar.me! id: or_56GXnk6T0eU88qMm log_id: 1234')
+
+        integrationlogCreateSpy.mockRestore()
+      })
+
+      it('saves the order and payment information', async () => {
+        const integrationlogCreateSpy = jest.spyOn(Integrationlog, 'create').mockImplementation(() => {
+          return { _id: '1234' }
+        })
+
+        const contact = await Contact.create(
+          contactFactory.build({
+            customer_id: '1234',
+            name: 'John Doe',
+            number: '5511990283745',
+            credit_card_id: 'card_3dlyaY6SPSb',
+            licensee,
+          }),
+        )
+
+        const cart = await Cart.create(
+          cartFactory.build({
+            products: [
+              {
+                product_retailer_id: '0123',
+                product_fb_id: 'fb_id',
+                name: 'Product 1',
+                quantity: 2,
+                unit_price: 7.8,
+                note: 'item note',
+              },
+            ],
+            delivery_tax: 0.5,
+            contact,
+            licensee,
+            uf: 'SP',
+            city: 'Sorocaba',
+            cep: '99876222',
+            address_number: '10',
+            address: 'Rua qualquer da cidade',
+            neighborhood: 'Bairro',
+            address_complement: 'Perto daquela parada lá',
+            total: 16.1,
+          }),
+        )
+
+        const expectedBody = {
+          customer_id: '1234',
+          items: [
+            {
+              amount: 780,
+              description: 'Product 1',
+              quantity: 2,
+              code: '0123',
+            },
+          ],
+          shipping: {
+            amount: 50,
+            recipient_name: 'John Doe',
+            recipient_phone: '5511990283745',
+            address: {
+              country: 'BR',
+              state: 'SP',
+              city: 'Sorocaba',
+              zip_code: '99876222',
+              line_1: `10, Rua qualquer da cidade, Bairro`,
+              line_2: 'Perto daquela parada lá',
+            },
+          },
+          payments: [
+            {
+              payment_method: 'credit_card',
+              amount: 1610,
+              credit_card: {
+                recurrence: 'false',
+                installments: 1,
+                statement_descriptor: 'Alcateia Ltds',
+                operation_type: 'auth_and_capture',
+                card_id: 'card_3dlyaY6SPSb',
+              },
+            },
+          ],
+        }
+
+        fetchMock.postOnce(
+          (url, { body, headers }) => {
+            return (
+              url === 'https://api.pagar.me/core/v5/orders/' &&
+              body === JSON.stringify(expectedBody) &&
+              headers['Authorization'] === 'Basic token'
+            )
+          },
+          {
+            status: 200,
+            body: {
+              id: 'or_56GXnk6T0eU88qMm',
+              code: 'YV3RCRIN24',
+              amount: 1610,
+              currency: 'BRL',
+              closed: false,
+              items: [
+                {
+                  id: 'oi_6rXqKEzuZYcRo2zL',
+                  description: 'Product 1',
+                  amount: 780,
+                  quantity: 2,
+                  status: 'active',
+                },
+              ],
+              customer: {
+                id: '1234',
+                name: 'John Doe',
+              },
+              shipping: {
+                amount: 50,
+                recipient_name: 'John Doe',
+                recipient_phone: '5511990283745',
+                address: {
+                  country: 'BR',
+                  state: 'SP',
+                  city: 'Sorocaba',
+                  zip_code: '99876222',
+                  line_1: `10, Rua qualquer da cidade, Bairro`,
+                  line_2: 'Perto daquela parada lá',
+                },
+              },
+              status: 'pending',
+              location: {
+                latitude: '-22.970722',
+                longitude: '43.182365',
+              },
+              charges: [
+                {
+                  id: 'ch_p4lnAGyU0GT1E9MZ',
+                  code: 'GP8KUL0B2D',
+                  status: 'pending',
+                  payment_method: 'credit_card',
+                  funding_source: 'prepaid',
+                  last_transaction: {
+                    operation_key: '830608357',
+                    id: 'tran_ywqNVaxiorcpde8W',
+                    transaction_type: 'credit_card',
+                    gateway_id: 'e98d2459-7b0e-43c1-b5e6-adea2c751427',
+                    amount: 2990,
+                    status: 'authorized_pending_capture',
+                    success: true,
+                    installments: 1,
+                    funding_source: 'prepaid',
+                    statement_descriptor: 'Alcateia Ltds',
+                    acquirer_name: 'simulator',
+                    acquirer_tid: '806863466',
+                    acquirer_nsu: '66184',
+                    acquirer_auth_code: '890',
+                    acquirer_message: 'Transação autorizada com sucesso',
+                    acquirer_return_code: '00',
+                    operation_type: 'auth_only',
+                    payment_type: 'PAN',
+                    created_at: '2023-03-03T19:49:15Z',
+                    updated_at: '2023-03-03T19:49:15Z',
+                    gateway_response: {
+                      code: '200',
+                      errors: [],
+                    },
+                    antifraud_response: {},
+                    metadata: {},
+                  },
+                },
+              ],
+              checkouts: [],
+            },
+          },
+        )
+
+        const payment = new Payment()
+        await payment.createCreditCard(cart, 'token')
+        await fetchMock.flush(true)
+
+        expect(fetchMock.done()).toBe(true)
+        expect(fetchMock.calls()).toHaveLength(1)
+
+        const cartUpdated = await Cart.findById(cart._id)
+        expect(cartUpdated.order_id).toEqual('or_56GXnk6T0eU88qMm')
+        expect(cartUpdated.charge_id).toEqual('ch_p4lnAGyU0GT1E9MZ')
+        expect(cartUpdated.operation_key).toEqual('830608357')
+        expect(cartUpdated.operation_id).toEqual('tran_ywqNVaxiorcpde8W')
+        expect(cartUpdated.gateway_id).toEqual('e98d2459-7b0e-43c1-b5e6-adea2c751427')
+        expect(cartUpdated.gateway_response_code).toEqual('200')
+        expect(cartUpdated.payment_status).toEqual('authorized_pending_capture')
+        expect(cartUpdated.integration_status).toEqual('pending')
+
+        integrationlogCreateSpy.mockRestore()
+      })
+
+      it('creates a record on integrationlog', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({
+            customer_id: '1234',
+            name: 'John Doe',
+            number: '5511990283745',
+            credit_card_id: 'card_3dlyaY6SPSb',
+            licensee,
+          }),
+        )
+
+        const cart = await Cart.create(
+          cartFactory.build({
+            products: [
+              {
+                product_retailer_id: '0123',
+                product_fb_id: 'fb_id',
+                name: 'Product 1',
+                quantity: 2,
+                unit_price: 7.8,
+                note: 'item note',
+              },
+            ],
+            delivery_tax: 0.5,
+            contact,
+            licensee,
+            uf: 'SP',
+            city: 'Sorocaba',
+            cep: '99876222',
+            address_number: '10',
+            address: 'Rua qualquer da cidade',
+            neighborhood: 'Bairro',
+            address_complement: 'Perto daquela parada lá',
+            total: 16.1,
+          }),
+        )
+
+        const expectedBody = {
+          customer_id: '1234',
+          items: [
+            {
+              amount: 780,
+              description: 'Product 1',
+              quantity: 2,
+              code: '0123',
+            },
+          ],
+          shipping: {
+            amount: 50,
+            recipient_name: 'John Doe',
+            recipient_phone: '5511990283745',
+            address: {
+              country: 'BR',
+              state: 'SP',
+              city: 'Sorocaba',
+              zip_code: '99876222',
+              line_1: `10, Rua qualquer da cidade, Bairro`,
+              line_2: 'Perto daquela parada lá',
+            },
+          },
+          payments: [
+            {
+              payment_method: 'credit_card',
+              amount: 1610,
+              credit_card: {
+                recurrence: 'false',
+                installments: 1,
+                statement_descriptor: 'Alcateia Ltds',
+                operation_type: 'auth_and_capture',
+                card_id: 'card_3dlyaY6SPSb',
+              },
+            },
+          ],
+        }
+
+        const bodyResponse = {
+          id: 'or_56GXnk6T0eU88qMm',
+          status: 'pending',
+          charges: [
+            {
+              id: 'ch_p4lnAGyU0GT1E9MZ',
+              code: 'GP8KUL0B2D',
+              status: 'pending',
+              payment_method: 'credit_card',
+              funding_source: 'prepaid',
+              last_transaction: {
+                operation_key: '830608357',
+                id: 'tran_ywqNVaxiorcpde8W',
+                transaction_type: 'credit_card',
+                gateway_id: 'e98d2459-7b0e-43c1-b5e6-adea2c751427',
+                amount: 2990,
+                status: 'authorized_pending_capture',
+                success: true,
+                installments: 1,
+                funding_source: 'prepaid',
+                statement_descriptor: 'Alcateia Ltds',
+                acquirer_name: 'simulator',
+                acquirer_tid: '806863466',
+                acquirer_nsu: '66184',
+                acquirer_auth_code: '890',
+                acquirer_message: 'Transação autorizada com sucesso',
+                acquirer_return_code: '00',
+                operation_type: 'auth_only',
+                payment_type: 'PAN',
+                created_at: '2023-03-03T19:49:15Z',
+                updated_at: '2023-03-03T19:49:15Z',
+                gateway_response: {
+                  code: '200',
+                  errors: [],
+                },
+              },
+            },
+          ],
+          checkouts: [],
+        }
+
+        fetchMock.postOnce(
+          (url, { body, headers }) => {
+            return (
+              url === 'https://api.pagar.me/core/v5/orders/' &&
+              body === JSON.stringify(expectedBody) &&
+              headers['Authorization'] === 'Basic token'
+            )
+          },
+          {
+            status: 200,
+            body: bodyResponse,
+          },
+        )
+
+        const payment = new Payment()
+        await payment.createCreditCard(cart, 'token')
+        await fetchMock.flush(true)
+
+        expect(fetchMock.done()).toBe(true)
+        expect(fetchMock.calls()).toHaveLength(1)
+
+        const integrationlog = await Integrationlog.findOne({ cart: cart._id })
+        expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
+        expect(integrationlog.log_payload).toEqual(bodyResponse)
+      })
+    })
+
+    describe('when error', () => {
+      it('logs the error message', async () => {
+        const integrationlogCreateSpy = jest.spyOn(Integrationlog, 'create').mockImplementation(() => {
+          return { _id: '1234' }
+        })
+
+        const contact = await Contact.create(
+          contactFactory.build({
+            customer_id: '1234',
+            name: 'John Doe',
+            number: '5511990283745',
+            credit_card_id: 'card_3dlyaY6SPSb',
+            licensee,
+          }),
+        )
+
+        const cart = await Cart.create(
+          cartFactory.build({
+            products: [
+              {
+                product_retailer_id: '0123',
+                product_fb_id: 'fb_id',
+                name: 'Product 1',
+                quantity: 2,
+                unit_price: 7.8,
+                note: 'item note',
+              },
+            ],
+            delivery_tax: 0.5,
+            contact,
+            licensee,
+            uf: 'SP',
+            city: 'Sorocaba',
+            cep: '99876222',
+            address_number: '10',
+            address: 'Rua qualquer da cidade',
+            neighborhood: 'Bairro',
+            address_complement: 'Perto daquela parada lá',
+            total: 16.1,
+          }),
+        )
+
+        const expectedBody = {
+          customer_id: '1234',
+          items: [
+            {
+              amount: 780,
+              description: 'Product 1',
+              quantity: 2,
+              code: '0123',
+            },
+          ],
+          shipping: {
+            amount: 50,
+            recipient_name: 'John Doe',
+            recipient_phone: '5511990283745',
+            address: {
+              country: 'BR',
+              state: 'SP',
+              city: 'Sorocaba',
+              zip_code: '99876222',
+              line_1: `10, Rua qualquer da cidade, Bairro`,
+              line_2: 'Perto daquela parada lá',
+            },
+          },
+          payments: [
+            {
+              payment_method: 'credit_card',
+              amount: 1610,
+              credit_card: {
+                recurrence: 'false',
+                installments: 1,
+                statement_descriptor: 'Alcateia Ltds',
+                operation_type: 'auth_and_capture',
+                card_id: 'card_3dlyaY6SPSb',
+              },
+            },
+          ],
+        }
+
+        fetchMock.postOnce(
+          (url, { body, headers }) => {
+            return (
+              url === 'https://api.pagar.me/core/v5/orders/' &&
+              body === JSON.stringify(expectedBody) &&
+              headers['Authorization'] === 'Basic token'
+            )
+          },
+          {
+            status: 422,
+            body: {
+              message: 'The request is invalid.',
+              errors: {
+                'order.automaticanticipationsettings.type': [
+                  "The type field is invalid. Possible values are 'full','1025'",
+                ],
+              },
+            },
+          },
+        )
+
+        const payment = new Payment()
+        await payment.createCreditCard(cart, 'token')
+        await fetchMock.flush(true)
+
+        expect(fetchMock.done()).toBe(true)
+        expect(fetchMock.calls()).toHaveLength(1)
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          `Pedido ${cart._id} não criado na pagar.me.
+           status: 422
+           mensagem: {"message":"The request is invalid.","errors":{"order.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
+           log_id: 1234`,
+        )
+
+        integrationlogCreateSpy.mockRestore()
+      })
+
+      it('creates a record on integrationlog', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({
+            customer_id: '1234',
+            name: 'John Doe',
+            number: '5511990283745',
+            credit_card_id: 'card_3dlyaY6SPSb',
+            licensee,
+          }),
+        )
+
+        const cart = await Cart.create(
+          cartFactory.build({
+            products: [
+              {
+                product_retailer_id: '0123',
+                product_fb_id: 'fb_id',
+                name: 'Product 1',
+                quantity: 2,
+                unit_price: 7.8,
+                note: 'item note',
+              },
+            ],
+            delivery_tax: 0.5,
+            contact,
+            licensee,
+            uf: 'SP',
+            city: 'Sorocaba',
+            cep: '99876222',
+            address_number: '10',
+            address: 'Rua qualquer da cidade',
+            neighborhood: 'Bairro',
+            address_complement: 'Perto daquela parada lá',
+            total: 16.1,
+          }),
+        )
+
+        const expectedBody = {
+          customer_id: '1234',
+          items: [
+            {
+              amount: 780,
+              description: 'Product 1',
+              quantity: 2,
+              code: '0123',
+            },
+          ],
+          shipping: {
+            amount: 50,
+            recipient_name: 'John Doe',
+            recipient_phone: '5511990283745',
+            address: {
+              country: 'BR',
+              state: 'SP',
+              city: 'Sorocaba',
+              zip_code: '99876222',
+              line_1: `10, Rua qualquer da cidade, Bairro`,
+              line_2: 'Perto daquela parada lá',
+            },
+          },
+          payments: [
+            {
+              payment_method: 'credit_card',
+              amount: 1610,
+              credit_card: {
+                recurrence: 'false',
+                installments: 1,
+                statement_descriptor: 'Alcateia Ltds',
+                operation_type: 'auth_and_capture',
+                card_id: 'card_3dlyaY6SPSb',
+              },
+            },
+          ],
+        }
+
+        const bodyResponse = {
+          message: 'The request is invalid.',
+          errors: {
+            'order.automaticanticipationsettings.type': [
+              "The type field is invalid. Possible values are 'full','1025'",
+            ],
+          },
+        }
+
+        fetchMock.postOnce(
+          (url, { body, headers }) => {
+            return (
+              url === 'https://api.pagar.me/core/v5/orders/' &&
+              body === JSON.stringify(expectedBody) &&
+              headers['Authorization'] === 'Basic token'
+            )
+          },
+          {
+            status: 422,
+            body: bodyResponse,
+          },
+        )
+
+        const payment = new Payment()
+        await payment.createCreditCard(cart, 'token')
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)

@@ -16,6 +16,7 @@ const sendContactToPagarMe = require('./SendContactToPagarMe')
 const processBackgroundJob = require('./ProcessBackgroundjob')
 const processBackgroundjobGetPix = require('./ProcessBackgroundjobGetPix')
 const processBackgroundjobGetCreditCard = require('./ProcessBackgroundjobGetCreditCard')
+const processBackgroundjobChargeCreditCard = require('./ProcessBackgroundjobChargeCreditCard')
 const processBackgroundjobCancelOrder = require('./ProcessBackgroundjobCancelOrder')
 const processWebhookRequest = require('./ProcessWebhookRequest')
 const processPagarmeOrderPaid = require('./ProcessPagarmeOrderPaid')
@@ -39,6 +40,7 @@ const jobs = [
   processBackgroundJob,
   processBackgroundjobGetPix,
   processBackgroundjobGetCreditCard,
+  processBackgroundjobChargeCreditCard,
   processWebhookRequest,
   processPagarmeOrderPaid,
   processBackgroundjobCancelOrder,
