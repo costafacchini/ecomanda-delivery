@@ -62,7 +62,7 @@ describe('processBackgroundjobInviteCreditCard', () => {
 
   describe('when success', () => {
     it('returns the request data information at backgroundjob', async () => {
-      const createCreditCardFnSpy = jest.spyOn(Card.prototype, 'create').mockImplementation(async () => {
+      const createCreditCardFnSpy = jest.spyOn(Card.prototype, 'create').mockImplementation(() => {
         return { success: true }
       })
 
@@ -113,7 +113,7 @@ describe('processBackgroundjobInviteCreditCard', () => {
 
   describe('when error', () => {
     it('saves the error information at backgroundjob', async () => {
-      const createCreditCardFnSpy = jest.spyOn(Card.prototype, 'create').mockImplementation(async () => {
+      const createCreditCardFnSpy = jest.spyOn(Card.prototype, 'create').mockImplementation(() => {
         return {
           success: false,
           error: 'error message',
