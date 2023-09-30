@@ -18,8 +18,11 @@ const backgroundjobSchema = new Schema(
     },
     kind: {
       type: String,
-      enum: ['get-pix', 'cancel-order', 'get-credit-card'],
-      required: [true, 'Tipo do job: Você deve informar um valor ( get-pix | cancel-order | get-credit-card )'],
+      enum: ['get-pix', 'cancel-order', 'get-credit-card', 'invite-credit-card'],
+      required: [
+        true,
+        'Tipo do job: Você deve informar um valor ( get-pix | cancel-order | get-credit-card | invite-credit-card )',
+      ],
     },
     error: String,
     body: { type: Object },

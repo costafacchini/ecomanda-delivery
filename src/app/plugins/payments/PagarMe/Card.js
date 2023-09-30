@@ -32,15 +32,22 @@ class Card {
           creditCard.holder_name
         } criado na pagar.me! id: ${contact.credit_card_id} log_id: ${integrationlog._id}`,
       )
+
+      return { success: true }
     } else {
-      console.error(
-        `Cartão ${creditCard.number.substr(0, 6)}******${creditCard.number.substr(-4)} ${
-          creditCard.holder_name
-        } não criado na pagar.me.
+      const error = `Cartão ${creditCard.number.substr(0, 6)}******${creditCard.number.substr(-4)} ${
+        creditCard.holder_name
+      } não criado na pagar.me.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}
-           log_id: ${integrationlog._id}`,
-      )
+           log_id: ${integrationlog._id}`
+
+      console.error(error)
+
+      return {
+        success: false,
+        error,
+      }
     }
   }
 

@@ -90,7 +90,9 @@ describe('PagarMe/Card plugin', () => {
         )
 
         const card = new Card()
-        await card.create(contact, creditCard, 'token')
+        const response = await card.create(contact, creditCard, 'token')
+
+        expect(response.success).toEqual(true)
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
@@ -167,7 +169,9 @@ describe('PagarMe/Card plugin', () => {
         )
 
         const card = new Card()
-        await card.create(contact, creditCard, 'token')
+        const response = await card.create(contact, creditCard, 'token')
+
+        expect(response.success).toEqual(true)
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
@@ -240,7 +244,9 @@ describe('PagarMe/Card plugin', () => {
         )
 
         const card = new Card()
-        await card.create(contact, creditCard, 'token')
+        const response = await card.create(contact, creditCard, 'token')
+
+        expect(response.success).toEqual(true)
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
@@ -303,7 +309,15 @@ describe('PagarMe/Card plugin', () => {
         )
 
         const card = new Card()
-        await card.create(contact, creditCard, 'token')
+        const response = await card.create(contact, creditCard, 'token')
+
+        expect(response.success).toEqual(false)
+        expect(response.error).toEqual(
+          `Cartão 123412******1234 John Doe não criado na pagar.me.
+           status: 422
+           mensagem: {"message":"The request is invalid.","errors":{"card.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
+           log_id: 1234`,
+        )
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
@@ -365,7 +379,9 @@ describe('PagarMe/Card plugin', () => {
         )
 
         const card = new Card()
-        await card.create(contact, creditCard, 'token')
+        const response = await card.create(contact, creditCard, 'token')
+
+        expect(response.success).toEqual(false)
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
