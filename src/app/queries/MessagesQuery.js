@@ -77,7 +77,7 @@ class MessagesQuery {
     const query = new QueryBuilder(Message)
     this.applyFilters(query)
 
-    return await query.getQuery().count()
+    return await query.getQuery().countDocuments()
   }
 }
 
