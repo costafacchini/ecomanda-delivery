@@ -1,11 +1,13 @@
 const transformChatBody = require('./ChatMessage')
 const Licensee = require('@models/Licensee')
+const Contact = require('@models/Contact')
 const Body = require('@models/Body')
 const Rocketchat = require('../plugins/chats/Rocketchat')
 const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { body: bodyFactory } = require('@factories/body')
 const { contactWithWhatsappWindowClosed } = require('@repositories/contact')
+const { contact: contactFactory } = require('@factories/contact')
 
 jest.mock('@repositories/contact')
 
@@ -74,8 +76,8 @@ describe('transformChatBody', () => {
       .spyOn(Rocketchat.prototype, 'responseToMessages')
       .mockImplementation(() => {
         return [
-          { _id: 'KSDF656DSD91NSE', contact: { _id: 'id-contact-1' }, kind: 'text' },
-          { _id: 'OAR8Q54LDN02T', contact: { _id: 'id-contact-1' } },
+          { _id: 'KSDF656DSD91NSE', contact: { _id: contact._id }, kind: 'text' },
+          { _id: 'OAR8Q54LDN02T', contact: { _id: contact._id } },
         ]
       })
 
@@ -91,6 +93,8 @@ describe('transformChatBody', () => {
         useWhatsappWindow: true,
       }),
     )
+
+    const contact = await Contact.create(contactFactory.build({ licensee: licensee }))
 
     const body = await Body.create(
       bodyFactory.build({

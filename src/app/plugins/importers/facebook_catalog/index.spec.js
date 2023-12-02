@@ -67,6 +67,6 @@ describe('FacebookCatalogImporter', () => {
 }`
 
     expect(triggerImported.catalogMulti).toBe(catalog)
-    expect(await Product.where({ licensee }).count()).toEqual(3)
+    expect(await Product.where({ licensee }).countDocuments()).toEqual(3)
   })
 })

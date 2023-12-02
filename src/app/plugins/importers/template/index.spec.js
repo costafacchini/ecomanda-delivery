@@ -47,6 +47,6 @@ describe('TemplatesImporter', () => {
 
     const oldTemplate = await Template.findById(template._id)
     expect(oldTemplate).toEqual(null)
-    expect(await Template.where({ licensee }).count()).toEqual(2)
+    expect(await Template.where({ licensee }).countDocuments()).toEqual(2)
   })
 })
