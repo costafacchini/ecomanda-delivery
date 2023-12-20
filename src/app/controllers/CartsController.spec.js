@@ -533,12 +533,16 @@ describe('carts controller', () => {
                   },
                 ],
               },
+              {
+                product_retailer_id: '0123',
+                quantity: 1,
+              },
             ],
           })
           .expect('Content-Type', /json/)
           .expect(200)
           .then((response) => {
-            expect(response.body.total).toEqual(17.1)
+            expect(response.body.total).toEqual(24.9)
             expect(response.body.concluded).toEqual(false)
             expect(response.body.contact).toEqual(contact._id.toString())
             expect(response.body.licensee).toEqual(licensee._id.toString())
@@ -546,7 +550,7 @@ describe('carts controller', () => {
             expect(response.body.products.length).toEqual(2)
             expect(response.body.products[0].product_retailer_id).toEqual('0123')
             expect(response.body.products[0].name).toEqual('Product 1')
-            expect(response.body.products[0].quantity).toEqual(2)
+            expect(response.body.products[0].quantity).toEqual(3)
             expect(response.body.products[0].unit_price).toEqual(7.8)
 
             expect(response.body.products[0].additionals.length).toEqual(1)

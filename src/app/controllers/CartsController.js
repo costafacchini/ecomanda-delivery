@@ -262,7 +262,12 @@ class CartsController {
       }
 
       req.body.products?.forEach((product) => {
-        cart.products.push(product)
+        const cartItem = cart.products.find((item) => item.product_retailer_id == product.product_retailer_id)
+        if (cartItem) {
+          cartItem.quantity = cartItem.quantity + product.quantity
+        } else {
+          cart.products.push(product)
+        }
       })
 
       await cart.save()
