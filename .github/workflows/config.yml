@@ -26,10 +26,10 @@ jobs:
       NODE_ENV: 'test'
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js 18
+      - name: Use Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
       - uses: c-hive/gha-yarn-cache@v2
       - name: Install dependencies
         run: yarn

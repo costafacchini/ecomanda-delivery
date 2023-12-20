@@ -1,10 +1,7 @@
 const mongoose = require('mongoose')
 const { createDefaultUser } = require('../setup/database')
 
-const mongoConnectionOpts = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}
+const mongoConnectionOpts = {}
 
 class MongoServer {
   constructor(uri) {
