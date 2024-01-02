@@ -4193,10 +4193,10 @@ bull-board@2.1.3:
     express "4.17.1"
     redis-info "^3.0.8"
 
-bullmq@5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-5.1.0.tgz#9c527b1bd5121e082bd807a3bbab953b002aea1c"
-  integrity sha512-08rTUvXlAFIhKNIHVRL6KTc0xJf2pxVxnMH0Bvlq6WfKgW3uTWmTjw+oj1NDYCK5BTr3F8ih7dV2exoM8prA2w==
+bullmq@5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-5.1.1.tgz#ce07f513fceae580d766fc15e15be4a5ceeb348f"
+  integrity sha512-j3zbNEQWsyHjpqGWiem2XBfmxAjYcArbwsmGlkM1E9MAVcrqB5hQUsXmyy9gEBAdL+PVotMICr7xTquR4Y2sKQ==
   dependencies:
     cron-parser "^4.6.0"
     glob "^8.0.3"
