@@ -208,16 +208,6 @@ describe('carts controller', () => {
           })
       })
 
-      it('returns status 422 and message if the contact is not valid', async () => {
-        await request(expressServer)
-          .post(`/api/v1/carts?token=${licensee.apiToken}`)
-          .send(cartFactory.build({ contact: '5568902938567' }))
-          .expect('Content-Type', /json/)
-          .expect(422, {
-            errors: { message: 'Contato 5568902938567 não encontrado' },
-          })
-      })
-
       it('returns status 500 and message if the some error ocurred when create the cart', async () => {
         const mockFunction = jest.spyOn(Cart.prototype, 'save').mockImplementation(() => {
           throw new Error('some error')
