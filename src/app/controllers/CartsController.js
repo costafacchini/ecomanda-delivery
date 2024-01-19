@@ -41,14 +41,14 @@ function permit(fields) {
 
 class CartsController {
   async create(req, res) {
-    const { name } = req.body
+    let { name } = req.body
     let { contact } = req.body
     if (!contact) contact = req.query.contact
 
     try {
       let cartContact = await getContactByNumber(contact, req.licensee._id)
       if (!cartContact) {
-        if (!name) return res.status(422).send({ errors: { message: `Contato ${contact} não encontrado` } })
+        if (!name) return (name = contact)
 
         const normalizedPhone = new NormalizePhone(contact)
 
