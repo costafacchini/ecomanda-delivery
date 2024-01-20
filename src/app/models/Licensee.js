@@ -209,6 +209,13 @@ const licenseeSchema = new Schema(
     },
     recipient_id: String,
     card_information_url: String,
+    pedidos10_integration: {
+      type: Object,
+    },
+    pedidos10_integrator: {
+      type: String,
+      enum: [''],
+    },
   },
   { timestamps: true },
 )
