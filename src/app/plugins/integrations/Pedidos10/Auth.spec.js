@@ -1,0 +1,241 @@
+const Auth = require('./Auth')
+const Licensee = require('@models/Licensee')
+const Integrationlog = require('@models/Integrationlog')
+const fetchMock = require('fetch-mock')
+const mongoServer = require('../../../../../.jest/utils')
+const { licenseePedidos10: licenseeFactory } = require('@factories/licensee')
+
+describe('Pedidos10/Auth plugin', () => {
+  let licensee
+  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
+  const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
+
+  beforeEach(async () => {
+    await mongoServer.connect()
+    jest.clearAllMocks()
+    fetchMock.reset()
+
+    licensee = await Licensee.create(licenseeFactory.build())
+    licensee.pedidos10_integration = {
+      integration_token: 'integration-token',
+      username: 'username',
+      password: 'password',
+    }
+  })
+
+  afterEach(async () => {
+    await mongoServer.disconnect()
+  })
+
+  describe('#login', () => {
+    describe('when success', () => {
+      it('logins on Pedidos 10 API', async () => {
+        const integrationlogCreateSpy = jest.spyOn(Integrationlog, 'create').mockImplementation(() => {
+          return { _id: '1234' }
+        })
+
+        const expectedBody = {
+          integration_token: 'integration-token',
+          username: 'username',
+          password: 'password',
+        }
+
+        fetchMock.postOnce(
+          (url, { body, headers }) => {
+            return (
+              url === 'https://extranet.pedidos10.com.br/api-integracao-V1/auth/' &&
+              body === JSON.stringify(expectedBody) &&
+              headers['Accept'] === 'application/json'
+            )
+          },
+          {
+            status: 200,
+            body: {
+              access_token: 'access-token',
+            },
+          },
+        )
+
+        const auth = new Auth(licensee)
+        await auth.login()
+        await fetchMock.flush(true)
+
+        expect(fetchMock.done()).toBe(true)
+        expect(fetchMock.calls()).toHaveLength(1)
+
+        expect(consoleInfoSpy).toHaveBeenCalledWith('Login efetuado na API do Pedidos 10! log_id: 1234')
+
+        integrationlogCreateSpy.mockRestore()
+      })
+
+      it('saves the access_token on licensee', async () => {
+        const integrationlogCreateSpy = jest.spyOn(Integrationlog, 'create').mockImplementation(() => {
+          return { _id: '1234' }
+        })
+
+        const expectedBody = {
+          integration_token: 'integration-token',
+          username: 'username',
+          password: 'password',
+        }
+
+        fetchMock.postOnce(
+          (url, { body, headers }) => {
+            return (
+              url === 'https://extranet.pedidos10.com.br/api-integracao-V1/auth/' &&
+              body === JSON.stringify(expectedBody) &&
+              headers['Accept'] === 'application/json'
+            )
+          },
+          {
+            status: 200,
+            body: {
+              access_token: 'access-token',
+            },
+          },
+        )
+
+        const auth = new Auth(licensee)
+        await auth.login()
+        await fetchMock.flush(true)
+
+        expect(fetchMock.done()).toBe(true)
+        expect(fetchMock.calls()).toHaveLength(1)
+
+        const licenseeUpdated = await Licensee.findById(licensee._id)
+        expect(licenseeUpdated.pedidos10_integration.access_token).toEqual('access-token')
+        expect(licenseeUpdated.pedidos10_integration.authenticated).toEqual(true)
+
+        integrationlogCreateSpy.mockRestore()
+      })
+
+      it('creates a record on integrationlog', async () => {
+        const expectedBody = {
+          integration_token: 'integration-token',
+          username: 'username',
+          password: 'password',
+        }
+
+        const bodyResponse = {
+          access_token: 'access-token',
+        }
+
+        fetchMock.postOnce(
+          (url, { body, headers }) => {
+            return (
+              url === 'https://extranet.pedidos10.com.br/api-integracao-V1/auth/' &&
+              body === JSON.stringify(expectedBody) &&
+              headers['Accept'] === 'application/json'
+            )
+          },
+          {
+            status: 200,
+            body: bodyResponse,
+          },
+        )
+
+        const auth = new Auth(licensee)
+        await auth.login()
+        await fetchMock.flush(true)
+
+        expect(fetchMock.done()).toBe(true)
+        expect(fetchMock.calls()).toHaveLength(1)
+
+        const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
+        expect(integrationlog.log_payload).toEqual(bodyResponse)
+      })
+    })
+
+    describe('when error', () => {
+      it('logs the error message', async () => {
+        const integrationlogCreateSpy = jest.spyOn(Integrationlog, 'create').mockImplementation(() => {
+          return { _id: '1234' }
+        })
+
+        const expectedBody = {
+          integration_token: 'integration-token',
+          username: 'username',
+          password: 'password',
+        }
+
+        fetchMock.postOnce(
+          (url, { body, headers }) => {
+            return (
+              url === 'https://extranet.pedidos10.com.br/api-integracao-V1/auth/' &&
+              body === JSON.stringify(expectedBody) &&
+              headers['Accept'] === 'application/json'
+            )
+          },
+          {
+            status: 422,
+            body: {
+              message: 'The request is invalid.',
+              errors: {
+                'customer.automaticanticipationsettings.type': [
+                  "The type field is invalid. Possible values are 'full','1025'",
+                ],
+              },
+            },
+          },
+        )
+
+        const auth = new Auth(licensee)
+        await auth.login()
+        await fetchMock.flush(true)
+
+        expect(fetchMock.done()).toBe(true)
+        expect(fetchMock.calls()).toHaveLength(1)
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          `Não foi possível fazer a autenticação na API do Pedidos 10
+           status: 422
+           mensagem: {"message":"The request is invalid.","errors":{"customer.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
+           log_id: 1234`,
+        )
+
+        integrationlogCreateSpy.mockRestore()
+      })
+
+      it('creates a record on integrationlog', async () => {
+        const expectedBody = {
+          integration_token: 'integration-token',
+          username: 'username',
+          password: 'password',
+        }
+
+        const bodyResponse = {
+          message: 'The request is invalid.',
+          errors: {
+            'customer.automaticanticipationsettings.type': [
+              "The type field is invalid. Possible values are 'full','1025'",
+            ],
+          },
+        }
+
+        fetchMock.postOnce(
+          (url, { body, headers }) => {
+            return (
+              url === 'https://extranet.pedidos10.com.br/api-integracao-V1/auth/' &&
+              body === JSON.stringify(expectedBody) &&
+              headers['Accept'] === 'application/json'
+            )
+          },
+          {
+            status: 422,
+            body: bodyResponse,
+          },
+        )
+
+        const auth = new Auth(licensee)
+        await auth.login()
+        await fetchMock.flush(true)
+
+        expect(fetchMock.done()).toBe(true)
+        expect(fetchMock.calls()).toHaveLength(1)
+
+        const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
+        expect(integrationlog.log_payload).toEqual(bodyResponse)
+      })
+    })
+  })
+})
