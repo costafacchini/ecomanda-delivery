@@ -12,7 +12,7 @@ async function processWebhook(data) {
     {
       action: `pedidos10-send-order`,
       body: {
-        order_id: orderPersisted._id,
+        orderId: orderPersisted._id,
       },
     },
   ]

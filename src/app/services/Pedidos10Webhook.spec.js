@@ -79,6 +79,6 @@ describe('processWebhook', () => {
 
     expect(actions.length).toEqual(1)
     expect(actions[0].action).toEqual('pedidos10-send-order')
-    expect(actions[0].body.order_id).toBeDefined()
+    expect(actions[0].body.orderId).toBeDefined()
   })
 })

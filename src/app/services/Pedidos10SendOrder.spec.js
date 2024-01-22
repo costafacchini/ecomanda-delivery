@@ -23,7 +23,7 @@ describe('sendOrder', () => {
     const order = await createOrder({ ...orderFactory.build({ licensee }) })
 
     const data = {
-      order_id: order._id,
+      orderId: order._id,
     }
 
     await sendOrder(data)
