@@ -140,6 +140,7 @@ const orderSchema = new Schema(
       type: String,
       enum: ['pending', 'done', 'error'],
     },
+    integration_error: String,
   },
   { timestamps: true },
 )

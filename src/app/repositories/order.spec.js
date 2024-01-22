@@ -1,5 +1,4 @@
 const Licensee = require('@models/Licensee')
-const Order = require('@models/Order')
 const mongoServer = require('../../../.jest/utils')
 const { createOrder, getOrderBy } = require('@repositories/order')
 const { licensee: licenseeFactory } = require('@factories/licensee')

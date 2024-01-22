@@ -1,13 +1,22 @@
+const Licensee = require('@models/Licensee')
+const mongoServer = require('../../../../.jest/utils')
 const Pedidos10 = require('./Pedidos10')
-const { licensee: licenseeFactory } = require('@factories/licensee')
+const { createOrder, getOrderBy } = require('@repositories/order')
 const Order = require('./Pedidos10/Order')
+const { licensee: licenseeFactory } = require('@factories/licensee')
+const { order: orderFactory } = require('@factories/order')
 
 describe('Pedidos10 plugin', () => {
   const orderLoadFnSpy = jest.spyOn(Order.prototype, 'loadOrderFromDatabase').mockImplementation(() => {})
   const orderSaveFnSpy = jest.spyOn(Order.prototype, 'save').mockImplementation(() => {})
 
-  beforeAll(() => {
+  beforeAll(async () => {
     jest.clearAllMocks()
+    await mongoServer.connect()
+  })
+
+  afterAll(async () => {
+    await mongoServer.disconnect()
   })
 
   describe('#processOrder', () => {
@@ -60,6 +69,33 @@ describe('Pedidos10 plugin', () => {
 
       expect(orderLoadFnSpy).toHaveBeenCalledWith()
       expect(orderSaveFnSpy).toHaveBeenCalledWith()
+    })
+  })
+
+  describe('#sendOrder', () => {
+    describe('when the licensee has no integrator configuration', () => {
+      it('changes integration_status to done', async () => {
+        const licensee = await Licensee.create(licenseeFactory.build({ pedidos10_integrator: '' }))
+        const order = await createOrder({ ...orderFactory.build({ licensee, integration_status: 'pending' }) })
+
+        const pedidos10 = new Pedidos10(licensee)
+        const orderChanged = await pedidos10.sendOrder(order)
+
+        expect(orderChanged.integration_status).toEqual('done')
+      })
+    })
+
+    describe('when an error occurs', () => {
+      it('changes the integration_status to done and fills the error', async () => {
+        const licensee = licenseeFactory.build({ pedidos10_integrator: 'error' })
+        const order = orderFactory.build({ licensee, integration_status: 'pending' })
+
+        const pedidos10 = new Pedidos10(licensee)
+        const orderUpdated = await pedidos10.sendOrder(order)
+
+        expect(orderUpdated.integration_status).toEqual('error')
+        expect(orderUpdated.integration_error).toEqual('Error: implementar quando tiver o primeiro integrador')
+      })
     })
   })
 })
