@@ -3711,10 +3711,10 @@ bull-board@2.1.3:
     express "4.17.1"
     redis-info "^3.0.8"
 
-bullmq@5.1.4:
-  version "5.1.4"
-  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-5.1.4.tgz#cda7f400be2e03be778184ce45cee46eace39307"
-  integrity sha512-j/AjaPc8BhyrH7b2MyZpi4cUtGH8TJTxonZUmXEefmKU8z5DcldzmlXPief0P4+qvN0A7qwWZH3n0F+GsWgQkg==
+bullmq@5.1.5:
+  version "5.1.5"
+  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-5.1.5.tgz#8cdd09f0e9e8b83321bc8f1af822b1b50c3ad8ad"
+  integrity sha512-Rc9QGHrj/wJ8RMENKa839o1pJmdicg7KBTfmVU8YqYuEK2JcMSJaKMg2XrAi7sdYSawgOJgC/kiW9fCGYEj6Yg==
   dependencies:
     cron-parser "^4.6.0"
     glob "^8.0.3"
