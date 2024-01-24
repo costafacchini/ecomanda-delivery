@@ -1,5 +1,5 @@
 const Integrationlog = require('@models/Integrationlog')
-const request = require('../../../services/request')
+const request = require('../../../../services/request')
 
 class Auth {
   constructor(licensee) {

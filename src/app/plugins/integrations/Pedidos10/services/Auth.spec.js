@@ -2,7 +2,7 @@ const Auth = require('./Auth')
 const Licensee = require('@models/Licensee')
 const Integrationlog = require('@models/Integrationlog')
 const fetchMock = require('fetch-mock')
-const mongoServer = require('../../../../../.jest/utils')
+const mongoServer = require('../../../../../../.jest/utils')
 const { licenseePedidos10: licenseeFactory } = require('@factories/licensee')
 
 describe('Pedidos10/Auth plugin', () => {

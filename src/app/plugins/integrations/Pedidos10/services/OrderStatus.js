@@ -1,15 +1,16 @@
 const Integrationlog = require('@models/Integrationlog')
-const request = require('../../../services/request')
+const request = require('../../../../services/request')
 
-class Webhook {
+class OrderStatus {
   constructor(licensee) {
     this.licensee = licensee
   }
 
-  async sign() {
+  async change(orderId, status) {
     const body = {
-      urlWebhook: `https://clave-digital.herokuapp.com/api/v1/orders?token=${this.licensee.apiToken}`,
-      merchantExternalCode: this.licensee._id.toString(),
+      orderId: orderId,
+      status: status,
+      observation: '',
     }
 
     const headers = {
@@ -17,7 +18,7 @@ class Webhook {
       Authorization: this.licensee.pedidos10_integration.access_token,
     }
 
-    const response = await request.put('https://extranet.pedidos10.com.br/api-integracao-V1/webhook-order/', {
+    const response = await request.post('https://extranet.pedidos10.com.br/api-integracao-V1/order-status/', {
       headers,
       body,
     })
@@ -28,10 +29,10 @@ class Webhook {
     })
 
     if (response.status === 200) {
-      console.info(`Webhook do Pedidos 10 assinado com sucesso! log_id: ${integrationlog._id}`)
+      console.info(`Status do pedido ${orderId} atualizado para ${status}! log_id: ${integrationlog._id}`)
     } else {
       console.error(
-        `Não foi possível assinar o webhook de pedidos do Pedidos 10
+        `Não foi possível alterar o status do pedido no Pedidos 10
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}
            log_id: ${integrationlog._id}`,
@@ -40,4 +41,4 @@ class Webhook {
   }
 }
 
-module.exports = Webhook
+module.exports = OrderStatus
