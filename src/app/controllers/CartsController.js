@@ -44,6 +44,7 @@ class CartsController {
     let { name } = req.body
     let { contact } = req.body
     if (!contact) contact = req.query.contact
+    if (!name) name = req.query.name
 
     try {
       let cartContact = await getContactByNumber(contact, req.licensee._id)
