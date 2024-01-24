@@ -48,7 +48,7 @@ class CartsController {
     try {
       let cartContact = await getContactByNumber(contact, req.licensee._id)
       if (!cartContact) {
-        if (!name) return (name = contact)
+        if (!name) name = contact
 
         const normalizedPhone = new NormalizePhone(contact)
 
