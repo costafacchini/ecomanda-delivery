@@ -69,7 +69,7 @@ Runs the tests .\
 
 ```bash
 # Backup
-$ mongodump --uri {uri} --gzip --archive=={path}
+$ mongodump --uri {uri} --gzip --out=={path}
 
 # Restore
 $ mongorestore --uri {uri} --gzip --drop {path do backup}
