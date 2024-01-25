@@ -73,7 +73,7 @@ describe('Gallabox plugin', () => {
               fbProductId: '4939381689498702',
               retailer_id: '83921',
               name: '1/2 Portuguesa',
-              description: 'Mozzarella Roni coberta com presunto, ovo cozido e rodelas de cebola',
+              description: 'Mozzarella Roni coberta com presunto, ovo cozido e rodelas de cebola - 5647',
               price: 'R$88.00',
               image_url: 'https://labraciera.com.br/wp-content/uploads/2022/12/GIU01240-768x748.jpg',
             },
@@ -81,7 +81,7 @@ describe('Gallabox plugin', () => {
               fbProductId: '5440587292720086',
               retailer_id: '83906',
               name: '1/2 Castelões',
-              description: 'Mozzarela italiana Fior di Latte e calabresa artesanal Cinque',
+              description: 'Mozzarela italiana Fior di Latte e calabresa artesanal Cinque - 5647',
               price: 'R$89.00',
               image_url: 'https://labraciera.com.br/wp-content/uploads/2022/06/CASTELOES-Otimizado.jpg',
             },
@@ -134,7 +134,7 @@ describe('Gallabox plugin', () => {
       expect(cart.products[0].additionals[0].quantity).toEqual(1)
       expect(cart.products[0].additionals[0].unit_price).toEqual(88)
       expect(cart.products[0].additionals[0].note).toEqual(
-        'Mozzarella Roni coberta com presunto, ovo cozido e rodelas de cebola',
+        'Mozzarella Roni coberta com presunto, ovo cozido e rodelas de cebola - 5647',
       )
       expect(cart.products[0].additionals[0].product_fb_id).toEqual('4939381689498702')
 
@@ -143,7 +143,7 @@ describe('Gallabox plugin', () => {
       expect(cart.products[0].additionals[1].quantity).toEqual(1)
       expect(cart.products[0].additionals[1].unit_price).toEqual(89)
       expect(cart.products[0].additionals[1].note).toEqual(
-        'Mozzarela italiana Fior di Latte e calabresa artesanal Cinque',
+        'Mozzarela italiana Fior di Latte e calabresa artesanal Cinque - 5647',
       )
       expect(cart.products[0].additionals[1].product_fb_id).toEqual('5440587292720086')
 
