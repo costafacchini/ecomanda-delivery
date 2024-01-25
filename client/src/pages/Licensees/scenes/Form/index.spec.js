@@ -44,10 +44,14 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Plugin para uso de carrinho de compra')).toHaveValue('')
     expect(screen.getByLabelText('Id da loja')).toHaveValue('')
     expect(screen.getByLabelText('Id do status do carrinho de compra')).toHaveValue('')
-    expect(screen.getByLabelText('Nome do produto fracionado 1/2')).toHaveValue('')
-    expect(screen.getByLabelText('Id 1/2')).toHaveValue('')
-    expect(screen.getByLabelText('Nome do produto fracionado 1/3')).toHaveValue('')
-    expect(screen.getByLabelText('Id 1/3')).toHaveValue('')
+    expect(screen.getByLabelText('Nome do produto (1)')).toHaveValue('')
+    expect(screen.getByLabelText('Id 1')).toHaveValue('')
+    expect(screen.getByLabelText('Nome do produto (2)')).toHaveValue('')
+    expect(screen.getByLabelText('Id 2')).toHaveValue('')
+    expect(screen.getByLabelText('Nome do produto (3)')).toHaveValue('')
+    expect(screen.getByLabelText('Id 3')).toHaveValue('')
+    expect(screen.getByLabelText('Nome do produto (4)')).toHaveValue('')
+    expect(screen.getByLabelText('Id 4')).toHaveValue('')
     expect(screen.getByLabelText('URL para webhook de Chat')).toHaveValue('')
     expect(screen.getByLabelText('URL para webhook de Chatbot')).toHaveValue('')
     expect(screen.getByLabelText('URL de webhook para transferir do Chatbot para o Chat')).toHaveValue('')
@@ -96,6 +100,10 @@ describe('<LicenseeForm />', () => {
       productFractional2Id: '9876',
       productFractional3Name: 'Pizza grande 3 sabores',
       productFractional3Id: '9987',
+      productFractionalSize3Name: 'Pizza média',
+      productFractionalSize3Id: '1234',
+      productFractionalSize4Name: 'Pizza pequena',
+      productFractionalSize4Id: '2345',
       urlChatWebhook: 'URL para webhook de Chat',
       urlChatbotWebhook: 'URL para webhook de Chatbot',
       urlChatbotTransfer: 'URL de webhook para transferir do Chatbot para o Chat',
@@ -144,10 +152,14 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Plugin para uso de carrinho de compra')).toHaveValue('go2go')
     expect(screen.getByLabelText('Id da loja')).toHaveValue('999')
     expect(screen.getByLabelText('Id do status do carrinho de compra')).toHaveValue('5433')
-    expect(screen.getByLabelText('Nome do produto fracionado 1/2')).toHaveValue('Pizza grande 2 sabores')
-    expect(screen.getByLabelText('Id 1/2')).toHaveValue('9876')
-    expect(screen.getByLabelText('Nome do produto fracionado 1/3')).toHaveValue('Pizza grande 3 sabores')
-    expect(screen.getByLabelText('Id 1/3')).toHaveValue('9987')
+    expect(screen.getByLabelText('Nome do produto (1)')).toHaveValue('Pizza grande 2 sabores')
+    expect(screen.getByLabelText('Id 1')).toHaveValue('9876')
+    expect(screen.getByLabelText('Nome do produto (2)')).toHaveValue('Pizza grande 3 sabores')
+    expect(screen.getByLabelText('Id 2')).toHaveValue('9987')
+    expect(screen.getByLabelText('Nome do produto (3)')).toHaveValue('Pizza média')
+    expect(screen.getByLabelText('Id 3')).toHaveValue('1234')
+    expect(screen.getByLabelText('Nome do produto (4)')).toHaveValue('Pizza pequena')
+    expect(screen.getByLabelText('Id 4')).toHaveValue('2345')
     expect(screen.getByLabelText('URL para webhook de Chat')).toHaveValue('URL para webhook de Chat')
     expect(screen.getByLabelText('URL para webhook de Chatbot')).toHaveValue('URL para webhook de Chatbot')
     expect(screen.getByLabelText('URL de webhook para transferir do Chatbot para o Chat')).toHaveValue('URL de webhook para transferir do Chatbot para o Chat')
@@ -293,6 +305,10 @@ describe('<LicenseeForm />', () => {
         productFractional2Id: '',
         productFractional3Name: '',
         productFractional3Id: '',
+        productFractionalSize3Name: '',
+        productFractionalSize3Id: '',
+        productFractionalSize4Name: '',
+        productFractionalSize4Id: '',
         document: '',
         kind: '',
         financial_player_fee: '0.00',
