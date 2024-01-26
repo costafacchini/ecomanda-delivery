@@ -150,6 +150,9 @@ const licenseeSchema = new Schema(
     productFractionalSize3Id: String,
     productFractionalSize4Name: String,
     productFractionalSize4Id: String,
+    productFractionals: {
+      type: Object,
+    },
     document: String,
     kind: {
       type: String,

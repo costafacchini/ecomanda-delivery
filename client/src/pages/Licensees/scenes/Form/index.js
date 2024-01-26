@@ -42,6 +42,7 @@ const licenseeInitialValues = {
   productFractionalSize3Id: '',
   productFractionalSize4Name: '',
   productFractionalSize4Id: '',
+  productFractionals: '',
   document: '',
   kind: '',
   financial_player_fee: '0.00',
@@ -549,106 +550,19 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
               </div>
 
               <div className='row'>
-                <div className='form-group col-4'>
-                  <label htmlFor='productFractional2Name'>Nome do produto (1)</label>
-                  <FieldWithError
-                    id='productFractional2Name'
-                    name='productFractional2Name'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.productFractional2Name}
-                  />
-                </div>
-
-                <div className='form-group col-1'>
-                  <label htmlFor='productFractional2Id'>Id 1</label>
-                  <FieldWithError
-                    id='productFractional2Id'
-                    name='productFractional2Id'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.productFractional2Id}
-                  />
-                </div>
-              </div>
-
-              <div className='row'>
-                <div className='form-group col-4'>
-                  <label htmlFor='productFractional3Name'>Nome do produto (2)</label>
-                  <FieldWithError
-                    id='productFractional3Name'
-                    name='productFractional3Name'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.productFractional3Name}
-                  />
-                </div>
-
-                <div className='form-group col-1'>
-                  <label htmlFor='productFractional3Id'>Id 2</label>
-                  <FieldWithError
-                    id='productFractional3Id'
-                    name='productFractional3Id'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.productFractional3Id}
-                  />
-                </div>
-              </div>
-
-              <div className='row'>
-                <div className='form-group col-4'>
-                  <label htmlFor='productFractionalSize3Name'>Nome do produto (3)</label>
-                  <FieldWithError
-                    id='productFractionalSize3Name'
-                    name='productFractionalSize3Name'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.productFractionalSize3Name}
-                  />
-                </div>
-
-                <div className='form-group col-1'>
-                  <label htmlFor='productFractionalSize3Id'>Id 3</label>
-                  <FieldWithError
-                    id='productFractionalSize3Id'
-                    name='productFractionalSize3Id'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.productFractionalSize3Id}
-                  />
-                </div>
-              </div>
-
-              <div className='row'>
-                <div className='form-group col-4'>
-                  <label htmlFor='productFractionalSize4Name'>Nome do produto (4)</label>
-                  <FieldWithError
-                    id='productFractionalSize4Name'
-                    name='productFractionalSize4Name'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.productFractionalSize4Name}
-                  />
-                </div>
-
-                <div className='form-group col-1'>
-                  <label htmlFor='productFractionalSize4Id'>Id 4</label>
-                  <FieldWithError
-                    id='productFractionalSize4Id'
-                    name='productFractionalSize4Id'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.productFractionalSize4Id}
-                  />
+                <div className='form-group col-5'>
+                  <label htmlFor='productFractionals'>Produtos</label>
+                  <div className='pb-2'>
+                    <textarea
+                      id='productFractionals'
+                      name='productFractionals'
+                      className='form-control'
+                      rows={10}
+                      onChange={props.handleChange}
+                      onBlur={props.handleBlur}
+                      value={props.values.productFractionals}
+                    />
+                  </div>
                 </div>
               </div>
             </fieldset>

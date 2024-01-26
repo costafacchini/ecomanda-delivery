@@ -13,7 +13,7 @@ class IntegrationsController {
 
     publishMessage({ key: 'process-webhook-request', body: { bodyId: bodySaved._id } })
 
-    res.send(200)
+    res.sendStatus(200)
   }
 }
 

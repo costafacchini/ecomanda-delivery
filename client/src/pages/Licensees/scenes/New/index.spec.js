@@ -57,6 +57,7 @@ describe('<LicenseeNew />', () => {
         productFractionalSize3Id: '',
         productFractionalSize4Name: '',
         productFractionalSize4Id: '',
+        productFractionals: '',
         document: '',
         kind: '',
         financial_player_fee: '0.00',
