@@ -15,11 +15,16 @@ class FractionalProducts {
   }
 
   findProductNameByID(id) {
-    if (this.licensee.productFractional2Id == id) return this.licensee.productFractional2Name
-    if (this.licensee.productFractional3Id == id) return this.licensee.productFractional3Name
-    if (this.licensee.productFractionalSize3Id == id) return this.licensee.productFractionalSize3Name
-    if (this.licensee.productFractionalSize4Id == id) return this.licensee.productFractionalSize4Name
-    return ''
+    if (!this.licensee.productFractionals) return ''
+
+    try {
+      const productFrationals = JSON.parse(this.licensee.productFractionals)
+      const productFractional = productFrationals.products.find((product) => product.id == id)
+
+      return productFractional.name
+    } catch {
+      return ''
+    }
   }
 
   createItemFull(productRetaileId) {

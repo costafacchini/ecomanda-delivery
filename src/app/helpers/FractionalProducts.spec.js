@@ -2,14 +2,14 @@ const FractionalProducts = require('./FractionalProducts')
 
 describe('Fractional products', () => {
   const licensee = {
-    productFractional2Name: 'Pizza Grande (2 sabores)',
-    productFractional2Id: '5647',
-    productFractional3Name: 'Pizza Grande (3 sabores)',
-    productFractional3Id: '5699',
-    productFractionalSize3Name: 'Pizza Broto',
-    productFractionalSize3Id: '5599',
-    productFractionalSize4Name: 'Pizza Grande (4 sabores)',
-    productFractionalSize4Id: '9876',
+    productFractionals: `{
+      "products": [
+        { "id": "5647", "name": "Pizza Grande (2 sabores)" },
+        { "id": "5699", "name": "Pizza Grande (3 sabores)" },
+        { "id": "5599", "name": "Pizza Broto" },
+        { "id": "9876", "name": "Pizza Grande (4 sabores)" }
+      ]
+    }`,
   }
 
   describe('when has no items with factional in name', () => {

@@ -24,8 +24,11 @@ describe('Gallabox plugin', () => {
         licenseeFactory.build({
           unidadeId: '123',
           statusId: '743',
-          productFractional2Name: 'Pizza Grande 2 Sabores',
-          productFractional2Id: '5647',
+          productFractionals: `{
+            "products": [
+              { "id": "5647", "name": "Pizza Grande (2 sabores)" }
+            ]
+          }`,
         }),
       )
 
@@ -123,7 +126,7 @@ describe('Gallabox plugin', () => {
       expect(cart.products.length).toEqual(2)
 
       expect(cart.products[0].product_retailer_id).toEqual('5647')
-      expect(cart.products[0].name).toEqual('Pizza Grande 2 Sabores')
+      expect(cart.products[0].name).toEqual('Pizza Grande (2 sabores)')
       expect(cart.products[0].quantity).toEqual(1)
       expect(cart.products[0].unit_price).toEqual(177)
       expect(cart.products[0].note).toEqual('')
@@ -148,7 +151,7 @@ describe('Gallabox plugin', () => {
       expect(cart.products[0].additionals[1].product_fb_id).toEqual('5440587292720086')
 
       expect(cart.products[1].product_retailer_id).toEqual('5647')
-      expect(cart.products[1].name).toEqual('Pizza Grande 2 Sabores')
+      expect(cart.products[1].name).toEqual('Pizza Grande (2 sabores)')
       expect(cart.products[1].quantity).toEqual(1)
       expect(cart.products[1].unit_price).toEqual(95)
       expect(cart.products[1].note).toEqual('')
