@@ -22,12 +22,11 @@ class FractionalProducts {
     return ''
   }
 
-  createItemFull() {
-    const product_retailer_id = this.fractionProductRetailerId
-    const name = this.findProductNameByID(product_retailer_id)
+  createItemFull(productRetaileId) {
+    const name = this.findProductNameByID(productRetaileId)
 
     return {
-      product_retailer_id: product_retailer_id,
+      product_retailer_id: productRetaileId,
       name: name,
       quantity: 1,
       unit_price: 0,
@@ -44,20 +43,28 @@ class FractionalProducts {
       unit_price: item.unit_price,
       note: item.note,
       product_retailer_id: item.product_retailer_id,
-      product_fb_id: item.product_fb_id,
+      product_fb_id: item.product_fb_id || '',
     }
+  }
+
+  hasIdOnNote(item) {
+    return item.note && item.note.replace(/[^0-9]/g, '') != ''
+  }
+
+  getItemIdFromNote(note) {
+    return note.replace(/[^0-9]/g, '')
   }
 
   join(items) {
     const itemsTransformed = []
 
     items.forEach((item) => {
-      if (item.name.includes('1/2') || item.name.includes('1/3')) {
+      if (item.name.includes('1/')) {
         if (this.hasSomePartialItem()) {
           this.itemPartial.push(item)
 
           if (this.isPartialItemsFull()) {
-            const itemComplete = this.createItemFull()
+            const itemComplete = this.createItemFull(this.fractionProductRetailerId)
 
             this.itemPartial.forEach((item) => {
               const additional = this.createItemAdditional(item)
@@ -70,12 +77,28 @@ class FractionalProducts {
             itemsTransformed.push(itemComplete)
           }
         } else {
-          this.fractionTotal = item.name.includes('1/2') ? 2 : 3
-          this.fractionProductRetailerId = item.note.replace(/[^0-9]/g, '')
+          if (item.name.includes('1/2')) this.fractionTotal = 2
+          if (item.name.includes('1/3')) this.fractionTotal = 3
+          if (item.name.includes('1/4')) this.fractionTotal = 4
+          this.fractionProductRetailerId = this.getItemIdFromNote(item.note)
           this.itemPartial.push(item)
         }
       } else {
-        itemsTransformed.push(item)
+        if (this.hasIdOnNote(item)) {
+          const productRetailerId = this.getItemIdFromNote(item.note)
+
+          const mainItem = this.createItemFull(productRetailerId)
+          mainItem.quantity = item.quantity
+          mainItem.unit_price = item.unit_price
+
+          const additional = this.createItemAdditional(item)
+          mainItem.additionals.push(additional)
+
+          itemsTransformed.push(mainItem)
+        } else {
+          // path mais simples onde devolve o item de forma original
+          itemsTransformed.push(item)
+        }
       }
     })
 

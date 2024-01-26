@@ -89,7 +89,7 @@ describe('Gallabox plugin', () => {
               fbProductId: '5676467839108717',
               retailer_id: '83908',
               name: 'Napoli In Higienopolis Grande',
-              description: 'Catupiry®, carne seca desfiada e tomates cereja assados',
+              description: 'Catupiry®, carne seca desfiada e tomates cereja assados - 5647',
               price: 'R$95.00',
               image_url: 'https://labraciera.com.br/wp-content/uploads/2022/06/NAPOLI-IN-HIGIENOPOLIS-Otimizado.jpg',
             },
@@ -147,12 +147,21 @@ describe('Gallabox plugin', () => {
       )
       expect(cart.products[0].additionals[1].product_fb_id).toEqual('5440587292720086')
 
-      expect(cart.products[1].product_retailer_id).toEqual('83908')
-      expect(cart.products[1].name).toEqual('Napoli In Higienopolis Grande')
+      expect(cart.products[1].product_retailer_id).toEqual('5647')
+      expect(cart.products[1].name).toEqual('Pizza Grande 2 Sabores')
       expect(cart.products[1].quantity).toEqual(1)
       expect(cart.products[1].unit_price).toEqual(95)
-      expect(cart.products[1].note).toEqual('Catupiry®, carne seca desfiada e tomates cereja assados')
-      expect(cart.products[1].product_fb_id).toEqual('5676467839108717')
+      expect(cart.products[1].note).toEqual('')
+      expect(cart.products[1].product_fb_id).toEqual('')
+
+      expect(cart.products[1].additionals[0].product_retailer_id).toEqual('83908')
+      expect(cart.products[1].additionals[0].name).toEqual('Napoli In Higienopolis Grande')
+      expect(cart.products[1].additionals[0].quantity).toEqual(1)
+      expect(cart.products[1].additionals[0].unit_price).toEqual(95)
+      expect(cart.products[1].additionals[0].note).toEqual(
+        'Catupiry®, carne seca desfiada e tomates cereja assados - 5647',
+      )
+      expect(cart.products[1].additionals[0].product_fb_id).toEqual('5676467839108717')
     })
   })
 })

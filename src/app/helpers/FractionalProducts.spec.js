@@ -2,50 +2,77 @@ const FractionalProducts = require('./FractionalProducts')
 
 describe('Fractional products', () => {
   const licensee = {
-    productFractional2Name: 'Pizza Grande 2 Sabores',
+    productFractional2Name: 'Pizza Grande (2 sabores)',
     productFractional2Id: '5647',
-    productFractional3Name: 'Pizza Grande 3 Sabores',
+    productFractional3Name: 'Pizza Grande (3 sabores)',
     productFractional3Id: '5699',
-    productFractionalSize3Name: '',
-    productFractionalSize3Id: '',
-    productFractionalSize4Name: '',
-    productFractionalSize4Id: '',
+    productFractionalSize3Name: 'Pizza Broto',
+    productFractionalSize3Id: '5599',
+    productFractionalSize4Name: 'Pizza Grande (4 sabores)',
+    productFractionalSize4Id: '9876',
   }
 
   describe('when has no items with factional in name', () => {
-    it('maitains the item as original', () => {
-      const items = [
-        {
-          name: 'Pizza grande inteira 1',
-          product_retailer_id: '1234',
+    describe('when the item has an id on note', () => {
+      it('changes the item by product with id', () => {
+        const items = [
+          {
+            name: 'Pizza grande inteira 1',
+            product_retailer_id: '1234',
+            quantity: 1,
+            unit_price: 80,
+            note: 'Pizza - 5599',
+          },
+        ]
+
+        const fractionalProducts = new FractionalProducts(licensee)
+        const itemsParsed = fractionalProducts.join(items)
+
+        expect(itemsParsed.length).toEqual(1)
+
+        expect(itemsParsed[0]).toEqual({
+          name: 'Pizza Broto',
+          product_retailer_id: '5599',
           quantity: 1,
           unit_price: 80,
-        },
-        {
+          note: '',
+          product_fb_id: '',
+          additionals: [
+            {
+              product_retailer_id: '1234',
+              name: 'Pizza grande inteira 1',
+              quantity: 1,
+              unit_price: 80,
+              note: 'Pizza - 5599',
+              product_fb_id: '',
+            },
+          ],
+        })
+      })
+    })
+
+    describe('when the item has no id on note', () => {
+      it('maitains the item as original', () => {
+        const items = [
+          {
+            name: 'Pizza grande inteira 2',
+            product_retailer_id: '1235',
+            quantity: 1,
+            unit_price: 80,
+          },
+        ]
+
+        const fractionalProducts = new FractionalProducts(licensee)
+        const itemsParsed = fractionalProducts.join(items)
+
+        expect(itemsParsed.length).toEqual(1)
+
+        expect(itemsParsed[0]).toEqual({
           name: 'Pizza grande inteira 2',
           product_retailer_id: '1235',
           quantity: 1,
           unit_price: 80,
-        },
-      ]
-
-      const fractionalProducts = new FractionalProducts(licensee)
-      const itemsParsed = fractionalProducts.join(items)
-
-      expect(itemsParsed.length).toEqual(2)
-
-      expect(itemsParsed[0]).toEqual({
-        name: 'Pizza grande inteira 1',
-        product_retailer_id: '1234',
-        quantity: 1,
-        unit_price: 80,
-      })
-
-      expect(itemsParsed[1]).toEqual({
-        name: 'Pizza grande inteira 2',
-        product_retailer_id: '1235',
-        quantity: 1,
-        unit_price: 80,
+        })
       })
     })
   })
@@ -84,7 +111,7 @@ describe('Fractional products', () => {
         expect(itemsParsed.length).toEqual(2)
 
         expect(itemsParsed[1]).toEqual({
-          name: 'Pizza Grande 2 Sabores',
+          name: 'Pizza Grande (2 sabores)',
           product_retailer_id: '5647',
           quantity: 1,
           unit_price: 85,
@@ -154,7 +181,7 @@ describe('Fractional products', () => {
         expect(itemsParsed.length).toEqual(2)
 
         expect(itemsParsed[1]).toEqual({
-          name: 'Pizza Grande 3 Sabores',
+          name: 'Pizza Grande (3 sabores)',
           product_retailer_id: '5699',
           quantity: 1,
           unit_price: 75,
@@ -183,6 +210,99 @@ describe('Fractional products', () => {
               quantity: 1,
               unit_price: 30,
               note: 'Pizza - 5699',
+              product_fb_id: '',
+            },
+          ],
+        })
+      })
+    })
+
+    describe('when its a quarter', () => {
+      it('joins the items', () => {
+        const items = [
+          {
+            name: 'Pizza grande inteira 1',
+            product_retailer_id: '1234',
+            quantity: 1,
+            unit_price: 80,
+          },
+          {
+            name: '1/4 Frango com catupiry',
+            product_retailer_id: '1234',
+            quantity: 1,
+            unit_price: 20,
+            note: 'Pizza - 9876',
+            product_fb_id: '',
+          },
+          {
+            name: '1/4 Bacon com milho',
+            product_retailer_id: '1235',
+            quantity: 1,
+            unit_price: 25,
+            note: 'Pizza - 9876',
+            product_fb_id: '',
+          },
+          {
+            name: '1/4 Bacon calabresa',
+            product_retailer_id: '1236',
+            quantity: 1,
+            unit_price: 30,
+            note: 'Pizza - 9876',
+            product_fb_id: '',
+          },
+          {
+            name: '1/4 Calabresa',
+            product_retailer_id: '1299',
+            quantity: 1,
+            unit_price: 30,
+            note: 'Pizza - 9876',
+            product_fb_id: '',
+          },
+        ]
+
+        const fractionalProducts = new FractionalProducts(licensee)
+        const itemsParsed = fractionalProducts.join(items)
+
+        expect(itemsParsed.length).toEqual(2)
+
+        expect(itemsParsed[1]).toEqual({
+          name: 'Pizza Grande (4 sabores)',
+          product_retailer_id: '9876',
+          quantity: 1,
+          unit_price: 105,
+          note: '',
+          product_fb_id: '',
+          additionals: [
+            {
+              product_retailer_id: '1234',
+              name: '1/4 Frango com catupiry',
+              quantity: 1,
+              unit_price: 20,
+              note: 'Pizza - 9876',
+              product_fb_id: '',
+            },
+            {
+              product_retailer_id: '1235',
+              name: '1/4 Bacon com milho',
+              quantity: 1,
+              unit_price: 25,
+              note: 'Pizza - 9876',
+              product_fb_id: '',
+            },
+            {
+              product_retailer_id: '1236',
+              name: '1/4 Bacon calabresa',
+              quantity: 1,
+              unit_price: 30,
+              note: 'Pizza - 9876',
+              product_fb_id: '',
+            },
+            {
+              product_retailer_id: '1299',
+              name: '1/4 Calabresa',
+              quantity: 1,
+              unit_price: 30,
+              note: 'Pizza - 9876',
               product_fb_id: '',
             },
           ],
