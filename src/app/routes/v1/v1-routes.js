@@ -54,6 +54,7 @@ router.get('/backgroundjobs/:id', backgroundjobsController.show)
 router.post('/backgroundjobs', backgroundjobsController.create)
 
 router.post('/orders', ordersController.create)
+router.post('/orders/change-status', ordersController.changeStatus)
 
 router.post('/integrations', integrationsController.create)
 

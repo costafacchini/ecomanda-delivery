@@ -82,4 +82,37 @@ describe('chats controller', () => {
       })
     })
   })
+
+  describe('changeStatus', () => {
+    describe('response', () => {
+      it('returns status 200 and schedule job to process order status', async () => {
+        await request(expressServer)
+          .post(`/api/v1/orders/change-status?token=${apiToken}`)
+          .send({
+            order: 'order-id',
+            status: 'delivered',
+          })
+          .expect(200)
+          .then(async (response) => {
+            const body = await Body.findById(response.body.id)
+
+            expect(body.content).toEqual({
+              order: 'order-id',
+              status: 'delivered',
+            })
+            expect(body.kind).toEqual('pedidos10')
+
+            expect(response.body).toEqual({
+              id: body._id.toString(),
+            })
+
+            const integrationlog = await Integrationlog.findOne({ log_payload: body.content })
+            expect(integrationlog.log_payload).toEqual(body.content)
+
+            expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
+            expect(queueServerAddJobSpy).toHaveBeenCalledWith('pedidos10-change-order-status', { bodyId: body._id })
+          })
+      })
+    })
+  })
 })
