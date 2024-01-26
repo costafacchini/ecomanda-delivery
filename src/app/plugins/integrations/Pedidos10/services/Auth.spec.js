@@ -51,7 +51,9 @@ describe('Pedidos10/Auth plugin', () => {
           {
             status: 200,
             body: {
-              access_token: 'access-token',
+              data: {
+                access_token: 'access-token',
+              },
             },
           },
         )
@@ -90,7 +92,9 @@ describe('Pedidos10/Auth plugin', () => {
           {
             status: 200,
             body: {
-              access_token: 'access-token',
+              data: {
+                access_token: 'access-token',
+              },
             },
           },
         )
@@ -117,7 +121,9 @@ describe('Pedidos10/Auth plugin', () => {
         }
 
         const bodyResponse = {
-          access_token: 'access-token',
+          data: {
+            access_token: 'access-token',
+          },
         }
 
         fetchMock.postOnce(
@@ -169,12 +175,7 @@ describe('Pedidos10/Auth plugin', () => {
           {
             status: 422,
             body: {
-              message: 'The request is invalid.',
-              errors: {
-                'customer.automaticanticipationsettings.type': [
-                  "The type field is invalid. Possible values are 'full','1025'",
-                ],
-              },
+              error: 'Credenciais para login inválidas',
             },
           },
         )
@@ -189,7 +190,7 @@ describe('Pedidos10/Auth plugin', () => {
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Não foi possível fazer a autenticação na API do Pedidos 10
            status: 422
-           mensagem: {"message":"The request is invalid.","errors":{"customer.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
+           mensagem: {"error":"Credenciais para login inválidas"}
            log_id: 1234`,
         )
 
@@ -204,12 +205,7 @@ describe('Pedidos10/Auth plugin', () => {
         }
 
         const bodyResponse = {
-          message: 'The request is invalid.',
-          errors: {
-            'customer.automaticanticipationsettings.type': [
-              "The type field is invalid. Possible values are 'full','1025'",
-            ],
-          },
+          error: 'Credenciais para login inválidas',
         }
 
         fetchMock.postOnce(

@@ -25,7 +25,7 @@ class Auth {
     })
 
     if (response.status === 200) {
-      this.licensee.pedidos10_integration.access_token = response.data.access_token
+      this.licensee.pedidos10_integration.access_token = response.data.data.access_token
       this.licensee.pedidos10_integration.authenticated = true
       await this.licensee.save()
 
