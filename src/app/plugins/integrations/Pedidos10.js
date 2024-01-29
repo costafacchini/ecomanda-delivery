@@ -7,9 +7,7 @@ class Pedidos10 {
   }
 
   async processOrder(body) {
-    this.orderModule.parseBody(body)
-    await this.orderModule.loadOrderFromDatabase()
-    return await this.orderModule.save()
+    return await this.orderModule.save(body)
   }
 
   sendOrder(order) {
@@ -29,6 +27,8 @@ class Pedidos10 {
 
     return order
   }
+
+  changeOrderStatus(orderId, status) {}
 }
 
 module.exports = Pedidos10

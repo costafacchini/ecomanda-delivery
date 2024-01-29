@@ -7,7 +7,6 @@ const { licensee: licenseeFactory } = require('@factories/licensee')
 const { order: orderFactory } = require('@factories/order')
 
 describe('Pedidos10 plugin', () => {
-  const orderLoadFnSpy = jest.spyOn(Order.prototype, 'loadOrderFromDatabase').mockImplementation(() => {})
   const orderSaveFnSpy = jest.spyOn(Order.prototype, 'save').mockImplementation(() => {})
 
   beforeAll(async () => {
@@ -67,8 +66,7 @@ describe('Pedidos10 plugin', () => {
       const pedidos10 = new Pedidos10(licensee)
       await pedidos10.processOrder(body)
 
-      expect(orderLoadFnSpy).toHaveBeenCalledWith()
-      expect(orderSaveFnSpy).toHaveBeenCalledWith()
+      expect(orderSaveFnSpy).toHaveBeenCalledWith(body)
     })
   })
 

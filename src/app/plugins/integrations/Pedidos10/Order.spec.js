@@ -15,117 +15,6 @@ describe('Pedidos10/Order', () => {
     await mongoServer.disconnect()
   })
 
-  describe('#loadOrderFromDatabase', () => {
-    describe('when does not exists', () => {
-      it('does not load', async () => {
-        const licensee = await Licensee.create(licenseeFactory.build())
-
-        const body = {
-          MerchantExternalCode: '358b9068-34cf-4f96-b883-0d8192bc12dd',
-          order: {
-            id: '9967816',
-            customer: {
-              id: '14246',
-              name: 'Anderson Felizari',
-              phone: { number: '47988044298' },
-              documentNumber: '05798820980',
-            },
-            items: [
-              {
-                id: '17628924',
-                productId: '280089',
-                name: 'Refrigerante 600ml',
-                unit: 'UNIT',
-                quantity: 1,
-                unitPrice: { value: 5, currency: 'BRL' },
-                totalPrice: { value: 5, currency: 'BRL' },
-                optionGroups: [],
-              },
-            ],
-            total: {
-              itemsPrice: { value: 5, currency: 'BRL' },
-              otherFees: { value: 3, currency: 'BRL' },
-              discount: { value: 2, currency: 'BRL' },
-              addition: { value: 1, currency: 'BRL' },
-              orderAmount: { value: 7, currency: 'BRL' },
-            },
-            payments: {
-              prepaid: 0,
-              pending: 7,
-              methods: [],
-            },
-            takeout: {
-              mode: 'DEFAULT',
-              takeoutMinutes: 25,
-              takeoutDateTime: '2023-02-07 07:31:46',
-            },
-          },
-        }
-
-        const order = new Order(licensee)
-        order.parseBody(body)
-        await order.loadOrderFromDatabase()
-
-        expect(order.alreadyExists()).toEqual(false)
-      })
-    })
-
-    describe('when already exists', () => {
-      it('loads the order from database', async () => {
-        const licensee = await Licensee.create(licenseeFactory.build())
-        await createOrder({ ...orderFactory.build({ licensee }) })
-
-        const body = {
-          MerchantExternalCode: '358b9068-34cf-4f96-b883-0d8192bc12dd',
-          order: {
-            id: '9967816',
-            customer: {
-              id: '14246',
-              name: 'Anderson Felizari',
-              phone: { number: '47988044298' },
-              documentNumber: '05798820980',
-            },
-            items: [
-              {
-                id: '17628924',
-                productId: '280089',
-                name: 'Refrigerante 600ml',
-                unit: 'UNIT',
-                quantity: 1,
-                unitPrice: { value: 5, currency: 'BRL' },
-                totalPrice: { value: 5, currency: 'BRL' },
-                optionGroups: [],
-              },
-            ],
-            total: {
-              itemsPrice: { value: 5, currency: 'BRL' },
-              otherFees: { value: 3, currency: 'BRL' },
-              discount: { value: 2, currency: 'BRL' },
-              addition: { value: 1, currency: 'BRL' },
-              orderAmount: { value: 7, currency: 'BRL' },
-            },
-            payments: {
-              prepaid: 0,
-              pending: 7,
-              methods: [],
-            },
-            takeout: {
-              mode: 'DEFAULT',
-              takeoutMinutes: 25,
-              takeoutDateTime: '2023-02-07 07:31:46',
-            },
-          },
-        }
-
-        const order = new Order(licensee)
-        order.parseBody(body)
-        await order.loadOrderFromDatabase()
-
-        expect(order.alreadyExists()).toEqual(true)
-      })
-    })
-  })
-
   describe('#save', () => {
     describe('when order does not exists', () => {
       it('saves the order', async () => {
@@ -225,8 +114,7 @@ describe('Pedidos10/Order', () => {
 
         const licensee = await Licensee.create(licenseeFactory.build())
         const order = new Order(licensee)
-        order.parseBody(body)
-        await order.save()
+        await order.save(body)
 
         const orderPersisted = await getOrderBy({ licensee: licensee, order_external_id: '9967816' })
 
@@ -322,9 +210,7 @@ describe('Pedidos10/Order', () => {
           }
 
           const order = new Order(licensee)
-          order.parseBody(body)
-          await order.loadOrderFromDatabase()
-          await order.save()
+          await order.save(body)
 
           const orderUpdated = await getOrderBy({ licensee, order_external_id: '9967816' })
 
@@ -379,9 +265,7 @@ describe('Pedidos10/Order', () => {
           }
 
           const order = new Order(licensee)
-          order.parseBody(body)
-          await order.loadOrderFromDatabase()
-          await order.save()
+          await order.save(body)
 
           const orderUpdated = await getOrderBy({ licensee, order_external_id: '9967816' })
 
@@ -448,9 +332,7 @@ describe('Pedidos10/Order', () => {
           }
 
           const order = new Order(licensee)
-          order.parseBody(body)
-          await order.loadOrderFromDatabase()
-          await order.save()
+          await order.save(body)
 
           const orderUpdated = await getOrderBy({ licensee, order_external_id: '9967816' })
 
@@ -511,9 +393,7 @@ describe('Pedidos10/Order', () => {
           }
 
           const order = new Order(licensee)
-          order.parseBody(body)
-          await order.loadOrderFromDatabase()
-          await order.save()
+          await order.save(body)
 
           const orderUpdated = await getOrderBy({ licensee, order_external_id: '9967816' })
 
