@@ -2,13 +2,16 @@ const Parser = require('./Parser')
 const { createOrder, getOrderBy } = require('@repositories/order')
 
 class Order {
-  constructor(body, licensee) {
+  constructor(licensee) {
     this.licensee = licensee
 
-    const parser = new Parser()
-    this.order = parser.parseOrder(body)
+    this.parser = new Parser()
 
     this.order_persisted
+  }
+
+  parseBody(body) {
+    this.order = this.parser.parseOrder(body)
   }
 
   async loadOrderFromDatabase() {

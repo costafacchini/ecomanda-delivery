@@ -62,7 +62,8 @@ describe('Pedidos10/Order', () => {
           },
         }
 
-        const order = new Order(body, licensee)
+        const order = new Order(licensee)
+        order.parseBody(body)
         await order.loadOrderFromDatabase()
 
         expect(order.alreadyExists()).toEqual(false)
@@ -116,7 +117,8 @@ describe('Pedidos10/Order', () => {
           },
         }
 
-        const order = new Order(body, licensee)
+        const order = new Order(licensee)
+        order.parseBody(body)
         await order.loadOrderFromDatabase()
 
         expect(order.alreadyExists()).toEqual(true)
@@ -222,7 +224,8 @@ describe('Pedidos10/Order', () => {
         }
 
         const licensee = await Licensee.create(licenseeFactory.build())
-        const order = new Order(body, licensee)
+        const order = new Order(licensee)
+        order.parseBody(body)
         await order.save()
 
         const orderPersisted = await getOrderBy({ licensee: licensee, order_external_id: '9967816' })
@@ -318,7 +321,8 @@ describe('Pedidos10/Order', () => {
             },
           }
 
-          const order = new Order(body, licensee)
+          const order = new Order(licensee)
+          order.parseBody(body)
           await order.loadOrderFromDatabase()
           await order.save()
 
@@ -374,7 +378,8 @@ describe('Pedidos10/Order', () => {
             },
           }
 
-          const order = new Order(body, licensee)
+          const order = new Order(licensee)
+          order.parseBody(body)
           await order.loadOrderFromDatabase()
           await order.save()
 
@@ -442,7 +447,8 @@ describe('Pedidos10/Order', () => {
             },
           }
 
-          const order = new Order(body, licensee)
+          const order = new Order(licensee)
+          order.parseBody(body)
           await order.loadOrderFromDatabase()
           await order.save()
 
@@ -504,7 +510,8 @@ describe('Pedidos10/Order', () => {
             },
           }
 
-          const order = new Order(body, licensee)
+          const order = new Order(licensee)
+          order.parseBody(body)
           await order.loadOrderFromDatabase()
           await order.save()
 

@@ -3,12 +3,13 @@ const Order = require('./Pedidos10/Order')
 class Pedidos10 {
   constructor(licensee) {
     this.licensee = licensee
+    this.orderModule = new Order(this.licensee)
   }
 
   async processOrder(body) {
-    const orderProcessed = new Order(body, this.licensee)
-    await orderProcessed.loadOrderFromDatabase()
-    return await orderProcessed.save()
+    this.orderModule.parseBody(body)
+    await this.orderModule.loadOrderFromDatabase()
+    return await this.orderModule.save()
   }
 
   sendOrder(order) {
