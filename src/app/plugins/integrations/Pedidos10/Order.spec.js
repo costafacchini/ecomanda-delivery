@@ -2,6 +2,9 @@ const Licensee = require('@models/Licensee')
 const { createOrder, getOrderBy } = require('@repositories/order')
 const mongoServer = require('../../../../../.jest/utils')
 const Order = require('./Order')
+const Webhook = require('./services/Webhook')
+const OrderStatus = require('./services/OrderStatus')
+const Auth = require('./services/Auth')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { order: orderFactory } = require('@factories/order')
 
@@ -399,6 +402,86 @@ describe('Pedidos10/Order', () => {
 
           expect(orderUpdated.integration_status).toEqual('done')
         })
+      })
+    })
+  })
+
+  describe('#signOrderWebhook', () => {
+    it('calls service to sign order webhooks on Pedidos 10 API', async () => {
+      const webhookSignFnSpy = jest.spyOn(Webhook.prototype, 'sign').mockImplementation(() => {})
+      const authLoginFnSpy = jest.spyOn(Auth.prototype, 'login').mockImplementation(() => {})
+
+      const licensee = licenseeFactory.build()
+      licensee.pedidos10_integration = {
+        access_token: 'access-token',
+      }
+
+      const order = new Order(licensee)
+      await order.signOrderWebhook()
+
+      expect(authLoginFnSpy).not.toHaveBeenCalled()
+      expect(webhookSignFnSpy).toHaveBeenCalled()
+
+      authLoginFnSpy.mockRestore()
+      webhookSignFnSpy.mockRestore()
+    })
+
+    describe('when not logged on Pedidos 10 API', () => {
+      it('calls the login before on Pedidos 10 API', async () => {
+        const webhookSignFnSpy = jest.spyOn(Webhook.prototype, 'sign').mockImplementation(() => {})
+        const authLoginFnSpy = jest.spyOn(Auth.prototype, 'login').mockImplementation(() => {})
+
+        const licensee = licenseeFactory.build()
+        licensee.pedidos10_integration = {}
+
+        const order = new Order(licensee)
+        await order.signOrderWebhook()
+
+        expect(authLoginFnSpy).toHaveBeenCalled()
+        expect(webhookSignFnSpy).toHaveBeenCalled()
+
+        authLoginFnSpy.mockRestore()
+        webhookSignFnSpy.mockRestore()
+      })
+    })
+  })
+
+  describe('#changeOrderStatus', () => {
+    it('calls service to change order status on Pedidos 10 API', async () => {
+      const orderStatusChangeFnSpy = jest.spyOn(OrderStatus.prototype, 'change').mockImplementation(() => {})
+      const authLoginFnSpy = jest.spyOn(Auth.prototype, 'login').mockImplementation(() => {})
+
+      const licensee = licenseeFactory.build()
+      licensee.pedidos10_integration = {
+        access_token: 'access-token',
+      }
+
+      const order = new Order(licensee)
+      await order.changeOrderStatus('order-id', 'status')
+
+      expect(authLoginFnSpy).not.toHaveBeenCalled()
+      expect(orderStatusChangeFnSpy).toHaveBeenCalledWith('order-id', 'status')
+
+      authLoginFnSpy.mockRestore()
+      orderStatusChangeFnSpy.mockRestore()
+    })
+
+    describe('when not logged on Pedidos 10 API', () => {
+      it('calls the login before on Pedidos 10 API', async () => {
+        const orderStatusChangeFnSpy = jest.spyOn(OrderStatus.prototype, 'change').mockImplementation(() => {})
+        const authLoginFnSpy = jest.spyOn(Auth.prototype, 'login').mockImplementation(() => {})
+
+        const licensee = licenseeFactory.build()
+        licensee.pedidos10_integration = {}
+
+        const order = new Order(licensee)
+        await order.changeOrderStatus('order-id', 'status')
+
+        expect(authLoginFnSpy).toHaveBeenCalled()
+        expect(orderStatusChangeFnSpy).toHaveBeenCalledWith('order-id', 'status')
+
+        authLoginFnSpy.mockRestore()
+        orderStatusChangeFnSpy.mockRestore()
       })
     })
   })

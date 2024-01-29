@@ -96,4 +96,40 @@ describe('Pedidos10 plugin', () => {
       })
     })
   })
+
+  describe('#signOrderWebhook', () => {
+    it('calls the order module to sign order webhook', async () => {
+      const signOrderWebhookFnSpy = jest.spyOn(Order.prototype, 'signOrderWebhook').mockImplementation(() => {})
+
+      const licensee = licenseeFactory.build()
+      licensee.pedidos10_integration = {
+        access_token: 'access-token',
+      }
+
+      const pedidos10 = new Pedidos10(licensee)
+      await pedidos10.signOrderWebhook()
+
+      expect(signOrderWebhookFnSpy).toHaveBeenCalled()
+
+      signOrderWebhookFnSpy.mockRestore()
+    })
+  })
+
+  describe('#changeOrderStatus', () => {
+    it('calls the order module to change order status', async () => {
+      const changeOrderStatusFnSpy = jest.spyOn(Order.prototype, 'changeOrderStatus').mockImplementation(() => {})
+
+      const licensee = licenseeFactory.build()
+      licensee.pedidos10_integration = {
+        access_token: 'access-token',
+      }
+
+      const pedidos10 = new Pedidos10(licensee)
+      await pedidos10.changeOrderStatus()
+
+      expect(changeOrderStatusFnSpy).toHaveBeenCalled()
+
+      changeOrderStatusFnSpy.mockRestore()
+    })
+  })
 })

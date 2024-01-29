@@ -1,12 +1,17 @@
+const Licensee = require('@models/Licensee')
 const Parser = require('./Parser')
+const Webhook = require('./services/Webhook')
+const OrderStatus = require('./services/OrderStatus')
+const Auth = require('./services/Auth')
 const { createOrder, getOrderBy } = require('@repositories/order')
 
 class Order {
   constructor(licensee) {
     this.licensee = licensee
     this.orderBodyParser = new Parser()
-    this.order_persisted
-    this.order
+    this.webhookService = new Webhook(licensee)
+    this.orderSatatusService = new OrderStatus(licensee)
+    this.authService = new Auth(licensee)
   }
 
   async loadOrderFromDatabase(order) {
@@ -43,6 +48,29 @@ class Order {
     orderPersisted.total = order.total
 
     return await orderPersisted.save()
+  }
+
+  async doAuthentication() {
+    await this.authService.login()
+
+    // TODO - Precisa testar esse recarregamento do Licenciado
+    this.licensee = await Licensee.findOne({ _id: this.licensee.id })
+  }
+
+  async checkAuth() {
+    if (!this.licensee.pedidos10_integration?.access_token) {
+      await this.doAuthentication()
+    }
+  }
+
+  async signOrderWebhook() {
+    await this.checkAuth()
+    await this.webhookService.sign()
+  }
+
+  async changeOrderStatus(orderId, status) {
+    await this.checkAuth()
+    await this.orderSatatusService.change(orderId, status)
   }
 }
 

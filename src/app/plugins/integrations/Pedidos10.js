@@ -28,7 +28,13 @@ class Pedidos10 {
     return order
   }
 
-  changeOrderStatus(orderId, status) {}
+  async signOrderWebhook() {
+    await this.orderModule.signOrderWebhook()
+  }
+
+  async changeOrderStatus(orderId, status) {
+    await this.orderModule.changeOrderStatus(orderId, status)
+  }
 }
 
 module.exports = Pedidos10
