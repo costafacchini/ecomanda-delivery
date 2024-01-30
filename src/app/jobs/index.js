@@ -23,6 +23,7 @@ const processWebhookRequest = require('./ProcessWebhookRequest')
 const processPagarmeOrderPaid = require('./ProcessPagarmeOrderPaid')
 const pedidos10Webhook = require('./Pedidos10Webhook')
 const pedidos10SendOrder = require('./Pedidos10SendOrder')
+const pedidos10ChangeOrderStatus = require('./pedidos10ChangeOrderStatus')
 
 const jobs = [
   chatMessage,
@@ -50,6 +51,7 @@ const jobs = [
   processBackgroundjobCancelOrder,
   pedidos10Webhook,
   pedidos10SendOrder,
+  pedidos10ChangeOrderStatus,
 ]
 
 module.exports = jobs
