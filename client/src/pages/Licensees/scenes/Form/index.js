@@ -38,6 +38,11 @@ const licenseeInitialValues = {
   productFractional2Id: '',
   productFractional3Name: '',
   productFractional3Id: '',
+  productFractionalSize3Name: '',
+  productFractionalSize3Id: '',
+  productFractionalSize4Name: '',
+  productFractionalSize4Id: '',
+  productFractionals: '',
   document: '',
   kind: '',
   financial_player_fee: '0.00',
@@ -59,12 +64,12 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
     <div>
       <Form
         validationSchema={SignupSchema}
-        initialValues={{...licenseeInitialValues, ...initialValues}}
+        initialValues={{ ...licenseeInitialValues, ...initialValues }}
         onSubmit={(values) => {
           onSubmit(values)
         }}
       >
-        {props => (
+        {(props) => (
           <form onSubmit={props.handleSubmit}>
             <div className='row'>
               <div className='form-group col-5'>
@@ -88,7 +93,9 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                     className='form-check-input'
                     id='active'
                   />
-                  <label className='form-check-label' htmlFor='active'>Ativo</label>
+                  <label className='form-check-label' htmlFor='active'>
+                    Ativo
+                  </label>
                 </div>
               </div>
             </div>
@@ -193,7 +200,9 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                     onBlur={props.handleBlur}
                     checked={props.values.useChatbot}
                   />
-                  <label className='form-check-label' htmlFor='useChatbot'>Usa chatbot?</label>
+                  <label className='form-check-label' htmlFor='useChatbot'>
+                    Usa chatbot?
+                  </label>
                 </div>
               </div>
             </div>
@@ -260,7 +269,9 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
               <div className='row'>
                 <div className='form-group col-5'>
                   <label htmlFor='messageOnResetChatbot'>Mensagem de encerramento de chatbot abandonado</label>
-                  <textarea className='form-control' rows={4}
+                  <textarea
+                    className='form-control'
+                    rows={4}
                     id='messageOnResetChatbot'
                     name='messageOnResetChatbot'
                     type='text'
@@ -274,7 +285,9 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
               <div className='row'>
                 <div className='form-group col-5'>
                   <label htmlFor='messageOnCloseChat'>Mensagem de encerramento de chat</label>
-                  <textarea className='form-control' rows={4}
+                  <textarea
+                    className='form-control'
+                    rows={4}
                     id='messageOnCloseChat'
                     name='messageOnCloseChat'
                     type='text'
@@ -406,8 +419,9 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                         event.preventDefault()
                         await setLicenseeWebhook(props.values)
                       }}
-                      className='btn btn-info'>
-                        Configurar Webhook na Dialog360
+                      className='btn btn-info'
+                    >
+                      Configurar Webhook na Dialog360
                     </button>
                   </div>
 
@@ -417,7 +431,8 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                         event.preventDefault()
                         await importLicenseeTemplate(props.values)
                       }}
-                      className='btn btn-info'>
+                      className='btn btn-info'
+                    >
                       Importar templates
                     </button>
                   </div>
@@ -499,7 +514,9 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                       onBlur={props.handleBlur}
                       checked={props.values.useCartGallabox}
                     />
-                    <label className='form-check-label' htmlFor='useCartGallabox'>Usa gallabox?</label>
+                    <label className='form-check-label' htmlFor='useCartGallabox'>
+                      Usa gallabox?
+                    </label>
                   </div>
                 </div>
               </div>
@@ -533,54 +550,19 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
               </div>
 
               <div className='row'>
-                <div className='form-group col-4'>
-                  <label htmlFor='productFractional2Name'>Nome do produto fracionado 1/2</label>
-                  <FieldWithError
-                    id='productFractional2Name'
-                    name='productFractional2Name'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.productFractional2Name}
-                  />
-                </div>
-
-                <div className='form-group col-1'>
-                  <label htmlFor='productFractional2Id'>Id 1/2</label>
-                  <FieldWithError
-                    id='productFractional2Id'
-                    name='productFractional2Id'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.productFractional2Id}
-                  />
-                </div>
-              </div>
-
-              <div className='row'>
-                <div className='form-group col-4'>
-                  <label htmlFor='productFractional3Name'>Nome do produto fracionado 1/3</label>
-                  <FieldWithError
-                    id='productFractional3Name'
-                    name='productFractional3Name'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.productFractional3Name}
-                  />
-                </div>
-
-                <div className='form-group col-1'>
-                  <label htmlFor='productFractional3Id'>Id 1/3</label>
-                  <FieldWithError
-                    id='productFractional3Id'
-                    name='productFractional3Id'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.productFractional3Id}
-                  />
+                <div className='form-group col-5'>
+                  <label htmlFor='productFractionals'>Produtos</label>
+                  <div className='pb-2'>
+                    <textarea
+                      id='productFractionals'
+                      name='productFractionals'
+                      className='form-control'
+                      rows={10}
+                      onChange={props.handleChange}
+                      onBlur={props.handleBlur}
+                      value={props.values.productFractionals}
+                    />
+                  </div>
                 </div>
               </div>
             </fieldset>
@@ -729,7 +711,8 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                       event.preventDefault()
                       await sendLicenseePagarMe(props.values)
                     }}
-                    className='btn btn-info'>
+                    className='btn btn-info'
+                  >
                     Integrar com a Pagar.Me
                   </button>
                 </div>
@@ -801,7 +784,9 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
             {errors && (
               <div className='alert alert-danger'>
                 <ul>
-                  {errors.map((error) => (<li key={error.message}>{error.message}</li>))}
+                  {errors.map((error) => (
+                    <li key={error.message}>{error.message}</li>
+                  ))}
                 </ul>
               </div>
             )}
@@ -809,8 +794,12 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
             <div className='row'>
               <div className='col-5'>
                 <div className='mt-4 d-flex justify-content-between'>
-                  <button onClick={() => navigate('/licensees')} className='btn btn-secondary' type='button'>Voltar</button>
-                  <button className='btn btn-success' type='submit'>Salvar</button>
+                  <button onClick={() => navigate('/licensees')} className='btn btn-secondary' type='button'>
+                    Voltar
+                  </button>
+                  <button className='btn btn-success' type='submit'>
+                    Salvar
+                  </button>
                 </div>
               </div>
             </div>
