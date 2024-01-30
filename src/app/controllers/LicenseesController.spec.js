@@ -6,6 +6,7 @@ const { expressServer } = require('../../../.jest/server-express')
 const { licenseeComplete: licenseeCompleteFactory, licensee: licenseeFactory } = require('@factories/licensee')
 const { userSuper: userSuperFactory } = require('@factories/user')
 const Recipient = require('@plugins/payments/PagarMe/Recipient')
+const Pedidos10 = require('@plugins/integrations/Pedidos10')
 
 describe('licensee controller', () => {
   let token
@@ -482,6 +483,65 @@ describe('licensee controller', () => {
 
         licenseeFindOneSpy.mockRestore()
         recipientCreateFnSpy.mockRestore()
+      })
+    })
+  })
+
+  describe('signOrderWebhook', () => {
+    describe('response', () => {
+      describe('when has pedidos 10 integration data', () => {
+        it('returns status 200 and message success', async () => {
+          const licensee = await Licensee.create(
+            licenseeCompleteFactory.build({ pedidos10_integration: { username: '' } }),
+          )
+          const signOrderWebhookFnSpy = jest.spyOn(Pedidos10.prototype, 'signOrderWebhook').mockImplementation(() => {})
+
+          await request(expressServer)
+            .post(`/resources/licensees/${licensee._id}/sign-order-webhook`)
+            .set('x-access-token', token)
+            .send({ _id: 123 })
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .then((response) => {
+              expect(response.body.message).toEqual('Webhook assinado!')
+              expect(signOrderWebhookFnSpy).toHaveBeenCalled()
+            })
+        })
+      })
+
+      describe('when does not have pedidos 10 integration data', () => {
+        it('returns status 200 and does not call Pedidos 10 service', async () => {
+          const licensee = await Licensee.create(licenseeCompleteFactory.build({ pedidos10_integration: {} }))
+
+          await request(expressServer)
+            .post(`/resources/licensees/${licensee._id}/sign-order-webhook`)
+            .set('x-access-token', token)
+            .send({ _id: 123 })
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .then((response) => {
+              expect(response.body.message).toEqual('Webhook não assinado pois não tem os dados para o login!')
+            })
+        })
+      })
+
+      it('returns status 500 and message if the some error ocurred', async () => {
+        const licenseeFindOneSpy = jest.spyOn(Licensee, 'findOne').mockImplementation(() => {
+          throw new Error('some error')
+        })
+
+        const licensee = await Licensee.create(licenseeCompleteFactory.build())
+
+        await request(expressServer)
+          .post(`/resources/licensees/${licensee._id}/dialogwebhook`)
+          .set('x-access-token', token)
+          .send({ _id: 123 })
+          .expect('Content-Type', /json/)
+          .expect(500, {
+            errors: { message: 'Error: some error' },
+          })
+
+        licenseeFindOneSpy.mockRestore()
       })
     })
   })

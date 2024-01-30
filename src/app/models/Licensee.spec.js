@@ -32,6 +32,7 @@ describe('Licensee', () => {
       const licensee = new Licensee()
 
       expect(licensee.active).toEqual(true)
+      expect(licensee.pedidos10_active).toEqual(false)
       expect(licensee.useChatbot).toEqual(false)
       expect(licensee.apiToken).toBeDefined()
       expect(licensee.apiToken).not.toBe(null)

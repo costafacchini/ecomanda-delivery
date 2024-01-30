@@ -59,12 +59,13 @@ describe('Pedidos10/Auth plugin', () => {
         )
 
         const auth = new Auth(licensee)
-        await auth.login()
+        const isLogged = await auth.login()
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(1)
 
+        expect(isLogged).toBe(true)
         expect(consoleInfoSpy).toHaveBeenCalledWith('Login efetuado na API do Pedidos 10! log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
@@ -181,12 +182,13 @@ describe('Pedidos10/Auth plugin', () => {
         )
 
         const auth = new Auth(licensee)
-        await auth.login()
+        const isLogged = await auth.login()
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(1)
 
+        expect(isLogged).toBe(false)
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Não foi possível fazer a autenticação na API do Pedidos 10
            status: 422

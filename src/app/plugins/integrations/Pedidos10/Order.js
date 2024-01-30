@@ -51,26 +51,31 @@ class Order {
   }
 
   async doAuthentication() {
-    await this.authService.login()
+    // TODO - refatorar para gerar exceção ao invés de ficar retornando true ou false
+    const isLogged = await this.authService.login()
 
     // TODO - Precisa testar esse recarregamento do Licenciado
-    this.licensee = await Licensee.findOne({ _id: this.licensee.id })
+    if (isLogged) this.licensee = await Licensee.findOne({ _id: this.licensee.id })
+
+    return isLogged
   }
 
   async checkAuth() {
-    if (!this.licensee.pedidos10_integration?.access_token) {
-      await this.doAuthentication()
+    if (!this.licensee.pedidos10_integration?.authenticated) {
+      return await this.doAuthentication()
     }
+
+    return true
   }
 
   async signOrderWebhook() {
-    await this.checkAuth()
-    await this.webhookService.sign()
+    const isAutenticated = await this.checkAuth()
+    if (isAutenticated) await this.webhookService.sign()
   }
 
   async changeOrderStatus(orderId, status) {
-    await this.checkAuth()
-    await this.orderSatatusService.change(orderId, status)
+    const isAutenticated = await this.checkAuth()
+    if (isAutenticated) await this.orderSatatusService.change(orderId, status)
   }
 }
 

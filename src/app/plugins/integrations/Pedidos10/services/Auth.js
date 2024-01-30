@@ -25,8 +25,12 @@ class Auth {
     })
 
     if (response.status === 200) {
-      this.licensee.pedidos10_integration.access_token = response.data.data.access_token
-      this.licensee.pedidos10_integration.authenticated = true
+      this.licensee.pedidos10_integration = {
+        ...this.licensee.pedidos10_integration,
+        access_token: response.data.data.access_token,
+        authenticated: true,
+      }
+
       await this.licensee.save()
 
       console.info(`Login efetuado na API do Pedidos 10! log_id: ${integrationlog._id}`)
@@ -41,6 +45,8 @@ class Auth {
            log_id: ${integrationlog._id}`,
       )
     }
+
+    return response.status === 200
   }
 }
 

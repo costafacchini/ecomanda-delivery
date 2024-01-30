@@ -216,4 +216,27 @@ describe('LicenseesQuery', () => {
       expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: licenseeInactive._id })]))
     })
   })
+
+  describe('filterByPedidos10Active', () => {
+    it('returns licensees filtered by pedidos10_active', async () => {
+      const licensee1 = await Licensee.create(licenseeFactory.build({ pedidos10_active: true }))
+      const licenseeInactive = await Licensee.create(licenseeFactory.build({ pedidos10_active: false }))
+
+      const licenseesQuery = new LicenseesQuery()
+      licenseesQuery.filterByPedidos10Active('true')
+      let records = await licenseesQuery.all()
+
+      // When filter is true, join other licensees plus pedidos 10 licensees
+      expect(records.length).toEqual(2)
+      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: licensee1._id })]))
+      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: licenseeInactive._id })]))
+
+      licenseesQuery.filterByPedidos10Active('false')
+      records = await licenseesQuery.all()
+
+      expect(records.length).toEqual(1)
+      expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: licensee1._id })]))
+      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: licenseeInactive._id })]))
+    })
+  })
 })

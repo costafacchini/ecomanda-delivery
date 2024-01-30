@@ -5,7 +5,7 @@ import { getLicensee, updateLicensee } from '../../../../services/licensee'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 
-function LicenseeEdit() {
+function LicenseeEdit({ currentUser }) {
   const navigate = useNavigate()
   let { id } = useParams()
   const [errors, setErrors] = useState(null)
@@ -31,6 +31,7 @@ function LicenseeEdit() {
         <Form
           initialValues={licensee}
           errors={errors}
+          currentUser={currentUser}
           onSubmit={async (values) => {
             const response = await updateLicensee(values)
 

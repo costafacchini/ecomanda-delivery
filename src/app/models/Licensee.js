@@ -216,6 +216,7 @@ const licenseeSchema = new Schema(
     },
     recipient_id: String,
     card_information_url: String,
+    pedidos10_active: { type: Boolean, default: false },
     pedidos10_integration: {
       type: Object,
     },
@@ -242,12 +243,6 @@ licenseeSchema.pre('save', function (next) {
     licensee._id = new mongoose.Types.ObjectId()
   }
   next()
-})
-
-licenseeSchema.post('save', function (licensee) {
-  if (licensee.whatsappDefault === 'dialog') {
-    //
-  }
 })
 
 licenseeSchema.set('toJSON', {

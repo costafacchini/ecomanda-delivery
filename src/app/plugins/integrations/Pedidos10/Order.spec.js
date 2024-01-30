@@ -413,7 +413,7 @@ describe('Pedidos10/Order', () => {
 
       const licensee = licenseeFactory.build()
       licensee.pedidos10_integration = {
-        access_token: 'access-token',
+        authenticated: true,
       }
 
       const order = new Order(licensee)
@@ -429,9 +429,11 @@ describe('Pedidos10/Order', () => {
     describe('when not logged on Pedidos 10 API', () => {
       it('calls the login before on Pedidos 10 API', async () => {
         const webhookSignFnSpy = jest.spyOn(Webhook.prototype, 'sign').mockImplementation(() => {})
-        const authLoginFnSpy = jest.spyOn(Auth.prototype, 'login').mockImplementation(() => {})
+        const authLoginFnSpy = jest.spyOn(Auth.prototype, 'login').mockImplementation(() => {
+          return true
+        })
 
-        const licensee = licenseeFactory.build()
+        const licensee = await Licensee.create(licenseeFactory.build())
         licensee.pedidos10_integration = {}
 
         const order = new Order(licensee)
@@ -453,7 +455,7 @@ describe('Pedidos10/Order', () => {
 
       const licensee = licenseeFactory.build()
       licensee.pedidos10_integration = {
-        access_token: 'access-token',
+        authenticated: true,
       }
 
       const order = new Order(licensee)
@@ -469,9 +471,11 @@ describe('Pedidos10/Order', () => {
     describe('when not logged on Pedidos 10 API', () => {
       it('calls the login before on Pedidos 10 API', async () => {
         const orderStatusChangeFnSpy = jest.spyOn(OrderStatus.prototype, 'change').mockImplementation(() => {})
-        const authLoginFnSpy = jest.spyOn(Auth.prototype, 'login').mockImplementation(() => {})
+        const authLoginFnSpy = jest.spyOn(Auth.prototype, 'login').mockImplementation(() => {
+          return true
+        })
 
-        const licensee = licenseeFactory.build()
+        const licensee = await Licensee.create(licenseeFactory.build())
         licensee.pedidos10_integration = {}
 
         const order = new Order(licensee)

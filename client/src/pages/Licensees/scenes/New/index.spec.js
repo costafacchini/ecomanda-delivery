@@ -58,6 +58,8 @@ describe('<LicenseeNew />', () => {
         productFractionalSize4Name: '',
         productFractionalSize4Id: '',
         productFractionals: '',
+        pedidos10_integration: '',
+        pedidos10_integrator: '',
         document: '',
         kind: '',
         financial_player_fee: '0.00',

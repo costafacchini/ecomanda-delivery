@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor, cleanup } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import LicenseeForm from './'
-import { setLicenseeWebhook } from '../../../../services/licensee'
+import { setLicenseeWebhook, signOrderWebhook } from '../../../../services/licensee'
 
 jest.mock('../../../../services/licensee')
 
@@ -241,6 +241,33 @@ describe('<LicenseeForm />', () => {
 
       expect(setLicenseeWebhook).toHaveBeenCalledTimes(1)
     })
+
+    describe('Pedidos 10 fieldset', () => {
+      it('show fiels when user isPedidos10', () => {
+        mount({ currentUser: { } })
+
+        expect(screen.queryByLabelText('Dados da integração')).not.toBeInTheDocument()
+        expect(screen.queryByLabelText('Software Integrador')).not.toBeInTheDocument()
+        expect(screen.queryByRole('button', { name: 'Assinar Webhook P10' })).not.toBeInTheDocument()
+
+        cleanup()
+        mount({ currentUser: { isPedidos10: true } })
+
+        expect(screen.getByLabelText('Dados da integração')).toBeVisible()
+        expect(screen.getByLabelText('Software Integrador')).toBeVisible()
+        expect(screen.getByRole('button', { name: 'Assinar Webhook P10' })).toBeInTheDocument()
+      })
+
+      it('Assinar Webhook P10 click', () => {
+        mount({ currentUser: { isPedidos10: true } })
+
+        expect(signOrderWebhook).not.toHaveBeenCalled()
+
+        fireEvent.click(screen.getByRole('button', { name: 'Assinar Webhook P10' }))
+
+        expect(signOrderWebhook).toHaveBeenCalledTimes(1)
+      })
+    })
   })
 
   describe('submit', () => {
@@ -289,6 +316,8 @@ describe('<LicenseeForm />', () => {
         productFractionalSize4Name: '',
         productFractionalSize4Id: '',
         productFractionals: '',
+        pedidos10_integration: '',
+        pedidos10_integrator: '',
         document: '',
         kind: '',
         financial_player_fee: '0.00',
