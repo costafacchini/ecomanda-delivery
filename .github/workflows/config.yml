@@ -58,7 +58,7 @@ jobs:
           yarn test --coverageDirectory '../react-coverage' --coverage --maxWorkers 4
         env:
           SKIP_PREFLIGHT_CHECK: true
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           file: nodejs-coverage/lcov.info
           flags: jestspecs
