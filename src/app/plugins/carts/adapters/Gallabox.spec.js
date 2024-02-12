@@ -1,10 +1,10 @@
 const Gallabox = require('./Gallabox')
 const Contact = require('@models/Contact')
-const Licensee = require('@models/Licensee')
 const mongoServer = require('../../../../../.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { advanceTo, clear } = require('jest-date-mock')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('Gallabox plugin', () => {
   beforeEach(async () => {
@@ -20,7 +20,8 @@ describe('Gallabox plugin', () => {
 
   describe('#parseCart', () => {
     it('returns the cart normalized from plugin format', async () => {
-      const licensee = await Licensee.create(
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(
         licenseeFactory.build({
           unidadeId: '123',
           statusId: '743',

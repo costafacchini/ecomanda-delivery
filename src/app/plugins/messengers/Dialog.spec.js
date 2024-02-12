@@ -1,7 +1,6 @@
 const Dialog = require('./Dialog')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
-const Licensee = require('@models/Licensee')
 const Trigger = require('@models/Trigger')
 const Template = require('@models/Template')
 const Cart = require('@models/Cart')
@@ -23,6 +22,7 @@ const { template: templateFactory } = require('@factories/template')
 const { cart: cartFactory } = require('@factories/cart')
 const { product: productFactory } = require('@factories/product')
 const { advanceTo, clear } = require('jest-date-mock')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -40,7 +40,8 @@ describe('Dialog plugin', () => {
     jest.clearAllMocks()
     fetchMock.reset()
 
-    licensee = await Licensee.create(licenseeFactory.build({ whatsappToken: 'whats-token' }))
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build({ whatsappToken: 'whats-token' }))
   })
 
   afterEach(async () => {

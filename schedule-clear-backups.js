@@ -2,13 +2,15 @@ require('dotenv').config()
 require('module-alias/register')
 require('@models/index')
 
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const request = require('./src/app/services/request')
-const Licensee = require('@models/Licensee')
 const connect = require('./src/config/database')
-connect()
 
 async function schedule() {
-  const licensee = await Licensee.findOne()
+  await connect()
+
+  const licenseeRepository = new LicenseeRepositoryDatabase()
+  const licensee = await licenseeRepository.findFirst()
 
   await request.post(`https://clave-digital.herokuapp.com/api/v1/backups/clear?token=${licensee.apiToken}`)
 

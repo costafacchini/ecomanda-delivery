@@ -1,9 +1,9 @@
 const IntegrationlogsQuery = require('@queries/IntegrationlogsQuery')
 const mongoServer = require('../../../.jest/utils')
-const Licensee = require('@models/Licensee')
 const Integrationlog = require('@models/Integrationlog')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { integrationlog: integrationlogFactory } = require('@factories/integrationlog')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('IntegrationlogsQuery', () => {
   let licensee
@@ -11,7 +11,8 @@ describe('IntegrationlogsQuery', () => {
   beforeEach(async () => {
     await mongoServer.connect()
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
   afterEach(async () => {
@@ -92,7 +93,8 @@ describe('IntegrationlogsQuery', () => {
           }),
         )
 
-        const anotherLicensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const anotherLicensee = await licenseeRepository.create(licenseeFactory.build())
         const anotherMessage = await Integrationlog.create(
           integrationlogFactory.build({
             licensee: anotherLicensee,

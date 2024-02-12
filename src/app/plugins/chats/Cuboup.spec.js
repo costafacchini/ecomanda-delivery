@@ -1,7 +1,6 @@
 const Cuboup = require('./Cuboup')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
-const Licensee = require('@models/Licensee')
 const Trigger = require('@models/Trigger')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
@@ -10,6 +9,7 @@ const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
 const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -24,7 +24,8 @@ describe('Cuboup plugin', () => {
     jest.clearAllMocks()
     fetchMock.reset()
 
-    licensee = await Licensee.create(licenseeFactory.build({ phone: '554891231231' }))
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build({ phone: '554891231231' }))
   })
 
   afterEach(async () => {
@@ -826,7 +827,8 @@ describe('Cuboup plugin', () => {
   describe('#closeChat', () => {
     describe('when the licensee use chatbot', () => {
       it('changes the talking with chatbot in contact to true', async () => {
-        const licensee = await Licensee.create(
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(
           licenseeFactory.build({
             useChatbot: true,
             chatbotDefault: 'landbot',
@@ -867,7 +869,8 @@ describe('Cuboup plugin', () => {
 
     describe('when the licensee has a message on close chat', () => {
       it('creates the messages to send to messenger before close chat', async () => {
-        const licensee = await Licensee.create(
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(
           licenseeFactory.build({
             useChatbot: true,
             chatbotDefault: 'landbot',

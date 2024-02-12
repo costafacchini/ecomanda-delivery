@@ -1,5 +1,4 @@
 const processBackgroundjob = require('./ProcessBackgroundjob')
-const Licensee = require('@models/Licensee')
 const Backgroundjob = require('@models/Backgroundjob')
 const Contact = require('@models/Contact')
 const Cart = require('@models/Cart')
@@ -8,6 +7,7 @@ const { licensee: licenseeFactory } = require('@factories/licensee')
 const { cart: cartFactory } = require('@factories/cart')
 const { contact: contactFactory } = require('@factories/contact')
 const { backgroundjob: backgroundjobFactory } = require('@factories/backgroundjob')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('processBackgroundjob', () => {
   beforeEach(async () => {
@@ -21,7 +21,8 @@ describe('processBackgroundjob', () => {
 
   describe('when backgroundjob has cart_id', () => {
     it('responds with action with backgroundjob kind', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       const backgroundjob = await Backgroundjob.create(
         backgroundjobFactory.build({
           kind: 'get-pix',
@@ -51,7 +52,8 @@ describe('processBackgroundjob', () => {
   describe('when backgroundjob has contact', () => {
     describe('when contact has cart', () => {
       it('responds with action with backgroundjob kind and cart_id', async () => {
-        const licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
         const contact = await Contact.create(contactFactory.build({ licensee }))
         const cart = await Cart.create(cartFactory.build({ contact, licensee }))
 
@@ -83,7 +85,8 @@ describe('processBackgroundjob', () => {
 
     describe('when contact has no cart opened', () => {
       it('saves error information at backgroundjob', async () => {
-        const licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
         const contact = await Contact.create(contactFactory.build({ licensee }))
         await Cart.create(cartFactory.build({ contact, licensee, concluded: true }))
 
@@ -112,7 +115,8 @@ describe('processBackgroundjob', () => {
   describe('when backgroundjob has no cart_id and contact', () => {
     describe('and has no contact', () => {
       it('saves error information at backgroundjob', async () => {
-        const licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
         const backgroundjob = await Backgroundjob.create({
           status: 'scheduled',
           kind: 'get-pix',

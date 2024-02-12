@@ -1,5 +1,4 @@
 const processBackgroundjobGetPix = require('./ProcessBackgroundjobGetPix')
-const Licensee = require('@models/Licensee')
 const Backgroundjob = require('@models/Backgroundjob')
 const Cart = require('@models/Cart')
 const Contact = require('@models/Contact')
@@ -9,6 +8,7 @@ const { backgroundjob: backgroundjobFactory } = require('@factories/backgroundjo
 const { cart: cartFactory } = require('@factories/cart')
 const { contact: contactFactory } = require('@factories/contact')
 const Payment = require('@plugins/payments/PagarMe/Payment')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('processBackgroundjobGetPix', () => {
   beforeEach(async () => {
@@ -23,7 +23,8 @@ describe('processBackgroundjobGetPix', () => {
   it('calls to pagar.me API to generate pix', async () => {
     const paymentCreateFnSpy = jest.spyOn(Payment.prototype, 'createPIX').mockImplementation(() => {})
 
-    const licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const licensee = await licenseeRepository.create(licenseeFactory.build())
     const backgroundjob = await Backgroundjob.create(
       backgroundjobFactory.build({
         kind: 'get-pix',
@@ -55,7 +56,8 @@ describe('processBackgroundjobGetPix', () => {
         await cart.save()
       })
 
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       const backgroundjob = await Backgroundjob.create(
         backgroundjobFactory.build({
           kind: 'get-pix',
@@ -91,7 +93,8 @@ describe('processBackgroundjobGetPix', () => {
         throw new Error('some error')
       })
 
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       const backgroundjob = await Backgroundjob.create(
         backgroundjobFactory.build({
           kind: 'get-pix',

@@ -1,9 +1,9 @@
 const processWebhookRequest = require('./ProcessWebhookRequest')
-const Licensee = require('@models/Licensee')
 const Body = require('@models/Body')
 const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { body: bodyFactory } = require('@factories/body')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('processWebhookRequest', () => {
   beforeEach(async () => {
@@ -17,7 +17,8 @@ describe('processWebhookRequest', () => {
 
   describe('when content has provider pagarme', () => {
     it('responds with action with body type', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       const body = await Body.create(
         bodyFactory.build({
           kind: 'webhook',
@@ -51,7 +52,8 @@ describe('processWebhookRequest', () => {
 
   describe('when content has no provider', () => {
     it('responds with action blank', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       const body = await Body.create(
         bodyFactory.build({
           kind: 'webhook',
@@ -78,7 +80,8 @@ describe('processWebhookRequest', () => {
 
   describe('when content has provider other', () => {
     it('responds with action blank', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       const body = await Body.create(
         bodyFactory.build({
           kind: 'webhook',

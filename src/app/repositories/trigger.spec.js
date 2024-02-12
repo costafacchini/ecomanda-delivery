@@ -1,8 +1,8 @@
-const Licensee = require('@models/Licensee')
 const mongoServer = require('../../../.jest/utils')
 const { createTrigger, getAllTriggerBy } = require('@repositories/trigger')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { triggerMultiProduct: triggerFactory } = require('@factories/trigger')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('trigger repository', () => {
   beforeEach(async () => {
@@ -16,7 +16,8 @@ describe('trigger repository', () => {
 
   describe('#createTrigger', () => {
     it('creates a trigger', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
 
       const trigger = await createTrigger({
         licensee,
@@ -44,11 +45,12 @@ describe('trigger repository', () => {
 
   describe('#getAllTriggerBy', () => {
     it('returns all records by filter', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       const trigger1 = await createTrigger(triggerFactory.build({ licensee }))
       const trigger2 = await createTrigger(triggerFactory.build({ licensee }))
 
-      const anotherLicensee = await Licensee.create(licenseeFactory.build())
+      const anotherLicensee = await licenseeRepository.create(licenseeFactory.build())
       const trigger3 = await createTrigger(triggerFactory.build({ licensee: anotherLicensee }))
 
       const triggers = await getAllTriggerBy({ licensee })
@@ -59,7 +61,8 @@ describe('trigger repository', () => {
     })
 
     it('returns all records by filter ordered', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       const trigger1 = await createTrigger(triggerFactory.build({ licensee, order: 2 }))
       const trigger2 = await createTrigger(triggerFactory.build({ licensee, order: 1 }))
 

@@ -1,5 +1,4 @@
 const sendMessageToChat = require('./SendMessageToChat')
-const Licensee = require('@models/Licensee')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Rocketchat = require('../plugins/chats/Rocketchat')
@@ -7,6 +6,7 @@ const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('sendMessageToChat', () => {
   const rocketchatSendMessageSpy = jest.spyOn(Rocketchat.prototype, 'sendMessage').mockImplementation(() => {})
@@ -21,7 +21,8 @@ describe('sendMessageToChat', () => {
   })
 
   it('asks the plugin to send message to chat', async () => {
-    const licensee = await Licensee.create(
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const licensee = await licenseeRepository.create(
       licenseeFactory.build({
         chatDefault: 'rocketchat',
         chatUrl: 'https://chat.url',

@@ -1,7 +1,7 @@
-const Licensee = require('@models/Licensee')
 const mongoServer = require('../../../.jest/utils')
 const { createProduct, getProductBy } = require('@repositories/product')
 const { licensee: licenseeFactory } = require('@factories/licensee')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('product repository', () => {
   beforeEach(async () => {
@@ -15,7 +15,8 @@ describe('product repository', () => {
 
   describe('#createProduct', () => {
     it('creates a product', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
 
       const product = await createProduct({
         licensee,
@@ -33,13 +34,14 @@ describe('product repository', () => {
 
   describe('#getProductBy', () => {
     it('returns one record by filter', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       await createProduct({
         name: 'Product 1',
         licensee,
       })
 
-      const anotherLicensee = await Licensee.create(licenseeFactory.build())
+      const anotherLicensee = await licenseeRepository.create(licenseeFactory.build())
       await createProduct({
         name: 'Product 1',
         licensee: anotherLicensee,

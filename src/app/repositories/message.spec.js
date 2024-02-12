@@ -1,5 +1,4 @@
 const Contact = require('@models/Contact')
-const Licensee = require('@models/Licensee')
 const Trigger = require('@models/Trigger')
 const mongoServer = require('../../../.jest/utils')
 const {
@@ -12,6 +11,7 @@ const {
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { triggerText } = require('@factories/trigger')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -27,7 +27,8 @@ describe('message repository', () => {
 
   describe('#createMessage', () => {
     it('creates a message', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       const contact = await Contact.create(contactFactory.build({ licensee: licensee._id }))
 
       const message = await createMessage({
@@ -54,7 +55,9 @@ describe('message repository', () => {
   describe('#createInteractiveMessages', () => {
     describe('when has trigger with expression equal to text', () => {
       it('creates a list of interactive messages', async () => {
-        const licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
+
         const contact = await Contact.create(contactFactory.build({ licensee: licensee._id }))
         const trigger1 = await Trigger.create(
           triggerText.build({ licensee, expression: 'hello_world', text: 'Hello world 1' }),
@@ -99,7 +102,9 @@ describe('message repository', () => {
 
     describe('when has no trigger with expression equal to text', () => {
       it('create a list of messages with one text message', async () => {
-        const licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
+
         const contact = await Contact.create(contactFactory.build({ licensee: licensee._id }))
 
         const messages = await createInteractiveMessages({
@@ -127,7 +132,9 @@ describe('message repository', () => {
 
   describe('#createTextMessageInsteadInteractive', () => {
     it('creates a message', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
+
       const contact = await Contact.create(contactFactory.build({ licensee: licensee._id }))
 
       const message = await createTextMessageInsteadInteractive({
@@ -151,7 +158,9 @@ describe('message repository', () => {
     })
 
     it('creates a message changed text when the message is interactive', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
+
       const contact = await Contact.create(contactFactory.build({ licensee: licensee._id, name: 'John Doe' }))
 
       const message = await createTextMessageInsteadInteractive({
@@ -174,7 +183,9 @@ describe('message repository', () => {
 
   describe('#createMessageToWarnAboutWindowOfWhatsassHasExpired', () => {
     it('creates a message with warn about window of whatsapp to the chat', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
+
       const contact = await Contact.create(contactFactory.build({ licensee: licensee._id }))
 
       const message = await createMessageToWarnAboutWindowOfWhatsassHasExpired(contact, licensee)
@@ -194,7 +205,9 @@ describe('message repository', () => {
 
   describe('#createMessageToWarnAboutWindowOfWhatsassIsEnding', () => {
     it('creates a message with warn about window of whatsapp to the chat', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
+
       const contact = await Contact.create(contactFactory.build({ licensee: licensee._id }))
 
       const message = await createMessageToWarnAboutWindowOfWhatsassIsEnding(contact, licensee)

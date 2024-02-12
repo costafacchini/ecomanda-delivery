@@ -1,7 +1,6 @@
 const Rocketchat = require('./Rocketchat')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
-const Licensee = require('@models/Licensee')
 const Room = require('@models/Room')
 const Trigger = require('@models/Trigger')
 const fetchMock = require('fetch-mock')
@@ -12,6 +11,7 @@ const { contact: contactFactory } = require('@factories/contact')
 const { room: roomFactory } = require('@factories/room')
 const { message: messageFactory } = require('@factories/message')
 const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -26,7 +26,8 @@ describe('Rocketchat plugin', () => {
     jest.clearAllMocks()
     fetchMock.reset()
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
   afterEach(async () => {
@@ -1203,7 +1204,8 @@ describe('Rocketchat plugin', () => {
 
     describe('when the licensee use chatbot', () => {
       it('changes the talking with chatbot in contact to true', async () => {
-        const licensee = await Licensee.create(
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(
           licenseeFactory.build({
             useChatbot: true,
             chatbotDefault: 'landbot',
@@ -1251,7 +1253,8 @@ describe('Rocketchat plugin', () => {
 
     describe('when the licensee has a message on close chat', () => {
       it('creates the messages to send to messenger before close chat', async () => {
-        const licensee = await Licensee.create(
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(
           licenseeFactory.build({
             useChatbot: true,
             chatbotDefault: 'landbot',

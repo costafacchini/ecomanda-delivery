@@ -1,4 +1,3 @@
-const Licensee = require('@models/Licensee')
 const Body = require('@models/Body')
 const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
@@ -6,6 +5,7 @@ const { expressServer } = require('../../../.jest/server-express')
 const queueServer = require('@config/queue')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { publishMessage } = require('@config/rabbitmq')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 jest.mock('@config/rabbitmq')
 
@@ -18,7 +18,8 @@ describe('chatbots controller', () => {
     jest.clearAllMocks()
     await mongoServer.connect()
 
-    const licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const licensee = await licenseeRepository.create(licenseeFactory.build())
     apiToken = licensee.apiToken
   })
 

@@ -1,9 +1,9 @@
 const TemplatesQuery = require('@queries/TemplatesQuery')
 const mongoServer = require('../../../.jest/utils')
 const Template = require('@models/Template')
-const Licensee = require('@models/Licensee')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { template: templateFactory } = require('@factories/template')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('TemplatesQuery', () => {
   let licensee
@@ -11,7 +11,8 @@ describe('TemplatesQuery', () => {
   beforeEach(async () => {
     await mongoServer.connect()
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
   afterEach(async () => {
@@ -87,7 +88,8 @@ describe('TemplatesQuery', () => {
         templateFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 0) }),
       )
 
-      const anotherLicensee = await Licensee.create(licenseeFactory.build({ name: 'Wolf e cia' }))
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const anotherLicensee = await licenseeRepository.create(licenseeFactory.build({ name: 'Wolf e cia' }))
       const template2 = await Template.create(
         templateFactory.build({ licensee: anotherLicensee._id, createdAt: new Date(2021, 6, 3, 0, 0, 1) }),
       )

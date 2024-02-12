@@ -1,8 +1,8 @@
 const Trigger = require('@models/Trigger')
-const Licensee = require('@models/Licensee')
 const mongoServer = require('../../../.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { triggerMultiProduct: triggerFactory } = require('@factories/trigger')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('Trigger', () => {
   let licensee
@@ -10,7 +10,8 @@ describe('Trigger', () => {
   beforeEach(async () => {
     await mongoServer.connect()
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
   afterEach(async () => {

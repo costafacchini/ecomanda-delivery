@@ -1,6 +1,6 @@
-const Licensee = require('@models/Licensee')
 const MessagesSendedQuery = require('@queries/MessagesSended')
 const MessagesFailedQuery = require('@queries/MessagesFailed')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const moment = require('moment')
 
 class MessagesSendedYesterday {
@@ -11,7 +11,8 @@ class MessagesSendedYesterday {
   }
 
   async report() {
-    const licensees = await Licensee.find({ licenseKind: 'paid' })
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const licensees = await licenseeRepository.find({ licenseKind: 'paid' })
 
     const licenseeMessages = []
 

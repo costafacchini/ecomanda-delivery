@@ -1,9 +1,9 @@
-const Licensee = require('@models/Licensee')
 const Contact = require('@models/Contact')
 const mongoServer = require('../../../.jest/utils')
 const { createRoom, getRoomBy } = require('@repositories/room')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('room repository', () => {
   beforeEach(async () => {
@@ -17,7 +17,8 @@ describe('room repository', () => {
 
   describe('#createRoom', () => {
     it('creates a room', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       const contact = await Contact.create(contactFactory.build({ licensee }))
 
       const room = await createRoom({
@@ -34,7 +35,8 @@ describe('room repository', () => {
 
   describe('#getRoomBy', () => {
     it('returns one record by filter', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       const contact = await Contact.create(contactFactory.build({ licensee }))
 
       await createRoom({

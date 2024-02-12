@@ -1,4 +1,3 @@
-const Licensee = require('@models/Licensee')
 const mongoServer = require('../../../.jest/utils')
 const {
   createContact,
@@ -9,6 +8,7 @@ const {
 const { createMessage } = require('@repositories/message')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { message: messageFactory } = require('@factories/message')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const moment = require('moment-timezone')
 
 describe('contact repository', () => {
@@ -23,7 +23,8 @@ describe('contact repository', () => {
 
   describe('#createContact', () => {
     it('creates a contact', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
 
       const contact = await createContact({
         licensee,
@@ -43,14 +44,15 @@ describe('contact repository', () => {
 
   describe('#getContactBy', () => {
     it('returns one record by filter', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       await createContact({
         number: '5511990283745',
         talkingWithChatBot: false,
         licensee,
       })
 
-      const anotherLicensee = await Licensee.create(licenseeFactory.build())
+      const anotherLicensee = await licenseeRepository.create(licenseeFactory.build())
       await createContact({
         number: '5511990283745',
         talkingWithChatBot: false,
@@ -77,7 +79,8 @@ describe('contact repository', () => {
 
   describe('#contactWithWhatsappWindowClosed', () => {
     it('returns true if the last message of contact sended to chat is greather than 24 hours', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
 
       const contact = await createContact({
         licensee,
@@ -109,7 +112,8 @@ describe('contact repository', () => {
     })
 
     it('returns true if the last message of contact sended to chat is equal 24 hours', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
 
       const contact = await createContact({
         licensee,
@@ -141,7 +145,8 @@ describe('contact repository', () => {
     })
 
     it('returns true if the contact has no sended message to chat', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
 
       const contact = await createContact({
         licensee,
@@ -153,7 +158,8 @@ describe('contact repository', () => {
     })
 
     it('returns false if the last message of contact sended to chat is less than 24 hours', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
 
       const contact = await createContact({
         licensee,
@@ -187,14 +193,15 @@ describe('contact repository', () => {
 
   describe('#getContactByNumber', () => {
     it('returns one record by filter', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       await createContact({
         number: '5511990283745',
         talkingWithChatBot: false,
         licensee,
       })
 
-      const anotherLicensee = await Licensee.create(licenseeFactory.build())
+      const anotherLicensee = await licenseeRepository.create(licenseeFactory.build())
       await createContact({
         number: '5511990283745',
         talkingWithChatBot: false,

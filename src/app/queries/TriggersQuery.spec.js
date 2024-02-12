@@ -1,7 +1,6 @@
 const TriggersQuery = require('@queries/TriggersQuery')
 const mongoServer = require('../../../.jest/utils')
 const Trigger = require('@models/Trigger')
-const Licensee = require('@models/Licensee')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const {
   triggerMultiProduct: triggerMultiProductFactory,
@@ -10,6 +9,7 @@ const {
   triggerListMessage: triggerListMessageFactory,
   triggerText: triggerTextFactory,
 } = require('@factories/trigger')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('TriggersQuery', () => {
   let licensee
@@ -17,7 +17,8 @@ describe('TriggersQuery', () => {
   beforeEach(async () => {
     await mongoServer.connect()
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
   afterEach(async () => {
@@ -164,7 +165,8 @@ describe('TriggersQuery', () => {
         triggerMultiProductFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 0) }),
       )
 
-      const anotherLicensee = await Licensee.create(licenseeFactory.build({ name: 'Wolf e cia' }))
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const anotherLicensee = await licenseeRepository.create(licenseeFactory.build({ name: 'Wolf e cia' }))
       const trigger2 = await Trigger.create(
         triggerMultiProductFactory.build({ licensee: anotherLicensee._id, createdAt: new Date(2021, 6, 3, 0, 0, 1) }),
       )

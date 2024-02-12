@@ -1,5 +1,4 @@
 const processBackgroundjobGetCreditCard = require('./ProcessBackgroundjobGetCreditCard')
-const Licensee = require('@models/Licensee')
 const Backgroundjob = require('@models/Backgroundjob')
 const Cart = require('@models/Cart')
 const Contact = require('@models/Contact')
@@ -9,6 +8,7 @@ const { backgroundjob: backgroundjobFactory } = require('@factories/backgroundjo
 const { cart: cartFactory } = require('@factories/cart')
 const { contact: contactFactory } = require('@factories/contact')
 const Card = require('@plugins/payments/PagarMe/Card')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('processBackgroundjobGetCreditCard', () => {
   beforeEach(async () => {
@@ -23,7 +23,8 @@ describe('processBackgroundjobGetCreditCard', () => {
   it('calls to pagar.me API to get credit card data', async () => {
     const cardListFnSpy = jest.spyOn(Card.prototype, 'list').mockImplementation(() => {})
 
-    const licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const licensee = await licenseeRepository.create(licenseeFactory.build())
     const backgroundjob = await Backgroundjob.create(
       backgroundjobFactory.build({
         kind: 'get-credit-card',
@@ -79,7 +80,8 @@ describe('processBackgroundjobGetCreditCard', () => {
         ]
       })
 
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       const backgroundjob = await Backgroundjob.create(
         backgroundjobFactory.build({
           kind: 'get-credit-card',
@@ -158,7 +160,8 @@ describe('processBackgroundjobGetCreditCard', () => {
         ]
       })
 
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       const backgroundjob = await Backgroundjob.create(
         backgroundjobFactory.build({
           kind: 'get-credit-card',
@@ -196,7 +199,8 @@ describe('processBackgroundjobGetCreditCard', () => {
         throw new Error('some error')
       })
 
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       const backgroundjob = await Backgroundjob.create(
         backgroundjobFactory.build({
           kind: 'get-credit-card',
