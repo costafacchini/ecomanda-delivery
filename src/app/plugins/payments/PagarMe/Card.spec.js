@@ -1,11 +1,11 @@
 const Card = require('./Card')
-const Licensee = require('@models/Licensee')
 const Contact = require('@models/Contact')
 const Integrationlog = require('@models/Integrationlog')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../../.jest/utils')
 const { licenseeIntegrationPagarMe: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('PagarMe/Card plugin', () => {
   let licensee
@@ -17,7 +17,8 @@ describe('PagarMe/Card plugin', () => {
     jest.clearAllMocks()
     fetchMock.reset()
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
   afterEach(async () => {

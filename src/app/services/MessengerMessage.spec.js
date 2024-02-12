@@ -1,10 +1,10 @@
 const transformMessengerBody = require('./MessengerMessage')
-const Licensee = require('@models/Licensee')
 const Body = require('@models/Body')
 const Dialog = require('../plugins/messengers/Dialog')
 const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { body: bodyFactory } = require('@factories/body')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('transformMessengerBody', () => {
   let licensee
@@ -13,7 +13,8 @@ describe('transformMessengerBody', () => {
     await mongoServer.connect()
     jest.clearAllMocks()
 
-    licensee = await Licensee.create(
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(
       licenseeFactory.build({
         whatsappDefault: 'dialog',
         whatsappUrl: 'https://waba.360dialog.io/',

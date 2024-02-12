@@ -1,9 +1,9 @@
 const Recipient = require('./Recipient')
-const Licensee = require('@models/Licensee')
 const Integrationlog = require('@models/Integrationlog')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../../.jest/utils')
 const { licenseeIntegrationPagarMe: licenseeFactory } = require('@factories/licensee')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('PagarMe/Recipient plugin', () => {
   let licensee
@@ -15,7 +15,8 @@ describe('PagarMe/Recipient plugin', () => {
     jest.clearAllMocks()
     fetchMock.reset()
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
   afterEach(async () => {
@@ -135,7 +136,8 @@ describe('PagarMe/Recipient plugin', () => {
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(1)
 
-        const licenseeUpdated = await Licensee.findById(licensee._id)
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licenseeUpdated = await licenseeRepository.findFirst({ _id: licensee._id })
         expect(licenseeUpdated.recipient_id).toEqual('23717165')
 
         integrationlogCreateSpy.mockRestore()

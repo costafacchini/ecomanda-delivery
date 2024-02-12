@@ -1,5 +1,4 @@
 const closeChat = require('./CloseChat')
-const Licensee = require('@models/Licensee')
 const Contact = require('@models/Contact')
 const Message = require('@models/Message')
 const Rocketchat = require('../plugins/chats/Rocketchat')
@@ -7,6 +6,7 @@ const mongoServer = require('../../../.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('closeChat', () => {
   beforeEach(async () => {
@@ -21,7 +21,8 @@ describe('closeChat', () => {
   it('asks the plugin to close the chat', async () => {
     const rocketchatCloseChatSpy = jest.spyOn(Rocketchat.prototype, 'closeChat').mockImplementation(() => [])
 
-    const licensee = await Licensee.create(
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const licensee = await licenseeRepository.create(
       licenseeFactory.build({
         chatDefault: 'rocketchat',
         chatUrl: 'https://chat.url',
@@ -55,7 +56,8 @@ describe('closeChat', () => {
         return [{ _id: 'KSDF656DSD91NSE' }, { _id: 'OAR8Q54LDN02T' }]
       })
 
-      const licensee = await Licensee.create(
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(
         licenseeFactory.build({
           chatDefault: 'rocketchat',
           chatUrl: 'https://chat.url',

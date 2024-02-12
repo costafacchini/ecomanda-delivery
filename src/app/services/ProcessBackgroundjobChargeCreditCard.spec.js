@@ -1,5 +1,4 @@
 const processBackgroundjobChargeCreditCard = require('./ProcessBackgroundjobChargeCreditCard')
-const Licensee = require('@models/Licensee')
 const Backgroundjob = require('@models/Backgroundjob')
 const Cart = require('@models/Cart')
 const Contact = require('@models/Contact')
@@ -9,6 +8,7 @@ const { backgroundjob: backgroundjobFactory } = require('@factories/backgroundjo
 const { cart: cartFactory } = require('@factories/cart')
 const { contact: contactFactory } = require('@factories/contact')
 const Payment = require('@plugins/payments/PagarMe/Payment')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('processBackgroundjobChargeCreditCard', () => {
   beforeEach(async () => {
@@ -27,7 +27,8 @@ describe('processBackgroundjobChargeCreditCard', () => {
       await cart.save()
     })
 
-    const licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const licensee = await licenseeRepository.create(licenseeFactory.build())
     const backgroundjob = await Backgroundjob.create(
       backgroundjobFactory.build({
         kind: 'get-credit-card',
@@ -80,7 +81,8 @@ describe('processBackgroundjobChargeCreditCard', () => {
         await cart.save()
       })
 
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       const backgroundjob = await Backgroundjob.create(
         backgroundjobFactory.build({
           kind: 'get-credit-card',
@@ -136,7 +138,8 @@ describe('processBackgroundjobChargeCreditCard', () => {
   describe('when error', () => {
     describe('when card do not belong to contact', () => {
       it('saves the error information at backgroundjob', async () => {
-        const licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
         const backgroundjob = await Backgroundjob.create(
           backgroundjobFactory.build({
             kind: 'get-credit-card',
@@ -196,7 +199,8 @@ describe('processBackgroundjobChargeCreditCard', () => {
           await cart.save()
         })
 
-        const licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
         const backgroundjob = await Backgroundjob.create(
           backgroundjobFactory.build({
             kind: 'get-credit-card',
@@ -257,7 +261,8 @@ describe('processBackgroundjobChargeCreditCard', () => {
           await cart.save()
         })
 
-        const licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
         const backgroundjob = await Backgroundjob.create(
           backgroundjobFactory.build({
             kind: 'get-credit-card',
@@ -316,7 +321,8 @@ describe('processBackgroundjobChargeCreditCard', () => {
           await cart.save()
         })
 
-        const licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
         const backgroundjob = await Backgroundjob.create(
           backgroundjobFactory.build({
             kind: 'get-credit-card',
@@ -375,7 +381,8 @@ describe('processBackgroundjobChargeCreditCard', () => {
           await cart.save()
         })
 
-        const licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
         const backgroundjob = await Backgroundjob.create(
           backgroundjobFactory.build({
             kind: 'get-credit-card',

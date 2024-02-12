@@ -1,6 +1,6 @@
-const Licensee = require('@models/Licensee')
 const Dialog = require('@plugins/messengers/Dialog')
 const { createTemplate, destroyAllTemplates } = require('@repositories/template')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 class TemplatesImporter {
   constructor(licenseeId) {
@@ -8,8 +8,11 @@ class TemplatesImporter {
   }
 
   async import() {
-    const licensee = await Licensee.findById(this.licenseeId)
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const licensee = await licenseeRepository.findFirst({ _id: this.licenseeId })
+
     await destroyAllTemplates()
+
     if (licensee.whatsappDefault === 'dialog') {
       const dialog = new Dialog(licensee)
       const templates = await dialog.searchTemplates(licensee.whatsappUrl, licensee.whatsappToken)

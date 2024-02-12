@@ -1,8 +1,8 @@
 const Backgroundjob = require('@models/Backgroundjob')
-const Licensee = require('@models/Licensee')
 const mongoServer = require('../../../.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { backgroundjob: backgroundjobFactory } = require('@factories/backgroundjob')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('Backgroundjob', () => {
   let licensee
@@ -10,7 +10,8 @@ describe('Backgroundjob', () => {
   beforeEach(async () => {
     await mongoServer.connect()
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
   afterEach(async () => {

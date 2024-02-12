@@ -1,5 +1,5 @@
-const Licensee = require('@models/Licensee')
 const MessagesQuery = require('@queries/MessagesQuery')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const moment = require('moment-timezone')
 
 async function getLicenseeFirstMessage(licensee) {
@@ -67,7 +67,8 @@ class BillingQuery {
   async all() {
     const result = []
 
-    const licensees = await Licensee.find()
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const licensees = await licenseeRepository.find()
     for (const licensee of licensees) {
       const firstMessage = await getLicenseeFirstMessage(licensee, this.reportDate)
       const lastMessage = await getLicenseeLastMessage(licensee, this.reportDate)

@@ -1,4 +1,3 @@
-const Licensee = require('@models/Licensee')
 const Backgroundjob = require('@models/Backgroundjob')
 const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
@@ -6,6 +5,7 @@ const queueServer = require('@config/queue')
 const { expressServer } = require('../../../.jest/server-express')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { backgroundjob: backgroundjobFactory } = require('@factories/backgroundjob')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('backgrounndjobs controller', () => {
   let apiToken
@@ -16,7 +16,8 @@ describe('backgrounndjobs controller', () => {
     jest.clearAllMocks()
     await mongoServer.connect()
 
-    const licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const licensee = await licenseeRepository.create(licenseeFactory.build())
     apiToken = licensee.apiToken
   })
 
@@ -123,7 +124,9 @@ describe('backgrounndjobs controller', () => {
   describe('show', () => {
     describe('response', () => {
       it('returns status 200 and backgroundjob if scheduled', async () => {
-        const licensee = await Licensee.findOne({ apiToken })
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.findFirst({ apiToken })
+
         const backgroundjob = await Backgroundjob.create(
           backgroundjobFactory.build({
             licensee,
@@ -143,7 +146,9 @@ describe('backgrounndjobs controller', () => {
       })
 
       it('returns status 200 and payload response if running', async () => {
-        const licensee = await Licensee.findOne({ apiToken })
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.findFirst({ apiToken })
+
         const backgroundjob = await Backgroundjob.create(
           backgroundjobFactory.build({
             licensee,
@@ -163,7 +168,9 @@ describe('backgrounndjobs controller', () => {
       })
 
       it('returns status 200 and payload response if done', async () => {
-        const licensee = await Licensee.findOne({ apiToken })
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.findFirst({ apiToken })
+
         const backgroundjob = await Backgroundjob.create(
           backgroundjobFactory.build({
             licensee,
@@ -187,7 +194,9 @@ describe('backgrounndjobs controller', () => {
       })
 
       it('returns status 200 and payload response if error', async () => {
-        const licensee = await Licensee.findOne({ apiToken })
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.findFirst({ apiToken })
+
         const backgroundjob = await Backgroundjob.create(
           backgroundjobFactory.build({
             licensee,
@@ -206,7 +215,9 @@ describe('backgrounndjobs controller', () => {
       })
 
       it('returns status 404 and message if backgroundjobs belongs to another licensee', async () => {
-        const licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
+
         const backgroundjob = await Backgroundjob.create(
           backgroundjobFactory.build({
             licensee,

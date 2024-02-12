@@ -1,4 +1,3 @@
-const Licensee = require('@models/Licensee')
 const Contact = require('@models/Contact')
 const Cart = require('@models/Cart')
 const request = require('supertest')
@@ -9,6 +8,7 @@ const { contact: contactFactory } = require('@factories/contact')
 const { cart: cartFactory } = require('@factories/cart')
 const { createTextMessageInsteadInteractive } = require('@repositories/message')
 const { publishMessage } = require('@config/rabbitmq')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 jest.mock('@config/rabbitmq')
 jest.mock('@repositories/message')
@@ -21,10 +21,11 @@ describe('carts controller', () => {
   beforeAll(async () => {
     await mongoServer.connect()
 
-    licensee = await Licensee.create(licenseeFactory.build({ cartDefault: 'go2go' }))
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build({ cartDefault: 'go2go' }))
     contact = await Contact.create(contactFactory.build({ licensee }))
 
-    anotherLicensee = await Licensee.create(licenseeFactory.build())
+    anotherLicensee = await licenseeRepository.create(licenseeFactory.build())
     anotherContact = await Contact.create(contactFactory.build({ licensee: anotherLicensee }))
   })
 

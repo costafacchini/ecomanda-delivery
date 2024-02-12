@@ -1,4 +1,4 @@
-const Licensee = require('@models/Licensee')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const createMessengerPlugin = require('@plugins/messengers/factory')
 const { check, validationResult } = require('express-validator')
 const { sanitizeExpressErrors, sanitizeModelErrors } = require('../helpers/SanitizeErrors')
@@ -126,67 +126,63 @@ class LicenseesController {
       account_type,
     } = req.body
 
-    const licensee = new Licensee({
-      name,
-      email,
-      phone,
-      active,
-      licenseKind,
-      useChatbot,
-      chatbotDefault,
-      chatbotUrl,
-      chatbotAuthorizationToken,
-      messageOnResetChatbot,
-      chatbotApiToken,
-      whatsappDefault,
-      whatsappToken,
-      whatsappUrl,
-      chatDefault,
-      chatUrl,
-      awsId,
-      awsSecret,
-      bucketName,
-      chatIdentifier,
-      chatKey,
-      cartDefault,
-      unidadeId,
-      statusId,
-      messageOnCloseChat,
-      useCartGallabox,
-      productFractional2Name,
-      productFractional2Id,
-      productFractional3Name,
-      productFractional3Id,
-      productFractionalSize3Name,
-      productFractionalSize3Id,
-      productFractionalSize4Name,
-      productFractionalSize4Id,
-      productFractionals,
-      document,
-      kind,
-      financial_player_fee,
-      holder_name,
-      bank,
-      branch_number,
-      branch_check_digit,
-      account_number,
-      account_check_digit,
-      holder_kind,
-      holder_document,
-      account_type,
-    })
-
-    const validation = licensee.validateSync()
-
     try {
-      if (validation) {
-        return res.status(422).json({ errors: sanitizeModelErrors(validation.errors) })
-      } else {
-        await licensee.save()
-      }
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create({
+        name,
+        email,
+        phone,
+        active,
+        licenseKind,
+        useChatbot,
+        chatbotDefault,
+        chatbotUrl,
+        chatbotAuthorizationToken,
+        messageOnResetChatbot,
+        chatbotApiToken,
+        whatsappDefault,
+        whatsappToken,
+        whatsappUrl,
+        chatDefault,
+        chatUrl,
+        awsId,
+        awsSecret,
+        bucketName,
+        chatIdentifier,
+        chatKey,
+        cartDefault,
+        unidadeId,
+        statusId,
+        messageOnCloseChat,
+        useCartGallabox,
+        productFractional2Name,
+        productFractional2Id,
+        productFractional3Name,
+        productFractional3Id,
+        productFractionalSize3Name,
+        productFractionalSize3Id,
+        productFractionalSize4Name,
+        productFractionalSize4Id,
+        productFractionals,
+        document,
+        kind,
+        financial_player_fee,
+        holder_name,
+        bank,
+        branch_number,
+        branch_check_digit,
+        account_number,
+        account_check_digit,
+        holder_kind,
+        holder_document,
+        account_type,
+      })
 
       res.status(201).send(licensee)
     } catch (err) {
+      if ('errors' in err) {
+        return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
+      }
       res.status(500).send({ errors: { message: err.toString() } })
     }
   }
@@ -199,14 +195,15 @@ class LicenseesController {
 
     const fields = permit(req.body)
 
+    const licenseeRepository = new LicenseeRepositoryDatabase()
     try {
-      await Licensee.updateOne({ _id: req.params.id }, { $set: fields }, { runValidators: true })
+      await licenseeRepository.update(req.params.id, { ...fields })
     } catch (err) {
       return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
     }
 
     try {
-      const licensee = await Licensee.findOne({ _id: req.params.id })
+      const licensee = await licenseeRepository.findFirst({ _id: req.params.id })
 
       res.status(200).send(licensee)
     } catch (err) {
@@ -216,7 +213,8 @@ class LicenseesController {
 
   async show(req, res) {
     try {
-      const licensee = await Licensee.findOne({ _id: req.params.id })
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.findFirst({ _id: req.params.id })
 
       res.status(200).send(licensee)
     } catch (err) {
@@ -268,7 +266,8 @@ class LicenseesController {
 
   async setDialogWebhook(req, res) {
     try {
-      const licensee = await Licensee.findOne({ _id: req.params.id })
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.findFirst({ _id: req.params.id })
 
       if (licensee.whatsappDefault === 'dialog') {
         const pluginWhatsapp = createMessengerPlugin(licensee)
@@ -283,7 +282,8 @@ class LicenseesController {
 
   async sendToPagarMe(req, res) {
     try {
-      const licensee = await Licensee.findOne({ _id: req.params.id })
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.findFirst({ _id: req.params.id })
       const pagarMe = new PagarMe()
 
       if (licensee.recipient_id) {

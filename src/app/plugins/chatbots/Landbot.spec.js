@@ -1,7 +1,6 @@
 const Landbot = require('./Landbot')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
-const Licensee = require('@models/Licensee')
 const Trigger = require('@models/Trigger')
 const Cart = require('@models/Cart')
 const fetchMock = require('fetch-mock')
@@ -15,6 +14,7 @@ const { message: messageFactory } = require('@factories/message')
 const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
 const { cart: cartFactory } = require('@factories/cart')
 const { advanceTo, clear } = require('jest-date-mock')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -29,7 +29,8 @@ describe('Landbot plugin', () => {
     jest.clearAllMocks()
     fetchMock.reset()
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
   afterEach(async () => {
@@ -1134,7 +1135,8 @@ describe('Landbot plugin', () => {
 
   describe('#dropConversation', () => {
     it('send request to delete customer on landbot', async () => {
-      const licensee = await Licensee.create(
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(
         licenseeFactory.build({
           chatbotApiToken: 'token',
         }),

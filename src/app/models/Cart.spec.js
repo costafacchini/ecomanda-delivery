@@ -1,10 +1,10 @@
 const Cart = require('@models/Cart')
-const Licensee = require('@models/Licensee')
 const Contact = require('@models/Contact')
 const mongoServer = require('../../../.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { cart: cartFactory } = require('@factories/cart')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('Cart', () => {
   let licensee
@@ -13,7 +13,8 @@ describe('Cart', () => {
   beforeEach(async () => {
     await mongoServer.connect()
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build())
     contact = await Contact.create(contactFactory.build({ licensee }))
   })
 

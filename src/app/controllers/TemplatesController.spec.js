@@ -1,4 +1,3 @@
-const Licensee = require('@models/Licensee')
 const Template = require('@models/Template')
 const User = require('@models/User')
 const request = require('supertest')
@@ -8,6 +7,7 @@ const Dialog = require('@plugins/messengers/Dialog')
 const { userSuper: userSuperFactory } = require('@factories/user')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { template: templateFactory } = require('@factories/template')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('template controller', () => {
   let token
@@ -25,7 +25,8 @@ describe('template controller', () => {
         token = response.body.token
       })
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
   afterAll(async () => {
@@ -132,7 +133,8 @@ describe('template controller', () => {
       it('returns status 200 and the template data if the update is successful', async () => {
         const template = await Template.create(templateFactory.build({ licensee }))
 
-        const licenseeNew = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licenseeNew = await licenseeRepository.create(licenseeFactory.build())
 
         await request(expressServer)
           .post(`/resources/templates/${template._id}`)
@@ -293,9 +295,11 @@ describe('template controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurre when update the template', async () => {
-        const licenseeFindOneSpy = jest.spyOn(Licensee, 'findOne').mockImplementation(() => {
-          throw new Error('some error')
-        })
+        const licenseeFindOneSpy = jest
+          .spyOn(LicenseeRepositoryDatabase.prototype, 'findFirst')
+          .mockImplementation(() => {
+            throw new Error('some error')
+          })
 
         await request(expressServer)
           .post(`/resources/templates/${licensee._id}/importation`)

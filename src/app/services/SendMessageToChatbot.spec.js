@@ -1,5 +1,4 @@
 const sendMessageToChatbot = require('./SendMessageToChatbot')
-const Licensee = require('@models/Licensee')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Landbot = require('../plugins/chatbots/Landbot')
@@ -7,6 +6,7 @@ const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('sendMessageToChatbot', () => {
   const landbotSendMessageSpy = jest.spyOn(Landbot.prototype, 'sendMessage').mockImplementation(() => {})
@@ -21,7 +21,8 @@ describe('sendMessageToChatbot', () => {
   })
 
   it('asks the plugin to send message to chatbot', async () => {
-    const licensee = await Licensee.create(
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const licensee = await licenseeRepository.create(
       licenseeFactory.build({
         chatbotDefault: 'landbot',
       }),

@@ -1,4 +1,3 @@
-const Licensee = require('@models/Licensee')
 const User = require('@models/User')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
@@ -9,6 +8,7 @@ const { userSuper: userSuperFactory } = require('@factories/user')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('messengers controller', () => {
   let token
@@ -64,8 +64,9 @@ describe('messengers controller', () => {
   describe('index', () => {
     describe('response', () => {
       it('returns status 200 and return messages', async () => {
-        const licensee = await Licensee.create(licenseeFactory.build())
-        const another_licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
+        const another_licensee = await licenseeRepository.create(licenseeFactory.build())
 
         const contact = await Contact.create(contactFactory.build({ licensee }))
         const another_contact = await Contact.create(contactFactory.build({ licensee }))

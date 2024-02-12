@@ -1,9 +1,9 @@
 const ContactsQuery = require('@queries/ContactsQuery')
 const mongoServer = require('../../../.jest/utils')
 const Contact = require('@models/Contact')
-const Licensee = require('@models/Licensee')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('ContactsQuery', () => {
   let licensee
@@ -11,7 +11,8 @@ describe('ContactsQuery', () => {
   beforeEach(async () => {
     await mongoServer.connect()
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
   afterEach(async () => {
@@ -149,7 +150,8 @@ describe('ContactsQuery', () => {
         }),
       )
 
-      const anotherLicensee = await Licensee.create(licenseeFactory.build({ name: 'Wolf e cia' }))
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const anotherLicensee = await licenseeRepository.create(licenseeFactory.build({ name: 'Wolf e cia' }))
       const contact2 = await Contact.create(
         contactFactory.build({
           licensee: anotherLicensee._id,

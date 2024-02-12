@@ -1,8 +1,8 @@
 const Template = require('@models/Template')
-const Licensee = require('@models/Licensee')
 const mongoServer = require('../../../.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { template: templateFactory } = require('@factories/template')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('Template', () => {
   let licensee
@@ -10,7 +10,8 @@ describe('Template', () => {
   beforeEach(async () => {
     await mongoServer.connect()
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
   afterEach(async () => {

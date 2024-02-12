@@ -1,6 +1,5 @@
 const Cart = require('@models/Cart')
 const Contact = require('@models/Contact')
-const Licensee = require('@models/Licensee')
 const Product = require('@models/Product')
 const mongoServer = require('../../../.jest/utils')
 const { parseText, parseCart } = require('./ParseTriggerText')
@@ -8,6 +7,7 @@ const { contact: contactFactory } = require('@factories/contact')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { cart: cartFactory } = require('@factories/cart')
 const { product: productFactory } = require('@factories/product')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('ParseTriggerText', () => {
   beforeEach(async () => {
@@ -21,7 +21,9 @@ describe('ParseTriggerText', () => {
   describe('#parseText', () => {
     describe('$last_cart_resume', () => {
       it('replaces by cart data', async () => {
-        const licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
+
         const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
         await Cart.create(cartFactory.build({ licensee, contact, concluded: true }))
 
@@ -129,7 +131,9 @@ describe('ParseTriggerText', () => {
 
       describe('when the cart has no address', () => {
         it('replaces by cart data without address', async () => {
-          const licensee = await Licensee.create(licenseeFactory.build())
+          const licenseeRepository = new LicenseeRepositoryDatabase()
+          const licensee = await licenseeRepository.create(licenseeFactory.build())
+
           const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
           await Cart.create(cartFactory.build({ licensee, contact, concluded: true }))
 
@@ -163,7 +167,9 @@ describe('ParseTriggerText', () => {
 
       describe('when the cart address is incomplete', () => {
         it('replaces by cart data with address incomplete', async () => {
-          const licensee = await Licensee.create(licenseeFactory.build())
+          const licenseeRepository = new LicenseeRepositoryDatabase()
+          const licensee = await licenseeRepository.create(licenseeFactory.build())
+
           const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
           await Cart.create(cartFactory.build({ licensee, contact, concluded: true }))
 
@@ -206,7 +212,9 @@ describe('ParseTriggerText', () => {
 
       describe('when the cart has no partner key', () => {
         it('replaces by cart data without partner key', async () => {
-          const licensee = await Licensee.create(licenseeFactory.build())
+          const licenseeRepository = new LicenseeRepositoryDatabase()
+          const licensee = await licenseeRepository.create(licenseeFactory.build())
+
           const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
           await Cart.create(cartFactory.build({ licensee, contact, concluded: true }))
 
@@ -243,7 +251,9 @@ describe('ParseTriggerText', () => {
 
       describe('when the cart has no payment method', () => {
         it('replaces by cart data without payment method', async () => {
-          const licensee = await Licensee.create(licenseeFactory.build())
+          const licenseeRepository = new LicenseeRepositoryDatabase()
+          const licensee = await licenseeRepository.create(licenseeFactory.build())
+
           const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
           await Cart.create(cartFactory.build({ licensee, contact, concluded: true }))
 
@@ -278,7 +288,9 @@ describe('ParseTriggerText', () => {
 
       describe('when the cart has no note', () => {
         it('replaces by cart data without note', async () => {
-          const licensee = await Licensee.create(licenseeFactory.build())
+          const licenseeRepository = new LicenseeRepositoryDatabase()
+          const licensee = await licenseeRepository.create(licenseeFactory.build())
+
           const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
           await Cart.create(cartFactory.build({ licensee, contact, concluded: true }))
 
@@ -313,7 +325,9 @@ describe('ParseTriggerText', () => {
 
       describe('when the cart has no points', () => {
         it('replaces by cart data without note', async () => {
-          const licensee = await Licensee.create(licenseeFactory.build())
+          const licenseeRepository = new LicenseeRepositoryDatabase()
+          const licensee = await licenseeRepository.create(licenseeFactory.build())
+
           const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
           await Cart.create(cartFactory.build({ licensee, contact, concluded: true }))
 
@@ -350,7 +364,9 @@ describe('ParseTriggerText', () => {
 
       describe('when the payment method is cart', () => {
         it('replaces by cart data without change', async () => {
-          const licensee = await Licensee.create(licenseeFactory.build())
+          const licenseeRepository = new LicenseeRepositoryDatabase()
+          const licensee = await licenseeRepository.create(licenseeFactory.build())
+
           const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
           await Cart.create(cartFactory.build({ licensee, contact, concluded: true }))
 
@@ -432,7 +448,9 @@ describe('ParseTriggerText', () => {
 
   describe('#parseCart', () => {
     it('returns cart data', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
+
       const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
 
       const product = await Product.create(productFactory.build({ name: 'Product 1', licensee }))

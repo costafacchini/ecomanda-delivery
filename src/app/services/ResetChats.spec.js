@@ -1,5 +1,4 @@
 const resetChats = require('./ResetChats')
-const Licensee = require('@models/Licensee')
 const Contact = require('@models/Contact')
 const Message = require('@models/Message')
 const mongoServer = require('.jest/utils')
@@ -7,6 +6,7 @@ const { licenseeComplete: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const moment = require('moment')
 const Rocketchat = require('../plugins/chats/Rocketchat')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 const spySendMessage = jest.spyOn(Rocketchat.prototype, 'sendMessage').mockImplementation()
 
@@ -25,7 +25,8 @@ describe('resetChats', () => {
   describe('when the licensee uses messenger plugin dialog and use whatsapp window', () => {
     describe('when the contact starts a whatsapp chat 23 hours and 50 minutes ago', () => {
       it('send the message to warn the chat that the conversation window is ending', async () => {
-        const licensee = await Licensee.create(
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(
           licenseeFactory.build({
             whatsappDefault: 'dialog',
             whatsappUrl: 'https://waba.360dialog.io/',
@@ -62,7 +63,7 @@ describe('resetChats', () => {
           }),
         )
 
-        const licenseeWhatsappWindowOff = await Licensee.create(
+        const licenseeWhatsappWindowOff = await licenseeRepository.create(
           licenseeFactory.build({
             whatsappDefault: 'dialog',
             whatsappUrl: 'https://waba.360dialog.io/',
@@ -78,7 +79,7 @@ describe('resetChats', () => {
           }),
         )
 
-        const licenseeThatNotUseDialog = await Licensee.create(
+        const licenseeThatNotUseDialog = await licenseeRepository.create(
           licenseeFactory.build({
             whatsappDefault: 'utalk',
             whatsappUrl: 'https://utalk.com/',
@@ -122,7 +123,8 @@ describe('resetChats', () => {
       })
 
       it('send the message to notify the chat that the conversation window has expired ans clear field on contact', async () => {
-        const licensee = await Licensee.create(
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(
           licenseeFactory.build({
             whatsappDefault: 'dialog',
             whatsappUrl: 'https://waba.360dialog.io/',
@@ -145,7 +147,7 @@ describe('resetChats', () => {
           }),
         )
 
-        const licenseeWhatsappWindowOff = await Licensee.create(
+        const licenseeWhatsappWindowOff = await licenseeRepository.create(
           licenseeFactory.build({
             whatsappDefault: 'dialog',
             whatsappUrl: 'https://waba.360dialog.io/',
@@ -161,7 +163,7 @@ describe('resetChats', () => {
           }),
         )
 
-        const licenseeThatNotUseDialog = await Licensee.create(
+        const licenseeThatNotUseDialog = await licenseeRepository.create(
           licenseeFactory.build({
             whatsappDefault: 'utalk',
             whatsappUrl: 'https://utalk.com/',

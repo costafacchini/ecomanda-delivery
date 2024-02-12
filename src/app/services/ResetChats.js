@@ -1,4 +1,3 @@
-const Licensee = require('@models/Licensee')
 const Contact = require('@models/Contact')
 const createChatPlugin = require('../plugins/chats/factory')
 const moment = require('moment-timezone')
@@ -7,6 +6,7 @@ const {
   createMessageToWarnAboutWindowOfWhatsassHasExpired,
 } = require('@repositories/message')
 const { getContactBy } = require('@repositories/contact')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 async function sendMessageToChat(licensee, messageToSend) {
   const chatPlugin = createChatPlugin(licensee)
@@ -56,7 +56,8 @@ async function warningAboutChatsExpired(licensee) {
 }
 
 async function resetChats() {
-  const licensees = await Licensee.find({ active: true, whatsappDefault: 'dialog', useWhatsappWindow: true })
+  const licenseeRepository = new LicenseeRepositoryDatabase()
+  const licensees = await licenseeRepository.find({ active: true, whatsappDefault: 'dialog', useWhatsappWindow: true })
   for (const licensee of licensees) {
     await warningAboutChatsEnding(licensee)
     await warningAboutChatsExpired(licensee)

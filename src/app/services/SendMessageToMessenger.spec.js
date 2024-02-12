@@ -1,5 +1,4 @@
 const sendMessageToMessenger = require('./SendMessageToMessenger')
-const Licensee = require('@models/Licensee')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Dialog = require('../plugins/messengers/Dialog')
@@ -7,6 +6,7 @@ const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('sendMessageToMessenger', () => {
   const dialogSendMessageSpy = jest.spyOn(Dialog.prototype, 'sendMessage').mockImplementation(() => {})
@@ -21,7 +21,8 @@ describe('sendMessageToMessenger', () => {
   })
 
   it('asks the plugin to send message to messenger', async () => {
-    const licensee = await Licensee.create(
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const licensee = await licenseeRepository.create(
       licenseeFactory.build({
         whatsappDefault: 'dialog',
         whatsappUrl: 'https://chat.url',

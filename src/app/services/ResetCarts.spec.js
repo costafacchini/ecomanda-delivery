@@ -1,11 +1,11 @@
 const resetCarts = require('./ResetCarts')
-const Licensee = require('@models/Licensee')
 const Contact = require('@models/Contact')
 const Cart = require('@models/Cart')
 const mongoServer = require('.jest/utils')
 const { licenseeComplete: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { cart: cartFactory } = require('@factories/cart')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const moment = require('moment')
 
 describe('resetCarts', () => {
@@ -22,7 +22,8 @@ describe('resetCarts', () => {
 
   describe('when the cart is open an hour ago', () => {
     it('closes the cart', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
 
       const contact = await Contact.create(contactFactory.build({ licensee }))
 

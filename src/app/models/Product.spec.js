@@ -1,7 +1,7 @@
-const Licensee = require('@models/Licensee')
 const Product = require('@models/Product')
 const mongoServer = require('../../../.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('Product', () => {
   let licensee
@@ -9,7 +9,8 @@ describe('Product', () => {
   beforeEach(async () => {
     await mongoServer.connect()
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
   afterEach(async () => {

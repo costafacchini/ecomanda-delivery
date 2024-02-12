@@ -1,7 +1,7 @@
 const Body = require('@models/Body')
-const Licensee = require('@models/Licensee')
 const mongoServer = require('../../../.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('Body', () => {
   beforeEach(async () => {
@@ -14,7 +14,8 @@ describe('Body', () => {
 
   describe('before save', () => {
     it('generates _id', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
 
       const body = await Body.create({
         content: JSON.parse('{ "field1": 1, "field2": "text" }'),
@@ -26,7 +27,8 @@ describe('Body', () => {
     })
 
     it('does not changes _id if bidy is changed', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
 
       const body = await Body.create({
         content: JSON.parse('{ "field1": 1, "field2": "text" }'),

@@ -1,13 +1,13 @@
 const Utalk = require('./Utalk')
 const Message = require('@models/Message')
 const Contact = require('@models/Contact')
-const Licensee = require('@models/Licensee')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
 const S3 = require('../storage/S3')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -25,7 +25,8 @@ describe('Utalk plugin', () => {
     jest.clearAllMocks()
     fetchMock.reset()
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
   afterEach(async () => {
@@ -268,7 +269,8 @@ describe('Utalk plugin', () => {
     })
 
     it('updates the contact if contact exists, name is different and message is not file', async () => {
-      const licensee = await Licensee.create(
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(
         licenseeFactory.build({
           useChatbot: true,
           chatbotDefault: 'landbot',
