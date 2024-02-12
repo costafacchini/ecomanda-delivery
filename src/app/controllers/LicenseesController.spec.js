@@ -1,10 +1,11 @@
-const Licensee = require('@models/Licensee')
 const User = require('@models/User')
 const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
 const { licenseeComplete: licenseeCompleteFactory, licensee: licenseeFactory } = require('@factories/licensee')
 const { userSuper: userSuperFactory } = require('@factories/user')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const LicenseesQuery = require('@queries/LicenseesQuery')
 const Recipient = require('@plugins/payments/PagarMe/Recipient')
 const Pedidos10 = require('@plugins/integrations/Pedidos10')
 
@@ -108,7 +109,7 @@ describe('licensee controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurred when create the licensee', async () => {
-        const licenseeSaveSpy = jest.spyOn(Licensee.prototype, 'save').mockImplementation(() => {
+        const licenseeSaveSpy = jest.spyOn(LicenseeRepositoryDatabase.prototype, 'create').mockImplementation(() => {
           throw new Error('some error')
         })
 
@@ -142,7 +143,8 @@ describe('licensee controller', () => {
   describe('update', () => {
     describe('response', () => {
       it('returns status 200 and the licensee data if the update is successful', async () => {
-        const licensee = await Licensee.create(licenseeCompleteFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeCompleteFactory.build())
 
         await request(expressServer)
           .post(`/resources/licensees/${licensee._id}`)
@@ -192,7 +194,8 @@ describe('licensee controller', () => {
       })
 
       it('returns status 422 and message if the licensee is not valid', async () => {
-        const licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
 
         await request(expressServer)
           .post(`/resources/licensees/${licensee._id}`)
@@ -208,11 +211,14 @@ describe('licensee controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurre when update the licensee', async () => {
-        const licenseeFindOneSpy = jest.spyOn(Licensee, 'findOne').mockImplementation(() => {
-          throw new Error('some error')
-        })
+        const licenseeFindOneSpy = jest
+          .spyOn(LicenseeRepositoryDatabase.prototype, 'findFirst')
+          .mockImplementation(() => {
+            throw new Error('some error')
+          })
 
-        const licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
 
         await request(expressServer)
           .post(`/resources/licensees/${licensee._id}`)
@@ -228,7 +234,8 @@ describe('licensee controller', () => {
 
       describe('validations', () => {
         it('returns status 422 and message if the email is invalid', async () => {
-          const licensee = await Licensee.create(licenseeFactory.build())
+          const licenseeRepository = new LicenseeRepositoryDatabase()
+          const licensee = await licenseeRepository.create(licenseeFactory.build())
 
           await request(expressServer)
             .post(`/resources/licensees/${licensee._id}`)
@@ -246,7 +253,8 @@ describe('licensee controller', () => {
   describe('show', () => {
     describe('response', () => {
       it('returns status 200 and message if licensee exists', async () => {
-        const licensee = await Licensee.create(licenseeCompleteFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeCompleteFactory.build())
 
         await request(expressServer)
           .get(`/resources/licensees/${licensee._id}`)
@@ -286,9 +294,11 @@ describe('licensee controller', () => {
       })
 
       it('returns status 500 and message if occurs another error', async () => {
-        const licenseeFindOneSpy = jest.spyOn(Licensee, 'findOne').mockImplementation(() => {
-          throw new Error('some error')
-        })
+        const licenseeFindOneSpy = jest
+          .spyOn(LicenseeRepositoryDatabase.prototype, 'findFirst')
+          .mockImplementation(() => {
+            throw new Error('some error')
+          })
 
         await request(expressServer)
           .get('/resources/licensees/12312')
@@ -306,7 +316,8 @@ describe('licensee controller', () => {
   describe('index', () => {
     describe('response', () => {
       it('returns status 200 and message if licensee exists', async () => {
-        await Licensee.create(
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        await licenseeRepository.create(
           licenseeCompleteFactory.build({
             chatDefault: 'rocketchat',
             chatbotDefault: 'landbot',
@@ -314,7 +325,7 @@ describe('licensee controller', () => {
             name: 'Alcalina',
           }),
         )
-        await Licensee.create(
+        await licenseeRepository.create(
           licenseeCompleteFactory.build({
             chatDefault: 'rocketchat',
             chatbotDefault: 'landbot',
@@ -322,7 +333,7 @@ describe('licensee controller', () => {
             name: 'Alcateia ltds',
           }),
         )
-        await Licensee.create(
+        await licenseeRepository.create(
           licenseeCompleteFactory.build({
             chatDefault: 'rocketchat',
             chatbotDefault: 'landbot',
@@ -330,7 +341,7 @@ describe('licensee controller', () => {
             name: 'Alcachofra',
           }),
         )
-        await Licensee.create(
+        await licenseeRepository.create(
           licenseeCompleteFactory.build({
             active: false,
             chatDefault: 'rocketchat',
@@ -374,7 +385,7 @@ describe('licensee controller', () => {
       })
 
       it('returns status 500 and message if occurs another error', async () => {
-        const licenseeFindSpy = jest.spyOn(Licensee, 'find').mockImplementation(() => {
+        const licenseeFindSpy = jest.spyOn(LicenseesQuery.prototype, 'all').mockImplementation(() => {
           throw new Error('some error')
         })
 
@@ -394,7 +405,8 @@ describe('licensee controller', () => {
   describe('setDialogWebhook', () => {
     describe('response', () => {
       it('returns status 200 and message if dialog webhook is set', async () => {
-        const licensee = await Licensee.create(licenseeCompleteFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeCompleteFactory.build())
 
         await request(expressServer)
           .post(`/resources/licensees/${licensee._id}/dialogwebhook`)
@@ -408,11 +420,14 @@ describe('licensee controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurred', async () => {
-        const licenseeFindOneSpy = jest.spyOn(Licensee, 'findOne').mockImplementation(() => {
-          throw new Error('some error')
-        })
+        const licenseeFindOneSpy = jest
+          .spyOn(LicenseeRepositoryDatabase.prototype, 'findFirst')
+          .mockImplementation(() => {
+            throw new Error('some error')
+          })
 
-        const licensee = await Licensee.create(licenseeCompleteFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeCompleteFactory.build())
 
         await request(expressServer)
           .post(`/resources/licensees/${licensee._id}/dialogwebhook`)
@@ -432,7 +447,9 @@ describe('licensee controller', () => {
     describe('response', () => {
       it('returns status 200 and message if create on pagar.me API', async () => {
         const recipientCreateFnSpy = jest.spyOn(Recipient.prototype, 'create').mockImplementation(() => {})
-        const licensee = await Licensee.create(licenseeCompleteFactory.build())
+
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeCompleteFactory.build())
 
         await request(expressServer)
           .post(`/resources/licensees/${licensee._id}/integration/pagarme`)
@@ -449,7 +466,9 @@ describe('licensee controller', () => {
 
       it('returns status 200 and message if update on pagar.me API', async () => {
         const recipientCreateFnSpy = jest.spyOn(Recipient.prototype, 'update').mockImplementation(() => {})
-        const licensee = await Licensee.create(licenseeCompleteFactory.build({ recipient_id: '1234' }))
+
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeCompleteFactory.build({ recipient_id: '1234' }))
 
         await request(expressServer)
           .post(`/resources/licensees/${licensee._id}/integration/pagarme`)
@@ -466,11 +485,14 @@ describe('licensee controller', () => {
 
       it('returns status 500 and message if the some error ocurred', async () => {
         const recipientCreateFnSpy = jest.spyOn(Recipient.prototype, 'create').mockImplementation(() => {})
-        const licenseeFindOneSpy = jest.spyOn(Licensee, 'findOne').mockImplementation(() => {
-          throw new Error('some error')
-        })
+        const licenseeFindOneSpy = jest
+          .spyOn(LicenseeRepositoryDatabase.prototype, 'findFirst')
+          .mockImplementation(() => {
+            throw new Error('some error')
+          })
 
-        const licensee = await Licensee.create(licenseeCompleteFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeCompleteFactory.build())
 
         await request(expressServer)
           .post(`/resources/licensees/${licensee._id}/integration/pagarme`)
@@ -491,7 +513,8 @@ describe('licensee controller', () => {
     describe('response', () => {
       describe('when has pedidos 10 integration data', () => {
         it('returns status 200 and message success', async () => {
-          const licensee = await Licensee.create(
+          const licenseeRepository = new LicenseeRepositoryDatabase()
+          const licensee = await licenseeRepository.create(
             licenseeCompleteFactory.build({ pedidos10_integration: { username: '' } }),
           )
           const signOrderWebhookFnSpy = jest.spyOn(Pedidos10.prototype, 'signOrderWebhook').mockImplementation(() => {})
@@ -511,7 +534,8 @@ describe('licensee controller', () => {
 
       describe('when does not have pedidos 10 integration data', () => {
         it('returns status 200 and does not call Pedidos 10 service', async () => {
-          const licensee = await Licensee.create(licenseeCompleteFactory.build({ pedidos10_integration: {} }))
+          const licenseeRepository = new LicenseeRepositoryDatabase()
+          const licensee = await licenseeRepository.create(licenseeCompleteFactory.build({ pedidos10_integration: {} }))
 
           await request(expressServer)
             .post(`/resources/licensees/${licensee._id}/sign-order-webhook`)
@@ -526,11 +550,14 @@ describe('licensee controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurred', async () => {
-        const licenseeFindOneSpy = jest.spyOn(Licensee, 'findOne').mockImplementation(() => {
-          throw new Error('some error')
-        })
+        const licenseeFindOneSpy = jest
+          .spyOn(LicenseeRepositoryDatabase.prototype, 'findFirst')
+          .mockImplementation(() => {
+            throw new Error('some error')
+          })
 
-        const licensee = await Licensee.create(licenseeCompleteFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeCompleteFactory.build())
 
         await request(expressServer)
           .post(`/resources/licensees/${licensee._id}/dialogwebhook`)

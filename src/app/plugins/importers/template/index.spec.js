@@ -1,10 +1,10 @@
-const Licensee = require('@models/Licensee')
 const Template = require('@models/Template')
 const Dialog = require('@plugins/messengers/Dialog')
 const TemplatesImporter = require('@plugins/importers/template/index')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { template: templateFactory } = require('@factories/template')
 const mongoServer = require('../../../../../.jest/utils')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('TemplatesImporter', () => {
   beforeAll(async () => {
@@ -16,7 +16,8 @@ describe('TemplatesImporter', () => {
   })
 
   it('imports the templates of whatsapp', async () => {
-    const licensee = await Licensee.create(
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const licensee = await licenseeRepository.create(
       licenseeFactory.build({ whatsappDefault: 'dialog', whatsappUrl: 'https://dialog.com', whatsappToken: 'token' }),
     )
     const template = await Template.create(templateFactory.build({ licensee }))

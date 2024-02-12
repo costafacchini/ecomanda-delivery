@@ -1,10 +1,10 @@
-const Licensee = require('@models/Licensee')
 const Contact = require('@models/Contact')
 const request = require('supertest')
 const mongoServer = require('../../../../.jest/utils')
 const { expressServer } = require('../../../../.jest/server-express')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('addresses controller', () => {
   let licensee
@@ -12,7 +12,8 @@ describe('addresses controller', () => {
   beforeAll(async () => {
     await mongoServer.connect()
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
   afterAll(async () => {

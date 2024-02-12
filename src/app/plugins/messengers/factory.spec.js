@@ -1,16 +1,11 @@
 const createMessengerPlugin = require('./factory')
-const Licensee = require('@models/Licensee')
 const Utalk = require('./Utalk')
 const Dialog = require('./Dialog')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 
 describe('createMessengerPlugin', () => {
   it('returns the utalk plugin if it is configured on licensee', () => {
-    const licensee = new Licensee(
-      licenseeFactory.build({
-        whatsappDefault: 'utalk',
-      }),
-    )
+    const licensee = licenseeFactory.build({ whatsappDefault: 'utalk' })
 
     const body = {
       type: 'test',
@@ -22,11 +17,7 @@ describe('createMessengerPlugin', () => {
   })
 
   it('returns the dialog plugin if it is configured on licensee', () => {
-    const licensee = new Licensee(
-      licenseeFactory.build({
-        whatsappDefault: 'dialog',
-      }),
-    )
+    const licensee = licenseeFactory.build({ whatsappDefault: 'dialog' })
 
     const body = {
       type: 'test',
@@ -38,11 +29,7 @@ describe('createMessengerPlugin', () => {
   })
 
   it('throws if option plugin is unknow', () => {
-    const licensee = new Licensee(
-      licenseeFactory.build({
-        whatsappDefault: 'something',
-      }),
-    )
+    const licensee = licenseeFactory.build({ whatsappDefault: 'something' })
 
     const body = {
       field: 'test',

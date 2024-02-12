@@ -1,5 +1,4 @@
 const processBackgroundjobInviteCreditCard = require('./ProcessBackgroundjobInviteCreditCard')
-const Licensee = require('@models/Licensee')
 const Backgroundjob = require('@models/Backgroundjob')
 const Cart = require('@models/Cart')
 const Contact = require('@models/Contact')
@@ -9,6 +8,7 @@ const { backgroundjob: backgroundjobFactory } = require('@factories/backgroundjo
 const { cart: cartFactory } = require('@factories/cart')
 const { contact: contactFactory } = require('@factories/contact')
 const Card = require('@plugins/payments/PagarMe/Card')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('processBackgroundjobInviteCreditCard', () => {
   beforeEach(async () => {
@@ -23,7 +23,8 @@ describe('processBackgroundjobInviteCreditCard', () => {
   it('calls to pagar.me API to create credit card', async () => {
     const createCreditCardFnSpy = jest.spyOn(Card.prototype, 'create').mockImplementation(async () => {})
 
-    const licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const licensee = await licenseeRepository.create(licenseeFactory.build())
     const backgroundjob = await Backgroundjob.create(
       backgroundjobFactory.build({
         kind: 'invite-credit-card',
@@ -66,7 +67,8 @@ describe('processBackgroundjobInviteCreditCard', () => {
         return { success: true }
       })
 
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       const backgroundjob = await Backgroundjob.create(
         backgroundjobFactory.build({
           kind: 'invite-credit-card',
@@ -120,7 +122,8 @@ describe('processBackgroundjobInviteCreditCard', () => {
         }
       })
 
-      const licensee = await Licensee.create(licenseeFactory.build())
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
       const backgroundjob = await Backgroundjob.create(
         backgroundjobFactory.build({
           kind: 'invite-credit-card',

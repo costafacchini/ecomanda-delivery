@@ -1,5 +1,4 @@
 const transformChatBody = require('./ChatMessage')
-const Licensee = require('@models/Licensee')
 const Contact = require('@models/Contact')
 const Body = require('@models/Body')
 const Rocketchat = require('../plugins/chats/Rocketchat')
@@ -8,6 +7,7 @@ const { licensee: licenseeFactory } = require('@factories/licensee')
 const { body: bodyFactory } = require('@factories/body')
 const { contactWithWhatsappWindowClosed } = require('@repositories/contact')
 const { contact: contactFactory } = require('@factories/contact')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 jest.mock('@repositories/contact')
 
@@ -18,7 +18,8 @@ describe('transformChatBody', () => {
     await mongoServer.connect()
     jest.clearAllMocks()
 
-    licensee = await Licensee.create(
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(
       licenseeFactory.build({
         chatDefault: 'rocketchat',
         chatUrl: 'https://www.jivo.chat.com',
@@ -83,7 +84,8 @@ describe('transformChatBody', () => {
 
     contactWithWhatsappWindowClosed.mockResolvedValue(true)
 
-    const licensee = await Licensee.create(
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const licensee = await licenseeRepository.create(
       licenseeFactory.build({
         chatDefault: 'rocketchat',
         chatUrl: 'https://www.jivo.chat.com',

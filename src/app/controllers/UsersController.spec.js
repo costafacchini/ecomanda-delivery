@@ -1,10 +1,10 @@
 const User = require('@models/User')
-const Licensee = require('@models/Licensee')
 const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
 const { userSuper: userSuperFactory, user: userFactory } = require('@factories/user')
 const { licensee: licenseeFactory } = require('@factories/licensee')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('user controller', () => {
   let token
@@ -53,7 +53,8 @@ describe('user controller', () => {
   describe('create', () => {
     describe('response', () => {
       it('returns status 201 and the user data if the create is successful', async () => {
-        const licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
 
         await request(expressServer)
           .post('/resources/users/')
@@ -73,7 +74,8 @@ describe('user controller', () => {
       })
 
       it('returns status 422 and message if the user is not valid', async () => {
-        const licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
 
         await request(expressServer)
           .post('/resources/users/')
@@ -89,7 +91,8 @@ describe('user controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurred when create the user', async () => {
-        const licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
 
         const mockFunction = jest.spyOn(User.prototype, 'save').mockImplementation(() => {
           throw new Error('some error')
@@ -197,7 +200,8 @@ describe('user controller', () => {
   describe('show', () => {
     describe('response', () => {
       it('returns status 200 and message if user exists', async () => {
-        const licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
 
         const user = await User.create(
           userFactory.build({
@@ -223,7 +227,8 @@ describe('user controller', () => {
       })
 
       it('returns status 200 and message if user id does not exists and user email exists', async () => {
-        const licensee = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
 
         await User.create(
           userFactory.build({

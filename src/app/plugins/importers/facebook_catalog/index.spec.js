@@ -1,4 +1,3 @@
-const Licensee = require('@models/Licensee')
 const Trigger = require('@models/Trigger')
 const Product = require('@models/Product')
 const FacebookCatalogImporter = require('@plugins/importers/facebook_catalog/index')
@@ -6,6 +5,7 @@ const { licensee: licenseeFactory } = require('@factories/licensee')
 const { triggerMultiProduct: triggerFactory } = require('@factories/trigger')
 const { product: productFactory } = require('@factories/product')
 const mongoServer = require('../../../../../.jest/utils')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('FacebookCatalogImporter', () => {
   beforeAll(async () => {
@@ -17,7 +17,9 @@ describe('FacebookCatalogImporter', () => {
   })
 
   it('imports csv catalog on whatsapp catalog', async () => {
-    const licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const licensee = await licenseeRepository.create(licenseeFactory.build())
+
     const trigger = await Trigger.create(triggerFactory.build({ licensee }))
     await Product.create(productFactory.build({ licensee, product_retailer_id: '83863' }))
 

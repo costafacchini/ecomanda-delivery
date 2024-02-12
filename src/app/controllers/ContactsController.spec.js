@@ -1,4 +1,3 @@
-const Licensee = require('@models/Licensee')
 const Contact = require('@models/Contact')
 const User = require('@models/User')
 const request = require('supertest')
@@ -8,6 +7,7 @@ const { expressServer } = require('../../../.jest/server-express')
 const { userSuper: userSuperFactory } = require('@factories/user')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('contact controller', () => {
   let token
@@ -27,7 +27,8 @@ describe('contact controller', () => {
         token = response.body.token
       })
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
   afterAll(async () => {
@@ -155,7 +156,8 @@ describe('contact controller', () => {
           }),
         )
 
-        const licenseeNew = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licenseeNew = await licenseeRepository.create(licenseeFactory.build())
 
         await request(expressServer)
           .post(`/resources/contacts/${contact._id}`)

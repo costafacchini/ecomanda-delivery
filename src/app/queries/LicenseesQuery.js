@@ -1,5 +1,5 @@
-const Licensee = require('@models/Licensee')
 const QueryBuilder = require('@queries/QueryBuilder')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 class LicenseesQuery {
   constructor() {}
@@ -41,7 +41,8 @@ class LicenseesQuery {
   }
 
   async all() {
-    const query = new QueryBuilder(Licensee)
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const query = new QueryBuilder(licenseeRepository.model())
     query.sortBy('createdAt', 1)
 
     if (this.pageClause) query.page(this.pageClause, this.limitClause)

@@ -1,4 +1,3 @@
-const Licensee = require('@models/Licensee')
 const Trigger = require('@models/Trigger')
 const User = require('@models/User')
 const request = require('supertest')
@@ -7,6 +6,7 @@ const { expressServer } = require('../../../.jest/server-express')
 const { userSuper: userSuperFactory } = require('@factories/user')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { triggerMultiProduct: triggerFactory } = require('@factories/trigger')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('trigger controller', () => {
   let token
@@ -24,7 +24,8 @@ describe('trigger controller', () => {
         token = response.body.token
       })
 
-    licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
   afterAll(async () => {
@@ -134,7 +135,8 @@ describe('trigger controller', () => {
       it('returns status 200 and the trigger data if the update is successful', async () => {
         const trigger = await Trigger.create(triggerFactory.build({ licensee }))
 
-        const licenseeNew = await Licensee.create(licenseeFactory.build())
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licenseeNew = await licenseeRepository.create(licenseeFactory.build())
 
         await request(expressServer)
           .post(`/resources/triggers/${trigger._id}`)

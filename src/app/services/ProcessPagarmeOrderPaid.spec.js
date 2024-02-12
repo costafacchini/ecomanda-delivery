@@ -1,11 +1,11 @@
 const processPagarmeOrderPaid = require('./ProcessPagarmeOrderPaid')
-const Licensee = require('@models/Licensee')
 const Cart = require('@models/Cart')
 const Contact = require('@models/Contact')
 const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { cart: cartFactory } = require('@factories/cart')
 const { contact: contactFactory } = require('@factories/contact')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('processPagarmeOrderPaid', () => {
   beforeEach(async () => {
@@ -18,7 +18,8 @@ describe('processPagarmeOrderPaid', () => {
   })
 
   it('updates the cart payment status and integration status information', async () => {
-    const licensee = await Licensee.create(licenseeFactory.build())
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const licensee = await licenseeRepository.create(licenseeFactory.build())
     const contact = await Contact.create(contactFactory.build({ licensee }))
     const cart = await Cart.create(
       cartFactory.build({

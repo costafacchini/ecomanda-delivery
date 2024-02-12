@@ -1,10 +1,10 @@
 const transformChatbotTransferBody = require('./ChatbotTransfer')
-const Licensee = require('@models/Licensee')
 const Body = require('@models/Body')
 const Landbot = require('../plugins/chatbots/Landbot')
 const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { body: bodyFactory } = require('@factories/body')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('transformChatbotTransferBody', () => {
   let licensee
@@ -13,7 +13,8 @@ describe('transformChatbotTransferBody', () => {
     await mongoServer.connect()
     jest.clearAllMocks()
 
-    licensee = await Licensee.create(
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    licensee = await licenseeRepository.create(
       licenseeFactory.build({
         chatbotDefault: 'landbot',
         chatUrl: 'https://chat.url',

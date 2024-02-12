@@ -1,7 +1,7 @@
 const LicenseesQuery = require('@queries/LicenseesQuery')
 const mongoServer = require('../../../.jest/utils')
-const Licensee = require('@models/Licensee')
 const { licensee: licenseeFactory } = require('@factories/licensee')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('LicenseesQuery', () => {
   beforeEach(async () => {
@@ -13,12 +13,13 @@ describe('LicenseesQuery', () => {
   })
 
   it('returns all licensees ordered by createdAt asc', async () => {
-    const licensee1 = await Licensee.create(
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const licensee1 = await licenseeRepository.create(
       licenseeFactory.build({
         createdAt: new Date(2021, 6, 3, 0, 0, 0),
       }),
     )
-    const licensee2 = await Licensee.create(
+    const licensee2 = await licenseeRepository.create(
       licenseeFactory.build({
         createdAt: new Date(2021, 6, 3, 0, 0, 1),
       }),
@@ -34,17 +35,18 @@ describe('LicenseesQuery', () => {
 
   describe('about pagination', () => {
     it('returns all by page respecting the limit', async () => {
-      const licensee1 = await Licensee.create(
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee1 = await licenseeRepository.create(
         licenseeFactory.build({
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
         }),
       )
-      const licensee2 = await Licensee.create(
+      const licensee2 = await licenseeRepository.create(
         licenseeFactory.build({
           createdAt: new Date(2021, 6, 3, 0, 0, 1),
         }),
       )
-      const licensee3 = await Licensee.create(
+      const licensee3 = await licenseeRepository.create(
         licenseeFactory.build({
           createdAt: new Date(2021, 6, 3, 0, 0, 2),
         }),
@@ -78,7 +80,8 @@ describe('LicenseesQuery', () => {
 
   describe('filterByChatDefault', () => {
     it('returns licensees filtered by chat default', async () => {
-      const licensee1 = await Licensee.create(
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee1 = await licenseeRepository.create(
         licenseeFactory.build({
           chatDefault: 'crisp',
           chatUrl: 'http://chat.com',
@@ -86,7 +89,7 @@ describe('LicenseesQuery', () => {
           chatIdentifier: 'identifier',
         }),
       )
-      const licensee2 = await Licensee.create(
+      const licensee2 = await licenseeRepository.create(
         licenseeFactory.build({
           chatDefault: 'rocketchat',
           chatUrl: 'http://chat.com',
@@ -106,7 +109,8 @@ describe('LicenseesQuery', () => {
 
   describe('filterByChatbotDefault', () => {
     it('returns licensees filtered by chatbot default', async () => {
-      const licensee1 = await Licensee.create(
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee1 = await licenseeRepository.create(
         licenseeFactory.build({
           useChatbot: true,
           chatbotDefault: 'landbot',
@@ -114,7 +118,7 @@ describe('LicenseesQuery', () => {
           chatbotAuthorizationToken: 'key',
         }),
       )
-      const licensee2 = await Licensee.create(
+      const licensee2 = await licenseeRepository.create(
         licenseeFactory.build({
           useChatbot: false,
         }),
@@ -132,7 +136,8 @@ describe('LicenseesQuery', () => {
 
   describe('filterByWhatsappDefault', () => {
     it('returns licensees filtered by whatsapp default', async () => {
-      const licensee1 = await Licensee.create(
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee1 = await licenseeRepository.create(
         licenseeFactory.build({
           whatsappDefault: 'utalk',
           whatsappUrl: 'https://v1.utalk.chat/send/',
@@ -142,7 +147,7 @@ describe('LicenseesQuery', () => {
           awsSecret: 'secret',
         }),
       )
-      const licensee2 = await Licensee.create(
+      const licensee2 = await licenseeRepository.create(
         licenseeFactory.build({
           whatsappDefault: 'dialog',
           whatsappUrl: 'https://waba.360dialog.io/',
@@ -162,20 +167,21 @@ describe('LicenseesQuery', () => {
 
   describe('filterByExpression', () => {
     it('returns licensees filtered by expression on name, email and phone', async () => {
-      const licensee1 = await Licensee.create(
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee1 = await licenseeRepository.create(
         licenseeFactory.build({
           email: 'alcateia@gmail.com',
           phone: '551123459',
         }),
       )
-      const licensee2 = await Licensee.create(
+      const licensee2 = await licenseeRepository.create(
         licenseeFactory.build({
           name: 'Doeland',
           email: 'doeland@china.com',
           phone: '56009234687',
         }),
       )
-      const licensee3 = await Licensee.create(
+      const licensee3 = await licenseeRepository.create(
         licenseeFactory.build({
           name: 'Mary Ltda',
           email: 'maryltda@china.com',
@@ -204,8 +210,9 @@ describe('LicenseesQuery', () => {
 
   describe('filterByActive', () => {
     it('returns only active licensees', async () => {
-      const licensee1 = await Licensee.create(licenseeFactory.build())
-      const licenseeInactive = await Licensee.create(licenseeFactory.build({ active: false }))
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee1 = await licenseeRepository.create(licenseeFactory.build())
+      const licenseeInactive = await licenseeRepository.create(licenseeFactory.build({ active: false }))
 
       const licenseesQuery = new LicenseesQuery()
       licenseesQuery.filterByActive()
@@ -219,8 +226,9 @@ describe('LicenseesQuery', () => {
 
   describe('filterByPedidos10Active', () => {
     it('returns licensees filtered by pedidos10_active', async () => {
-      const licensee1 = await Licensee.create(licenseeFactory.build({ pedidos10_active: true }))
-      const licenseeInactive = await Licensee.create(licenseeFactory.build({ pedidos10_active: false }))
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee1 = await licenseeRepository.create(licenseeFactory.build({ pedidos10_active: true }))
+      const licenseeInactive = await licenseeRepository.create(licenseeFactory.build({ pedidos10_active: false }))
 
       const licenseesQuery = new LicenseesQuery()
       licenseesQuery.filterByPedidos10Active('true')

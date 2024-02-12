@@ -1,5 +1,4 @@
 const resetChatbots = require('./ResetChatbots')
-const Licensee = require('@models/Licensee')
 const Contact = require('@models/Contact')
 const Message = require('@models/Message')
 const mongoServer = require('.jest/utils')
@@ -7,6 +6,7 @@ const fetchMock = require('fetch-mock')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('resetChatbots', () => {
   jest.spyOn(global.console, 'info').mockImplementation()
@@ -23,7 +23,8 @@ describe('resetChatbots', () => {
 
   describe('if licensees uses chatbot and contacts that talking with chatbot and the last message has destination to messenger and the sended a hour ago', () => {
     it('calls the drop conversation to reset chatbot', async () => {
-      const licensee = await Licensee.create(
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(
         licenseeFactory.build({
           chatbotDefault: 'landbot',
           chatbotUrl: 'https://landbot.url',
@@ -120,7 +121,7 @@ describe('resetChatbots', () => {
         }),
       )
 
-      const licenseeWhithoutChatbot = await Licensee.create(
+      const licenseeWhithoutChatbot = await licenseeRepository.create(
         licenseeFactory.build({
           chatbotDefault: 'landbot',
           chatbotUrl: 'https://landbot.url',
@@ -148,7 +149,7 @@ describe('resetChatbots', () => {
         }),
       )
 
-      const licenseeWithoutChatbotApiToken = await Licensee.create(
+      const licenseeWithoutChatbotApiToken = await licenseeRepository.create(
         licenseeFactory.build({
           chatbotDefault: 'landbot',
           chatbotUrl: 'https://landbot.url',
@@ -213,7 +214,8 @@ describe('resetChatbots', () => {
 
     describe('when the licensee has a message on reset chatbot', () => {
       it('sends a message to the contact that the chatbot conversation has been closed', async () => {
-        const licensee = await Licensee.create(
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(
           licenseeFactory.build({
             chatbotDefault: 'landbot',
             chatbotUrl: 'https://landbot.url',
