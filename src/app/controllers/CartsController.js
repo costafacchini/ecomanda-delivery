@@ -62,7 +62,8 @@ class CartsController {
         })
       }
 
-      const cartPlugin = createCartAdapter(req.licensee)
+      const plugin = req.query.origin
+      const cartPlugin = createCartAdapter(plugin)
 
       const {
         delivery_tax,
