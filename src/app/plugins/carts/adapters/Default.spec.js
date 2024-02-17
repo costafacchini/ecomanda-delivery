@@ -1,43 +1,25 @@
 const Default = require('./Default')
-const Contact = require('@models/Contact')
-const mongoServer = require('../../../../../.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
-const { advanceTo, clear } = require('jest-date-mock')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('Default plugin', () => {
-  beforeEach(async () => {
-    await mongoServer.connect()
-    jest.clearAllMocks()
-    advanceTo(new Date('2021-01-05T10:25:47.000Z'))
-  })
-
-  afterEach(async () => {
-    await mongoServer.disconnect()
-    clear()
-  })
-
   describe('#parseCart', () => {
-    it('returns the cart normalized from plugin format', async () => {
-      const licenseeRepository = new LicenseeRepositoryDatabase()
-      const licensee = await licenseeRepository.create(licenseeFactory.build({ unidadeId: '123', statusId: '743' }))
+    it('returns the cart normalized from plugin format', () => {
+      const licensee = licenseeFactory.build({ unidadeId: '123', statusId: '743' })
 
-      const contact = await Contact.create(
-        contactFactory.build({
-          licensee,
-          plugin_cart_id: '929787465',
-          name: 'John Doe',
-          email: 'john@doe.com',
-          uf: 'SP',
-          city: 'Santos',
-          neighborhood: 'Centro',
-          address: 'Rua dos Bobos',
-          address_number: '123',
-          address_complement: 'Sala 1',
-          cep: '12345-678',
-        }),
-      )
+      const contact = contactFactory.build({
+        licensee,
+        plugin_cart_id: '929787465',
+        name: 'John Doe',
+        email: 'john@doe.com',
+        uf: 'SP',
+        city: 'Santos',
+        neighborhood: 'Centro',
+        address: 'Rua dos Bobos',
+        address_number: '123',
+        address_complement: 'Sala 1',
+        cep: '12345-678',
+      })
 
       const cartDefault = {
         products: [
@@ -96,7 +78,7 @@ describe('Default plugin', () => {
       }
 
       const pluginDefault = new Default()
-      const cart = await pluginDefault.parseCart(licensee, contact, cartDefault)
+      const cart = pluginDefault.parseCart(licensee, contact, cartDefault)
 
       expect(cart.concluded).toEqual(true)
       expect(cart.contact).toEqual(contact._id)

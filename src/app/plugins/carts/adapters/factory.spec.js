@@ -1,21 +1,23 @@
 const createCartAdapter = require('./factory')
 const Default = require('./Default')
 const Gallabox = require('./Gallabox')
-const { licensee: licenseeFactory } = require('@factories/licensee')
+const Alloy = require('./Alloy')
 
 describe('createCartAdapter', () => {
-  it('returns the gallabox adapter if licensee using gallabox', () => {
-    const licensee = licenseeFactory.build({ useCartGallabox: true })
-
-    const plugin = createCartAdapter(licensee)
+  it('returns the gallabox adapter', () => {
+    const plugin = createCartAdapter('gallabox')
 
     expect(plugin).toBeInstanceOf(Gallabox)
   })
 
-  it('returns the default adapter if licensee not using gallabox', () => {
-    const licensee = licenseeFactory.build({ useCartGallabox: false })
+  it('returns the alloy adapter', () => {
+    const plugin = createCartAdapter('alloy')
 
-    const plugin = createCartAdapter(licensee)
+    expect(plugin).toBeInstanceOf(Alloy)
+  })
+
+  it('returns the default adapter', () => {
+    const plugin = createCartAdapter('')
 
     expect(plugin).toBeInstanceOf(Default)
   })
