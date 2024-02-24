@@ -1,6 +1,6 @@
 const Backgroundjob = require('@models/Backgroundjob')
 const { getContactByNumber } = require('@repositories/contact')
-const { getCartBy } = require('@repositories/cart')
+const { CartRepositoryDatabase } = require('@repositories/cart')
 
 async function processBackgroundjob(data) {
   const { jobId } = data
@@ -20,7 +20,8 @@ async function processBackgroundjob(data) {
   if (!backgroundjob.body.cart_id && backgroundjob.body.contact) {
     const licensee = backgroundjob.licensee
     const contact = await getContactByNumber(backgroundjob.body.contact, licensee._id)
-    const cart = await getCartBy({ contact, licensee, concluded: false })
+    const cartRepository = new CartRepositoryDatabase()
+    const cart = await cartRepository.findFirst({ contact, licensee, concluded: false })
 
     if (!cart) {
       backgroundjob.status = 'error'

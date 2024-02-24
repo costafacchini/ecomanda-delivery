@@ -1,4 +1,3 @@
-const Cart = require('@models/Cart')
 const Contact = require('@models/Contact')
 const Product = require('@models/Product')
 const mongoServer = require('../../../.jest/utils')
@@ -8,6 +7,7 @@ const { licensee: licenseeFactory } = require('@factories/licensee')
 const { cart: cartFactory } = require('@factories/cart')
 const { product: productFactory } = require('@factories/product')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { CartRepositoryDatabase } = require('@repositories/cart')
 
 describe('ParseTriggerText', () => {
   beforeEach(async () => {
@@ -25,10 +25,11 @@ describe('ParseTriggerText', () => {
         const licensee = await licenseeRepository.create(licenseeFactory.build())
 
         const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
-        await Cart.create(cartFactory.build({ licensee, contact, concluded: true }))
+        const cartRepository = new CartRepositoryDatabase()
+        await cartRepository.create(cartFactory.build({ licensee, contact, concluded: true }))
 
         const product = await Product.create(productFactory.build({ name: 'Product 1', licensee }))
-        await Cart.create(
+        await cartRepository.create(
           cartFactory.build({
             licensee,
             contact,
@@ -135,10 +136,12 @@ describe('ParseTriggerText', () => {
           const licensee = await licenseeRepository.create(licenseeFactory.build())
 
           const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
-          await Cart.create(cartFactory.build({ licensee, contact, concluded: true }))
+
+          const cartRepository = new CartRepositoryDatabase()
+          await cartRepository.create(cartFactory.build({ licensee, contact, concluded: true }))
 
           const product = await Product.create(productFactory.build({ name: 'Product 1', licensee }))
-          await Cart.create(
+          await cartRepository.create(
             cartFactory.build({
               licensee,
               contact,
@@ -171,10 +174,12 @@ describe('ParseTriggerText', () => {
           const licensee = await licenseeRepository.create(licenseeFactory.build())
 
           const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
-          await Cart.create(cartFactory.build({ licensee, contact, concluded: true }))
+
+          const cartRepository = new CartRepositoryDatabase()
+          await cartRepository.create(cartFactory.build({ licensee, contact, concluded: true }))
 
           const product = await Product.create(productFactory.build({ name: 'Product 1', licensee }))
-          await Cart.create(
+          await cartRepository.create(
             cartFactory.build({
               licensee,
               contact,
@@ -216,10 +221,12 @@ describe('ParseTriggerText', () => {
           const licensee = await licenseeRepository.create(licenseeFactory.build())
 
           const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
-          await Cart.create(cartFactory.build({ licensee, contact, concluded: true }))
+
+          const cartRepository = new CartRepositoryDatabase()
+          await cartRepository.create(cartFactory.build({ licensee, contact, concluded: true }))
 
           const product = await Product.create(productFactory.build({ name: 'Product 1', licensee }))
-          await Cart.create(
+          await cartRepository.create(
             cartFactory.build({
               licensee,
               contact,
@@ -255,10 +262,12 @@ describe('ParseTriggerText', () => {
           const licensee = await licenseeRepository.create(licenseeFactory.build())
 
           const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
-          await Cart.create(cartFactory.build({ licensee, contact, concluded: true }))
+
+          const cartRepository = new CartRepositoryDatabase()
+          await cartRepository.create(cartFactory.build({ licensee, contact, concluded: true }))
 
           const product = await Product.create(productFactory.build({ name: 'Product 1', licensee }))
-          await Cart.create(
+          await cartRepository.create(
             cartFactory.build({
               licensee,
               contact,
@@ -292,10 +301,12 @@ describe('ParseTriggerText', () => {
           const licensee = await licenseeRepository.create(licenseeFactory.build())
 
           const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
-          await Cart.create(cartFactory.build({ licensee, contact, concluded: true }))
+
+          const cartRepository = new CartRepositoryDatabase()
+          await cartRepository.create(cartFactory.build({ licensee, contact, concluded: true }))
 
           const product = await Product.create(productFactory.build({ name: 'Product 1', licensee }))
-          await Cart.create(
+          await cartRepository.create(
             cartFactory.build({
               licensee,
               contact,
@@ -329,10 +340,12 @@ describe('ParseTriggerText', () => {
           const licensee = await licenseeRepository.create(licenseeFactory.build())
 
           const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
-          await Cart.create(cartFactory.build({ licensee, contact, concluded: true }))
+
+          const cartRepository = new CartRepositoryDatabase()
+          await cartRepository.create(cartFactory.build({ licensee, contact, concluded: true }))
 
           const product = await Product.create(productFactory.build({ name: 'Product 1', licensee }))
-          await Cart.create(
+          await cartRepository.create(
             cartFactory.build({
               licensee,
               contact,
@@ -368,10 +381,12 @@ describe('ParseTriggerText', () => {
           const licensee = await licenseeRepository.create(licenseeFactory.build())
 
           const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
-          await Cart.create(cartFactory.build({ licensee, contact, concluded: true }))
+
+          const cartRepository = new CartRepositoryDatabase()
+          await cartRepository.create(cartFactory.build({ licensee, contact, concluded: true }))
 
           const product = await Product.create(productFactory.build({ name: 'Product 1', licensee }))
-          await Cart.create(
+          await cartRepository.create(
             cartFactory.build({
               licensee,
               contact,
@@ -452,9 +467,10 @@ describe('ParseTriggerText', () => {
       const licensee = await licenseeRepository.create(licenseeFactory.build())
 
       const contact = await Contact.create(contactFactory.build({ name: 'John Doe', licensee }))
+      const cartRepository = new CartRepositoryDatabase()
 
       const product = await Product.create(productFactory.build({ name: 'Product 1', licensee }))
-      const cart = await Cart.create(
+      const cart = await cartRepository.create(
         cartFactory.build({
           licensee,
           contact,

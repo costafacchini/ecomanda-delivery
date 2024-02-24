@@ -1,14 +1,7 @@
+const Repository = require('./repository')
 const Licensee = require('@models/Licensee')
 
-class LicenseeRepository {
-  model() {}
-  async findFirst() {}
-  async create() {}
-  async update() {}
-  async find() {}
-}
-
-class LicenseeRepositoryDatabase extends LicenseeRepository {
+class LicenseeRepositoryDatabase extends Repository {
   model() {
     return Licensee
   }
@@ -30,4 +23,4 @@ class LicenseeRepositoryDatabase extends LicenseeRepository {
   }
 }
 
-module.exports = { LicenseeRepository, LicenseeRepositoryDatabase }
+module.exports = { LicenseeRepositoryDatabase }

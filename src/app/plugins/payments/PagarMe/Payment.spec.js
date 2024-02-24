@@ -1,6 +1,5 @@
 const Payment = require('./Payment')
 const Contact = require('@models/Contact')
-const Cart = require('@models/Cart')
 const Integrationlog = require('@models/Integrationlog')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../../.jest/utils')
@@ -8,6 +7,7 @@ const { licenseeIntegrationPagarMe: licenseeFactory } = require('@factories/lice
 const { contact: contactFactory } = require('@factories/contact')
 const { cart: cartFactory } = require('@factories/cart')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { CartRepositoryDatabase } = require('@repositories/cart')
 
 describe('PagarMe/Customer plugin', () => {
   let licensee
@@ -43,7 +43,8 @@ describe('PagarMe/Customer plugin', () => {
           }),
         )
 
-        const cart = await Cart.create(
+        const cartRepository = new CartRepositoryDatabase()
+        const cart = await cartRepository.create(
           cartFactory.build({
             products: [
               {
@@ -167,7 +168,8 @@ describe('PagarMe/Customer plugin', () => {
           }),
         )
 
-        const cart = await Cart.create(
+        const cartRepository = new CartRepositoryDatabase()
+        const cart = await cartRepository.create(
           cartFactory.build({
             products: [
               {
@@ -327,7 +329,7 @@ describe('PagarMe/Customer plugin', () => {
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(1)
 
-        const cartUpdated = await Cart.findById(cart._id)
+        const cartUpdated = await cartRepository.findFirst({ _id: cart._id })
         expect(cartUpdated.order_id).toEqual('or_56GXnk6T0eU88qMm')
         expect(cartUpdated.charge_id).toEqual('ch_K2rJ5nlHwTE4qRDP')
         expect(cartUpdated.pix_qrcode).toEqual(
@@ -352,7 +354,8 @@ describe('PagarMe/Customer plugin', () => {
           }),
         )
 
-        const cart = await Cart.create(
+        const cartRepository = new CartRepositoryDatabase()
+        const cart = await cartRepository.create(
           cartFactory.build({
             products: [
               {
@@ -480,7 +483,8 @@ describe('PagarMe/Customer plugin', () => {
           }),
         )
 
-        const cart = await Cart.create(
+        const cartRepository = new CartRepositoryDatabase()
+        const cart = await cartRepository.create(
           cartFactory.build({
             products: [
               {
@@ -595,7 +599,8 @@ describe('PagarMe/Customer plugin', () => {
           }),
         )
 
-        const cart = await Cart.create(
+        const cartRepository = new CartRepositoryDatabase()
+        const cart = await cartRepository.create(
           cartFactory.build({
             products: [
               {
@@ -716,7 +721,8 @@ describe('PagarMe/Customer plugin', () => {
           }),
         )
 
-        const cart = await Cart.create(
+        const cartRepository = new CartRepositoryDatabase()
+        const cart = await cartRepository.create(
           cartFactory.build({
             products: [
               {
@@ -862,7 +868,8 @@ describe('PagarMe/Customer plugin', () => {
           }),
         )
 
-        const cart = await Cart.create(
+        const cartRepository = new CartRepositoryDatabase()
+        const cart = await cartRepository.create(
           cartFactory.build({
             products: [
               {
@@ -1022,7 +1029,7 @@ describe('PagarMe/Customer plugin', () => {
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(1)
 
-        const cartUpdated = await Cart.findById(cart._id)
+        const cartUpdated = await cartRepository.findFirst({ _id: cart._id })
         expect(cartUpdated.order_id).toEqual('or_56GXnk6T0eU88qMm')
         expect(cartUpdated.charge_id).toEqual('ch_p4lnAGyU0GT1E9MZ')
         expect(cartUpdated.operation_key).toEqual('830608357')
@@ -1046,7 +1053,8 @@ describe('PagarMe/Customer plugin', () => {
           }),
         )
 
-        const cart = await Cart.create(
+        const cartRepository = new CartRepositoryDatabase()
+        const cart = await cartRepository.create(
           cartFactory.build({
             products: [
               {
@@ -1194,7 +1202,8 @@ describe('PagarMe/Customer plugin', () => {
           }),
         )
 
-        const cart = await Cart.create(
+        const cartRepository = new CartRepositoryDatabase()
+        const cart = await cartRepository.create(
           cartFactory.build({
             products: [
               {
@@ -1307,7 +1316,8 @@ describe('PagarMe/Customer plugin', () => {
           }),
         )
 
-        const cart = await Cart.create(
+        const cartRepository = new CartRepositoryDatabase()
+        const cart = await cartRepository.create(
           cartFactory.build({
             products: [
               {
@@ -1424,7 +1434,8 @@ describe('PagarMe/Customer plugin', () => {
           }),
         )
 
-        const cart = await Cart.create(
+        const cartRepository = new CartRepositoryDatabase()
+        const cart = await cartRepository.create(
           cartFactory.build({
             products: [
               {
@@ -1492,7 +1503,8 @@ describe('PagarMe/Customer plugin', () => {
           }),
         )
 
-        const cart = await Cart.create(
+        const cartRepository = new CartRepositoryDatabase()
+        const cart = await cartRepository.create(
           cartFactory.build({
             products: [
               {
@@ -1541,7 +1553,7 @@ describe('PagarMe/Customer plugin', () => {
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(1)
 
-        const cartUpdated = await Cart.findById(cart._id)
+        const cartUpdated = await cartRepository.findFirst({ _id: cart._id })
         expect(cartUpdated.payment_status).toEqual('voided')
         expect(cartUpdated.concluded).toEqual(true)
 
@@ -1558,7 +1570,8 @@ describe('PagarMe/Customer plugin', () => {
           }),
         )
 
-        const cart = await Cart.create(
+        const cartRepository = new CartRepositoryDatabase()
+        const cart = await cartRepository.create(
           cartFactory.build({
             products: [
               {
@@ -1630,7 +1643,8 @@ describe('PagarMe/Customer plugin', () => {
           }),
         )
 
-        const cart = await Cart.create(
+        const cartRepository = new CartRepositoryDatabase()
+        const cart = await cartRepository.create(
           cartFactory.build({
             products: [
               {
@@ -1703,7 +1717,8 @@ describe('PagarMe/Customer plugin', () => {
           }),
         )
 
-        const cart = await Cart.create(
+        const cartRepository = new CartRepositoryDatabase()
+        const cart = await cartRepository.create(
           cartFactory.build({
             products: [
               {

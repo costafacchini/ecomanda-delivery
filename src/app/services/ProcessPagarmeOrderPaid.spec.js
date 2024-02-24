@@ -1,11 +1,11 @@
 const processPagarmeOrderPaid = require('./ProcessPagarmeOrderPaid')
-const Cart = require('@models/Cart')
 const Contact = require('@models/Contact')
 const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { cart: cartFactory } = require('@factories/cart')
 const { contact: contactFactory } = require('@factories/contact')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { CartRepositoryDatabase } = require('@repositories/cart')
 
 describe('processPagarmeOrderPaid', () => {
   beforeEach(async () => {
@@ -21,7 +21,9 @@ describe('processPagarmeOrderPaid', () => {
     const licenseeRepository = new LicenseeRepositoryDatabase()
     const licensee = await licenseeRepository.create(licenseeFactory.build())
     const contact = await Contact.create(contactFactory.build({ licensee }))
-    const cart = await Cart.create(
+
+    const cartRepository = new CartRepositoryDatabase()
+    const cart = await cartRepository.create(
       cartFactory.build({
         contact,
         licensee,
@@ -46,7 +48,7 @@ describe('processPagarmeOrderPaid', () => {
 
     await processPagarmeOrderPaid(body)
 
-    const cartUpdated = await Cart.findById(cart)
+    const cartUpdated = await cartRepository.findFirst({ _id: cart._id })
     expect(cartUpdated.payment_status).toEqual('paid-2')
     expect(cartUpdated.integration_status).toEqual('paid')
   })

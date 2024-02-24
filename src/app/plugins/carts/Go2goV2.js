@@ -1,4 +1,4 @@
-const Cart = require('@models/Cart')
+const { CartRepositoryDatabase } = require('@repositories/cart')
 
 class Go2goV2 {
   getPaymentType(payment_method) {
@@ -14,7 +14,8 @@ class Go2goV2 {
   }
 
   async transformCart(licensee, cartId) {
-    const cart = await Cart.findById(cartId).populate('contact')
+    const cartRepository = new CartRepositoryDatabase()
+    const cart = await cartRepository.findFirst({ _id: cartId }, ['contact'])
 
     const cartTransformed = {
       order: {

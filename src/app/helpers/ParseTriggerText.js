@@ -1,5 +1,5 @@
-const Cart = require('@models/Cart')
 const moment = require('moment-timezone')
+const { CartRepositoryDatabase } = require('@repositories/cart')
 
 async function parseText(text, contact) {
   return text
@@ -21,10 +21,12 @@ function parseAddressComplete(contact) {
 }
 
 async function parseLastCart(contact) {
-  const last_cart = await Cart.findOne({ contact: contact._id, concluded: false })
-    .populate('contact')
-    .populate('licensee')
-    .populate('products.product')
+  const cartRepository = new CartRepositoryDatabase()
+  const last_cart = await cartRepository.findFirst({ contact: contact._id, concluded: false }, [
+    'contact',
+    'licensee',
+    'products.product',
+  ])
   return last_cart ? cartDescription(last_cart) : ''
 }
 
@@ -108,7 +110,8 @@ function phoneWithoutCountryCode(phone) {
 }
 
 async function parseCart(cartId) {
-  const cart = await Cart.findById(cartId).populate('contact').populate('licensee').populate('products.product')
+  const cartRepository = new CartRepositoryDatabase()
+  const cart = await cartRepository.findFirst({ _id: cartId }, ['contact', 'licensee', 'products.product'])
   return cart ? cartDescription(cart) : ''
 }
 
