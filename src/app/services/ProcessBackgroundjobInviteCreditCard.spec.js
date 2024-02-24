@@ -1,6 +1,5 @@
 const processBackgroundjobInviteCreditCard = require('./ProcessBackgroundjobInviteCreditCard')
 const Backgroundjob = require('@models/Backgroundjob')
-const Cart = require('@models/Cart')
 const Contact = require('@models/Contact')
 const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
@@ -9,6 +8,7 @@ const { cart: cartFactory } = require('@factories/cart')
 const { contact: contactFactory } = require('@factories/contact')
 const Card = require('@plugins/payments/PagarMe/Card')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { CartRepositoryDatabase } = require('@repositories/cart')
 
 describe('processBackgroundjobInviteCreditCard', () => {
   beforeEach(async () => {
@@ -42,7 +42,9 @@ describe('processBackgroundjobInviteCreditCard', () => {
       }),
     )
     const contact = await Contact.create(contactFactory.build({ licensee }))
-    const cart = await Cart.create(cartFactory.build({ contact, licensee }))
+
+    const cartRepository = new CartRepositoryDatabase()
+    const cart = await cartRepository.create(cartFactory.build({ contact, licensee }))
 
     const data = {
       cart_id: cart._id,
@@ -87,7 +89,9 @@ describe('processBackgroundjobInviteCreditCard', () => {
       )
 
       const contact = await Contact.create(contactFactory.build({ licensee }))
-      const cart = await Cart.create(cartFactory.build({ contact, licensee }))
+
+      const cartRepository = new CartRepositoryDatabase()
+      const cart = await cartRepository.create(cartFactory.build({ contact, licensee }))
 
       const data = {
         cart_id: cart._id,
@@ -142,7 +146,9 @@ describe('processBackgroundjobInviteCreditCard', () => {
       )
 
       const contact = await Contact.create(contactFactory.build({ licensee }))
-      const cart = await Cart.create(cartFactory.build({ contact, licensee }))
+
+      const cartRepository = new CartRepositoryDatabase()
+      const cart = await cartRepository.create(cartFactory.build({ contact, licensee }))
 
       const data = {
         cart_id: cart._id,

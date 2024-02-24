@@ -1,7 +1,7 @@
 const Backgroundjob = require('@models/Backgroundjob')
-const Cart = require('@models/Cart')
 const Contact = require('@models/Contact')
 const PagarMe = require('@plugins/payments/PagarMe')
+const { CartRepositoryDatabase } = require('@repositories/cart')
 
 async function processBackgroundjobChargeCreditCard(data) {
   const { jobId, credit_card_data, cart_id: cartId } = data
@@ -9,7 +9,8 @@ async function processBackgroundjobChargeCreditCard(data) {
   const backgroundjob = await Backgroundjob.findById(jobId)
 
   try {
-    const cart = await Cart.findById(cartId).populate('contact')
+    const cartRepository = new CartRepositoryDatabase()
+    const cart = await cartRepository.findFirst({ _id: cartId }, ['contact'])
     const contact = await Contact.findById(cart.contact)
     const card = contact.credit_cards.find(
       (card) =>
@@ -30,7 +31,7 @@ async function processBackgroundjobChargeCreditCard(data) {
     const pagarMe = new PagarMe()
     await pagarMe.payment.createCreditCard(cart, process.env.PAGARME_TOKEN)
 
-    const cartUpdated = await Cart.findById(cartId)
+    const cartUpdated = await cartRepository.findFirst({ _id: cartId })
 
     if (
       cartUpdated.payment_status == 'not_authorized' ||

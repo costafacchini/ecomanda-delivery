@@ -2,11 +2,11 @@ const Alloy = require('./Alloy')
 const mongoServer = require('../../../../.jest/utils')
 const { advanceTo, clear } = require('jest-date-mock')
 const Contact = require('@models/Contact')
-const Cart = require('@models/Cart')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { cart: cartFactory } = require('@factories/cart')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { CartRepositoryDatabase } = require('@repositories/cart')
 
 describe('Alloy plugin', () => {
   beforeEach(async () => {
@@ -41,7 +41,10 @@ describe('Alloy plugin', () => {
         }),
       )
 
-      const cart = await Cart.create(cartFactory.build({ contact, licensee, delivery_tax: 3.5, note: 'without onion' }))
+      const cartRepository = new CartRepositoryDatabase()
+      const cart = await cartRepository.create(
+        cartFactory.build({ contact, licensee, delivery_tax: 3.5, note: 'without onion' }),
+      )
 
       const go2go = new Alloy()
       const cartTransformed = await go2go.transformCart(licensee, cart._id)

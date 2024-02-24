@@ -2,7 +2,7 @@ const Message = require('@models/Message')
 const { createContact, getContactBy } = require('@repositories/contact')
 const { getAllTriggerBy } = require('@repositories/trigger')
 const { createMessage } = require('@repositories/message')
-const { createCart, getCartBy } = require('@repositories/cart')
+const { CartRepositoryDatabase } = require('@repositories/cart')
 const { getProductBy } = require('@repositories/product')
 const { v4: uuidv4 } = require('uuid')
 const S3 = require('../storage/S3')
@@ -149,14 +149,15 @@ class MessengersBase {
         messageToSend.kind = 'cart'
         messageToSend.destination = 'to-chatbot'
 
-        let cart = await getCartBy({ contact, concluded: false })
+        const cartRepository = new CartRepositoryDatabase()
+        let cart = await cartRepository.findFirst({ contact, concluded: false })
         if (!cart) {
           cart = {
             licensee: this.licensee._id,
             contact: contact._id,
           }
 
-          cart = await createCart(cart)
+          cart = await cartRepository.create(cart)
         }
 
         const products = []
