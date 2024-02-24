@@ -1,7 +1,7 @@
 const Backgroundjob = require('@models/Backgroundjob')
-const Cart = require('@models/Cart')
 const Contact = require('@models/Contact')
 const PagarMe = require('@plugins/payments/PagarMe')
+const { CartRepositoryDatabase } = require('@repositories/cart')
 
 async function processBackgroundjobInviteCreditCard(data) {
   const { jobId, credit_card_data, cart_id: cartId } = data
@@ -9,7 +9,8 @@ async function processBackgroundjobInviteCreditCard(data) {
   const backgroundjob = await Backgroundjob.findById(jobId)
 
   try {
-    const cart = await Cart.findById(cartId).populate('contact')
+    const cartRepository = new CartRepositoryDatabase()
+    const cart = await cartRepository.findFirst({ _id: cartId }, ['contact'])
     const contact = await Contact.findById(cart.contact)
 
     const pagarMe = new PagarMe()

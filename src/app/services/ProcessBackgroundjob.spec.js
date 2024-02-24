@@ -1,13 +1,13 @@
 const processBackgroundjob = require('./ProcessBackgroundjob')
 const Backgroundjob = require('@models/Backgroundjob')
 const Contact = require('@models/Contact')
-const Cart = require('@models/Cart')
 const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { cart: cartFactory } = require('@factories/cart')
 const { contact: contactFactory } = require('@factories/contact')
 const { backgroundjob: backgroundjobFactory } = require('@factories/backgroundjob')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { CartRepositoryDatabase } = require('@repositories/cart')
 
 describe('processBackgroundjob', () => {
   beforeEach(async () => {
@@ -55,7 +55,8 @@ describe('processBackgroundjob', () => {
         const licenseeRepository = new LicenseeRepositoryDatabase()
         const licensee = await licenseeRepository.create(licenseeFactory.build())
         const contact = await Contact.create(contactFactory.build({ licensee }))
-        const cart = await Cart.create(cartFactory.build({ contact, licensee }))
+        const cartRepository = new CartRepositoryDatabase()
+        const cart = await cartRepository.create(cartFactory.build({ contact, licensee }))
 
         const backgroundjob = await Backgroundjob.create({
           status: 'scheduled',
@@ -88,7 +89,8 @@ describe('processBackgroundjob', () => {
         const licenseeRepository = new LicenseeRepositoryDatabase()
         const licensee = await licenseeRepository.create(licenseeFactory.build())
         const contact = await Contact.create(contactFactory.build({ licensee }))
-        await Cart.create(cartFactory.build({ contact, licensee, concluded: true }))
+        const cartRepository = new CartRepositoryDatabase()
+        await cartRepository.create(cartFactory.build({ contact, licensee, concluded: true }))
 
         const backgroundjob = await Backgroundjob.create({
           status: 'scheduled',

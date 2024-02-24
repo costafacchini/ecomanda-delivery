@@ -1,11 +1,11 @@
 const resetCarts = require('./ResetCarts')
 const Contact = require('@models/Contact')
-const Cart = require('@models/Cart')
 const mongoServer = require('.jest/utils')
 const { licenseeComplete: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { cart: cartFactory } = require('@factories/cart')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { CartRepositoryDatabase } = require('@repositories/cart')
 const moment = require('moment')
 
 describe('resetCarts', () => {
@@ -27,7 +27,8 @@ describe('resetCarts', () => {
 
       const contact = await Contact.create(contactFactory.build({ licensee }))
 
-      const cartOpenedOnLimitEnding1 = await Cart.create(
+      const cartRepository = new CartRepositoryDatabase()
+      const cartOpenedOnLimitEnding1 = await cartRepository.create(
         cartFactory.build({
           licensee,
           contact,
@@ -36,7 +37,7 @@ describe('resetCarts', () => {
         }),
       )
 
-      const cartExpired1 = await Cart.create(
+      const cartExpired1 = await cartRepository.create(
         cartFactory.build({
           licensee,
           contact,
@@ -47,10 +48,10 @@ describe('resetCarts', () => {
 
       await resetCarts()
 
-      const cartOpenedOnLimitEnding1Reloaded = await Cart.findById(cartOpenedOnLimitEnding1)
+      const cartOpenedOnLimitEnding1Reloaded = await cartRepository.findFirst({ _id: cartOpenedOnLimitEnding1 })
       expect(cartOpenedOnLimitEnding1Reloaded.concluded).toEqual(false)
 
-      const cartExpired1Reloaded = await Cart.findById(cartExpired1)
+      const cartExpired1Reloaded = await cartRepository.findFirst({ _id: cartExpired1 })
       expect(cartExpired1Reloaded.concluded).toEqual(true)
     })
   })

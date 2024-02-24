@@ -3,7 +3,6 @@ const Message = require('@models/Message')
 const Contact = require('@models/Contact')
 const Trigger = require('@models/Trigger')
 const Template = require('@models/Template')
-const Cart = require('@models/Cart')
 const Product = require('@models/Product')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
@@ -23,6 +22,7 @@ const { cart: cartFactory } = require('@factories/cart')
 const { product: productFactory } = require('@factories/product')
 const { advanceTo, clear } = require('jest-date-mock')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { CartRepositoryDatabase } = require('@repositories/cart')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -792,7 +792,8 @@ describe('Dialog plugin', () => {
 
         const product = await Product.create(productFactory.build({ product_retailer_id: '1011', licensee }))
 
-        const cartConcluded = await Cart.create(cartFactory.build({ contact, licensee, concluded: true }))
+        const cartRepository = new CartRepositoryDatabase()
+        const cartConcluded = await cartRepository.create(cartFactory.build({ contact, licensee, concluded: true }))
 
         const responseBody = {
           contacts: [{ profile: { name: 'John Doe' }, wa_id: '5511990283745' }],
@@ -817,7 +818,7 @@ describe('Dialog plugin', () => {
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
 
-        const cart = await Cart.findOne({ contact: contact._id, concluded: false })
+        const cart = await cartRepository.findFirst({ contact: contact._id, concluded: false })
 
         expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -860,7 +861,8 @@ describe('Dialog plugin', () => {
           }),
         )
 
-        const cart = await Cart.create(cartFactory.build({ contact, licensee, concluded: false }))
+        const cartRepository = new CartRepositoryDatabase()
+        const cart = await cartRepository.create(cartFactory.build({ contact, licensee, concluded: false }))
 
         const responseBody = {
           contacts: [{ profile: { name: 'John Doe' }, wa_id: '5511990283745' }],
@@ -902,7 +904,7 @@ describe('Dialog plugin', () => {
 
         expect(messages.length).toEqual(1)
 
-        const cartUpdated = await Cart.findOne({ contact: contact._id, concluded: false })
+        const cartUpdated = await cartRepository.findFirst({ contact: contact._id, concluded: false })
 
         expect(cartUpdated._id).toEqual(cart._id)
         expect(cartUpdated.delivery_tax).toEqual(0)
@@ -2571,7 +2573,8 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          const cart = await Cart.create(cartFactory.build({ contact, licensee }))
+          const cartRepository = new CartRepositoryDatabase()
+          const cart = await cartRepository.create(cartFactory.build({ contact, licensee }))
 
           const message = await Message.create(
             messageFactory.build({

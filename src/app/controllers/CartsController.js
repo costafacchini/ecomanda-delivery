@@ -1,4 +1,3 @@
-const Cart = require('@models/Cart')
 const _ = require('lodash')
 const NormalizePhone = require('@helpers/NormalizePhone')
 const { createTextMessageInsteadInteractive } = require('@repositories/message')
@@ -9,6 +8,7 @@ const createCartAdapter = require('../plugins/carts/adapters/factory')
 const cartFactory = require('@plugins/carts/factory')
 const { publishMessage } = require('@config/rabbitmq')
 const { getContactByNumber } = require('@repositories/contact')
+const { CartRepositoryDatabase } = require('@repositories/cart')
 
 function permit(fields) {
   const permitedFields = [
@@ -90,13 +90,11 @@ class CartsController {
         delivery_method,
       } = cartPlugin.parseCart(req.licensee, contact, req.body)
 
-      let cart = await Cart.findOne({
-        contact: cartContact._id,
-        concluded: false,
-      })
+      const cartRepository = new CartRepositoryDatabase()
+      let cart = await cartRepository.findFirst({ contact: cartContact._id, concluded: false })
 
       if (!cart) {
-        cart = new Cart({
+        cart = await cartRepository.create({
           delivery_tax,
           contact: cartContact._id,
           licensee: req.licensee._id,
@@ -143,13 +141,11 @@ class CartsController {
         cart.location = location
         cart.documento = documento
         cart.delivery_method = delivery_method
+        Array.prototype.push.apply(cart.products, products)
+        cart.total = cart.calculateTotal()
 
-        products.forEach((item) => {
-          cart.products.push(item)
-        })
+        await cartRepository.update(cart._id, { ...cart })
       }
-
-      await cart.save()
 
       res.status(201).send(cart)
     } catch (err) {
@@ -168,10 +164,8 @@ class CartsController {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
       }
 
-      let cart = await Cart.findOne({
-        contact: contact._id,
-        concluded: false,
-      })
+      const cartRepository = new CartRepositoryDatabase()
+      let cart = await cartRepository.findFirst({ contact: contact._id, concluded: false })
 
       if (!cart) {
         return res.status(200).send({ errors: { message: `Carrinho não encontrado` } })
@@ -186,7 +180,9 @@ class CartsController {
           cart[field] = fields[field]
         }
       })
-      await cart.save()
+      cart.total = cart.calculateTotal()
+
+      await cartRepository.update(cart._id, { ...cart })
 
       res.status(200).send(cart)
     } catch (err) {
@@ -202,10 +198,8 @@ class CartsController {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
       }
 
-      const cart = await Cart.findOne({
-        contact: contact._id,
-        concluded: false,
-      })
+      const cartRepository = new CartRepositoryDatabase()
+      let cart = await cartRepository.findFirst({ contact: contact._id, concluded: false })
 
       if (!cart) {
         return res.status(200).send({ errors: { message: `Carrinho não encontrado` } })
@@ -227,18 +221,16 @@ class CartsController {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
       }
 
-      let cart = await Cart.findOne({
-        contact: contact._id,
-        concluded: false,
-      })
+      const cartRepository = new CartRepositoryDatabase()
+      let cart = await cartRepository.findFirst({ contact: contact._id, concluded: false })
 
       if (!cart) {
         return res.status(200).send({ errors: { message: `Carrinho não encontrado` } })
       }
 
-      await Cart.updateOne({ _id: cart._id }, { concluded: true }, { runValidators: true })
+      await cartRepository.update(cart._id, { concluded: true })
 
-      cart = await Cart.findOne({ _id: cart._id })
+      cart = await cartRepository.findFirst({ _id: cart._id })
 
       res.status(200).send(cart)
     } catch (err) {
@@ -254,10 +246,8 @@ class CartsController {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
       }
 
-      let cart = await Cart.findOne({
-        contact: contact._id,
-        concluded: false,
-      })
+      const cartRepository = new CartRepositoryDatabase()
+      let cart = await cartRepository.findFirst({ contact: contact._id, concluded: false })
 
       if (!cart) {
         return res.status(200).send({ errors: { message: `Carrinho não encontrado` } })
@@ -288,10 +278,8 @@ class CartsController {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
       }
 
-      let cart = await Cart.findOne({
-        contact: contact._id,
-        concluded: false,
-      })
+      const cartRepository = new CartRepositoryDatabase()
+      let cart = await cartRepository.findFirst({ contact: contact._id, concluded: false })
 
       if (!cart) {
         return res.status(200).send({ errors: { message: `Carrinho não encontrado` } })
@@ -300,7 +288,7 @@ class CartsController {
       cart.products.splice(req.body.item - 1)
       await cart.save()
 
-      cart = await Cart.findOne({ _id: cart._id })
+      cart = await cartRepository.findFirst({ _id: cart._id })
 
       res.status(200).send(cart)
     } catch (err) {
@@ -318,10 +306,14 @@ class CartsController {
 
       let cart
       try {
-        cart = await Cart.findOne({
-          contact: contact._id,
-          concluded: false,
-        }).populate('contact')
+        const cartRepository = new CartRepositoryDatabase()
+        cart = await cartRepository.findFirst(
+          {
+            contact: contact._id,
+            concluded: false,
+          },
+          ['contact'],
+        )
       } catch (err) {
         return res.status(200).send({ errors: { message: 'Carrinho não encontrado' } })
       }
@@ -359,10 +351,8 @@ class CartsController {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
       }
 
-      const cart = await Cart.findOne({
-        contact: contact._id,
-        concluded: false,
-      })
+      const cartRepository = new CartRepositoryDatabase()
+      const cart = await cartRepository.findFirst({ contact: contact._id, concluded: false })
 
       if (!cart) {
         return res.status(200).send({ errors: { message: `Carrinho não encontrado` } })
@@ -385,10 +375,8 @@ class CartsController {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
       }
 
-      const cart = await Cart.findOne({
-        contact: contact._id,
-        concluded: false,
-      })
+      const cartRepository = new CartRepositoryDatabase()
+      const cart = await cartRepository.findFirst({ contact: contact._id, concluded: false })
 
       if (!cart) {
         return res.status(200).send({ errors: { message: `Carrinho não encontrado` } })

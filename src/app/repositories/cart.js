@@ -1,15 +1,33 @@
+const Repository = require('./repository')
 const Cart = require('@models/Cart')
 
-async function createCart(fields) {
-  const cart = new Cart({
-    ...fields,
-  })
+class CartRepositoryDatabase extends Repository {
+  model() {
+    return Cart
+  }
 
-  return await cart.save()
+  async create(fields) {
+    return await Cart.create({ ...fields })
+  }
+
+  async update(id, fields) {
+    return await Cart.updateOne({ _id: id }, { $set: fields }, { runValidators: true })
+  }
+
+  async findFirst(params, relations) {
+    if (relations) {
+      const query = Cart.findOne(params)
+      relations.forEach((relation) => query.populate(relation))
+
+      return await query
+    } else {
+      return await Cart.findOne(params)
+    }
+  }
+
+  async delete() {
+    return await Cart.deleteMany()
+  }
 }
 
-async function getCartBy(filter) {
-  return await Cart.findOne(filter)
-}
-
-module.exports = { createCart, getCartBy }
+module.exports = { CartRepositoryDatabase }

@@ -1,5 +1,4 @@
 const Contact = require('@models/Contact')
-const Cart = require('@models/Cart')
 const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
@@ -9,6 +8,7 @@ const { cart: cartFactory } = require('@factories/cart')
 const { createTextMessageInsteadInteractive } = require('@repositories/message')
 const { publishMessage } = require('@config/rabbitmq')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { CartRepositoryDatabase } = require('@repositories/cart')
 
 jest.mock('@config/rabbitmq')
 jest.mock('@repositories/message')
@@ -52,7 +52,7 @@ describe('carts controller', () => {
   describe('create', () => {
     describe('response', () => {
       beforeEach(async () => {
-        await Cart.deleteMany()
+        await new CartRepositoryDatabase().delete()
       })
 
       it('returns status 201 and the cart data if the create is successful', async () => {
@@ -137,7 +137,8 @@ describe('carts controller', () => {
       })
 
       it('returns status 201 and update cart data if the cart already exists', async () => {
-        await Cart.create(cartFactory.build({ contact, licensee }))
+        const cartRepository = new CartRepositoryDatabase()
+        await cartRepository.create(cartFactory.build({ contact, licensee }))
 
         await request(expressServer)
           .post(`/api/v1/carts?token=${licensee.apiToken}&contact=${contact.number}`)
@@ -210,7 +211,7 @@ describe('carts controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurred when create the cart', async () => {
-        const mockFunction = jest.spyOn(Cart.prototype, 'save').mockImplementation(() => {
+        const mockFunction = jest.spyOn(CartRepositoryDatabase.prototype, 'create').mockImplementation(() => {
           throw new Error('some error')
         })
 
@@ -230,7 +231,8 @@ describe('carts controller', () => {
   describe('update', () => {
     describe('response', () => {
       it('returns status 200 and the cart data if the update is successful', async () => {
-        await Cart.create(cartFactory.build({ contact, licensee }))
+        const cartRepository = new CartRepositoryDatabase()
+        await cartRepository.create(cartFactory.build({ contact, licensee }))
 
         await request(expressServer)
           .post(`/api/v1/carts/5511990283745?token=${licensee.apiToken}`)
@@ -303,7 +305,7 @@ describe('carts controller', () => {
       })
 
       it('returns status 200 and message if the cart is not founded', async () => {
-        await Cart.deleteMany({})
+        await new CartRepositoryDatabase().delete()
 
         await request(expressServer)
           .post(`/api/v1/carts/5511990283745?token=${licensee.apiToken}`)
@@ -339,7 +341,8 @@ describe('carts controller', () => {
   describe('show', () => {
     describe('response', () => {
       it('returns status 200 and message if cart exists', async () => {
-        await Cart.create(cartFactory.build({ contact, licensee }))
+        const cartRepository = new CartRepositoryDatabase()
+        await cartRepository.create(cartFactory.build({ contact, licensee }))
 
         await request(expressServer)
           .get(`/api/v1/carts/5511990283745?token=${licensee.apiToken}`)
@@ -397,7 +400,7 @@ describe('carts controller', () => {
       })
 
       it('returns status 200 and message if the cart is not founded', async () => {
-        await Cart.deleteMany({})
+        await new CartRepositoryDatabase().delete()
 
         await request(expressServer)
           .get(`/api/v1/carts/5511990283745?token=${licensee.apiToken}`)
@@ -432,7 +435,8 @@ describe('carts controller', () => {
   describe('close', () => {
     describe('response', () => {
       it('returns status 200 and the cart data if the close is successful', async () => {
-        await Cart.create(cartFactory.build({ contact, licensee }))
+        const cartRepository = new CartRepositoryDatabase()
+        await cartRepository.create(cartFactory.build({ contact, licensee }))
 
         await request(expressServer)
           .delete(`/api/v1/carts/5511990283745?token=${licensee.apiToken}`)
@@ -462,7 +466,7 @@ describe('carts controller', () => {
       })
 
       it('returns status 200 and message if the cart is not founded', async () => {
-        await Cart.deleteMany({})
+        await new CartRepositoryDatabase().delete()
 
         await request(expressServer)
           .delete(`/api/v1/carts/5511990283745?token=${licensee.apiToken}`)
@@ -498,7 +502,8 @@ describe('carts controller', () => {
   describe('addItem', () => {
     describe('response', () => {
       it('returns status 200 and the cart data if the item added with successful', async () => {
-        await Cart.create(cartFactory.build({ contact, licensee }))
+        const cartRepository = new CartRepositoryDatabase()
+        await cartRepository.create(cartFactory.build({ contact, licensee }))
 
         await request(expressServer)
           .post(`/api/v1/carts/5511990283745/item?token=${licensee.apiToken}`)
@@ -572,7 +577,7 @@ describe('carts controller', () => {
       })
 
       it('returns status 200 and message if the cart is not founded', async () => {
-        await Cart.deleteMany({})
+        await new CartRepositoryDatabase().delete()
 
         await request(expressServer)
           .post(`/api/v1/carts/5511990283745/item?token=${licensee.apiToken}`)
@@ -608,7 +613,8 @@ describe('carts controller', () => {
   describe('removeItem', () => {
     describe('response', () => {
       it('returns status 200 and the cart data if the item removed with successful', async () => {
-        await Cart.create(cartFactory.build({ contact, licensee }))
+        const cartRepository = new CartRepositoryDatabase()
+        await cartRepository.create(cartFactory.build({ contact, licensee }))
 
         await request(expressServer)
           .delete(`/api/v1/carts/5511990283745/item?token=${licensee.apiToken}`)
@@ -626,7 +632,7 @@ describe('carts controller', () => {
       })
 
       it('returns status 200 and message if the cart is not founded', async () => {
-        await Cart.deleteMany({})
+        await new CartRepositoryDatabase().delete()
 
         await request(expressServer)
           .delete(`/api/v1/carts/5511990283745/item?token=${licensee.apiToken}`)
@@ -662,7 +668,8 @@ describe('carts controller', () => {
   describe('send', () => {
     describe('response', () => {
       it('returns status 200 and schedules to send message if the item removed with successful', async () => {
-        await Cart.create(cartFactory.build({ contact, licensee }))
+        const cartRepository = new CartRepositoryDatabase()
+        await cartRepository.create(cartFactory.build({ contact, licensee }))
 
         createTextMessageInsteadInteractive.mockResolvedValue({ _id: 'id' })
 
@@ -675,7 +682,7 @@ describe('carts controller', () => {
       })
 
       it('returns status 200 and message if the cart is not founded', async () => {
-        await Cart.deleteMany({})
+        await new CartRepositoryDatabase().delete()
 
         await request(expressServer)
           .post(`/api/v1/carts/5511990283745/send?token=${licensee.apiToken}`)
@@ -684,7 +691,8 @@ describe('carts controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurred when update the cart', async () => {
-        await Cart.create(cartFactory.build({ contact, licensee }))
+        const cartRepository = new CartRepositoryDatabase()
+        await cartRepository.create(cartFactory.build({ contact, licensee }))
 
         createTextMessageInsteadInteractive.mockImplementation(() => {
           throw new Error('some error')
@@ -705,7 +713,8 @@ describe('carts controller', () => {
   describe('getCart', () => {
     describe('response', () => {
       it('returns status 200 and message if cart exists', async () => {
-        await Cart.create(cartFactory.build({ contact, licensee }))
+        const cartRepository = new CartRepositoryDatabase()
+        await cartRepository.create(cartFactory.build({ contact, licensee }))
 
         await request(expressServer)
           .get(`/api/v1/carts/5511990283745/cart?token=${licensee.apiToken}`)
@@ -760,7 +769,7 @@ describe('carts controller', () => {
       })
 
       it('returns status 200 and message if the cart is not founded', async () => {
-        await Cart.deleteMany({})
+        await new CartRepositoryDatabase().delete()
 
         await request(expressServer)
           .get(`/api/v1/carts/5511990283745?token=${licensee.apiToken}`)
@@ -795,7 +804,8 @@ describe('carts controller', () => {
   describe('getPayment', () => {
     describe('response', () => {
       it('returns status 200 and message if cart exists', async () => {
-        await Cart.create(cartFactory.build({ contact, licensee }))
+        const cartRepository = new CartRepositoryDatabase()
+        await cartRepository.create(cartFactory.build({ contact, licensee }))
 
         await request(expressServer)
           .get(`/api/v1/carts/5511990283745/payment?token=${licensee.apiToken}`)
@@ -809,7 +819,7 @@ describe('carts controller', () => {
       })
 
       it('returns status 200 and message if the cart is not founded', async () => {
-        await Cart.deleteMany({})
+        await new CartRepositoryDatabase().delete()
 
         await request(expressServer)
           .get(`/api/v1/carts/5511990283745/payment?token=${licensee.apiToken}`)

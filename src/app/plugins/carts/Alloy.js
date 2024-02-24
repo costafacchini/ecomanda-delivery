@@ -1,8 +1,9 @@
-const Cart = require('@models/Cart')
+const { CartRepositoryDatabase } = require('@repositories/cart')
 
 class Alloy {
-  async transformCart(licensee, cartId) {
-    const cart = await Cart.findById(cartId).populate('contact')
+  async transformCart(_, cartId) {
+    const cartRepository = new CartRepositoryDatabase()
+    const cart = await cartRepository.findFirst({ _id: cartId }, ['contact'])
 
     const cartTransformed = {
       order: {

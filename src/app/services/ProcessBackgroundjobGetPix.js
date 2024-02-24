@@ -1,6 +1,6 @@
 const Backgroundjob = require('@models/Backgroundjob')
-const Cart = require('@models/Cart')
 const PagarMe = require('@plugins/payments/PagarMe')
+const { CartRepositoryDatabase } = require('@repositories/cart')
 
 async function processBackgroundjobGetPix(data) {
   const { jobId, cart_id: cartId } = data
@@ -8,12 +8,13 @@ async function processBackgroundjobGetPix(data) {
   const backgroundjob = await Backgroundjob.findById(jobId)
 
   try {
-    const cart = await Cart.findById(cartId)
+    const cartRepository = new CartRepositoryDatabase()
+    const cart = await cartRepository.findFirst({ _id: cartId })
 
     const pagarMe = new PagarMe()
     await pagarMe.payment.createPIX(cart, process.env.PAGARME_TOKEN)
 
-    const cartUpdated = await Cart.findById(cartId)
+    const cartUpdated = await cartRepository.findFirst({ _id: cartId })
 
     backgroundjob.status = 'done'
     backgroundjob.response = {
