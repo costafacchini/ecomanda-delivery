@@ -78,7 +78,7 @@ describe('processWebhook', () => {
     expect(pedidos10ProcessOrderFnSpy).toHaveBeenCalledWith(body.content)
 
     expect(actions.length).toEqual(1)
-    expect(actions[0].action).toEqual('pedidos10-send-order')
+    expect(actions[0].action).toEqual('integration-send-order')
     expect(actions[0].body.orderId).toBeDefined()
   })
 })

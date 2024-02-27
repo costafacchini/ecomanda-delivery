@@ -10,7 +10,7 @@ async function processWebhook(data) {
 
   const actions = [
     {
-      action: `pedidos10-send-order`,
+      action: `integration-send-order`,
       body: {
         orderId: orderPersisted._id,
       },

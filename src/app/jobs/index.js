@@ -22,7 +22,7 @@ const processBackgroundjobCancelOrder = require('./ProcessBackgroundjobCancelOrd
 const processWebhookRequest = require('./ProcessWebhookRequest')
 const processPagarmeOrderPaid = require('./ProcessPagarmeOrderPaid')
 const pedidos10Webhook = require('./Pedidos10Webhook')
-const pedidos10SendOrder = require('./Pedidos10SendOrder')
+const IntegrationSendOrder = require('./Integration10SendOrder')
 const pedidos10ChangeOrderStatus = require('./Pedidos10ChangeOrderStatus')
 
 const jobs = [
@@ -50,7 +50,7 @@ const jobs = [
   processPagarmeOrderPaid,
   processBackgroundjobCancelOrder,
   pedidos10Webhook,
-  pedidos10SendOrder,
+  IntegrationSendOrder,
   pedidos10ChangeOrderStatus,
 ]
 

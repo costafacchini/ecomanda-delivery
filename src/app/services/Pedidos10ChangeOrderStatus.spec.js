@@ -7,11 +7,16 @@ const { licensee: licenseeFactory } = require('@factories/licensee')
 const { order: orderFactory } = require('@factories/order')
 const { body: bodyFactory } = require('@factories/body')
 const Pedidos10 = require('../plugins/integrations/Pedidos10')
+const IntegratorBase = require('../plugins/integrations/IntegratorBase')
 
 describe('changeOrderStatus', () => {
   const pedidos10ChangeOrderStatusFnSpy = jest
     .spyOn(Pedidos10.prototype, 'changeOrderStatus')
     .mockImplementation(() => {})
+
+  jest.spyOn(IntegratorBase.prototype, 'parseStatus').mockImplementation((status) => {
+    return status
+  })
 
   beforeEach(async () => {
     await mongoServer.connect()
