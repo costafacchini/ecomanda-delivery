@@ -59,6 +59,7 @@ router.get('/templates/', templatesController.index)
 router.post('/templates/:id/importation', templatesController.importation)
 
 router.post('/licensees/:id/dialogwebhook', licenseesController.setDialogWebhook)
+router.post('/licensees/:id/sign-order-webhook', licenseesController.signOrderWebhook)
 router.post('/licensees/:id/integration/pagarme', licenseesController.sendToPagarMe)
 
 router.get('/messages/', messagesController.index)

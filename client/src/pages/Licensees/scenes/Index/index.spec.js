@@ -8,13 +8,17 @@ import { SimpleCrudContextProvider } from '../../../../contexts/SimpleCrud'
 jest.mock('../../../../services/licensee')
 
 describe('<LicenseeIndex />', () => {
+  const currentUser = {
+    isPedidos10: false
+  }
+
   function mount() {
     render(
       <SimpleCrudContextProvider>
         <MemoryRouter>
-          <LicenseeIndex />
+          <LicenseeIndex currentUser={currentUser} />
         </MemoryRouter>
-      </SimpleCrudContextProvider>
+      </SimpleCrudContextProvider>,
     )
   }
 
@@ -27,6 +31,7 @@ describe('<LicenseeIndex />', () => {
 
     expect(getLicensees).toHaveBeenCalledWith({
       page: 1,
+      pedidos10_active: false,
     })
 
     expect(await screen.findByText('Licenciado')).toBeInTheDocument()
@@ -45,6 +50,7 @@ describe('<LicenseeIndex />', () => {
 
     expect(getLicensees).toHaveBeenCalledWith({
       page: 2,
+      pedidos10_active: false,
     })
   })
 
@@ -66,6 +72,7 @@ describe('<LicenseeIndex />', () => {
     expect(getLicensees).toHaveBeenNthCalledWith(2, {
       page: 1,
       expression: 'expression',
+      pedidos10_active: false,
     })
   })
 })

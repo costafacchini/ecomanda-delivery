@@ -5,6 +5,7 @@ const { sanitizeExpressErrors, sanitizeModelErrors } = require('../helpers/Sanit
 const _ = require('lodash')
 const LicenseesQuery = require('@queries/LicenseesQuery')
 const PagarMe = require('@plugins/payments/PagarMe')
+const Pedidos10 = require('@plugins/integrations/Pedidos10')
 
 function permit(fields) {
   const permitedFields = [
@@ -43,6 +44,9 @@ function permit(fields) {
     'productFractionalSize4Name',
     'productFractionalSize4Id',
     'productFractionals',
+    'pedidos10_active',
+    'pedidos10_integration',
+    'pedidos10_integrator',
     'document',
     'kind',
     'financial_player_fee',
@@ -112,6 +116,9 @@ class LicenseesController {
       productFractionalSize4Name,
       productFractionalSize4Id,
       productFractionals,
+      pedidos10_active,
+      pedidos10_integration,
+      pedidos10_integrator,
       document,
       kind,
       financial_player_fee,
@@ -164,6 +171,9 @@ class LicenseesController {
         productFractionalSize4Name,
         productFractionalSize4Id,
         productFractionals,
+        pedidos10_active,
+        pedidos10_integration: JSON.parse(pedidos10_integration || '{}'),
+        pedidos10_integrator,
         document,
         kind,
         financial_player_fee,
@@ -197,6 +207,7 @@ class LicenseesController {
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     try {
+      fields.pedidos10_integration = JSON.parse(fields.pedidos10_integration || '{}')
       await licenseeRepository.update(req.params.id, { ...fields })
     } catch (err) {
       return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
@@ -204,6 +215,7 @@ class LicenseesController {
 
     try {
       const licensee = await licenseeRepository.findFirst({ _id: req.params.id })
+      licensee.pedidos10_integration = JSON.stringify(licensee.pedidos10_integration)
 
       res.status(200).send(licensee)
     } catch (err) {
@@ -215,6 +227,7 @@ class LicenseesController {
     try {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.findFirst({ _id: req.params.id })
+      licensee.pedidos10_integration = JSON.stringify(licensee.pedidos10_integration)
 
       res.status(200).send(licensee)
     } catch (err) {
@@ -256,6 +269,10 @@ class LicenseesController {
         licenseesQuery.filterByActive()
       }
 
+      if (req.query.pedidos10_active) {
+        licenseesQuery.filterByPedidos10Active(req.query.pedidos10_active)
+      }
+
       const messages = await licenseesQuery.all()
 
       res.status(200).send(messages)
@@ -293,6 +310,24 @@ class LicenseesController {
       }
 
       res.status(200).send({ message: 'Licenciado enviado para a pagar.me!' })
+    } catch (err) {
+      res.status(500).send({ errors: { message: err.toString() } })
+    }
+  }
+
+  async signOrderWebhook(req, res) {
+    try {
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.findFirst({ _id: req.params.id })
+
+      if (!licensee.pedidos10_integration) {
+        return res.status(200).send({ message: 'Webhook não assinado pois não tem os dados para o login!' })
+      }
+
+      const pedidos10 = new Pedidos10(licensee)
+      await pedidos10.signOrderWebhook()
+
+      res.status(200).send({ message: 'Webhook assinado!' })
     } catch (err) {
       res.status(500).send({ errors: { message: err.toString() } })
     }

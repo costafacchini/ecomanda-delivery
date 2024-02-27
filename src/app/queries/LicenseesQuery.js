@@ -32,6 +32,14 @@ class LicenseesQuery {
     this.expressionActive = true
   }
 
+  filterByPedidos10Active(value) {
+    if (value === true || value === 'true') {
+      this.expressionPedidos10Active = undefined
+    } else {
+      this.expressionPedidos10Active = value || 'false'
+    }
+  }
+
   async all() {
     const licenseeRepository = new LicenseeRepositoryDatabase()
     const query = new QueryBuilder(licenseeRepository.model())
@@ -46,6 +54,8 @@ class LicenseesQuery {
     if (this.whatsappClause) query.filterBy('whatsappDefault', this.whatsappClause)
 
     if (this.expressionActive) query.filterBy('active', this.expressionActive)
+
+    if (this.expressionPedidos10Active) query.filterBy('pedidos10_active', this.expressionPedidos10Active)
 
     if (this.expressionClause) query.filterByExpression(['name', 'email', 'phone'], this.expressionClause)
 

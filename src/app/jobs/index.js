@@ -21,6 +21,9 @@ const processBackgroundjobInviteCreditCard = require('./ProcessBackgroundjobInvi
 const processBackgroundjobCancelOrder = require('./ProcessBackgroundjobCancelOrder')
 const processWebhookRequest = require('./ProcessWebhookRequest')
 const processPagarmeOrderPaid = require('./ProcessPagarmeOrderPaid')
+const pedidos10Webhook = require('./Pedidos10Webhook')
+const IntegrationSendOrder = require('./Integration10SendOrder')
+const pedidos10ChangeOrderStatus = require('./Pedidos10ChangeOrderStatus')
 
 const jobs = [
   chatMessage,
@@ -46,6 +49,9 @@ const jobs = [
   processWebhookRequest,
   processPagarmeOrderPaid,
   processBackgroundjobCancelOrder,
+  pedidos10Webhook,
+  IntegrationSendOrder,
+  pedidos10ChangeOrderStatus,
 ]
 
 module.exports = jobs

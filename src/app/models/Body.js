@@ -16,8 +16,8 @@ const bodySchema = new Schema(
     },
     kind: {
       type: String,
-      enum: ['normal', 'webhook'],
-      required: [true, 'Tipo de Body: Você deve informar um valor ( normal | webhook )'],
+      enum: ['normal', 'webhook', 'pedidos10'],
+      required: [true, 'Tipo de Body: Você deve informar um valor ( normal | webhook | pedidos10 )'],
     },
     concluded: { type: Boolean, default: false },
   },

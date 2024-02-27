@@ -1,7 +1,12 @@
 import { FieldWithError, Form } from '../../../../components/form'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router-dom'
-import { setLicenseeWebhook, importLicenseeTemplate, sendLicenseePagarMe } from '../../../../services/licensee'
+import {
+  setLicenseeWebhook,
+  importLicenseeTemplate,
+  sendLicenseePagarMe,
+  signOrderWebhook,
+} from '../../../../services/licensee'
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string()
@@ -43,6 +48,8 @@ const licenseeInitialValues = {
   productFractionalSize4Name: '',
   productFractionalSize4Id: '',
   productFractionals: '',
+  pedidos10_integration: '',
+  pedidos10_integrator: '',
   document: '',
   kind: '',
   financial_player_fee: '0.00',
@@ -57,8 +64,8 @@ const licenseeInitialValues = {
   account_type: '',
 }
 
-function LicenseeForm({ onSubmit, errors, initialValues }) {
-  let navigate = useNavigate();
+function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
+  let navigate = useNavigate()
 
   return (
     <div>
@@ -718,6 +725,56 @@ function LicenseeForm({ onSubmit, errors, initialValues }) {
                 </div>
               </div>
             </fieldset>
+
+            {currentUser && currentUser.isPedidos10 && (
+              <fieldset>
+                <div className='row'>
+                  <div className='form-group col-5'>
+                    <label htmlFor='pedidos10_integrator'>Software Integrador</label>
+                    <select
+                      value={props.values.pedidos10_integrator}
+                      className='form-select'
+                      id='pedidos10_integrator'
+                      onChange={props.handleChange}
+                      onBlur={props.handleBlur}
+                    >
+                      <option value=''></option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className='row'>
+                  <div className='form-group col-5'>
+                    <label htmlFor='pedidos10_integration'>Dados da integração</label>
+                    <div className='pb-2'>
+                      <textarea
+                        id='pedidos10_integration'
+                        name='pedidos10_integration'
+                        className='form-control'
+                        rows={10}
+                        onChange={props.handleChange}
+                        onBlur={props.handleBlur}
+                        value={props.values.pedidos10_integration}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className='row'>
+                  <div className='form-group col-3'>
+                    <button
+                      onClick={async (event) => {
+                        event.preventDefault()
+                        await signOrderWebhook(props.values)
+                      }}
+                      className='btn btn-info'
+                    >
+                      Assinar Webhook P10
+                    </button>
+                  </div>
+                </div>
+              </fieldset>
+            )}
 
             <fieldset>
               <div className='row'>

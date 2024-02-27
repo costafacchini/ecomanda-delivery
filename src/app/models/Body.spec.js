@@ -69,7 +69,7 @@ describe('Body', () => {
         const validation = body.validateSync()
 
         expect(validation.errors['kind'].message).toEqual(
-          'Tipo de Body: Você deve informar um valor ( normal | webhook )',
+          'Tipo de Body: Você deve informar um valor ( normal | webhook | pedidos10 )',
         )
       })
     })
