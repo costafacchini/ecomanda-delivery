@@ -2856,10 +2856,10 @@ bull-board@2.1.3:
     express "4.17.1"
     redis-info "^3.0.8"
 
-bullmq@5.3.3:
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-5.3.3.tgz#b40906efee4dda4186e826da8551725759d28a3f"
-  integrity sha512-Gc/68HxiCHLMPBiGIqtINxcf8HER/5wvBYMY/6x3tFejlvldUBFaAErMTLDv4TnPsTyzNPrfBKmFCEM58uVnJg==
+bullmq@5.4.0:
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-5.4.0.tgz#5cb0016e6084b2af22307df9d340e881a6506a3c"
+  integrity sha512-QNOT+Vp/OFctwKa1/LYvrfIMXqb6Hu8a1VwXxQpa/JXoFAQ9E4ZcqW4fyEjx9iYrXakpV6cAGPbmdgWaKTGXOQ==
   dependencies:
     cron-parser "^4.6.0"
     fast-glob "^3.3.2"
