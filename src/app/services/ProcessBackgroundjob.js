@@ -1,5 +1,5 @@
 const Backgroundjob = require('@models/Backgroundjob')
-const { getContactByNumber } = require('@repositories/contact')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { CartRepositoryDatabase } = require('@repositories/cart')
 
 async function processBackgroundjob(data) {
@@ -19,7 +19,10 @@ async function processBackgroundjob(data) {
 
   if (!backgroundjob.body.cart_id && backgroundjob.body.contact) {
     const licensee = backgroundjob.licensee
-    const contact = await getContactByNumber(backgroundjob.body.contact, licensee._id)
+
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact = await contactRepository.getContactByNumber(backgroundjob.body.contact, licensee._id)
+
     const cartRepository = new CartRepositoryDatabase()
     const cart = await cartRepository.findFirst({ contact, licensee, concluded: false })
 

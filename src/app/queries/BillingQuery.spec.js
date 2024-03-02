@@ -1,11 +1,11 @@
 const BillingQuery = require('@queries/BillingQuery')
 const mongoServer = require('../../../.jest/utils')
-const Contact = require('@models/Contact')
 const Message = require('@models/Message')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 const moment = require('moment-timezone')
 
 describe('BillingQuery', () => {
@@ -20,7 +20,9 @@ describe('BillingQuery', () => {
   it('returns the billed data for licensees', async () => {
     const licenseeRepository = new LicenseeRepositoryDatabase()
     const licensee1 = await licenseeRepository.create(licenseeFactory.build({ createdAt: '2020-01-01T00:00:00-03:00' }))
-    const contact1 = await Contact.create(contactFactory.build({ licensee: licensee1 }))
+
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact1 = await contactRepository.create(contactFactory.build({ licensee: licensee1 }))
     await Message.create(
       messageFactory.build({
         contact: contact1,
@@ -65,7 +67,7 @@ describe('BillingQuery', () => {
     )
 
     const licensee2 = await licenseeRepository.create(licenseeFactory.build({ createdAt: '2022-01-01T00:00:00-03:00' }))
-    const contact2 = await Contact.create(contactFactory.build({ licensee: licensee2 }))
+    const contact2 = await contactRepository.create(contactFactory.build({ licensee: licensee2 }))
     await Message.create(
       messageFactory.build({
         contact: contact2,
@@ -82,7 +84,7 @@ describe('BillingQuery', () => {
     )
 
     const licensee3 = await licenseeRepository.create(licenseeFactory.build({ createdAt: '2019-01-01T00:00:00-03:00' }))
-    const contact3 = await Contact.create(contactFactory.build({ licensee: licensee2 }))
+    const contact3 = await contactRepository.create(contactFactory.build({ licensee: licensee2 }))
     await Message.create(
       messageFactory.build({
         contact: contact3,
@@ -99,7 +101,7 @@ describe('BillingQuery', () => {
     )
 
     const licensee4 = await licenseeRepository.create(licenseeFactory.build({ createdAt: '2020-05-01T00:00:00-03:00' }))
-    const contact4 = await Contact.create(contactFactory.build({ licensee: licensee2 }))
+    const contact4 = await contactRepository.create(contactFactory.build({ licensee: licensee2 }))
     await Message.create(
       messageFactory.build({
         contact: contact4,

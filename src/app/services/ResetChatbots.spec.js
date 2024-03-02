@@ -1,5 +1,4 @@
 const resetChatbots = require('./ResetChatbots')
-const Contact = require('@models/Contact')
 const Message = require('@models/Message')
 const mongoServer = require('.jest/utils')
 const fetchMock = require('fetch-mock')
@@ -7,6 +6,7 @@ const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 describe('resetChatbots', () => {
   jest.spyOn(global.console, 'info').mockImplementation()
@@ -34,7 +34,8 @@ describe('resetChatbots', () => {
         }),
       )
 
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: true,
           landbotId: 'landbot-id',
@@ -51,7 +52,7 @@ describe('resetChatbots', () => {
         }),
       )
 
-      const contactThatMessageDoesNotCreatedInTimeLimit = await Contact.create(
+      const contactThatMessageDoesNotCreatedInTimeLimit = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: true,
           landbotId: 'landbot-id',
@@ -68,7 +69,7 @@ describe('resetChatbots', () => {
         }),
       )
 
-      const contactThatMessageDoesNotSended = await Contact.create(
+      const contactThatMessageDoesNotSended = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: true,
           landbotId: 'landbot-id',
@@ -86,7 +87,7 @@ describe('resetChatbots', () => {
         }),
       )
 
-      const contactThatNotTalkingWithChatbot = await Contact.create(
+      const contactThatNotTalkingWithChatbot = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: false,
           landbotId: 'landbot-id',
@@ -104,7 +105,7 @@ describe('resetChatbots', () => {
         }),
       )
 
-      const contactWithoutLandbotId = await Contact.create(
+      const contactWithoutLandbotId = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: true,
           licensee,
@@ -131,7 +132,7 @@ describe('resetChatbots', () => {
         }),
       )
 
-      const contact2 = await Contact.create(
+      const contact2 = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: true,
           landbotId: 'landbot-id',
@@ -158,7 +159,7 @@ describe('resetChatbots', () => {
         }),
       )
 
-      const contact3 = await Contact.create(
+      const contact3 = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: true,
           landbotId: 'landbot-id',
@@ -186,24 +187,28 @@ describe('resetChatbots', () => {
 
       await resetChatbots()
 
-      const contactChanged = await Contact.findById(contact._id)
+      const contactChanged = await contactRepository.findFirst({ _id: contact._id })
       expect(contactChanged.landbotId).toEqual(null)
 
-      const contactThatMessageDoesNotCreatedInTimeLimitChanged = await Contact.findById(
-        contactThatMessageDoesNotCreatedInTimeLimit._id,
-      )
+      const contactThatMessageDoesNotCreatedInTimeLimitChanged = await contactRepository.findFirst({
+        _id: contactThatMessageDoesNotCreatedInTimeLimit._id,
+      })
       expect(contactThatMessageDoesNotCreatedInTimeLimitChanged.landbotId).toEqual('landbot-id')
 
-      const contactcontactThatMessageDoesNotSended = await Contact.findById(contactThatMessageDoesNotSended._id)
+      const contactcontactThatMessageDoesNotSended = await contactRepository.findFirst({
+        _id: contactThatMessageDoesNotSended._id,
+      })
       expect(contactcontactThatMessageDoesNotSended.landbotId).toEqual('landbot-id')
 
-      const contactThatNotTalkingWithChatbotChanged = await Contact.findById(contactThatNotTalkingWithChatbot._id)
+      const contactThatNotTalkingWithChatbotChanged = await contactRepository.findFirst({
+        _id: contactThatNotTalkingWithChatbot._id,
+      })
       expect(contactThatNotTalkingWithChatbotChanged.landbotId).toEqual('landbot-id')
 
-      const contact2NotChanged = await Contact.findById(contact2._id)
+      const contact2NotChanged = await contactRepository.findFirst({ _id: contact2._id })
       expect(contact2NotChanged.landbotId).toEqual('landbot-id')
 
-      const contact3NotChanged = await Contact.findById(contact3._id)
+      const contact3NotChanged = await contactRepository.findFirst({ _id: contact3._id })
       expect(contact3NotChanged.landbotId).toEqual('landbot-id')
 
       await fetchMock.flush(true)
@@ -232,7 +237,8 @@ describe('resetChatbots', () => {
           }),
         )
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             talkingWithChatBot: true,
             landbotId: 'landbot-id',

@@ -3,10 +3,10 @@ const files = require('@helpers/Files')
 const NormalizePhone = require('../../helpers/NormalizePhone')
 const { v4: uuidv4 } = require('uuid')
 const Message = require('@models/Message')
-const Contact = require('@models/Contact')
 const request = require('../../services/request')
 const ChatsBase = require('./Base')
 const { createInteractiveMessages } = require('@repositories/message')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 class Cuboup extends ChatsBase {
   constructor(licensee) {
@@ -94,7 +94,9 @@ class Cuboup extends ChatsBase {
 
   async transfer(messageId, url) {
     const messageToSend = await Message.findById(messageId).populate('contact')
-    const contact = await Contact.findById(messageToSend.contact._id)
+
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact = await contactRepository.findFirst({ _id: messageToSend.contact._id })
 
     contact.talkingWithChatBot = false
     await contact.save()
@@ -188,7 +190,9 @@ class Cuboup extends ChatsBase {
   async closeChat(messageId) {
     const message = await Message.findById(messageId).populate('contact').populate('licensee')
     const licensee = message.licensee
-    const contact = await Contact.findById(message.contact._id)
+
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact = await contactRepository.findFirst({ _id: message.contact._id })
     const messages = []
 
     if (licensee.messageOnCloseChat) {

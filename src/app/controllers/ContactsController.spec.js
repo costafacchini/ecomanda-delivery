@@ -1,4 +1,3 @@
-const Contact = require('@models/Contact')
 const User = require('@models/User')
 const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
@@ -8,6 +7,8 @@ const { userSuper: userSuperFactory } = require('@factories/user')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
+const ContactsQuery = require('@queries/ContactsQuery')
 
 describe('contact controller', () => {
   let token
@@ -106,7 +107,7 @@ describe('contact controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurred when create the contact', async () => {
-        const contactSaveSpy = jest.spyOn(Contact.prototype, 'save').mockImplementation(() => {
+        const contactSaveSpy = jest.spyOn(ContactRepositoryDatabase.prototype, 'create').mockImplementation(() => {
           throw new Error('some error')
         })
 
@@ -146,7 +147,8 @@ describe('contact controller', () => {
   describe('update', () => {
     describe('response', () => {
       it('returns status 200 and the contact data if the update is successful', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             type: '@c.us',
@@ -192,7 +194,8 @@ describe('contact controller', () => {
       })
 
       it('returns status 422 and message if the contact is not valid', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             type: '@c.us',
@@ -213,11 +216,14 @@ describe('contact controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurre when update the contact', async () => {
-        const contactFindOneSpy = jest.spyOn(Contact, 'findOne').mockImplementation(() => {
-          throw new Error('some error')
-        })
+        const contactFindOneSpy = jest
+          .spyOn(ContactRepositoryDatabase.prototype, 'findFirst')
+          .mockImplementation(() => {
+            throw new Error('some error')
+          })
 
-        const contact = await Contact.create(contactFactory.build({ licensee }))
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(contactFactory.build({ licensee }))
 
         await request(expressServer)
           .post(`/resources/contacts/${contact._id}`)
@@ -236,7 +242,8 @@ describe('contact controller', () => {
   describe('show', () => {
     describe('response', () => {
       it('returns status 200 and message if contact exists', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             type: '@c.us',
@@ -274,9 +281,11 @@ describe('contact controller', () => {
       })
 
       it('returns status 500 and message if occurs another error', async () => {
-        const contactFindOneSpy = jest.spyOn(Contact, 'findOne').mockImplementation(() => {
-          throw new Error('some error')
-        })
+        const contactFindOneSpy = jest
+          .spyOn(ContactRepositoryDatabase.prototype, 'findFirst')
+          .mockImplementation(() => {
+            throw new Error('some error')
+          })
 
         await request(expressServer)
           .get('/resources/contacts/12312')
@@ -315,7 +324,7 @@ describe('contact controller', () => {
       })
 
       it('returns status 500 and message if occurs another error', async () => {
-        const contactFindSpy = jest.spyOn(Contact, 'find').mockImplementation(() => {
+        const contactFindSpy = jest.spyOn(ContactsQuery.prototype, 'all').mockImplementation(() => {
           throw new Error('some error')
         })
 

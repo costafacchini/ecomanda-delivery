@@ -1,6 +1,5 @@
 const Utalk = require('./Utalk')
 const Message = require('@models/Message')
-const Contact = require('@models/Contact')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
 const S3 = require('../storage/S3')
@@ -8,6 +7,7 @@ const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -36,7 +36,8 @@ describe('Utalk plugin', () => {
   describe('#responseToMessages', () => {
     describe('image and text', () => {
       it('returns the response body transformed in messages with only text message', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -84,7 +85,8 @@ describe('Utalk plugin', () => {
 
     describe('image', () => {
       it('returns the response body transformed in messages', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -146,7 +148,8 @@ describe('Utalk plugin', () => {
 
     describe('text', () => {
       it('returns the response body transformed in messages', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -192,7 +195,8 @@ describe('Utalk plugin', () => {
 
     describe('group', () => {
       it('returns the response body transformed in messages', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'Grupo Teste',
             number: '5511989187726-1622497000@g.us',
@@ -280,7 +284,8 @@ describe('Utalk plugin', () => {
         }),
       )
 
-      await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: false,
@@ -306,7 +311,7 @@ describe('Utalk plugin', () => {
       const utalk = new Utalk(licensee)
       await utalk.responseToMessages(responseBody)
 
-      const contactUpdated = await Contact.findOne({
+      const contactUpdated = await contactRepository.findFirst({
         number: '5511990283745',
         type: '@c.us',
         licensee: licensee._id,
@@ -317,7 +322,8 @@ describe('Utalk plugin', () => {
     })
 
     it('does not update the contact if contact exists, name is different and message is file', async () => {
-      await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: false,
@@ -339,7 +345,7 @@ describe('Utalk plugin', () => {
       const utalk = new Utalk(licensee)
       await utalk.responseToMessages(responseBody)
 
-      const contactUpdated = await Contact.findOne({
+      const contactUpdated = await contactRepository.findFirst({
         number: '5511990283745',
         type: '@c.us',
         licensee: licensee._id,
@@ -349,7 +355,8 @@ describe('Utalk plugin', () => {
     })
 
     it('does not update the contact if contact exists and body name is undefined', async () => {
-      await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: false,
@@ -374,7 +381,7 @@ describe('Utalk plugin', () => {
       const utalk = new Utalk(licensee)
       await utalk.responseToMessages(responseBody)
 
-      const contactUpdated = await Contact.findOne({
+      const contactUpdated = await contactRepository.findFirst({
         number: '5511990283745',
         type: '@c.us',
         licensee: licensee._id,
@@ -403,7 +410,8 @@ describe('Utalk plugin', () => {
         const utalk = new Utalk(licensee)
         const messages = await utalk.responseToMessages(responseBody)
 
-        const contact = await Contact.findOne({
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.findFirst({
           number: '5511990283745',
           type: '@c.us',
           licensee: licensee._id,
@@ -448,7 +456,8 @@ describe('Utalk plugin', () => {
         const utalk = new Utalk(licensee)
         const messages = await utalk.responseToMessages(responseBody)
 
-        const contact = await Contact.findOne({
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.findFirst({
           number: '5511990283745',
           type: '@c.us',
           licensee: licensee._id,
@@ -480,7 +489,8 @@ describe('Utalk plugin', () => {
 
     describe('when the contact talking with chatbot', () => {
       it('returns the response body transformed in message with destination "to_chatbot"', async () => {
-        await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -562,7 +572,8 @@ describe('Utalk plugin', () => {
   describe('#sendMessage', () => {
     describe('when the message was sent', () => {
       it('marks the message with was sent', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -619,7 +630,8 @@ describe('Utalk plugin', () => {
       })
 
       it('logs the success message', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -664,7 +676,8 @@ describe('Utalk plugin', () => {
 
       describe('when the message is file', () => {
         it('marks the message with sended and log the success message', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
@@ -733,7 +746,8 @@ describe('Utalk plugin', () => {
 
     describe('when can not send the message', () => {
       it('logs the error message', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,

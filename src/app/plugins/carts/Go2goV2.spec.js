@@ -1,11 +1,11 @@
 const Go2go = require('./Go2goV2')
-const Contact = require('@models/Contact')
 const mongoServer = require('../../../../.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { cart: cartFactory } = require('@factories/cart')
 const { advanceTo, clear } = require('jest-date-mock')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { CartRepositoryDatabase } = require('@repositories/cart')
 
 describe('Go2goV2 plugin', () => {
@@ -25,7 +25,8 @@ describe('Go2goV2 plugin', () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build({ unidadeId: '123', statusId: '743' }))
 
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           licensee,
           plugin_cart_id: '929787465',

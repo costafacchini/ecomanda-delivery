@@ -1,9 +1,11 @@
-const Contact = require('@models/Contact')
 const PagarMe = require('@plugins/payments/PagarMe')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 async function sendContactToPagarMe(data) {
   const { contactId } = data
-  const contact = await Contact.findById(contactId).populate('licensee')
+
+  const contactRepository = new ContactRepositoryDatabase()
+  const contact = await contactRepository.findFirst({ _id: contactId }, ['licensee'])
   const licensee = contact.licensee
 
   if (!licensee.recipient_id) return

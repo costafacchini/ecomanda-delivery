@@ -1,10 +1,10 @@
 const Cart = require('@models/Cart')
-const Contact = require('@models/Contact')
 const mongoServer = require('../../../.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { cart: cartFactory } = require('@factories/cart')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 describe('Cart', () => {
   let licensee
@@ -15,7 +15,9 @@ describe('Cart', () => {
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
-    contact = await Contact.create(contactFactory.build({ licensee }))
+
+    const contactRepository = new ContactRepositoryDatabase()
+    contact = await contactRepository.create(contactFactory.build({ licensee }))
   })
 
   afterEach(async () => {
@@ -91,7 +93,9 @@ describe('Cart', () => {
         }),
       )
 
-      const contactUpdated = await Contact.findById(contact._id)
+      const contactRepository = new ContactRepositoryDatabase()
+      const contactUpdated = await contactRepository.findFirst({ _id: contact._id })
+
       expect(contactUpdated.address).toEqual('Rua Teste')
       expect(contactUpdated.address_number).toEqual('123')
       expect(contactUpdated.address_complement).toEqual('Apto 123')
@@ -124,7 +128,9 @@ describe('Cart', () => {
         }),
       )
 
-      const contactUpdated = await Contact.findById(contact._id)
+      const contactRepository = new ContactRepositoryDatabase()
+      const contactUpdated = await contactRepository.findFirst({ _id: contact._id })
+
       expect(contactUpdated.address).toEqual(undefined)
       expect(contactUpdated.address_number).toEqual(undefined)
       expect(contactUpdated.address_complement).toEqual(undefined)
@@ -157,7 +163,9 @@ describe('Cart', () => {
         }),
       )
 
-      const contactUpdated = await Contact.findById(contact._id)
+      const contactRepository = new ContactRepositoryDatabase()
+      const contactUpdated = await contactRepository.findFirst({ _id: contact._id })
+
       expect(contactUpdated.address).toEqual(undefined)
       expect(contactUpdated.address_number).toEqual(undefined)
       expect(contactUpdated.address_complement).toEqual(undefined)

@@ -1,5 +1,4 @@
 const Payment = require('./Payment')
-const Contact = require('@models/Contact')
 const Integrationlog = require('@models/Integrationlog')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../../.jest/utils')
@@ -7,6 +6,7 @@ const { licenseeIntegrationPagarMe: licenseeFactory } = require('@factories/lice
 const { contact: contactFactory } = require('@factories/contact')
 const { cart: cartFactory } = require('@factories/cart')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { CartRepositoryDatabase } = require('@repositories/cart')
 
 describe('PagarMe/Customer plugin', () => {
@@ -34,7 +34,8 @@ describe('PagarMe/Customer plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '1234',
             name: 'John Doe',
@@ -159,7 +160,8 @@ describe('PagarMe/Customer plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '1234',
             name: 'John Doe',
@@ -345,7 +347,8 @@ describe('PagarMe/Customer plugin', () => {
       })
 
       it('creates a record on integrationlog', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '1234',
             name: 'John Doe',
@@ -474,7 +477,8 @@ describe('PagarMe/Customer plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '1234',
             name: 'John Doe',
@@ -590,7 +594,8 @@ describe('PagarMe/Customer plugin', () => {
       })
 
       it('creates a record on integrationlog', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '1234',
             name: 'John Doe',
@@ -711,7 +716,8 @@ describe('PagarMe/Customer plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '1234',
             name: 'John Doe',
@@ -858,7 +864,8 @@ describe('PagarMe/Customer plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '1234',
             name: 'John Doe',
@@ -1043,7 +1050,8 @@ describe('PagarMe/Customer plugin', () => {
       })
 
       it('creates a record on integrationlog', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '1234',
             name: 'John Doe',
@@ -1192,7 +1200,8 @@ describe('PagarMe/Customer plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '1234',
             name: 'John Doe',
@@ -1306,7 +1315,8 @@ describe('PagarMe/Customer plugin', () => {
       })
 
       it('creates a record on integrationlog', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '1234',
             name: 'John Doe',
@@ -1425,7 +1435,8 @@ describe('PagarMe/Customer plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '1234',
             name: 'John Doe',
@@ -1494,7 +1505,8 @@ describe('PagarMe/Customer plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '1234',
             name: 'John Doe',
@@ -1561,7 +1573,8 @@ describe('PagarMe/Customer plugin', () => {
       })
 
       it('creates a record on integrationlog', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '1234',
             name: 'John Doe',
@@ -1634,7 +1647,8 @@ describe('PagarMe/Customer plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '1234',
             name: 'John Doe',
@@ -1708,7 +1722,8 @@ describe('PagarMe/Customer plugin', () => {
       })
 
       it('creates a record on integrationlog', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '1234',
             name: 'John Doe',

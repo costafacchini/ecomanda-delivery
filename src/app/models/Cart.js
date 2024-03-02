@@ -112,6 +112,7 @@ cartSchema.pre('save', function (next) {
 })
 
 cartSchema.post('save', async function (cart) {
+  // TODO: essa lógica deveria estar em um serviço sendo chamada antes de salvar e não aqui
   const contact = await Contact.findById(cart.contact)
   if (cart.address && cart.address !== '' && contact.address !== cart.address) {
     contact.address = cart.address

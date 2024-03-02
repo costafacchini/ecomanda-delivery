@@ -1,11 +1,11 @@
 const Card = require('./Card')
-const Contact = require('@models/Contact')
 const Integrationlog = require('@models/Integrationlog')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../../.jest/utils')
 const { licenseeIntegrationPagarMe: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 describe('PagarMe/Card plugin', () => {
   let licensee
@@ -32,7 +32,8 @@ describe('PagarMe/Card plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '12345',
             licensee,
@@ -111,7 +112,8 @@ describe('PagarMe/Card plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '12345',
             licensee,
@@ -178,14 +180,15 @@ describe('PagarMe/Card plugin', () => {
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(1)
 
-        const contactUpdated = await Contact.findById(contact._id)
+        const contactUpdated = await contactRepository.findFirst({ _id: contact._id })
         expect(contactUpdated.credit_card_id).toEqual('card_3dlyaY6SPSb')
 
         integrationlogCreateSpy.mockRestore()
       })
 
       it('creates a record on integrationlog', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '12345',
             licensee,
@@ -265,7 +268,8 @@ describe('PagarMe/Card plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '12345',
             licensee,
@@ -335,7 +339,8 @@ describe('PagarMe/Card plugin', () => {
       })
 
       it('creates a record on integrationlog', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '12345',
             licensee,
@@ -398,7 +403,8 @@ describe('PagarMe/Card plugin', () => {
   describe('#list', () => {
     describe('when success', () => {
       it('returns the customer credit cards', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '12345',
             licensee,
@@ -462,7 +468,8 @@ describe('PagarMe/Card plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '12345',
             licensee,
@@ -501,7 +508,8 @@ describe('PagarMe/Card plugin', () => {
       })
 
       it('creates a record on integrationlog', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '12345',
             licensee,
@@ -541,7 +549,8 @@ describe('PagarMe/Card plugin', () => {
   describe('#getById', () => {
     describe('when success', () => {
       it('returns the customer credit card data', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '12345',
             credit_card_id: 'card_3dlyaY6SPSb',
@@ -602,7 +611,8 @@ describe('PagarMe/Card plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '12345',
             credit_card_id: 'card_3dlyaY6SPSb',
@@ -643,7 +653,8 @@ describe('PagarMe/Card plugin', () => {
       })
 
       it('creates a record on integrationlog', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             customer_id: '12345',
             credit_card_id: 'card_3dlyaY6SPSb',

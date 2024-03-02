@@ -1,4 +1,3 @@
-const Contact = require('@models/Contact')
 const Trigger = require('@models/Trigger')
 const mongoServer = require('../../../.jest/utils')
 const {
@@ -12,6 +11,7 @@ const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { triggerText } = require('@factories/trigger')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -29,7 +29,9 @@ describe('message repository', () => {
     it('creates a message', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
-      const contact = await Contact.create(contactFactory.build({ licensee: licensee._id }))
+
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
 
       const message = await createMessage({
         destination: 'to-chatbot',
@@ -58,7 +60,8 @@ describe('message repository', () => {
         const licenseeRepository = new LicenseeRepositoryDatabase()
         const licensee = await licenseeRepository.create(licenseeFactory.build())
 
-        const contact = await Contact.create(contactFactory.build({ licensee: licensee._id }))
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
         const trigger1 = await Trigger.create(
           triggerText.build({ licensee, expression: 'hello_world', text: 'Hello world 1' }),
         )
@@ -105,7 +108,8 @@ describe('message repository', () => {
         const licenseeRepository = new LicenseeRepositoryDatabase()
         const licensee = await licenseeRepository.create(licenseeFactory.build())
 
-        const contact = await Contact.create(contactFactory.build({ licensee: licensee._id }))
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
 
         const messages = await createInteractiveMessages({
           destination: 'to-chatbot',
@@ -135,7 +139,8 @@ describe('message repository', () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
 
-      const contact = await Contact.create(contactFactory.build({ licensee: licensee._id }))
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
 
       const message = await createTextMessageInsteadInteractive({
         destination: 'to-chatbot',
@@ -161,7 +166,8 @@ describe('message repository', () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
 
-      const contact = await Contact.create(contactFactory.build({ licensee: licensee._id, name: 'John Doe' }))
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id, name: 'John Doe' }))
 
       const message = await createTextMessageInsteadInteractive({
         destination: 'to-chatbot',
@@ -186,7 +192,8 @@ describe('message repository', () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
 
-      const contact = await Contact.create(contactFactory.build({ licensee: licensee._id }))
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
 
       const message = await createMessageToWarnAboutWindowOfWhatsassHasExpired(contact, licensee)
 
@@ -208,7 +215,8 @@ describe('message repository', () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
 
-      const contact = await Contact.create(contactFactory.build({ licensee: licensee._id }))
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
 
       const message = await createMessageToWarnAboutWindowOfWhatsassIsEnding(contact, licensee)
 

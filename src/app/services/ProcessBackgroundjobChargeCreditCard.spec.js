@@ -1,6 +1,5 @@
 const processBackgroundjobChargeCreditCard = require('./ProcessBackgroundjobChargeCreditCard')
 const Backgroundjob = require('@models/Backgroundjob')
-const Contact = require('@models/Contact')
 const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { backgroundjob: backgroundjobFactory } = require('@factories/backgroundjob')
@@ -8,6 +7,7 @@ const { cart: cartFactory } = require('@factories/cart')
 const { contact: contactFactory } = require('@factories/contact')
 const Payment = require('@plugins/payments/PagarMe/Payment')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { CartRepositoryDatabase } = require('@repositories/cart')
 
 describe('processBackgroundjobChargeCreditCard', () => {
@@ -43,7 +43,8 @@ describe('processBackgroundjobChargeCreditCard', () => {
         licensee,
       }),
     )
-    const contact = await Contact.create(
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact = await contactRepository.create(
       contactFactory.build({
         licensee,
         credit_cards: [
@@ -99,7 +100,8 @@ describe('processBackgroundjobChargeCreditCard', () => {
         }),
       )
 
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           licensee,
           credit_cards: [
@@ -157,7 +159,8 @@ describe('processBackgroundjobChargeCreditCard', () => {
           }),
         )
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             licensee,
@@ -219,7 +222,8 @@ describe('processBackgroundjobChargeCreditCard', () => {
           }),
         )
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             licensee,
             credit_cards: [
@@ -282,7 +286,8 @@ describe('processBackgroundjobChargeCreditCard', () => {
           }),
         )
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             licensee,
             credit_cards: [
@@ -343,7 +348,8 @@ describe('processBackgroundjobChargeCreditCard', () => {
           }),
         )
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             licensee,
             credit_cards: [
@@ -404,7 +410,8 @@ describe('processBackgroundjobChargeCreditCard', () => {
           }),
         )
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             licensee,
             credit_cards: [

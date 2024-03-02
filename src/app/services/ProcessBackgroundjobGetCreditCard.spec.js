@@ -1,6 +1,5 @@
 const processBackgroundjobGetCreditCard = require('./ProcessBackgroundjobGetCreditCard')
 const Backgroundjob = require('@models/Backgroundjob')
-const Contact = require('@models/Contact')
 const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { backgroundjob: backgroundjobFactory } = require('@factories/backgroundjob')
@@ -8,6 +7,7 @@ const { cart: cartFactory } = require('@factories/cart')
 const { contact: contactFactory } = require('@factories/contact')
 const Card = require('@plugins/payments/PagarMe/Card')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { CartRepositoryDatabase } = require('@repositories/cart')
 
 describe('processBackgroundjobGetCreditCard', () => {
@@ -34,7 +34,9 @@ describe('processBackgroundjobGetCreditCard', () => {
         licensee,
       }),
     )
-    const contact = await Contact.create(contactFactory.build({ licensee }))
+
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact = await contactRepository.create(contactFactory.build({ licensee }))
 
     const cartRepository = new CartRepositoryDatabase()
     const cart = await cartRepository.create(cartFactory.build({ contact, licensee }))
@@ -94,7 +96,10 @@ describe('processBackgroundjobGetCreditCard', () => {
         }),
       )
 
-      const contact = await Contact.create(contactFactory.build({ licensee, credit_card_id: 'card_3dlyaP9KWSb' }))
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
+        contactFactory.build({ licensee, credit_card_id: 'card_3dlyaP9KWSb' }),
+      )
 
       const cartRepository = new CartRepositoryDatabase()
       const cart = await cartRepository.create(cartFactory.build({ contact, licensee }))
@@ -176,7 +181,10 @@ describe('processBackgroundjobGetCreditCard', () => {
         }),
       )
 
-      const contact = await Contact.create(contactFactory.build({ licensee, credit_card_id: 'card_3dlyaP9KWSb' }))
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
+        contactFactory.build({ licensee, credit_card_id: 'card_3dlyaP9KWSb' }),
+      )
 
       const cartRepository = new CartRepositoryDatabase()
       const cart = await cartRepository.create(cartFactory.build({ contact, licensee }))
@@ -188,7 +196,7 @@ describe('processBackgroundjobGetCreditCard', () => {
 
       await processBackgroundjobGetCreditCard(data)
 
-      const contactUpdated = await Contact.findById(contact)
+      const contactUpdated = await contactRepository.findFirst({ _id: contact })
 
       expect(contactUpdated.credit_cards.length).toEqual(2)
 
@@ -217,7 +225,8 @@ describe('processBackgroundjobGetCreditCard', () => {
         }),
       )
 
-      const contact = await Contact.create(contactFactory.build({ licensee }))
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee }))
 
       const cartRepository = new CartRepositoryDatabase()
       const cart = await cartRepository.create(cartFactory.build({ contact, licensee }))

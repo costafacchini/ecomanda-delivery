@@ -1,6 +1,5 @@
 const Landbot = require('./Landbot')
 const Message = require('@models/Message')
-const Contact = require('@models/Contact')
 const Trigger = require('@models/Trigger')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
@@ -14,6 +13,7 @@ const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/tr
 const { cart: cartFactory } = require('@factories/cart')
 const { advanceTo, clear } = require('jest-date-mock')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { CartRepositoryDatabase } = require('@repositories/cart')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
@@ -39,7 +39,8 @@ describe('Landbot plugin', () => {
 
   describe('#responseToMessages', () => {
     it('returns the response body transformed in messages', async () => {
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: true,
           licensee,
@@ -192,7 +193,8 @@ describe('Landbot plugin', () => {
     })
 
     it('changes the landbotId in contact if is different', async () => {
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: true,
           landbotId: '123',
@@ -226,7 +228,7 @@ describe('Landbot plugin', () => {
       const landbot = new Landbot(licensee)
       await landbot.responseToMessages(responseBody)
 
-      const contactUpdated = await Contact.findById(contact._id)
+      const contactUpdated = await contactRepository.findFirst({ _id: contact._id })
       expect(contactUpdated.landbotId).toEqual('2000')
     })
 
@@ -369,7 +371,8 @@ describe('Landbot plugin', () => {
 
   describe('#responseTransferToMessage', () => {
     it('returns the response body transformed in message', async () => {
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: true,
           licensee,
@@ -430,7 +433,8 @@ describe('Landbot plugin', () => {
     })
 
     it('close room if the body has a iniciar_nova_conversa with true', async () => {
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: true,
           licensee,
@@ -461,7 +465,8 @@ describe('Landbot plugin', () => {
     })
 
     it('updates the contact name when name is different of the contact name', async () => {
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: true,
           licensee,
@@ -480,12 +485,13 @@ describe('Landbot plugin', () => {
 
       expect(message).toBeInstanceOf(Message)
 
-      const modifiedContact = await Contact.findById(contact._id)
+      const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
       expect(modifiedContact.name).toEqual('John Silver Doe')
     })
 
     it('updates the contact email when email is different of the contact email', async () => {
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: true,
           licensee,
@@ -505,7 +511,7 @@ describe('Landbot plugin', () => {
 
       expect(message).toBeInstanceOf(Message)
 
-      const modifiedContact = await Contact.findById(contact._id)
+      const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
       expect(modifiedContact.email).toEqual('john_silver@doe.com')
     })
   })
@@ -513,7 +519,8 @@ describe('Landbot plugin', () => {
   describe('#sendMessage', () => {
     describe('when response status is 201', () => {
       it('marks the message with sended', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -580,7 +587,8 @@ describe('Landbot plugin', () => {
       })
 
       it('logs the success message', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -642,7 +650,8 @@ describe('Landbot plugin', () => {
 
           licensee.cartDefault = 'go2go'
 
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
@@ -714,7 +723,8 @@ describe('Landbot plugin', () => {
 
       describe('when message is location', () => {
         it('sends the message', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
@@ -786,7 +796,8 @@ describe('Landbot plugin', () => {
       describe('when message is file', () => {
         describe('when is image', () => {
           it('sends the message', async () => {
-            const contact = await Contact.create(
+            const contactRepository = new ContactRepositoryDatabase()
+            const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
                 talkingWithChatBot: true,
@@ -856,7 +867,8 @@ describe('Landbot plugin', () => {
 
         describe('when is video', () => {
           it('sends the message', async () => {
-            const contact = await Contact.create(
+            const contactRepository = new ContactRepositoryDatabase()
+            const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
                 talkingWithChatBot: true,
@@ -926,7 +938,8 @@ describe('Landbot plugin', () => {
 
         describe('when is audio', () => {
           it('sends the message', async () => {
-            const contact = await Contact.create(
+            const contactRepository = new ContactRepositoryDatabase()
+            const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
                 talkingWithChatBot: true,
@@ -996,7 +1009,8 @@ describe('Landbot plugin', () => {
 
         describe('when is document', () => {
           it('sends the message', async () => {
-            const contact = await Contact.create(
+            const contactRepository = new ContactRepositoryDatabase()
+            const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
                 talkingWithChatBot: true,
@@ -1068,7 +1082,8 @@ describe('Landbot plugin', () => {
 
     describe('when response is not 201', () => {
       it('logs the error message', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             email: 'john@doe.com',
@@ -1143,7 +1158,8 @@ describe('Landbot plugin', () => {
         }),
       )
 
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: true,

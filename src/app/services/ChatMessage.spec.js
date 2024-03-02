@@ -1,15 +1,12 @@
 const transformChatBody = require('./ChatMessage')
-const Contact = require('@models/Contact')
 const Body = require('@models/Body')
 const Rocketchat = require('../plugins/chats/Rocketchat')
 const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { body: bodyFactory } = require('@factories/body')
-const { contactWithWhatsappWindowClosed } = require('@repositories/contact')
 const { contact: contactFactory } = require('@factories/contact')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-
-jest.mock('@repositories/contact')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 describe('transformChatBody', () => {
   let licensee
@@ -44,7 +41,7 @@ describe('transformChatBody', () => {
         ]
       })
 
-    contactWithWhatsappWindowClosed.mockResolvedValue(false)
+    jest.spyOn(ContactRepositoryDatabase.prototype, 'contactWithWhatsappWindowClosed').mockResolvedValue(false)
 
     const body = await Body.create(
       bodyFactory.build({
@@ -82,7 +79,7 @@ describe('transformChatBody', () => {
         ]
       })
 
-    contactWithWhatsappWindowClosed.mockResolvedValue(true)
+    jest.spyOn(ContactRepositoryDatabase.prototype, 'contactWithWhatsappWindowClosed').mockResolvedValue(true)
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     const licensee = await licenseeRepository.create(
@@ -96,7 +93,8 @@ describe('transformChatBody', () => {
       }),
     )
 
-    const contact = await Contact.create(contactFactory.build({ licensee: licensee }))
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact = await contactRepository.create(contactFactory.build({ licensee: licensee }))
 
     const body = await Body.create(
       bodyFactory.build({
@@ -128,7 +126,7 @@ describe('transformChatBody', () => {
         return [{ _id: 'KSDF656DSD91NSE', contact: { _id: 'id-contact-1' }, kind: 'template' }]
       })
 
-    contactWithWhatsappWindowClosed.mockResolvedValue(true)
+    jest.spyOn(ContactRepositoryDatabase.prototype, 'contactWithWhatsappWindowClosed').mockResolvedValue(true)
 
     const body = await Body.create(
       bodyFactory.build({

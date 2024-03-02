@@ -1,4 +1,4 @@
-const Contact = require('@models/Contact')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { check, validationResult } = require('express-validator')
 const { sanitizeExpressErrors, sanitizeModelErrors } = require('../helpers/SanitizeErrors')
 const _ = require('lodash')
@@ -65,39 +65,35 @@ class ContactsController {
       plugin_cart_id,
     } = req.body
 
-    const contact = new Contact({
-      name,
-      number,
-      type,
-      talkingWithChatBot,
-      licensee,
-      waId,
-      landbotId,
-      email,
-      address,
-      address_number,
-      address_complement,
-      neighborhood,
-      city,
-      cep,
-      uf,
-      delivery_tax,
-      plugin_cart_id,
-    })
-
-    const validation = contact.validateSync()
-
     try {
-      if (validation) {
-        return res.status(422).json({ errors: sanitizeModelErrors(validation.errors) })
-      } else {
-        await contact.save()
-      }
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create({
+        name,
+        number,
+        type,
+        talkingWithChatBot,
+        licensee,
+        waId,
+        landbotId,
+        email,
+        address,
+        address_number,
+        address_complement,
+        neighborhood,
+        city,
+        cep,
+        uf,
+        delivery_tax,
+        plugin_cart_id,
+      })
 
       await queueServer.addJob('send-contact-to-pagarme', { contactId: contact._id.toString() })
 
       res.status(201).send(contact)
     } catch (err) {
+      if ('errors' in err) {
+        return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
+      }
       res.status(500).send({ errors: { message: err.toString() } })
     }
   }
@@ -106,14 +102,15 @@ class ContactsController {
     const fields = permit(req.body)
     delete fields.licensee
 
+    const contactRepository = new ContactRepositoryDatabase()
     try {
-      await Contact.updateOne({ _id: req.params.id }, { $set: fields }, { runValidators: true })
+      await contactRepository.update(req.params.id, { ...fields })
     } catch (err) {
       return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
     }
 
     try {
-      const contact = await Contact.findOne({ _id: req.params.id })
+      const contact = await contactRepository.findFirst({ _id: req.params.id })
 
       await queueServer.addJob('send-contact-to-pagarme', { contactId: contact._id.toString() })
 
@@ -125,7 +122,8 @@ class ContactsController {
 
   async show(req, res) {
     try {
-      const contact = await Contact.findOne({ _id: req.params.id }).populate('licensee')
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.findFirst({ _id: req.params.id }, ['licensee'])
 
       res.status(200).send(contact)
     } catch (err) {

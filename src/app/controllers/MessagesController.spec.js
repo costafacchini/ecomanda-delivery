@@ -1,6 +1,5 @@
 const User = require('@models/User')
 const Message = require('@models/Message')
-const Contact = require('@models/Contact')
 const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
@@ -9,6 +8,7 @@ const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 describe('messengers controller', () => {
   let token
@@ -68,8 +68,9 @@ describe('messengers controller', () => {
         const licensee = await licenseeRepository.create(licenseeFactory.build())
         const another_licensee = await licenseeRepository.create(licenseeFactory.build())
 
-        const contact = await Contact.create(contactFactory.build({ licensee }))
-        const another_contact = await Contact.create(contactFactory.build({ licensee }))
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(contactFactory.build({ licensee }))
+        const another_contact = await contactRepository.create(contactFactory.build({ licensee }))
 
         await Message.create(messageFactory.build({ licensee, contact }))
         await Message.create(messageFactory.build({ licensee, contact, createdAt: new Date(2021, 5, 30, 0, 0, 0) }))

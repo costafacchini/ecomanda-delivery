@@ -1,10 +1,10 @@
-const Contact = require('@models/Contact')
 const request = require('supertest')
 const mongoServer = require('../../../../.jest/utils')
 const { expressServer } = require('../../../../.jest/server-express')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 describe('addresses controller', () => {
   let licensee
@@ -39,7 +39,8 @@ describe('addresses controller', () => {
   describe('update', () => {
     describe('response', () => {
       it('returns status 200 and the contact address data if the update is successful', async () => {
-        await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        await contactRepository.create(
           contactFactory.build({
             number: '5511990283745',
             name: 'John Doe',
@@ -86,11 +87,14 @@ describe('addresses controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurred when update the contact', async () => {
-        const contactFindOneSpy = jest.spyOn(Contact, 'findOne').mockImplementation(() => {
-          throw new Error('some error')
-        })
+        const contactFindOneSpy = jest
+          .spyOn(ContactRepositoryDatabase.prototype, 'findFirst')
+          .mockImplementation(() => {
+            throw new Error('some error')
+          })
 
-        await Contact.create(contactFactory.build({ number: '5511990283745', licensee }))
+        const contactRepository = new ContactRepositoryDatabase()
+        await contactRepository.create(contactFactory.build({ number: '5511990283745', licensee }))
 
         await request(expressServer)
           .post(`/api/v1/contacts/address/11990283745?token=${licensee.apiToken}`)
@@ -108,7 +112,8 @@ describe('addresses controller', () => {
   describe('show', () => {
     describe('response', () => {
       it('returns status 200 and message if contact exists', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             type: '@c.us',
@@ -154,11 +159,14 @@ describe('addresses controller', () => {
       })
 
       it('returns status 500 and message if occurs another error', async () => {
-        const contactFindOneSpy = jest.spyOn(Contact, 'findOne').mockImplementation(() => {
-          throw new Error('some error')
-        })
+        const contactFindOneSpy = jest
+          .spyOn(ContactRepositoryDatabase.prototype, 'findFirst')
+          .mockImplementation(() => {
+            throw new Error('some error')
+          })
 
-        const contact = await Contact.create(contactFactory.build({ number: '5511990283745', licensee }))
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(contactFactory.build({ number: '5511990283745', licensee }))
 
         await request(expressServer)
           .get(`/api/v1/contacts/address/${contact.number}?token=${licensee.apiToken}`)

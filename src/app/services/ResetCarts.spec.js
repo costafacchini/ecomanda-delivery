@@ -1,10 +1,10 @@
 const resetCarts = require('./ResetCarts')
-const Contact = require('@models/Contact')
 const mongoServer = require('.jest/utils')
 const { licenseeComplete: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { cart: cartFactory } = require('@factories/cart')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { CartRepositoryDatabase } = require('@repositories/cart')
 const moment = require('moment')
 
@@ -25,7 +25,8 @@ describe('resetCarts', () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
 
-      const contact = await Contact.create(contactFactory.build({ licensee }))
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee }))
 
       const cartRepository = new CartRepositoryDatabase()
       const cartOpenedOnLimitEnding1 = await cartRepository.create(

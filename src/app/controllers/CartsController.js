@@ -1,13 +1,12 @@
 const _ = require('lodash')
 const NormalizePhone = require('@helpers/NormalizePhone')
 const { createTextMessageInsteadInteractive } = require('@repositories/message')
-const { createContact } = require('@repositories/contact')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { scheduleSendMessageToMessenger } = require('@repositories/messenger')
 const { parseCart } = require('@helpers/ParseTriggerText')
 const createCartAdapter = require('../plugins/carts/adapters/factory')
 const cartFactory = require('@plugins/carts/factory')
 const { publishMessage } = require('@config/rabbitmq')
-const { getContactByNumber } = require('@repositories/contact')
 const { CartRepositoryDatabase } = require('@repositories/cart')
 
 function permit(fields) {
@@ -47,13 +46,14 @@ class CartsController {
     if (!name) name = req.query.name
 
     try {
-      let cartContact = await getContactByNumber(contact, req.licensee._id)
+      const contactRepository = new ContactRepositoryDatabase()
+      let cartContact = await contactRepository.getContactByNumber(contact, req.licensee._id)
       if (!cartContact) {
         if (!name) name = contact
 
         const normalizedPhone = new NormalizePhone(contact)
 
-        cartContact = await createContact({
+        cartContact = await contactRepository.create({
           licensee: req.licensee._id,
           number: normalizedPhone.number,
           type: normalizedPhone.type,
@@ -159,7 +159,8 @@ class CartsController {
     delete fields.contact
 
     try {
-      const contact = await getContactByNumber(req.params.contact, req.licensee._id)
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.getContactByNumber(req.params.contact, req.licensee._id)
       if (!contact) {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
       }
@@ -192,7 +193,8 @@ class CartsController {
 
   async show(req, res) {
     try {
-      const contact = await getContactByNumber(req.params.contact, req.licensee._id)
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.getContactByNumber(req.params.contact, req.licensee._id)
 
       if (!contact) {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
@@ -215,7 +217,8 @@ class CartsController {
 
   async close(req, res) {
     try {
-      const contact = await getContactByNumber(req.params.contact, req.licensee._id)
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.getContactByNumber(req.params.contact, req.licensee._id)
 
       if (!contact) {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
@@ -240,7 +243,8 @@ class CartsController {
 
   async addItem(req, res) {
     try {
-      const contact = await getContactByNumber(req.params.contact, req.licensee._id)
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.getContactByNumber(req.params.contact, req.licensee._id)
 
       if (!contact) {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
@@ -272,7 +276,8 @@ class CartsController {
 
   async removeItem(req, res) {
     try {
-      const contact = await getContactByNumber(req.params.contact, req.licensee._id)
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.getContactByNumber(req.params.contact, req.licensee._id)
 
       if (!contact) {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
@@ -298,7 +303,8 @@ class CartsController {
 
   async send(req, res) {
     try {
-      const contact = await getContactByNumber(req.params.contact, req.licensee._id)
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.getContactByNumber(req.params.contact, req.licensee._id)
 
       if (!contact) {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
@@ -345,7 +351,8 @@ class CartsController {
 
   async getCart(req, res) {
     try {
-      const contact = await getContactByNumber(req.params.contact, req.licensee._id)
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.getContactByNumber(req.params.contact, req.licensee._id)
 
       if (!contact) {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
@@ -369,7 +376,8 @@ class CartsController {
 
   async getPayment(req, res) {
     try {
-      const contact = await getContactByNumber(req.params.contact, req.licensee._id)
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.getContactByNumber(req.params.contact, req.licensee._id)
 
       if (!contact) {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })

@@ -4,6 +4,7 @@ class QueryBuilder {
     this.filterByClause = []
     this.filterByIntervalClause = []
     this.filterByExpressionClause
+    this.filterByLessThanClause
   }
 
   sortBy(field, direction) {
@@ -25,6 +26,10 @@ class QueryBuilder {
 
   filterByExpression(fields, value) {
     this.filterByExpressionClause = { fields, value }
+  }
+
+  filterByLessThan(field, end) {
+    this.filterByLessThanClause = { field, end }
   }
 
   getQuery() {
@@ -70,6 +75,10 @@ class QueryBuilder {
         })
         this.query.or(expressionClauses)
       }
+    }
+
+    if (this.filterByLessThanClause) {
+      this.query.where(this.filterByLessThanClause.field).lt(this.filterByLessThanClause.end)
     }
 
     return this.query

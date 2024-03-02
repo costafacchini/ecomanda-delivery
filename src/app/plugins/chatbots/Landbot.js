@@ -2,13 +2,13 @@ const emoji = require('@helpers/Emoji')
 const NormalizePhone = require('@helpers/NormalizePhone')
 const { v4: uuidv4 } = require('uuid')
 const Message = require('@models/Message')
-const Contact = require('@models/Contact')
 const request = require('../../services/request')
 const Room = require('@models/Room')
 const Trigger = require('@models/Trigger')
 const cartFactory = require('@plugins/carts/factory')
 const { createMessage } = require('@repositories/message')
 const files = require('@helpers/Files')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 const closeRoom = async (contact) => {
   const room = await Room.findOne({ contact: contact._id, closed: false })
@@ -30,7 +30,8 @@ class Landbot {
 
     const normalizePhone = new NormalizePhone(customer.number)
 
-    const contact = await Contact.findOne({
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact = await contactRepository.findFirst({
       number: normalizePhone.number,
       type: normalizePhone.type,
       licensee: this.licensee._id,
@@ -138,7 +139,8 @@ class Landbot {
 
     const normalizePhone = new NormalizePhone(number)
 
-    const contact = await Contact.findOne({
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact = await contactRepository.findFirst({
       number: normalizePhone.number,
       type: normalizePhone.type,
       licensee: this.licensee._id,
@@ -242,7 +244,8 @@ class Landbot {
   }
 
   async dropConversation(contactId) {
-    const contact = await Contact.findById(contactId)
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact = await contactRepository.findFirst({ _id: contactId })
 
     const headers = {
       Authorization: `Token ${this.licensee.chatbotApiToken}`,

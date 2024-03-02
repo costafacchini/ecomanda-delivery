@@ -1,5 +1,5 @@
-const Contact = require('@models/Contact')
 const QueryBuilder = require('@queries/QueryBuilder')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 class ContactsQuery {
   constructor() {}
@@ -28,8 +28,18 @@ class ContactsQuery {
     this.expressionClause = value
   }
 
+  filterIntervalWaStartChat(startDate, endDate) {
+    this.startDateClause = startDate
+    this.endDateClause = endDate
+  }
+
+  filterWaStartChatLessThan(endDate) {
+    this.endDateClause = endDate
+  }
+
   async all() {
-    const query = new QueryBuilder(Contact)
+    const contactRepository = new ContactRepositoryDatabase()
+    const query = new QueryBuilder(contactRepository.model())
     query.sortBy('createdAt', 1)
 
     if (this.pageClause) query.page(this.pageClause, this.limitClause)
@@ -42,6 +52,11 @@ class ContactsQuery {
 
     if (this.expressionClause)
       query.filterByExpression(['name', 'email', 'number', 'waId', 'landbotId'], this.expressionClause)
+
+    if (this.startDateClause && this.endDateClause)
+      query.filterByInterval('wa_start_chat', this.startDateClause, this.endDateClause)
+
+    if (!this.startDateClause && this.endDateClause) query.filterByLessThan('wa_start_chat', this.endDateClause)
 
     return await query.getQuery().exec()
   }

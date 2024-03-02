@@ -1,11 +1,11 @@
 const files = require('@helpers/Files')
 const Message = require('@models/Message')
-const Contact = require('@models/Contact')
 const request = require('../../services/request')
 const mime = require('mime-types')
 const ChatsBase = require('./Base')
 const { createRoom, getRoomBy } = require('@repositories/room')
 const { createInteractiveMessages } = require('@repositories/message')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 const createSession = async (url, headers, contact, segments) => {
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })
@@ -165,7 +165,9 @@ class Crisp extends ChatsBase {
 
   async transfer(messageId, url) {
     const messageToSend = await Message.findById(messageId).populate('contact')
-    const contact = await Contact.findById(messageToSend.contact._id)
+
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact = await contactRepository.findFirst({ _id: messageToSend.contact._id })
 
     contact.talkingWithChatBot = false
     await contact.save()
@@ -206,7 +208,9 @@ class Crisp extends ChatsBase {
   async closeChat(messageId) {
     const message = await Message.findById(messageId).populate('contact').populate('licensee').populate('room')
     const licensee = message.licensee
-    const contact = await Contact.findById(message.contact._id)
+
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact = await contactRepository.findFirst({ _id: message.contact._id })
     const messages = []
 
     if (licensee.messageOnCloseChat) {

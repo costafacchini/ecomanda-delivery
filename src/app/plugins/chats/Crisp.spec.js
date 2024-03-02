@@ -1,6 +1,5 @@
 const Crisp = require('./Crisp')
 const Message = require('@models/Message')
-const Contact = require('@models/Contact')
 const Room = require('@models/Room')
 const Trigger = require('@models/Trigger')
 const fetchMock = require('fetch-mock')
@@ -12,6 +11,7 @@ const { room: roomFactory } = require('@factories/room')
 const { message: messageFactory } = require('@factories/message')
 const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -36,7 +36,8 @@ describe('Crisp plugin', () => {
 
   describe('#responseToMessages', () => {
     it('returns the response body transformed in messages', async () => {
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: true,
@@ -146,7 +147,8 @@ describe('Crisp plugin', () => {
     })
 
     it('returns the response body transformed in message to close-chat if event is "session:removed"', async () => {
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: true,
@@ -193,7 +195,8 @@ describe('Crisp plugin', () => {
     })
 
     it('returns the response body transformed in message to close-chat if event is "message:received" and namespace is "state:resolved"', async () => {
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: true,
@@ -243,7 +246,8 @@ describe('Crisp plugin', () => {
 
     describe('message types', () => {
       it('returns messages with file data if it is file', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -294,7 +298,8 @@ describe('Crisp plugin', () => {
       })
 
       it('returns messages with file data if it is audio', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -345,7 +350,8 @@ describe('Crisp plugin', () => {
       })
 
       it('returns messages with file data if it is audio [filename = url]', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -395,7 +401,8 @@ describe('Crisp plugin', () => {
       })
 
       it('returns empty data if kind is unknown', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -442,7 +449,8 @@ describe('Crisp plugin', () => {
       })
 
       it('returns messages with interactive data if it is text with trigger expression', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -517,7 +525,8 @@ describe('Crisp plugin', () => {
       })
 
       it('returns message of kind template if type is text and has {{ and }}', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -575,7 +584,8 @@ describe('Crisp plugin', () => {
           }),
         )
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -690,7 +700,8 @@ describe('Crisp plugin', () => {
           }),
         )
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -768,7 +779,8 @@ describe('Crisp plugin', () => {
             }),
           )
 
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
@@ -840,7 +852,8 @@ describe('Crisp plugin', () => {
 
       describe('when message is for group', () => {
         it('send message formatted to group', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'Grupo Teste',
               number: '5511989187726-1622497000@g.us',
@@ -938,7 +951,8 @@ describe('Crisp plugin', () => {
 
       describe('when message has a session and departament', () => {
         it('updates conversation to sets the segments', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               email: 'john@doe.com',
@@ -1016,7 +1030,8 @@ describe('Crisp plugin', () => {
 
       describe('when does not create session', () => {
         it('logs the error and does not send message', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               email: 'john@doe.com',
@@ -1064,7 +1079,8 @@ describe('Crisp plugin', () => {
 
       describe('when does not send message', () => {
         it('logs the error', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               email: 'john@doe.com',
@@ -1148,7 +1164,8 @@ describe('Crisp plugin', () => {
     describe('message types', () => {
       describe('when message is text', () => {
         it('sends the message with text', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               email: 'john@doe.com',
@@ -1216,7 +1233,8 @@ describe('Crisp plugin', () => {
 
       describe('when message is file', () => {
         it('sends the message with file', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               email: 'john@doe.com',
@@ -1304,7 +1322,8 @@ describe('Crisp plugin', () => {
 
       describe('when message is audio', () => {
         it('sends the message with audio', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               email: 'john@doe.com',
@@ -1396,7 +1415,8 @@ describe('Crisp plugin', () => {
   describe('#transfer', () => {
     it('changes the talking with chatbot in contact to false', async () => {
       jest.spyOn(Crisp.prototype, 'sendMessage').mockImplementation()
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           email: 'john@doe.com',
@@ -1420,13 +1440,15 @@ describe('Crisp plugin', () => {
       const crisp = new Crisp(licensee)
       await crisp.transfer(message._id, 'url')
 
-      const modifiedContact = await Contact.findById(contact._id)
+      const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
       expect(modifiedContact.talkingWithChatBot).toEqual(false)
     })
 
     it('sends message to chat', async () => {
       const sendMessageSpy = jest.spyOn(Crisp.prototype, 'sendMessage').mockImplementation()
-      const contact = await Contact.create(
+
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           email: 'john@doe.com',
@@ -1466,7 +1488,8 @@ describe('Crisp plugin', () => {
           }),
         )
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             email: 'john@doe.com',
@@ -1498,7 +1521,7 @@ describe('Crisp plugin', () => {
         const crisp = new Crisp(licensee)
         const messages = await crisp.closeChat(message._id)
 
-        const modifiedContact = await Contact.findById(contact._id)
+        const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
         expect(modifiedContact.talkingWithChatBot).toEqual(true)
 
         expect(messages.length).toEqual(0)
@@ -1518,7 +1541,8 @@ describe('Crisp plugin', () => {
           }),
         )
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             email: 'john@doe.com',
@@ -1550,7 +1574,7 @@ describe('Crisp plugin', () => {
         const crisp = new Crisp(licensee)
         const messages = await crisp.closeChat(message._id)
 
-        const modifiedContact = await Contact.findById(contact._id)
+        const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
         expect(modifiedContact.talkingWithChatBot).toEqual(true)
 
         expect(messages.length).toEqual(1)

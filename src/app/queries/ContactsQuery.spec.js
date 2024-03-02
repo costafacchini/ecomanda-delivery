@@ -1,9 +1,9 @@
 const ContactsQuery = require('@queries/ContactsQuery')
 const mongoServer = require('../../../.jest/utils')
-const Contact = require('@models/Contact')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 describe('ContactsQuery', () => {
   let licensee
@@ -20,8 +20,11 @@ describe('ContactsQuery', () => {
   })
 
   it('returns all contacts ordered by createdAt asc', async () => {
-    const contact1 = await Contact.create(contactFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 0) }))
-    const contact2 = await Contact.create(
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact1 = await contactRepository.create(
+      contactFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 0) }),
+    )
+    const contact2 = await contactRepository.create(
       contactFactory.build({
         number: '551183847642',
         licensee,
@@ -39,20 +42,21 @@ describe('ContactsQuery', () => {
 
   describe('about pagination', () => {
     it('returns all by page respecting the limit', async () => {
-      const contact1 = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact1 = await contactRepository.create(
         contactFactory.build({
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
         }),
       )
-      const contact2 = await Contact.create(
+      const contact2 = await contactRepository.create(
         contactFactory.build({
           number: '551183847642',
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 1),
         }),
       )
-      const contact3 = await Contact.create(
+      const contact3 = await contactRepository.create(
         contactFactory.build({
           number: '551164839723',
           licensee,
@@ -88,14 +92,15 @@ describe('ContactsQuery', () => {
 
   describe('filterByType', () => {
     it('returns contacts filtered by type', async () => {
-      const contact1 = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact1 = await contactRepository.create(
         contactFactory.build({
           type: '@c.us',
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
         }),
       )
-      const contact2 = await Contact.create(
+      const contact2 = await contactRepository.create(
         contactFactory.build({
           type: '@g.us',
           licensee,
@@ -115,7 +120,8 @@ describe('ContactsQuery', () => {
 
   describe('filterByTalkingWithChatbot', () => {
     it('returns contacts filtered by talking with chatbot', async () => {
-      const contact1 = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact1 = await contactRepository.create(
         contactFactory.build({
           number: '551190283745',
           talkingWithChatBot: false,
@@ -123,7 +129,7 @@ describe('ContactsQuery', () => {
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
         }),
       )
-      const contact2 = await Contact.create(
+      const contact2 = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: true,
           licensee,
@@ -143,7 +149,8 @@ describe('ContactsQuery', () => {
 
   describe('filterByLicensee', () => {
     it('returns contacts filtered by licensee', async () => {
-      const contact1 = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact1 = await contactRepository.create(
         contactFactory.build({
           licensee,
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
@@ -152,7 +159,7 @@ describe('ContactsQuery', () => {
 
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const anotherLicensee = await licenseeRepository.create(licenseeFactory.build({ name: 'Wolf e cia' }))
-      const contact2 = await Contact.create(
+      const contact2 = await contactRepository.create(
         contactFactory.build({
           licensee: anotherLicensee._id,
           createdAt: new Date(2021, 6, 3, 0, 0, 1),
@@ -171,8 +178,9 @@ describe('ContactsQuery', () => {
   })
 
   describe('filterByExpression', () => {
-    it('returns licensees filtered by expression on name, email, number, waId and landbotId', async () => {
-      const contact1 = await Contact.create(
+    it('returns contacts filtered by expression on name, email, number, waId and landbotId', async () => {
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact1 = await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           email: 'john@nothing.com',
@@ -182,7 +190,7 @@ describe('ContactsQuery', () => {
           createdAt: new Date(2021, 6, 3, 0, 0, 0),
         }),
       )
-      const contact2 = await Contact.create(
+      const contact2 = await contactRepository.create(
         contactFactory.build({
           name: 'Mary Jane',
           email: 'mary@doe.com',
@@ -194,7 +202,7 @@ describe('ContactsQuery', () => {
           createdAt: new Date(2021, 6, 3, 0, 0, 1),
         }),
       )
-      const contact3 = await Contact.create(
+      const contact3 = await contactRepository.create(
         contactFactory.build({
           name: 'Lizzy Black List',
           email: 'lizzy@blacklist.com',
@@ -238,6 +246,70 @@ describe('ContactsQuery', () => {
       expect(records.length).toEqual(1)
       expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact3._id })]))
       expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact1._id })]))
+      expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact2._id })]))
+    })
+  })
+
+  describe('filterIntervalWaStartChat', () => {
+    it('returns contacts filtered by wa start chat by interval', async () => {
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact1 = await contactRepository.create(
+        contactFactory.build({
+          licensee,
+          wa_start_chat: new Date(2021, 6, 5, 0, 0, 1),
+          createdAt: new Date(2021, 6, 3, 0, 0, 0),
+        }),
+      )
+      const contact2 = await contactRepository.create(
+        contactFactory.build({
+          licensee,
+          wa_start_chat: new Date(2021, 6, 5, 23, 59, 58),
+          createdAt: new Date(2021, 6, 3, 0, 0, 1),
+        }),
+      )
+      const contact3 = await contactRepository.create(
+        contactFactory.build({
+          licensee,
+          wa_start_chat: new Date(2021, 6, 6, 0, 0, 0),
+          createdAt: new Date(2021, 6, 3, 0, 0, 2),
+        }),
+      )
+
+      const contactsQuery = new ContactsQuery()
+      contactsQuery.filterIntervalWaStartChat(new Date(2021, 6, 5, 0, 0, 0), new Date(2021, 6, 5, 23, 59, 59))
+      let records = await contactsQuery.all()
+
+      expect(records.length).toEqual(2)
+      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact1._id })]))
+      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact2._id })]))
+      expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact3._id })]))
+    })
+  })
+
+  describe('filterWaStartChatLessThan', () => {
+    it('returns contacts filtered by start chat less than date', async () => {
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact1 = await contactRepository.create(
+        contactFactory.build({
+          licensee,
+          wa_start_chat: new Date(2021, 6, 5, 0, 0, 0),
+          createdAt: new Date(2021, 6, 3, 0, 0, 0),
+        }),
+      )
+      const contact2 = await contactRepository.create(
+        contactFactory.build({
+          licensee,
+          wa_start_chat: new Date(2021, 6, 5, 0, 0, 1),
+          createdAt: new Date(2021, 6, 3, 0, 0, 1),
+        }),
+      )
+
+      const contactsQuery = new ContactsQuery()
+      contactsQuery.filterWaStartChatLessThan(new Date(2021, 6, 5, 0, 0, 1))
+      let records = await contactsQuery.all()
+
+      expect(records.length).toEqual(1)
+      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact1._id })]))
       expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact2._id })]))
     })
   })

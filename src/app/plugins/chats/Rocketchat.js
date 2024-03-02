@@ -1,10 +1,10 @@
 const emoji = require('@helpers/Emoji')
 const Message = require('@models/Message')
-const Contact = require('@models/Contact')
 const Room = require('@models/Room')
 const request = require('../../services/request')
 const ChatsBase = require('./Base')
 const { createInteractiveMessages } = require('@repositories/message')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 const createVisitor = async (contact, token, url) => {
   const body = {
@@ -124,7 +124,9 @@ class Rocketchat extends ChatsBase {
 
   async transfer(messageId, url) {
     const messageToSend = await Message.findById(messageId).populate('contact')
-    const contact = await Contact.findById(messageToSend.contact._id)
+
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact = await contactRepository.findFirst({ _id: messageToSend.contact._id })
 
     contact.talkingWithChatBot = false
     await contact.save()
@@ -186,7 +188,10 @@ class Rocketchat extends ChatsBase {
   async closeChat(messageId) {
     const message = await Message.findById(messageId).populate('contact').populate('licensee').populate('room')
     const licensee = message.licensee
-    const contact = await Contact.findById(message.contact._id)
+
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact = await contactRepository.findFirst({ _id: message.contact._id })
+
     const room = await Room.findById(message.room._id)
     const messages = []
 

@@ -1,4 +1,3 @@
-const Contact = require('@models/Contact')
 const Message = require('@models/Message')
 const createChatbotPlugin = require('../plugins/chatbots/factory')
 const moment = require('moment-timezone')
@@ -6,6 +5,7 @@ const MessagesQuery = require('@queries/MessagesQuery')
 const { v4: uuidv4 } = require('uuid')
 const createMessengerPlugin = require('../plugins/messengers/factory')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 async function getLastMessageOfContact(contactId) {
   const messagesQuery = new MessagesQuery()
@@ -41,7 +41,12 @@ async function resetChatbots() {
   const licenseeRepository = new LicenseeRepositoryDatabase()
   const licensees = await licenseeRepository.find({ useChatbot: true, chatbotApiToken: { $ne: null } })
   for (const licensee of licensees) {
-    const contacts = await Contact.find({ licensee: licensee._id, talkingWithChatBot: true, landbotId: { $ne: null } })
+    const contactRepository = new ContactRepositoryDatabase()
+    const contacts = await contactRepository.find({
+      licensee: licensee._id,
+      talkingWithChatBot: true,
+      landbotId: { $ne: null },
+    })
     for (const contact of contacts) {
       const message = await getLastMessageOfContact(contact._id)
 

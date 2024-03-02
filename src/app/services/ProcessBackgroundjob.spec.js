@@ -1,6 +1,5 @@
 const processBackgroundjob = require('./ProcessBackgroundjob')
 const Backgroundjob = require('@models/Backgroundjob')
-const Contact = require('@models/Contact')
 const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { cart: cartFactory } = require('@factories/cart')
@@ -8,6 +7,7 @@ const { contact: contactFactory } = require('@factories/contact')
 const { backgroundjob: backgroundjobFactory } = require('@factories/backgroundjob')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const { CartRepositoryDatabase } = require('@repositories/cart')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 describe('processBackgroundjob', () => {
   beforeEach(async () => {
@@ -54,7 +54,10 @@ describe('processBackgroundjob', () => {
       it('responds with action with backgroundjob kind and cart_id', async () => {
         const licenseeRepository = new LicenseeRepositoryDatabase()
         const licensee = await licenseeRepository.create(licenseeFactory.build())
-        const contact = await Contact.create(contactFactory.build({ licensee }))
+
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(contactFactory.build({ licensee }))
+
         const cartRepository = new CartRepositoryDatabase()
         const cart = await cartRepository.create(cartFactory.build({ contact, licensee }))
 
@@ -88,7 +91,10 @@ describe('processBackgroundjob', () => {
       it('saves error information at backgroundjob', async () => {
         const licenseeRepository = new LicenseeRepositoryDatabase()
         const licensee = await licenseeRepository.create(licenseeFactory.build())
-        const contact = await Contact.create(contactFactory.build({ licensee }))
+
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(contactFactory.build({ licensee }))
+
         const cartRepository = new CartRepositoryDatabase()
         await cartRepository.create(cartFactory.build({ contact, licensee, concluded: true }))
 
