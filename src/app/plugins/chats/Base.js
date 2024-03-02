@@ -1,5 +1,5 @@
 const Trigger = require('@models/Trigger')
-const { getContactBy } = require('@repositories/contact')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { createMessage } = require('@repositories/message')
 const emoji = require('@helpers/Emoji')
 const { v4: uuidv4 } = require('uuid')
@@ -10,7 +10,8 @@ class ChatsBase {
   }
 
   async findContact(filters) {
-    return await getContactBy(filters)
+    const contactRepository = new ContactRepositoryDatabase()
+    return await contactRepository.findFirst(filters)
   }
 
   async responseToMessages(responseBody) {

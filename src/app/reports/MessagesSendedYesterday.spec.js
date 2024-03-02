@@ -1,5 +1,4 @@
 const mongoServer = require('../../../.jest/utils')
-const Contact = require('@models/Contact')
 const Message = require('@models/Message')
 const MessagesSendedYesterday = require('./MessagesSendedYesterday')
 const moment = require('moment')
@@ -7,6 +6,7 @@ const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 describe('MessagesSendedYesterday', () => {
   beforeEach(async () => {
@@ -20,7 +20,9 @@ describe('MessagesSendedYesterday', () => {
   it('returns the resume os messages sended yesterday', async () => {
     const licenseeRepository = new LicenseeRepositoryDatabase()
     const licensee1 = await licenseeRepository.create(licenseeFactory.build({ name: 'Alcateia', licenseKind: 'paid' }))
-    const contact1 = await Contact.create(contactFactory.build({ licensee: licensee1 }))
+
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact1 = await contactRepository.create(contactFactory.build({ licensee: licensee1 }))
     const messageOfYesterday1 = await Message.create(
       messageFactory.build({
         contact: contact1,
@@ -65,7 +67,7 @@ describe('MessagesSendedYesterday', () => {
     const licensee2 = await licenseeRepository.create(
       licenseeFactory.build({ name: 'Alcateia II', licenseKind: 'paid' }),
     )
-    const contact2 = await Contact.create(contactFactory.build({ licensee: licensee2 }))
+    const contact2 = await contactRepository.create(contactFactory.build({ licensee: licensee2 }))
     const messageOfYesterday4 = await Message.create(
       messageFactory.build({
         contact: contact2,

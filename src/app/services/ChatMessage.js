@@ -1,6 +1,6 @@
 const Body = require('@models/Body')
 const createChatPlugin = require('../plugins/chats/factory')
-const { contactWithWhatsappWindowClosed } = require('@repositories/contact')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { createMessageToWarnAboutWindowOfWhatsassHasExpired } = require('@repositories/message')
 
 async function transformChatBody(data) {
@@ -15,7 +15,8 @@ async function transformChatBody(data) {
 
   for (const message of messages) {
     if (licensee.useWhatsappWindow) {
-      const messageDoesNotHaveSended = await contactWithWhatsappWindowClosed(message.contact._id)
+      const contactRepository = new ContactRepositoryDatabase()
+      const messageDoesNotHaveSended = await contactRepository.contactWithWhatsappWindowClosed(message.contact._id)
       if (messageDoesNotHaveSended && message.kind !== 'template') {
         const messageToSend = await createMessageToWarnAboutWindowOfWhatsassHasExpired(message.contact, licensee)
 

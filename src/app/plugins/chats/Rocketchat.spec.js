@@ -1,6 +1,5 @@
 const Rocketchat = require('./Rocketchat')
 const Message = require('@models/Message')
-const Contact = require('@models/Contact')
 const Room = require('@models/Room')
 const Trigger = require('@models/Trigger')
 const fetchMock = require('fetch-mock')
@@ -12,6 +11,7 @@ const { room: roomFactory } = require('@factories/room')
 const { message: messageFactory } = require('@factories/message')
 const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -36,7 +36,8 @@ describe('Rocketchat plugin', () => {
 
   describe('#responseToMessage', () => {
     it('returns the response body transformed in message', async () => {
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: true,
@@ -177,7 +178,8 @@ describe('Rocketchat plugin', () => {
 
     describe('when the message is LivechatSession', () => {
       it('returns the response body transformed in message to close-chat', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -238,7 +240,8 @@ describe('Rocketchat plugin', () => {
   describe('#sendMessage', () => {
     describe('when response status is 200', () => {
       it('marks the message with sended', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -357,7 +360,8 @@ describe('Rocketchat plugin', () => {
       })
 
       it('logs the success message', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -454,7 +458,8 @@ describe('Rocketchat plugin', () => {
 
       describe('when message is for group', () => {
         it('send message formatted to group', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'Grupo Teste',
               number: '5511989187726-1622497000@g.us',
@@ -557,7 +562,8 @@ describe('Rocketchat plugin', () => {
 
       describe('when the message has a department', () => {
         it('transfers to departament and send message', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
@@ -672,7 +678,8 @@ describe('Rocketchat plugin', () => {
 
       describe('when message is file', () => {
         it('send message file', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
@@ -782,7 +789,8 @@ describe('Rocketchat plugin', () => {
 
       describe('when does not create visitor', () => {
         it('logs the error and does not send message', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               email: 'john@doe.com',
@@ -823,7 +831,8 @@ describe('Rocketchat plugin', () => {
 
       describe('when does not create room', () => {
         it('logs the error and does not send message', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               email: 'john@doe.com',
@@ -881,7 +890,8 @@ describe('Rocketchat plugin', () => {
 
       describe('when does not send message', () => {
         it('logs the error', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
@@ -975,7 +985,8 @@ describe('Rocketchat plugin', () => {
         })
 
         it('close room and retry send message if error includes room-closed', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
@@ -1105,7 +1116,8 @@ describe('Rocketchat plugin', () => {
     it('changes the talking with chatbot in contact to false', async () => {
       jest.spyOn(Rocketchat.prototype, 'sendMessage').mockImplementation()
 
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: true,
@@ -1128,14 +1140,15 @@ describe('Rocketchat plugin', () => {
       const rocketchat = new Rocketchat(licensee)
       await rocketchat.transfer(message._id, 'url')
 
-      const modifiedContact = await Contact.findById(contact._id)
+      const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
       expect(modifiedContact.talkingWithChatBot).toEqual(false)
     })
 
     it('sends message to chat', async () => {
       const sendMessageSpy = jest.spyOn(Rocketchat.prototype, 'sendMessage').mockImplementation()
 
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: true,
@@ -1163,7 +1176,8 @@ describe('Rocketchat plugin', () => {
 
   describe('#closeChat', () => {
     it('closes the room', async () => {
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: false,
@@ -1214,7 +1228,8 @@ describe('Rocketchat plugin', () => {
           }),
         )
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -1246,7 +1261,7 @@ describe('Rocketchat plugin', () => {
         const rocketchat = new Rocketchat(licensee)
         await rocketchat.closeChat(message._id)
 
-        const modifiedContact = await Contact.findById(contact._id)
+        const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
         expect(modifiedContact.talkingWithChatBot).toEqual(true)
       })
     })
@@ -1264,7 +1279,8 @@ describe('Rocketchat plugin', () => {
           }),
         )
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,

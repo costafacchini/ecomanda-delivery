@@ -1,6 +1,5 @@
 const Dialog = require('./Dialog')
 const Message = require('@models/Message')
-const Contact = require('@models/Contact')
 const Trigger = require('@models/Trigger')
 const Template = require('@models/Template')
 const Product = require('@models/Product')
@@ -22,6 +21,7 @@ const { cart: cartFactory } = require('@factories/cart')
 const { product: productFactory } = require('@factories/product')
 const { advanceTo, clear } = require('jest-date-mock')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { CartRepositoryDatabase } = require('@repositories/cart')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
@@ -51,7 +51,8 @@ describe('Dialog plugin', () => {
   describe('#responseToMessages', () => {
     describe('text', () => {
       it('returns the response body transformed in messages', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -104,7 +105,8 @@ describe('Dialog plugin', () => {
 
     describe('button', () => {
       it('returns the response body transformed in messages', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -161,7 +163,8 @@ describe('Dialog plugin', () => {
 
     describe('image', () => {
       it('returns the response body transformed in messages', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -232,7 +235,8 @@ describe('Dialog plugin', () => {
 
     describe('video', () => {
       it('returns the response body transformed in messages', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -303,7 +307,8 @@ describe('Dialog plugin', () => {
 
     describe('voice', () => {
       it('returns the response body transformed in messages', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -374,7 +379,8 @@ describe('Dialog plugin', () => {
 
     describe('audio', () => {
       it('returns the response body transformed in messages', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -445,7 +451,8 @@ describe('Dialog plugin', () => {
 
     describe('document', () => {
       it('returns the response body transformed in messages', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -516,7 +523,8 @@ describe('Dialog plugin', () => {
 
     describe('interactive list_reply', () => {
       it('returns the response body transformed in messages', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -591,7 +599,8 @@ describe('Dialog plugin', () => {
       })
 
       it('returns message with text if does not have trigger', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -650,7 +659,8 @@ describe('Dialog plugin', () => {
 
     describe('interactive button_reply', () => {
       it('returns the response body transformed in messages', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -724,7 +734,8 @@ describe('Dialog plugin', () => {
       })
 
       it('returns message with text if does not have trigger', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -782,7 +793,8 @@ describe('Dialog plugin', () => {
 
     describe('cart', () => {
       it('returns the response body transformed in messages and create new cart if contact has no cart opened', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -853,7 +865,8 @@ describe('Dialog plugin', () => {
       })
 
       it('returns the response body transformed in messages and updates the cart if contact has cart opened', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -921,7 +934,8 @@ describe('Dialog plugin', () => {
     })
 
     it('updates the contact if contact exists and name is different', async () => {
-      await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: false,
@@ -954,7 +968,7 @@ describe('Dialog plugin', () => {
       const dialog = new Dialog(licensee)
       await dialog.responseToMessages(responseBody)
 
-      const contactUpdated = await Contact.findOne({
+      const contactUpdated = await contactRepository.findFirst({
         number: '5511990283745',
         type: '@c.us',
         licensee: licensee._id,
@@ -964,7 +978,8 @@ describe('Dialog plugin', () => {
     })
 
     it('updates the contact if contact exists and waId is different', async () => {
-      await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: false,
@@ -997,7 +1012,7 @@ describe('Dialog plugin', () => {
       const dialog = new Dialog(licensee)
       await dialog.responseToMessages(responseBody)
 
-      const contactUpdated = await Contact.findOne({
+      const contactUpdated = await contactRepository.findFirst({
         number: '5511990283745',
         type: '@c.us',
         licensee: licensee._id,
@@ -1007,7 +1022,8 @@ describe('Dialog plugin', () => {
     })
 
     it('does not update the contact if name is undefined', async () => {
-      await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: false,
@@ -1039,7 +1055,7 @@ describe('Dialog plugin', () => {
       const dialog = new Dialog(licensee)
       await dialog.responseToMessages(responseBody)
 
-      const contactUpdated = await Contact.findOne({
+      const contactUpdated = await contactRepository.findFirst({
         number: '5511990283745',
         type: '@c.us',
         licensee: licensee._id,
@@ -1049,7 +1065,8 @@ describe('Dialog plugin', () => {
     })
 
     it('does not update the contact if wa_id is undefined', async () => {
-      await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: false,
@@ -1082,7 +1099,7 @@ describe('Dialog plugin', () => {
       const dialog = new Dialog(licensee)
       await dialog.responseToMessages(responseBody)
 
-      const contactUpdated = await Contact.findOne({
+      const contactUpdated = await contactRepository.findFirst({
         number: '5511990283745',
         type: '@c.us',
         licensee: licensee._id,
@@ -1092,7 +1109,8 @@ describe('Dialog plugin', () => {
     })
 
     it('updates the contact whatsapp start chat if field not filled', async () => {
-      await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: false,
@@ -1125,7 +1143,7 @@ describe('Dialog plugin', () => {
       const dialog = new Dialog(licensee)
       await dialog.responseToMessages(responseBody)
 
-      const contactUpdated = await Contact.findOne({
+      const contactUpdated = await contactRepository.findFirst({
         number: '5511990283745',
         type: '@c.us',
         licensee: licensee._id,
@@ -1135,7 +1153,8 @@ describe('Dialog plugin', () => {
     })
 
     it('does not update the contact whatsapp start chat if field already filled', async () => {
-      await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: false,
@@ -1169,7 +1188,7 @@ describe('Dialog plugin', () => {
       const dialog = new Dialog(licensee)
       await dialog.responseToMessages(responseBody)
 
-      const contactUpdated = await Contact.findOne({
+      const contactUpdated = await contactRepository.findFirst({
         number: '5511990283745',
         type: '@c.us',
         licensee: licensee._id,
@@ -1205,7 +1224,8 @@ describe('Dialog plugin', () => {
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
 
-        const contact = await Contact.findOne({
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.findFirst({
           number: '5593165392999',
           type: '@c.us',
           licensee: licensee._id,
@@ -1225,7 +1245,8 @@ describe('Dialog plugin', () => {
 
     describe('when the contact talking with chatbot', () => {
       it('returns the response body transformed in message with destination "to_chatbot"', async () => {
-        await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -1319,7 +1340,8 @@ describe('Dialog plugin', () => {
 
     describe('when the body has statuses', () => {
       it('fills the message sendedAt if status is sent', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -1361,7 +1383,8 @@ describe('Dialog plugin', () => {
       })
 
       it('fills the message deliveredAt if status is delivered', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -1403,7 +1426,8 @@ describe('Dialog plugin', () => {
       })
 
       it('fills the message readAt if status is read', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -1449,7 +1473,8 @@ describe('Dialog plugin', () => {
   describe('#sendMessage', () => {
     describe('when the message was sent', () => {
       it('marks the message with was sent and logs the success message', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -1513,7 +1538,8 @@ describe('Dialog plugin', () => {
 
       describe('when the message is image', () => {
         it('marks the message with sended and log the success message', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
@@ -1589,7 +1615,8 @@ describe('Dialog plugin', () => {
 
       describe('when the message is video', () => {
         it('marks the message with sended and log the success message', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
@@ -1665,7 +1692,8 @@ describe('Dialog plugin', () => {
 
       describe('when the message is audio', () => {
         it('marks the message with sended and log the success message', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
@@ -1742,7 +1770,8 @@ describe('Dialog plugin', () => {
 
       describe('when the message is document', () => {
         it('marks the message with sended and log the success message', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
@@ -1820,7 +1849,8 @@ describe('Dialog plugin', () => {
       describe('when the message is interactive', () => {
         describe('if triggerKind is multi_product', () => {
           it('marks the message with sended and log the success message', async () => {
-            const contact = await Contact.create(
+            const contactRepository = new ContactRepositoryDatabase()
+            const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
                 talkingWithChatBot: true,
@@ -1975,7 +2005,8 @@ describe('Dialog plugin', () => {
 
         describe('if triggerKind is single_product', () => {
           it('marks the message with sended and log the success message', async () => {
-            const contact = await Contact.create(
+            const contactRepository = new ContactRepositoryDatabase()
+            const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
                 talkingWithChatBot: true,
@@ -2086,7 +2117,8 @@ describe('Dialog plugin', () => {
 
         describe('if triggerKind is reply_button', () => {
           it('marks the message with sended and log the success message', async () => {
-            const contact = await Contact.create(
+            const contactRepository = new ContactRepositoryDatabase()
+            const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
                 talkingWithChatBot: true,
@@ -2237,7 +2269,8 @@ describe('Dialog plugin', () => {
 
         describe('if triggerKind is list_message', () => {
           it('marks the message with sended and log the success message', async () => {
-            const contact = await Contact.create(
+            const contactRepository = new ContactRepositoryDatabase()
+            const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
                 talkingWithChatBot: true,
@@ -2398,7 +2431,8 @@ describe('Dialog plugin', () => {
 
         describe('if triggerKind is text', () => {
           it('marks the message with sended and log the success message', async () => {
-            const contact = await Contact.create(
+            const contactRepository = new ContactRepositoryDatabase()
+            const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
                 talkingWithChatBot: true,
@@ -2475,7 +2509,8 @@ describe('Dialog plugin', () => {
 
         describe('if does not has a trigger', () => {
           it('send the message as text', async () => {
-            const contact = await Contact.create(
+            const contactRepository = new ContactRepositoryDatabase()
+            const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
                 talkingWithChatBot: true,
@@ -2565,7 +2600,8 @@ describe('Dialog plugin', () => {
 
           licensee.cartDefault = 'go2go'
 
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
@@ -2661,7 +2697,8 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
@@ -2775,7 +2812,8 @@ describe('Dialog plugin', () => {
 
     describe('when contact is invalid', () => {
       it('logs the error message', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -2818,7 +2856,8 @@ describe('Dialog plugin', () => {
 
     describe('when can not send the message', () => {
       it('logs the error message', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,

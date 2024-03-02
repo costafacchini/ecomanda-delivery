@@ -1,9 +1,9 @@
-const Contact = require('@models/Contact')
 const Room = require('@models/Room')
 const mongoServer = require('../../../.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 describe('Room', () => {
   let contact
@@ -13,7 +13,9 @@ describe('Room', () => {
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     const licensee = await licenseeRepository.create(licenseeFactory.build())
-    contact = await Contact.create(contactFactory.build({ licensee }))
+
+    const contactRepository = new ContactRepositoryDatabase()
+    contact = await contactRepository.create(contactFactory.build({ licensee }))
   })
 
   afterEach(async () => {

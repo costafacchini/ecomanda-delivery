@@ -1,6 +1,5 @@
 const processBackgroundjobGetPix = require('./ProcessBackgroundjobGetPix')
 const Backgroundjob = require('@models/Backgroundjob')
-const Contact = require('@models/Contact')
 const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { backgroundjob: backgroundjobFactory } = require('@factories/backgroundjob')
@@ -8,6 +7,7 @@ const { cart: cartFactory } = require('@factories/cart')
 const { contact: contactFactory } = require('@factories/contact')
 const Payment = require('@plugins/payments/PagarMe/Payment')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { CartRepositoryDatabase } = require('@repositories/cart')
 
 describe('processBackgroundjobGetPix', () => {
@@ -34,7 +34,9 @@ describe('processBackgroundjobGetPix', () => {
         licensee,
       }),
     )
-    const contact = await Contact.create(contactFactory.build({ licensee }))
+
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact = await contactRepository.create(contactFactory.build({ licensee }))
 
     const cartRepository = new CartRepositoryDatabase()
     const cart = await cartRepository.create(cartFactory.build({ contact, licensee }))
@@ -70,7 +72,8 @@ describe('processBackgroundjobGetPix', () => {
         }),
       )
 
-      const contact = await Contact.create(contactFactory.build({ licensee }))
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee }))
 
       const cartRepository = new CartRepositoryDatabase()
       const cart = await cartRepository.create(cartFactory.build({ contact, licensee }))
@@ -109,7 +112,8 @@ describe('processBackgroundjobGetPix', () => {
         }),
       )
 
-      const contact = await Contact.create(contactFactory.build({ licensee }))
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee }))
 
       const cartRepository = new CartRepositoryDatabase()
       const cart = await cartRepository.create(cartFactory.build({ contact, licensee }))

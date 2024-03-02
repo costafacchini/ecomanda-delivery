@@ -1,9 +1,9 @@
-const Contact = require('@models/Contact')
 const mongoServer = require('../../../.jest/utils')
 const { createRoom, getRoomBy } = require('@repositories/room')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 describe('room repository', () => {
   beforeEach(async () => {
@@ -19,7 +19,9 @@ describe('room repository', () => {
     it('creates a room', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
-      const contact = await Contact.create(contactFactory.build({ licensee }))
+
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee }))
 
       const room = await createRoom({
         contact,
@@ -37,14 +39,16 @@ describe('room repository', () => {
     it('returns one record by filter', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
-      const contact = await Contact.create(contactFactory.build({ licensee }))
+
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee }))
 
       await createRoom({
         roomId: '1234',
         contact,
       })
 
-      const anotherContact = await Contact.create(contactFactory.build({ licensee }))
+      const anotherContact = await contactRepository.create(contactFactory.build({ licensee }))
       await createRoom({
         roomId: '1234',
         contact: anotherContact,

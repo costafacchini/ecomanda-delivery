@@ -1,7 +1,7 @@
-const Contact = require('@models/Contact')
 const Integrationlog = require('@models/Integrationlog')
 const request = require('../../../services/request')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 const buildBody = (cart, contact, buildPaymentBuilder) => {
   return {
@@ -94,7 +94,9 @@ class Payment {
   async createPIX(cart, token) {
     const licenseeRepository = new LicenseeRepositoryDatabase()
     const licensee = await licenseeRepository.findFirst({ _id: cart.licensee._id })
-    const contact = await Contact.findById(cart.contact._id)
+
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact = await contactRepository.findFirst(cart.contact._id)
 
     const paymentBuilder = {
       build() {
@@ -134,7 +136,9 @@ class Payment {
   async createCreditCard(cart, token) {
     const licenseeRepository = new LicenseeRepositoryDatabase()
     const licensee = await licenseeRepository.findFirst({ _id: cart.licensee._id })
-    const contact = await Contact.findById(cart.contact._id)
+
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact = await contactRepository.findFirst(cart.contact._id)
 
     const paymentBuilder = {
       build() {

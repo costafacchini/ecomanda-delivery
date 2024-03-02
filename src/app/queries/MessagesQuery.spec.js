@@ -1,11 +1,11 @@
 const MessagesQuery = require('@queries/MessagesQuery')
 const mongoServer = require('../../../.jest/utils')
-const Contact = require('@models/Contact')
 const Message = require('@models/Message')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 describe('MessagesQuery', () => {
   let licensee
@@ -16,7 +16,9 @@ describe('MessagesQuery', () => {
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
-    contact = await Contact.create(contactFactory.build({ licensee }))
+
+    const contactRepository = new ContactRepositoryDatabase()
+    contact = await contactRepository.create(contactFactory.build({ licensee }))
   })
 
   afterEach(async () => {
@@ -183,7 +185,8 @@ describe('MessagesQuery', () => {
           }),
         )
 
-        const anotherContact = await Contact.create(contactFactory.build({ licensee }))
+        const contactRepository = new ContactRepositoryDatabase()
+        const anotherContact = await contactRepository.create(contactFactory.build({ licensee }))
         const anotherMessage = await Message.create(
           messageFactory.build({
             contact: anotherContact,
@@ -422,7 +425,8 @@ describe('MessagesQuery', () => {
           }),
         )
 
-        const anotherContact = await Contact.create(contactFactory.build({ licensee }))
+        const contactRepository = new ContactRepositoryDatabase()
+        const anotherContact = await contactRepository.create(contactFactory.build({ licensee }))
         await Message.create(
           messageFactory.build({
             contact: anotherContact,

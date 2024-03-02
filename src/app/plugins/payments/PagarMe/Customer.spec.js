@@ -1,11 +1,11 @@
 const Customer = require('./Customer')
-const Contact = require('@models/Contact')
 const Integrationlog = require('@models/Integrationlog')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../../.jest/utils')
 const { licenseeIntegrationPagarMe: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 describe('PagarMe/Customer plugin', () => {
   let licensee
@@ -32,7 +32,8 @@ describe('PagarMe/Customer plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             email: 'john@doe.com',
@@ -106,7 +107,8 @@ describe('PagarMe/Customer plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             email: 'john@doe.com',
@@ -155,7 +157,7 @@ describe('PagarMe/Customer plugin', () => {
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(1)
 
-        const contactUpdated = await Contact.findById(contact._id)
+        const contactUpdated = await contactRepository.findFirst({ _id: contact._id })
         expect(contactUpdated.customer_id).toEqual('23717165')
 
         integrationlogCreateSpy.mockRestore()
@@ -166,7 +168,8 @@ describe('PagarMe/Customer plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             email: 'john@doe.com',
@@ -230,14 +233,15 @@ describe('PagarMe/Customer plugin', () => {
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(1)
 
-        const contactUpdated = await Contact.findById(contact._id)
+        const contactUpdated = await contactRepository.findFirst({ _id: contact._id })
         expect(contactUpdated.address_id).toEqual('34224')
 
         integrationlogCreateSpy.mockRestore()
       })
 
       it('creates a record on integrationlog', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             email: 'john@doe.com',
@@ -300,7 +304,8 @@ describe('PagarMe/Customer plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             email: 'john@doe.com',
@@ -360,7 +365,8 @@ describe('PagarMe/Customer plugin', () => {
       })
 
       it('creates a record on integrationlog', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             email: 'john@doe.com',
@@ -425,7 +431,8 @@ describe('PagarMe/Customer plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             email: 'john@doe.com',
@@ -476,7 +483,8 @@ describe('PagarMe/Customer plugin', () => {
       })
 
       it('creates a record on integrationlog', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             email: 'john@doe.com',
@@ -535,7 +543,8 @@ describe('PagarMe/Customer plugin', () => {
           return { _id: '1234' }
         })
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             email: 'john@doe.com',
@@ -596,7 +605,8 @@ describe('PagarMe/Customer plugin', () => {
       })
 
       it('creates a record on integrationlog', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             email: 'john@doe.com',

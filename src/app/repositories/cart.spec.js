@@ -1,9 +1,9 @@
-const Contact = require('@models/Contact')
 const Cart = require('@models/Cart')
 const mongoServer = require('../../../.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { CartRepositoryDatabase } = require('@repositories/cart')
 
 describe('cart repository', () => {
@@ -28,7 +28,9 @@ describe('cart repository', () => {
     it('creates a cart', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
-      const contact = await Contact.create(contactFactory.build({ licensee }))
+
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee }))
 
       const cartRepository = new CartRepositoryDatabase()
       const cart = await cartRepository.create({
@@ -61,7 +63,9 @@ describe('cart repository', () => {
     it('updates cart', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
-      const contact = await Contact.create(contactFactory.build({ licensee }))
+
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee }))
       const cartData = { contact, licensee, delivery_tax: 0 }
 
       const cartRepository = new CartRepositoryDatabase()
@@ -76,7 +80,9 @@ describe('cart repository', () => {
       it('generate exception with error', async () => {
         const licenseeRepository = new LicenseeRepositoryDatabase()
         const licensee = await licenseeRepository.create(licenseeFactory.build())
-        const contact = await Contact.create(contactFactory.build({ licensee }))
+
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(contactFactory.build({ licensee }))
         const cartData = { contact, licensee }
 
         const cartRepository = new CartRepositoryDatabase()
@@ -94,7 +100,9 @@ describe('cart repository', () => {
     it('finds a licensee', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
-      const contact = await Contact.create(contactFactory.build({ licensee }))
+
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee }))
 
       const cartRepository = new CartRepositoryDatabase()
       await cartRepository.create({
@@ -125,7 +133,9 @@ describe('cart repository', () => {
     it('delete all cart', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
-      const contact = await Contact.create(contactFactory.build({ licensee }))
+
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee }))
       const cartData = { contact, licensee }
 
       const cartRepository = new CartRepositoryDatabase()

@@ -1,5 +1,5 @@
-const Contact = require('@models/Contact')
 const NormalizePhone = require('@helpers/NormalizePhone')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 const _ = require('lodash')
 
 function permit(fields) {
@@ -26,7 +26,9 @@ class AdressesController {
     try {
       const normalizedPhone = new NormalizePhone(req.params.number)
       const licensee = req.licensee._id
-      contact = await Contact.findOne({
+
+      const contactRepository = new ContactRepositoryDatabase()
+      contact = await contactRepository.findFirst({
         number: normalizedPhone.number,
         licensee: licensee._id,
         type: normalizedPhone.type,
@@ -39,20 +41,26 @@ class AdressesController {
       return res.status(404).send({ errors: { message: `Contato ${req.params.number} não encontrado` } })
     }
 
-    await Contact.updateOne({ _id: contact._id }, { $set: fields }, { runValidators: true })
+    const contactRepository = new ContactRepositoryDatabase()
+    await contactRepository.update(contact._id, { ...fields })
 
-    res.status(200).send(await Contact.findOne({ _id: contact._id }))
+    res.status(200).send(await contactRepository.findFirst({ _id: contact._id }))
   }
 
   async show(req, res) {
     try {
       const normalizedPhone = new NormalizePhone(req.params.number)
       const licensee = req.licensee._id
-      const contact = await Contact.findOne({
-        number: normalizedPhone.number,
-        licensee: licensee._id,
-        type: normalizedPhone.type,
-      }).populate('licensee')
+
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.findFirst(
+        {
+          number: normalizedPhone.number,
+          licensee: licensee._id,
+          type: normalizedPhone.type,
+        },
+        ['licensee'],
+      )
 
       if (!contact) {
         return res.status(404).send({ errors: { message: `Contato ${req.params.number} não encontrado` } })

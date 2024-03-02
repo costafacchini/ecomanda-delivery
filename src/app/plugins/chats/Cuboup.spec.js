@@ -1,6 +1,5 @@
 const Cuboup = require('./Cuboup')
 const Message = require('@models/Message')
-const Contact = require('@models/Contact')
 const Trigger = require('@models/Trigger')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
@@ -10,6 +9,7 @@ const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
 const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -34,7 +34,8 @@ describe('Cuboup plugin', () => {
 
   describe('#responseToMessages', () => {
     it('returns the response body transformed in messages', async () => {
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: true,
@@ -186,7 +187,8 @@ describe('Cuboup plugin', () => {
 
     describe('message types', () => {
       it('returns messages with file data if it is file', async () => {
-        await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -220,7 +222,8 @@ describe('Cuboup plugin', () => {
       })
 
       it('returns messages with coordinates data if it is location', async () => {
-        await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -277,7 +280,8 @@ describe('Cuboup plugin', () => {
       })
 
       it('returns messages with interactive data if it is text with trigger expression', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -337,7 +341,8 @@ describe('Cuboup plugin', () => {
       })
 
       it('returns message of kind template if type is text and has {{ and }}', async () => {
-        await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -372,7 +377,8 @@ describe('Cuboup plugin', () => {
   describe('#sendMessage', () => {
     describe('when response status is 200', () => {
       it('marks the message with sended', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -425,7 +431,8 @@ describe('Cuboup plugin', () => {
       })
 
       it('logs the success message', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -481,7 +488,8 @@ describe('Cuboup plugin', () => {
 
       describe('when message is for group', () => {
         it('send message formatted to group', async () => {
-          const contact = await Contact.create({
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create({
             name: 'Grupo Teste',
             number: '5511989187726-1622497000@g.us',
             type: '@g.us',
@@ -537,7 +545,8 @@ describe('Cuboup plugin', () => {
 
     describe('when response is not 200', () => {
       it('logs the error message and save error on message', async () => {
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: true,
@@ -604,7 +613,8 @@ describe('Cuboup plugin', () => {
     describe('message types', () => {
       describe('when message is location', () => {
         it('sends the message with location', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
@@ -658,7 +668,8 @@ describe('Cuboup plugin', () => {
 
       describe('when message is text', () => {
         it('sends the message with text', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
@@ -710,7 +721,8 @@ describe('Cuboup plugin', () => {
 
       describe('when message is file', () => {
         it('sends the message with file', async () => {
-          const contact = await Contact.create(
+          const contactRepository = new ContactRepositoryDatabase()
+          const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
               talkingWithChatBot: true,
@@ -769,7 +781,8 @@ describe('Cuboup plugin', () => {
   describe('#transfer', () => {
     it('changes the talking with chatbot in contact to false', async () => {
       jest.spyOn(Cuboup.prototype, 'sendMessage').mockImplementation()
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: true,
@@ -792,13 +805,14 @@ describe('Cuboup plugin', () => {
       const cuboup = new Cuboup(licensee)
       await cuboup.transfer(message._id, 'url')
 
-      const modifiedContact = await Contact.findById(contact._id)
+      const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
       expect(modifiedContact.talkingWithChatBot).toEqual(false)
     })
 
     it('sends message to chat', async () => {
       const sendMessageSpy = jest.spyOn(Cuboup.prototype, 'sendMessage').mockImplementation()
-      const contact = await Contact.create(
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
           talkingWithChatBot: true,
@@ -837,7 +851,8 @@ describe('Cuboup plugin', () => {
           }),
         )
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -862,7 +877,7 @@ describe('Cuboup plugin', () => {
         const cuboup = new Cuboup(licensee)
         await cuboup.closeChat(message._id)
 
-        const modifiedContact = await Contact.findById(contact._id)
+        const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
         expect(modifiedContact.talkingWithChatBot).toEqual(true)
       })
     })
@@ -880,7 +895,8 @@ describe('Cuboup plugin', () => {
           }),
         )
 
-        const contact = await Contact.create(
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
             talkingWithChatBot: false,
@@ -905,7 +921,7 @@ describe('Cuboup plugin', () => {
         const cuboup = new Cuboup(licensee)
         const messages = await cuboup.closeChat(message._id)
 
-        const modifiedContact = await Contact.findById(contact._id)
+        const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
         expect(modifiedContact.talkingWithChatBot).toEqual(true)
 
         expect(messages.length).toEqual(1)

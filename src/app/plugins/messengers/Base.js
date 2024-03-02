@@ -1,5 +1,5 @@
 const Message = require('@models/Message')
-const { createContact, getContactBy } = require('@repositories/contact')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { getAllTriggerBy } = require('@repositories/trigger')
 const { createMessage } = require('@repositories/message')
 const { CartRepositoryDatabase } = require('@repositories/cart')
@@ -44,7 +44,8 @@ class MessengersBase {
   }
 
   async findContact(number, type) {
-    return await getContactBy({
+    const contactRepository = new ContactRepositoryDatabase()
+    return await contactRepository.findFirst({
       number: number,
       type: type,
       licensee: this.licensee._id,
@@ -78,7 +79,8 @@ class MessengersBase {
     this.parseContactData(responseBody)
     let contact = await this.findContact(this.contactData.number, this.contactData.type)
     if (!contact) {
-      contact = await createContact({
+      const contactRepository = new ContactRepositoryDatabase()
+      contact = await contactRepository.create({
         name: this.contactData.name,
         number: this.contactData.number,
         type: this.contactData.type,

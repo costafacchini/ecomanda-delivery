@@ -1,7 +1,7 @@
 const Backgroundjob = require('@models/Backgroundjob')
-const Contact = require('@models/Contact')
 const PagarMe = require('@plugins/payments/PagarMe')
 const { CartRepositoryDatabase } = require('@repositories/cart')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
 
 async function processBackgroundjobChargeCreditCard(data) {
   const { jobId, credit_card_data, cart_id: cartId } = data
@@ -11,7 +11,8 @@ async function processBackgroundjobChargeCreditCard(data) {
   try {
     const cartRepository = new CartRepositoryDatabase()
     const cart = await cartRepository.findFirst({ _id: cartId }, ['contact'])
-    const contact = await Contact.findById(cart.contact)
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact = await contactRepository.findFirst({ _id: cart.contact })
     const card = contact.credit_cards.find(
       (card) =>
         card.first_six_digits == credit_card_data.first_six_digits &&

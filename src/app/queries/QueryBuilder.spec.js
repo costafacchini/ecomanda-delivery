@@ -86,4 +86,15 @@ describe('QueryBuilder', () => {
       })
     })
   })
+
+  describe('filterByLessThan', () => {
+    it('should return a query with filterByLessThan', () => {
+      const query = new QueryBuilder(Message)
+      query.filterByLessThan('createdAt', new Date('2019-01-31'))
+
+      expect(query.getQuery()._conditions).toEqual({
+        createdAt: { $lt: new Date('2019-01-31') },
+      })
+    })
+  })
 })
