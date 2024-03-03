@@ -21,7 +21,7 @@ describe('Fractional products', () => {
             product_retailer_id: '1234',
             quantity: 1,
             unit_price: 80,
-            note: 'Pizza - 5599',
+            note: 'Pizza - #5599',
           },
         ]
 
@@ -43,7 +43,7 @@ describe('Fractional products', () => {
               name: 'Pizza grande inteira 1',
               quantity: 1,
               unit_price: 80,
-              note: 'Pizza - 5599',
+              note: 'Pizza - #5599',
               product_fb_id: '',
             },
           ],
@@ -55,10 +55,11 @@ describe('Fractional products', () => {
       it('maitains the item as original', () => {
         const items = [
           {
-            name: 'Pizza grande inteira 2',
+            name: 'Refrigerante 2 litros',
             product_retailer_id: '1235',
             quantity: 1,
-            unit_price: 80,
+            note: 'Guaraná 2 litros',
+            unit_price: 12,
           },
         ]
 
@@ -68,10 +69,11 @@ describe('Fractional products', () => {
         expect(itemsParsed.length).toEqual(1)
 
         expect(itemsParsed[0]).toEqual({
-          name: 'Pizza grande inteira 2',
+          name: 'Refrigerante 2 litros',
           product_retailer_id: '1235',
           quantity: 1,
-          unit_price: 80,
+          unit_price: 12,
+          note: 'Guaraná 2 litros',
         })
       })
     })
@@ -92,7 +94,7 @@ describe('Fractional products', () => {
             product_retailer_id: '1234',
             quantity: 1,
             unit_price: 40,
-            note: 'Pizza - 5647',
+            note: 'Pizza - #5647',
             product_fb_id: '',
           },
           {
@@ -100,7 +102,7 @@ describe('Fractional products', () => {
             product_retailer_id: '1235',
             quantity: 1,
             unit_price: 45,
-            note: 'Pizza - 5647',
+            note: 'Pizza - #5647',
             product_fb_id: '',
           },
         ]
@@ -123,7 +125,7 @@ describe('Fractional products', () => {
               name: '1/2 Frango com catupiry',
               quantity: 1,
               unit_price: 40,
-              note: 'Pizza - 5647',
+              note: 'Pizza - #5647',
               product_fb_id: '',
             },
             {
@@ -131,7 +133,7 @@ describe('Fractional products', () => {
               name: '1/2 Bacon com milho',
               quantity: 1,
               unit_price: 45,
-              note: 'Pizza - 5647',
+              note: 'Pizza - #5647',
               product_fb_id: '',
             },
           ],
@@ -153,7 +155,7 @@ describe('Fractional products', () => {
             product_retailer_id: '1234',
             quantity: 1,
             unit_price: 20,
-            note: 'Pizza - 5699',
+            note: 'Pizza - #5699',
             product_fb_id: '',
           },
           {
@@ -161,7 +163,7 @@ describe('Fractional products', () => {
             product_retailer_id: '1235',
             quantity: 1,
             unit_price: 25,
-            note: 'Pizza - 5699',
+            note: 'Pizza - #5699',
             product_fb_id: '',
           },
           {
@@ -170,7 +172,7 @@ describe('Fractional products', () => {
             product_retailer_id: '1236',
             quantity: 1,
             unit_price: 30,
-            note: 'Pizza - 5699',
+            note: 'Pizza - #5699',
             product_fb_id: '',
           },
         ]
@@ -193,7 +195,7 @@ describe('Fractional products', () => {
               name: '1/3 Frango com catupiry',
               quantity: 1,
               unit_price: 20,
-              note: 'Pizza - 5699',
+              note: 'Pizza - #5699',
               product_fb_id: '',
             },
             {
@@ -201,7 +203,7 @@ describe('Fractional products', () => {
               name: '1/3 Bacon com milho',
               quantity: 1,
               unit_price: 25,
-              note: 'Pizza - 5699',
+              note: 'Pizza - #5699',
               product_fb_id: '',
             },
             {
@@ -209,7 +211,7 @@ describe('Fractional products', () => {
               name: '1/3 Bacon calabresa',
               quantity: 1,
               unit_price: 30,
-              note: 'Pizza - 5699',
+              note: 'Pizza - #5699',
               product_fb_id: '',
             },
           ],
@@ -231,7 +233,7 @@ describe('Fractional products', () => {
             product_retailer_id: '1234',
             quantity: 1,
             unit_price: 20,
-            note: 'Pizza - 9876',
+            note: 'Pizza - #9876',
             product_fb_id: '',
           },
           {
@@ -239,7 +241,7 @@ describe('Fractional products', () => {
             product_retailer_id: '1235',
             quantity: 1,
             unit_price: 25,
-            note: 'Pizza - 9876',
+            note: 'Pizza - #9876',
             product_fb_id: '',
           },
           {
@@ -247,7 +249,7 @@ describe('Fractional products', () => {
             product_retailer_id: '1236',
             quantity: 1,
             unit_price: 30,
-            note: 'Pizza - 9876',
+            note: 'Pizza - #9876',
             product_fb_id: '',
           },
           {
@@ -255,7 +257,7 @@ describe('Fractional products', () => {
             product_retailer_id: '1299',
             quantity: 1,
             unit_price: 30,
-            note: 'Pizza - 9876',
+            note: 'Pizza - #9876',
             product_fb_id: '',
           },
         ]
@@ -278,7 +280,7 @@ describe('Fractional products', () => {
               name: '1/4 Frango com catupiry',
               quantity: 1,
               unit_price: 20,
-              note: 'Pizza - 9876',
+              note: 'Pizza - #9876',
               product_fb_id: '',
             },
             {
@@ -286,7 +288,7 @@ describe('Fractional products', () => {
               name: '1/4 Bacon com milho',
               quantity: 1,
               unit_price: 25,
-              note: 'Pizza - 9876',
+              note: 'Pizza - #9876',
               product_fb_id: '',
             },
             {
@@ -294,7 +296,7 @@ describe('Fractional products', () => {
               name: '1/4 Bacon calabresa',
               quantity: 1,
               unit_price: 30,
-              note: 'Pizza - 9876',
+              note: 'Pizza - #9876',
               product_fb_id: '',
             },
             {
@@ -302,7 +304,7 @@ describe('Fractional products', () => {
               name: '1/4 Calabresa',
               quantity: 1,
               unit_price: 30,
-              note: 'Pizza - 9876',
+              note: 'Pizza - #9876',
               product_fb_id: '',
             },
           ],

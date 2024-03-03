@@ -53,7 +53,12 @@ class FractionalProducts {
   }
 
   hasIdOnNote(item) {
-    return item.note && item.note.replace(/[^0-9]/g, '') != ''
+    const indexOfIdentifier = item.note && item.note.indexOf('#')
+    if (!indexOfIdentifier || indexOfIdentifier < 0) return false
+
+    const expression = item.note.substring(indexOfIdentifier)
+
+    return expression.replace(/[^0-9]/g, '') != ''
   }
 
   getItemIdFromNote(note) {
