@@ -2177,9 +2177,9 @@
   integrity sha512-YATxVxgRqNH6nHEIsvg6k2Boc1JHI9ZbH5iWFFv/MTkchz3b1ieGDa5T0a9RznNdI0KhVbdbWSN+KWWrQZRxTw==
 
 "@types/node@*":
-  version "20.11.16"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.11.16.tgz#4411f79411514eb8e2926f036c86c9f0e4ec6708"
-  integrity sha512-gKb0enTmRCzXSSUJDq6/sPcqrfCv2mkkG6Jt/clpn5eiCbKTY+SgZUxo+p8ZKMof5dCp9vHQUAB7wOUTod22wQ==
+  version "20.11.25"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.11.25.tgz#0f50d62f274e54dd7a49f7704cc16bfbcccaf49f"
+  integrity sha512-TBHyJxk2b7HceLVGFcpAUjsa5zIdsPWlR6XHfyGzd0SFu+/NFgQgMAl96MSDZgQDvJAvV6BKsFOrt6zIL09JDw==
   dependencies:
     undici-types "~5.26.4"
 
@@ -2716,9 +2716,9 @@ binary-extensions@^2.0.0:
   integrity sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==
 
 bl@^6.0.7:
-  version "6.0.11"
-  resolved "https://registry.yarnpkg.com/bl/-/bl-6.0.11.tgz#e264651d5f4adaaedf1813c94642cb24d3d30aeb"
-  integrity sha512-Ok/NWrEA0mlEEbWzckkZVLq6Nv1m2xZ+i9Jq5hZ9Ph/YEcP5dExqls9wUzpluhQRPzdeT8oZNOXAytta6YN8pQ==
+  version "6.0.12"
+  resolved "https://registry.yarnpkg.com/bl/-/bl-6.0.12.tgz#77c35b96e13aeff028496c798b75389ddee9c7f8"
+  integrity sha512-EnEYHilP93oaOa2MnmNEjAcovPS3JlQZOyzGXi3EyEpPhm9qWvdDp7BmAVEVusGzp8LlwQK56Av+OkDoRjzE0w==
   dependencies:
     "@types/readable-stream" "^4.0.0"
     buffer "^6.0.3"
