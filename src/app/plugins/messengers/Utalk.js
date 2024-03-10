@@ -1,7 +1,7 @@
-const Message = require('@models/Message')
 const NormalizePhone = require('../../helpers/NormalizePhone')
 const request = require('../../services/request')
 const MessengersBase = require('./Base')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 class Utalk extends MessengersBase {
   constructor(licensee) {
@@ -108,7 +108,8 @@ class Utalk extends MessengersBase {
   }
 
   async sendMessage(messageId, url, token) {
-    const messageToSend = await Message.findById(messageId).populate('contact')
+    const messageRepository = new MessageRepositoryDatabase()
+    const messageToSend = await messageRepository.findFirst({ _id: messageId }, ['contact'])
 
     let body = {
       cmd: 'chat',

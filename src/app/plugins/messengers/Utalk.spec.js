@@ -1,5 +1,4 @@
 const Utalk = require('./Utalk')
-const Message = require('@models/Message')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
 const S3 = require('../storage/S3')
@@ -8,6 +7,7 @@ const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -65,7 +65,6 @@ describe('Utalk plugin', () => {
         const utalk = new Utalk(licensee)
         const messages = await utalk.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('text')
@@ -108,7 +107,6 @@ describe('Utalk plugin', () => {
         const utalk = new Utalk(licensee)
         const messages = await utalk.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('file')
@@ -175,7 +173,6 @@ describe('Utalk plugin', () => {
         const utalk = new Utalk(licensee)
         const messages = await utalk.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('text')
@@ -226,7 +223,6 @@ describe('Utalk plugin', () => {
         const utalk = new Utalk(licensee)
         const messages = await utalk.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('text')
@@ -424,7 +420,6 @@ describe('Utalk plugin', () => {
         expect(contact.licensee).toEqual(licensee._id)
         expect(contact.wa_start_chat).toEqual(undefined)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('text')
@@ -469,7 +464,6 @@ describe('Utalk plugin', () => {
         expect(contact.talkingWithChatBot).toEqual(licensee.useChatbot)
         expect(contact.licensee).toEqual(licensee._id)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('file')
@@ -516,7 +510,6 @@ describe('Utalk plugin', () => {
         const utalk = new Utalk(licensee)
         const messages = await utalk.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].destination).toEqual('to-chatbot')
 
         expect(messages.length).toEqual(1)
@@ -581,7 +574,8 @@ describe('Utalk plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
             text: 'Message to send',
@@ -625,7 +619,7 @@ describe('Utalk plugin', () => {
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(1)
 
-        const messageUpdated = await Message.findById(message._id)
+        const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
       })
 
@@ -639,7 +633,8 @@ describe('Utalk plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
             text: 'Message to send',
@@ -685,7 +680,8 @@ describe('Utalk plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               _id: '60958703f415ed4008748637',
               text: 'Message to send',
@@ -734,7 +730,7 @@ describe('Utalk plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(1)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
 
           expect(consoleInfoSpy).toHaveBeenCalledWith(
@@ -755,7 +751,8 @@ describe('Utalk plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
             text: 'Message to send',
@@ -798,7 +795,7 @@ describe('Utalk plugin', () => {
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(1)
 
-        const messageUpdated = await Message.findById(message._id)
+        const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(false)
         expect(messageUpdated.error).toEqual(
           '{"type":"send message","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","status":"whatsapp offline"}',

@@ -1,5 +1,4 @@
 const Landbot = require('./Landbot')
-const Message = require('@models/Message')
 const Trigger = require('@models/Trigger')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
@@ -15,6 +14,7 @@ const { advanceTo, clear } = require('jest-date-mock')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { CartRepositoryDatabase } = require('@repositories/cart')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -112,7 +112,6 @@ describe('Landbot plugin', () => {
 
       expect(messages.length).toEqual(5)
 
-      expect(messages[0]).toBeInstanceOf(Message)
       expect(messages[0].licensee).toEqual(licensee._id)
       expect(messages[0].contact).toEqual(contact._id)
       expect(messages[0].kind).toEqual('text')
@@ -125,7 +124,6 @@ describe('Landbot plugin', () => {
       expect(messages[0].longitude).toEqual(undefined)
       expect(messages[0].departament).toEqual(undefined)
 
-      expect(messages[1]).toBeInstanceOf(Message)
       expect(messages[1].licensee).toEqual(licensee._id)
       expect(messages[1].contact).toEqual(contact._id)
       expect(messages[1].kind).toEqual('file')
@@ -138,7 +136,6 @@ describe('Landbot plugin', () => {
       expect(messages[1].longitude).toEqual(undefined)
       expect(messages[1].departament).toEqual(undefined)
 
-      expect(messages[2]).toBeInstanceOf(Message)
       expect(messages[2].licensee).toEqual(licensee._id)
       expect(messages[2].contact).toEqual(contact._id)
       expect(messages[2].kind).toEqual('location')
@@ -151,7 +148,6 @@ describe('Landbot plugin', () => {
       expect(messages[2].longitude).toEqual(101.75)
       expect(messages[2].departament).toEqual(undefined)
 
-      expect(messages[3]).toBeInstanceOf(Message)
       expect(messages[3].licensee).toEqual(licensee._id)
       expect(messages[3].contact).toEqual(contact._id)
       expect(messages[3].kind).toEqual('interactive')
@@ -165,7 +161,6 @@ describe('Landbot plugin', () => {
       expect(messages[3].longitude).toEqual(undefined)
       expect(messages[3].departament).toEqual(undefined)
 
-      expect(messages[4]).toBeInstanceOf(Message)
       expect(messages[4].licensee).toEqual(licensee._id)
       expect(messages[4].contact).toEqual(contact._id)
       expect(messages[4].kind).toEqual('interactive')
@@ -388,7 +383,6 @@ describe('Landbot plugin', () => {
       const landbot = new Landbot(licensee)
       const message = await landbot.responseTransferToMessage(responseBody)
 
-      expect(message).toBeInstanceOf(Message)
       expect(message.licensee).toEqual(licensee._id)
       expect(message.contact).toEqual(contact._id)
       expect(message.kind).toEqual('text')
@@ -455,9 +449,7 @@ describe('Landbot plugin', () => {
       }
 
       const landbot = new Landbot(licensee)
-      const message = await landbot.responseTransferToMessage(responseBody)
-
-      expect(message).toBeInstanceOf(Message)
+      await landbot.responseTransferToMessage(responseBody)
 
       const modifiedRoom = await Room.findById(room._id)
       expect(modifiedRoom.roomId).toEqual('ka3DiV9CuHD765')
@@ -481,9 +473,7 @@ describe('Landbot plugin', () => {
       }
 
       const landbot = new Landbot(licensee)
-      const message = await landbot.responseTransferToMessage(responseBody)
-
-      expect(message).toBeInstanceOf(Message)
+      await landbot.responseTransferToMessage(responseBody)
 
       const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
       expect(modifiedContact.name).toEqual('John Silver Doe')
@@ -507,9 +497,7 @@ describe('Landbot plugin', () => {
       }
 
       const landbot = new Landbot(licensee)
-      const message = await landbot.responseTransferToMessage(responseBody)
-
-      expect(message).toBeInstanceOf(Message)
+      await landbot.responseTransferToMessage(responseBody)
 
       const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
       expect(modifiedContact.email).toEqual('john_silver@doe.com')
@@ -528,7 +516,8 @@ describe('Landbot plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             text: 'Message to send',
             contact,
@@ -582,7 +571,7 @@ describe('Landbot plugin', () => {
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(1)
 
-        const messageUpdated = await Message.findById(message._id)
+        const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
       })
 
@@ -597,7 +586,8 @@ describe('Landbot plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
             text: 'Message to send',
@@ -662,7 +652,8 @@ describe('Landbot plugin', () => {
           const cartRepository = new CartRepositoryDatabase()
           const cart = await cartRepository.create(cartFactory.build({ contact, licensee }))
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               kind: 'cart',
               contact,
@@ -714,7 +705,7 @@ describe('Landbot plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(1)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
 
           clear()
@@ -732,7 +723,8 @@ describe('Landbot plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               kind: 'location',
               latitude: 1,
@@ -788,7 +780,7 @@ describe('Landbot plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(1)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
         })
       })
@@ -805,7 +797,8 @@ describe('Landbot plugin', () => {
               }),
             )
 
-            const message = await Message.create(
+            const messageRepository = new MessageRepositoryDatabase()
+            const message = await messageRepository.create(
               messageFactory.build({
                 kind: 'file',
                 fileName: 'dojocat.jpg',
@@ -860,7 +853,7 @@ describe('Landbot plugin', () => {
             expect(fetchMock.done()).toBe(true)
             expect(fetchMock.calls()).toHaveLength(1)
 
-            const messageUpdated = await Message.findById(message._id)
+            const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
           })
         })
@@ -876,7 +869,8 @@ describe('Landbot plugin', () => {
               }),
             )
 
-            const message = await Message.create(
+            const messageRepository = new MessageRepositoryDatabase()
+            const message = await messageRepository.create(
               messageFactory.build({
                 kind: 'file',
                 fileName: 'dojocat.mp4',
@@ -931,7 +925,7 @@ describe('Landbot plugin', () => {
             expect(fetchMock.done()).toBe(true)
             expect(fetchMock.calls()).toHaveLength(1)
 
-            const messageUpdated = await Message.findById(message._id)
+            const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
           })
         })
@@ -947,7 +941,8 @@ describe('Landbot plugin', () => {
               }),
             )
 
-            const message = await Message.create(
+            const messageRepository = new MessageRepositoryDatabase()
+            const message = await messageRepository.create(
               messageFactory.build({
                 kind: 'file',
                 fileName: 'dojocat.ogg',
@@ -1002,7 +997,7 @@ describe('Landbot plugin', () => {
             expect(fetchMock.done()).toBe(true)
             expect(fetchMock.calls()).toHaveLength(1)
 
-            const messageUpdated = await Message.findById(message._id)
+            const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
           })
         })
@@ -1018,7 +1013,8 @@ describe('Landbot plugin', () => {
               }),
             )
 
-            const message = await Message.create(
+            const messageRepository = new MessageRepositoryDatabase()
+            const message = await messageRepository.create(
               messageFactory.build({
                 kind: 'file',
                 fileName: 'dojocat.pdf',
@@ -1073,7 +1069,7 @@ describe('Landbot plugin', () => {
             expect(fetchMock.done()).toBe(true)
             expect(fetchMock.calls()).toHaveLength(1)
 
-            const messageUpdated = await Message.findById(message._id)
+            const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
           })
         })
@@ -1092,7 +1088,8 @@ describe('Landbot plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
             text: 'Message to send',
@@ -1118,7 +1115,7 @@ describe('Landbot plugin', () => {
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(1)
 
-        const messageUpdated = await Message.findById(message._id)
+        const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(false)
         expect(messageUpdated.error).toEqual('{"detail":"invalid token"}')
 

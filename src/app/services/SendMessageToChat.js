@@ -1,9 +1,10 @@
-const Message = require('@models/Message')
 const createChatPlugin = require('../plugins/chats/factory')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 async function sendMessageToChat(data) {
   const { messageId, url } = data
-  const message = await Message.findById(messageId).populate('licensee')
+  const messageRepository = new MessageRepositoryDatabase()
+  const message = await messageRepository.findFirst({ _id: messageId }, ['licensee'])
   const licensee = message.licensee
 
   const chatPlugin = createChatPlugin(licensee)

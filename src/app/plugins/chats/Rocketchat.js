@@ -1,10 +1,9 @@
 const emoji = require('@helpers/Emoji')
-const Message = require('@models/Message')
 const Room = require('@models/Room')
 const request = require('../../services/request')
 const ChatsBase = require('./Base')
-const { createInteractiveMessages } = require('@repositories/message')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 const createVisitor = async (contact, token, url) => {
   const body = {
@@ -123,7 +122,8 @@ class Rocketchat extends ChatsBase {
   }
 
   async transfer(messageId, url) {
-    const messageToSend = await Message.findById(messageId).populate('contact')
+    const messageRepository = new MessageRepositoryDatabase()
+    const messageToSend = await messageRepository.findFirst({ _id: messageId }, ['contact'])
 
     const contactRepository = new ContactRepositoryDatabase()
     const contact = await contactRepository.findFirst({ _id: messageToSend.contact._id })
@@ -135,7 +135,8 @@ class Rocketchat extends ChatsBase {
   }
 
   async sendMessage(messageId, url) {
-    const messageToSend = await Message.findById(messageId).populate('contact')
+    const messageRepository = new MessageRepositoryDatabase()
+    const messageToSend = await messageRepository.findFirst({ _id: messageId }, ['contact'])
     const openRoom = await Room.findOne({ contact: messageToSend.contact, closed: false })
     let room = openRoom
 
@@ -186,7 +187,8 @@ class Rocketchat extends ChatsBase {
   }
 
   async closeChat(messageId) {
-    const message = await Message.findById(messageId).populate('contact').populate('licensee').populate('room')
+    const messageRepository = new MessageRepositoryDatabase()
+    const message = await messageRepository.findFirst({ _id: messageId }, ['contact', 'licensee', 'room'])
     const licensee = message.licensee
 
     const contactRepository = new ContactRepositoryDatabase()
@@ -199,7 +201,8 @@ class Rocketchat extends ChatsBase {
     await room.save()
 
     if (licensee.messageOnCloseChat) {
-      const messagesCloseChat = await createInteractiveMessages({
+      const messageRepository = new MessageRepositoryDatabase()
+      const messagesCloseChat = await messageRepository.createInteractiveMessages({
         kind: 'text',
         text: licensee.messageOnCloseChat,
         licensee,

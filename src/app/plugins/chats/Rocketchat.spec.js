@@ -1,5 +1,4 @@
 const Rocketchat = require('./Rocketchat')
-const Message = require('@models/Message')
 const Room = require('@models/Room')
 const Trigger = require('@models/Trigger')
 const fetchMock = require('fetch-mock')
@@ -12,6 +11,7 @@ const { message: messageFactory } = require('@factories/message')
 const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -87,7 +87,6 @@ describe('Rocketchat plugin', () => {
 
       expect(messages.length).toEqual(5)
 
-      expect(messages[0]).toBeInstanceOf(Message)
       expect(messages[0].licensee).toEqual(licensee._id)
       expect(messages[0].contact).toEqual(contact._id)
       expect(messages[0].room._id).toEqual(room._id)
@@ -102,7 +101,6 @@ describe('Rocketchat plugin', () => {
       expect(messages[0].longitude).toEqual(undefined)
       expect(messages[0].departament).toEqual(undefined)
 
-      expect(messages[1]).toBeInstanceOf(Message)
       expect(messages[1].licensee).toEqual(licensee._id)
       expect(messages[1].contact).toEqual(contact._id)
       expect(messages[1].room._id).toEqual(room._id)
@@ -117,7 +115,6 @@ describe('Rocketchat plugin', () => {
       expect(messages[1].longitude).toEqual(undefined)
       expect(messages[1].departament).toEqual(undefined)
 
-      expect(messages[2]).toBeInstanceOf(Message)
       expect(messages[2].licensee).toEqual(licensee._id)
       expect(messages[2].contact).toEqual(contact._id)
       expect(messages[2].room._id).toEqual(room._id)
@@ -132,7 +129,6 @@ describe('Rocketchat plugin', () => {
       expect(messages[2].longitude).toEqual(undefined)
       expect(messages[2].departament).toEqual(undefined)
 
-      expect(messages[3]).toBeInstanceOf(Message)
       expect(messages[3].licensee).toEqual(licensee._id)
       expect(messages[3].contact).toEqual(contact._id)
       expect(messages[3].room._id).toEqual(room._id)
@@ -147,7 +143,6 @@ describe('Rocketchat plugin', () => {
       expect(messages[3].longitude).toEqual(undefined)
       expect(messages[3].departament).toEqual(undefined)
 
-      expect(messages[4]).toBeInstanceOf(Message)
       expect(messages[4].kind).toEqual('template')
       expect(messages[4].text).toEqual('{{name}}')
 
@@ -216,7 +211,6 @@ describe('Rocketchat plugin', () => {
         const rocketchat = new Rocketchat(licensee)
         const messages = await rocketchat.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].room._id).toEqual(room._id)
@@ -249,7 +243,8 @@ describe('Rocketchat plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             text: 'Message to send',
             contact,
@@ -355,7 +350,7 @@ describe('Rocketchat plugin', () => {
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(3)
 
-        const messageUpdated = await Message.findById(message._id)
+        const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
       })
 
@@ -370,7 +365,8 @@ describe('Rocketchat plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
             text: 'Message to send',
@@ -470,7 +466,8 @@ describe('Rocketchat plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               text: 'Message to send',
               contact,
@@ -555,7 +552,7 @@ describe('Rocketchat plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(3)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
         })
       })
@@ -571,7 +568,8 @@ describe('Rocketchat plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               text: 'Message to send',
               contact,
@@ -671,7 +669,7 @@ describe('Rocketchat plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(4)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
         })
       })
@@ -688,7 +686,8 @@ describe('Rocketchat plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               text: '',
               kind: 'file',
@@ -782,7 +781,7 @@ describe('Rocketchat plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(3)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
         })
       })
@@ -799,7 +798,8 @@ describe('Rocketchat plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               _id: '60958703f415ed4008748637',
               text: 'Message to send',
@@ -820,7 +820,7 @@ describe('Rocketchat plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(1)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
 
           expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -841,7 +841,8 @@ describe('Rocketchat plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               _id: '60958703f415ed4008748637',
               text: 'Message to send',
@@ -881,7 +882,7 @@ describe('Rocketchat plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(2)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
 
           expect(consoleErrorSpy).toHaveBeenCalledWith('Não foi possível criar a sala na Rocketchat {"success":false}')
@@ -900,7 +901,8 @@ describe('Rocketchat plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               _id: '60958703f415ed4008748637',
               text: 'Message to send',
@@ -975,7 +977,7 @@ describe('Rocketchat plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(3)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
           expect(messageUpdated.error).toEqual('{"success":false}')
 
@@ -1003,7 +1005,8 @@ describe('Rocketchat plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               _id: '60958703f415ed4008748637',
               text: 'Message to send',
@@ -1094,7 +1097,7 @@ describe('Rocketchat plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(4)
 
-          const messageUpdated = await Message.findById(message._id).populate('room')
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id }, ['room'])
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.room).not.toEqual(room)
 
@@ -1125,7 +1128,8 @@ describe('Rocketchat plugin', () => {
         }),
       )
 
-      const message = await Message.create(
+      const messageRepository = new MessageRepositoryDatabase()
+      const message = await messageRepository.create(
         messageFactory.build({
           _id: '60958703f415ed4008748637',
           text: 'Message to send',
@@ -1156,7 +1160,8 @@ describe('Rocketchat plugin', () => {
         }),
       )
 
-      const message = await Message.create(
+      const messageRepository = new MessageRepositoryDatabase()
+      const message = await messageRepository.create(
         messageFactory.build({
           _id: '60958703f415ed4008748637',
           text: 'Message to send',
@@ -1193,7 +1198,8 @@ describe('Rocketchat plugin', () => {
         }),
       )
 
-      const message = await Message.create(
+      const messageRepository = new MessageRepositoryDatabase()
+      const message = await messageRepository.create(
         messageFactory.build({
           _id: '60958703f415ed4008748637',
           text: 'Message to send',
@@ -1245,7 +1251,8 @@ describe('Rocketchat plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
             text: 'Message to send',
@@ -1296,7 +1303,8 @@ describe('Rocketchat plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
             text: 'Message to send',

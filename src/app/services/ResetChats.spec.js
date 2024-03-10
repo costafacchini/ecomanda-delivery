@@ -1,5 +1,4 @@
 const resetChats = require('./ResetChats')
-const Message = require('@models/Message')
 const mongoServer = require('.jest/utils')
 const { licenseeComplete: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
@@ -7,6 +6,7 @@ const moment = require('moment')
 const Rocketchat = require('../plugins/chats/Rocketchat')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 const spySendMessage = jest.spyOn(Rocketchat.prototype, 'sendMessage').mockImplementation()
 
@@ -98,7 +98,8 @@ describe('resetChats', () => {
 
         await resetChats()
 
-        const messages = await Message.find()
+        const messageRepository = new MessageRepositoryDatabase()
+        const messages = await messageRepository.find()
 
         expect(messages.length).toEqual(3)
         expect(spySendMessage).toHaveBeenCalledTimes(3)
@@ -183,7 +184,8 @@ describe('resetChats', () => {
 
         await resetChats()
 
-        const messages = await Message.find()
+        const messageRepository = new MessageRepositoryDatabase()
+        const messages = await messageRepository.find()
 
         expect(messages.length).toEqual(2)
         expect(spySendMessage).toHaveBeenCalledTimes(2)

@@ -1,8 +1,7 @@
-const Message = require('@models/Message')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { getAllTriggerBy } = require('@repositories/trigger')
-const { createMessage } = require('@repositories/message')
 const { CartRepositoryDatabase } = require('@repositories/cart')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 const { getProductBy } = require('@repositories/product')
 const { v4: uuidv4 } = require('uuid')
 const S3 = require('../storage/S3')
@@ -53,9 +52,10 @@ class MessengersBase {
   }
 
   async responseToMessages(responseBody) {
+    const messageRepository = new MessageRepositoryDatabase()
     this.parseMessageStatus(responseBody)
     if (this.messageStatus) {
-      const message = await Message.findOne({
+      const message = await messageRepository.findFirst({
         licensee: this.licensee._id,
         messageWaId: this.messageStatus.id,
       })
@@ -112,7 +112,7 @@ class MessengersBase {
       if (triggers.length > 0) {
         for (const trigger of triggers) {
           processedMessages.push(
-            await createMessage({
+            await messageRepository.create({
               number: uuidv4(),
               messageWaId: this.messageData.waId,
               licensee: this.licensee._id,
@@ -125,7 +125,7 @@ class MessengersBase {
         }
       } else {
         processedMessages.push(
-          await createMessage({
+          await messageRepository.create({
             number: uuidv4(),
             messageWaId: this.messageData.waId,
             licensee: this.licensee._id,
@@ -197,7 +197,7 @@ class MessengersBase {
 
       if (this.messageData.sender) messageToSend.senderName = this.messageData.sender
 
-      processedMessages.push(await createMessage(messageToSend))
+      processedMessages.push(await messageRepository.create(messageToSend))
     }
 
     return processedMessages

@@ -1,5 +1,4 @@
 const transferToChat = require('./TransferToChat')
-const Message = require('@models/Message')
 const Rocketchat = require('../plugins/chats/Rocketchat')
 const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
@@ -7,6 +6,7 @@ const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 describe('transferToChat', () => {
   const rocketchatTransferSpy = jest.spyOn(Rocketchat.prototype, 'transfer').mockImplementation(() => {})
@@ -36,7 +36,8 @@ describe('transferToChat', () => {
       }),
     )
 
-    await Message.create(
+    const messageRepository = new MessageRepositoryDatabase()
+    await messageRepository.create(
       messageFactory.build({
         contact,
         licensee,

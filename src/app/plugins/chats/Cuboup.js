@@ -2,11 +2,10 @@ const emoji = require('@helpers/Emoji')
 const files = require('@helpers/Files')
 const NormalizePhone = require('../../helpers/NormalizePhone')
 const { v4: uuidv4 } = require('uuid')
-const Message = require('@models/Message')
 const request = require('../../services/request')
 const ChatsBase = require('./Base')
-const { createInteractiveMessages } = require('@repositories/message')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 class Cuboup extends ChatsBase {
   constructor(licensee) {
@@ -93,7 +92,8 @@ class Cuboup extends ChatsBase {
   }
 
   async transfer(messageId, url) {
-    const messageToSend = await Message.findById(messageId).populate('contact')
+    const messageRepository = new MessageRepositoryDatabase()
+    const messageToSend = await messageRepository.findFirst({ _id: messageId }, ['contact'])
 
     const contactRepository = new ContactRepositoryDatabase()
     const contact = await contactRepository.findFirst({ _id: messageToSend.contact._id })
@@ -105,7 +105,8 @@ class Cuboup extends ChatsBase {
   }
 
   async sendMessage(messageId, url) {
-    const messageToSend = await Message.findById(messageId).populate('contact').populate('licensee')
+    const messageRepository = new MessageRepositoryDatabase()
+    const messageToSend = await messageRepository.findFirst({ _id: messageId }, ['contact', 'licensee'])
 
     const sender = {
       id: messageToSend.contact.number + messageToSend.contact.type,
@@ -188,7 +189,8 @@ class Cuboup extends ChatsBase {
   }
 
   async closeChat(messageId) {
-    const message = await Message.findById(messageId).populate('contact').populate('licensee')
+    const messageRepository = new MessageRepositoryDatabase()
+    const message = await messageRepository.findFirst({ _id: messageId }, ['contact', 'licensee'])
     const licensee = message.licensee
 
     const contactRepository = new ContactRepositoryDatabase()
@@ -196,7 +198,8 @@ class Cuboup extends ChatsBase {
     const messages = []
 
     if (licensee.messageOnCloseChat) {
-      const messagesCloseChat = await createInteractiveMessages({
+      const messageRepository = new MessageRepositoryDatabase()
+      const messagesCloseChat = await messageRepository.createInteractiveMessages({
         kind: 'text',
         text: licensee.messageOnCloseChat,
         licensee,

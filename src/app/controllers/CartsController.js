@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const NormalizePhone = require('@helpers/NormalizePhone')
-const { createTextMessageInsteadInteractive } = require('@repositories/message')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { scheduleSendMessageToMessenger } = require('@repositories/messenger')
 const { parseCart } = require('@helpers/ParseTriggerText')
@@ -8,6 +7,7 @@ const createCartAdapter = require('../plugins/carts/adapters/factory')
 const cartFactory = require('@plugins/carts/factory')
 const { publishMessage } = require('@config/rabbitmq')
 const { CartRepositoryDatabase } = require('@repositories/cart')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 function permit(fields) {
   const permitedFields = [
@@ -329,7 +329,8 @@ class CartsController {
       }
 
       const cartDescription = await parseCart(cart._id)
-      const message = await createTextMessageInsteadInteractive({
+      const messageRepository = new MessageRepositoryDatabase()
+      const message = await messageRepository.createTextMessageInsteadInteractive({
         text: cartDescription,
         kind: 'text',
         licensee: req.licensee._id,

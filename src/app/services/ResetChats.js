@@ -1,11 +1,8 @@
 const createChatPlugin = require('../plugins/chats/factory')
 const moment = require('moment-timezone')
-const {
-  createMessageToWarnAboutWindowOfWhatsassIsEnding,
-  createMessageToWarnAboutWindowOfWhatsassHasExpired,
-} = require('@repositories/message')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 const ContactsQuery = require('@queries/ContactsQuery')
 
 async function sendMessageToChat(licensee, messageToSend) {
@@ -31,8 +28,10 @@ async function warningAboutChatsEnding(licensee) {
   )
 
   const contacts = await contactsQuery.all()
+
+  const messageRepository = new MessageRepositoryDatabase()
   for (const contact of contacts) {
-    const messageToSend = await createMessageToWarnAboutWindowOfWhatsassIsEnding(contact, licensee)
+    const messageToSend = await messageRepository.createMessageToWarnAboutWindowOfWhatsassIsEnding(contact, licensee)
 
     await sendMessageToChat(licensee, messageToSend)
   }
@@ -47,8 +46,12 @@ async function warningAboutChatsExpired(licensee) {
   for (const contact of contacts) {
     await clearWaStartChatOnContact(contact)
 
+    const messageRepository = new MessageRepositoryDatabase()
     if (licensee.useWhatsappWindow === true) {
-      const messageToSend = await createMessageToWarnAboutWindowOfWhatsassHasExpired(contact, licensee)
+      const messageToSend = await messageRepository.createMessageToWarnAboutWindowOfWhatsassHasExpired(
+        contact,
+        licensee,
+      )
 
       await sendMessageToChat(licensee, messageToSend)
     }

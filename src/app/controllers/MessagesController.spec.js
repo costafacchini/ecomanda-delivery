@@ -1,5 +1,4 @@
 const User = require('@models/User')
-const Message = require('@models/Message')
 const request = require('supertest')
 const mongoServer = require('../../../.jest/utils')
 const { expressServer } = require('../../../.jest/server-express')
@@ -9,6 +8,7 @@ const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 describe('messengers controller', () => {
   let token
@@ -72,14 +72,19 @@ describe('messengers controller', () => {
         const contact = await contactRepository.create(contactFactory.build({ licensee }))
         const another_contact = await contactRepository.create(contactFactory.build({ licensee }))
 
-        await Message.create(messageFactory.build({ licensee, contact }))
-        await Message.create(messageFactory.build({ licensee, contact, createdAt: new Date(2021, 5, 30, 0, 0, 0) }))
-        await Message.create(messageFactory.build({ licensee, contact, createdAt: new Date(2021, 6, 5, 0, 0, 0) }))
-        await Message.create(messageFactory.build({ destination: 'to-chatbot', licensee, contact }))
-        await Message.create(messageFactory.build({ licensee: another_licensee, contact }))
-        await Message.create(messageFactory.build({ licensee, contact: another_contact }))
-        await Message.create(messageFactory.build({ licensee, contact, kind: 'interactive' }))
-        await Message.create(messageFactory.build({ licensee, contact, sended: false }))
+        const messageRepository = new MessageRepositoryDatabase()
+        await messageRepository.create(messageFactory.build({ licensee, contact }))
+        await messageRepository.create(
+          messageFactory.build({ licensee, contact, createdAt: new Date(2021, 5, 30, 0, 0, 0) }),
+        )
+        await messageRepository.create(
+          messageFactory.build({ licensee, contact, createdAt: new Date(2021, 6, 5, 0, 0, 0) }),
+        )
+        await messageRepository.create(messageFactory.build({ destination: 'to-chatbot', licensee, contact }))
+        await messageRepository.create(messageFactory.build({ licensee: another_licensee, contact }))
+        await messageRepository.create(messageFactory.build({ licensee, contact: another_contact }))
+        await messageRepository.create(messageFactory.build({ licensee, contact, kind: 'interactive' }))
+        await messageRepository.create(messageFactory.build({ licensee, contact, sended: false }))
 
         await request(expressServer)
           .get(

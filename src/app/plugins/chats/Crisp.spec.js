@@ -1,5 +1,4 @@
 const Crisp = require('./Crisp')
-const Message = require('@models/Message')
 const Room = require('@models/Room')
 const Trigger = require('@models/Trigger')
 const fetchMock = require('fetch-mock')
@@ -12,6 +11,7 @@ const { message: messageFactory } = require('@factories/message')
 const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -77,7 +77,6 @@ describe('Crisp plugin', () => {
       const crisp = new Crisp(licensee)
       const messages = await crisp.responseToMessages(responseBody)
 
-      expect(messages[0]).toBeInstanceOf(Message)
       expect(messages[0].licensee).toEqual(licensee._id)
       expect(messages[0].contact).toEqual(contact._id)
       expect(messages[0].room._id).toEqual(room._id)
@@ -175,7 +174,6 @@ describe('Crisp plugin', () => {
       const crisp = new Crisp(licensee)
       const messages = await crisp.responseToMessages(responseBody)
 
-      expect(messages[0]).toBeInstanceOf(Message)
       expect(messages[0].licensee).toEqual(licensee._id)
       expect(messages[0].contact).toEqual(contact._id)
       expect(messages[0].room._id).toEqual(room._id)
@@ -225,7 +223,6 @@ describe('Crisp plugin', () => {
       const crisp = new Crisp(licensee)
       const messages = await crisp.responseToMessages(responseBody)
 
-      expect(messages[0]).toBeInstanceOf(Message)
       expect(messages[0].licensee).toEqual(licensee._id)
       expect(messages[0].contact).toEqual(contact._id)
       expect(messages[0].room._id).toEqual(room._id)
@@ -290,7 +287,6 @@ describe('Crisp plugin', () => {
         const crisp = new Crisp(licensee)
         const messages = await crisp.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].kind).toEqual('file')
         expect(messages[0].text).toEqual(undefined)
         expect(messages[0].url).toEqual('https://octodex.github.com/images/dojocat.jpg')
@@ -342,7 +338,6 @@ describe('Crisp plugin', () => {
         const crisp = new Crisp(licensee)
         const messages = await crisp.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].kind).toEqual('file')
         expect(messages[0].text).toEqual(undefined)
         expect(messages[0].url).toEqual('https://octodex.github.com/images/dojocat.ogg')
@@ -393,7 +388,6 @@ describe('Crisp plugin', () => {
         const crisp = new Crisp(licensee)
         const messages = await crisp.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].kind).toEqual('file')
         expect(messages[0].text).toEqual(undefined)
         expect(messages[0].url).toEqual('https://octodex.github.com/images/dojocat.ogg')
@@ -493,7 +487,6 @@ describe('Crisp plugin', () => {
         const crisp = new Crisp(licensee)
         const messages = await crisp.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('interactive')
@@ -507,7 +500,6 @@ describe('Crisp plugin', () => {
         expect(messages[0].longitude).toEqual(undefined)
         expect(messages[0].departament).toEqual(undefined)
 
-        expect(messages[1]).toBeInstanceOf(Message)
         expect(messages[1].licensee).toEqual(licensee._id)
         expect(messages[1].contact).toEqual(contact._id)
         expect(messages[1].kind).toEqual('interactive')
@@ -566,7 +558,6 @@ describe('Crisp plugin', () => {
         const crisp = new Crisp(licensee)
         const messages = await crisp.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].kind).toEqual('template')
         expect(messages[0].text).toEqual('{{name}}')
       })
@@ -594,7 +585,8 @@ describe('Crisp plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             text: 'Message to send',
             contact,
@@ -687,7 +679,7 @@ describe('Crisp plugin', () => {
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(3)
 
-        const messageUpdated = await Message.findById(message._id)
+        const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
       })
 
@@ -710,7 +702,8 @@ describe('Crisp plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
             text: 'Message to send',
@@ -789,7 +782,8 @@ describe('Crisp plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               text: 'Message to send',
               contact,
@@ -845,7 +839,7 @@ describe('Crisp plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(3)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
         })
       })
@@ -863,7 +857,8 @@ describe('Crisp plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               text: 'Message to send',
               contact,
@@ -944,7 +939,7 @@ describe('Crisp plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(3)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
         })
       })
@@ -961,7 +956,8 @@ describe('Crisp plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               text: 'Message to send',
               contact,
@@ -1023,7 +1019,7 @@ describe('Crisp plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(2)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
         })
       })
@@ -1040,7 +1036,8 @@ describe('Crisp plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               _id: '60958703f415ed4008748637',
               text: 'Message to send',
@@ -1068,7 +1065,7 @@ describe('Crisp plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(1)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
 
           expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -1089,7 +1086,8 @@ describe('Crisp plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               _id: '60958703f415ed4008748637',
               text: 'Message to send',
@@ -1146,7 +1144,7 @@ describe('Crisp plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(3)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
           expect(messageUpdated.error).toEqual(
             'mensagem: {"error":true,"reason":"invalid_data","data":{"namespace":"data","message":"data.user.type should be equal to one of the allowed values"}}',
@@ -1174,7 +1172,8 @@ describe('Crisp plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               text: 'Message to send',
               contact,
@@ -1243,7 +1242,8 @@ describe('Crisp plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               text: 'Message to send',
               contact,
@@ -1332,7 +1332,8 @@ describe('Crisp plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               text: 'Message to send',
               contact,
@@ -1425,7 +1426,8 @@ describe('Crisp plugin', () => {
         }),
       )
 
-      const message = await Message.create(
+      const messageRepository = new MessageRepositoryDatabase()
+      const message = await messageRepository.create(
         messageFactory.build({
           _id: '60958703f415ed4008748637',
           text: 'Message to send',
@@ -1457,7 +1459,8 @@ describe('Crisp plugin', () => {
         }),
       )
 
-      const message = await Message.create(
+      const messageRepository = new MessageRepositoryDatabase()
+      const message = await messageRepository.create(
         messageFactory.build({
           _id: '60958703f415ed4008748637',
           text: 'Message to send',
@@ -1505,7 +1508,8 @@ describe('Crisp plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
             text: 'Message to send',
@@ -1558,7 +1562,8 @@ describe('Crisp plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
             text: 'Message to send',

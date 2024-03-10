@@ -1,5 +1,4 @@
 const mongoServer = require('../../../.jest/utils')
-const Message = require('@models/Message')
 const MessagesSendedYesterday = require('./MessagesSendedYesterday')
 const moment = require('moment')
 const { licensee: licenseeFactory } = require('@factories/licensee')
@@ -7,6 +6,7 @@ const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 describe('MessagesSendedYesterday', () => {
   beforeEach(async () => {
@@ -23,7 +23,8 @@ describe('MessagesSendedYesterday', () => {
 
     const contactRepository = new ContactRepositoryDatabase()
     const contact1 = await contactRepository.create(contactFactory.build({ licensee: licensee1 }))
-    const messageOfYesterday1 = await Message.create(
+    const messageRepository = new MessageRepositoryDatabase()
+    const messageOfYesterday1 = await messageRepository.create(
       messageFactory.build({
         contact: contact1,
         licensee: licensee1,
@@ -31,7 +32,7 @@ describe('MessagesSendedYesterday', () => {
         createdAt: moment().subtract(1, 'days'),
       }),
     )
-    const messageOfYesterday2 = await Message.create(
+    const messageOfYesterday2 = await messageRepository.create(
       messageFactory.build({
         contact: contact1,
         licensee: licensee1,
@@ -39,7 +40,7 @@ describe('MessagesSendedYesterday', () => {
         createdAt: moment().subtract(1, 'days'),
       }),
     )
-    const messageOfYesterday3 = await Message.create(
+    const messageOfYesterday3 = await messageRepository.create(
       messageFactory.build({
         contact: contact1,
         licensee: licensee1,
@@ -47,7 +48,7 @@ describe('MessagesSendedYesterday', () => {
         createdAt: moment().subtract(1, 'days'),
       }),
     )
-    const messageOfTwoDays1 = await Message.create(
+    const messageOfTwoDays1 = await messageRepository.create(
       messageFactory.build({
         contact: contact1,
         licensee: licensee1,
@@ -55,7 +56,7 @@ describe('MessagesSendedYesterday', () => {
         createdAt: moment().subtract(2, 'days'),
       }),
     )
-    const messageOfToday1 = await Message.create(
+    const messageOfToday1 = await messageRepository.create(
       messageFactory.build({
         contact: contact1,
         licensee: licensee1,
@@ -68,7 +69,7 @@ describe('MessagesSendedYesterday', () => {
       licenseeFactory.build({ name: 'Alcateia II', licenseKind: 'paid' }),
     )
     const contact2 = await contactRepository.create(contactFactory.build({ licensee: licensee2 }))
-    const messageOfYesterday4 = await Message.create(
+    const messageOfYesterday4 = await messageRepository.create(
       messageFactory.build({
         contact: contact2,
         licensee: licensee2,
@@ -76,7 +77,7 @@ describe('MessagesSendedYesterday', () => {
         createdAt: moment().subtract(1, 'days'),
       }),
     )
-    const messageOfYesterday5 = await Message.create(
+    const messageOfYesterday5 = await messageRepository.create(
       messageFactory.build({
         contact: contact2,
         licensee: licensee2,
@@ -84,7 +85,7 @@ describe('MessagesSendedYesterday', () => {
         createdAt: moment().subtract(1, 'days'),
       }),
     )
-    const messageOfYesterday6 = await Message.create(
+    const messageOfYesterday6 = await messageRepository.create(
       messageFactory.build({
         contact: contact2,
         licensee: licensee2,
@@ -92,7 +93,7 @@ describe('MessagesSendedYesterday', () => {
         createdAt: moment().subtract(1, 'days'),
       }),
     )
-    const messageOfTwoDays2 = await Message.create(
+    const messageOfTwoDays2 = await messageRepository.create(
       messageFactory.build({
         contact: contact2,
         licensee: licensee2,
@@ -100,7 +101,7 @@ describe('MessagesSendedYesterday', () => {
         createdAt: moment().subtract(2, 'days'),
       }),
     )
-    const messageOfToday2 = await Message.create(
+    const messageOfToday2 = await messageRepository.create(
       messageFactory.build({
         contact: contact2,
         licensee: licensee2,

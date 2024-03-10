@@ -1,11 +1,11 @@
 const mongoServer = require('../../../.jest/utils')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
 const Contact = require('@models/Contact')
-const { createMessage } = require('@repositories/message')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+const { ContactRepositoryDatabase } = require('@repositories/contact')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 const moment = require('moment-timezone')
 
 describe('contact repository database', () => {
@@ -117,6 +117,27 @@ describe('contact repository database', () => {
     })
   })
 
+  describe('#find', () => {
+    it('finds messages', async () => {
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
+
+      const contactRepository = new ContactRepositoryDatabase()
+      await contactRepository.create(
+        contactFactory.build({ number: '5511990283745', talkingWithChatBot: true, licensee }),
+      )
+      await contactRepository.create(
+        contactFactory.build({ number: '5511990283745', talkingWithChatBot: false, licensee }),
+      )
+
+      let result = await contactRepository.find({ number: '5511990283745' })
+      expect(result.length).toEqual(2)
+
+      result = await contactRepository.find({ talkingWithChatBot: false })
+      expect(result.length).toEqual(1)
+    })
+  })
+
   describe('#contactWithWhatsappWindowClosed', () => {
     it('returns true if the last message of contact sended to chat is greather than 24 hours', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
@@ -131,7 +152,8 @@ describe('contact repository database', () => {
 
       const now = moment.tz(new Date(), 'UTC')
 
-      await createMessage(
+      const messageRepository = new MessageRepositoryDatabase()
+      await messageRepository.create(
         messageFactory.build({
           licensee,
           contact,
@@ -140,7 +162,7 @@ describe('contact repository database', () => {
         }),
       )
 
-      await createMessage(
+      await messageRepository.create(
         messageFactory.build({
           licensee,
           contact,
@@ -165,7 +187,8 @@ describe('contact repository database', () => {
 
       const now = moment.tz(new Date(), 'UTC')
 
-      await createMessage(
+      const messageRepository = new MessageRepositoryDatabase()
+      await messageRepository.create(
         messageFactory.build({
           licensee,
           contact,
@@ -174,7 +197,7 @@ describe('contact repository database', () => {
         }),
       )
 
-      await createMessage(
+      await messageRepository.create(
         messageFactory.build({
           licensee,
           contact,
@@ -213,7 +236,8 @@ describe('contact repository database', () => {
 
       const now = moment.tz(new Date(), 'UTC')
 
-      await createMessage(
+      const messageRepository = new MessageRepositoryDatabase()
+      await messageRepository.create(
         messageFactory.build({
           licensee,
           contact,
@@ -222,7 +246,7 @@ describe('contact repository database', () => {
         }),
       )
 
-      await createMessage(
+      await messageRepository.create(
         messageFactory.build({
           licensee,
           contact,

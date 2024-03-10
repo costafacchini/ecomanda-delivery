@@ -1,9 +1,10 @@
-const Message = require('@models/Message')
 const createMessengerPlugin = require('../plugins/messengers/factory')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 async function sendMessageToMessenger(data) {
   const { messageId, url, token } = data
-  const message = await Message.findById(messageId).populate('licensee')
+  const messageRepository = new MessageRepositoryDatabase()
+  const message = await messageRepository.findFirst({ _id: messageId }, ['licensee'])
   const licensee = message.licensee
 
   const messegnerPlugin = createMessengerPlugin(licensee)
