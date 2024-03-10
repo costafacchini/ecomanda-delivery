@@ -1,5 +1,4 @@
 const Cuboup = require('./Cuboup')
-const Message = require('@models/Message')
 const Trigger = require('@models/Trigger')
 const fetchMock = require('fetch-mock')
 const mongoServer = require('../../../../.jest/utils')
@@ -10,6 +9,7 @@ const { message: messageFactory } = require('@factories/message')
 const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -60,7 +60,6 @@ describe('Cuboup plugin', () => {
       const cuboup = new Cuboup(licensee)
       const messages = await cuboup.responseToMessages(responseBody)
 
-      expect(messages[0]).toBeInstanceOf(Message)
       expect(messages[0].licensee).toEqual(licensee._id)
       expect(messages[0].contact).toEqual(contact._id)
       expect(messages[0].kind).toEqual('text')
@@ -214,7 +213,6 @@ describe('Cuboup plugin', () => {
         const cuboup = new Cuboup(licensee)
         const messages = await cuboup.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].kind).toEqual('file')
         expect(messages[0].text).toEqual(undefined)
         expect(messages[0].url).toEqual('https://octodex.github.com/images/dojocat.jpg')
@@ -249,7 +247,6 @@ describe('Cuboup plugin', () => {
         const cuboup = new Cuboup(licensee)
         const messages = await cuboup.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].kind).toEqual('location')
         expect(messages[0].text).toEqual(undefined)
         expect(messages[0].latitude).toEqual(123.93)
@@ -309,7 +306,6 @@ describe('Cuboup plugin', () => {
         const cuboup = new Cuboup(licensee)
         const messages = await cuboup.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('interactive')
@@ -323,7 +319,6 @@ describe('Cuboup plugin', () => {
         expect(messages[0].longitude).toEqual(undefined)
         expect(messages[0].departament).toEqual(undefined)
 
-        expect(messages[1]).toBeInstanceOf(Message)
         expect(messages[1].licensee).toEqual(licensee._id)
         expect(messages[1].contact).toEqual(contact._id)
         expect(messages[1].kind).toEqual('interactive')
@@ -367,7 +362,6 @@ describe('Cuboup plugin', () => {
         const cuboup = new Cuboup(licensee)
         const messages = await cuboup.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].kind).toEqual('template')
         expect(messages[0].text).toEqual('{{name}}')
       })
@@ -387,7 +381,8 @@ describe('Cuboup plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             text: 'Message to send',
             contact,
@@ -426,7 +421,7 @@ describe('Cuboup plugin', () => {
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(1)
 
-        const messageUpdated = await Message.findById(message._id)
+        const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
       })
 
@@ -441,7 +436,8 @@ describe('Cuboup plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
             text: 'Message to send',
@@ -498,7 +494,8 @@ describe('Cuboup plugin', () => {
             licensee: licensee,
           })
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               text: 'Message to send',
               contact,
@@ -537,7 +534,7 @@ describe('Cuboup plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(1)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
         })
       })
@@ -555,7 +552,8 @@ describe('Cuboup plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
             text: 'Message to send',
@@ -595,7 +593,7 @@ describe('Cuboup plugin', () => {
         await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
         await fetchMock.flush(true)
 
-        const messageUpdated = await Message.findById(message._id)
+        const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(false)
         expect(messageUpdated.error).toEqual('mensagem: {"error":"Error message"}')
 
@@ -623,7 +621,8 @@ describe('Cuboup plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               text: 'Message to send',
               contact,
@@ -678,7 +677,8 @@ describe('Cuboup plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               text: 'Message to send',
               contact,
@@ -731,7 +731,8 @@ describe('Cuboup plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               text: 'Message to send',
               contact,
@@ -790,7 +791,8 @@ describe('Cuboup plugin', () => {
         }),
       )
 
-      const message = await Message.create(
+      const messageRepository = new MessageRepositoryDatabase()
+      const message = await messageRepository.create(
         messageFactory.build({
           _id: '60958703f415ed4008748637',
           text: 'Message to send',
@@ -820,7 +822,8 @@ describe('Cuboup plugin', () => {
         }),
       )
 
-      const message = await Message.create(
+      const messageRepository = new MessageRepositoryDatabase()
+      const message = await messageRepository.create(
         messageFactory.build({
           _id: '60958703f415ed4008748637',
           text: 'Message to send',
@@ -862,7 +865,8 @@ describe('Cuboup plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
             text: 'Message to send',
@@ -906,7 +910,8 @@ describe('Cuboup plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
             text: 'Message to send',

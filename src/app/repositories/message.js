@@ -1,98 +1,100 @@
 const { v4: uuidv4 } = require('uuid')
+const Repository = require('./repository')
 const Message = require('@models/Message')
 const Trigger = require('@models/Trigger')
 const { parseText } = require('@helpers/ParseTriggerText')
 const emoji = require('@helpers/Emoji')
 
-async function createMessage(fields) {
-  const message = new Message({
-    number: uuidv4(),
-    ...fields,
-  })
+class MessageRepositoryDatabase extends Repository {
+  model() {
+    return Message
+  }
 
-  const messageSaved = await message.save()
+  async findFirst(params, relations) {
+    if (relations) {
+      const query = Message.findOne(params)
+      relations.forEach((relation) => query.populate(relation))
 
-  return messageSaved
-}
+      return await query
+    } else {
+      return await Message.findOne(params)
+    }
+  }
 
-async function createInteractiveMessages(fields) {
-  const messages = []
+  async create(fields) {
+    return await Message.create({ number: uuidv4(), ...fields })
+  }
 
-  const text = emoji.replace(fields.text)
+  async update(id, fields) {
+    return await Message.updateOne({ _id: id }, { $set: fields }, { runValidators: true })
+  }
 
-  const triggers = await Trigger.find({ expression: text, licensee: fields.licensee }).sort({ order: 'asc' })
-  if (triggers.length > 0) {
-    for (const trigger of triggers) {
+  async find(params) {
+    return await Message.find(params)
+  }
+
+  async createInteractiveMessages(fields) {
+    const messages = []
+
+    const text = emoji.replace(fields.text)
+
+    const triggers = await Trigger.find({ expression: text, licensee: fields.licensee }).sort({ order: 'asc' })
+    if (triggers.length > 0) {
+      for (const trigger of triggers) {
+        messages.push(
+          await this.create({
+            ...fields,
+            kind: 'interactive',
+            text,
+            trigger: trigger._id,
+          }),
+        )
+      }
+    } else {
       messages.push(
-        await createMessage({
+        await this.create({
           ...fields,
-          kind: 'interactive',
+          kind: 'text',
           text,
-          trigger: trigger._id,
         }),
       )
     }
-  } else {
-    messages.push(
-      await createMessage({
-        ...fields,
-        kind: 'text',
-        text,
-      }),
-    )
+
+    return messages
   }
 
-  return messages
-}
+  async createTextMessageInsteadInteractive(fields) {
+    let { kind, text, contact } = fields
 
-async function createTextMessageInsteadInteractive(fields) {
-  const message = new Message({
-    number: uuidv4(),
-    ...fields,
-  })
+    if (kind === 'interactive') {
+      kind = 'text'
+      text = await parseText(text, contact)
+    }
 
-  if (message.kind === 'interactive') {
-    message.kind = 'text'
-    message.text = await parseText(message.text, message.contact)
+    return await this.create({ ...fields, kind, text, contact })
   }
 
-  const messageSaved = await message.save()
+  async createMessageToWarnAboutWindowOfWhatsassHasExpired(contact, licensee) {
+    return await this.create({
+      number: uuidv4(),
+      kind: 'text',
+      contact,
+      licensee,
+      destination: 'to-chat',
+      text: '🚨 ATENÇÃO\nO período de 24h para manter conversas expirou. Envie um Template para voltar a interagir com esse contato.',
+    })
+  }
 
-  return messageSaved
+  async createMessageToWarnAboutWindowOfWhatsassIsEnding(contact, licensee) {
+    return await this.create({
+      number: uuidv4(),
+      kind: 'text',
+      contact,
+      licensee,
+      destination: 'to-chat',
+      text: '🚨 ATENÇÃO\nO período de 24h para manter conversas está quase expirando. Faltam apenas 10 minutos para encerrar.',
+    })
+  }
 }
 
-async function createMessageToWarnAboutWindowOfWhatsassHasExpired(contact, licensee) {
-  const message = new Message({
-    number: uuidv4(),
-    kind: 'text',
-    contact,
-    licensee,
-    destination: 'to-chat',
-    text: '🚨 ATENÇÃO\nO período de 24h para manter conversas expirou. Envie um Template para voltar a interagir com esse contato.',
-  })
-
-  const messageSaved = await message.save()
-  return messageSaved
-}
-
-async function createMessageToWarnAboutWindowOfWhatsassIsEnding(contact, licensee) {
-  const message = new Message({
-    number: uuidv4(),
-    kind: 'text',
-    contact,
-    licensee,
-    destination: 'to-chat',
-    text: '🚨 ATENÇÃO\nO período de 24h para manter conversas está quase expirando. Faltam apenas 10 minutos para encerrar.',
-  })
-
-  const messageSaved = await message.save()
-  return messageSaved
-}
-
-module.exports = {
-  createMessage,
-  createMessageToWarnAboutWindowOfWhatsassHasExpired,
-  createMessageToWarnAboutWindowOfWhatsassIsEnding,
-  createTextMessageInsteadInteractive,
-  createInteractiveMessages,
-}
+module.exports = { MessageRepositoryDatabase }

@@ -1,5 +1,4 @@
 const Dialog = require('./Dialog')
-const Message = require('@models/Message')
 const Trigger = require('@models/Trigger')
 const Template = require('@models/Template')
 const Product = require('@models/Product')
@@ -23,6 +22,7 @@ const { advanceTo, clear } = require('jest-date-mock')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { CartRepositoryDatabase } = require('@repositories/cart')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -85,7 +85,6 @@ describe('Dialog plugin', () => {
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('text')
@@ -143,7 +142,6 @@ describe('Dialog plugin', () => {
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('text')
@@ -211,7 +209,6 @@ describe('Dialog plugin', () => {
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('file')
@@ -283,7 +280,6 @@ describe('Dialog plugin', () => {
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('file')
@@ -355,7 +351,6 @@ describe('Dialog plugin', () => {
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('file')
@@ -427,7 +422,6 @@ describe('Dialog plugin', () => {
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('file')
@@ -499,7 +493,6 @@ describe('Dialog plugin', () => {
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('file')
@@ -565,7 +558,6 @@ describe('Dialog plugin', () => {
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('interactive')
@@ -580,7 +572,6 @@ describe('Dialog plugin', () => {
         expect(messages[0].longitude).toEqual(undefined)
         expect(messages[0].departament).toEqual(undefined)
 
-        expect(messages[1]).toBeInstanceOf(Message)
         expect(messages[1].licensee).toEqual(licensee._id)
         expect(messages[1].contact).toEqual(contact._id)
         expect(messages[1].kind).toEqual('interactive')
@@ -638,7 +629,6 @@ describe('Dialog plugin', () => {
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('text')
@@ -700,7 +690,6 @@ describe('Dialog plugin', () => {
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('interactive')
@@ -715,7 +704,6 @@ describe('Dialog plugin', () => {
         expect(messages[0].longitude).toEqual(undefined)
         expect(messages[0].departament).toEqual(undefined)
 
-        expect(messages[1]).toBeInstanceOf(Message)
         expect(messages[1].licensee).toEqual(licensee._id)
         expect(messages[1].contact).toEqual(contact._id)
         expect(messages[1].kind).toEqual('interactive')
@@ -772,7 +760,6 @@ describe('Dialog plugin', () => {
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('text')
@@ -832,7 +819,6 @@ describe('Dialog plugin', () => {
 
         const cart = await cartRepository.findFirst({ contact: contact._id, concluded: false })
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('cart')
@@ -900,7 +886,6 @@ describe('Dialog plugin', () => {
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].licensee).toEqual(licensee._id)
         expect(messages[0].contact).toEqual(contact._id)
         expect(messages[0].kind).toEqual('cart')
@@ -1280,7 +1265,6 @@ describe('Dialog plugin', () => {
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
 
-        expect(messages[0]).toBeInstanceOf(Message)
         expect(messages[0].destination).toEqual('to-chatbot')
 
         expect(messages.length).toEqual(1)
@@ -1350,7 +1334,8 @@ describe('Dialog plugin', () => {
           }),
         )
 
-        await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        await messageRepository.create(
           messageFactory.build({
             text: 'Message to send',
             contact,
@@ -1374,8 +1359,8 @@ describe('Dialog plugin', () => {
 
         expect(messages).toEqual([])
 
-        const messageEdited = Message.findOne({
-          licensee: licensee,
+        const messageEdited = await messageRepository.findFirst({
+          licensee,
           messageWaId: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC44',
         })
 
@@ -1393,7 +1378,8 @@ describe('Dialog plugin', () => {
           }),
         )
 
-        await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        await messageRepository.create(
           messageFactory.build({
             text: 'Message to send',
             contact,
@@ -1417,8 +1403,8 @@ describe('Dialog plugin', () => {
 
         expect(messages).toEqual([])
 
-        const messageEdited = Message.findOne({
-          licensee: licensee,
+        const messageEdited = await messageRepository.findFirst({
+          licensee,
           messageWaId: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC44',
         })
 
@@ -1436,7 +1422,8 @@ describe('Dialog plugin', () => {
           }),
         )
 
-        await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        await messageRepository.create(
           messageFactory.build({
             text: 'Message to send',
             contact,
@@ -1460,8 +1447,8 @@ describe('Dialog plugin', () => {
 
         expect(messages).toEqual([])
 
-        const messageEdited = Message.findOne({
-          licensee: licensee,
+        const messageEdited = await messageRepository.findFirst({
+          licensee,
           messageWaId: 'ABEGVUiZKQggAhB1b33BM5Tk-yMHllM09TlC44',
         })
 
@@ -1483,7 +1470,8 @@ describe('Dialog plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
             text: 'Message to send',
@@ -1528,7 +1516,7 @@ describe('Dialog plugin', () => {
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(1)
 
-        const messageUpdated = await Message.findById(message._id)
+        const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
         expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
         expect(consoleInfoSpy).toHaveBeenCalledWith(
@@ -1547,7 +1535,8 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               _id: '60958703f415ed4008748637',
               text: 'Message to send',
@@ -1604,7 +1593,7 @@ describe('Dialog plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(2)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
           expect(consoleInfoSpy).toHaveBeenCalledWith(
@@ -1624,7 +1613,8 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               _id: '60958703f415ed4008748637',
               text: 'Message to send',
@@ -1681,7 +1671,7 @@ describe('Dialog plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(2)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
           expect(consoleInfoSpy).toHaveBeenCalledWith(
@@ -1702,7 +1692,8 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               _id: '60958703f415ed4008748637',
               text: 'Message to send',
@@ -1759,7 +1750,7 @@ describe('Dialog plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(2)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
           expect(consoleInfoSpy).toHaveBeenCalledWith(
@@ -1780,7 +1771,8 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               _id: '60958703f415ed4008748637',
               text: 'Message to send',
@@ -1837,7 +1829,7 @@ describe('Dialog plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(2)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
           expect(consoleInfoSpy).toHaveBeenCalledWith(
@@ -1903,7 +1895,8 @@ describe('Dialog plugin', () => {
               }),
             })
 
-            const message = await Message.create(
+            const messageRepository = new MessageRepositoryDatabase()
+            const message = await messageRepository.create(
               messageFactory.build({
                 _id: '60958703f415ed4008748637',
                 contact,
@@ -1994,7 +1987,7 @@ describe('Dialog plugin', () => {
             expect(fetchMock.done()).toBe(true)
             expect(fetchMock.calls()).toHaveLength(2)
 
-            const messageUpdated = await Message.findById(message._id)
+            const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
             expect(consoleInfoSpy).toHaveBeenCalledWith(
@@ -2037,7 +2030,8 @@ describe('Dialog plugin', () => {
               }),
             })
 
-            const message = await Message.create(
+            const messageRepository = new MessageRepositoryDatabase()
+            const message = await messageRepository.create(
               messageFactory.build({
                 _id: '60958703f415ed4008748637',
                 contact,
@@ -2106,7 +2100,7 @@ describe('Dialog plugin', () => {
             expect(fetchMock.done()).toBe(true)
             expect(fetchMock.calls()).toHaveLength(2)
 
-            const messageUpdated = await Message.findById(message._id)
+            const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
             expect(consoleInfoSpy).toHaveBeenCalledWith(
@@ -2169,7 +2163,8 @@ describe('Dialog plugin', () => {
               }),
             })
 
-            const message = await Message.create(
+            const messageRepository = new MessageRepositoryDatabase()
+            const message = await messageRepository.create(
               messageFactory.build({
                 _id: '60958703f415ed4008748637',
                 contact,
@@ -2258,7 +2253,7 @@ describe('Dialog plugin', () => {
             expect(fetchMock.done()).toBe(true)
             expect(fetchMock.calls()).toHaveLength(2)
 
-            const messageUpdated = await Message.findById(message._id)
+            const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
             expect(consoleInfoSpy).toHaveBeenCalledWith(
@@ -2326,7 +2321,8 @@ describe('Dialog plugin', () => {
               }),
             })
 
-            const message = await Message.create(
+            const messageRepository = new MessageRepositoryDatabase()
+            const message = await messageRepository.create(
               messageFactory.build({
                 _id: '60958703f415ed4008748637',
                 contact,
@@ -2420,7 +2416,7 @@ describe('Dialog plugin', () => {
             expect(fetchMock.done()).toBe(true)
             expect(fetchMock.calls()).toHaveLength(2)
 
-            const messageUpdated = await Message.findById(message._id)
+            const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
             expect(consoleInfoSpy).toHaveBeenCalledWith(
@@ -2446,7 +2442,8 @@ describe('Dialog plugin', () => {
               text: 'Message normal with $contact_name',
             })
 
-            const message = await Message.create(
+            const messageRepository = new MessageRepositoryDatabase()
+            const message = await messageRepository.create(
               messageFactory.build({
                 _id: '60958703f415ed4008748637',
                 contact,
@@ -2498,7 +2495,7 @@ describe('Dialog plugin', () => {
             expect(fetchMock.done()).toBe(true)
             expect(fetchMock.calls()).toHaveLength(2)
 
-            const messageUpdated = await Message.findById(message._id)
+            const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
             expect(consoleInfoSpy).toHaveBeenCalledWith(
@@ -2519,7 +2516,8 @@ describe('Dialog plugin', () => {
               }),
             )
 
-            const message = await Message.create(
+            const messageRepository = new MessageRepositoryDatabase()
+            const message = await messageRepository.create(
               messageFactory.build({
                 _id: '60958703f415ed4008748637',
                 text: 'Hello World',
@@ -2584,7 +2582,7 @@ describe('Dialog plugin', () => {
             expect(fetchMock.done()).toBe(true)
             expect(fetchMock.calls()).toHaveLength(2)
 
-            const messageUpdated = await Message.findById(message._id)
+            const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
             expect(consoleInfoSpy).toHaveBeenCalledWith(
@@ -2612,7 +2610,8 @@ describe('Dialog plugin', () => {
           const cartRepository = new CartRepositoryDatabase()
           const cart = await cartRepository.create(cartFactory.build({ contact, licensee }))
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               _id: '60958703f415ed4008748637',
               kind: 'cart',
@@ -2669,7 +2668,7 @@ describe('Dialog plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(2)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
           expect(consoleInfoSpy).toHaveBeenCalledWith(
@@ -2706,7 +2705,8 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          const message = await Message.create(
+          const messageRepository = new MessageRepositoryDatabase()
+          const message = await messageRepository.create(
             messageFactory.build({
               _id: '60958703f415ed4008748637',
               kind: 'template',
@@ -2800,7 +2800,7 @@ describe('Dialog plugin', () => {
           expect(fetchMock.done()).toBe(true)
           expect(fetchMock.calls()).toHaveLength(2)
 
-          const messageUpdated = await Message.findById(message._id)
+          const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
           expect(consoleInfoSpy).toHaveBeenCalledWith(
@@ -2821,7 +2821,8 @@ describe('Dialog plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
             text: 'Message to send',
@@ -2865,7 +2866,8 @@ describe('Dialog plugin', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
             text: 'Message to send',
@@ -2918,7 +2920,7 @@ describe('Dialog plugin', () => {
         expect(fetchMock.done()).toBe(true)
         expect(fetchMock.calls()).toHaveLength(2)
 
-        const messageUpdated = await Message.findById(message._id)
+        const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(false)
         expect(messageUpdated.error).toEqual(
           '{"meta":{"api_status":"stable","version":"2.35.4"},"errors":[{"code":1021,"title":"Bad user","details":"cannot send messages to myself"}]}',

@@ -1,14 +1,13 @@
 const emoji = require('@helpers/Emoji')
 const NormalizePhone = require('@helpers/NormalizePhone')
 const { v4: uuidv4 } = require('uuid')
-const Message = require('@models/Message')
 const request = require('../../services/request')
 const Room = require('@models/Room')
 const Trigger = require('@models/Trigger')
 const cartFactory = require('@plugins/carts/factory')
-const { createMessage } = require('@repositories/message')
 const files = require('@helpers/Files')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 const closeRoom = async (contact) => {
   const room = await Room.findOne({ contact: contact._id, closed: false })
@@ -62,12 +61,13 @@ class Landbot {
 
       const text = emoji.replace(message.message)
 
+      const messageRepository = new MessageRepositoryDatabase()
       if (kind === 'text') {
         const triggers = await Trigger.find({ expression: text, licensee: this.licensee._id }).sort({ order: 'asc' })
         if (triggers.length > 0) {
           for (const trigger of triggers) {
             processedMessages.push(
-              await createMessage({
+              await messageRepository.create({
                 number: uuidv4(),
                 text,
                 kind: 'interactive',
@@ -80,7 +80,7 @@ class Landbot {
           }
         } else {
           processedMessages.push(
-            await createMessage({
+            await messageRepository.create({
               number: uuidv4(),
               text,
               kind,
@@ -110,7 +110,7 @@ class Landbot {
           messageToSend.longitude = message.longitude
         }
 
-        processedMessages.push(await createMessage(messageToSend))
+        processedMessages.push(await messageRepository.create(messageToSend))
       }
     }
 
@@ -167,7 +167,8 @@ class Landbot {
       await closeRoom(contact)
     }
 
-    return await createMessage({
+    const messageRepository = new MessageRepositoryDatabase()
+    return await messageRepository.create({
       number: uuidv4(),
       text: observacao,
       kind: 'text',
@@ -179,7 +180,8 @@ class Landbot {
   }
 
   async sendMessage(messageId, url, token) {
-    const messageToSend = await Message.findById(messageId).populate('contact')
+    const messageRepository = new MessageRepositoryDatabase()
+    const messageToSend = await messageRepository.findFirst({ _id: messageId }, ['contact'])
 
     const customer = {
       name: messageToSend.contact.name,

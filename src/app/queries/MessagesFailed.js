@@ -19,8 +19,6 @@ class MessagesFailedQuery {
         $ne: 'Chat encerrado pelo agente',
       },
     })
-      .populate('contact', 'name number type')
-      .exec()
   }
 }
 

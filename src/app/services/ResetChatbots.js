@@ -1,4 +1,3 @@
-const Message = require('@models/Message')
 const createChatbotPlugin = require('../plugins/chatbots/factory')
 const moment = require('moment-timezone')
 const MessagesQuery = require('@queries/MessagesQuery')
@@ -6,6 +5,7 @@ const { v4: uuidv4 } = require('uuid')
 const createMessengerPlugin = require('../plugins/messengers/factory')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 async function getLastMessageOfContact(contactId) {
   const messagesQuery = new MessagesQuery()
@@ -23,7 +23,8 @@ function getTimeLimit() {
 }
 
 async function sendMessageToMessegner(licensee, contactId, text) {
-  const messageToSend = await Message.create({
+  const messageRepository = new MessageRepositoryDatabase()
+  const messageToSend = await messageRepository.create({
     number: uuidv4(),
     text: text,
     kind: 'text',

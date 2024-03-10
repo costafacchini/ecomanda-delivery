@@ -1,4 +1,3 @@
-const Message = require('@models/Message')
 const Trigger = require('@models/Trigger')
 const Template = require('@models/Template')
 const NormalizePhone = require('@helpers/NormalizePhone')
@@ -7,6 +6,7 @@ const files = require('@helpers/Files')
 const cartFactory = require('../../plugins/carts/factory')
 const { parseText } = require('@helpers/ParseTriggerText')
 const MessengersBase = require('./Base')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 const getWaIdContact = async (number, url, token) => {
   const headers = { 'D360-API-KEY': token }
@@ -243,7 +243,8 @@ class Dialog extends MessengersBase {
   }
 
   async sendMessage(messageId, url, token) {
-    const messageToSend = await Message.findById(messageId).populate('contact')
+    const messageRepository = new MessageRepositoryDatabase()
+    const messageToSend = await messageRepository.findFirst({ _id: messageId }, ['contact'])
 
     let waId = messageToSend.contact.waId
     if (!waId) {

@@ -1,17 +1,13 @@
 const Trigger = require('@models/Trigger')
+const Message = require('@models/Message')
 const mongoServer = require('../../../.jest/utils')
-const {
-  createMessage,
-  createMessageToWarnAboutWindowOfWhatsassHasExpired,
-  createMessageToWarnAboutWindowOfWhatsassIsEnding,
-  createTextMessageInsteadInteractive,
-  createInteractiveMessages,
-} = require('@repositories/message')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
+const { message: messageFactory } = require('@factories/message')
 const { triggerText } = require('@factories/trigger')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -25,15 +21,24 @@ describe('message repository', () => {
     await mongoServer.disconnect()
   })
 
-  describe('#createMessage', () => {
-    it('creates a message', async () => {
+  describe('#model', () => {
+    it('returns a model', () => {
+      const messageRepository = new MessageRepositoryDatabase()
+
+      expect(messageRepository.model()).toEqual(Message)
+    })
+  })
+
+  describe('#create', () => {
+    it('creates a new message', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
 
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
 
-      const message = await createMessage({
+      const messageRepository = new MessageRepositoryDatabase()
+      const message = await messageRepository.create({
         destination: 'to-chatbot',
         kind: 'text',
         text: 'Hello World',
@@ -52,6 +57,57 @@ describe('message repository', () => {
         }),
       )
     })
+
+    describe('when is invalid message', () => {
+      it('generate exception with error', async () => {
+        const messageRepository = new MessageRepositoryDatabase()
+
+        await expect(async () => {
+          await messageRepository.create()
+        }).rejects.toThrow(
+          'Message validation failed: contact: Contact: Você deve preencher o campo, licensee: Licensee: Você deve preencher o campo, destination: Destino: Você deve informar qual o destino da mensagem (to-chatbot | to-chat | to-messenger | to-transfer), text: Texto: deve ser preenchido quando o tipo de mensahem é texto',
+        )
+      })
+    })
+  })
+
+  describe('#findFirst', () => {
+    it('finds a licensee', async () => {
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
+
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
+
+      const messageRepository = new MessageRepositoryDatabase()
+      await messageRepository.create(messageFactory.build({ licensee, contact, text: 'Hello world' }))
+      await messageRepository.create(messageFactory.build({ licensee, contact, text: 'Hello world' }))
+      await messageRepository.create(messageFactory.build({ licensee, contact, text: 'Hello world again' }))
+
+      let result = await messageRepository.findFirst()
+      expect(result).toEqual(expect.objectContaining({ text: 'Hello world' }))
+
+      result = await messageRepository.findFirst({ text: 'Hello world again' })
+      expect(result).toEqual(expect.objectContaining({ text: 'Hello world again' }))
+    })
+  })
+
+  describe('#find', () => {
+    it('finds messages', async () => {
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
+
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
+
+      const messageRepository = new MessageRepositoryDatabase()
+      await messageRepository.create(messageFactory.build({ licensee, contact, text: 'Hello world' }))
+      await messageRepository.create(messageFactory.build({ licensee, contact, text: 'Hello world' }))
+      await messageRepository.create(messageFactory.build({ licensee, contact, text: 'Hello world again' }))
+
+      let result = await messageRepository.find({ text: 'Hello world' })
+      expect(result.length).toEqual(2)
+    })
   })
 
   describe('#createInteractiveMessages', () => {
@@ -69,7 +125,8 @@ describe('message repository', () => {
           triggerText.build({ licensee, expression: 'hello_world', text: 'Hello world 2' }),
         )
 
-        const messages = await createInteractiveMessages({
+        const messageRepository = new MessageRepositoryDatabase()
+        const messages = await messageRepository.createInteractiveMessages({
           destination: 'to-chatbot',
           kind: 'text',
           text: 'hello_world',
@@ -111,7 +168,8 @@ describe('message repository', () => {
         const contactRepository = new ContactRepositoryDatabase()
         const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
 
-        const messages = await createInteractiveMessages({
+        const messageRepository = new MessageRepositoryDatabase()
+        const messages = await messageRepository.createInteractiveMessages({
           destination: 'to-chatbot',
           kind: 'text',
           text: 'hello_world',
@@ -142,7 +200,8 @@ describe('message repository', () => {
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
 
-      const message = await createTextMessageInsteadInteractive({
+      const messageRepository = new MessageRepositoryDatabase()
+      const message = await messageRepository.createTextMessageInsteadInteractive({
         destination: 'to-chatbot',
         kind: 'text',
         text: 'Hello World',
@@ -169,7 +228,8 @@ describe('message repository', () => {
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id, name: 'John Doe' }))
 
-      const message = await createTextMessageInsteadInteractive({
+      const messageRepository = new MessageRepositoryDatabase()
+      const message = await messageRepository.createTextMessageInsteadInteractive({
         destination: 'to-chatbot',
         kind: 'interactive',
         text: '$contact_name',
@@ -195,7 +255,8 @@ describe('message repository', () => {
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
 
-      const message = await createMessageToWarnAboutWindowOfWhatsassHasExpired(contact, licensee)
+      const messageRepository = new MessageRepositoryDatabase()
+      const message = await messageRepository.createMessageToWarnAboutWindowOfWhatsassHasExpired(contact, licensee)
 
       expect(message).toEqual(
         expect.objectContaining({
@@ -218,7 +279,8 @@ describe('message repository', () => {
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
 
-      const message = await createMessageToWarnAboutWindowOfWhatsassIsEnding(contact, licensee)
+      const messageRepository = new MessageRepositoryDatabase()
+      const message = await messageRepository.createMessageToWarnAboutWindowOfWhatsassIsEnding(contact, licensee)
 
       expect(message).toEqual(
         expect.objectContaining({

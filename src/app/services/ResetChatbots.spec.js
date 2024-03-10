@@ -1,5 +1,4 @@
 const resetChatbots = require('./ResetChatbots')
-const Message = require('@models/Message')
 const mongoServer = require('.jest/utils')
 const fetchMock = require('fetch-mock')
 const { licensee: licenseeFactory } = require('@factories/licensee')
@@ -7,6 +6,7 @@ const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 describe('resetChatbots', () => {
   jest.spyOn(global.console, 'info').mockImplementation()
@@ -43,7 +43,8 @@ describe('resetChatbots', () => {
         }),
       )
 
-      await Message.create(
+      const messageRepository = new MessageRepositoryDatabase()
+      await messageRepository.create(
         messageFactory.build({
           contact,
           licensee,
@@ -60,7 +61,7 @@ describe('resetChatbots', () => {
         }),
       )
 
-      await Message.create(
+      await messageRepository.create(
         messageFactory.build({
           contact: contactThatMessageDoesNotCreatedInTimeLimit,
           licensee,
@@ -77,7 +78,7 @@ describe('resetChatbots', () => {
         }),
       )
 
-      await Message.create(
+      await messageRepository.create(
         messageFactory.build({
           contact: contactThatMessageDoesNotSended,
           licensee,
@@ -95,7 +96,7 @@ describe('resetChatbots', () => {
         }),
       )
 
-      await Message.create(
+      await messageRepository.create(
         messageFactory.build({
           contact: contactThatNotTalkingWithChatbot,
           licensee,
@@ -112,7 +113,7 @@ describe('resetChatbots', () => {
         }),
       )
 
-      await Message.create(
+      await messageRepository.create(
         messageFactory.build({
           contact: contactWithoutLandbotId,
           licensee,
@@ -140,7 +141,7 @@ describe('resetChatbots', () => {
         }),
       )
 
-      await Message.create(
+      await messageRepository.create(
         messageFactory.build({
           contact: contact2,
           licensee: licenseeWhithoutChatbot,
@@ -167,7 +168,7 @@ describe('resetChatbots', () => {
         }),
       )
 
-      await Message.create(
+      await messageRepository.create(
         messageFactory.build({
           contact: contact3,
           licensee: licenseeWithoutChatbotApiToken,
@@ -246,7 +247,8 @@ describe('resetChatbots', () => {
           }),
         )
 
-        const message = await Message.create(
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
           messageFactory.build({
             contact,
             licensee,
@@ -274,7 +276,7 @@ describe('resetChatbots', () => {
 
         await resetChatbots()
 
-        const messageUpdated = await Message.findById(message._id)
+        const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toBe(true)
 
         await fetchMock.flush(true)

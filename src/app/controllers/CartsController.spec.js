@@ -5,13 +5,12 @@ const { expressServer } = require('../../../.jest/server-express')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { cart: cartFactory } = require('@factories/cart')
-const { createTextMessageInsteadInteractive } = require('@repositories/message')
 const { publishMessage } = require('@config/rabbitmq')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const { CartRepositoryDatabase } = require('@repositories/cart')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 jest.mock('@config/rabbitmq')
-jest.mock('@repositories/message')
 
 describe('carts controller', () => {
   let licensee, contact
@@ -679,10 +678,16 @@ describe('carts controller', () => {
   describe('send', () => {
     describe('response', () => {
       it('returns status 200 and schedules to send message if the item removed with successful', async () => {
+        jest
+          .spyOn(MessageRepositoryDatabase.prototype, 'createTextMessageInsteadInteractive')
+          .mockImplementation(() => {
+            return {
+              _id: 'id',
+            }
+          })
+
         const cartRepository = new CartRepositoryDatabase()
         await cartRepository.create(cartFactory.build({ contact, licensee }))
-
-        createTextMessageInsteadInteractive.mockResolvedValue({ _id: 'id' })
 
         await request(expressServer)
           .post(`/api/v1/carts/5511990283745/send?token=${licensee.apiToken}`)
@@ -702,12 +707,14 @@ describe('carts controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurred when update the cart', async () => {
+        jest
+          .spyOn(MessageRepositoryDatabase.prototype, 'createTextMessageInsteadInteractive')
+          .mockImplementation(() => {
+            throw new Error('some error')
+          })
+
         const cartRepository = new CartRepositoryDatabase()
         await cartRepository.create(cartFactory.build({ contact, licensee }))
-
-        createTextMessageInsteadInteractive.mockImplementation(() => {
-          throw new Error('some error')
-        })
 
         await request(expressServer)
           .post(`/api/v1/carts/5511990283745/send?token=${licensee.apiToken}`)
@@ -715,8 +722,6 @@ describe('carts controller', () => {
           .expect(500, {
             errors: { message: 'Error: some error' },
           })
-
-        createTextMessageInsteadInteractive.mockRestore()
       })
     })
   })

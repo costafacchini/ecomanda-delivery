@@ -1,4 +1,4 @@
-const Message = require('@models/Message')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 class MessagesSendedQuery {
   constructor(startDate, endDate, licenseeId) {
@@ -8,7 +8,8 @@ class MessagesSendedQuery {
   }
 
   async all() {
-    return await Message.find({
+    const messageRepository = new MessageRepositoryDatabase()
+    return await messageRepository.find({
       sended: true,
       createdAt: {
         $gte: this.startDate,
@@ -16,8 +17,6 @@ class MessagesSendedQuery {
       },
       licensee: this.licenseeId,
     })
-      .populate('contact', 'name number type')
-      .exec()
   }
 }
 

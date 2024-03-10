@@ -1,11 +1,11 @@
 const mongoServer = require('../../../.jest/utils')
-const Message = require('@models/Message')
 const MessagesSendedQuery = require('./MessagesSended')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 describe('MessagesSendedQuery', () => {
   let licensee
@@ -26,7 +26,8 @@ describe('MessagesSendedQuery', () => {
   })
 
   it('returns the messages that sended filtered by licensee and period', async () => {
-    const filteredMessageSended1 = await Message.create(
+    const messageRepository = new MessageRepositoryDatabase()
+    const filteredMessageSended1 = await messageRepository.create(
       messageFactory.build({
         contact,
         licensee,
@@ -34,7 +35,7 @@ describe('MessagesSendedQuery', () => {
         createdAt: new Date(2021, 6, 3, 0, 0, 0),
       }),
     )
-    const filteredMessageSended2 = await Message.create(
+    const filteredMessageSended2 = await messageRepository.create(
       messageFactory.build({
         contact,
         licensee,
@@ -42,7 +43,7 @@ describe('MessagesSendedQuery', () => {
         createdAt: new Date(2021, 6, 3, 23, 59, 58),
       }),
     )
-    const filteredMessageNotSended = await Message.create(
+    const filteredMessageNotSended = await messageRepository.create(
       messageFactory.build({
         contact,
         licensee,
@@ -50,7 +51,7 @@ describe('MessagesSendedQuery', () => {
         createdAt: new Date(2021, 6, 3, 23, 59, 58),
       }),
     )
-    const filteredMessageBefore = await Message.create(
+    const filteredMessageBefore = await messageRepository.create(
       messageFactory.build({
         contact,
         licensee,
@@ -58,7 +59,7 @@ describe('MessagesSendedQuery', () => {
         createdAt: new Date(2021, 6, 2, 23, 59, 59),
       }),
     )
-    const filteredMessageAfter = await Message.create(
+    const filteredMessageAfter = await messageRepository.create(
       messageFactory.build({
         contact,
         licensee,
@@ -69,7 +70,7 @@ describe('MessagesSendedQuery', () => {
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     const anotherLicensee = await licenseeRepository.create(licenseeFactory.build())
-    const messageSendedAnotherLicensee = await Message.create(
+    const messageSendedAnotherLicensee = await messageRepository.create(
       messageFactory.build({
         contact,
         licensee: anotherLicensee,

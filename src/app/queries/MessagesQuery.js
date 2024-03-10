@@ -1,4 +1,4 @@
-const Message = require('@models/Message')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 const QueryBuilder = require('@queries/QueryBuilder')
 
 class MessagesQuery {
@@ -62,7 +62,8 @@ class MessagesQuery {
   }
 
   async all() {
-    const query = new QueryBuilder(Message)
+    const messageRepository = new MessageRepositoryDatabase()
+    const query = new QueryBuilder(messageRepository.model())
     if (this.sortByClause) {
       query.sortBy(this.sortByClause.field, this.sortByClause.order)
     } else {
@@ -74,7 +75,8 @@ class MessagesQuery {
   }
 
   async count() {
-    const query = new QueryBuilder(Message)
+    const messageRepository = new MessageRepositoryDatabase()
+    const query = new QueryBuilder(messageRepository.model())
     this.applyFilters(query)
 
     return await query.getQuery().countDocuments()

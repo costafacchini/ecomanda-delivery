@@ -1,5 +1,4 @@
 const sendMessageToChatbot = require('./SendMessageToChatbot')
-const Message = require('@models/Message')
 const Landbot = require('../plugins/chatbots/Landbot')
 const mongoServer = require('.jest/utils')
 const { licensee: licenseeFactory } = require('@factories/licensee')
@@ -7,6 +6,7 @@ const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
+const { MessageRepositoryDatabase } = require('@repositories/message')
 
 describe('sendMessageToChatbot', () => {
   const landbotSendMessageSpy = jest.spyOn(Landbot.prototype, 'sendMessage').mockImplementation(() => {})
@@ -36,7 +36,8 @@ describe('sendMessageToChatbot', () => {
       }),
     )
 
-    await Message.create(
+    const messageRepository = new MessageRepositoryDatabase()
+    await messageRepository.create(
       messageFactory.build({
         contact,
         licensee,
