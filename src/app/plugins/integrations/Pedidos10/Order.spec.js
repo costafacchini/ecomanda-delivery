@@ -1,5 +1,5 @@
 const Licensee = require('@models/Licensee')
-const { createOrder, getOrderBy } = require('@repositories/order')
+const { OrderRepositoryDatabase } = require('@repositories/order')
 const mongoServer = require('../../../../../.jest/utils')
 const Order = require('./Order')
 const Webhook = require('./services/Webhook')
@@ -119,7 +119,8 @@ describe('Pedidos10/Order', () => {
         const order = new Order(licensee)
         await order.save(body)
 
-        const orderPersisted = await getOrderBy({ licensee: licensee, order_external_id: '9967816' })
+        const orderRepository = new OrderRepositoryDatabase()
+        const orderPersisted = await orderRepository.findFirst({ licensee: licensee, order_external_id: '9967816' })
 
         expect(orderPersisted.merchant_external_code).toEqual('358b9068-34cf-4f96-b883-0d8192bc12dd')
         expect(orderPersisted.order_external_id).toEqual('9967816')
@@ -167,7 +168,9 @@ describe('Pedidos10/Order', () => {
       describe('when status is different than the persisted order', () => {
         it('updates the order status', async () => {
           const licensee = await Licensee.create(licenseeFactory.build())
-          await createOrder({ ...orderFactory.build({ licensee }) })
+
+          const orderRepository = new OrderRepositoryDatabase()
+          await orderRepository.create({ ...orderFactory.build({ licensee }) })
 
           const body = {
             MerchantExternalCode: '358b9068-34cf-4f96-b883-0d8192bc12dd',
@@ -215,14 +218,16 @@ describe('Pedidos10/Order', () => {
           const order = new Order(licensee)
           await order.save(body)
 
-          const orderUpdated = await getOrderBy({ licensee, order_external_id: '9967816' })
+          const orderUpdated = await orderRepository.findFirst({ licensee, order_external_id: '9967816' })
 
           expect(orderUpdated.status).toEqual('CHANGED_STATUS')
         })
 
         it('changes integration_status to pending', async () => {
           const licensee = await Licensee.create(licenseeFactory.build())
-          await createOrder({ ...orderFactory.build({ licensee }), integration_status: 'done' })
+
+          const orderRepository = new OrderRepositoryDatabase()
+          await orderRepository.create({ ...orderFactory.build({ licensee }), integration_status: 'done' })
 
           const body = {
             MerchantExternalCode: '358b9068-34cf-4f96-b883-0d8192bc12dd',
@@ -270,7 +275,7 @@ describe('Pedidos10/Order', () => {
           const order = new Order(licensee)
           await order.save(body)
 
-          const orderUpdated = await getOrderBy({ licensee, order_external_id: '9967816' })
+          const orderUpdated = await orderRepository.findFirst({ licensee, order_external_id: '9967816' })
 
           expect(orderUpdated.integration_status).toEqual('pending')
         })
@@ -279,7 +284,9 @@ describe('Pedidos10/Order', () => {
       describe('when the status is equal than the persisted order', () => {
         it('update fields', async () => {
           const licensee = await Licensee.create(licenseeFactory.build())
-          await createOrder({ ...orderFactory.build({ licensee }), integration_status: 'done' })
+
+          const orderRepository = new OrderRepositoryDatabase()
+          await orderRepository.create({ ...orderFactory.build({ licensee }), integration_status: 'done' })
 
           const body = {
             MerchantExternalCode: '358b9068-34cf-4f96-b883-0d8192bc12dd',
@@ -337,7 +344,7 @@ describe('Pedidos10/Order', () => {
           const order = new Order(licensee)
           await order.save(body)
 
-          const orderUpdated = await getOrderBy({ licensee, order_external_id: '9967816' })
+          const orderUpdated = await orderRepository.findFirst({ licensee, order_external_id: '9967816' })
 
           expect(orderUpdated.items.length).toEqual(2)
           expect(orderUpdated.payments.pending).toEqual(11)
@@ -350,7 +357,8 @@ describe('Pedidos10/Order', () => {
 
         it('does not change integration_status', async () => {
           const licensee = await Licensee.create(licenseeFactory.build())
-          await createOrder({ ...orderFactory.build({ licensee }), integration_status: 'done' })
+          const orderRepository = new OrderRepositoryDatabase()
+          await orderRepository.create({ ...orderFactory.build({ licensee }), integration_status: 'done' })
 
           const body = {
             MerchantExternalCode: '358b9068-34cf-4f96-b883-0d8192bc12dd',
@@ -398,7 +406,7 @@ describe('Pedidos10/Order', () => {
           const order = new Order(licensee)
           await order.save(body)
 
-          const orderUpdated = await getOrderBy({ licensee, order_external_id: '9967816' })
+          const orderUpdated = await orderRepository.findFirst({ licensee, order_external_id: '9967816' })
 
           expect(orderUpdated.integration_status).toEqual('done')
         })

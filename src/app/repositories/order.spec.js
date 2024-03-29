@@ -1,8 +1,8 @@
-const Licensee = require('@models/Licensee')
 const mongoServer = require('../../../.jest/utils')
-const { createOrder, getOrderBy } = require('@repositories/order')
+const { OrderRepositoryDatabase } = require('@repositories/order')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { order: orderFactory } = require('@factories/order')
+const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
 describe('order repository', () => {
   beforeEach(async () => {
@@ -14,14 +14,13 @@ describe('order repository', () => {
     await mongoServer.disconnect()
   })
 
-  describe('#createOrder', () => {
-    it('creates a order', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
-      const draftOrder = orderFactory.build({ licensee })
+  describe('#create', () => {
+    it('creates a new order', async () => {
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
 
-      const order = await createOrder({
-        ...draftOrder,
-      })
+      const orderRepository = new OrderRepositoryDatabase()
+      const order = await orderRepository.create(orderFactory.build({ licensee }))
 
       expect(order.merchant_external_code).toEqual('358b9068-34cf-4f96-b883-0d8192bc12dd')
       expect(order.order_external_id).toEqual('9967816')
@@ -63,36 +62,33 @@ describe('order repository', () => {
       expect(order.items[0].option_groups[0].options[0].quantity).toEqual(1)
       expect(order.items[0].option_groups[0].options[0].total).toEqual(5)
     })
+
+    describe('when is invalid order', () => {
+      it('generate exception with error', async () => {
+        const orderRepository = new OrderRepositoryDatabase()
+
+        await expect(async () => {
+          await orderRepository.create()
+        }).rejects.toThrow('Order validation failed: licensee: Licensee: Você deve preencher o campo')
+      })
+    })
   })
 
-  describe('#getOrderBy', () => {
-    it('returns one record by filter', async () => {
-      const licensee = await Licensee.create(licenseeFactory.build())
-      const draftOrder = orderFactory.build({ licensee })
+  describe('#findFirst', () => {
+    it('finds a order', async () => {
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
 
-      await createOrder({
-        ...draftOrder,
-      })
+      const orderRepository = new OrderRepositoryDatabase()
+      await orderRepository.create(orderFactory.build({ licensee, order_external_id: '9967816' }))
+      await orderRepository.create(orderFactory.build({ licensee, order_external_id: '9999999' }))
 
-      const anotherLicensee = await Licensee.create(licenseeFactory.build())
-      const anotherDraftOrder = orderFactory.build({ licensee: anotherLicensee })
-      await createOrder({
-        ...anotherDraftOrder,
-      })
+      let result = await orderRepository.findFirst()
+      expect(result).toEqual(expect.objectContaining({ order_external_id: '9967816' }))
 
-      const cart = await getOrderBy({ licensee })
-
-      expect(cart).toEqual(
-        expect.objectContaining({
-          licensee: licensee._id,
-        }),
-      )
-
-      expect(cart).not.toEqual(
-        expect.objectContaining({
-          licensee: anotherLicensee._id,
-        }),
-      )
+      result = await orderRepository.findFirst({ order_external_id: '9999999' }, ['licensee'])
+      expect(result).toEqual(expect.objectContaining({ order_external_id: '9999999' }))
+      expect(result.licensee.name).toEqual('Alcateia Ltds')
     })
   })
 })

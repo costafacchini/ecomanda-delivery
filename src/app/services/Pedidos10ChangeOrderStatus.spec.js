@@ -2,7 +2,7 @@ const changeOrderStatus = require('./Pedidos10ChangeOrderStatus')
 const Licensee = require('@models/Licensee')
 const Body = require('@models/Body')
 const mongoServer = require('.jest/utils')
-const { createOrder } = require('@repositories/order')
+const { OrderRepositoryDatabase } = require('@repositories/order')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { order: orderFactory } = require('@factories/order')
 const { body: bodyFactory } = require('@factories/body')
@@ -29,7 +29,9 @@ describe('changeOrderStatus', () => {
 
   it('responds send order to integrator', async () => {
     const licensee = await Licensee.create(licenseeFactory.build())
-    const order = await createOrder({ ...orderFactory.build({ licensee }) })
+
+    const orderRepository = new OrderRepositoryDatabase()
+    const order = await orderRepository.create({ ...orderFactory.build({ licensee }) })
 
     const body = await Body.create(
       bodyFactory.build({

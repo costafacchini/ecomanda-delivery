@@ -1,11 +1,10 @@
 const sendOrder = require('./IntegrationSendOrder')
 const Licensee = require('@models/Licensee')
 const mongoServer = require('.jest/utils')
-const { createOrder } = require('@repositories/order')
+const { OrderRepositoryDatabase } = require('@repositories/order')
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { order: orderFactory } = require('@factories/order')
 const IntegratorBase = require('../plugins/integrations/IntegratorBase')
-const { getOrderBy } = require('@repositories/order')
 
 describe('sendOrder', () => {
   const integratorSendOrderFnSpy = jest.spyOn(IntegratorBase.prototype, 'sendOrder')
@@ -21,7 +20,9 @@ describe('sendOrder', () => {
 
   it('sends order to integrator', async () => {
     const licensee = await Licensee.create(licenseeFactory.build())
-    const order = await createOrder({ ...orderFactory.build({ licensee }) })
+
+    const orderRepository = new OrderRepositoryDatabase()
+    const order = await orderRepository.create({ ...orderFactory.build({ licensee }) })
 
     const data = {
       orderId: order._id,
@@ -35,7 +36,9 @@ describe('sendOrder', () => {
   describe('when success', () => {
     it('change order status to done', async () => {
       const licensee = await Licensee.create(licenseeFactory.build())
-      const order = await createOrder({ ...orderFactory.build({ licensee, integration_status: 'pending' }) })
+
+      const orderRepository = new OrderRepositoryDatabase()
+      const order = await orderRepository.create({ ...orderFactory.build({ licensee, integration_status: 'pending' }) })
 
       const data = {
         orderId: order._id,
@@ -43,7 +46,7 @@ describe('sendOrder', () => {
 
       await sendOrder(data)
 
-      const orderUpdated = await getOrderBy(order._id)
+      const orderUpdated = await orderRepository.findFirst({ _id: order._id })
       expect(orderUpdated.integration_status).toEqual('done')
     })
   })
@@ -55,7 +58,9 @@ describe('sendOrder', () => {
       })
 
       const licensee = await Licensee.create(licenseeFactory.build())
-      const order = await createOrder({ ...orderFactory.build({ licensee, integration_status: 'pending' }) })
+
+      const orderRepository = new OrderRepositoryDatabase()
+      const order = await orderRepository.create({ ...orderFactory.build({ licensee, integration_status: 'pending' }) })
 
       const data = {
         orderId: order._id,
@@ -63,7 +68,7 @@ describe('sendOrder', () => {
 
       await sendOrder(data)
 
-      const orderUpdated = await getOrderBy(order._id)
+      const orderUpdated = await orderRepository.findFirst({ _id: order._id })
       expect(orderUpdated.integration_status).toEqual('error')
       expect(orderUpdated.integration_error).toEqual('Error: some error')
 
