@@ -3,7 +3,7 @@ const Parser = require('./Parser')
 const Webhook = require('./services/Webhook')
 const OrderStatus = require('./services/OrderStatus')
 const Auth = require('./services/Auth')
-const { createOrder, getOrderBy } = require('@repositories/order')
+const { OrderRepositoryDatabase } = require('@repositories/order')
 
 class Order {
   constructor(licensee) {
@@ -15,7 +15,8 @@ class Order {
   }
 
   async loadOrderFromDatabase(order) {
-    return await getOrderBy({
+    const orderRepository = new OrderRepositoryDatabase()
+    return await orderRepository.findFirst({
       licensee: this.licensee,
       merchant_external_code: order.merchant_external_code,
       order_external_id: order.order_external_id,
@@ -31,7 +32,8 @@ class Order {
     const orderPersisted = await this.loadOrderFromDatabase(order)
 
     if (!this.alreadyExists(orderPersisted)) {
-      return await createOrder({ ...order, licensee: this.licensee })
+      const orderRepository = new OrderRepositoryDatabase()
+      return await orderRepository.create({ ...order, licensee: this.licensee })
     }
 
     if (orderPersisted.status != order.status) {

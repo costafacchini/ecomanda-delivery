@@ -1,9 +1,11 @@
-const Order = require('@models/Order')
 const createIntegrator = require('../plugins/integrations/factory')
+const { OrderRepositoryDatabase } = require('@repositories/order')
 
 async function sendOrder(data) {
   const { orderId } = data
-  const order = await Order.findById(orderId).populate('licensee')
+
+  const orderRepository = new OrderRepositoryDatabase()
+  const order = await orderRepository.findFirst({ _id: orderId }, ['licensee'])
 
   const integrator = createIntegrator(order.licensee.pedidos10_integrator)
   try {
