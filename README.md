@@ -1,7 +1,44 @@
-# Setup node (only if you have not installed)
+# README
 
-This project uses [asdf](https://asdf-vm.com/#/). \
-Follow the installation [instructions](https://asdf-vm.com/#/core-manage-asdf?id=asdf)
+## Requirements
+
+```shell
+  node 20.x
+```
+
+## Purpose
+
+This project was developed at the request of a friend and I used it as a challenge to improve my Javascript skills using Node and React.
+
+## Domain
+
+The project domain is the integration between Chat platforms, Chatbots and WhatsApp.
+
+He set out to help support some companies by speeding up the exchange of messages between a WhatsApp number and a chat platform where various agents used to help users.
+
+The Chatbot was an opportunity that appeared later and helped users self-service before calling an attendant to resolve their query.
+
+## Decisions
+
+The project was developed without me having much experience developing with Javascript.
+The project does not follow a specific architecture. This caused a lot of problems like cohesion, coupling, dependency injection, bloated controllers.
+The project no longer has any client running, so it is only serving as a guinea pig to train refactorings and apply good practices
+
+## Improvements
+ - Decouple mongo from the application, facilitating a possible migration to another database. This improvement will help us improve tests that are currently highly coupled with the database
+ - Extract use cases from controllers. Controllers are full of logic and tightly coupled with the database layer
+ - Resolve pull requests with libs that changed their interface
+ - Migrate to TS
+ - Study improvements to use the app's architecture using Ports and Adapters. (probably many tasks will be necessary)
+ - Create API documentation
+ - Extract the PDV part to another project as it is not part of the project's main domain
+ - Remove no longer used plugins
+ - ...
+
+## Setup Node (only if you have not installed)
+
+This project uses [asdf](https://asdf-vm.com/guide/getting-started.html). \
+Follow the installation [instructions](https://asdf-vm.com/guide/getting-started.html#_3-install-asdf)
 
 After installation you need to follow these steps:
 
@@ -10,62 +47,96 @@ After installation you need to follow these steps:
 $ asdf plugin add nodejs
 
 # Install nodejs plugin
-$ asdf install nodejs 14.17.0
+$ asdf install nodejs 20.13.1
 
 # Set the default nodejs for the project
-$ asdf local nodejs 14.17.0
+$ asdf local nodejs 20.13.1
 
 # install Yarn
 $ npm install --global yarn
 ```
 
-In the project directory, you should run docker to prepare database:
+## Setup Project
 
-## `docker-compose up --build`
+The first step is configure environment variables
 
-# Available Scripts (backend)
+The project has a file called `.env.example` that contains all the necessary environment variables
 
-In the project directory, you can run:
+```bash
+# create a .env file
+$ cp .env.example .env
+```
 
-## `yarn start`
+In the project directory:
 
-Runs the SERVER only in the development mode.\
+```bash
+# build the containers used on development environment
+$ docker-compose up --build
+```
 
-## `yarn dev`
+## Local development
 
-Runs the Server and WORKER in the development mode.\
+In the project directory:
 
-## `yarn test`
+```bash
+# start the backend in nodejs
+$ yarn start
 
-Runs the tests without coverage (fast).\
+# to start the frontend part, you need to access the client folder
+$ cd client
+$ yarn start
+```
 
-## `yarn test::coverage`
+### Scripts available (backend)
 
-Runs the tests with coverage (low).\
+```bash
+# build the frontent from the root folder
+$ yarn build
 
-## `yarn watch`
+# to run only the server in local development with docker and nodemon
+$ yarn dev:server
 
-Watchs the tests without coverage.\
+# to run only the worker in local development (to process the jobs)
+$ yarn dev:worker
 
-## `linter`
+# to run all dev scripts (server and worker)
+$ yarn dev
 
-Run linter to show the code that is out of patters
+# to run the backend tests
+$ yarn test
 
-# Available Scripts (frontend)
+# to run the backend tests using the CI script
+$ yarn test:ci
 
-In the CLIENT directory, you can run:
+# to run the backend tests with the coverage report
+$ yarn test:coverage
 
-## `yarn start`
+# to run the backend tests in watch mode
+$ yarn watch
 
-Runs the frontend in the development mode.\
+# to run the linter
+$ yarn linter
+```
 
-## `yarn test`
+### Scripts available (frontend)
 
-Runs the tests .\
+```bash
+# you need to access the client folder
+$ cd client
 
-# Backups
+# to build the frontent
+$ yarn build
 
-## gzip
+# to run the frontend tests
+$ yarn test
+
+# to run the backend tests in watch mode
+$ yarn jest:watch
+```
+
+## Backups
+
+### gzip
 
 ```bash
 # Backup
