@@ -953,13 +953,13 @@
   resolved "https://registry.yarnpkg.com/@colors/colors/-/colors-1.5.0.tgz#bb504579c1cae923e6576a4f5da43d25f97bdbd9"
   integrity sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==
 
-"@contrast/fn-inspect@^3.3.0":
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/@contrast/fn-inspect/-/fn-inspect-3.3.1.tgz#3e8f7d297ce12742a4d54c7c7fea50a86e1ed5ed"
-  integrity sha512-BqsC5YslFxX/jgUzjAFEqnI0ngXXmUAFHUrhLSJu7lFYwTB7U1bLCUcjsZVnaO2bh0QDrmGAL/W0pe1Eu7PIIQ==
+"@contrast/fn-inspect@^4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@contrast/fn-inspect/-/fn-inspect-4.2.0.tgz#34ae2ce82b7c18a56f8dd58818adf67524e82159"
+  integrity sha512-pdPYE7gP+8t1lrL2yJnqpE2N5uYoolrVKHxfWxhAhmbLuDmxgIBqvPM7+qnPIIZyRgL7ljbuYo/yRXgcd9HZYQ==
   dependencies:
-    nan "^2.16.0"
-    node-gyp-build "^4.4.0"
+    nan "^2.19.0"
+    node-gyp-build "^4.8.1"
 
 "@eslint-community/eslint-utils@^4.1.2", "@eslint-community/eslint-utils@^4.2.0", "@eslint-community/eslint-utils@^4.4.0":
   version "4.4.0"
@@ -5989,10 +5989,15 @@ msgpackr@^1.10.1:
   optionalDependencies:
     msgpackr-extract "^3.0.2"
 
-nan@^2.16.0, nan@^2.17.0:
+nan@^2.17.0:
   version "2.17.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.17.0.tgz#c0150a2368a182f033e9aa5195ec76ea41a199cb"
   integrity sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ==
+
+nan@^2.19.0:
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.20.0.tgz#08c5ea813dd54ed16e5bd6505bf42af4f7838ca3"
+  integrity sha512-bk3gXBZDGILuuo/6sKtr0DQmSThYHLtNCdSdXk9YkxD/jK6X2vmCyyXBBxyqZ4XcnzTyYEAThfX3DCEnLf6igw==
 
 natural-compare@^1.4.0:
   version "1.4.0"
@@ -6011,10 +6016,10 @@ new-find-package-json@^2.0.0:
   dependencies:
     debug "^4.3.4"
 
-newrelic@11.21.0:
-  version "11.21.0"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-11.21.0.tgz#0307bc27d7b7fca43a6ee75107017db37bb72942"
-  integrity sha512-lJBvGfXtdySZMfRkQGXpxPMcQPxCZ6X/M0xW65YkIPHGjD7hCwquLSlSUorLqmwp14DIweENH5OvFCpBxOcYNg==
+newrelic@11.22.0:
+  version "11.22.0"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-11.22.0.tgz#f9d62c3653084d14709b01adccf9c1a95777050d"
+  integrity sha512-TRk7HogUoYFTkvdE7cEu5J63byK88I/peWdtVCWiuSU2KCSzJWA3gcNO7Q4sN94vEINK1H773ttTj8jwYoSQZQ==
   dependencies:
     "@grpc/grpc-js" "^1.9.4"
     "@grpc/proto-loader" "^0.7.5"
@@ -6031,7 +6036,7 @@ newrelic@11.21.0:
     semver "^7.5.2"
     winston-transport "^4.5.0"
   optionalDependencies:
-    "@contrast/fn-inspect" "^3.3.0"
+    "@contrast/fn-inspect" "^4.2.0"
     "@newrelic/native-metrics" "^10.0.0"
     "@prisma/prisma-fmt-wasm" "^4.17.0-16.27eb2449f178cd9fe1a4b892d732cc4795f75085"
 
@@ -6057,10 +6062,10 @@ node-gyp-build-optional-packages@5.0.7:
   resolved "https://registry.yarnpkg.com/node-gyp-build-optional-packages/-/node-gyp-build-optional-packages-5.0.7.tgz#5d2632bbde0ab2f6e22f1bbac2199b07244ae0b3"
   integrity sha512-YlCCc6Wffkx0kHkmam79GKvDQ6x+QZkMjFGrIMxgFNILFvGSbCp2fCBC55pGTT9gVaz8Na5CLmxt/urtzRv36w==
 
-node-gyp-build@^4.4.0:
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.6.0.tgz#0c52e4cbf54bbd28b709820ef7b6a3c2d6209055"
-  integrity sha512-NTZVKn9IylLwUzaKjkas1e4u2DLNcV4rdYagA4PWdPwW87Bi7z+BznyKSRwS/761tV/lzCGXplWsiaMjLqP2zQ==
+node-gyp-build@^4.8.1:
+  version "4.8.1"
+  resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.8.1.tgz#976d3ad905e71b76086f4f0b0d3637fe79b6cda5"
+  integrity sha512-OSs33Z9yWr148JZcbZd5WiAXhh/n9z8TxQcdMhIOlpN9AhWpLfvVFO73+m77bBABQMaY9XSvIa+qk0jlI7Gcaw==
 
 node-int64@^0.4.0:
   version "0.4.0"
