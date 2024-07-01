@@ -93,9 +93,9 @@
     tslib "^2.6.2"
 
 "@aws-sdk/client-s3@^3.32.0":
-  version "3.606.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.606.0.tgz#ff9d7e029591387522783b7aae3d458d4cb0b473"
-  integrity sha512-IGM/E8kVk/NY/kZwLdmGRsX1QYtuPljoNutM5kBRdtGahQL5VwVAve5PElPUArcsTkfTyW+LfXpznDeeHxMCcA==
+  version "3.608.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.608.0.tgz#a1e5e688615088b694944a6a44a3f9fee4fd4d5f"
+  integrity sha512-la2R6QfUOmE4JMubxLD3OdnPTduAs5YekIvx68I5CbLudb5pbxkHDqnrWDhgK1lX4Cu19pXjgQXmS8oZMJPeLQ==
   dependencies:
     "@aws-crypto/sha1-browser" "5.2.0"
     "@aws-crypto/sha256-browser" "5.2.0"
@@ -399,9 +399,9 @@
     tslib "^2.6.2"
 
 "@aws-sdk/lib-storage@^3.32.0":
-  version "3.606.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.606.0.tgz#99fe53ef466d10118286f2784c6d6b9415f59ad4"
-  integrity sha512-SagGtmyU0Zyjq5ZA+EvccqPrJTrRNAHXE/rjk9Z2ENqtTYI2pK451sD5kLQqgNIAHNf/6U1TX7hnYz1wkInLUQ==
+  version "3.608.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.608.0.tgz#ba16c4ddfb85906aaad090b4750bbd0ab29987f3"
+  integrity sha512-A6RXgkXYf+eY2POxi382nhMdo7x7QpVfgeehvOqpK5c7LgXjwsPTfjSPqLV1fIZuPLn3NG6uNd12Gs6x/466tQ==
   dependencies:
     "@smithy/abort-controller" "^3.0.1"
     "@smithy/middleware-endpoint" "^3.0.2"
@@ -547,9 +547,9 @@
     tslib "^2.6.2"
 
 "@aws-sdk/s3-request-presigner@^3.32.0":
-  version "3.606.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/s3-request-presigner/-/s3-request-presigner-3.606.0.tgz#8ccde4f65147f091961da8eb3a4dd03513cbd05b"
-  integrity sha512-ErxArdCk73MVOh5xiTWZkk76kZWCHZqCCdMnSJTD0lzTpfGbwL/eEjHIjKLJO+EsRtDKYmS8vN+qijyMvMqruw==
+  version "3.608.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/s3-request-presigner/-/s3-request-presigner-3.608.0.tgz#dd0ab4b6ac02cbebad06b4fb84fd2f3be9240a59"
+  integrity sha512-5IJskqhzkw+XA/RshAewRlFsJchl3M6I6ZTo9b9It3oFya/J/rEwpDKMt+HPS0E74Zg1mSj1bCGVXNQutmaWAA==
   dependencies:
     "@aws-sdk/signature-v4-multi-region" "3.598.0"
     "@aws-sdk/types" "3.598.0"
