@@ -6,7 +6,7 @@ const { cart: cartFactory } = require('@factories/cart')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 const { ContactRepositoryDatabase } = require('@repositories/contact')
 const { CartRepositoryDatabase } = require('@repositories/cart')
-const moment = require('moment')
+const moment = require('moment-timezone')
 
 describe('resetCarts', () => {
   jest.spyOn(global.console, 'info').mockImplementation()
