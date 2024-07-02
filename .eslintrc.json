@@ -22,7 +22,6 @@
         "no-nested-ternary": "error",
         "jest/no-focused-tests": "error",
         "jest/no-disabled-tests": "error",
-        "jest/no-if": "error",
         "standard/no-callback-literal": "off",
         "default-param-last": "off",
         "camelcase": "off",
