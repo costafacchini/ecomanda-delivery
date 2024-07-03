@@ -320,7 +320,7 @@ class CartsController {
           },
           ['contact'],
         )
-      } catch (err) {
+      } catch {
         return res.status(200).send({ errors: { message: 'Carrinho não encontrado' } })
       }
 
