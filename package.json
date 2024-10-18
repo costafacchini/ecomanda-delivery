@@ -34,7 +34,7 @@
     "jest-date-mock": "1.0.10",
     "mongodb-memory-server": "10.0.1",
     "mongodb-memory-server-global": "10.0.1",
-    "npm-run-all2": "6.2.3",
+    "npm-run-all2": "6.2.4",
     "prettier": "3.3.3",
     "supertest": "7.0.0"
   },
