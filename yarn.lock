@@ -5889,24 +5889,6 @@ mongodb-connection-string-url@^3.0.0:
     "@types/whatwg-url" "^11.0.2"
     whatwg-url "^13.0.0"
 
-mongodb-memory-server-core@10.0.1:
-  version "10.0.1"
-  resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-10.0.1.tgz#f227ece12c1fd2dfc8c6c6ad0511b5ff3d677222"
-  integrity sha512-sJGqoS3saNNJKQjocrqxRISUP6g2N6/D+k1JEqKYo2p9YzUOOvEopxROyvBlqkiVa67/vdf2FV4v+rOvNIHURg==
-  dependencies:
-    async-mutex "^0.5.0"
-    camelcase "^6.3.0"
-    debug "^4.3.5"
-    find-cache-dir "^3.3.2"
-    follow-redirects "^1.15.6"
-    https-proxy-agent "^7.0.5"
-    mongodb "^6.7.0"
-    new-find-package-json "^2.0.0"
-    semver "^7.6.3"
-    tar-stream "^3.1.7"
-    tslib "^2.6.3"
-    yauzl "^3.1.3"
-
 mongodb-memory-server-core@10.1.2:
   version "10.1.2"
   resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-10.1.2.tgz#4960f59e5c56a30dbde366ff69497b6ce5b2c4dc"
@@ -5925,13 +5907,13 @@ mongodb-memory-server-core@10.1.2:
     tslib "^2.7.0"
     yauzl "^3.1.3"
 
-mongodb-memory-server-global@10.0.1:
-  version "10.0.1"
-  resolved "https://registry.yarnpkg.com/mongodb-memory-server-global/-/mongodb-memory-server-global-10.0.1.tgz#c0ed1c7647f27cb6a296498acfa5ca7902d8d1d9"
-  integrity sha512-V45dy6a9UFN3YMZVJDTY7yf4Xnv75cm1N1AFMRq1YuTZpxVHa0DM8q2yjfaywxmi5j9zfRKh86mnkhCOgtOB7g==
+mongodb-memory-server-global@10.1.2:
+  version "10.1.2"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server-global/-/mongodb-memory-server-global-10.1.2.tgz#db6b483d90deda1450c5ef66a3efdac5ff01af98"
+  integrity sha512-samyvNyhJGiqM5At8ifLGMa2IcOmrpQbdEYPGpcMiaf1qMjRRmVDUMqe6NwVH8U00IhFavhNpadTHLQlW7ykCw==
   dependencies:
-    mongodb-memory-server-core "10.0.1"
-    tslib "^2.6.3"
+    mongodb-memory-server-core "10.1.2"
+    tslib "^2.7.0"
 
 mongodb-memory-server@10.1.2:
   version "10.1.2"
@@ -5954,15 +5936,6 @@ mongodb@6.9.0:
   version "6.9.0"
   resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-6.9.0.tgz#743ebfff6b3c14b04ac6e00a55e30d4127d3016d"
   integrity sha512-UMopBVx1LmEUbW/QE0Hw18u583PEDVQmUmVzzBRH0o/xtE9DBRA5ZYLOjpLIa03i8FXjzvQECJcqoMvCXftTUA==
-  dependencies:
-    "@mongodb-js/saslprep" "^1.1.5"
-    bson "^6.7.0"
-    mongodb-connection-string-url "^3.0.0"
-
-mongodb@^6.7.0:
-  version "6.8.0"
-  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-6.8.0.tgz#680450f113cdea6d2d9f7121fe57cd29111fd2ce"
-  integrity sha512-HGQ9NWDle5WvwMnrvUxsFYPd3JEbqD3RgABHBQRuoCEND0qzhsd0iH5ypHsf1eJ+sXmvmyKpP+FLOKY8Il7jMw==
   dependencies:
     "@mongodb-js/saslprep" "^1.1.5"
     bson "^6.7.0"
@@ -7644,7 +7617,7 @@ tsconfig-paths@^3.15.0:
     minimist "^1.2.6"
     strip-bom "^3.0.0"
 
-tslib@^2.0.0, tslib@^2.4.0, tslib@^2.6.3:
+tslib@^2.0.0, tslib@^2.4.0:
   version "2.6.3"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.6.3.tgz#0438f810ad7a9edcde7a241c3d80db693c8cbfe0"
   integrity sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ==
