@@ -19,7 +19,7 @@
     "react-json-formatter": "^0.4.0",
     "react-router-dom": "6.28.0",
     "react-scripts": "5.0.1",
-    "react-select": "5.8.3",
+    "react-select": "5.9.0",
     "react-toastify": "10.0.6",
     "socket.io-client": "4.8.1",
     "web-vitals": "4.2.4",
