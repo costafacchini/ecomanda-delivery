@@ -11,7 +11,7 @@ on:
 jobs:
   linter-and-unit:
     if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]')"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     services:
       redis:
         image: redis
