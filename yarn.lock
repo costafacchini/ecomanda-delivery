@@ -1415,14 +1415,15 @@
     node-gyp-build "^4.8.1"
     prebuildify "^6.0.1"
 
-"@newrelic/security-agent@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@newrelic/security-agent/-/security-agent-2.0.0.tgz#71debcb168ae1335a5111eb437cc584c293ea251"
-  integrity sha512-nUj20Hhfn7LZNDoiLtl18nBNOesCvNpMJcR6DS0iAhlgUAYkQMmMdKjWK4Ne5yqtp5nx1iYb47HeiwIFuOfVVw==
+"@newrelic/security-agent@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@newrelic/security-agent/-/security-agent-2.2.0.tgz#8de78496243b2352011ddbbbf70dbb9352274d5b"
+  integrity sha512-vjIl3dgccFC/M3CeIXhzrLI/S7IYCJK2MGw+G1WFwvtb+/9jZCOI+LbszfEGBjHQYt71hEudJN3lm2L5hs6D6g==
   dependencies:
     axios "^1.7.4"
     check-disk-space "^3.4.0"
     content-type "^1.0.5"
+    cron "^3.1.7"
     fast-safe-stringify "^2.1.1"
     find-package-json "^1.2.0"
     hash.js "^1.1.7"
@@ -2231,6 +2232,11 @@
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==
+
+"@types/luxon@~3.4.0":
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/@types/luxon/-/luxon-3.4.2.tgz#e4fc7214a420173cea47739c33cdf10874694db7"
+  integrity sha512-TifLZlFudklWlMBfhubvgqTXRzLDI5pCbGa4P8a3wPyUQSW+1xQ5eDsreP9DWHX3tjq1ke96uYG/nwundroWcA==
 
 "@types/mime@^1":
   version "1.3.5"
@@ -3275,6 +3281,14 @@ cron-parser@^4.6.0:
   integrity sha512-p0SaNjrHOnQeR8/VnfGbmg9te2kfyYSQ7Sc/j/6DtPL3JQvKxmjO9TSjNFpujqV3vEYYBvNNvXSxzyksBWAx1Q==
   dependencies:
     luxon "^3.2.1"
+
+cron@^3.1.7:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/cron/-/cron-3.3.1.tgz#03c56b4a3ad52606160adfba1fab932c53838807"
+  integrity sha512-KpvuzJEbeTMTfLsXhUuDfsFYr8s5roUlLKb4fa68GszWrA4783C7q6m9yj4vyc6neyD/V9e0YiADSX2c+yRDXg==
+  dependencies:
+    "@types/luxon" "~3.4.0"
+    luxon "~3.5.0"
 
 cross-spawn@^7.0.0, cross-spawn@^7.0.3:
   version "7.0.3"
@@ -5727,6 +5741,11 @@ luxon@^3.2.1:
   resolved "https://registry.yarnpkg.com/luxon/-/luxon-3.4.4.tgz#cf20dc27dc532ba41a169c43fdcc0063601577af"
   integrity sha512-zobTr7akeGHnv7eBOXcRgMeCP6+uyYsczwmeRCauvpvaAltgNyTbLH/+VaEAPUeWBT+1GuNmz4wC/6jtQzbbVA==
 
+luxon@~3.5.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/luxon/-/luxon-3.5.0.tgz#6b6f65c5cd1d61d1fd19dbf07ee87a50bf4b8e20"
+  integrity sha512-rh+Zjr6DNfUYR3bPwJEnuwDdqMbxZW7LOQfUN4B54+Cl+0o5zaU9RJ6bcidfDtC1cWCZXQ+nvX8bf6bAji37QQ==
+
 make-dir@^3.0.2, make-dir@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/make-dir/-/make-dir-3.1.0.tgz#415e967046b3a7f1d185277d84aa58203726a13f"
@@ -6070,14 +6089,14 @@ new-find-package-json@^2.0.0:
   dependencies:
     debug "^4.3.4"
 
-newrelic@12.8.2:
-  version "12.8.2"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-12.8.2.tgz#dc96ff0003403894f243e6f0e3a87778e35648cd"
-  integrity sha512-VE2jxhfXqxift93gAWIneqnQQeB49tdgA7IW9oejbyqWAEHp4cpj85F39bmzNXoow+ZF5cuFccG5K5o1s6qgTg==
+newrelic@12.9.0:
+  version "12.9.0"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-12.9.0.tgz#378f812c824b018d00c7513781e5c4c569bd8006"
+  integrity sha512-ay4EVbsfomm79QJhBcbE45S6+f4bFE8e3hPRceoyeyAkMhqhnEC9uQQ7D21i28OJdE197S+UaSx2ph6y2y5mUQ==
   dependencies:
     "@grpc/grpc-js" "^1.12.2"
     "@grpc/proto-loader" "^0.7.5"
-    "@newrelic/security-agent" "^2.0.0"
+    "@newrelic/security-agent" "^2.2.0"
     "@tyriar/fibonacci-heap" "^2.0.7"
     concat-stream "^2.0.0"
     https-proxy-agent "^7.0.1"
