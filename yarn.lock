@@ -1468,6 +1468,16 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@opentelemetry/api@^1.9.0":
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/api/-/api-1.9.0.tgz#d03eba68273dc0f7509e2a3d5cba21eae10379fe"
+  integrity sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==
+
+"@opentelemetry/semantic-conventions@^1.27.0":
+  version "1.28.0"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/semantic-conventions/-/semantic-conventions-1.28.0.tgz#337fb2bca0453d0726696e745f50064411f646d6"
+  integrity sha512-lp4qAiMTD4sNWW4DbKLBkfiMZ4jbAboJIGOQr5DvciMRI494OapieI9qiODpOt0XBr1LjIDy1xAGAnVs5supTA==
+
 "@pkgjs/parseargs@^0.11.0":
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"
@@ -6083,14 +6093,16 @@ new-find-package-json@^2.0.0:
   dependencies:
     debug "^4.3.4"
 
-newrelic@12.10.0:
-  version "12.10.0"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-12.10.0.tgz#c2bb445c0bc309829dc4b1056bc932260fbce1bd"
-  integrity sha512-Xjfa8jcSqWXweI1d9I+wNXx1VNTpNfcz9f4mKwUBzW4ZlIoLU/j0UMpyUHJA8Fwz8FAAXx1cu1lvj8gQyLaNUQ==
+newrelic@12.11.0:
+  version "12.11.0"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-12.11.0.tgz#806cee625d53c79cd152775f03a62946e4f3d0cf"
+  integrity sha512-5VnmMRJu7tznx6BTFR1yfAJu7DTOoKw0d0ZCD6pAbw+UK3gLonaYU5hHJsmcwexyQEH0zE+48yc+rvzRNTntnQ==
   dependencies:
     "@grpc/grpc-js" "^1.12.2"
     "@grpc/proto-loader" "^0.7.5"
     "@newrelic/security-agent" "^2.2.0"
+    "@opentelemetry/api" "^1.9.0"
+    "@opentelemetry/semantic-conventions" "^1.27.0"
     "@tyriar/fibonacci-heap" "^2.0.7"
     concat-stream "^2.0.0"
     https-proxy-agent "^7.0.1"
