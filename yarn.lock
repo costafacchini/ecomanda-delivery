@@ -2240,9 +2240,9 @@
   integrity sha512-/pyBZWSLD2n0dcHE3hq8s8ZvcETHtEuF+3E7XVt0Ig2nvsVQXdghHVcEkIWjy9A0wKfTn97a/PSDYohKIlnP/w==
 
 "@types/node@*":
-  version "22.12.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.12.0.tgz#bf8af3b2af0837b5a62a368756ff2b705ae0048c"
-  integrity sha512-Fll2FZ1riMjNmlmJOdAyY5pUbkftXslB5DgEzlIuNaiWhXd00FhWxVC/r4yV/4wBb9JfImTu+jiSvXTkJ7F/gA==
+  version "22.13.10"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.13.10.tgz#df9ea358c5ed991266becc3109dc2dc9125d77e4"
+  integrity sha512-I6LPUvlRH+O6VRUqYOcMudhaIdUVWfsjnZavnsraHvpBwaEyMN29ry+0UVJhImYL16xsscu0aske3yA+uPOWfw==
   dependencies:
     undici-types "~6.20.0"
 
@@ -2789,9 +2789,9 @@ bl@^4.0.3:
     readable-stream "^3.4.0"
 
 bl@^6.0.7:
-  version "6.0.19"
-  resolved "https://registry.yarnpkg.com/bl/-/bl-6.0.19.tgz#c4487282bb18768186f02fec6be1be3b5b93677b"
-  integrity sha512-4Ay3A3oDfGg3GGirhl4s62ebtnk0pJZA5mLp672MPKOQXsWvXjEF4dqdXySjJIs7b9OVr/O8aOo0Lm+xdjo2JA==
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/bl/-/bl-6.1.0.tgz#cc35ce7a2e8458caa8c8fb5deeed6537b73e4504"
+  integrity sha512-ClDyJGQkc8ZtzdAAbAwBmhMSpwN/sC9HA8jxdYm6nVUbCfZbe2mgza4qh7AuEYyEPB/c4Kznf9s66bnsKMQDjw==
   dependencies:
     "@types/readable-stream" "^4.0.0"
     buffer "^6.0.3"
