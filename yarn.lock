@@ -6086,10 +6086,10 @@ new-find-package-json@^2.0.0:
   dependencies:
     debug "^4.3.4"
 
-newrelic@12.16.0:
-  version "12.16.0"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-12.16.0.tgz#718aa2e2b76eb8f6c23c29a57e9c700e23625bdd"
-  integrity sha512-519+c5YkOH5qy5LxEa3eA89tc/2zy0hKLwx5QItfUHwu+5kpilr7IGIuEqM5NbCTBuDs6FmxeEaxfQ/qBzlrrQ==
+newrelic@12.16.1:
+  version "12.16.1"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-12.16.1.tgz#8e0efd32ca3561975466eb475bc9237e70542a47"
+  integrity sha512-YkHyqVv49krTVVMdhvqNhlxZJGktjBUIlrjzHoyAVUghP4UhS+eGQEqdB9RU09lwnZ2awA1CGVWRwwTWBbWdlA==
   dependencies:
     "@grpc/grpc-js" "^1.12.2"
     "@grpc/proto-loader" "^0.7.5"
