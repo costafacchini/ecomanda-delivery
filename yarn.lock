@@ -2936,10 +2936,10 @@ bull-board@2.1.3:
     express "4.17.1"
     redis-info "^3.0.8"
 
-bullmq@5.44.4:
-  version "5.44.4"
-  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-5.44.4.tgz#ae35b177d8fd8153470d915d7853a6485ad91750"
-  integrity sha512-0BjgABM/7U85Fxatj586ftsoWiGdjmg7fR7PwRYNOOGfvGpiUX9nQoUmx+9VZW/OtHO/4um/BVh2Y2S9BEhKFg==
+bullmq@5.45.2:
+  version "5.45.2"
+  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-5.45.2.tgz#88e19db218e5f7eceb5885ffac9334c87586701a"
+  integrity sha512-wHZfcD4z4aLolxREmwNNDSbfh7USeq2e3yu5W2VGkzHMUcrH0fzZuRuCMsjD0XKS9ViK1U854oM9yWR6ftPeDA==
   dependencies:
     cron-parser "^4.9.0"
     ioredis "^5.4.1"
