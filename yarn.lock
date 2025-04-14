@@ -992,10 +992,10 @@
     "@eslint/core" "^0.12.0"
     levn "^0.4.1"
 
-"@grpc/grpc-js@^1.12.2":
-  version "1.12.2"
-  resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.12.2.tgz#97eda82dd49bb9c24eaf6434ea8d7de446e95aac"
-  integrity sha512-bgxdZmgTrJZX50OjyVwz3+mNEnCTNkh3cIqGPWVNeW9jX6bn1ZkU80uPd+67/ZpIJIjRQ9qaHCjhavyoWYxumg==
+"@grpc/grpc-js@^1.13.2":
+  version "1.13.3"
+  resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.13.3.tgz#6ad08d186c2a8651697085f790c5c68eaca45904"
+  integrity sha512-FTXHdOoPbZrBjlVLHuKbDZnsTxXv2BlHF57xw6LuThXacXvtkahEPED0CKMk6obZDf65Hv4k3z62eyPNpvinIg==
   dependencies:
     "@grpc/proto-loader" "^0.7.13"
     "@js-sdsl/ordered-map" "^4.4.2"
@@ -6067,12 +6067,12 @@ new-find-package-json@^2.0.0:
   dependencies:
     debug "^4.3.4"
 
-newrelic@12.17.0:
-  version "12.17.0"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-12.17.0.tgz#d0d569197fb9cd6c3fd1d54bae4fedf90e5b679c"
-  integrity sha512-Rn+V3ym7EYkzMXcylyLQBNgBS+zBoo+XR+ki5An1I91o2h0mWZzuTJC65ROrHLKHV2tXUFuVlc7FuOufnNdtRg==
+newrelic@12.18.0:
+  version "12.18.0"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-12.18.0.tgz#60a2b3915f81d0d276f75ef8df7b0c38abfe8fbf"
+  integrity sha512-Nslha2a64qJwb4M1uF3pPr0NSwmeHIb2W5P+TYxa0AOQiure5It0FLO4CaIIrje1QaIuQeGlisc1h7PEo4qdNQ==
   dependencies:
-    "@grpc/grpc-js" "^1.12.2"
+    "@grpc/grpc-js" "^1.13.2"
     "@grpc/proto-loader" "^0.7.5"
     "@newrelic/security-agent" "^2.3.0"
     "@opentelemetry/api" "^1.9.0"
