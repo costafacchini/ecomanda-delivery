@@ -55,12 +55,14 @@ jobs:
         with:
           file: nodejs-coverage/lcov.info
           flags: jestspecs
-          fail_ci_if_error: true
+          fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
+        continue-on-error: true
       - name: Upload React coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
           file: react-coverage/lcov.info
           flags: reactspecs
-          fail_ci_if_error: true
+          fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
+        continue-on-error: true
