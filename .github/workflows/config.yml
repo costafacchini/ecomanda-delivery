@@ -37,6 +37,10 @@ jobs:
         with:
           node-version: '22'
           cache: 'yarn'
+      - name: Install libssl compatibility (libcrypto)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libssl1.1 || sudo apt-get install -y libssl3
       - name: Install dependencies
         run: yarn
       - name: linter
