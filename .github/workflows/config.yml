@@ -11,7 +11,7 @@ on:
 jobs:
   linter-and-unit:
     if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]')"
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     services:
       redis:
         image: redis
@@ -24,33 +24,31 @@ jobs:
           - 6379:6379
     env:
       NODE_ENV: 'test'
+      REDIS_URL: 'redis://localhost:6379'
+      SECRET: '394ru6gf6gjSsM6'
+      DEFAULT_USER: 'user@user.com'
+      DEFAULT_PASSWORD: '09876543'
+      # MONGOMS_VERSION: '5.0'
+      # MONGOMS_DOWNLOAD_URL: 'http://downloads.mongodb.org/linux/mongodb-linux-x86_64-debian10-v5.0-latest.tgz'
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js 20
+      - name: Use Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - uses: c-hive/gha-yarn-cache@v2
+          cache: 'yarn'
+      - name: Instalar MongoDB (para mongodb-memory-server)
+        run: |
+          curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor
+          echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+          sudo apt update
+          sudo apt install -y mongodb-org # Isso instala o servidor, shell e ferramentas
       - name: Install dependencies
         run: yarn
-        env:
-          MONGOMS_VERSION: '5.0'
-          MONGOMS_DOWNLOAD_URL: 'http://downloads.mongodb.org/linux/mongodb-linux-x86_64-debian10-v5.0-latest.tgz'
       - name: linter
-        run: |
-          yarn
-          yarn linter
+        run: yarn linter
       - name: Unit tests NodeJs
-        run: |
-          yarn
-          yarn test:ci --coverageDirectory nodejs-coverage --maxWorkers 4
-        env:
-          REDIS_URL: 'redis://localhost:6379'
-          SECRET: '394ru6gf6gjSsM6'
-          DEFAULT_USER: 'user@user.com'
-          DEFAULT_PASSWORD: '09876543'
-          MONGOMS_VERSION: '5.0'
-          MONGOMS_DOWNLOAD_URL: 'http://downloads.mongodb.org/linux/mongodb-linux-x86_64-debian10-v5.0-latest.tgz'
+        run: yarn test:ci --coverageDirectory nodejs-coverage --maxWorkers 4
       - name: Unit tests React
         run: |
           cd client
@@ -58,9 +56,19 @@ jobs:
           yarn test --coverageDirectory '../react-coverage' --coverage --maxWorkers 4
         env:
           SKIP_PREFLIGHT_CHECK: true
-      - uses: codecov/codecov-action@v5
+      - name: Upload NodeJS coverage to Codecov
+        uses: codecov/codecov-action@v5
         with:
           file: nodejs-coverage/lcov.info
           flags: jestspecs
-          fail_ci_if_error: true
+          fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
+        continue-on-error: true
+      - name: Upload React coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          file: react-coverage/lcov.info
+          flags: reactspecs
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+        continue-on-error: true
