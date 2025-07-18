@@ -43,7 +43,7 @@
     "@aws-sdk/lib-storage": "^3.32.0",
     "@aws-sdk/s3-request-presigner": "^3.32.0",
     "@sinonjs/fake-timers": "14.0.0",
-    "amqplib": "0.10.7",
+    "amqplib": "0.10.8",
     "archiver": "7.0.1",
     "bcrypt": "5.1.1",
     "bl": "^6.0.7",
