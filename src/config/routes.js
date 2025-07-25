@@ -9,7 +9,7 @@ function routes(app) {
   app.use('/api', apiRoutes)
   app.use('/login', loginRoutes)
   app.use('/queue', bullboardRoute)
-  app.get('*', (req, res) => {
+  app.get(/.*/, (req, res) => {
     res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'))
   })
 }
