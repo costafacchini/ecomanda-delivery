@@ -7,7 +7,7 @@ class DelayController {
 
     await delay(time)
 
-    res.send(200)
+    res.sendStatus(200)
   }
 }
 
