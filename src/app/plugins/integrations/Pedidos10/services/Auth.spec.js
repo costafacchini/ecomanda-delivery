@@ -1,7 +1,7 @@
 const Auth = require('./Auth')
 const Licensee = require('@models/Licensee')
 const Integrationlog = require('@models/Integrationlog')
-const fetchMock = require('fetch-mock')
+const fetchMock = require('fetch-mock').default
 const mongoServer = require('../../../../../../.jest/utils')
 const { licenseePedidos10: licenseeFactory } = require('@factories/licensee')
 
@@ -13,7 +13,7 @@ describe('Pedidos10/Auth plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
+    fetchMock.callHistory.clear()
 
     licensee = await Licensee.create(licenseeFactory.build())
     licensee.pedidos10_integration = {
@@ -60,10 +60,10 @@ describe('Pedidos10/Auth plugin', () => {
 
         const auth = new Auth(licensee)
         const isLogged = await auth.login()
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(isLogged).toBe(true)
         expect(consoleInfoSpy).toHaveBeenCalledWith('Login efetuado na API do Pedidos 10! log_id: 1234')
@@ -102,10 +102,10 @@ describe('Pedidos10/Auth plugin', () => {
 
         const auth = new Auth(licensee)
         await auth.login()
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const licenseeUpdated = await Licensee.findById(licensee._id)
         expect(licenseeUpdated.pedidos10_integration.access_token).toEqual('access-token')
@@ -143,10 +143,10 @@ describe('Pedidos10/Auth plugin', () => {
 
         const auth = new Auth(licensee)
         await auth.login()
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual(bodyResponse)
@@ -183,10 +183,10 @@ describe('Pedidos10/Auth plugin', () => {
 
         const auth = new Auth(licensee)
         const isLogged = await auth.login()
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(isLogged).toBe(false)
         expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -226,10 +226,10 @@ describe('Pedidos10/Auth plugin', () => {
 
         const auth = new Auth(licensee)
         await auth.login()
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual(bodyResponse)

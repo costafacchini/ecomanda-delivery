@@ -1,5 +1,5 @@
 const Utalk = require('./Utalk')
-const fetchMock = require('fetch-mock')
+const fetchMock = require('fetch-mock').default
 const mongoServer = require('../../../../.jest/utils')
 const S3 = require('../storage/S3')
 const { licensee: licenseeFactory } = require('@factories/licensee')
@@ -23,7 +23,7 @@ describe('Utalk plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
+    fetchMock.callHistory.clear()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
@@ -614,10 +614,10 @@ describe('Utalk plugin', () => {
 
         const utalk = new Utalk(licensee)
         await utalk.sendMessage(message._id, 'https://api.utalk.com.br/send/', 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
@@ -659,10 +659,10 @@ describe('Utalk plugin', () => {
 
         const utalk = new Utalk(licensee)
         await utalk.sendMessage(message._id, 'https://api.utalk.com.br/send/', 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           'Mensagem 60958703f415ed4008748637 enviada para Utalk com sucesso! {"type":"send message","cmd":"chat","to":"5511990283745@c.us","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","servidor":"res_utalk"}',
@@ -725,10 +725,10 @@ describe('Utalk plugin', () => {
 
           const utalk = new Utalk(licensee)
           await utalk.sendMessage(message._id, 'https://api.utalk.com.br/send/', 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(1)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -790,10 +790,10 @@ describe('Utalk plugin', () => {
 
         const utalk = new Utalk(licensee)
         await utalk.sendMessage(message._id, 'https://api.utalk.com.br/send/', 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(false)

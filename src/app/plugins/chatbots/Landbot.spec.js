@@ -1,6 +1,6 @@
 const Landbot = require('./Landbot')
 const Trigger = require('@models/Trigger')
-const fetchMock = require('fetch-mock')
+const fetchMock = require('fetch-mock').default
 const mongoServer = require('../../../../.jest/utils')
 const emoji = require('@helpers/Emoji')
 const Room = require('@models/Room')
@@ -27,7 +27,7 @@ describe('Landbot plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
+    fetchMock.callHistory.clear()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
@@ -566,10 +566,10 @@ describe('Landbot plugin', () => {
 
         const landbot = new Landbot(licensee)
         await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
@@ -613,10 +613,10 @@ describe('Landbot plugin', () => {
 
         const landbot = new Landbot(licensee)
         await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           `Mensagem 60958703f415ed4008748637 enviada para Landbot com sucesso!
@@ -700,10 +700,10 @@ describe('Landbot plugin', () => {
 
           const landbot = new Landbot(licensee)
           await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(1)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -775,10 +775,10 @@ describe('Landbot plugin', () => {
 
           const landbot = new Landbot(licensee)
           await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(1)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -848,10 +848,10 @@ describe('Landbot plugin', () => {
 
             const landbot = new Landbot(licensee)
             await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
-            await fetchMock.flush(true)
+            await fetchMock.callHistory.flush(true)
 
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(1)
+            expect(fetchMock.callHistory.done()).toBe(true)
+            expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -920,10 +920,10 @@ describe('Landbot plugin', () => {
 
             const landbot = new Landbot(licensee)
             await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
-            await fetchMock.flush(true)
+            await fetchMock.callHistory.flush(true)
 
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(1)
+            expect(fetchMock.callHistory.done()).toBe(true)
+            expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -992,10 +992,10 @@ describe('Landbot plugin', () => {
 
             const landbot = new Landbot(licensee)
             await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
-            await fetchMock.flush(true)
+            await fetchMock.callHistory.flush(true)
 
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(1)
+            expect(fetchMock.callHistory.done()).toBe(true)
+            expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -1064,10 +1064,10 @@ describe('Landbot plugin', () => {
 
             const landbot = new Landbot(licensee)
             await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
-            await fetchMock.flush(true)
+            await fetchMock.callHistory.flush(true)
 
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(1)
+            expect(fetchMock.callHistory.done()).toBe(true)
+            expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -1110,10 +1110,10 @@ describe('Landbot plugin', () => {
 
         const landbot = new Landbot(licensee)
         await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(false)
@@ -1171,10 +1171,10 @@ describe('Landbot plugin', () => {
 
       const landbot = new Landbot(licensee)
       await landbot.dropConversation(contact._id, 'token')
-      await fetchMock.flush(true)
+      await fetchMock.callHistory.flush(true)
 
-      expect(fetchMock.done()).toBe(true)
-      expect(fetchMock.calls()).toHaveLength(1)
+      expect(fetchMock.callHistory.done()).toBe(true)
+      expect(fetchMock.callHistory.calls()).toHaveLength(1)
     })
   })
 })
