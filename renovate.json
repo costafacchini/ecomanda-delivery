@@ -1,8 +1,5 @@
 {
-  "extends": [
-    "config:base",
-    "docker:disable"
-  ],
+  "extends": ["config:recommended", "docker:disable"],
   "patch": {
     "automerge": true
   },
