@@ -42,6 +42,8 @@
     "@aws-sdk/client-s3": "^3.32.0",
     "@aws-sdk/lib-storage": "^3.32.0",
     "@aws-sdk/s3-request-presigner": "^3.32.0",
+    "@bull-board/api": "^6.12.0",
+    "@bull-board/express": "^6.12.0",
     "@sinonjs/fake-timers": "14.0.0",
     "amqplib": "0.10.8",
     "archiver": "7.0.1",
