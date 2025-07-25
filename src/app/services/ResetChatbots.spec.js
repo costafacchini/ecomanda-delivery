@@ -1,6 +1,6 @@
 const resetChatbots = require('./ResetChatbots')
 const mongoServer = require('.jest/utils')
-const fetchMock = require('fetch-mock')
+const fetchMock = require('fetch-mock').default
 const { licensee: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
 const { message: messageFactory } = require('@factories/message')
@@ -13,7 +13,7 @@ describe('resetChatbots', () => {
 
   beforeEach(async () => {
     await mongoServer.connect()
-    fetchMock.reset()
+    fetchMock.callHistory.clear()
     jest.clearAllMocks()
   })
 
@@ -212,10 +212,10 @@ describe('resetChatbots', () => {
       const contact3NotChanged = await contactRepository.findFirst({ _id: contact3._id })
       expect(contact3NotChanged.landbotId).toEqual('landbot-id')
 
-      await fetchMock.flush(true)
+      await fetchMock.callHistory.flush(true)
 
-      expect(fetchMock.done()).toBe(true)
-      expect(fetchMock.calls()).toHaveLength(1)
+      expect(fetchMock.callHistory.done()).toBe(true)
+      expect(fetchMock.callHistory.calls()).toHaveLength(1)
     })
 
     describe('when the licensee has a message on reset chatbot', () => {
@@ -279,10 +279,10 @@ describe('resetChatbots', () => {
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toBe(true)
 
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(2)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(2)
       })
     })
   })

@@ -1,6 +1,6 @@
 const Payment = require('./Payment')
 const Integrationlog = require('@models/Integrationlog')
-const fetchMock = require('fetch-mock')
+const fetchMock = require('fetch-mock').default
 const mongoServer = require('../../../../../.jest/utils')
 const { licenseeIntegrationPagarMe: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
@@ -17,7 +17,7 @@ describe('PagarMe/Customer plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
+    fetchMock.callHistory.clear()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build({ recipient_id: '2313' }))
@@ -145,10 +145,10 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.createPIX(cart, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith('Pedido criado na pagar.me! id: or_56GXnk6T0eU88qMm log_id: 1234')
 
@@ -326,10 +326,10 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.createPIX(cart, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const cartUpdated = await cartRepository.findFirst({ _id: cart._id })
         expect(cartUpdated.order_id).toEqual('or_56GXnk6T0eU88qMm')
@@ -460,10 +460,10 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.createPIX(cart, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const integrationlog = await Integrationlog.findOne({ cart: cart._id })
         expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
@@ -578,10 +578,10 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.createPIX(cart, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Pedido ${cart._id} não criado na pagar.me.
@@ -697,10 +697,10 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.createPIX(cart, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const integrationlog = await Integrationlog.findOne({ cart: cart._id })
         expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
@@ -849,10 +849,10 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.createCreditCard(cart, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith('Pedido criado na pagar.me! id: or_56GXnk6T0eU88qMm log_id: 1234')
 
@@ -1031,10 +1031,10 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.createCreditCard(cart, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const cartUpdated = await cartRepository.findFirst({ _id: cart._id })
         expect(cartUpdated.order_id).toEqual('or_56GXnk6T0eU88qMm')
@@ -1183,10 +1183,10 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.createCreditCard(cart, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const integrationlog = await Integrationlog.findOne({ cart: cart._id })
         expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
@@ -1299,10 +1299,10 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.createCreditCard(cart, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Pedido ${cart._id} não criado na pagar.me.
@@ -1416,10 +1416,10 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.createCreditCard(cart, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const integrationlog = await Integrationlog.findOne({ cart: cart._id })
         expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
@@ -1490,10 +1490,10 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.delete(cart, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith('Pagamento cancelado na pagar.me! id: charge-id log_id: 1234')
 
@@ -1560,10 +1560,10 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.delete(cart, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const cartUpdated = await cartRepository.findFirst({ _id: cart._id })
         expect(cartUpdated.payment_status).toEqual('voided')
@@ -1630,10 +1630,10 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.delete(cart, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const integrationlog = await Integrationlog.findOne({ cart: cart._id })
         expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
@@ -1706,10 +1706,10 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.delete(cart, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Pagamento ${cart._id} não cancelado na pagar.me.
@@ -1783,10 +1783,10 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.delete(cart, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const integrationlog = await Integrationlog.findOne({ cart: cart._id })
         expect(integrationlog.licensee._id).toEqual(cart.licensee._id)

@@ -1,7 +1,7 @@
 const Crisp = require('./Crisp')
 const Room = require('@models/Room')
 const Trigger = require('@models/Trigger')
-const fetchMock = require('fetch-mock')
+const fetchMock = require('fetch-mock').default
 const mongoServer = require('../../../../.jest/utils')
 const emoji = require('../../helpers/Emoji')
 const { licensee: licenseeFactory } = require('@factories/licensee')
@@ -24,7 +24,7 @@ describe('Crisp plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
+    fetchMock.callHistory.clear()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
@@ -674,10 +674,10 @@ describe('Crisp plugin', () => {
 
         const crisp = new Crisp(licensee)
         await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(3)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(3)
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
@@ -754,10 +754,10 @@ describe('Crisp plugin', () => {
 
         const crisp = new Crisp(licensee)
         await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(3)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(3)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith('Mensagem 60958703f415ed4008748637 enviada para Crisp com sucesso!')
       })
@@ -834,10 +834,10 @@ describe('Crisp plugin', () => {
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(3)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(3)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -934,10 +934,10 @@ describe('Crisp plugin', () => {
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(3)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(3)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -1014,10 +1014,10 @@ describe('Crisp plugin', () => {
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(2)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(2)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -1060,10 +1060,10 @@ describe('Crisp plugin', () => {
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(1)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
@@ -1139,10 +1139,10 @@ describe('Crisp plugin', () => {
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(3)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(3)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
@@ -1223,10 +1223,10 @@ describe('Crisp plugin', () => {
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(3)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(3)
         })
       })
 
@@ -1313,10 +1313,10 @@ describe('Crisp plugin', () => {
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(3)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(3)
         })
       })
 
@@ -1404,10 +1404,10 @@ describe('Crisp plugin', () => {
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(3)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(3)
         })
       })
     })
