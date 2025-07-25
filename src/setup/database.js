@@ -4,7 +4,7 @@ const DEFAULT_PASSWORD = process.env.DEFAULT_PASSWORD
 
 async function createDefaultUser() {
   try {
-    const count = await User.countDocuments()
+    const count = await User.countDocuments({})
     if (count === 0) {
       await User.create({
         name: 'Default user',

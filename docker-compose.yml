@@ -19,6 +19,9 @@ services:
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: pwk372ew
+      ME_CONFIG_BASICAUTH_USERNAME: root
+      ME_CONFIG_BASICAUTH_PASSWORD: pwk372ew
+      ME_CONFIG_MONGODB_URL: mongodb://root:pwk372ew@mongo:27017/ecomanda-delivery?authSource=admin
     links:
       - "mongo"
 
