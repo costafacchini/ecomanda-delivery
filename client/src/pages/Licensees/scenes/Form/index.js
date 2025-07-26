@@ -419,8 +419,8 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
                 </div>
               </div>
 
-              {props.values.whatsappDefault === 'dialog' ||
-                (props.values.whatsappDefault === 'ycloud' && props.values.apiToken && (
+              {(((props.values.whatsappDefault === 'dialog' ||
+                props.values.whatsappDefault === 'ycloud') && props.values.apiToken) && (
                   <div className='row pb-4'>
                     <div className='form-group col-3'>
                       <button
@@ -430,7 +430,7 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
                         }}
                         className='btn btn-info'
                       >
-                        Configurar Webhook na provedor
+                        Configurar Webhook no provedor
                       </button>
                     </div>
 

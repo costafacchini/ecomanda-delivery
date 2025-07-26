@@ -219,25 +219,41 @@ describe('<LicenseeForm />', () => {
     it('shows button set webhook if "Whatsapp padrão" is dialog and licensee has apiToken', () => {
       mount({ initialValues: { whatsappDefault: 'dialog' } })
 
-      expect(screen.queryByRole('button', { name: 'Configurar Webhook na Dialog360' })).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Configurar Webhook no provedor' })).not.toBeInTheDocument()
 
       cleanup()
       mount({ initialValues: { apiToken: 'key' } })
 
-      expect(screen.queryByRole('button', { name: 'Configurar Webhook na Dialog360' })).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Configurar Webhook no provedor' })).not.toBeInTheDocument()
 
       cleanup()
       mount({ initialValues: { whatsappDefault: 'dialog', apiToken: 'key' } })
 
-      expect(screen.getByRole('button', { name: 'Configurar Webhook na Dialog360' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Configurar Webhook no provedor' })).toBeInTheDocument()
     })
 
-    it('Configurar Webhook na Dialog360 click', () => {
+    it('shows button set webhook if "Whatsapp padrão" is YCloud and licensee has apiToken', () => {
+      mount({ initialValues: { whatsappDefault: 'ycloud' } })
+
+      expect(screen.queryByRole('button', { name: 'Configurar Webhook no provedor' })).not.toBeInTheDocument()
+
+      cleanup()
+      mount({ initialValues: { apiToken: 'key' } })
+
+      expect(screen.queryByRole('button', { name: 'Configurar Webhook no provedor' })).not.toBeInTheDocument()
+
+      cleanup()
+      mount({ initialValues: { whatsappDefault: 'dialog', apiToken: 'key' } })
+
+      expect(screen.getByRole('button', { name: 'Configurar Webhook no provedor' })).toBeInTheDocument()
+    })
+
+    it('Configurar Webhook no provedor click', () => {
       mount({ initialValues: { whatsappDefault: 'dialog', apiToken: 'key' } })
 
       expect(setLicenseeWebhook).not.toHaveBeenCalled()
 
-      fireEvent.click(screen.getByRole('button', { name: 'Configurar Webhook na Dialog360' }))
+      fireEvent.click(screen.getByRole('button', { name: 'Configurar Webhook no provedor' }))
 
       expect(setLicenseeWebhook).toHaveBeenCalledTimes(1)
     })
