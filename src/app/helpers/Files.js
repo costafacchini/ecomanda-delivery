@@ -3,7 +3,7 @@ function isPhoto(fileUrl) {
 }
 
 function isVideo(fileUrl) {
-  return !!fileUrl.match(/.(mp4|avi|mov|wmv|flv|webm|mkv|3gp)$/i)
+  return !!fileUrl.match(/.(mp4|avi|mov|wmv|flv|webm|mkv|3gp|m4v|mpg|mpeg)$/i)
 }
 
 function isMidia(fileUrl) {
