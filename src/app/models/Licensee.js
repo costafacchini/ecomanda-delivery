@@ -56,7 +56,7 @@ const licenseeSchema = new Schema(
     },
     whatsappDefault: {
       type: String,
-      enum: ['utalk', 'dialog', ''],
+      enum: ['utalk', 'dialog', 'ycloud', ''],
     },
     whatsappToken: {
       type: String,
@@ -237,6 +237,10 @@ licenseeSchema.pre('save', function (next) {
 
   if (licensee.whatsappDefault === 'dialog') {
     licensee.whatsappUrl = 'https://waba.360dialog.io/'
+  }
+
+  if (licensee.whatsappDefault === 'ycloud') {
+    licensee.whatsappUrl = 'https://api.ycloud.com/v2/'
   }
 
   if (!licensee._id) {

@@ -385,6 +385,7 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
                   <option value=''></option>
                   <option value='utalk'>Utalk</option>
                   <option value='dialog'>Dialog360</option>
+                  <option value='ycloud'>YCloud</option>
                 </select>
               </div>
             </div>
@@ -418,33 +419,34 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
                 </div>
               </div>
 
-              {props.values.whatsappDefault === 'dialog' && props.values.apiToken && (
-                <div className='row pb-4'>
-                  <div className='form-group col-3'>
-                    <button
-                      onClick={async (event) => {
-                        event.preventDefault()
-                        await setLicenseeWebhook(props.values)
-                      }}
-                      className='btn btn-info'
-                    >
-                      Configurar Webhook na Dialog360
-                    </button>
-                  </div>
+              {(((props.values.whatsappDefault === 'dialog' ||
+                props.values.whatsappDefault === 'ycloud') && props.values.apiToken) && (
+                  <div className='row pb-4'>
+                    <div className='form-group col-3'>
+                      <button
+                        onClick={async (event) => {
+                          event.preventDefault()
+                          await setLicenseeWebhook(props.values)
+                        }}
+                        className='btn btn-info'
+                      >
+                        Configurar Webhook no provedor
+                      </button>
+                    </div>
 
-                  <div className='form-group col-2'>
-                    <button
-                      onClick={async (event) => {
-                        event.preventDefault()
-                        await importLicenseeTemplate(props.values)
-                      }}
-                      className='btn btn-info'
-                    >
-                      Importar templates
-                    </button>
+                    <div className='form-group col-2'>
+                      <button
+                        onClick={async (event) => {
+                          event.preventDefault()
+                          await importLicenseeTemplate(props.values)
+                        }}
+                        className='btn btn-info'
+                      >
+                        Importar templates
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
+                ))}
             </fieldset>
 
             <fieldset className='pb-4'>

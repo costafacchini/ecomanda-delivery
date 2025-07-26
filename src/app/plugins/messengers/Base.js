@@ -188,11 +188,15 @@ class MessengersBase {
         messageToSend.attachmentWaId = this.messageData.file.id
         messageToSend.fileName = this.messageData.file.fileName
 
-        messageToSend.url = await getMediaURL(this.licensee, contact, {
-          mediaWaId: messageToSend.attachmentWaId,
-          fileName: this.messageData.file.fileName,
-          fileBase64: this.messageData.file.fileBase64,
-        })
+        if (this.messageData.url) {
+          messageToSend.url = this.messageData.url
+        } else {
+          messageToSend.url = await getMediaURL(this.licensee, contact, {
+            mediaWaId: messageToSend.attachmentWaId,
+            fileName: this.messageData.file.fileName,
+            fileBase64: this.messageData.file.fileBase64,
+          })
+        }
       }
 
       if (this.messageData.sender) messageToSend.senderName = this.messageData.sender
