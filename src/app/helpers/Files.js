@@ -1,9 +1,9 @@
 function isPhoto(fileUrl) {
-  return !!fileUrl.match(/.(jpg|jpeg|png|gif)$/i)
+  return !!fileUrl.match(/.(jpg|jpeg|png|gif|webp|bmp|svg)$/i)
 }
 
 function isVideo(fileUrl) {
-  return !!fileUrl.match(/.(avi|mp4|m4v|mov|mpg|mpeg|wmv)$/i)
+  return !!fileUrl.match(/.(mp4|avi|mov|wmv|flv|webm|mkv|3gp)$/i)
 }
 
 function isMidia(fileUrl) {
