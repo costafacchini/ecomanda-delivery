@@ -1,7 +1,7 @@
 const Rocketchat = require('./Rocketchat')
 const Room = require('@models/Room')
 const Trigger = require('@models/Trigger')
-const fetchMock = require('fetch-mock')
+const fetchMock = require('fetch-mock').default
 const mongoServer = require('../../../../.jest/utils')
 const emoji = require('../../helpers/Emoji')
 const { licensee: licenseeFactory } = require('@factories/licensee')
@@ -24,7 +24,7 @@ describe('Rocketchat plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
+    fetchMock.callHistory.clear()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
@@ -345,10 +345,10 @@ describe('Rocketchat plugin', () => {
 
         const rocketchat = new Rocketchat(licensee)
         await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(3)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(3)
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
@@ -442,10 +442,10 @@ describe('Rocketchat plugin', () => {
 
         const rocketchat = new Rocketchat(licensee)
         await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(3)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(3)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           'Mensagem 60958703f415ed4008748637 enviada para Rocketchat com sucesso!',
@@ -547,10 +547,10 @@ describe('Rocketchat plugin', () => {
 
           const rocketchat = new Rocketchat(licensee)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(3)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(3)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -664,10 +664,10 @@ describe('Rocketchat plugin', () => {
 
           const rocketchat = new Rocketchat(licensee)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(4)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(4)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -776,10 +776,10 @@ describe('Rocketchat plugin', () => {
 
           const rocketchat = new Rocketchat(licensee)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(3)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(3)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -815,10 +815,10 @@ describe('Rocketchat plugin', () => {
 
           const rocketchat = new Rocketchat(licensee)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(1)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
@@ -877,10 +877,10 @@ describe('Rocketchat plugin', () => {
 
           const rocketchat = new Rocketchat(licensee)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(2)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(2)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
@@ -972,10 +972,10 @@ describe('Rocketchat plugin', () => {
 
           const rocketchat = new Rocketchat(licensee)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(3)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(3)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
@@ -1092,10 +1092,10 @@ describe('Rocketchat plugin', () => {
 
           const rocketchat = new Rocketchat(licensee)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(4)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(4)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id }, ['room'])
           expect(messageUpdated.sended).toEqual(true)

@@ -1,6 +1,6 @@
 const Recipient = require('./Recipient')
 const Integrationlog = require('@models/Integrationlog')
-const fetchMock = require('fetch-mock')
+const fetchMock = require('fetch-mock').default
 const mongoServer = require('../../../../../.jest/utils')
 const { licenseeIntegrationPagarMe: licenseeFactory } = require('@factories/licensee')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
@@ -13,7 +13,7 @@ describe('PagarMe/Recipient plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
+    fetchMock.callHistory.clear()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
@@ -72,10 +72,10 @@ describe('PagarMe/Recipient plugin', () => {
 
         const recipient = new Recipient()
         await recipient.create(licensee, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           'Licenciado Alcateia Ltds criado na pagar.me! id: 23717165 log_id: 1234',
@@ -131,10 +131,10 @@ describe('PagarMe/Recipient plugin', () => {
 
         const recipient = new Recipient()
         await recipient.create(licensee, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const licenseeRepository = new LicenseeRepositoryDatabase()
         const licenseeUpdated = await licenseeRepository.findFirst({ _id: licensee._id })
@@ -188,10 +188,10 @@ describe('PagarMe/Recipient plugin', () => {
 
         const recipient = new Recipient()
         await recipient.create(licensee, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual(bodyResponse)
@@ -245,10 +245,10 @@ describe('PagarMe/Recipient plugin', () => {
 
         const recipient = new Recipient()
         await recipient.create(licensee, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Licenciado Alcateia Ltds não criado na pagar.me.
@@ -304,10 +304,10 @@ describe('PagarMe/Recipient plugin', () => {
 
         const recipient = new Recipient()
         await recipient.create(licensee, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual(bodyResponse)
@@ -346,10 +346,10 @@ describe('PagarMe/Recipient plugin', () => {
         const recipient = new Recipient()
         licensee.recipient_id = '98765'
         await recipient.update(licensee, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           'Licenciado Alcateia Ltds atualizado na pagar.me! id: 98765 log_id: 1234',
@@ -385,10 +385,10 @@ describe('PagarMe/Recipient plugin', () => {
         const recipient = new Recipient()
         licensee.recipient_id = '98765'
         await recipient.update(licensee, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual(bodyResponse)
@@ -430,10 +430,10 @@ describe('PagarMe/Recipient plugin', () => {
         const recipient = new Recipient()
         licensee.recipient_id = '98765'
         await recipient.update(licensee, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Licenciado Alcateia Ltds não atualizado na pagar.me.
@@ -477,10 +477,10 @@ describe('PagarMe/Recipient plugin', () => {
         const recipient = new Recipient()
         licensee.recipient_id = '98765'
         await recipient.update(licensee, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual(bodyResponse)

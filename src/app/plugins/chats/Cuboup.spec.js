@@ -1,6 +1,6 @@
 const Cuboup = require('./Cuboup')
 const Trigger = require('@models/Trigger')
-const fetchMock = require('fetch-mock')
+const fetchMock = require('fetch-mock').default
 const mongoServer = require('../../../../.jest/utils')
 const emoji = require('../../helpers/Emoji')
 const { licensee: licenseeFactory } = require('@factories/licensee')
@@ -22,7 +22,7 @@ describe('Cuboup plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
+    fetchMock.callHistory.clear()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build({ phone: '554891231231' }))
@@ -416,10 +416,10 @@ describe('Cuboup plugin', () => {
 
         const cuboup = new Cuboup(licensee)
         await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
@@ -472,10 +472,10 @@ describe('Cuboup plugin', () => {
 
         const cuboup = new Cuboup(licensee)
         await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           'Mensagem 60958703f415ed4008748637 enviada para CuboUp com sucesso!',
@@ -529,10 +529,10 @@ describe('Cuboup plugin', () => {
 
           const cuboup = new Cuboup(licensee)
           await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(1)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -591,14 +591,14 @@ describe('Cuboup plugin', () => {
 
         const cuboup = new Cuboup(licensee)
         await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(false)
         expect(messageUpdated.error).toEqual('mensagem: {"error":"Error message"}')
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Mensagem 60958703f415ed4008748637 não enviada para CuboUp.
@@ -658,10 +658,10 @@ describe('Cuboup plugin', () => {
 
           const cuboup = new Cuboup(licensee)
           await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(1)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(1)
         })
       })
 
@@ -712,10 +712,10 @@ describe('Cuboup plugin', () => {
 
           const cuboup = new Cuboup(licensee)
           await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(1)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(1)
         })
       })
 
@@ -770,10 +770,10 @@ describe('Cuboup plugin', () => {
 
           const cuboup = new Cuboup(licensee)
           await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(1)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(1)
         })
       })
     })

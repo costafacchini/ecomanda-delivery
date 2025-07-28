@@ -1,6 +1,6 @@
 const Card = require('./Card')
 const Integrationlog = require('@models/Integrationlog')
-const fetchMock = require('fetch-mock')
+const fetchMock = require('fetch-mock').default
 const mongoServer = require('../../../../../.jest/utils')
 const { licenseeIntegrationPagarMe: licenseeFactory } = require('@factories/licensee')
 const { contact: contactFactory } = require('@factories/contact')
@@ -15,7 +15,7 @@ describe('PagarMe/Card plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
+    fetchMock.callHistory.clear()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
@@ -95,10 +95,10 @@ describe('PagarMe/Card plugin', () => {
         const response = await card.create(contact, creditCard, 'token')
 
         expect(response.success).toEqual(true)
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           'Cartão 123412******1234 John Doe criado na pagar.me! id: card_3dlyaY6SPSb log_id: 1234',
@@ -175,10 +175,10 @@ describe('PagarMe/Card plugin', () => {
         const response = await card.create(contact, creditCard, 'token')
 
         expect(response.success).toEqual(true)
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const contactUpdated = await contactRepository.findFirst({ _id: contact._id })
         expect(contactUpdated.credit_card_id).toEqual('card_3dlyaY6SPSb')
@@ -251,10 +251,10 @@ describe('PagarMe/Card plugin', () => {
         const response = await card.create(contact, creditCard, 'token')
 
         expect(response.success).toEqual(true)
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const integrationlog = await Integrationlog.findOne({ contact: contact._id })
         expect(integrationlog.licensee._id).toEqual(contact.licensee._id)
@@ -323,10 +323,10 @@ describe('PagarMe/Card plugin', () => {
            mensagem: {"message":"The request is invalid.","errors":{"card.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
            log_id: 1234`,
         )
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Cartão 123412******1234 John Doe não criado na pagar.me.
@@ -388,10 +388,10 @@ describe('PagarMe/Card plugin', () => {
         const response = await card.create(contact, creditCard, 'token')
 
         expect(response.success).toEqual(false)
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const integrationlog = await Integrationlog.findOne({ contact: contact._id })
         expect(integrationlog.licensee._id).toEqual(contact.licensee._id)
@@ -442,10 +442,10 @@ describe('PagarMe/Card plugin', () => {
 
         const card = new Card()
         const cards = await card.list(contact, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(cards[0]).toEqual(
           expect.objectContaining({
@@ -492,10 +492,10 @@ describe('PagarMe/Card plugin', () => {
 
         const card = new Card()
         await card.list(contact, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Não foi possível buscar os cartões na pagar.me.
@@ -534,10 +534,10 @@ describe('PagarMe/Card plugin', () => {
 
         const card = new Card()
         await card.list(contact, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const integrationlog = await Integrationlog.findOne({ contact: contact._id })
         expect(integrationlog.licensee._id).toEqual(contact.licensee._id)
@@ -585,10 +585,10 @@ describe('PagarMe/Card plugin', () => {
 
         const card = new Card()
         const cardData = await card.getById(contact, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(cardData).toEqual(
           expect.objectContaining({
@@ -637,10 +637,10 @@ describe('PagarMe/Card plugin', () => {
 
         const card = new Card()
         await card.getById(contact, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Não foi possível buscar os cartões na pagar.me.
@@ -681,10 +681,10 @@ describe('PagarMe/Card plugin', () => {
 
         const card = new Card()
         await card.getById(contact, 'token')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const integrationlog = await Integrationlog.findOne({ contact: contact._id })
         expect(integrationlog.licensee._id).toEqual(contact.licensee._id)

@@ -2,7 +2,7 @@ const Dialog = require('./Dialog')
 const Trigger = require('@models/Trigger')
 const Template = require('@models/Template')
 const Product = require('@models/Product')
-const fetchMock = require('fetch-mock')
+const fetchMock = require('fetch-mock').default
 const mongoServer = require('../../../../.jest/utils')
 const S3 = require('../storage/S3')
 const { licensee: licenseeFactory } = require('@factories/licensee')
@@ -38,7 +38,7 @@ describe('Dialog plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
+    fetchMock.callHistory.clear()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build({ whatsappToken: 'whats-token' }))
@@ -1511,10 +1511,10 @@ describe('Dialog plugin', () => {
 
         const dialog = new Dialog(licensee)
         await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
@@ -1588,10 +1588,10 @@ describe('Dialog plugin', () => {
 
           const dialog = new Dialog(licensee)
           await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(2)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(2)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -1666,10 +1666,10 @@ describe('Dialog plugin', () => {
 
           const dialog = new Dialog(licensee)
           await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(2)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(2)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -1745,10 +1745,10 @@ describe('Dialog plugin', () => {
 
           const dialog = new Dialog(licensee)
           await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(2)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(2)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -1824,10 +1824,10 @@ describe('Dialog plugin', () => {
 
           const dialog = new Dialog(licensee)
           await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(2)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(2)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -1982,10 +1982,10 @@ describe('Dialog plugin', () => {
 
             const dialog = new Dialog(licensee)
             await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-            await fetchMock.flush(true)
+            await fetchMock.callHistory.flush(true)
 
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(2)
+            expect(fetchMock.callHistory.done()).toBe(true)
+            expect(fetchMock.callHistory.calls()).toHaveLength(2)
 
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -2095,10 +2095,10 @@ describe('Dialog plugin', () => {
 
             const dialog = new Dialog(licensee)
             await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-            await fetchMock.flush(true)
+            await fetchMock.callHistory.flush(true)
 
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(2)
+            expect(fetchMock.callHistory.done()).toBe(true)
+            expect(fetchMock.callHistory.calls()).toHaveLength(2)
 
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -2248,10 +2248,10 @@ describe('Dialog plugin', () => {
 
             const dialog = new Dialog(licensee)
             await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-            await fetchMock.flush(true)
+            await fetchMock.callHistory.flush(true)
 
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(2)
+            expect(fetchMock.callHistory.done()).toBe(true)
+            expect(fetchMock.callHistory.calls()).toHaveLength(2)
 
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -2411,10 +2411,10 @@ describe('Dialog plugin', () => {
 
             const dialog = new Dialog(licensee)
             await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-            await fetchMock.flush(true)
+            await fetchMock.callHistory.flush(true)
 
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(2)
+            expect(fetchMock.callHistory.done()).toBe(true)
+            expect(fetchMock.callHistory.calls()).toHaveLength(2)
 
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -2490,10 +2490,10 @@ describe('Dialog plugin', () => {
 
             const dialog = new Dialog(licensee)
             await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-            await fetchMock.flush(true)
+            await fetchMock.callHistory.flush(true)
 
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(2)
+            expect(fetchMock.callHistory.done()).toBe(true)
+            expect(fetchMock.callHistory.calls()).toHaveLength(2)
 
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -2577,10 +2577,10 @@ describe('Dialog plugin', () => {
 
             const dialog = new Dialog(licensee)
             await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-            await fetchMock.flush(true)
+            await fetchMock.callHistory.flush(true)
 
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(2)
+            expect(fetchMock.callHistory.done()).toBe(true)
+            expect(fetchMock.callHistory.calls()).toHaveLength(2)
 
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -2663,10 +2663,10 @@ describe('Dialog plugin', () => {
 
           const dialog = new Dialog(licensee)
           await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(2)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(2)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -2795,10 +2795,10 @@ describe('Dialog plugin', () => {
 
           const dialog = new Dialog(licensee)
           await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-          await fetchMock.flush(true)
+          await fetchMock.callHistory.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(2)
+          expect(fetchMock.callHistory.done()).toBe(true)
+          expect(fetchMock.callHistory.calls()).toHaveLength(2)
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -2844,10 +2844,10 @@ describe('Dialog plugin', () => {
 
         const dialog = new Dialog(licensee)
         await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(1)
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           'A mensagem não foi enviada para a Dialog pois o contato não é válido {"contacts":[{"input":"+5511990283745","status":"invalid"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
@@ -2915,10 +2915,10 @@ describe('Dialog plugin', () => {
 
         const dialog = new Dialog(licensee)
         await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-        await fetchMock.flush(true)
+        await fetchMock.callHistory.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(2)
+        expect(fetchMock.callHistory.done()).toBe(true)
+        expect(fetchMock.callHistory.calls()).toHaveLength(2)
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(false)
@@ -2957,10 +2957,10 @@ describe('Dialog plugin', () => {
 
       const dialog = new Dialog(licensee)
       const setted = await dialog.setWebhook('https://waba.360dialog.io/', 'token-dialog')
-      await fetchMock.flush(true)
+      await fetchMock.callHistory.flush(true)
 
-      expect(fetchMock.done()).toBe(true)
-      expect(fetchMock.calls()).toHaveLength(1)
+      expect(fetchMock.callHistory.done()).toBe(true)
+      expect(fetchMock.callHistory.calls()).toHaveLength(1)
       expect(setted).toEqual(true)
     })
   })
@@ -3050,7 +3050,7 @@ describe('Dialog plugin', () => {
 
       const dialog = new Dialog(licensee)
       const templates = await dialog.searchTemplates('https://waba.360dialog.io/', 'token-dialog')
-      await fetchMock.flush(true)
+      await fetchMock.callHistory.flush(true)
 
       expect(templates[0].name).toEqual('sample_movie_ticket_confirmation')
       expect(templates[0].namespace).toEqual('93aa6bf3_3bfc_4840_a76c_0f43073739e2')
