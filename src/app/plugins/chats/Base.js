@@ -29,7 +29,7 @@ class ChatsBase {
           kind: 'text',
           licensee: this.licensee._id,
           contact: this.messageParsed.contact._id,
-          room: this.messageParsed.room._id || this.messageParsed.room,
+          room: this.messageParsed.room?._id || this.messageParsed.room,
           destination: 'to-messenger',
         }),
       )
@@ -48,7 +48,7 @@ class ChatsBase {
                   text,
                   licensee: this.licensee._id,
                   contact: this.messageParsed.contact._id,
-                  room: this.messageParsed.room._id || this.messageParsed.room,
+                  room: this.messageParsed.room?._id || this.messageParsed.room,
                   destination: 'to-messenger',
                   trigger: trigger._id,
                 }),
@@ -61,7 +61,7 @@ class ChatsBase {
               text,
               licensee: this.licensee._id,
               contact: this.messageParsed.contact._id,
-              room: this.messageParsed.room._id || this.messageParsed.room,
+              room: this.messageParsed.room?._id || this.messageParsed.room,
               destination: 'to-messenger',
             }
 
@@ -77,7 +77,7 @@ class ChatsBase {
             kind: 'file',
             licensee: this.licensee._id,
             contact: this.messageParsed.contact._id,
-            room: this.messageParsed.room._id || this.messageParsed.room,
+            room: this.messageParsed.room?._id || this.messageParsed.room,
             destination: 'to-messenger',
           }
 
@@ -92,7 +92,7 @@ class ChatsBase {
             kind: 'location',
             licensee: this.licensee._id,
             contact: this.messageParsed.contact._id,
-            room: this.messageParsed.room._id || this.messageParsed.room,
+            room: this.messageParsed.room?._id || this.messageParsed.room,
             destination: 'to-messenger',
           }
 
