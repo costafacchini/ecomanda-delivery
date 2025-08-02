@@ -320,6 +320,7 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
                   <option value='rocketchat'>Rocketchat</option>
                   <option value='crisp'>Crisp</option>
                   <option value='cuboup'>CuboUp</option>
+                  <option value='chatwoot'>Chatwoot</option>
                 </select>
               </div>
             </div>
@@ -339,7 +340,7 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
                 </div>
               </div>
 
-              {props.values.chatDefault === 'crisp' && (
+              {['crisp', 'chatwoot'].includes(props.values.chatDefault) && (
                 <>
                   <div className='row'>
                     <div className='form-group col-5'>
