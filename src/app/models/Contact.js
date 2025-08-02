@@ -31,6 +31,8 @@ const contactSchema = new Schema(
     },
     waId: String,
     landbotId: String,
+    chatwootId: String,
+    chatwootSourceId: String,
     address: String,
     address_number: String,
     address_complement: String,
