@@ -7,7 +7,12 @@ async function request(url, method, { headers, body, isDownload }) {
       'Content-Type': 'application/json',
       ...headers,
     },
-    body: JSON.stringify(body),
+  }
+
+  if (headers && headers['Content-Type'] && headers['Content-Type'].includes('multipart/form-data')) {
+    requestOptions.body = body
+  } else {
+    requestOptions.body = JSON.stringify(body)
   }
 
   let result

@@ -7,11 +7,12 @@ const { v4: uuidv4 } = require('uuid')
 class ChatsBase {
   constructor(licensee) {
     this.licensee = licensee
+    this.contactRepository = new ContactRepositoryDatabase()
+    this.messageRepository = new MessageRepositoryDatabase()
   }
 
   async findContact(filters) {
-    const contactRepository = new ContactRepositoryDatabase()
-    return await contactRepository.findFirst(filters)
+    return await this.contactRepository.findFirst(filters)
   }
 
   async responseToMessages(responseBody) {
@@ -20,11 +21,9 @@ class ChatsBase {
 
     const processedMessages = []
 
-    const messageRepository = new MessageRepositoryDatabase()
-
     if (this.messageParsed.action === 'close-chat') {
       processedMessages.push(
-        await messageRepository.create({
+        await this.messageRepository.create({
           number: uuidv4(),
           text: 'Chat encerrado pelo agente',
           kind: 'text',
@@ -43,7 +42,7 @@ class ChatsBase {
           if (triggers.length > 0) {
             for (const trigger of triggers) {
               processedMessages.push(
-                await messageRepository.create({
+                await this.messageRepository.create({
                   number: uuidv4(),
                   kind: 'interactive',
                   text,
@@ -70,7 +69,7 @@ class ChatsBase {
               messageToSend.kind = 'template'
             }
 
-            processedMessages.push(await messageRepository.create(messageToSend))
+            processedMessages.push(await this.messageRepository.create(messageToSend))
           }
         } else if (message.kind === 'file') {
           const messageToSend = {
@@ -86,7 +85,7 @@ class ChatsBase {
           messageToSend.fileName = message.file.fileName
           messageToSend.url = message.file.url
 
-          processedMessages.push(await messageRepository.create(messageToSend))
+          processedMessages.push(await this.messageRepository.create(messageToSend))
         } else if (message.kind === 'location') {
           const messageToSend = {
             number: uuidv4(),
@@ -100,7 +99,7 @@ class ChatsBase {
           messageToSend.latitude = message.location.latitude
           messageToSend.longitude = message.location.longitude
 
-          processedMessages.push(await messageRepository.create(messageToSend))
+          processedMessages.push(await this.messageRepository.create(messageToSend))
         }
       }
     }
