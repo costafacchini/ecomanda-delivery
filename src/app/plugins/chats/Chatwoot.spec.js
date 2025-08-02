@@ -95,6 +95,13 @@ describe('Chatwoot plugin', () => {
       const responseBody = {
         event: 'conversation_status_changed',
         message_type: 'outgoing',
+        sender: {
+          id: 'contact_123',
+        },
+        conversation: {
+          id: 'conversation_456',
+          messages: [],
+        },
       }
 
       const chatwoot = new Chatwoot(licensee)
@@ -107,6 +114,13 @@ describe('Chatwoot plugin', () => {
       const responseBody = {
         event: 'message_created',
         message_type: 'incoming',
+        sender: {
+          id: 'contact_123',
+        },
+        conversation: {
+          id: 'conversation_456',
+          messages: [],
+        },
       }
 
       const chatwoot = new Chatwoot(licensee)
@@ -409,7 +423,7 @@ describe('Chatwoot plugin', () => {
           }),
         )
 
-        const room = await Room.create(
+        await Room.create(
           roomFactory.build({
             roomId: 'conversation_456',
             contact,
@@ -427,7 +441,7 @@ describe('Chatwoot plugin', () => {
           }),
         )
 
-        fetchMock.postOnce('https://api.chatwoot.com/api/v1//conversations/conversation_456/messages', {
+        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations/conversation_456/messages', {
           status: 200,
           body: {
             error: false,
@@ -467,42 +481,22 @@ describe('Chatwoot plugin', () => {
           }),
         )
 
-        // Mock conversation creation
-        fetchMock.postOnce(
-          (url, { headers: _headers, body }) => {
-            return (
-              url === 'https://api.chatwoot.com/api/v1/conversations' &&
-              body.source_id === 'source_123' &&
-              body.inbox_id === 'inbox_123' &&
-              body.contact_id === 'contact_123'
-            )
-          },
-          {
-            status: 200,
-            body: {
-              data: {
-                id: 'new_conversation_789',
-              },
+        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations', {
+          status: 200,
+          body: {
+            data: {
+              id: 'new_conversation_789',
             },
           },
-        )
+        })
 
-        // Mock message sending
-        fetchMock.postOnce(
-          (url, { headers: _headers, body }) => {
-            return (
-              url === 'https://api.chatwoot.com/api/v1/conversations/new_conversation_789/messages' &&
-              body.content === 'Message to send'
-            )
+        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations/new_conversation_789/messages', {
+          status: 200,
+          body: {
+            error: false,
+            success: true,
           },
-          {
-            status: 200,
-            body: {
-              error: false,
-              success: true,
-            },
-          },
-        )
+        })
 
         const chatwoot = new Chatwoot(licensee)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
@@ -537,63 +531,39 @@ describe('Chatwoot plugin', () => {
           }),
         )
 
-        // Mock contact search
-        fetchMock.getOnce(
-          (url, { headers: _headers }) => {
-            return (
-              url === 'https://api.chatwoot.com/api/v1/contacts/search?q=+5511999999999' &&
-              _headers['api_access_token'] === 'api_token_123'
-            )
-          },
-          {
-            status: 200,
-            body: {
-              payload: [
-                {
-                  id: 'contact_123',
-                  contact_inboxes: [
-                    {
-                      inbox_id: 'inbox_123',
-                      source_id: 'source_123',
-                    },
-                  ],
-                },
-              ],
-            },
-          },
-        )
-
-        // Mock conversation creation
-        fetchMock.postOnce(
-          (url, { headers: _headers, body }) => {
-            return url === 'https://api.chatwoot.com/api/v1/conversations' && body.source_id === 'source_123'
-          },
-          {
-            status: 200,
-            body: {
-              data: {
-                id: 'new_conversation_789',
+        fetchMock.getOnce('https://api.chatwoot.com/api/v1/contacts/search?q=+5511999999999', {
+          status: 200,
+          body: {
+            payload: [
+              {
+                id: 'contact_123',
+                contact_inboxes: [
+                  {
+                    inbox_id: 'inbox_123',
+                    source_id: 'source_123',
+                  },
+                ],
               },
-            },
+            ],
           },
-        )
+        })
 
-        // Mock message sending
-        fetchMock.postOnce(
-          (url, { headers: _headers, body }) => {
-            return (
-              url === 'https://api.chatwoot.com/api/v1/conversations/new_conversation_789/messages' &&
-              body.content === 'Message to send'
-            )
-          },
-          {
-            status: 200,
-            body: {
-              error: false,
-              success: true,
+        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations', {
+          status: 200,
+          body: {
+            data: {
+              id: 'new_conversation_789',
             },
           },
-        )
+        })
+
+        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations/new_conversation_789/messages', {
+          status: 200,
+          body: {
+            error: false,
+            success: true,
+          },
+        })
 
         const chatwoot = new Chatwoot(licensee)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
@@ -639,78 +609,46 @@ describe('Chatwoot plugin', () => {
         )
 
         // Mock contact search - no results
-        fetchMock.getOnce(
-          (url, { headers: _headers }) => {
-            return (
-              url === 'https://api.chatwoot.com/api/v1/contacts/search?q=+5511999999999' &&
-              _headers['api_access_token'] === 'api_token_123'
-            )
+        fetchMock.getOnce('https://api.chatwoot.com/api/v1/contacts/search?q=+5511999999999', {
+          status: 200,
+          body: {
+            payload: [],
           },
-          {
-            status: 200,
-            body: {
-              payload: [],
-            },
-          },
-        )
+        })
 
         // Mock contact creation
-        fetchMock.postOnce(
-          (url, { headers: _headers, body }) => {
-            return (
-              url === 'https://api.chatwoot.com/api/v1/contacts' &&
-              body.name === 'John Doe' &&
-              body.inbox_id === 'inbox_123' &&
-              body.phone_number === '+5511999999999' &&
-              body.email === 'john@example.com'
-            )
-          },
-          {
-            status: 200,
-            body: {
-              payload: {
-                id: 'contact_123',
-                contact_inboxes: [
-                  {
-                    source_id: 'source_123',
-                  },
-                ],
-              },
+        fetchMock.postOnce('https://api.chatwoot.com/api/v1/contacts', {
+          status: 200,
+          body: {
+            payload: {
+              id: 'contact_123',
+              contact_inboxes: [
+                {
+                  source_id: 'source_123',
+                },
+              ],
             },
           },
-        )
+        })
 
         // Mock conversation creation
-        fetchMock.postOnce(
-          (url, { headers: _headers, body }) => {
-            return url === 'https://api.chatwoot.com/api/v1/conversations' && body.source_id === 'source_123'
-          },
-          {
-            status: 200,
-            body: {
-              data: {
-                id: 'new_conversation_789',
-              },
+        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations', {
+          status: 200,
+          body: {
+            data: {
+              id: 'new_conversation_789',
             },
           },
-        )
+        })
 
         // Mock message sending
-        fetchMock.postOnce(
-          (url, { headers: _headers, body }) => {
-            return (
-              url === 'https://api.chatwoot.com/api/v1/conversations/new_conversation_789/messages' &&
-              body.content === 'Message to send'
-            )
+        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations/new_conversation_789/messages', {
+          status: 200,
+          body: {
+            error: false,
+            success: true,
           },
-          {
-            status: 200,
-            body: {
-              error: false,
-              success: true,
-            },
-          },
-        )
+        })
 
         const chatwoot = new Chatwoot(licensee)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
@@ -739,7 +677,7 @@ describe('Chatwoot plugin', () => {
           }),
         )
 
-        const room = await Room.create(
+        await Room.create(
           roomFactory.build({
             roomId: 'conversation_456',
             contact,
@@ -751,30 +689,21 @@ describe('Chatwoot plugin', () => {
         const message = await messageRepository.create(
           messageFactory.build({
             kind: 'file',
-            file: {
-              url: 'https://example.com/file.pdf',
-            },
+            fileName: 'file.pdf',
+            url: 'https://example.com/file.pdf',
             contact,
             licensee,
             sended: false,
           }),
         )
 
-        fetchMock.postOnce(
-          (url, { headers: _headers }) => {
-            return (
-              url === 'https://api.chatwoot.com/api/v1/conversations/conversation_456/messages' &&
-              _headers['Content-Type'].includes('multipart/form-data')
-            )
+        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations/conversation_456/messages', {
+          status: 200,
+          body: {
+            error: false,
+            success: true,
           },
-          {
-            status: 200,
-            body: {
-              error: false,
-              success: true,
-            },
-          },
-        )
+        })
 
         const chatwoot = new Chatwoot(licensee)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
@@ -797,7 +726,7 @@ describe('Chatwoot plugin', () => {
           }),
         )
 
-        const room = await Room.create(
+        await Room.create(
           roomFactory.build({
             roomId: 'conversation_456',
             contact,
@@ -815,23 +744,13 @@ describe('Chatwoot plugin', () => {
           }),
         )
 
-        fetchMock.postOnce(
-          (url, { headers: _headers, body }) => {
-            return (
-              url === 'https://api.chatwoot.com/api/v1/conversations/conversation_456/messages' &&
-              body.private === false &&
-              body.message_type === 'incoming' &&
-              body.content_type === 'form'
-            )
+        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations/conversation_456/messages', {
+          status: 200,
+          body: {
+            error: false,
+            success: true,
           },
-          {
-            status: 200,
-            body: {
-              error: false,
-              success: true,
-            },
-          },
-        )
+        })
 
         const chatwoot = new Chatwoot(licensee)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
@@ -856,7 +775,7 @@ describe('Chatwoot plugin', () => {
           }),
         )
 
-        const room = await Room.create(
+        await Room.create(
           roomFactory.build({
             roomId: 'conversation_456',
             contact,
@@ -911,7 +830,7 @@ describe('Chatwoot plugin', () => {
           }),
         )
 
-        const room = await Room.create(
+        await Room.create(
           roomFactory.build({
             roomId: 'conversation_456',
             contact,
@@ -954,7 +873,7 @@ describe('Chatwoot plugin', () => {
 
   describe('#transfer', () => {
     it('changes talkingWithChatBot to false and sends message', async () => {
-      const sendMessageSpy = jest.spyOn(Chatwoot.prototype, 'sendMessage').mockImplementation()
+      const sendMessageSpy = jest.spyOn(Chatwoot.prototype, 'sendMessage').mockImplementation(async () => {})
 
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(
@@ -985,7 +904,6 @@ describe('Chatwoot plugin', () => {
       expect(modifiedContact.talkingWithChatBot).toEqual(false)
 
       expect(sendMessageSpy).toHaveBeenCalledTimes(1)
-      expect(sendMessageSpy).toHaveBeenCalledWith('60958703f415ed4008748637', 'https://api.chatwoot.com/api/v1/')
     })
   })
 

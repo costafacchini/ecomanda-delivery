@@ -2,20 +2,20 @@ const request = require('../../services/request')
 const ChatsBase = require('./Base')
 const { createRoom, getRoomBy } = require('@repositories/room')
 
-const searchContact = async (url, headers, contact) => {
-  const response = await request.get(`${url}/contacts/search?q=+${contact.number}`, { headers })
+const searchContact = async (url, headers, contact, licensee, contactRepository) => {
+  const response = await request.get(`${url}contacts/search?q=+${contact.number}`, { headers })
 
-  if (response.status == 200) {
+  if (response.status == 200 && response.data && response.data.payload && response.data.payload.length > 0) {
     const contactInbox = response.data.payload[0].contact_inboxes.find(
-      (inbox) => inbox.inbox_id === this.licensee.chatIdentifier,
+      (inbox) => inbox.inbox_id === licensee.chatIdentifier,
     )
 
     if (!contactInbox) {
       return null
     }
 
-    await this.contactRepository.update(contact._id, {
-      chatwootId: response.data.payload.id,
+    await contactRepository.update(contact._id, {
+      chatwootId: response.data.payload[0].id,
       chatwootSourceId: contactInbox.source_id,
     })
 
@@ -25,10 +25,10 @@ const searchContact = async (url, headers, contact) => {
   }
 }
 
-const createContact = async (url, headers, contact) => {
+const createContact = async (url, headers, contact, licensee, contactRepository) => {
   const body = {
     name: contact.name,
-    inbox_id: this.licensee.chatIdentifier,
+    inbox_id: licensee.chatIdentifier,
     phone_number: `+${contact.number}`,
     email: contact.email,
     custom_attributes: {
@@ -50,20 +50,27 @@ const createContact = async (url, headers, contact) => {
   if (response.status == 400) {
     console.error(`Não foi possível criar o contato na Chatwoot ${JSON.stringify(response.data)}`)
     return
-  } else {
-    await this.contactRepository.update(contact._id, {
+  } else if (
+    response.data &&
+    response.data.payload &&
+    response.data.payload.contact_inboxes &&
+    response.data.payload.contact_inboxes.length > 0
+  ) {
+    await contactRepository.update(contact._id, {
       chatwootId: response.data.payload.id,
       chatwootSourceId: response.data.payload.contact_inboxes[0].source_id,
     })
 
     return response.data.payload.contact_inboxes[0].source_id
+  } else {
+    return null
   }
 }
 
-const createConversation = async (url, headers, contact) => {
+const createConversation = async (url, headers, contact, licensee) => {
   const body = {
     source_id: contact.chatwootSourceId,
-    inbox_id: this.licensee.chatIdentifier,
+    inbox_id: licensee.chatIdentifier,
     contact_id: contact.chatwootId,
     status: 'open',
   }
@@ -114,7 +121,7 @@ const postMessage = async (url, headers, contact, message, room) => {
 
     multipartBody += `--${boundary}\r\n`
     multipartBody += 'Content-Disposition: form-data; name="attachments[]"\r\n\r\n'
-    multipartBody += message.file.url + '\r\n'
+    multipartBody += message.url + '\r\n'
 
     multipartBody += `--${boundary}--\r\n`
 
@@ -129,7 +136,7 @@ const postMessage = async (url, headers, contact, message, room) => {
     requestOptions.body = body
   }
 
-  const response = await request.post(`${url}/conversations/${room.roomId}/messages`, requestOptions)
+  const response = await request.post(`${url}conversations/${room.roomId}/messages`, requestOptions)
 
   if (response.data.error === false) {
     message.sended = true
@@ -169,12 +176,47 @@ class Chatwoot extends ChatsBase {
   }
 
   async parseMessage(responseBody) {
-    if (responseBody.event !== 'message_created' && responseBody.message_type !== 'outgoing') {
+    if (responseBody.event === 'conversation_status_changed' && responseBody.status === 'resolved') {
+      if (!responseBody.sender || !responseBody.sender.id) {
+        this.messageParsed = null
+        return
+      }
+
+      const contact = await this.findContact({ chatwootId: responseBody.sender.id })
+      if (!contact) {
+        this.messageParsed = null
+        return
+      }
+
+      let room = await getRoomBy({ roomId: responseBody.conversation.id })
+      if (!room) {
+        this.messageParsed = null
+        return
+      }
+
+      this.messageParsed = { room }
+      this.messageParsed.contact = contact
+      this.messageParsed.action = this.action(responseBody)
+      this.messageParsed.messages = []
+      return
+    }
+
+    if (responseBody.event !== 'message_created' || responseBody.message_type !== 'outgoing') {
+      this.messageParsed = null
+      return
+    }
+
+    if (!responseBody.sender || !responseBody.sender.id) {
       this.messageParsed = null
       return
     }
 
     const contact = await this.findContact({ chatwootId: responseBody.sender.id })
+    if (!contact) {
+      this.messageParsed = null
+      return
+    }
+
     let room = await getRoomBy({ roomId: responseBody.conversation.id })
     if (!room) {
       room = await createRoom({ roomId: responseBody.conversation.id, contact: contact })
@@ -227,9 +269,15 @@ class Chatwoot extends ChatsBase {
     const headers = { api_access_token: this.licensee.chatKey, 'Content-Type': 'application/json' }
 
     if (!messageToSend.contact.chatwootSourceId) {
-      const sourceId = await searchContact(url, headers, messageToSend.contact)
+      const sourceId = await searchContact(url, headers, messageToSend.contact, this.licensee, this.contactRepository)
       if (!sourceId) {
-        messageToSend.contact.chatwootSourceId = await createContact(url, headers, messageToSend.contact)
+        messageToSend.contact.chatwootSourceId = await createContact(
+          url,
+          headers,
+          messageToSend.contact,
+          this.licensee,
+          this.contactRepository,
+        )
       } else {
         messageToSend.contact.chatwootSourceId = sourceId
       }
@@ -239,7 +287,7 @@ class Chatwoot extends ChatsBase {
     let room = openRoom
 
     if (!room) {
-      room = await createConversation(url, headers, messageToSend.contact)
+      room = await createConversation(url, headers, messageToSend.contact, this.licensee)
       if (!room) {
         return
       }
