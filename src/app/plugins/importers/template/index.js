@@ -1,5 +1,5 @@
 const Dialog = require('@plugins/messengers/Dialog')
-const Chatwoot = require('@plugins/messengers/Chatwoot')
+const YCloud = require('@plugins/messengers/YCloud')
 const { createTemplate, destroyAllTemplates } = require('@repositories/template')
 const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
 
@@ -20,8 +20,8 @@ class TemplatesImporter {
       templates.forEach((template) => createTemplate(template))
     }
 
-    if (licensee.whatsappDefault === 'chatwoot') {
-      const chatwoot = new Chatwoot(licensee)
+    if (licensee.whatsappDefault === 'ycloud') {
+      const chatwoot = new YCloud(licensee)
       const templates = await chatwoot.searchTemplates(licensee.whatsappUrl, licensee.whatsappToken)
       templates.forEach((template) => createTemplate(template))
     }
