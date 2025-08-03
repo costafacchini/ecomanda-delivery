@@ -303,13 +303,13 @@ class YCloud extends MessengersBase {
     }
 
     const chatId = responseBody.whatsappInboundMessage.from
-    const contact = responseBody.customerProfile
+    const contact = responseBody.whatsappInboundMessage.customerProfile
     const normalizePhone = new NormalizePhone(chatId)
 
     this.contactData = {
       number: normalizePhone.number,
       type: normalizePhone.type,
-      name: contact.profile?.name || '',
+      name: contact.name || '',
       wa_start_chat: new Date(),
     }
   }

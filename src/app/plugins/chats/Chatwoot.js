@@ -7,7 +7,7 @@ const searchContact = async (url, headers, contact, licensee, contactRepository)
 
   if (response.status == 200 && response.data && response.data.payload && response.data.payload.length > 0) {
     const contactInbox = response.data.payload[0].contact_inboxes.find(
-      (inbox) => inbox.inbox_id === licensee.chatIdentifier,
+      (inbox) => inbox.inbox.id == licensee.chatIdentifier,
     )
 
     if (!contactInbox) {
@@ -47,7 +47,7 @@ const createContact = async (url, headers, contact, licensee, contactRepository)
   // host + public/api/ + api version + /inboxes/ + inbox id + /contacts
   const response = await request.post(`${url}contacts`, { headers, body })
 
-  if (response.status == 400) {
+  if (!response.status == 200) {
     console.error(`Não foi possível criar o contato na Chatwoot ${JSON.stringify(response.data)}`)
     return
   } else if (
@@ -67,10 +67,9 @@ const createContact = async (url, headers, contact, licensee, contactRepository)
   }
 }
 
-const createConversation = async (url, headers, contact, licensee) => {
+const createConversation = async (url, headers, contact) => {
   const body = {
     source_id: contact.chatwootSourceId,
-    inbox_id: licensee.chatIdentifier,
     contact_id: contact.chatwootId,
     status: 'open',
   }
@@ -82,7 +81,7 @@ const createConversation = async (url, headers, contact, licensee) => {
     return
   } else {
     const room = await createRoom({
-      roomId: response.data.data.id,
+      roomId: response.data.id,
       contact: contact._id,
     })
 
@@ -138,7 +137,7 @@ const postMessage = async (url, headers, contact, message, room) => {
 
   const response = await request.post(`${url}conversations/${room.roomId}/messages`, requestOptions)
 
-  if (response.data.error === false) {
+  if (response.status === 200) {
     message.sended = true
     await message.save()
 
@@ -281,6 +280,11 @@ class Chatwoot extends ChatsBase {
       } else {
         messageToSend.contact.chatwootSourceId = sourceId
       }
+    }
+
+    if (!messageToSend.contact.chatwootSourceId) {
+      console.error(`Não foi possível criar o contato na Chatwoot e o envio da mensagem foi abortado!`)
+      return
     }
 
     const openRoom = await getRoomBy({ contact: messageToSend.contact, closed: false })
