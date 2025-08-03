@@ -373,7 +373,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['chatKey'].message).toEqual(
-          'Key do Chat: deve ser preenchido quando o plugin de chat for crisp',
+          'API Key do Chat: deve ser preenchido quando o plugin de chat for crisp ou chatwoot',
         )
       })
     })
@@ -391,7 +391,7 @@ describe('Licensee', () => {
         const validation = licensee.validateSync()
 
         expect(validation.errors['chatIdentifier'].message).toEqual(
-          'Identifier do Chat: deve ser preenchido quando o plugin de chat for crisp',
+          'Identifier (Conta) do Chat: deve ser preenchido quando o plugin de chat for crisp ou chatwoot',
         )
       })
     })

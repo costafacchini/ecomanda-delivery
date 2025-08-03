@@ -118,10 +118,7 @@ describe('template controller', () => {
             })
             .expect('Content-Type', /json/)
             .expect(422, {
-              errors: [
-                { message: 'Namespace: Você deve preencher o campo' },
-                { message: 'Licensee: Você deve preencher o campo' },
-              ],
+              errors: [{ message: 'Licensee: Você deve preencher o campo' }],
             })
         })
       })

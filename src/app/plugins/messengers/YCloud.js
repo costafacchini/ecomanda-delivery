@@ -443,7 +443,7 @@ class YCloud extends MessengersBase {
     }
 
     try {
-      const messageResponse = await request.post(`${url}/whatsapp/messages/sendDirectly`, {
+      const messageResponse = await request.post(`${url}whatsapp/messages/sendDirectly`, {
         headers,
         body: messageBody,
       })
@@ -478,7 +478,7 @@ class YCloud extends MessengersBase {
     }
 
     try {
-      const response = await request.post(`${url}/webhookEndpoints`, { headers, body })
+      const response = await request.post(`${url}webhookEndpoints`, { headers, body })
       return response.status === 200 || response.status === 201
     } catch (error) {
       console.error('Erro ao configurar webhook YCloud:', error)
