@@ -171,12 +171,12 @@ class Chatwoot extends ChatsBase {
 
   async parseMessage(responseBody) {
     if (responseBody.event === 'conversation_status_changed' && responseBody.status === 'resolved') {
-      if (!responseBody.sender || !responseBody.sender.id) {
+      if (!responseBody.conversation?.contact_inbox?.contact_id) {
         this.messageParsed = null
         return
       }
 
-      const contact = await this.findContact({ chatwootId: responseBody.sender.id })
+      const contact = await this.findContact({ chatwootId: responseBody.conversation.contact_inbox.contact_id })
       if (!contact) {
         this.messageParsed = null
         return
@@ -200,12 +200,12 @@ class Chatwoot extends ChatsBase {
       return
     }
 
-    if (!responseBody.sender || !responseBody.sender.id) {
+    if (!responseBody.conversation?.contact_inbox?.contact_id) {
       this.messageParsed = null
       return
     }
 
-    const contact = await this.findContact({ chatwootId: responseBody.sender.id })
+    const contact = await this.findContact({ chatwootId: responseBody.conversation.contact_inbox.contact_id })
     if (!contact) {
       this.messageParsed = null
       return
@@ -224,7 +224,7 @@ class Chatwoot extends ChatsBase {
 
     const messagesToSend = []
 
-    responseBody.conversation.messages.forEach((message) => {
+    responseBody.conversation.messages?.forEach((message) => {
       if (message.content) {
         const messageToSend = {}
         messageToSend.text = { body: message.content }
@@ -232,7 +232,7 @@ class Chatwoot extends ChatsBase {
         messagesToSend.push(messageToSend)
       }
 
-      if (message.attachments.length > 0) {
+      if (message.attachments?.length > 0) {
         message.attachments.forEach((attachment) => {
           const messageToSend = {}
           messageToSend.kind = 'file'
