@@ -50,18 +50,13 @@ const createContact = async (url, headers, contact, licensee, contactRepository)
   if (!response.status == 200) {
     console.error(`Não foi possível criar o contato na Chatwoot ${JSON.stringify(response.data)}`)
     return
-  } else if (
-    response.data &&
-    response.data.payload &&
-    response.data.payload.contact_inboxes &&
-    response.data.payload.contact_inboxes.length > 0
-  ) {
+  } else if (response.data?.payload?.contact_inbox) {
     await contactRepository.update(contact._id, {
-      chatwootId: response.data.payload.id,
-      chatwootSourceId: response.data.payload.contact_inboxes[0].source_id,
+      chatwootId: response.data.payload.contact.id,
+      chatwootSourceId: response.data.payload.contact_inbox.source_id,
     })
 
-    return response.data.payload.contact_inboxes[0].source_id
+    return response.data.payload.contact_inbox.source_id
   } else {
     return null
   }
