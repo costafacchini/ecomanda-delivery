@@ -13,10 +13,7 @@ const templateSchema = new Schema(
       type: String,
       required: [true, 'Nome: Você deve preencher o campo'],
     }, // Apenas alfanuméricos minúsculos e underline, sem espaços
-    namespace: {
-      type: String,
-      required: [true, 'Namespace: Você deve preencher o campo'],
-    },
+    namespace: String,
     language: String,
     category: String,
     waId: String,

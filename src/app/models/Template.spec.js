@@ -52,15 +52,6 @@ describe('Template', () => {
       })
     })
 
-    describe('namespace', () => {
-      it('is required', () => {
-        const template = new Template({})
-        const validation = template.validateSync()
-
-        expect(validation.errors['namespace'].message).toEqual('Namespace: Você deve preencher o campo')
-      })
-    })
-
     describe('licensee', () => {
       it('is required', () => {
         const template = new Template({ number: '7849342387' })
