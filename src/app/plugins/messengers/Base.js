@@ -188,8 +188,8 @@ class MessengersBase {
         messageToSend.attachmentWaId = this.messageData.file.id
         messageToSend.fileName = this.messageData.file.fileName
 
-        if (this.messageData.url) {
-          messageToSend.url = this.messageData.url
+        if (this.messageData.file.url) {
+          messageToSend.url = this.messageData.file.url
         } else {
           messageToSend.url = await getMediaURL(this.licensee, contact, {
             mediaWaId: messageToSend.attachmentWaId,
