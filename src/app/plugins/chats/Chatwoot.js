@@ -1,6 +1,8 @@
 const request = require('../../services/request')
 const ChatsBase = require('./Base')
 const { createRoom, getRoomBy } = require('@repositories/room')
+const path = require('path')
+const mime = require('mime-types')
 
 const searchContact = async (url, headers, contact, licensee, contactRepository) => {
   const response = await request.get(`${url}contacts/search?q=+${contact.number}`, { headers })
@@ -99,8 +101,24 @@ const postMessage = async (url, headers, contact, message, room) => {
 
     requestOptions.body = body
   } else if (message.kind === 'file') {
-    const boundary = '----WebKitFormBoundary' + Math.random().toString(16).substr(2)
+    const fileResponse = await request.download(message.url)
 
+    if (!fileResponse || !fileResponse.data) {
+      console.error('Erro: fileResponse ou fileResponse.data é null/undefined', fileResponse)
+      message.error = 'Erro ao baixar arquivo: resposta inválida'
+      await message.save()
+      return false
+    }
+
+    const fileName = path.basename(message.url.split('?')[0]) || 'file'
+    const contentType =
+      (fileResponse.headers && fileResponse.headers.get && fileResponse.headers.get('content-type')) ||
+      mime.lookup(fileName) ||
+      'application/octet-stream'
+
+    const fileBuffer = Buffer.from(fileResponse.data)
+
+    const boundary = '----WebKitFormBoundary' + Math.random().toString(16).substr(2)
     requestOptions.headers['Content-Type'] = `multipart/form-data; boundary=${boundary}`
 
     let multipartBody = ''
@@ -114,10 +132,13 @@ const postMessage = async (url, headers, contact, message, room) => {
     multipartBody += 'incoming\r\n'
 
     multipartBody += `--${boundary}\r\n`
-    multipartBody += 'Content-Disposition: form-data; name="attachments[]"\r\n\r\n'
-    multipartBody += message.url + '\r\n'
+    multipartBody += `Content-Disposition: form-data; name="attachments[]"; filename="${fileName}"\r\n`
+    multipartBody += `Content-Type: ${contentType}\r\n\r\n`
 
-    multipartBody += `--${boundary}--\r\n`
+    const headerBuffer = Buffer.from(multipartBody, 'utf8')
+    const footerBuffer = Buffer.from(`\r\n--${boundary}--\r\n`, 'utf8')
+
+    multipartBody = Buffer.concat([headerBuffer, fileBuffer, footerBuffer])
 
     requestOptions.body = multipartBody
   } else {
