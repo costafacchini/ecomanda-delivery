@@ -192,18 +192,18 @@ class Chatwoot extends ChatsBase {
 
   async parseMessage(responseBody) {
     if (responseBody.event === 'conversation_status_changed' && responseBody.status === 'resolved') {
-      if (!responseBody.conversation?.contact_inbox?.contact_id) {
+      if (!responseBody.contact_inbox?.contact_id) {
         this.messageParsed = null
         return
       }
 
-      const contact = await this.findContact({ chatwootId: responseBody.conversation.contact_inbox.contact_id })
+      const contact = await this.findContact({ chatwootId: responseBody.contact_inbox.contact_id })
       if (!contact) {
         this.messageParsed = null
         return
       }
 
-      let room = await getRoomBy({ roomId: responseBody.conversation.id })
+      let room = await getRoomBy({ roomId: responseBody.id })
       if (!room) {
         this.messageParsed = null
         return
