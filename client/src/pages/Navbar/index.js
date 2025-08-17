@@ -15,7 +15,7 @@ export default function Navbar({ currentUser }) {
               </li>
               {currentUser && currentUser.isAdmin && (
                 <li className='nav-item dropdown'>
-                  <a className='nav-link dropdown-toggle' role='button' data-bs-toggle='dropdown' id='admin-dropdown'>
+                  <a className='nav-link dropdown-toggle' href='#' role='button' data-bs-toggle='dropdown' id='admin-dropdown' aria-expanded='false'>
                     Admin
                   </a>
 
@@ -31,7 +31,7 @@ export default function Navbar({ currentUser }) {
                 </li>
               )}
               <li className='nav-item dropdown'>
-                <a className='nav-link dropdown-toggle' role='button' data-bs-toggle='dropdown' id='cadastros-dropdown'>
+                <a className='nav-link dropdown-toggle' href='#' role='button' data-bs-toggle='dropdown' id='cadastros-dropdown' aria-expanded='false'>
                   Cadastros
                 </a>
 
@@ -54,7 +54,7 @@ export default function Navbar({ currentUser }) {
               </li>
               {currentUser && currentUser.isAdmin && currentUser.isSuper && (
                 <li className='nav-item dropdown'>
-                  <a className='nav-link dropdown-toggle' id='reports-menu' role='button' data-bs-toggle='dropdown'>
+                  <a className='nav-link dropdown-toggle' href='#' id='reports-menu' role='button' data-bs-toggle='dropdown' aria-expanded='false'>
                     Relatórios
                   </a>
                   <div className='dropdown-menu' aria-labelledby='reports-menu'>
