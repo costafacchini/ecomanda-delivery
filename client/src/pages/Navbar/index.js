@@ -15,9 +15,9 @@ export default function Navbar({ currentUser }) {
               </li>
               {currentUser && currentUser.isAdmin && (
                 <li className='nav-item dropdown'>
-                  <a className='nav-link dropdown-toggle' href='#' role='button' data-bs-toggle='dropdown' id='admin-dropdown' aria-expanded='false'>
+                  <button className='nav-link dropdown-toggle' type='button' data-bs-toggle='dropdown' id='admin-dropdown' aria-expanded='false'>
                     Admin
-                  </a>
+                  </button>
 
                   <div className='dropdown-menu' aria-labelledby='admin-dropdown'>
                     <a href='/#/licensees' className='dropdown-item'>
@@ -31,9 +31,9 @@ export default function Navbar({ currentUser }) {
                 </li>
               )}
               <li className='nav-item dropdown'>
-                <a className='nav-link dropdown-toggle' href='#' role='button' data-bs-toggle='dropdown' id='cadastros-dropdown' aria-expanded='false'>
+                <button className='nav-link dropdown-toggle' type='button' data-bs-toggle='dropdown' id='cadastros-dropdown' aria-expanded='false'>
                   Cadastros
-                </a>
+                </button>
 
                 <div className='dropdown-menu' aria-labelledby='cadastros-dropdown'>
                   <a className='dropdown-item' href='/#/contacts'>
@@ -54,9 +54,9 @@ export default function Navbar({ currentUser }) {
               </li>
               {currentUser && currentUser.isAdmin && currentUser.isSuper && (
                 <li className='nav-item dropdown'>
-                  <a className='nav-link dropdown-toggle' href='#' id='reports-menu' role='button' data-bs-toggle='dropdown' aria-expanded='false'>
+                  <button className='nav-link dropdown-toggle' type='button' id='reports-menu' data-bs-toggle='dropdown' aria-expanded='false'>
                     Relatórios
-                  </a>
+                  </button>
                   <div className='dropdown-menu' aria-labelledby='reports-menu'>
                     <a className='dropdown-item' href='/#/reports/billing'>Faturamento</a>
                     <a className='dropdown-item' href='/#/reports/integrationlog'>Logs de Integração</a>
