@@ -60,11 +60,11 @@ describe('Chatwoot plugin', () => {
       const responseBody = {
         event: 'message_created',
         message_type: 'outgoing',
-        sender: {
-          id: 'contact_123',
-        },
         conversation: {
           id: 'conversation_456',
+          contact_inbox: {
+            contact_id: 'contact_123',
+          },
           messages: [
             {
               content: 'Hello world',
@@ -95,9 +95,6 @@ describe('Chatwoot plugin', () => {
       const responseBody = {
         event: 'conversation_status_changed',
         message_type: 'outgoing',
-        sender: {
-          id: 'contact_123',
-        },
         conversation: {
           id: 'conversation_456',
           messages: [],
@@ -114,9 +111,6 @@ describe('Chatwoot plugin', () => {
       const responseBody = {
         event: 'message_created',
         message_type: 'incoming',
-        sender: {
-          id: 'contact_123',
-        },
         conversation: {
           id: 'conversation_456',
           messages: [],
@@ -133,11 +127,11 @@ describe('Chatwoot plugin', () => {
       const responseBody = {
         event: 'message_created',
         message_type: 'outgoing',
-        sender: {
-          id: 'non_existent_contact',
-        },
         conversation: {
           id: 'conversation_456',
+          contact_inbox: {
+            contact_id: 'non_existent_contact',
+          },
           messages: [
             {
               content: 'Hello world',
@@ -166,11 +160,11 @@ describe('Chatwoot plugin', () => {
       const responseBody = {
         event: 'message_created',
         message_type: 'outgoing',
-        sender: {
-          id: 'contact_123',
-        },
         conversation: {
           id: 'new_conversation_789',
+          contact_inbox: {
+            contact_id: 'contact_123',
+          },
           messages: [
             {
               content: 'Hello world',
@@ -210,12 +204,9 @@ describe('Chatwoot plugin', () => {
       const responseBody = {
         event: 'conversation_status_changed',
         status: 'resolved',
-        sender: {
-          id: 'contact_123',
-        },
-        conversation: {
-          id: 'conversation_456',
-          messages: [],
+        id: 'conversation_456',
+        contact_inbox: {
+          contact_id: 'contact_123',
         },
       }
 
@@ -253,11 +244,11 @@ describe('Chatwoot plugin', () => {
         const responseBody = {
           event: 'message_created',
           message_type: 'outgoing',
-          sender: {
-            id: 'contact_123',
-          },
           conversation: {
             id: 'conversation_456',
+            contact_inbox: {
+              contact_id: 'contact_123',
+            },
             messages: [
               {
                 content: '',
@@ -305,11 +296,11 @@ describe('Chatwoot plugin', () => {
         const responseBody = {
           event: 'message_created',
           message_type: 'outgoing',
-          sender: {
-            id: 'contact_123',
-          },
           conversation: {
             id: 'conversation_456',
+            contact_inbox: {
+              contact_id: 'contact_123',
+            },
             messages: [
               {
                 content: 'send_reply_buttons',
@@ -347,11 +338,11 @@ describe('Chatwoot plugin', () => {
         const responseBody = {
           event: 'message_created',
           message_type: 'outgoing',
-          sender: {
-            id: 'contact_123',
-          },
           conversation: {
             id: 'conversation_456',
+            contact_inbox: {
+              contact_id: 'contact_123',
+            },
             messages: [
               {
                 content: '{{name}}',
@@ -389,11 +380,11 @@ describe('Chatwoot plugin', () => {
         const responseBody = {
           event: 'message_created',
           message_type: 'outgoing',
-          sender: {
-            id: 'contact_123',
-          },
           conversation: {
             id: 'conversation_456',
+            contact_inbox: {
+              contact_id: 'contact_123',
+            },
             messages: [
               {
                 content: 'Hello group',
@@ -484,9 +475,7 @@ describe('Chatwoot plugin', () => {
         fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations', {
           status: 200,
           body: {
-            data: {
-              id: 'new_conversation_789',
-            },
+            id: 'new_conversation_789',
           },
         })
 
@@ -539,7 +528,9 @@ describe('Chatwoot plugin', () => {
                 id: 'contact_123',
                 contact_inboxes: [
                   {
-                    inbox_id: 'inbox_123',
+                    inbox: {
+                      id: 'inbox_123',
+                    },
                     source_id: 'source_123',
                   },
                 ],
@@ -551,9 +542,7 @@ describe('Chatwoot plugin', () => {
         fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations', {
           status: 200,
           body: {
-            data: {
-              id: 'new_conversation_789',
-            },
+            id: 'new_conversation_789',
           },
         })
 
@@ -621,12 +610,12 @@ describe('Chatwoot plugin', () => {
           status: 200,
           body: {
             payload: {
-              id: 'contact_123',
-              contact_inboxes: [
-                {
-                  source_id: 'source_123',
-                },
-              ],
+              contact: {
+                id: 'contact_123',
+              },
+              contact_inbox: {
+                source_id: 'source_123',
+              },
             },
           },
         })
@@ -635,9 +624,7 @@ describe('Chatwoot plugin', () => {
         fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations', {
           status: 200,
           body: {
-            data: {
-              id: 'new_conversation_789',
-            },
+            id: 'new_conversation_789',
           },
         })
 
@@ -697,6 +684,13 @@ describe('Chatwoot plugin', () => {
           }),
         )
 
+        // Mock file download
+        fetchMock.getOnce('https://example.com/file.pdf', {
+          status: 200,
+          body: 'file content',
+          headers: { 'content-type': 'application/pdf' },
+        })
+
         fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations/conversation_456/messages', {
           status: 200,
           body: {
@@ -710,7 +704,7 @@ describe('Chatwoot plugin', () => {
         await fetchMock.flush(true)
 
         expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(fetchMock.calls()).toHaveLength(2)
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)

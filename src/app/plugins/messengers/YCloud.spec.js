@@ -340,9 +340,7 @@ describe('YCloud Plugin', () => {
       const responseBody = {
         whatsappInboundMessage: {
           from: '5511999999999',
-        },
-        customerProfile: {
-          profile: {
+          customerProfile: {
             name: 'John Doe',
           },
         },
@@ -361,6 +359,28 @@ describe('YCloud Plugin', () => {
       const responseBody = {}
       ycloud.parseContactData(responseBody)
       expect(ycloud.contactData).toBeNull()
+    })
+
+    it('should handle missing customerProfile', () => {
+      const mockNormalizePhone = {
+        number: '5511999999999',
+        type: '@c.us',
+      }
+      NormalizePhone.mockImplementation(() => mockNormalizePhone)
+
+      const responseBody = {
+        whatsappInboundMessage: {
+          from: '5511999999999',
+        },
+      }
+
+      ycloud.parseContactData(responseBody)
+      expect(ycloud.contactData).toEqual({
+        number: '5511999999999',
+        type: '@c.us',
+        name: '',
+        wa_start_chat: expect.any(Date),
+      })
     })
   })
 
@@ -728,7 +748,7 @@ describe('YCloud Plugin', () => {
       const result = await ycloud.searchTemplates('https://api.ycloud.com/v1', 'test-token')
 
       expect(request.get).toHaveBeenCalledWith(
-        'https://api.ycloud.com/v1whatsapp/templates?page=1&limit=50&includeTotal=false',
+        'https://api.ycloud.com/v1/whatsapp/templates?page=1&limit=50&includeTotal=false',
         {
           headers: {
             'X-Api-Key': 'test-token',
