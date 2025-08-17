@@ -25,7 +25,7 @@ function LicenseesIndex({ currentUser }) {
     try {
       if (!isEmpty(filters)) return
 
-      onFilter({ page: 1, pedidos10_active: currentUser.isPedidos10 })
+      onFilter({ page: 1, pedidos10_active: false })
     } catch (error) {
       if (error.name === 'AbortError') {
         // Handling error thrown by aborting request
