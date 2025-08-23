@@ -884,14 +884,7 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@bull-board/api@6.12.4":
-  version "6.12.4"
-  resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-6.12.4.tgz#74d65c7706b1b5b7440f75de5a1434ba10514cc3"
-  integrity sha512-z+j//rCnWZUkba3WBSpv3/gs04fiCtvtOoOwV+VgcOXHEXQdf0bUb8eAQXvC5W8zRi7KHSpG2Fhbx4xIBI7wUA==
-  dependencies:
-    redis-info "^3.1.0"
-
-"@bull-board/api@^6.12.0":
+"@bull-board/api@6.12.5", "@bull-board/api@^6.12.0":
   version "6.12.5"
   resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-6.12.5.tgz#ca348bd38605a2b89ad24f9107d5b596e19bda46"
   integrity sha512-54X+dsWzAv/Svz1CyAP3hng+M0Fv8rjDlgi1FkGeafMODWoUUYhCU85YLbJ+NSwZHcy/Ey3ZGe0VFHqndJSL9A==
@@ -899,21 +892,21 @@
     redis-info "^3.1.0"
 
 "@bull-board/express@^6.12.0":
-  version "6.12.4"
-  resolved "https://registry.yarnpkg.com/@bull-board/express/-/express-6.12.4.tgz#ef7118d6752fac521cbadd6e1ae43479d633d008"
-  integrity sha512-O3L/ch6S24dIdhhEitT9Zn1YH21OA3dArcSG9mGfJCPfR+KFl5Yt6q6jSHBoQjGOjgLclLNLApi//CJFvk/8lw==
+  version "6.12.5"
+  resolved "https://registry.yarnpkg.com/@bull-board/express/-/express-6.12.5.tgz#a8e2c27c384d955e9a9e8b25ae841e597608993a"
+  integrity sha512-wIP3W88py+/jRRjuYpTmp8LN7h67jfdlp/vunSXHUGK7tBbcEKTeMOHzJXBKOeahSD3YkKSvGIwfS4PE8MZ5oQ==
   dependencies:
-    "@bull-board/api" "6.12.4"
-    "@bull-board/ui" "6.12.4"
+    "@bull-board/api" "6.12.5"
+    "@bull-board/ui" "6.12.5"
     ejs "^3.1.10"
     express "^4.21.1 || ^5.0.0"
 
-"@bull-board/ui@6.12.4":
-  version "6.12.4"
-  resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-6.12.4.tgz#0bf57454e1849394967ea208d0e731ecfb5bca8a"
-  integrity sha512-cSX4jofoRS4vm9GG96DJpmFmhquhWJX64kiJaJSO01OmrnMG7fp84l5KmPmM08nUePJ9BaAOfykuzD1Mn/AZmA==
+"@bull-board/ui@6.12.5":
+  version "6.12.5"
+  resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-6.12.5.tgz#3e2aefa2c4f1dd1644373920464439ef07799086"
+  integrity sha512-4sBEQqkN1fcY/6Y5napZWVcFJZ26XCNnd9xbBq2PY5Prk++BhsjlTXJgxrpho+ZaR9Qb2GQ3z8yXsigj2UZYxA==
   dependencies:
-    "@bull-board/api" "6.12.4"
+    "@bull-board/api" "6.12.5"
 
 "@colors/colors@1.6.0":
   version "1.6.0"
