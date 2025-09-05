@@ -2300,7 +2300,14 @@
   resolved "https://registry.yarnpkg.com/@types/luxon/-/luxon-3.4.2.tgz#e4fc7214a420173cea47739c33cdf10874694db7"
   integrity sha512-TifLZlFudklWlMBfhubvgqTXRzLDI5pCbGa4P8a3wPyUQSW+1xQ5eDsreP9DWHX3tjq1ke96uYG/nwundroWcA==
 
-"@types/node@*", "@types/node@>=10.0.0", "@types/node@>=13.7.0":
+"@types/node@*":
+  version "24.3.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-24.3.1.tgz#b0a3fb2afed0ef98e8d7f06d46ef6349047709f3"
+  integrity sha512-3vXmQDXy+woz+gnrTvuvNrPzekOi+Ds0ReMxw0LzBiK3a+1k0kQn9f2NWk+lgD4rJehFUmYy2gMhJ2ZI+7YP9g==
+  dependencies:
+    undici-types "~7.10.0"
+
+"@types/node@>=10.0.0", "@types/node@>=13.7.0":
   version "24.3.0"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-24.3.0.tgz#89b09f45cb9a8ee69466f18ee5864e4c3eb84dec"
   integrity sha512-aPTXCrfwnDLj4VvXrm+UUCQjNEvJgNA8s5F1cvwQU+3KNltTOkBm1j30uNLyqqPNe7gE3KFzImYoZEfLhp4Yow==
@@ -2895,9 +2902,9 @@ bl@^4.0.3:
     readable-stream "^3.4.0"
 
 bl@^6.0.7:
-  version "6.1.2"
-  resolved "https://registry.yarnpkg.com/bl/-/bl-6.1.2.tgz#fd4274e73c24f4c34ada6d69a612ec924f3df345"
-  integrity sha512-6J3oG82fpJ71WF4l0W6XslkwAPMr+Zcp+AmdxJ0L8LsXNzFeO8GYesV2J9AzGArBjrsb2xR50Ocbn/CL1B44TA==
+  version "6.1.3"
+  resolved "https://registry.yarnpkg.com/bl/-/bl-6.1.3.tgz#158ac572ee2a3446884585ddd02d02b4c5d122bf"
+  integrity sha512-nHB8B5roHlGX5TFsWeiQJijdddZIOHuv1eL2cM2kHnG3qR91CYLsysGe+CvxQfEd23EKD0eJf4lto0frTbddKA==
   dependencies:
     "@types/readable-stream" "^4.0.0"
     buffer "^6.0.3"
