@@ -1,16 +1,23 @@
 const normalize = (number) => {
   let result = number
-  if (number[number.length - 1] === '.') {
-    result = number.slice(0, number.length - 1)
+
+  if (result[result.length - 1] === '.') {
+    result = result.slice(0, -1)
   }
+
   if (result.length <= 9) {
-    result = ''
+    return ''
   }
+
   if (result.length === 10 || result.length === 11) {
     result = '55' + result
   }
+
   if (result.length === 12) {
-    result = [result.slice(0, 4), '9', result.slice(4)].join('')
+    const firstDigitAfterDDD = parseInt(result[4])
+    if (firstDigitAfterDDD > 5) {
+      result = [result.slice(0, 4), '9', result.slice(4)].join('')
+    }
   }
 
   return result
