@@ -5901,10 +5901,10 @@ new-find-package-json@^2.0.0:
   dependencies:
     debug "^4.3.4"
 
-newrelic@13.2.1:
-  version "13.2.1"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-13.2.1.tgz#e2deee3057420675af9de1d399f971dc2eb69ab2"
-  integrity sha512-F/qruL+GNRJq5JvQuDAEnmxX6U8+owD4SOdsXD0W6Lk/PjArqXZgQcm9nQ/BqoSedg55GavlN2DQsa8XWatLTg==
+newrelic@13.3.2:
+  version "13.3.2"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-13.3.2.tgz#bdd2e9bac8e134c3b75d439ed0e5dce151599cb1"
+  integrity sha512-eiQ3YalkXrQJIYGStX99atqR2+GvG2/rQUlsXc+KvsQttfY8qN94AiUBA6Pfsx05qNbcT3z2FozLBwkclb32+w==
   dependencies:
     "@apm-js-collab/tracing-hooks" "^0.1.0"
     "@grpc/grpc-js" "^1.13.2"
