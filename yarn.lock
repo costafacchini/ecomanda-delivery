@@ -905,7 +905,14 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@bull-board/api@6.12.7", "@bull-board/api@^6.12.0":
+"@bull-board/api@6.13.0":
+  version "6.13.0"
+  resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-6.13.0.tgz#66e416b1d8eb096349cfbb82165403c4a9f893ee"
+  integrity sha512-GZ0On0VeL5uZVS1x7UdU90F9GV1kdmHa1955hW3Ow1PmslCY/2YwmvnapVdbvCUSVBqluTfbVZsE9X3h79r1kw==
+  dependencies:
+    redis-info "^3.1.0"
+
+"@bull-board/api@^6.12.0":
   version "6.12.7"
   resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-6.12.7.tgz#fcfac26397449cbf785699ae659daf640e6aa041"
   integrity sha512-mI/akvhI937/IPB9+l2NN18Vd+RivCoNLIJ3h3ZxNrp3xetjX5R90l/wuHt5SG837sLkChgMhRVA2mJAiGypJA==
@@ -913,21 +920,21 @@
     redis-info "^3.1.0"
 
 "@bull-board/express@^6.12.0":
-  version "6.12.7"
-  resolved "https://registry.yarnpkg.com/@bull-board/express/-/express-6.12.7.tgz#b446216d84c87b124c8f147e32af78646d639f98"
-  integrity sha512-KPzOQSk8HRg5sTO2zuAl8b55YBy4ljxZDs+vMBEE8J2yhER0Kx09sZwWfj8DfIK58+qSriEzgfNWn7loFTawTg==
+  version "6.13.0"
+  resolved "https://registry.yarnpkg.com/@bull-board/express/-/express-6.13.0.tgz#dce2423870837c318fa45ab0b377b922d0e06549"
+  integrity sha512-PAbzD3dplV2NtN8ETs00bp++pBOD+cVb1BEYltXrjyViA2WluDBVKdlh/2wM+sHbYO2TAMNg8bUtKxGNCmxG7w==
   dependencies:
-    "@bull-board/api" "6.12.7"
-    "@bull-board/ui" "6.12.7"
+    "@bull-board/api" "6.13.0"
+    "@bull-board/ui" "6.13.0"
     ejs "^3.1.10"
     express "^4.21.1 || ^5.0.0"
 
-"@bull-board/ui@6.12.7":
-  version "6.12.7"
-  resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-6.12.7.tgz#acc108c6c118d32027337b702a4709d0b67fa4df"
-  integrity sha512-EJvS84Ob661ASIjGH58RpKLb7upPM+kS9I7PdezS67Dtab1V8cq10E+Sb2WIvXVLaGgQU8eITiLBjgWze2uWsg==
+"@bull-board/ui@6.13.0":
+  version "6.13.0"
+  resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-6.13.0.tgz#761d65417f98ef46bf3f75d19ceceb09ba2fba72"
+  integrity sha512-63I6b3nZnKWI5ok6mw/Tk2rIObuzMTY/tLGyO51p0GW4rAImdXxrK6mT7j4SgEuP2B+tt/8L1jU7sLu8MMcCNw==
   dependencies:
-    "@bull-board/api" "6.12.7"
+    "@bull-board/api" "6.13.0"
 
 "@colors/colors@1.6.0":
   version "1.6.0"
@@ -3360,14 +3367,14 @@ debug@2.6.9:
   dependencies:
     ms "2.0.0"
 
-debug@4, debug@4.x, debug@^4, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debug@^4.3.4, debug@^4.3.5, debug@^4.3.7, debug@^4.4.0, debug@^4.4.1:
+debug@4, debug@4.x, debug@^4, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debug@^4.3.4, debug@^4.3.7, debug@^4.4.1:
   version "4.4.1"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.4.1.tgz#e5a8bc6cbc4c6cd3e64308b0693a3d4fa550189b"
   integrity sha512-KcKCqiftBJcZr++7ykoDIEwSa3XWowTfNPo92BYxjXiyYEVrUQh2aLyhxBCwww+heortUFxEJYcRzosstTEBYQ==
   dependencies:
     ms "^2.1.3"
 
-debug@4.4.3:
+debug@4.4.3, debug@^4.3.5, debug@^4.4.0:
   version "4.4.3"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.4.3.tgz#c6ae432d9bd9662582fce08709b038c58e9e3d6a"
   integrity sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==
@@ -4515,7 +4522,14 @@ human-signals@^2.1.0:
   resolved "https://registry.yarnpkg.com/human-signals/-/human-signals-2.1.0.tgz#dc91fcba42e4d06e4abaed33b3e7a3c02f514ea0"
   integrity sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==
 
-iconv-lite@0.6.3, iconv-lite@^0.6.3:
+iconv-lite@0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.7.0.tgz#c50cd80e6746ca8115eb98743afa81aa0e147a3e"
+  integrity sha512-cf6L2Ds3h57VVmkZe+Pn+5APsT7FpqJtEhhieDCvrE2MK5Qk9MyffgQyuxQTm6BChfeZNtcOLHp9IcWRVcIcBQ==
+  dependencies:
+    safer-buffer ">= 2.1.2 < 3.0.0"
+
+iconv-lite@^0.6.3:
   version "0.6.3"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.6.3.tgz#a52f80bf38da1952eb5c681790719871a1a72501"
   integrity sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==
@@ -6259,9 +6273,9 @@ path-scurry@^1.11.1:
     minipass "^5.0.0 || ^6.0.2 || ^7.0.0"
 
 path-to-regexp@^8.0.0:
-  version "8.2.0"
-  resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-8.2.0.tgz#73990cc29e57a3ff2a0d914095156df5db79e8b4"
-  integrity sha512-TdrF7fW9Rphjq4RjrW0Kp2AW0Ahwu9sRGTkS6bvDi0SCwZlEZYmcfDbEsTz8RVk0EHIS/Vd1bv3JhG+1xZuAyQ==
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-8.3.0.tgz#aa818a6981f99321003a08987d3cec9c3474cd1f"
+  integrity sha512-7jdwVIRtsP8MYpdXSwOS0YdD0Du+qOoF/AEPIt88PcCFrZCzx41oxku1jD88hZBwbNUIEfpqvuhjFaMAqMTWnA==
 
 pend@~1.2.0:
   version "1.2.0"
@@ -6513,13 +6527,13 @@ range-parser@^1.2.1:
   integrity sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==
 
 raw-body@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-3.0.0.tgz#25b3476f07a51600619dae3fe82ddc28a36e5e0f"
-  integrity sha512-RmkhL8CAyCRPXCE28MMH0z2PNWQBNk2Q09ZdxM9IOOXwxwZbN+qbWaatPkdkWIKL2ZVDImrN/pK5HTRz2PcS4g==
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-3.0.1.tgz#ced5cd79a77bbb0496d707f2a0f9e1ae3aecdcb1"
+  integrity sha512-9G8cA+tuMS75+6G/TzW8OtLzmBDMo8p1JRxN5AZ+LAp8uxGA8V8GZm4GQ4/N5QNQEnLmg6SS7wyuSmbKepiKqA==
   dependencies:
     bytes "3.1.2"
     http-errors "2.0.0"
-    iconv-lite "0.6.3"
+    iconv-lite "0.7.0"
     unpipe "1.0.0"
 
 react-is@^18.3.1:
