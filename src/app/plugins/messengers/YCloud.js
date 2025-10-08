@@ -345,7 +345,7 @@ class YCloud extends MessengersBase {
       case 'text':
         messageBody.type = 'text'
         messageBody.text = {
-          body: messageToSend.text,
+          body: messageToSend.senderName ? `${messageToSend.senderName}: ${messageToSend.text}` : messageToSend.text,
         }
         break
 
@@ -396,11 +396,17 @@ class YCloud extends MessengersBase {
               break
             default:
               messageBody.type = 'text'
-              messageBody.text = { body: messageToSend.text }
+              messageBody.text = {
+                body: messageToSend.senderName
+                  ? `${messageToSend.senderName}: ${messageToSend.text}`
+                  : messageToSend.text,
+              }
           }
         } else {
           messageBody.type = 'text'
-          messageBody.text = { body: messageToSend.text }
+          messageBody.text = {
+            body: messageToSend.senderName ? `${messageToSend.senderName}: ${messageToSend.text}` : messageToSend.text,
+          }
         }
         break
       }
@@ -439,7 +445,11 @@ class YCloud extends MessengersBase {
 
       default:
         messageBody.type = 'text'
-        messageBody.text = { body: messageToSend.text || 'Mensagem não suportada' }
+        messageBody.text = {
+          body: messageToSend.senderName
+            ? `${messageToSend.senderName}: ${messageToSend.text}`
+            : messageToSend.text || 'Mensagem não suportada',
+        }
     }
 
     try {
