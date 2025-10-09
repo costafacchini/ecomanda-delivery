@@ -1,11 +1,11 @@
-const Customer = require('./Customer')
-const Integrationlog = require('@models/Integrationlog')
-const fetchMock = require('fetch-mock')
-const mongoServer = require('../../../../../.jest/utils')
-const { licenseeIntegrationPagarMe: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
+import Customer from './Customer.js'
+import Integrationlog from '@models/Integrationlog.js'
+import fetchMock from 'fetch-mock'
+import mongoServer from '../../../../../.jest/utils.js'
+import { licenseeIntegrationPagarMe as licenseeFactory   } from '@factories/licensee.js'
+import { contact as contactFactory   } from '@factories/contact.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import { ContactRepositoryDatabase  } from '@repositories/contact.js'
 
 describe('PagarMe/Customer plugin', () => {
   let licensee

@@ -1,6 +1,6 @@
-const resetChats = require('../services/ResetChats')
+import resetChats from '../services/ResetChats.js'
 
-module.exports = {
+export default {
   key: 'reset-chats',
   async handle(data) {
     return await resetChats(data.body)

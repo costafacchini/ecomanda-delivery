@@ -1,7 +1,7 @@
-const { Queue } = require('bullmq')
-const { redisConnection } = require('@config/redis')
+import { Queue } from 'bullmq'
+import { redisConnection } from '@config/redis.js'
 
-const jobs = require('../app/jobs')
+import jobs from '../app/jobs/index.js'
 
 const queueOptions = {
   defaultJobOptions: {
@@ -36,4 +36,4 @@ class QueueServer {
   }
 }
 
-module.exports = new QueueServer()
+export default new QueueServer()

@@ -1,12 +1,12 @@
-const Alloy = require('./Alloy')
-const mongoServer = require('../../../../.jest/utils')
-const { advanceTo, clear } = require('jest-date-mock')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
-const { cart: cartFactory } = require('@factories/cart')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { CartRepositoryDatabase } = require('@repositories/cart')
+import Alloy from './Alloy.js'
+import mongoServer from '../../../../.jest/utils.js'
+import { advanceTo, clear  } from 'jest-date-mock'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { contact as contactFactory   } from '@factories/contact.js'
+import { cart as cartFactory   } from '@factories/cart.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import { CartRepositoryDatabase  } from '@repositories/cart.js'
 
 describe('Alloy plugin', () => {
   beforeEach(async () => {

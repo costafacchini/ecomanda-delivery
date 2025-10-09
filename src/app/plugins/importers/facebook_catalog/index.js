@@ -1,6 +1,6 @@
-const Trigger = require('@models/Trigger')
-const Product = require('@models/Product')
-const _ = require('lodash')
+import Trigger from '@models/Trigger.js'
+import Product from '@models/Product.js'
+import _ from 'lodash'
 
 async function importProducts(products, licensee) {
   const importedProductsPromises = await products.map(async (product) => {
@@ -93,4 +93,4 @@ class FacebookCatalogImporter {
   }
 }
 
-module.exports = FacebookCatalogImporter
+export default FacebookCatalogImporter

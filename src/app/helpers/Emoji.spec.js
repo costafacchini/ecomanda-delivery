@@ -1,5 +1,5 @@
-const emoji = require('./Emoji')
-const { emojiList } = require('./EmojiList')
+import emoji from './Emoji.js'
+import { emojiList  } from './EmojiList.js'
 
 describe('Emoji', () => {
   describe('#replace', () => {

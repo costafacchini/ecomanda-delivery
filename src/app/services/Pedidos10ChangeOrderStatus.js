@@ -1,6 +1,6 @@
-const Body = require('@models/Body')
-const Pedidos10 = require('../plugins/integrations/Pedidos10')
-const createIntegrator = require('../plugins/integrations/factory')
+import Body from '@models/Body.js'
+import Pedidos10 from '../plugins/integrations/Pedidos10.js'
+import createIntegrator from '../plugins/integrations/factory.js'
 
 async function changeOrderStatus(data) {
   const { bodyId } = data
@@ -14,4 +14,4 @@ async function changeOrderStatus(data) {
   await pedidos10.changeOrderStatus(order, pedidos10Status)
 }
 
-module.exports = changeOrderStatus
+export default changeOrderStatus

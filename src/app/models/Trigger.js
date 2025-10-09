@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
+
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
 
@@ -99,4 +100,4 @@ triggerSchema.set('toJSON', {
 
 const Trigger = mongoose.model('Trigger', triggerSchema)
 
-module.exports = Trigger
+export default Trigger

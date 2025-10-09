@@ -1,15 +1,14 @@
-const TriggersQuery = require('@queries/TriggersQuery')
-const mongoServer = require('../../../.jest/utils')
-const Trigger = require('@models/Trigger')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const {
-  triggerMultiProduct: triggerMultiProductFactory,
+import TriggersQuery from '@queries/TriggersQuery.js'
+import mongoServer from '../../../.jest/utils.js'
+import Trigger from '@models/Trigger.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { triggerMultiProduct as triggerMultiProductFactory,
   triggerSingleProduct: triggerSingleProductFactory,
   triggerReplyButton: triggerReplyButtonFactory,
   triggerListMessage: triggerListMessageFactory,
   triggerText: triggerTextFactory,
-} = require('@factories/trigger')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+  } from '@factories/trigger.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
 
 describe('TriggersQuery', () => {
   let licensee

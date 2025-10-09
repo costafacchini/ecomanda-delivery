@@ -1,9 +1,9 @@
-const processWebhookRequest = require('./ProcessWebhookRequest')
-const Body = require('@models/Body')
-const mongoServer = require('.jest/utils')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { body: bodyFactory } = require('@factories/body')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+import processWebhookRequest from './ProcessWebhookRequest.js'
+import Body from '@models/Body.js'
+import mongoServer from '.jest/utils.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { body as bodyFactory   } from '@factories/body.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
 
 describe('processWebhookRequest', () => {
   beforeEach(async () => {

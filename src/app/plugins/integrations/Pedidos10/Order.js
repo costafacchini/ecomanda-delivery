@@ -1,9 +1,9 @@
-const Licensee = require('@models/Licensee')
-const Parser = require('./Parser')
-const Webhook = require('./services/Webhook')
-const OrderStatus = require('./services/OrderStatus')
-const Auth = require('./services/Auth')
-const { OrderRepositoryDatabase } = require('@repositories/order')
+import Licensee from '@models/Licensee.js'
+import Parser from './Parser.js'
+import Webhook from './services/Webhook.js'
+import OrderStatus from './services/OrderStatus.js'
+import Auth from './services/Auth.js'
+import { OrderRepositoryDatabase  } from '@repositories/order.js'
 
 class Order {
   constructor(licensee) {
@@ -81,4 +81,4 @@ class Order {
   }
 }
 
-module.exports = Order
+export default Order

@@ -1,4 +1,4 @@
-const FractionalProducts = require('./FractionalProducts')
+import FractionalProducts from './FractionalProducts.js'
 
 describe('Fractional products', () => {
   const licensee = {

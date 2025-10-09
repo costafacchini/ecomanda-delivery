@@ -1,8 +1,8 @@
-const Backgroundjob = require('@models/Backgroundjob')
-const mongoServer = require('../../../.jest/utils')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { backgroundjob: backgroundjobFactory } = require('@factories/backgroundjob')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+import Backgroundjob from '@models/Backgroundjob.js'
+import mongoServer from '../../../.jest/utils.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { backgroundjob as backgroundjobFactory   } from '@factories/backgroundjob.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
 
 describe('Backgroundjob', () => {
   let licensee

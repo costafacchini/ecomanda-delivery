@@ -1,14 +1,14 @@
-const processBackgroundjobChargeCreditCard = require('./ProcessBackgroundjobChargeCreditCard')
-const Backgroundjob = require('@models/Backgroundjob')
-const mongoServer = require('.jest/utils')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { backgroundjob: backgroundjobFactory } = require('@factories/backgroundjob')
-const { cart: cartFactory } = require('@factories/cart')
-const { contact: contactFactory } = require('@factories/contact')
-const Payment = require('@plugins/payments/PagarMe/Payment')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { CartRepositoryDatabase } = require('@repositories/cart')
+import processBackgroundjobChargeCreditCard from './ProcessBackgroundjobChargeCreditCard.js'
+import Backgroundjob from '@models/Backgroundjob.js'
+import mongoServer from '.jest/utils.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { backgroundjob as backgroundjobFactory   } from '@factories/backgroundjob.js'
+import { cart as cartFactory   } from '@factories/cart.js'
+import { contact as contactFactory   } from '@factories/contact.js'
+import Payment from '@plugins/payments/PagarMe/Payment.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import { CartRepositoryDatabase  } from '@repositories/cart.js'
 
 describe('processBackgroundjobChargeCreditCard', () => {
   beforeEach(async () => {

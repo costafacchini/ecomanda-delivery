@@ -1,4 +1,4 @@
-const _ = require('lodash')
+import _ from 'lodash'
 
 function sanitizeExpressErrors(errorsList) {
   return _.uniqWith(errorsList, _.isEqual).map((item) => {
@@ -14,4 +14,4 @@ function sanitizeModelErrors(errors) {
   })
 }
 
-module.exports = { sanitizeExpressErrors, sanitizeModelErrors }
+export { sanitizeExpressErrors, sanitizeModelErrors }

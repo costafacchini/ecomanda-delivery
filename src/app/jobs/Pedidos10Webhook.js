@@ -1,6 +1,6 @@
-const processWebhook = require('../services/Pedidos10Webhook')
+import processWebhook from '../services/Pedidos10Webhook.js'
 
-module.exports = {
+export default {
   key: 'pedidos10-webhook',
   async handle(data) {
     return await processWebhook(data.body)

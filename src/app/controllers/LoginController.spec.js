@@ -1,9 +1,9 @@
-const User = require('@models/User')
-const jwt = require('jsonwebtoken')
-const request = require('supertest')
-const mongoServer = require('../../../.jest/utils')
-const { expressServer } = require('../../../.jest/server-express')
-const { userSuper: userSuperFactory } = require('@factories/user')
+import User from '@models/User.js'
+import jwt from 'jsonwebtoken'
+import request from 'supertest'
+import mongoServer from '../../../.jest/utils.js'
+import { expressServer  } from '../../../.jest/server-express.js'
+import { userSuper as userSuperFactory   } from '@factories/user.js'
 
 describe('login controller', () => {
   beforeAll(async () => {

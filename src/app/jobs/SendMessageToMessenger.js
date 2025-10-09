@@ -1,6 +1,6 @@
-const sendMessageToMessenger = require('../services/SendMessageToMessenger')
+import sendMessageToMessenger from '../services/SendMessageToMessenger.js'
 
-module.exports = {
+export default {
   key: 'send-message-to-messenger',
   async handle(data) {
     return await sendMessageToMessenger(data.body)

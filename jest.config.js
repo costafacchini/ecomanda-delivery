@@ -1,4 +1,6 @@
-require('dotenv').config()
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const jest = {
   testEnvironment: 'node',
@@ -32,4 +34,4 @@ const jest = {
   clearMocks: true,
 }
 
-module.exports = jest
+export default jest

@@ -1,7 +1,8 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
+import NormalizePhone from '@helpers/NormalizePhone.js'
+
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
-const NormalizePhone = require('@helpers/NormalizePhone')
 
 const cardsSchema = new Schema({
   credit_card_id: String,
@@ -78,4 +79,4 @@ contactSchema.set('toJSON', {
 
 const Contact = mongoose.model('Contact', contactSchema)
 
-module.exports = Contact
+export default Contact

@@ -1,9 +1,9 @@
-const Recipient = require('./Recipient')
-const Integrationlog = require('@models/Integrationlog')
-const fetchMock = require('fetch-mock')
-const mongoServer = require('../../../../../.jest/utils')
-const { licenseeIntegrationPagarMe: licenseeFactory } = require('@factories/licensee')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+import Recipient from './Recipient.js'
+import Integrationlog from '@models/Integrationlog.js'
+import fetchMock from 'fetch-mock'
+import mongoServer from '../../../../../.jest/utils.js'
+import { licenseeIntegrationPagarMe as licenseeFactory   } from '@factories/licensee.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
 
 describe('PagarMe/Recipient plugin', () => {
   let licensee

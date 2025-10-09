@@ -1,5 +1,5 @@
-const Body = require('@models/Body')
-const queueServer = require('@config/queue')
+import Body from '@models/Body.js'
+import queueServer from '@config/queue.js'
 
 class MessengersController {
   async message(req, res) {
@@ -13,4 +13,4 @@ class MessengersController {
   }
 }
 
-module.exports = MessengersController
+export default MessengersController

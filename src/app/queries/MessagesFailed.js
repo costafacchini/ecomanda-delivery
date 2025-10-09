@@ -1,4 +1,4 @@
-const Message = require('@models/Message')
+import Message from '@models/Message.js'
 
 class MessagesFailedQuery {
   constructor(startDate, endDate, licenseeId) {
@@ -22,4 +22,4 @@ class MessagesFailedQuery {
   }
 }
 
-module.exports = MessagesFailedQuery
+export default MessagesFailedQuery

@@ -1,5 +1,5 @@
-const moment = require('moment-timezone')
-const { CartRepositoryDatabase } = require('@repositories/cart')
+import moment from 'moment-timezone'
+import { CartRepositoryDatabase  } from '@repositories/cart.js'
 
 async function parseText(text, contact) {
   return text
@@ -115,4 +115,4 @@ async function parseCart(cartId) {
   return cart ? cartDescription(cart) : ''
 }
 
-module.exports = { parseText, parseCart }
+export default { parseText, parseCart }

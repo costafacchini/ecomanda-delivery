@@ -1,12 +1,14 @@
-const router = require('express').Router()
-const jwt = require('jsonwebtoken')
+import express from 'express'
+import jwt from 'jsonwebtoken'
+import UsersController from '@controllers/UsersController.js'
+import LicenseesController from '@controllers/LicenseesController.js'
+import ContactsController from '@controllers/ContactsController.js'
+import TriggersController from '@controllers/TriggersController.js'
+import MessagesController from '@controllers/MessagesController.js'
+import TemplatesController from '@controllers/TemplatesController.js'
+
+const router = express.Router()
 const SECRET = process.env.SECRET
-const UsersController = require('@controllers/UsersController')
-const LicenseesController = require('@controllers/LicenseesController')
-const ContactsController = require('@controllers/ContactsController')
-const TriggersController = require('@controllers/TriggersController')
-const MessagesController = require('@controllers/MessagesController')
-const TemplatesController = require('@controllers/TemplatesController')
 
 const usersController = new UsersController()
 const licenseesController = new LicenseesController()
@@ -62,4 +64,4 @@ router.post('/licensees/:id/integration/pagarme', licenseesController.sendToPaga
 
 router.get('/messages', messagesController.index)
 
-module.exports = router
+export default router

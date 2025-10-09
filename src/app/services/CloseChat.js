@@ -1,5 +1,5 @@
-const createChatPlugin = require('../plugins/chats/factory')
-const { MessageRepositoryDatabase } = require('@repositories/message')
+import createChatPlugin from '../plugins/chats/factory.js'
+import { MessageRepositoryDatabase  } from '@repositories/message.js'
 
 async function closeChat(data) {
   const { messageId } = data
@@ -30,4 +30,4 @@ async function closeChat(data) {
   return actions
 }
 
-module.exports = closeChat
+export default closeChat

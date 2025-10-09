@@ -1,7 +1,7 @@
-const { Factory } = require('fishery')
-const { licensee } = require('./licensee')
-const { contact } = require('./contact')
-const moment = require('moment')
+import { Factory  } from 'fishery'
+import { licensee  } from './licensee.js'
+import { contact  } from './contact.js'
+import moment from 'moment'
 
 const cart = Factory.define(() => ({
   products: [
@@ -45,4 +45,4 @@ const cart = Factory.define(() => ({
   createdAt: moment('2021-07-03T00:00:00-03:00').toDate(),
 }))
 
-module.exports = { cart }
+export default { cart }

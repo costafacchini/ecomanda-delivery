@@ -1,4 +1,4 @@
-const User = require('@models/User')
+import User from '@models/User.js'
 const DEFAULT_USER = process.env.DEFAULT_USER
 const DEFAULT_PASSWORD = process.env.DEFAULT_PASSWORD
 
@@ -19,4 +19,4 @@ async function createDefaultUser() {
   }
 }
 
-module.exports = { createDefaultUser }
+export { createDefaultUser }

@@ -1,6 +1,6 @@
-const mime = require('mime-types')
-const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3')
-const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
+import mime from 'mime-types'
+import { S3Client, PutObjectCommand, GetObjectCommand  } from '@aws-sdk/client-s3.js'
+import { getSignedUrl  } from '@aws-sdk/s3-request-presigner.js'
 
 const getBucketPath = (number) => {
   const date = new Date()
@@ -67,4 +67,4 @@ class S3 {
   }
 }
 
-module.exports = S3
+export default S3

@@ -1,13 +1,13 @@
-const _ = require('lodash')
-const NormalizePhone = require('@helpers/NormalizePhone')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { scheduleSendMessageToMessenger } = require('@repositories/messenger')
-const { parseCart } = require('@helpers/ParseTriggerText')
-const createCartAdapter = require('../plugins/carts/adapters/factory')
-const cartFactory = require('@plugins/carts/factory')
-const { publishMessage } = require('@config/rabbitmq')
-const { CartRepositoryDatabase } = require('@repositories/cart')
-const { MessageRepositoryDatabase } = require('@repositories/message')
+import _ from 'lodash'
+import NormalizePhone from '@helpers/NormalizePhone.js'
+import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import { scheduleSendMessageToMessenger  } from '@repositories/messenger.js'
+import { parseCart  } from '@helpers/ParseTriggerText.js'
+import createCartAdapter from '../plugins/carts/adapters/factory.js'
+import cartFactory from '@plugins/carts/factory.js'
+import { publishMessage  } from '@config/rabbitmq.js'
+import { CartRepositoryDatabase  } from '@repositories/cart.js'
+import { MessageRepositoryDatabase  } from '@repositories/message.js'
 
 function permit(fields) {
   const permitedFields = [
@@ -408,4 +408,4 @@ class CartsController {
   }
 }
 
-module.exports = CartsController
+export default CartsController

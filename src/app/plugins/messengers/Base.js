@@ -1,12 +1,12 @@
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { getAllTriggerBy } = require('@repositories/trigger')
-const { CartRepositoryDatabase } = require('@repositories/cart')
-const { MessageRepositoryDatabase } = require('@repositories/message')
-const { getProductBy } = require('@repositories/product')
-const { v4: uuidv4 } = require('uuid')
-const S3 = require('../storage/S3')
-const request = require('../../services/request')
-const mime = require('mime-types')
+import { ContactRepositoryDatabase } from '@repositories/contact.js'
+import { getAllTriggerBy } from '@repositories/trigger.js'
+import { CartRepositoryDatabase } from '@repositories/cart.js'
+import { MessageRepositoryDatabase } from '@repositories/message.js'
+import { getProductBy } from '@repositories/product.js'
+import { v4 as uuidv4 } from 'uuid'
+import S3 from '../storage/S3.js'
+import request from '../../services/request.js'
+import mime from 'mime-types'
 
 const getMediaURL = async (licensee, contact, { mediaWaId, fileName, fileBase64 }) => {
   if (mediaWaId) {
@@ -208,4 +208,4 @@ class MessengersBase {
   }
 }
 
-module.exports = MessengersBase
+export default MessengersBase

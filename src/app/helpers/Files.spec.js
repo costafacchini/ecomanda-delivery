@@ -1,4 +1,4 @@
-const files = require('./Files')
+import files from './Files.js'
 
 const photoExtensions = ['jpg', 'jpeg', 'png', 'gif']
 const videoExtensions = ['avi', 'mp4', 'm4v', 'mov', 'mpg', 'mpeg', 'wmv']

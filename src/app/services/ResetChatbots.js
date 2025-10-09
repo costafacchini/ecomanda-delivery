@@ -1,11 +1,11 @@
-const createChatbotPlugin = require('../plugins/chatbots/factory')
-const moment = require('moment-timezone')
-const MessagesQuery = require('@queries/MessagesQuery')
-const { v4: uuidv4 } = require('uuid')
-const createMessengerPlugin = require('../plugins/messengers/factory')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { MessageRepositoryDatabase } = require('@repositories/message')
+import createChatbotPlugin from '../plugins/chatbots/factory.js'
+import moment from 'moment-timezone'
+import MessagesQuery from '@queries/MessagesQuery.js'
+import { v4 as uuidv4   } from 'uuid'
+import createMessengerPlugin from '../plugins/messengers/factory.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import { MessageRepositoryDatabase  } from '@repositories/message.js'
 
 async function getLastMessageOfContact(contactId) {
   const messagesQuery = new MessagesQuery()
@@ -69,4 +69,4 @@ async function resetChatbots() {
   }
 }
 
-module.exports = resetChatbots
+export default resetChatbots

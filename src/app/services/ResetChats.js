@@ -1,9 +1,9 @@
-const createChatPlugin = require('../plugins/chats/factory')
-const moment = require('moment-timezone')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { MessageRepositoryDatabase } = require('@repositories/message')
-const ContactsQuery = require('@queries/ContactsQuery')
+import createChatPlugin from '../plugins/chats/factory.js'
+import moment from 'moment-timezone'
+import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import { MessageRepositoryDatabase  } from '@repositories/message.js'
+import ContactsQuery from '@queries/ContactsQuery.js'
 
 async function sendMessageToChat(licensee, messageToSend) {
   const chatPlugin = createChatPlugin(licensee)
@@ -67,4 +67,4 @@ async function resetChats() {
   }
 }
 
-module.exports = resetChats
+export default resetChats

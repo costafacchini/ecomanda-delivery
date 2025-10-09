@@ -1,13 +1,13 @@
-const Template = require('@models/Template')
-const User = require('@models/User')
-const request = require('supertest')
-const mongoServer = require('../../../.jest/utils')
-const { expressServer } = require('../../../.jest/server-express')
-const Dialog = require('@plugins/messengers/Dialog')
-const { userSuper: userSuperFactory } = require('@factories/user')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { template: templateFactory } = require('@factories/template')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+import Template from '@models/Template.js'
+import User from '@models/User.js'
+import request from 'supertest'
+import mongoServer from '../../../.jest/utils.js'
+import { expressServer  } from '../../../.jest/server-express.js'
+import Dialog from '@plugins/messengers/Dialog.js'
+import { userSuper as userSuperFactory   } from '@factories/user.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { template as templateFactory   } from '@factories/template.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
 
 describe('template controller', () => {
   let token

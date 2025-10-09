@@ -1,11 +1,11 @@
-const fs = require('fs')
-const os = require('os')
-const path = require('path')
-const spawn = require('child_process').spawn
-const archiver = require('archiver')
-const mime = require('mime-types')
-const bl = require('bl')
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
+import fs from 'fs'
+import os from 'os'
+import path from 'path'
+import spawn from 'child_process'.spawn
+import archiver from 'archiver'
+import mime from 'mime-types'
+import bl from 'bl'
+import { S3Client, PutObjectCommand  } from '@aws-sdk/client-s3.js'
 
 async function backup() {
   const mongoURI = process.env.MONGODB_URI
@@ -87,4 +87,4 @@ async function upload(content, fileName) {
   return results
 }
 
-module.exports = backup
+export default backup

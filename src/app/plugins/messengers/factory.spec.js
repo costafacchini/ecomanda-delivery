@@ -1,7 +1,7 @@
-const createMessengerPlugin = require('./factory')
-const Utalk = require('./Utalk')
-const Dialog = require('./Dialog')
-const { licensee: licenseeFactory } = require('@factories/licensee')
+import createMessengerPlugin from './factory.js'
+import Utalk from './Utalk.js'
+import Dialog from './Dialog.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
 
 describe('createMessengerPlugin', () => {
   it('returns the utalk plugin if it is configured on licensee', () => {

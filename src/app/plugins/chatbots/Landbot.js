@@ -1,13 +1,13 @@
-const emoji = require('@helpers/Emoji')
-const NormalizePhone = require('@helpers/NormalizePhone')
-const { v4: uuidv4 } = require('uuid')
-const request = require('../../services/request')
-const Room = require('@models/Room')
-const Trigger = require('@models/Trigger')
-const cartFactory = require('@plugins/carts/factory')
-const files = require('@helpers/Files')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { MessageRepositoryDatabase } = require('@repositories/message')
+import emoji from '@helpers/Emoji.js'
+import NormalizePhone from '@helpers/NormalizePhone.js'
+import { v4 as uuidv4   } from 'uuid'
+import request from '../../services/request.js'
+import Room from '@models/Room.js'
+import Trigger from '@models/Trigger.js'
+import cartFactory from '@plugins/carts/factory.js'
+import files from '@helpers/Files.js'
+import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import { MessageRepositoryDatabase  } from '@repositories/message.js'
 
 const closeRoom = async (contact) => {
   const room = await Room.findOne({ contact: contact._id, closed: false })
@@ -259,4 +259,4 @@ class Landbot {
   }
 }
 
-module.exports = Landbot
+export default Landbot

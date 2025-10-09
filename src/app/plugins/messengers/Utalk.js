@@ -1,7 +1,7 @@
-const NormalizePhone = require('../../helpers/NormalizePhone')
-const request = require('../../services/request')
-const MessengersBase = require('./Base')
-const { MessageRepositoryDatabase } = require('@repositories/message')
+import NormalizePhone from '../../helpers/NormalizePhone.js'
+import request from '../../services/request.js'
+import MessengersBase from './Base.js'
+import { MessageRepositoryDatabase  } from '@repositories/message.js'
 
 class Utalk extends MessengersBase {
   constructor(licensee) {
@@ -137,4 +137,4 @@ class Utalk extends MessengersBase {
   }
 }
 
-module.exports = Utalk
+export default Utalk

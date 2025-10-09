@@ -1,7 +1,7 @@
-const IntegratorBase = require('./IntegratorBase')
+import IntegratorBase from './IntegratorBase.js'
 
 function createIntegrator() {
   return new IntegratorBase()
 }
 
-module.exports = createIntegrator
+export default createIntegrator

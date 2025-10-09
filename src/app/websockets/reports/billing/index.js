@@ -1,6 +1,6 @@
-const { io } = require('@config/http')
-const BillingQuery = require('@queries/BillingQuery')
-const IntegrationlogsQuery = require('@queries/IntegrationlogsQuery')
+import { io  } from '@config/http.js'
+import BillingQuery from '@queries/BillingQuery.js'
+import IntegrationlogsQuery from '@queries/IntegrationlogsQuery.js'
 
 io.on('connect', (socket) => {
   socket.on('load_billing_report', async (params) => {

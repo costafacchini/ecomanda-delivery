@@ -1,9 +1,9 @@
-const Webhook = require('./Webhook')
-const Licensee = require('@models/Licensee')
-const Integrationlog = require('@models/Integrationlog')
-const fetchMock = require('fetch-mock')
-const mongoServer = require('../../../../../../.jest/utils')
-const { licenseePedidos10: licenseeFactory } = require('@factories/licensee')
+import Webhook from './Webhook.js'
+import Licensee from '@models/Licensee.js'
+import Integrationlog from '@models/Integrationlog.js'
+import fetchMock from 'fetch-mock'
+import mongoServer from '../../../../../../.jest/utils.js'
+import { licenseePedidos10 as licenseeFactory   } from '@factories/licensee.js'
 
 describe('Pedidos10/Webhook plugin', () => {
   let licensee

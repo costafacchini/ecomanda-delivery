@@ -1,17 +1,17 @@
-const Rocketchat = require('./Rocketchat')
-const Room = require('@models/Room')
-const Trigger = require('@models/Trigger')
-const fetchMock = require('fetch-mock')
-const mongoServer = require('../../../../.jest/utils')
-const emoji = require('../../helpers/Emoji')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
-const { room: roomFactory } = require('@factories/room')
-const { message: messageFactory } = require('@factories/message')
-const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { MessageRepositoryDatabase } = require('@repositories/message')
+import Rocketchat from './Rocketchat.js'
+import Room from '@models/Room.js'
+import Trigger from '@models/Trigger.js'
+import fetchMock from 'fetch-mock'
+import mongoServer from '../../../../.jest/utils.js'
+import emoji from '../../helpers/Emoji.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { contact as contactFactory   } from '@factories/contact.js'
+import { room as roomFactory   } from '@factories/room.js'
+import { message as messageFactory   } from '@factories/message.js'
+import { triggerReplyButton as triggerReplyButtonFactory   } from '@factories/trigger.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import { MessageRepositoryDatabase  } from '@repositories/message.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 

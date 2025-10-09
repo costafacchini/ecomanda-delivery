@@ -1,13 +1,13 @@
-const processBackgroundjob = require('./ProcessBackgroundjob')
-const Backgroundjob = require('@models/Backgroundjob')
-const mongoServer = require('.jest/utils')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { cart: cartFactory } = require('@factories/cart')
-const { contact: contactFactory } = require('@factories/contact')
-const { backgroundjob: backgroundjobFactory } = require('@factories/backgroundjob')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { CartRepositoryDatabase } = require('@repositories/cart')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
+import processBackgroundjob from './ProcessBackgroundjob.js'
+import Backgroundjob from '@models/Backgroundjob.js'
+import mongoServer from '.jest/utils.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { cart as cartFactory   } from '@factories/cart.js'
+import { contact as contactFactory   } from '@factories/contact.js'
+import { backgroundjob as backgroundjobFactory   } from '@factories/backgroundjob.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import { CartRepositoryDatabase  } from '@repositories/cart.js'
+import { ContactRepositoryDatabase  } from '@repositories/contact.js'
 
 describe('processBackgroundjob', () => {
   beforeEach(async () => {

@@ -1,10 +1,10 @@
-const Body = require('@models/Body')
-const request = require('supertest')
-const mongoServer = require('../../../.jest/utils')
-const { expressServer } = require('../../../.jest/server-express')
-const queueServer = require('@config/queue')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+import Body from '@models/Body.js'
+import request from 'supertest'
+import mongoServer from '../../../.jest/utils.js'
+import { expressServer  } from '../../../.jest/server-express.js'
+import queueServer from '@config/queue.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
 
 describe('messengers controller', () => {
   let apiToken

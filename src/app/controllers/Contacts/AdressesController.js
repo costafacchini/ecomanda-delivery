@@ -1,6 +1,6 @@
-const NormalizePhone = require('@helpers/NormalizePhone')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const _ = require('lodash')
+import NormalizePhone from '@helpers/NormalizePhone.js'
+import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import _ from 'lodash'
 
 function permit(fields) {
   const permitedFields = [
@@ -73,4 +73,4 @@ class AdressesController {
   }
 }
 
-module.exports = AdressesController
+export default AdressesController

@@ -1,9 +1,9 @@
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { check, validationResult } = require('express-validator')
-const { sanitizeExpressErrors, sanitizeModelErrors } = require('../helpers/SanitizeErrors')
-const _ = require('lodash')
-const ContactsQuery = require('@queries/ContactsQuery')
-const queueServer = require('@config/queue')
+import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import { check, validationResult  } from 'express-validator'
+import { sanitizeExpressErrors, sanitizeModelErrors  } from '../helpers/SanitizeErrors.js'
+import _ from 'lodash'
+import ContactsQuery from '@queries/ContactsQuery.js'
+import queueServer from '@config/queue.js'
 
 function permit(fields) {
   const permitedFields = [
@@ -170,4 +170,4 @@ class ContactsController {
   }
 }
 
-module.exports = ContactsController
+export default ContactsController

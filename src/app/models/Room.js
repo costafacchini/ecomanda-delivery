@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
+
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
 
@@ -33,4 +34,4 @@ roomSchema.set('toJSON', {
 
 const Room = mongoose.model('Room', roomSchema)
 
-module.exports = Room
+export default Room

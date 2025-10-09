@@ -1,7 +1,7 @@
-const queueServer = require('@config/queue')
+import queueServer from '@config/queue.js'
 
 async function scheduleSendMessageToMessenger({ messageId, url, token }) {
   await queueServer.addJob('send-message-to-messenger', { messageId, url, token })
 }
 
-module.exports = { scheduleSendMessageToMessenger }
+export default { scheduleSendMessageToMessenger }

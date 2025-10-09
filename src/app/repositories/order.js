@@ -1,5 +1,5 @@
-const Repository = require('./repository')
-const Order = require('@models/Order')
+import Repository from './repository.js'
+import Order from '@models/Order.js'
 
 class OrderRepositoryDatabase extends Repository {
   async create(fields) {
@@ -18,4 +18,4 @@ class OrderRepositoryDatabase extends Repository {
   }
 }
 
-module.exports = { OrderRepositoryDatabase }
+export default { OrderRepositoryDatabase }

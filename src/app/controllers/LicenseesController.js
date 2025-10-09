@@ -1,11 +1,11 @@
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const createMessengerPlugin = require('@plugins/messengers/factory')
-const { check, validationResult } = require('express-validator')
-const { sanitizeExpressErrors, sanitizeModelErrors } = require('../helpers/SanitizeErrors')
-const _ = require('lodash')
-const LicenseesQuery = require('@queries/LicenseesQuery')
-const PagarMe = require('@plugins/payments/PagarMe')
-const Pedidos10 = require('@plugins/integrations/Pedidos10')
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import createMessengerPlugin from '@plugins/messengers/factory.js'
+import { check, validationResult  } from 'express-validator'
+import { sanitizeExpressErrors, sanitizeModelErrors  } from '../helpers/SanitizeErrors.js'
+import _ from 'lodash'
+import LicenseesQuery from '@queries/LicenseesQuery.js'
+import PagarMe from '@plugins/payments/PagarMe.js'
+import Pedidos10 from '@plugins/integrations/Pedidos10.js'
 
 function permit(fields) {
   const permitedFields = [
@@ -334,4 +334,4 @@ class LicenseesController {
   }
 }
 
-module.exports = LicenseesController
+export default LicenseesController

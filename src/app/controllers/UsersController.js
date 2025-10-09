@@ -1,7 +1,7 @@
-const User = require('@models/User')
-const { check, validationResult } = require('express-validator')
-const { sanitizeExpressErrors, sanitizeModelErrors } = require('../helpers/SanitizeErrors')
-const _ = require('lodash')
+import User from '@models/User.js'
+import { check, validationResult } from 'express-validator'
+import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
+import _ from 'lodash'
 
 function permit(fields) {
   const permitedFields = ['name', 'active', 'password', 'isAdmin', 'isSuper', 'email']
@@ -87,4 +87,4 @@ class UsersController {
   }
 }
 
-module.exports = UsersController
+export default UsersController

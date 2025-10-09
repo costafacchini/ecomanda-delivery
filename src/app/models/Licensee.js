@@ -1,7 +1,8 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
+import { v4 as uuidv4 } from 'uuid'
+
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
-const { v4: uuidv4 } = require('uuid')
 
 const licenseeSchema = new Schema(
   {
@@ -271,4 +272,4 @@ licenseeSchema.virtual('urlWhatsappWebhook').get(function () {
 
 const Licensee = mongoose.model('Licensee', licenseeSchema)
 
-module.exports = Licensee
+export default Licensee

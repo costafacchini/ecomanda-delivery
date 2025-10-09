@@ -1,8 +1,8 @@
-const createCartPlugin = require('./factory')
-const Go2go = require('./Go2go')
-const Go2goV2 = require('./Go2goV2')
-const Alloy = require('./Alloy')
-const { licensee: licenseeFactory } = require('@factories/licensee')
+import createCartPlugin from './factory.js'
+import Go2go from './Go2go.js'
+import Go2goV2 from './Go2goV2.js'
+import Alloy from './Alloy.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
 
 describe('createCartPlugin', () => {
   it('returns the go2go plugin if it is configured on licensee', () => {

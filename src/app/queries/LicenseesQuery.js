@@ -1,5 +1,5 @@
-const QueryBuilder = require('@queries/QueryBuilder')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+import QueryBuilder from '@queries/QueryBuilder.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
 
 class LicenseesQuery {
   constructor() {}
@@ -63,4 +63,4 @@ class LicenseesQuery {
   }
 }
 
-module.exports = LicenseesQuery
+export default LicenseesQuery

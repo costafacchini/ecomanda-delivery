@@ -1,14 +1,14 @@
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const request = require('supertest')
-const mongoServer = require('../../../.jest/utils')
-const { expressServer } = require('../../../.jest/server-express')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
-const { cart: cartFactory } = require('@factories/cart')
-const { publishMessage } = require('@config/rabbitmq')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { CartRepositoryDatabase } = require('@repositories/cart')
-const { MessageRepositoryDatabase } = require('@repositories/message')
+import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import request from 'supertest'
+import mongoServer from '../../../.jest/utils.js'
+import { expressServer  } from '../../../.jest/server-express.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { contact as contactFactory   } from '@factories/contact.js'
+import { cart as cartFactory   } from '@factories/cart.js'
+import { publishMessage  } from '@config/rabbitmq.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import { CartRepositoryDatabase  } from '@repositories/cart.js'
+import { MessageRepositoryDatabase  } from '@repositories/message.js'
 
 jest.mock('@config/rabbitmq')
 

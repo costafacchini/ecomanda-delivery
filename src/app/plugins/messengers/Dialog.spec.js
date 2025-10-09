@@ -1,28 +1,27 @@
-const Dialog = require('./Dialog')
-const Trigger = require('@models/Trigger')
-const Template = require('@models/Template')
-const Product = require('@models/Product')
-const fetchMock = require('fetch-mock')
-const mongoServer = require('../../../../.jest/utils')
-const S3 = require('../storage/S3')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
-const { message: messageFactory } = require('@factories/message')
-const {
-  triggerReplyButton: triggerReplyButtonFactory,
+import Dialog from './Dialog.js'
+import Trigger from '@models/Trigger.js'
+import Template from '@models/Template.js'
+import Product from '@models/Product.js'
+import fetchMock from 'fetch-mock'
+import mongoServer from '../../../../.jest/utils.js'
+import S3 from '../storage/S3.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { contact as contactFactory   } from '@factories/contact.js'
+import { message as messageFactory   } from '@factories/message.js'
+import { triggerReplyButton as triggerReplyButtonFactory,
   triggerMultiProduct: triggerMultiProductFactory,
   triggerListMessage: triggerListMessageFactory,
   triggerSingleProduct: triggerSingleProductFactory,
   triggerText: triggerTextFactory,
-} = require('@factories/trigger')
-const { template: templateFactory } = require('@factories/template')
-const { cart: cartFactory } = require('@factories/cart')
-const { product: productFactory } = require('@factories/product')
-const { advanceTo, clear } = require('jest-date-mock')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { CartRepositoryDatabase } = require('@repositories/cart')
-const { MessageRepositoryDatabase } = require('@repositories/message')
+  } from '@factories/trigger.js'
+import { template as templateFactory   } from '@factories/template.js'
+import { cart as cartFactory   } from '@factories/cart.js'
+import { product as productFactory   } from '@factories/product.js'
+import { advanceTo, clear  } from 'jest-date-mock'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import { CartRepositoryDatabase  } from '@repositories/cart.js'
+import { MessageRepositoryDatabase  } from '@repositories/message.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 

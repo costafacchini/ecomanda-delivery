@@ -1,6 +1,6 @@
-const changeOrderStatus = require('../services/Pedidos10ChangeOrderStatus')
+import changeOrderStatus from '../services/Pedidos10ChangeOrderStatus.js'
 
-module.exports = {
+export default {
   key: 'pedidos10-change-order-status',
   async handle(data) {
     return await changeOrderStatus(data.body)

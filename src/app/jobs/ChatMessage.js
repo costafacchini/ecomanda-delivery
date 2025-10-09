@@ -1,6 +1,6 @@
-const transformChatBody = require('../services/ChatMessage')
+import transformChatBody from '../services/ChatMessage.js'
 
-module.exports = {
+export default {
   key: 'chat-message',
   async handle(data) {
     return await transformChatBody(data.body)

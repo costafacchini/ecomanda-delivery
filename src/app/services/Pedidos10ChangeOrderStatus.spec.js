@@ -1,13 +1,13 @@
-const changeOrderStatus = require('./Pedidos10ChangeOrderStatus')
-const Licensee = require('@models/Licensee')
-const Body = require('@models/Body')
-const mongoServer = require('.jest/utils')
-const { OrderRepositoryDatabase } = require('@repositories/order')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { order: orderFactory } = require('@factories/order')
-const { body: bodyFactory } = require('@factories/body')
-const Pedidos10 = require('../plugins/integrations/Pedidos10')
-const IntegratorBase = require('../plugins/integrations/IntegratorBase')
+import changeOrderStatus from './Pedidos10ChangeOrderStatus.js'
+import Licensee from '@models/Licensee.js'
+import Body from '@models/Body.js'
+import mongoServer from '.jest/utils.js'
+import { OrderRepositoryDatabase  } from '@repositories/order.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { order as orderFactory   } from '@factories/order.js'
+import { body as bodyFactory   } from '@factories/body.js'
+import Pedidos10 from '../plugins/integrations/Pedidos10.js'
+import IntegratorBase from '../plugins/integrations/IntegratorBase.js'
 
 describe('changeOrderStatus', () => {
   const pedidos10ChangeOrderStatusFnSpy = jest

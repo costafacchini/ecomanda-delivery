@@ -1,6 +1,6 @@
-const Backgroundjob = require('@models/Backgroundjob')
-const queueServer = require('@config/queue')
-const { sanitizeModelErrors } = require('../helpers/SanitizeErrors')
+import Backgroundjob from '@models/Backgroundjob.js'
+import queueServer from '@config/queue.js'
+import { sanitizeModelErrors  } from '../helpers/SanitizeErrors.js'
 
 class BackgroundjobsController {
   async create(req, res) {
@@ -75,4 +75,4 @@ class BackgroundjobsController {
   }
 }
 
-module.exports = BackgroundjobsController
+export default BackgroundjobsController

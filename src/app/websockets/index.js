@@ -1,1 +1,1 @@
-require('./reports/billing/index')
+import './reports/billing/index.js'

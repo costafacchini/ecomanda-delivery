@@ -1,4 +1,4 @@
-const Product = require('@models/Product')
+import Product from '@models/Product.js'
 
 async function createProduct(fields) {
   const product = new Product({
@@ -12,4 +12,4 @@ async function getProductBy(filter) {
   return await Product.findOne(filter)
 }
 
-module.exports = { createProduct, getProductBy }
+export default { createProduct, getProductBy }

@@ -1,5 +1,5 @@
-const createChatbotPlugin = require('../plugins/chatbots/factory')
-const { MessageRepositoryDatabase } = require('@repositories/message')
+import createChatbotPlugin from '../plugins/chatbots/factory.js'
+import { MessageRepositoryDatabase  } from '@repositories/message.js'
 
 async function sendMessageToChatbot(data) {
   const { messageId, url, token } = data
@@ -12,4 +12,4 @@ async function sendMessageToChatbot(data) {
   await chatbotPlugin.sendMessage(messageId, url, token)
 }
 
-module.exports = sendMessageToChatbot
+export default sendMessageToChatbot

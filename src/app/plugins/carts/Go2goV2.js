@@ -1,4 +1,4 @@
-const { CartRepositoryDatabase } = require('@repositories/cart')
+import { CartRepositoryDatabase  } from '@repositories/cart.js'
 
 class Go2goV2 {
   getPaymentType(payment_method) {
@@ -110,4 +110,4 @@ class Go2goV2 {
   }
 }
 
-module.exports = Go2goV2
+export default Go2goV2

@@ -1,20 +1,20 @@
-const Landbot = require('./Landbot')
-const Trigger = require('@models/Trigger')
-const fetchMock = require('fetch-mock')
-const mongoServer = require('../../../../.jest/utils')
-const emoji = require('@helpers/Emoji')
-const Room = require('@models/Room')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
-const { room: roomFactory } = require('@factories/room')
-const { message: messageFactory } = require('@factories/message')
-const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
-const { cart: cartFactory } = require('@factories/cart')
-const { advanceTo, clear } = require('jest-date-mock')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { CartRepositoryDatabase } = require('@repositories/cart')
-const { MessageRepositoryDatabase } = require('@repositories/message')
+import Landbot from './Landbot.js'
+import Trigger from '@models/Trigger.js'
+import fetchMock from 'fetch-mock'
+import mongoServer from '../../../../.jest/utils.js'
+import emoji from '@helpers/Emoji.js'
+import Room from '@models/Room.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { contact as contactFactory   } from '@factories/contact.js'
+import { room as roomFactory   } from '@factories/room.js'
+import { message as messageFactory   } from '@factories/message.js'
+import { triggerReplyButton as triggerReplyButtonFactory   } from '@factories/trigger.js'
+import { cart as cartFactory   } from '@factories/cart.js'
+import { advanceTo, clear  } from 'jest-date-mock'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import { CartRepositoryDatabase  } from '@repositories/cart.js'
+import { MessageRepositoryDatabase  } from '@repositories/message.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 

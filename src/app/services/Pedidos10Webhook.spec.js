@@ -1,10 +1,10 @@
-const processWebhook = require('./Pedidos10Webhook')
-const Licensee = require('@models/Licensee')
-const Body = require('@models/Body')
-const mongoServer = require('.jest/utils')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { body: bodyFactory } = require('@factories/body')
-const Pedidos10 = require('../plugins/integrations/Pedidos10')
+import processWebhook from './Pedidos10Webhook.js'
+import Licensee from '@models/Licensee.js'
+import Body from '@models/Body.js'
+import mongoServer from '.jest/utils.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { body as bodyFactory   } from '@factories/body.js'
+import Pedidos10 from '../plugins/integrations/Pedidos10.js'
 
 describe('processWebhook', () => {
   const pedidos10ProcessOrderFnSpy = jest.spyOn(Pedidos10.prototype, 'processOrder')

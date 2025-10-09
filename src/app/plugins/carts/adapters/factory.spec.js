@@ -1,7 +1,7 @@
-const createCartAdapter = require('./factory')
-const Default = require('./Default')
-const Gallabox = require('./Gallabox')
-const Alloy = require('./Alloy')
+import createCartAdapter from './factory.js'
+import Default from './Default.js'
+import Gallabox from './Gallabox.js'
+import Alloy from './Alloy.js'
 
 describe('createCartAdapter', () => {
   it('returns the gallabox adapter', () => {

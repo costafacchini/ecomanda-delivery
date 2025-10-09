@@ -1,4 +1,4 @@
-const { S3Client, ListObjectsCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3')
+import { S3Client, ListObjectsCommand, DeleteObjectCommand  } from '@aws-sdk/client-s3.js'
 
 async function clearBackups() {
   const accessKeyId = process.env.AWS_ACCESS_KEY_ID
@@ -38,4 +38,4 @@ async function clearBackups() {
   }
 }
 
-module.exports = clearBackups
+export default clearBackups

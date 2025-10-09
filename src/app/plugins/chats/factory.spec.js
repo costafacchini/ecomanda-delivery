@@ -1,8 +1,8 @@
-const createChatPlugin = require('./factory')
-const Rocketchat = require('./Rocketchat')
-const Cuboup = require('./Cuboup')
-const Crisp = require('./Crisp')
-const { licensee: licenseeFactory } = require('@factories/licensee')
+import createChatPlugin from './factory.js'
+import Rocketchat from './Rocketchat.js'
+import Cuboup from './Cuboup.js'
+import Crisp from './Crisp.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
 
 describe('createChatPlugin', () => {
   it('returns the rocketchat plugin if it is configured on licensee', () => {

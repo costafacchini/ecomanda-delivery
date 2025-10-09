@@ -1,5 +1,5 @@
-const QueryBuilder = require('@queries/QueryBuilder')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
+import QueryBuilder from '@queries/QueryBuilder.js'
+import { ContactRepositoryDatabase  } from '@repositories/contact.js'
 
 class ContactsQuery {
   constructor() {}
@@ -62,4 +62,4 @@ class ContactsQuery {
   }
 }
 
-module.exports = ContactsQuery
+export default ContactsQuery

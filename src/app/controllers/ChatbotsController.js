@@ -1,6 +1,6 @@
-const Body = require('@models/Body')
-const queueServer = require('@config/queue')
-const { publishMessage } = require('@config/rabbitmq')
+import Body from '@models/Body.js'
+import queueServer from '@config/queue.js'
+import { publishMessage  } from '@config/rabbitmq.js'
 
 class ChatbotsController {
   async message(req, res) {
@@ -32,4 +32,4 @@ class ChatbotsController {
   }
 }
 
-module.exports = ChatbotsController
+export default ChatbotsController

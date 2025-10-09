@@ -1,9 +1,9 @@
-const IntegrationlogsQuery = require('@queries/IntegrationlogsQuery')
-const mongoServer = require('../../../.jest/utils')
-const Integrationlog = require('@models/Integrationlog')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { integrationlog: integrationlogFactory } = require('@factories/integrationlog')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+import IntegrationlogsQuery from '@queries/IntegrationlogsQuery.js'
+import mongoServer from '../../../.jest/utils.js'
+import Integrationlog from '@models/Integrationlog.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { integrationlog as integrationlogFactory   } from '@factories/integrationlog.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
 
 describe('IntegrationlogsQuery', () => {
   let licensee

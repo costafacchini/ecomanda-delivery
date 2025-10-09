@@ -1,8 +1,8 @@
-const request = require('../../services/request')
-const ChatsBase = require('./Base')
-const { createRoom, getRoomBy } = require('@repositories/room')
-const path = require('path')
-const mime = require('mime-types')
+import request from '../../services/request.js'
+import ChatsBase from './Base.js'
+import { createRoom, getRoomBy  } from '@repositories/room.js'
+import path from 'path'
+import mime from 'mime-types'
 
 const searchContact = async (url, headers, contact, licensee, contactRepository) => {
   const response = await request.get(`${url}contacts/search?q=+${contact.number}`, { headers })
@@ -344,4 +344,4 @@ class Chatwoot extends ChatsBase {
   }
 }
 
-module.exports = Chatwoot
+export default Chatwoot

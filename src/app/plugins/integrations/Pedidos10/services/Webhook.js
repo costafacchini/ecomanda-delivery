@@ -1,5 +1,5 @@
-const Integrationlog = require('@models/Integrationlog')
-const request = require('../../../../services/request')
+import Integrationlog from '@models/Integrationlog.js'
+import request from '../../../../services/request.js'
 
 class Webhook {
   constructor(licensee) {
@@ -40,4 +40,4 @@ class Webhook {
   }
 }
 
-module.exports = Webhook
+export default Webhook

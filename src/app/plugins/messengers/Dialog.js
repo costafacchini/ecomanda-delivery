@@ -1,12 +1,12 @@
-const Trigger = require('@models/Trigger')
-const Template = require('@models/Template')
-const NormalizePhone = require('@helpers/NormalizePhone')
-const request = require('../../services/request')
-const files = require('@helpers/Files')
-const cartFactory = require('../../plugins/carts/factory')
-const { parseText } = require('@helpers/ParseTriggerText')
-const MessengersBase = require('./Base')
-const { MessageRepositoryDatabase } = require('@repositories/message')
+import Trigger from '@models/Trigger.js'
+import Template from '@models/Template.js'
+import NormalizePhone from '@helpers/NormalizePhone.js'
+import request from '../../services/request.js'
+import files from '@helpers/Files.js'
+import cartFactory from '../../plugins/carts/factory.js'
+import { parseText  } from '@helpers/ParseTriggerText.js'
+import MessengersBase from './Base.js'
+import { MessageRepositoryDatabase  } from '@repositories/message.js'
 
 const getWaIdContact = async (number, url, token) => {
   const headers = { 'D360-API-KEY': token }
@@ -399,4 +399,4 @@ class Dialog extends MessengersBase {
   }
 }
 
-module.exports = Dialog
+export default Dialog

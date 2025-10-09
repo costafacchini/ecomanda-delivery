@@ -1,10 +1,10 @@
-const files = require('@helpers/Files')
-const request = require('../../services/request')
-const mime = require('mime-types')
-const ChatsBase = require('./Base')
-const { createRoom, getRoomBy } = require('@repositories/room')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { MessageRepositoryDatabase } = require('@repositories/message')
+import files from '@helpers/Files.js'
+import request from '../../services/request.js'
+import mime from 'mime-types'
+import ChatsBase from './Base.js'
+import { createRoom, getRoomBy  } from '@repositories/room.js'
+import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import { MessageRepositoryDatabase  } from '@repositories/message.js'
 
 const createSession = async (url, headers, contact, segments) => {
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })
@@ -237,4 +237,4 @@ class Crisp extends ChatsBase {
   }
 }
 
-module.exports = Crisp
+export default Crisp

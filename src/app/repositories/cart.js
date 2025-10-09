@@ -1,5 +1,5 @@
-const Repository = require('./repository')
-const Cart = require('@models/Cart')
+import Repository from './repository.js'
+import Cart from '@models/Cart.js'
 
 class CartRepositoryDatabase extends Repository {
   model() {
@@ -30,4 +30,4 @@ class CartRepositoryDatabase extends Repository {
   }
 }
 
-module.exports = { CartRepositoryDatabase }
+export default { CartRepositoryDatabase }

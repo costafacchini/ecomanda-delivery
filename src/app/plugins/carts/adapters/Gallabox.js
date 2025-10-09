@@ -1,4 +1,4 @@
-const FractionalProducts = require('../../../helpers/FractionalProducts.js')
+import FractionalProducts from '../../../helpers/FractionalProducts.js'
 
 class Gallabox {
   parseCart(licensee, contact, cart) {
@@ -51,4 +51,4 @@ class Gallabox {
   }
 }
 
-module.exports = Gallabox
+export default Gallabox

@@ -1,10 +1,10 @@
-const Body = require('@models/Body')
-const request = require('supertest')
-const mongoServer = require('../../../.jest/utils')
-const { expressServer } = require('../../../.jest/server-express')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { publishMessage } = require('@config/rabbitmq')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+import Body from '@models/Body.js'
+import request from 'supertest'
+import mongoServer from '../../../.jest/utils.js'
+import { expressServer  } from '../../../.jest/server-express.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { publishMessage  } from '@config/rabbitmq.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
 
 jest.mock('@config/rabbitmq')
 

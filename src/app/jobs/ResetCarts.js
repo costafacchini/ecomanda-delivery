@@ -1,6 +1,6 @@
-const resetCarts = require('../services/ResetCarts')
+import resetCarts from '../services/ResetCarts.js'
 
-module.exports = {
+export default {
   key: 'reset-carts',
   async handle(data) {
     return await resetCarts(data.body)

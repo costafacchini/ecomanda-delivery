@@ -1,4 +1,4 @@
-const { Factory } = require('fishery')
+import { Factory } from 'fishery'
 
 const licensee = Factory.define(({ sequence }) => ({
   name: 'Alcateia Ltds',
@@ -61,4 +61,4 @@ const licenseePedidos10 = Factory.define(() => ({
   pedidos10_integrator: '',
 }))
 
-module.exports = { licensee, licenseeComplete, licenseeIntegrationPagarMe, licenseePedidos10 }
+export { licensee, licenseeComplete, licenseeIntegrationPagarMe, licenseePedidos10 }

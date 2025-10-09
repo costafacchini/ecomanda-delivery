@@ -59,4 +59,4 @@ class Alloy {
   }
 }
 
-module.exports = Alloy
+export default Alloy

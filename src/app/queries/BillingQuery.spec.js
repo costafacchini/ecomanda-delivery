@@ -1,12 +1,12 @@
-const BillingQuery = require('@queries/BillingQuery')
-const mongoServer = require('../../../.jest/utils')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
-const { message: messageFactory } = require('@factories/message')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { MessageRepositoryDatabase } = require('@repositories/message')
-const moment = require('moment-timezone')
+import BillingQuery from '@queries/BillingQuery.js'
+import mongoServer from '../../../.jest/utils.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { contact as contactFactory   } from '@factories/contact.js'
+import { message as messageFactory   } from '@factories/message.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import { MessageRepositoryDatabase  } from '@repositories/message.js'
+import moment from 'moment-timezone'
 
 describe('BillingQuery', () => {
   beforeEach(async () => {

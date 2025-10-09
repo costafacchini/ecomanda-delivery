@@ -1,7 +1,8 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
+import Contact from '@models/Contact.js'
+
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
-const Contact = require('@models/Contact')
 
 const detailSchema = new Schema({
   name: String,
@@ -161,4 +162,4 @@ cartSchema.methods.calculateTotalItem = function (item) {
 
 const Cart = mongoose.model('Cart', cartSchema)
 
-module.exports = Cart
+export default Cart

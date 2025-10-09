@@ -1,6 +1,6 @@
-const Alloy = require('./Alloy')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
+import Alloy from './Alloy.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { contact as contactFactory   } from '@factories/contact.js'
 
 describe('Alloy plugin', () => {
   describe('#parseCart', () => {

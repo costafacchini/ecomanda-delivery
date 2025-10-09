@@ -1,13 +1,13 @@
-const Product = require('@models/Product')
-const mongoServer = require('../../../.jest/utils')
-const { parseText, parseCart } = require('./ParseTriggerText')
-const { contact: contactFactory } = require('@factories/contact')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { cart: cartFactory } = require('@factories/cart')
-const { product: productFactory } = require('@factories/product')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { CartRepositoryDatabase } = require('@repositories/cart')
+import Product from '@models/Product.js'
+import mongoServer from '../../../.jest/utils.js'
+import { parseText, parseCart  } from './ParseTriggerText.js'
+import { contact as contactFactory   } from '@factories/contact.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { cart as cartFactory   } from '@factories/cart.js'
+import { product as productFactory   } from '@factories/product.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import { CartRepositoryDatabase  } from '@repositories/cart.js'
 
 describe('ParseTriggerText', () => {
   beforeEach(async () => {

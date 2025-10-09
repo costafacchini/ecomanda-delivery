@@ -1,4 +1,4 @@
-const NormalizePhone = require('./NormalizePhone')
+import NormalizePhone from './NormalizePhone.js'
 
 describe('NormalizePhone', () => {
   it('does not normalize phone if number is blank', () => {

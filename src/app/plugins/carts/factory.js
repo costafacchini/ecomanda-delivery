@@ -1,6 +1,6 @@
-const Go2go = require('./Go2go')
-const Go2goV2 = require('./Go2goV2')
-const Alloy = require('./Alloy')
+import Go2go from './Go2go.js'
+import Go2goV2 from './Go2goV2.js'
+import Alloy from './Alloy.js'
 
 function createCartPlugin(licensee) {
   switch (licensee.cartDefault) {
@@ -15,4 +15,4 @@ function createCartPlugin(licensee) {
   }
 }
 
-module.exports = createCartPlugin
+export default createCartPlugin

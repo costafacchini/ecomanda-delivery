@@ -1,5 +1,5 @@
-const { MessageRepositoryDatabase } = require('@repositories/message')
-const QueryBuilder = require('@queries/QueryBuilder')
+import { MessageRepositoryDatabase  } from '@repositories/message.js'
+import QueryBuilder from '@queries/QueryBuilder.js'
 
 class MessagesQuery {
   constructor() {}
@@ -83,4 +83,4 @@ class MessagesQuery {
   }
 }
 
-module.exports = MessagesQuery
+export default MessagesQuery

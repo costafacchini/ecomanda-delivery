@@ -1,7 +1,7 @@
-const mongoServer = require('../../../.jest/utils')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const Licensee = require('@models/Licensee')
+import mongoServer from '../../../.jest/utils.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import Licensee from '@models/Licensee.js'
 
 describe('licensee repository database', () => {
   beforeEach(async () => {

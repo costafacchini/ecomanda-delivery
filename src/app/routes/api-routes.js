@@ -1,6 +1,6 @@
-const router = require('express').Router()
-const v1Routes = require('./v1/v1-routes')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+import router from 'express'.Router()
+import v1Routes from './v1/v1-routes.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
 
 router.use(async (req, res, next) => {
   if (req.query.token) {
@@ -17,4 +17,4 @@ router.use(async (req, res, next) => {
 
 router.use('/v1', v1Routes)
 
-module.exports = router
+export default router

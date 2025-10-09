@@ -1,8 +1,8 @@
-const YCloud = require('./YCloud')
-const Trigger = require('@models/Trigger')
-const Template = require('@models/Template')
-const { MessageRepositoryDatabase } = require('@repositories/message')
-const NormalizePhone = require('@helpers/NormalizePhone')
+import YCloud from './YCloud.js'
+import Trigger from '@models/Trigger.js'
+import Template from '@models/Template.js'
+import { MessageRepositoryDatabase  } from '@repositories/message.js'
+import NormalizePhone from '@helpers/NormalizePhone.js'
 
 jest.mock('@models/Trigger')
 jest.mock('@models/Template')
@@ -12,8 +12,8 @@ jest.mock('@helpers/Files')
 jest.mock('@helpers/NormalizePhone')
 jest.mock('@helpers/ParseTriggerText')
 
-const request = require('../../services/request')
-const files = require('@helpers/Files')
+import request from '../../services/request.js'
+import files from '@helpers/Files.js'
 
 describe('YCloud Plugin', () => {
   let ycloud

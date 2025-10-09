@@ -1,11 +1,11 @@
-const PagarMe = require('./PagarMe')
-const Recipient = require('./PagarMe/Recipient')
-const Customer = require('./PagarMe/Customer')
-const Payment = require('./PagarMe/Payment')
-const Card = require('./PagarMe/Card')
-const { licenseeIntegrationPagarMe: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
-const { cart: cartFactory } = require('@factories/cart')
+import PagarMe from './PagarMe.js'
+import Recipient from './PagarMe/Recipient.js'
+import Customer from './PagarMe/Customer.js'
+import Payment from './PagarMe/Payment.js'
+import Card from './PagarMe/Card.js'
+import { licenseeIntegrationPagarMe as licenseeFactory   } from '@factories/licensee.js'
+import { contact as contactFactory   } from '@factories/contact.js'
+import { cart as cartFactory   } from '@factories/cart.js'
 
 describe('PagarMe plugin', () => {
   const recipientCreateFnSpy = jest.spyOn(Recipient.prototype, 'create').mockImplementation(() => {})

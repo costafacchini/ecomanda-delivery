@@ -1,6 +1,6 @@
-const transferToChat = require('../services/TransferToChat')
+import transferToChat from '../services/TransferToChat.js'
 
-module.exports = {
+export default {
   key: 'transfer-to-chat',
   async handle(data) {
     return await transferToChat(data.body)

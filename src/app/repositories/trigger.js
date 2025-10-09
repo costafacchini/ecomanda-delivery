@@ -1,5 +1,5 @@
-const Trigger = require('@models/Trigger')
-const isEmpty = require('lodash/isEmpty')
+import Trigger from '@models/Trigger.js'
+import isEmpty from 'lodash/isEmpty'
 
 async function createTrigger(fields) {
   const trigger = new Trigger({
@@ -17,4 +17,4 @@ async function getAllTriggerBy(filters, order = {}) {
   }
 }
 
-module.exports = { createTrigger, getAllTriggerBy }
+export default { createTrigger, getAllTriggerBy }

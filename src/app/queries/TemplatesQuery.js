@@ -1,5 +1,5 @@
-const Template = require('@models/Template')
-const QueryBuilder = require('@queries/QueryBuilder')
+import Template from '@models/Template.js'
+import QueryBuilder from '@queries/QueryBuilder.js'
 
 class TemplatesQuery {
   constructor() {}
@@ -34,4 +34,4 @@ class TemplatesQuery {
   }
 }
 
-module.exports = TemplatesQuery
+export default TemplatesQuery

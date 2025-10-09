@@ -1,0 +1,143 @@
+{
+  "account": { "id": 4, "name": "Estância Supermercados" },
+  "additional_attributes": {},
+  "content_attributes": {},
+  "content_type": "text",
+  "content": null,
+  "conversation": {
+    "additional_attributes": {},
+    "can_reply": true,
+    "channel": "Channel::Api",
+    "contact_inbox": {
+      "id": 208,
+      "contact_id": 7785,
+      "inbox_id": 2,
+      "source_id": "a795f04a-fcd6-40d9-92ad-e402d90b6b87",
+      "created_at": "2025-08-02T12:58:02.340Z",
+      "updated_at": "2025-08-02T12:58:02.340Z",
+      "hmac_verified": false,
+      "pubsub_token": "fUcuGxmrKqxfqTyZoMRCAJoj"
+    },
+    "id": 67,
+    "inbox_id": 2,
+    "messages": [
+      {
+        "id": 15051,
+        "content": null,
+        "account_id": 4,
+        "inbox_id": 2,
+        "conversation_id": 67,
+        "message_type": 1,
+        "created_at": 1754141252,
+        "updated_at": "2025-08-02T13:27:32.891Z",
+        "private": false,
+        "status": "sent",
+        "source_id": null,
+        "content_type": "text",
+        "content_attributes": {},
+        "sender_type": "User",
+        "sender_id": 9,
+        "external_source_ids": {},
+        "additional_attributes": {},
+        "processed_message_content": null,
+        "sentiment": {},
+        "conversation": {
+          "assignee_id": 9,
+          "unread_count": 0,
+          "last_activity_at": 1754141252,
+          "contact_inbox": {
+            "source_id": "a795f04a-fcd6-40d9-92ad-e402d90b6b87"
+          }
+        },
+        "attachments": [
+          {
+            "id": 473,
+            "message_id": 15051,
+            "file_type": "image",
+            "account_id": 4,
+            "extension": null,
+            "data_url": "https://chat.zibb.com.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdndMIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--3a7cc9b0e0cb580ec80e341c1c48195bf9a56161/calzone_original_expanded.png",
+            "thumb_url": "https://chat.zibb.com.br/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdndMIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--3a7cc9b0e0cb580ec80e341c1c48195bf9a56161/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2RTNKbGMybDZaVjkwYjE5bWFXeHNXd2RwQWZvdyIsImV4cCI6bnVsbCwicHVyIjoidmFyaWF0aW9uIn19--6e01188d5edb4be53ced9c1b8a6267644ec8b8f0/calzone_original_expanded.png",
+            "file_size": 836858,
+            "width": null,
+            "height": null
+          }
+        ],
+        "sender": {
+          "id": 9,
+          "name": "Alan",
+          "available_name": "Alan",
+          "avatar_url": "https://chat.zibb.com.br/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBbUlKIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--10f5261d214376be257ff9e100fe2794f908820f/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2RTNKbGMybDZaVjkwYjE5bWFXeHNXd2RwQWZvdyIsImV4cCI6bnVsbCwicHVyIjoidmFyaWF0aW9uIn19--6e01188d5edb4be53ced9c1b8a6267644ec8b8f0/20ad04816b94e3007d2a76b66d691567.png",
+          "type": "user",
+          "availability_status": null,
+          "thumbnail": "https://chat.zibb.com.br/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBbUlKIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--10f5261d214376be257ff9e100fe2794f908820f/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2RTNKbGMybDZaVjkwYjE5bWFXeHNXd2RwQWZvdyIsImV4cCI6bnVsbCwicHVyIjoidmFyaWF0aW9uIn19--6e01188d5edb4be53ced9c1b8a6267644ec8b8f0/20ad04816b94e3007d2a76b66d691567.png"
+        }
+      }
+    ],
+    "labels": [],
+    "meta": {
+      "sender": {
+        "additional_attributes": {},
+        "custom_attributes": { "test": "test", "hello": "hello" },
+        "email": null,
+        "id": 7785,
+        "identifier": null,
+        "name": "Alan",
+        "phone_number": "+5548999290820",
+        "thumbnail": "",
+        "type": "contact"
+      },
+      "assignee": {
+        "id": 9,
+        "name": "Alan",
+        "available_name": "Alan",
+        "avatar_url": "https://chat.zibb.com.br/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBbUlKIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--10f5261d214376be257ff9e100fe2794f908820f/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2RTNKbGMybDZaVjkwYjE5bWFXeHNXd2RwQWZvdyIsImV4cCI6bnVsbCwicHVyIjoidmFyaWF0aW9uIn19--6e01188d5edb4be53ced9c1b8a6267644ec8b8f0/20ad04816b94e3007d2a76b66d691567.png",
+        "type": "user",
+        "availability_status": null,
+        "thumbnail": "https://chat.zibb.com.br/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBbUlKIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--10f5261d214376be257ff9e100fe2794f908820f/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2RTNKbGMybDZaVjkwYjE5bWFXeHNXd2RwQWZvdyIsImV4cCI6bnVsbCwicHVyIjoidmFyaWF0aW9uIn19--6e01188d5edb4be53ced9c1b8a6267644ec8b8f0/20ad04816b94e3007d2a76b66d691567.png"
+      },
+      "team": null,
+      "hmac_verified": false
+    },
+    "status": "resolved",
+    "custom_attributes": {},
+    "snoozed_until": null,
+    "unread_count": 0,
+    "first_reply_created_at": "2025-08-02T13:02:03.518Z",
+    "priority": null,
+    "waiting_since": 0,
+    "agent_last_seen_at": 1754141252,
+    "contact_last_seen_at": 0,
+    "last_activity_at": 1754141252,
+    "timestamp": 1754141252,
+    "created_at": 1754139593
+  },
+  "created_at": "2025-08-02T13:27:32.891Z",
+  "id": 15051,
+  "inbox": { "id": 2, "name": "estancia" },
+  "message_type": "outgoing",
+  "status": "sent",
+  "private": false,
+  "sender": {
+    "id": 9,
+    "name": "Alan",
+    "email": "costafacchini@gmail.com",
+    "type": "user"
+  },
+  "source_id": null,
+  "attachments": [
+    {
+      "id": 473,
+      "message_id": 15051,
+      "file_type": "image",
+      "account_id": 4,
+      "extension": null,
+      "data_url": "https://chat.zibb.com.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdndMIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--3a7cc9b0e0cb580ec80e341c1c48195bf9a56161/calzone_original_expanded.png",
+      "thumb_url": "https://chat.zibb.com.br/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdndMIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--3a7cc9b0e0cb580ec80e341c1c48195bf9a56161/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2RTNKbGMybDZaVjkwYjE5bWFXeHNXd2RwQWZvdyIsImV4cCI6bnVsbCwicHVyIjoidmFyaWF0aW9uIn19--6e01188d5edb4be53ced9c1b8a6267644ec8b8f0/calzone_original_expanded.png",
+      "file_size": 836858,
+      "width": null,
+      "height": null
+    }
+  ],
+  "event": "message_created"
+}

@@ -1,14 +1,14 @@
-const User = require('@models/User')
-const request = require('supertest')
-const mongoServer = require('../../../.jest/utils')
-const queueServer = require('@config/queue')
-const { expressServer } = require('../../../.jest/server-express')
-const { userSuper: userSuperFactory } = require('@factories/user')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const ContactsQuery = require('@queries/ContactsQuery')
+import User from '@models/User.js'
+import request from 'supertest'
+import mongoServer from '../../../.jest/utils.js'
+import queueServer from '@config/queue.js'
+import { expressServer  } from '../../../.jest/server-express.js'
+import { userSuper as userSuperFactory   } from '@factories/user.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { contact as contactFactory   } from '@factories/contact.js'
+import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import ContactsQuery from '@queries/ContactsQuery.js'
 
 describe('contact controller', () => {
   let token

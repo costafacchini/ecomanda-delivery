@@ -1,14 +1,14 @@
-const router = require('express').Router()
-const ChatsController = require('@controllers/ChatsController')
-const ChatbotsController = require('@controllers/ChatbotsController')
-const MessengersController = require('@controllers/MessengersController')
-const BackupsController = require('@controllers/BackupsController')
-const AdressesController = require('@controllers/Contacts/AdressesController')
-const CartsController = require('@controllers/CartsController')
-const DelayController = require('@controllers/DelayController')
-const BackgroundjobsController = require('@controllers/BackgroundjobsController')
-const IntegrationsController = require('@controllers/IntegrationsController')
-const OrdersController = require('@controllers/OrdersController')
+import router from 'express'.Router()
+import ChatsController from '@controllers/ChatsController.js'
+import ChatbotsController from '@controllers/ChatbotsController.js'
+import MessengersController from '@controllers/MessengersController.js'
+import BackupsController from '@controllers/BackupsController.js'
+import AdressesController from '@controllers/Contacts/AdressesController.js'
+import CartsController from '@controllers/CartsController.js'
+import DelayController from '@controllers/DelayController.js'
+import BackgroundjobsController from '@controllers/BackgroundjobsController.js'
+import IntegrationsController from '@controllers/IntegrationsController.js'
+import OrdersController from '@controllers/OrdersController.js'
 
 const chatsController = new ChatsController()
 const chatbotsController = new ChatbotsController()
@@ -58,4 +58,4 @@ router.post('/orders/change-status', ordersController.changeStatus)
 
 router.post('/integrations', integrationsController.create)
 
-module.exports = router
+export default router

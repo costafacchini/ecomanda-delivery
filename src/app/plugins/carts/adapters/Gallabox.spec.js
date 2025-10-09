@@ -1,6 +1,6 @@
-const Gallabox = require('./Gallabox')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
+import Gallabox from './Gallabox.js'
+import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import { contact as contactFactory   } from '@factories/contact.js'
 
 describe('Gallabox plugin', () => {
   describe('#parseCart', () => {

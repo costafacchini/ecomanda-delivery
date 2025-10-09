@@ -1,5 +1,5 @@
-const createChatPlugin = require('../plugins/chats/factory')
-const { MessageRepositoryDatabase } = require('@repositories/message')
+import createChatPlugin from '../plugins/chats/factory.js'
+import { MessageRepositoryDatabase  } from '@repositories/message.js'
 
 async function transferToChat(data) {
   const { messageId, url } = data
@@ -12,4 +12,4 @@ async function transferToChat(data) {
   await chatPlugin.transfer(messageId, url)
 }
 
-module.exports = transferToChat
+export default transferToChat

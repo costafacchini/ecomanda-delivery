@@ -1,5 +1,5 @@
-const { Factory } = require('fishery')
-const { licensee } = require('./licensee')
+import { Factory  } from 'fishery'
+import { licensee  } from './licensee.js'
 
 const body = Factory.define(() => ({
   content: {
@@ -9,4 +9,4 @@ const body = Factory.define(() => ({
   licensee: licensee.build(),
 }))
 
-module.exports = { body }
+export default { body }
