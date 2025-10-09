@@ -27,6 +27,7 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('API token')).toHaveValue('')
     expect(screen.getByLabelText('Ativo')).not.toBeChecked()
     expect(screen.getByLabelText('Usa chatbot?')).not.toBeChecked()
+    expect(screen.getByLabelText('Usa o remetente no nome do chat?')).not.toBeChecked()
     expect(screen.getByLabelText('Chatbot padrão')).toHaveValue('')
     expect(screen.getByLabelText('URL do chatbot')).toHaveValue('')
     expect(screen.getByLabelText('Token do chatbot')).toHaveValue('')
@@ -106,6 +107,7 @@ describe('<LicenseeForm />', () => {
       holder_kind: 'company',
       holder_document: '0987517651712',
       account_type: 'savings',
+      useSenderName: true,
     }
 
     mount({ initialValues: licensee })
@@ -119,6 +121,7 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('API token')).toHaveValue('token')
     expect(screen.getByLabelText('Licença')).toHaveValue('paid')
     expect(screen.getByLabelText('Usa chatbot?')).toBeChecked()
+    expect(screen.getByLabelText('Usa o remetente no nome do chat?')).toBeChecked()
     expect(screen.getByLabelText('Chatbot padrão')).toHaveValue('landbot')
     expect(screen.getByLabelText('Whatsapp padrão')).toHaveValue('utalk')
     expect(screen.getByLabelText('URL do chatbot')).toHaveValue('URL chatbot')
@@ -346,6 +349,7 @@ describe('<LicenseeForm />', () => {
         holder_kind: '',
         holder_document: '',
         account_type: '',
+        useSenderName: false,
       })
     })
   })

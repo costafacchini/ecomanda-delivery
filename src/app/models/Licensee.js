@@ -224,6 +224,7 @@ const licenseeSchema = new Schema(
       type: String,
       enum: [''],
     },
+    useSenderName: { type: Boolean, default: false },
   },
   { timestamps: true },
 )
