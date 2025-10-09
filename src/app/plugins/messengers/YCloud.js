@@ -345,7 +345,7 @@ class YCloud extends MessengersBase {
       case 'text':
         messageBody.type = 'text'
         messageBody.text = {
-          body: messageToSend.senderName ? `${messageToSend.senderName}: ${messageToSend.text}` : messageToSend.text,
+          body: messageToSend.senderName ? `*${messageToSend.senderName}:*\n${messageToSend.text}` : messageToSend.text,
         }
         break
 

@@ -245,7 +245,10 @@ class Chatwoot extends ChatsBase {
 
     const messagesToSend = []
 
-    const senderName = responseBody.conversation.meta?.assignee?.available_name
+    let senderName = null
+    if (this.licensee.useSenderName) {
+      senderName = responseBody.conversation.meta?.assignee?.available_name
+    }
 
     responseBody.conversation.messages?.forEach((message) => {
       if (message.content) {
