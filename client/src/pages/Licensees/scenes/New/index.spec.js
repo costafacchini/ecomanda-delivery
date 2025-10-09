@@ -72,6 +72,7 @@ describe('<LicenseeNew />', () => {
         holder_kind: '',
         holder_document: '',
         account_type: '',
+        useSenderName: false,
       }),
     )
   })
