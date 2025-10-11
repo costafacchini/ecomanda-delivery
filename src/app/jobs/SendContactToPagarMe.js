@@ -1,4 +1,4 @@
-import sendContactToPagarMe from '../services/SendContactToPagarMe.js'
+import sendContactToPagarMe from '../services/SendContactToPagarMe'
 
 export default {
   key: 'send-contact-to-pagarme',

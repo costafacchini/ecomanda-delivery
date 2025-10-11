@@ -1,7 +1,7 @@
-import mongoServer from '../../../../.jest/utils.js'
-import Pedidos10 from './Pedidos10.js'
-import Order from './Pedidos10/Order.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import mongoServer from '../../../../.jest/utils'
+import Pedidos10 from './Pedidos10'
+import Order from './Pedidos10/Order'
+import { licensee as licenseeFactory } from '@factories/licensee'
 
 describe('Pedidos10 plugin', () => {
   const orderSaveFnSpy = jest.spyOn(Order.prototype, 'save').mockImplementation(() => {})

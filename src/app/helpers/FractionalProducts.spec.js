@@ -1,4 +1,4 @@
-import FractionalProducts from './FractionalProducts.js'
+import FractionalProducts from './FractionalProducts'
 
 describe('Fractional products', () => {
   const licensee = {

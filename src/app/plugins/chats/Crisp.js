@@ -1,10 +1,10 @@
-import files from '@helpers/Files.js'
-import request from '../../services/request.js'
+import files from '@helpers/Files'
+import request from '../../services/request'
 import mime from 'mime-types'
-import ChatsBase from './Base.js'
-import { createRoom, getRoomBy  } from '@repositories/room.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
-import { MessageRepositoryDatabase  } from '@repositories/message.js'
+import ChatsBase from './Base'
+import { createRoom, getRoomBy } from '@repositories/room'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { MessageRepositoryDatabase } from '@repositories/message'
 
 const createSession = async (url, headers, contact, segments) => {
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })

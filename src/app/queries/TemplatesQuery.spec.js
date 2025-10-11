@@ -1,9 +1,9 @@
-import TemplatesQuery from '@queries/TemplatesQuery.js'
-import mongoServer from '../../../.jest/utils.js'
-import Template from '@models/Template.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { template as templateFactory   } from '@factories/template.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import TemplatesQuery from '@queries/TemplatesQuery'
+import mongoServer from '../../../.jest/utils'
+import Template from '@models/Template'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { template as templateFactory } from '@factories/template'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('TemplatesQuery', () => {
   let licensee

@@ -1,8 +1,8 @@
-import Template from '@models/Template.js'
-import mongoServer from '../../../.jest/utils.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { template as templateFactory   } from '@factories/template.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import Template from '@models/Template'
+import mongoServer from '../../../.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { template as templateFactory } from '@factories/template'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('Template', () => {
   let licensee

@@ -30,7 +30,7 @@ const licenseeSchema = new Schema(
     chatbotDefault: {
       type: String,
       enum: ['landbot', ''],
-      required: () => {
+      required: function () {
         return this.useChatbot === true
       },
     },

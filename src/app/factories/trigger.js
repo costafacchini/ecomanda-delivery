@@ -1,5 +1,5 @@
-import { Factory  } from 'fishery'
-import { licensee  } from './licensee.js'
+import { Factory } from 'fishery'
+import { licensee } from './licensee'
 
 const triggerMultiProduct = Factory.define(() => ({
   name: 'Send multi products',
@@ -47,4 +47,4 @@ const triggerText = Factory.define(() => ({
   order: 1,
 }))
 
-export default { triggerMultiProduct, triggerSingleProduct, triggerReplyButton, triggerListMessage, triggerText }
+export { triggerMultiProduct, triggerSingleProduct, triggerReplyButton, triggerListMessage, triggerText }

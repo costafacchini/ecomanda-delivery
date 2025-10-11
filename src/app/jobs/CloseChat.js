@@ -1,4 +1,4 @@
-import closeChat from '../services/CloseChat.js'
+import closeChat from '../services/CloseChat'
 
 export default {
   key: 'close-chat',

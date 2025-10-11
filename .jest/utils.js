@@ -1,7 +1,8 @@
-const { MongoServerTest } = require('./mongo')
+import MongoServerTest from './mongo'
 
 jest.setTimeout(600000)
 
+// Singleton instance - created once and reused across all tests
 const mongoServer = new MongoServerTest()
 
-module.exports = mongoServer
+export default mongoServer

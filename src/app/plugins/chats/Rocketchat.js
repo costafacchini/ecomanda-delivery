@@ -1,9 +1,9 @@
-import emoji from '@helpers/Emoji.js'
-import Room from '@models/Room.js'
-import request from '../../services/request.js'
-import ChatsBase from './Base.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
-import { MessageRepositoryDatabase  } from '@repositories/message.js'
+import emoji from '@helpers/Emoji'
+import Room from '@models/Room'
+import request from '../../services/request'
+import ChatsBase from './Base'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { MessageRepositoryDatabase } from '@repositories/message'
 
 const createVisitor = async (contact, token, url) => {
   const body = {

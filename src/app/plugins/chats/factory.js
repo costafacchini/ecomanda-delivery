@@ -1,7 +1,7 @@
-import Rocketchat from './Rocketchat.js'
-import Crisp from './Crisp.js'
-import Cuboup from './Cuboup.js'
-import Chatwoot from './Chatwoot.js'
+import Rocketchat from './Rocketchat'
+import Crisp from './Crisp'
+import Cuboup from './Cuboup'
+import Chatwoot from './Chatwoot'
 
 function createChatPlugin(licensee) {
   switch (licensee.chatDefault) {

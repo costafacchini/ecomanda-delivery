@@ -1,4 +1,4 @@
-import Landbot from './Landbot.js'
+import Landbot from './Landbot'
 
 function createChatbotPlugin(licensee) {
   switch (licensee.chatbotDefault) {

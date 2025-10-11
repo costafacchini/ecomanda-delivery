@@ -1,7 +1,7 @@
-import Product from '@models/Product.js'
-import mongoServer from '../../../.jest/utils.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import Product from '@models/Product'
+import mongoServer from '../../../.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('Product', () => {
   let licensee

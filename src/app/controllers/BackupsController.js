@@ -1,4 +1,4 @@
-import { publishMessage  } from '@config/rabbitmq.js'
+import { publishMessage } from '@config/rabbitmq'
 
 class BackupsController {
   schedule(_, res) {

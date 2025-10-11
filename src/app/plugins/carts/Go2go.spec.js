@@ -1,12 +1,12 @@
-import Go2go from './Go2go.js'
-import mongoServer from '../../../../.jest/utils.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { contact as contactFactory   } from '@factories/contact.js'
-import { cart as cartFactory   } from '@factories/cart.js'
-import { advanceTo, clear  } from 'jest-date-mock'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
-import { CartRepositoryDatabase  } from '@repositories/cart.js'
+import Go2go from './Go2go'
+import mongoServer from '../../../../.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
+import { cart as cartFactory } from '@factories/cart'
+import { advanceTo, clear } from 'jest-date-mock'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { CartRepositoryDatabase } from '@repositories/cart'
 
 describe('Go2go plugin', () => {
   beforeEach(async () => {

@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const { MongoMemoryServer } = require('mongodb-memory-server')
+import mongoose from 'mongoose'
+import { MongoMemoryServer } from 'mongodb-memory-server'
 
 class MongoServerTest {
   async connect() {
@@ -23,4 +23,4 @@ class MongoServerTest {
   }
 }
 
-module.exports = { MongoServerTest }
+export default MongoServerTest

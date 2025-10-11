@@ -1,5 +1,5 @@
-import PagarMe from '@plugins/payments/PagarMe.js'
-import { CartRepositoryDatabase  } from '@repositories/cart.js'
+import PagarMe from '@plugins/payments/PagarMe'
+import { CartRepositoryDatabase } from '@repositories/cart'
 
 async function processPagarmeOrderPaid(body) {
   const pagarMe = new PagarMe()

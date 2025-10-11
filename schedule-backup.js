@@ -1,10 +1,10 @@
-require('dotenv').config()
-require('module-alias/register')
-require('@models/index')
+import 'dotenv/config'
+import 'module-alias/register'
+import '@models/index'
 
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const request = require('./src/app/services/request')
-const connect = require('./src/config/database')
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import request from './src/app/services/request'
+import connect from './src/config/database'
 
 async function schedule() {
   await connect()

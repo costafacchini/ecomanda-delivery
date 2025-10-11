@@ -1,12 +1,12 @@
-import Trigger from '@models/Trigger.js'
-import User from '@models/User.js'
+import Trigger from '@models/Trigger'
+import User from '@models/User'
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils.js'
-import { expressServer  } from '../../../.jest/server-express.js'
-import { userSuper as userSuperFactory   } from '@factories/user.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { triggerMultiProduct as triggerFactory   } from '@factories/trigger.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import mongoServer from '../../../.jest/utils'
+import { expressServer } from '../../../.jest/server-express'
+import { userSuper as userSuperFactory } from '@factories/user'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { triggerMultiProduct as triggerFactory } from '@factories/trigger'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('trigger controller', () => {
   let token

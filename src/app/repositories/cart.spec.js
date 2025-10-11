@@ -1,10 +1,10 @@
-import Cart from '@models/Cart.js'
-import mongoServer from '../../../.jest/utils.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { contact as contactFactory   } from '@factories/contact.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
-import { CartRepositoryDatabase  } from '@repositories/cart.js'
+import Cart from '@models/Cart'
+import mongoServer from '../../../.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { CartRepositoryDatabase } from '@repositories/cart'
 
 describe('cart repository', () => {
   beforeEach(async () => {

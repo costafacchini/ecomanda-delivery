@@ -1,4 +1,4 @@
-import User from '@models/User.js'
+import User from '@models/User'
 import jwt from 'jsonwebtoken'
 const SECRET = process.env.SECRET
 

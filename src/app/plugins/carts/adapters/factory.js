@@ -1,6 +1,6 @@
-import Default from './Default.js'
-import Gallabox from './Gallabox.js'
-import Alloy from './Alloy.js'
+import Default from './Default'
+import Gallabox from './Gallabox'
+import Alloy from './Alloy'
 
 function createCartAdapter(plugin) {
   if (plugin == 'gallabox') {

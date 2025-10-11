@@ -1,6 +1,6 @@
-import Alloy from './Alloy.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { contact as contactFactory   } from '@factories/contact.js'
+import Alloy from './Alloy'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
 
 describe('Alloy plugin', () => {
   describe('#parseCart', () => {

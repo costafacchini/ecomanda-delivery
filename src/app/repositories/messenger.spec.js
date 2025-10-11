@@ -1,5 +1,5 @@
-import { scheduleSendMessageToMessenger  } from '@repositories/messenger.js'
-import queueServer from '@config/queue.js'
+import { scheduleSendMessageToMessenger } from '@repositories/messenger'
+import queueServer from '@config/queue'
 
 jest.mock('@config/rabbitmq')
 

@@ -1,12 +1,12 @@
-import sendMessageToChatbot from './SendMessageToChatbot.js'
-import Landbot from '../plugins/chatbots/Landbot.js'
-import mongoServer from '.jest/utils.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { contact as contactFactory   } from '@factories/contact.js'
-import { message as messageFactory   } from '@factories/message.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
-import { MessageRepositoryDatabase  } from '@repositories/message.js'
+import sendMessageToChatbot from './SendMessageToChatbot'
+import Landbot from '../plugins/chatbots/Landbot'
+import mongoServer from '.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
+import { message as messageFactory } from '@factories/message'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { MessageRepositoryDatabase } from '@repositories/message'
 
 describe('sendMessageToChatbot', () => {
   const landbotSendMessageSpy = jest.spyOn(Landbot.prototype, 'sendMessage').mockImplementation(() => {})

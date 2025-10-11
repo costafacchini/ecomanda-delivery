@@ -1,13 +1,13 @@
-import Template from '@models/Template.js'
-import User from '@models/User.js'
+import Template from '@models/Template'
+import User from '@models/User'
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils.js'
-import { expressServer  } from '../../../.jest/server-express.js'
-import Dialog from '@plugins/messengers/Dialog.js'
-import { userSuper as userSuperFactory   } from '@factories/user.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { template as templateFactory   } from '@factories/template.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import mongoServer from '../../../.jest/utils'
+import { expressServer } from '../../../.jest/server-express'
+import Dialog from '@plugins/messengers/Dialog'
+import { userSuper as userSuperFactory } from '@factories/user'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { template as templateFactory } from '@factories/template'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('template controller', () => {
   let token

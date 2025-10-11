@@ -1,11 +1,11 @@
-import { ContactRepositoryDatabase } from '@repositories/contact.js'
-import { getAllTriggerBy } from '@repositories/trigger.js'
-import { CartRepositoryDatabase } from '@repositories/cart.js'
-import { MessageRepositoryDatabase } from '@repositories/message.js'
-import { getProductBy } from '@repositories/product.js'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { getAllTriggerBy } from '@repositories/trigger'
+import { CartRepositoryDatabase } from '@repositories/cart'
+import { MessageRepositoryDatabase } from '@repositories/message'
+import { getProductBy } from '@repositories/product'
 import { v4 as uuidv4 } from 'uuid'
-import S3 from '../storage/S3.js'
-import request from '../../services/request.js'
+import S3 from '../storage/S3'
+import request from '../../services/request'
 import mime from 'mime-types'
 
 const getMediaURL = async (licensee, contact, { mediaWaId, fileName, fileBase64 }) => {

@@ -1,11 +1,11 @@
-import Licensee from '@models/Licensee.js'
-import Body from '@models/Body.js'
-import Integrationlog from '@models/Integrationlog.js'
+import Licensee from '@models/Licensee'
+import Body from '@models/Body'
+import Integrationlog from '@models/Integrationlog'
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils.js'
-import { expressServer  } from '../../../.jest/server-express.js'
-import queueServer from '@config/queue.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import mongoServer from '../../../.jest/utils'
+import { expressServer } from '../../../.jest/server-express'
+import queueServer from '@config/queue'
+import { licensee as licenseeFactory } from '@factories/licensee'
 
 describe('chats controller', () => {
   let apiToken

@@ -1,4 +1,4 @@
-import processPagarmeOrderPaid from '../services/ProcessPagarmeOrderPaid.js'
+import processPagarmeOrderPaid from '../services/ProcessPagarmeOrderPaid'
 
 export default {
   key: 'process-pagarme-order-paid',

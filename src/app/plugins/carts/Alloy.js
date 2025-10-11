@@ -1,4 +1,4 @@
-import { CartRepositoryDatabase  } from '@repositories/cart.js'
+import { CartRepositoryDatabase } from '@repositories/cart'
 
 class Alloy {
   async transformCart(_, cartId) {

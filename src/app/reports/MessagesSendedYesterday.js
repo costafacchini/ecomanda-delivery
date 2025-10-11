@@ -1,6 +1,6 @@
-import MessagesSendedQuery from '@queries/MessagesSended.js'
-import MessagesFailedQuery from '@queries/MessagesFailed.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import MessagesSendedQuery from '@queries/MessagesSended'
+import MessagesFailedQuery from '@queries/MessagesFailed'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import moment from 'moment'
 
 class MessagesSendedYesterday {

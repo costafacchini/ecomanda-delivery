@@ -1,7 +1,7 @@
-import { createBullBoard  } from '@bull-board/api.js'
-import { BullMQAdapter  } from '@bull-board/api/bullMQAdapter.js'
-import { ExpressAdapter  } from '@bull-board/express.js'
-import queueServer from '@config/queue.js'
+import { createBullBoard } from '@bull-board/api'
+import { BullMQAdapter } from '@bull-board/api/bullMQAdapter'
+import { ExpressAdapter } from '@bull-board/express'
+import queueServer from '@config/queue'
 
 const adapters = queueServer.queues.map((queue) => new BullMQAdapter(queue.bull), { readOnlyMode: true })
 

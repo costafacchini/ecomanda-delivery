@@ -1,5 +1,5 @@
-import createIntegrator from '../plugins/integrations/factory.js'
-import { OrderRepositoryDatabase  } from '@repositories/order.js'
+import createIntegrator from '../plugins/integrations/factory'
+import { OrderRepositoryDatabase } from '@repositories/order'
 
 async function sendOrder(data) {
   const { orderId } = data

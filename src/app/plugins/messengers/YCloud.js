@@ -1,11 +1,11 @@
-import Trigger from '@models/Trigger.js'
-import Template from '@models/Template.js'
-import NormalizePhone from '@helpers/NormalizePhone.js'
-import request from '../../services/request.js'
-import files from '@helpers/Files.js'
-import { parseText  } from '@helpers/ParseTriggerText.js'
-import MessengersBase from './Base.js'
-import { MessageRepositoryDatabase  } from '@repositories/message.js'
+import Trigger from '@models/Trigger'
+import Template from '@models/Template'
+import NormalizePhone from '@helpers/NormalizePhone'
+import request from '../../services/request'
+import files from '@helpers/Files'
+import { parseText } from '@helpers/ParseTriggerText'
+import MessengersBase from './Base'
+import { MessageRepositoryDatabase } from '@repositories/message'
 
 // const getWaIdContact = async (number, url, token) => {
 //   const headers = {

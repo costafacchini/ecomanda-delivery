@@ -1,10 +1,10 @@
-import transformMessengerBody from './MessengerMessage.js'
-import Body from '@models/Body.js'
-import Dialog from '../plugins/messengers/Dialog.js'
-import mongoServer from '.jest/utils.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { body as bodyFactory   } from '@factories/body.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import transformMessengerBody from './MessengerMessage'
+import Body from '@models/Body'
+import Dialog from '../plugins/messengers/Dialog'
+import mongoServer from '.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { body as bodyFactory } from '@factories/body'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('transformMessengerBody', () => {
   let licensee

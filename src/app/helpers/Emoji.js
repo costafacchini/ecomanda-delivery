@@ -1,4 +1,4 @@
-import { emojiList  } from './EmojiList.js'
+import { emojiList } from './EmojiList'
 
 function replace(message) {
   const regex = /(:[^:]*:)/gm

@@ -1,6 +1,6 @@
-import { Factory  } from 'fishery'
-import { licensee  } from './licensee.js'
-import { contact  } from './contact.js'
+import { Factory } from 'fishery'
+import { licensee } from './licensee'
+import { contact } from './contact'
 import moment from 'moment'
 
 const cart = Factory.define(() => ({
@@ -45,4 +45,4 @@ const cart = Factory.define(() => ({
   createdAt: moment('2021-07-03T00:00:00-03:00').toDate(),
 }))
 
-export default { cart }
+export { cart }

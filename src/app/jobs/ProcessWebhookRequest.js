@@ -1,4 +1,4 @@
-import processWebhookRequest from '../services/ProcessWebhookRequest.js'
+import processWebhookRequest from '../services/ProcessWebhookRequest'
 
 export default {
   key: 'process-webhook-request',

@@ -1,10 +1,10 @@
-import sendContactToPagarMe from './SendContactToPagarMe.js'
-import Customer from '@plugins/payments/PagarMe/Customer.js'
-import mongoServer from '.jest/utils.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { contact as contactFactory   } from '@factories/contact.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import sendContactToPagarMe from './SendContactToPagarMe'
+import Customer from '@plugins/payments/PagarMe/Customer'
+import mongoServer from '.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
 
 describe('sendContactToPagarMe', () => {
   const customerCreateFnSpy = jest.spyOn(Customer.prototype, 'create').mockImplementation(() => {})

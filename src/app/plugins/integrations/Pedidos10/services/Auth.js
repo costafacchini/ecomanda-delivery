@@ -1,5 +1,5 @@
-import Integrationlog from '@models/Integrationlog.js'
-import request from '../../../../services/request.js'
+import Integrationlog from '@models/Integrationlog'
+import request from '../../../../services/request'
 
 class Auth {
   constructor(licensee) {

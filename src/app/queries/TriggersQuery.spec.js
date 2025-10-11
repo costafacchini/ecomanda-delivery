@@ -1,14 +1,15 @@
-import TriggersQuery from '@queries/TriggersQuery.js'
-import mongoServer from '../../../.jest/utils.js'
-import Trigger from '@models/Trigger.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { triggerMultiProduct as triggerMultiProductFactory,
-  triggerSingleProduct: triggerSingleProductFactory,
-  triggerReplyButton: triggerReplyButtonFactory,
-  triggerListMessage: triggerListMessageFactory,
-  triggerText: triggerTextFactory,
-  } from '@factories/trigger.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import TriggersQuery from '@queries/TriggersQuery'
+import mongoServer from '../../../.jest/utils'
+import Trigger from '@models/Trigger'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import {
+  triggerMultiProduct as triggerMultiProductFactory,
+  triggerSingleProduct as triggerSingleProductFactory,
+  triggerReplyButton as triggerReplyButtonFactory,
+  triggerListMessage as triggerListMessageFactory,
+  triggerText as triggerTextFactory,
+} from '@factories/trigger'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('TriggersQuery', () => {
   let licensee

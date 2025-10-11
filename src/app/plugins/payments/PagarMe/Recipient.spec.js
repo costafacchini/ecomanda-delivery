@@ -1,9 +1,9 @@
-import Recipient from './Recipient.js'
-import Integrationlog from '@models/Integrationlog.js'
+import Recipient from './Recipient'
+import Integrationlog from '@models/Integrationlog'
 import fetchMock from 'fetch-mock'
-import mongoServer from '../../../../../.jest/utils.js'
-import { licenseeIntegrationPagarMe as licenseeFactory   } from '@factories/licensee.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import mongoServer from '../../../../../.jest/utils'
+import { licenseeIntegrationPagarMe as licenseeFactory } from '@factories/licensee'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('PagarMe/Recipient plugin', () => {
   let licensee

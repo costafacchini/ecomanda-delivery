@@ -1,10 +1,10 @@
-import transformChatbotTransferBody from './ChatbotTransfer.js'
-import Body from '@models/Body.js'
-import Landbot from '../plugins/chatbots/Landbot.js'
-import mongoServer from '.jest/utils.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { body as bodyFactory   } from '@factories/body.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import transformChatbotTransferBody from './ChatbotTransfer'
+import Body from '@models/Body'
+import Landbot from '../plugins/chatbots/Landbot'
+import mongoServer from '.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { body as bodyFactory } from '@factories/body'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('transformChatbotTransferBody', () => {
   let licensee

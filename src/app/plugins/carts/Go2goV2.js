@@ -1,4 +1,4 @@
-import { CartRepositoryDatabase  } from '@repositories/cart.js'
+import { CartRepositoryDatabase } from '@repositories/cart'
 
 class Go2goV2 {
   getPaymentType(payment_method) {

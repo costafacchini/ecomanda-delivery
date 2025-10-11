@@ -1,4 +1,4 @@
-import resetChatbots from '../services/ResetChatbots.js'
+import resetChatbots from '../services/ResetChatbots'
 
 export default {
   key: 'reset-chatbots',

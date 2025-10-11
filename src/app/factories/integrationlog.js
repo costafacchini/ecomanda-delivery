@@ -1,5 +1,5 @@
-import { Factory  } from 'fishery'
-import { licensee  } from './licensee.js'
+import { Factory } from 'fishery'
+import { licensee } from './licensee'
 
 const integrationlog = Factory.define(() => ({
   log_description: 'Some integration',
@@ -13,4 +13,4 @@ const integrationlog = Factory.define(() => ({
   licensee: licensee.build(),
 }))
 
-export default { integrationlog }
+export { integrationlog }

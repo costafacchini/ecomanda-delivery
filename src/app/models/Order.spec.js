@@ -1,8 +1,8 @@
-import Order from '@models/Order.js'
-import Licensee from '@models/Licensee.js'
-import mongoServer from '../../../.jest/utils.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { order as orderFactory   } from '@factories/order.js'
+import Order from '@models/Order'
+import Licensee from '@models/Licensee'
+import mongoServer from '../../../.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { order as orderFactory } from '@factories/order'
 
 describe('Order', () => {
   let licensee

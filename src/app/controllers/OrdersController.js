@@ -1,6 +1,6 @@
-import Integrationlog from '@models/Integrationlog.js'
-import Body from '@models/Body.js'
-import queueServer from '@config/queue.js'
+import Integrationlog from '@models/Integrationlog'
+import Body from '@models/Body'
+import queueServer from '@config/queue'
 
 class OrdersController {
   async create(req, res) {

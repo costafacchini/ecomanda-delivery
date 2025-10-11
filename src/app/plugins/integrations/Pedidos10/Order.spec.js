@@ -1,12 +1,12 @@
-import Licensee from '@models/Licensee.js'
-import { OrderRepositoryDatabase  } from '@repositories/order.js'
-import mongoServer from '../../../../../.jest/utils.js'
-import Order from './Order.js'
-import Webhook from './services/Webhook.js'
-import OrderStatus from './services/OrderStatus.js'
-import Auth from './services/Auth.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { order as orderFactory   } from '@factories/order.js'
+import Licensee from '@models/Licensee'
+import { OrderRepositoryDatabase } from '@repositories/order'
+import mongoServer from '../../../../../.jest/utils'
+import Order from './Order'
+import Webhook from './services/Webhook'
+import OrderStatus from './services/OrderStatus'
+import Auth from './services/Auth'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { order as orderFactory } from '@factories/order'
 
 describe('Pedidos10/Order', () => {
   beforeAll(async () => {

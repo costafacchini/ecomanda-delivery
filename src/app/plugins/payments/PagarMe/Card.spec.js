@@ -1,11 +1,11 @@
-import Card from './Card.js'
-import Integrationlog from '@models/Integrationlog.js'
+import Card from './Card'
+import Integrationlog from '@models/Integrationlog'
 import fetchMock from 'fetch-mock'
-import mongoServer from '../../../../../.jest/utils.js'
-import { licenseeIntegrationPagarMe as licenseeFactory   } from '@factories/licensee.js'
-import { contact as contactFactory   } from '@factories/contact.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import mongoServer from '../../../../../.jest/utils'
+import { licenseeIntegrationPagarMe as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
 
 describe('PagarMe/Card plugin', () => {
   let licensee

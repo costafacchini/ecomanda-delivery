@@ -1,11 +1,11 @@
-import processPagarmeOrderPaid from './ProcessPagarmeOrderPaid.js'
-import mongoServer from '.jest/utils.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { cart as cartFactory   } from '@factories/cart.js'
-import { contact as contactFactory   } from '@factories/contact.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
-import { CartRepositoryDatabase  } from '@repositories/cart.js'
+import processPagarmeOrderPaid from './ProcessPagarmeOrderPaid'
+import mongoServer from '.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { cart as cartFactory } from '@factories/cart'
+import { contact as contactFactory } from '@factories/contact'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { CartRepositoryDatabase } from '@repositories/cart'
 
 describe('processPagarmeOrderPaid', () => {
   beforeEach(async () => {

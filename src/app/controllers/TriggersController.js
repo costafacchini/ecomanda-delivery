@@ -1,8 +1,8 @@
-import Trigger from '@models/Trigger.js'
-import { sanitizeModelErrors  } from '@helpers/SanitizeErrors.js'
+import Trigger from '@models/Trigger'
+import { sanitizeModelErrors } from '@helpers/SanitizeErrors'
 import _ from 'lodash'
-import TriggersQuery from '@queries/TriggersQuery.js'
-import FacebookCatalogImporter from '@plugins/importers/facebook_catalog/index.js'
+import TriggersQuery from '@queries/TriggersQuery'
+import FacebookCatalogImporter from '@plugins/importers/facebook_catalog/index'
 
 function permit(fields) {
   const permitedFields = [

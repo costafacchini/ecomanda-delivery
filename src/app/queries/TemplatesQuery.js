@@ -1,5 +1,5 @@
-import Template from '@models/Template.js'
-import QueryBuilder from '@queries/QueryBuilder.js'
+import Template from '@models/Template'
+import QueryBuilder from '@queries/QueryBuilder'
 
 class TemplatesQuery {
   constructor() {}

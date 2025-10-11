@@ -1,11 +1,13 @@
-require('dotenv').config()
+import 'dotenv/config'
 
-if (process.env.NODE_ENV === 'production') require('newrelic')
+if (process.env.NODE_ENV === 'production') {
+  import 'newrelic'
+}
 
-const { server } = require('./src/config/http')
-const debug = require('debug')('ecomanda-delivery:server')
+const { server } = import('./src/config/http')
+const debug = import('debug')('ecomanda-delivery:server')
 
-require('./src/app/websockets/index')
+import('./src/app/websockets/index')
 
 const PORT = process.env.PORT || '5000'
 

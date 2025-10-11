@@ -1,5 +1,5 @@
-import Trigger from '@models/Trigger.js'
-import QueryBuilder from '@queries/QueryBuilder.js'
+import Trigger from '@models/Trigger'
+import QueryBuilder from '@queries/QueryBuilder'
 
 class TriggersQuery {
   constructor() {}

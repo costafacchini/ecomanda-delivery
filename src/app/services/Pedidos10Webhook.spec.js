@@ -1,10 +1,10 @@
-import processWebhook from './Pedidos10Webhook.js'
-import Licensee from '@models/Licensee.js'
-import Body from '@models/Body.js'
-import mongoServer from '.jest/utils.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { body as bodyFactory   } from '@factories/body.js'
-import Pedidos10 from '../plugins/integrations/Pedidos10.js'
+import processWebhook from './Pedidos10Webhook'
+import Licensee from '@models/Licensee'
+import Body from '@models/Body'
+import mongoServer from '.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { body as bodyFactory } from '@factories/body'
+import Pedidos10 from '../plugins/integrations/Pedidos10'
 
 describe('processWebhook', () => {
   const pedidos10ProcessOrderFnSpy = jest.spyOn(Pedidos10.prototype, 'processOrder')

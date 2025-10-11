@@ -1,5 +1,5 @@
-import createChatbotPlugin from '../plugins/chatbots/factory.js'
-import { MessageRepositoryDatabase  } from '@repositories/message.js'
+import createChatbotPlugin from '../plugins/chatbots/factory'
+import { MessageRepositoryDatabase } from '@repositories/message'
 
 async function sendMessageToChatbot(data) {
   const { messageId, url, token } = data

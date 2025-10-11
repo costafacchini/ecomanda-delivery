@@ -1,4 +1,4 @@
-import Trigger from '@models/Trigger.js'
+import Trigger from '@models/Trigger'
 import isEmpty from 'lodash/isEmpty'
 
 async function createTrigger(fields) {
@@ -17,4 +17,4 @@ async function getAllTriggerBy(filters, order = {}) {
   }
 }
 
-export default { createTrigger, getAllTriggerBy }
+export { createTrigger, getAllTriggerBy }

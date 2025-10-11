@@ -1,6 +1,8 @@
-import router from 'express'.Router()
-import v1Routes from './v1/v1-routes.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import express from 'express'
+import v1Routes from './v1/v1-routes'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+
+const router = express.Router()
 
 router.use(async (req, res, next) => {
   if (req.query.token) {

@@ -1,5 +1,5 @@
-import Repository from './repository.js'
-import Licensee from '@models/Licensee.js'
+import Repository from './repository'
+import Licensee from '@models/Licensee'
 
 class LicenseeRepositoryDatabase extends Repository {
   model() {
@@ -23,4 +23,4 @@ class LicenseeRepositoryDatabase extends Repository {
   }
 }
 
-export default { LicenseeRepositoryDatabase }
+export { LicenseeRepositoryDatabase }

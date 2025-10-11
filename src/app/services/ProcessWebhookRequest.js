@@ -1,4 +1,4 @@
-import Body from '@models/Body.js'
+import Body from '@models/Body'
 
 async function processWebhookRequest(data) {
   const { bodyId } = data

@@ -1,6 +1,6 @@
-import Utalk from './Utalk.js'
-import Dialog from './Dialog.js'
-import YCloud from './YCloud.js'
+import Utalk from './Utalk'
+import Dialog from './Dialog'
+import YCloud from './YCloud'
 
 function createMessengerPlugin(licensee) {
   switch (licensee.whatsappDefault) {

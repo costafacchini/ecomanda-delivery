@@ -1,7 +1,7 @@
-import Body from '@models/Body.js'
-import createChatPlugin from '../plugins/chats/factory.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
-import { MessageRepositoryDatabase  } from '@repositories/message.js'
+import Body from '@models/Body'
+import createChatPlugin from '../plugins/chats/factory'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { MessageRepositoryDatabase } from '@repositories/message'
 
 async function transformChatBody(data) {
   const { bodyId } = data

@@ -1,5 +1,5 @@
 import { Factory } from 'fishery'
-const { licenseeFactory } = require('./licensee')
+import { licenseeFactory } from './licensee'
 
 const templateFactory = Factory.define(({ sequence }) => ({
   id: sequence,

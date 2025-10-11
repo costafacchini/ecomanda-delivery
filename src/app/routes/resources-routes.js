@@ -1,11 +1,11 @@
 import express from 'express'
 import jwt from 'jsonwebtoken'
-import UsersController from '@controllers/UsersController.js'
-import LicenseesController from '@controllers/LicenseesController.js'
-import ContactsController from '@controllers/ContactsController.js'
-import TriggersController from '@controllers/TriggersController.js'
-import MessagesController from '@controllers/MessagesController.js'
-import TemplatesController from '@controllers/TemplatesController.js'
+import UsersController from '@controllers/UsersController'
+import LicenseesController from '@controllers/LicenseesController'
+import ContactsController from '@controllers/ContactsController'
+import TriggersController from '@controllers/TriggersController'
+import MessagesController from '@controllers/MessagesController'
+import TemplatesController from '@controllers/TemplatesController'
 
 const router = express.Router()
 const SECRET = process.env.SECRET

@@ -1,9 +1,9 @@
-import createChatPlugin from '../plugins/chats/factory.js'
+import createChatPlugin from '../plugins/chats/factory'
 import moment from 'moment-timezone'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
-import { MessageRepositoryDatabase  } from '@repositories/message.js'
-import ContactsQuery from '@queries/ContactsQuery.js'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { MessageRepositoryDatabase } from '@repositories/message'
+import ContactsQuery from '@queries/ContactsQuery'
 
 async function sendMessageToChat(licensee, messageToSend) {
   const chatPlugin = createChatPlugin(licensee)

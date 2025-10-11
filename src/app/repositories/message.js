@@ -1,9 +1,9 @@
-import { v4 as uuidv4   } from 'uuid'
-import Repository from './repository.js'
-import Message from '@models/Message.js'
-import Trigger from '@models/Trigger.js'
-import { parseText  } from '@helpers/ParseTriggerText.js'
-import emoji from '@helpers/Emoji.js'
+import { v4 as uuidv4 } from 'uuid'
+import Repository from './repository'
+import Message from '@models/Message'
+import Trigger from '@models/Trigger'
+import { parseText } from '@helpers/ParseTriggerText'
+import emoji from '@helpers/Emoji'
 
 class MessageRepositoryDatabase extends Repository {
   model() {
@@ -97,4 +97,4 @@ class MessageRepositoryDatabase extends Repository {
   }
 }
 
-export default { MessageRepositoryDatabase }
+export { MessageRepositoryDatabase }

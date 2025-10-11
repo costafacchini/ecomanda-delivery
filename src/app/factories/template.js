@@ -1,5 +1,5 @@
-import { Factory  } from 'fishery'
-import { licensee  } from './licensee.js'
+import { Factory } from 'fishery'
+import { licensee } from './licensee'
 
 const template = Factory.define(() => ({
   name: 'template',
@@ -7,4 +7,4 @@ const template = Factory.define(() => ({
   licensee: licensee.build(),
 }))
 
-export default { template }
+export { template }

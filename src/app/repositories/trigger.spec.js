@@ -1,8 +1,8 @@
-import mongoServer from '../../../.jest/utils.js'
-import { createTrigger, getAllTriggerBy  } from '@repositories/trigger.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { triggerMultiProduct as triggerFactory   } from '@factories/trigger.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import mongoServer from '../../../.jest/utils'
+import { createTrigger, getAllTriggerBy } from '@repositories/trigger'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { triggerMultiProduct as triggerFactory } from '@factories/trigger'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('trigger repository', () => {
   beforeEach(async () => {

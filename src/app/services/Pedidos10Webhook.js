@@ -1,5 +1,5 @@
-import Body from '@models/Body.js'
-import Pedidos10 from '../plugins/integrations/Pedidos10.js'
+import Body from '@models/Body'
+import Pedidos10 from '../plugins/integrations/Pedidos10'
 
 async function processWebhook(data) {
   const { bodyId } = data

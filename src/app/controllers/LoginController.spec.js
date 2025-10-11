@@ -1,9 +1,9 @@
-import User from '@models/User.js'
+import User from '@models/User'
 import jwt from 'jsonwebtoken'
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils.js'
-import { expressServer  } from '../../../.jest/server-express.js'
-import { userSuper as userSuperFactory   } from '@factories/user.js'
+import mongoServer from '../../../.jest/utils'
+import { expressServer } from '../../../.jest/server-express'
+import { userSuper as userSuperFactory } from '@factories/user'
 
 describe('login controller', () => {
   beforeAll(async () => {

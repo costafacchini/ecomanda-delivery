@@ -1,4 +1,4 @@
-import NormalizePhone from './NormalizePhone.js'
+import NormalizePhone from './NormalizePhone'
 
 describe('NormalizePhone', () => {
   it('does not normalize phone if number is blank', () => {

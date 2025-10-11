@@ -1,5 +1,5 @@
-import { Factory  } from 'fishery'
-import { licensee  } from './licensee.js'
+import { Factory } from 'fishery'
+import { licensee } from './licensee'
 
 const contact = Factory.define(() => ({
   number: '5511990283745',
@@ -7,4 +7,4 @@ const contact = Factory.define(() => ({
   licensee: licensee.build(),
 }))
 
-export default { contact }
+export { contact }

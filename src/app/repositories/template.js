@@ -1,4 +1,4 @@
-import Template from '@models/Template.js'
+import Template from '@models/Template'
 
 async function destroyAllTemplates() {
   await Template.deleteMany()
@@ -12,4 +12,4 @@ async function createTemplate(fields) {
   return templateSaved
 }
 
-export default { createTemplate, destroyAllTemplates }
+export { createTemplate, destroyAllTemplates }

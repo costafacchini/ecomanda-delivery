@@ -1,4 +1,4 @@
-import Cart from '@models/Cart.js'
+import Cart from '@models/Cart'
 import moment from 'moment-timezone'
 
 async function resetCarts() {

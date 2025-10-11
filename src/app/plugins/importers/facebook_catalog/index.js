@@ -1,5 +1,5 @@
-import Trigger from '@models/Trigger.js'
-import Product from '@models/Product.js'
+import Trigger from '@models/Trigger'
+import Product from '@models/Product'
 import _ from 'lodash'
 
 async function importProducts(products, licensee) {

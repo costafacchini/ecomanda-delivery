@@ -1,12 +1,12 @@
-import resetChats from './ResetChats.js'
-import mongoServer from '.jest/utils.js'
-import { licenseeComplete as licenseeFactory   } from '@factories/licensee.js'
-import { contact as contactFactory   } from '@factories/contact.js'
+import resetChats from './ResetChats'
+import mongoServer from '.jest/utils'
+import { licenseeComplete as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
 import moment from 'moment'
-import Rocketchat from '../plugins/chats/Rocketchat.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
-import { MessageRepositoryDatabase  } from '@repositories/message.js'
+import Rocketchat from '../plugins/chats/Rocketchat'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { MessageRepositoryDatabase } from '@repositories/message'
 
 const spySendMessage = jest.spyOn(Rocketchat.prototype, 'sendMessage').mockImplementation()
 

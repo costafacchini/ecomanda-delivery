@@ -1,5 +1,5 @@
-import PagarMe from '@plugins/payments/PagarMe.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import PagarMe from '@plugins/payments/PagarMe'
+import { ContactRepositoryDatabase } from '@repositories/contact'
 
 async function sendContactToPagarMe(data) {
   const { contactId } = data

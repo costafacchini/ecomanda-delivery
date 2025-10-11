@@ -1,11 +1,13 @@
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils.js'
-import { expressServer  } from '../../../.jest/server-express.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { publishMessage  } from '@config/rabbitmq.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import mongoServer from '../../../.jest/utils'
+import { expressServer } from '../../../.jest/server-express'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { publishMessage } from '@config/rabbitmq'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
-jest.mock('@config/rabbitmq')
+jest.mock('@config/rabbitmq', () => ({
+  publishMessage: jest.fn(),
+}))
 
 describe('backups controller', () => {
   let apiToken, licensee

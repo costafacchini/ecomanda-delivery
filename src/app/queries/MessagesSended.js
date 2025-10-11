@@ -1,4 +1,4 @@
-import { MessageRepositoryDatabase  } from '@repositories/message.js'
+import { MessageRepositoryDatabase } from '@repositories/message'
 
 class MessagesSendedQuery {
   constructor(startDate, endDate, licenseeId) {

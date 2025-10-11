@@ -1,5 +1,5 @@
-import Integrationlog from '@models/Integrationlog.js'
-import QueryBuilder from '@queries/QueryBuilder.js'
+import Integrationlog from '@models/Integrationlog'
+import QueryBuilder from '@queries/QueryBuilder'
 
 class IntegrationlogsQuery {
   constructor() {}

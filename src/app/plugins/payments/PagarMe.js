@@ -1,8 +1,8 @@
-import Recipient from './PagarMe/Recipient.js'
-import Customer from './PagarMe/Customer.js'
-import Payment from './PagarMe/Payment.js'
-import Parser from './PagarMe/Parser.js'
-import Card from './PagarMe/Card.js'
+import Recipient from './PagarMe/Recipient'
+import Customer from './PagarMe/Customer'
+import Payment from './PagarMe/Payment'
+import Parser from './PagarMe/Parser'
+import Card from './PagarMe/Card'
 
 class PagarMe {
   constructor(licensee) {

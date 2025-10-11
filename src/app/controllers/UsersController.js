@@ -1,6 +1,6 @@
-import User from '@models/User.js'
+import User from '@models/User'
 import { check, validationResult } from 'express-validator'
-import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
+import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors'
 import _ from 'lodash'
 
 function permit(fields) {

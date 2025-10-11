@@ -1,6 +1,6 @@
-import Backgroundjob from '@models/Backgroundjob.js'
-import queueServer from '@config/queue.js'
-import { sanitizeModelErrors  } from '../helpers/SanitizeErrors.js'
+import Backgroundjob from '@models/Backgroundjob'
+import queueServer from '@config/queue'
+import { sanitizeModelErrors } from '../helpers/SanitizeErrors'
 
 class BackgroundjobsController {
   async create(req, res) {
@@ -16,7 +16,7 @@ class BackgroundjobsController {
 
     try {
       if (validation) {
-        return res.status(422).json({ errors: sanitizeModelErrors(validation.errors) })
+        return res.status(422).send({ errors: sanitizeModelErrors(validation.errors) })
       } else {
         await backgroundjob.save()
       }

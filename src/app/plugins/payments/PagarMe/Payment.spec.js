@@ -1,13 +1,13 @@
-import Payment from './Payment.js'
-import Integrationlog from '@models/Integrationlog.js'
+import Payment from './Payment'
+import Integrationlog from '@models/Integrationlog'
 import fetchMock from 'fetch-mock'
-import mongoServer from '../../../../../.jest/utils.js'
-import { licenseeIntegrationPagarMe as licenseeFactory   } from '@factories/licensee.js'
-import { contact as contactFactory   } from '@factories/contact.js'
-import { cart as cartFactory   } from '@factories/cart.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
-import { CartRepositoryDatabase  } from '@repositories/cart.js'
+import mongoServer from '../../../../../.jest/utils'
+import { licenseeIntegrationPagarMe as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
+import { cart as cartFactory } from '@factories/cart'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { CartRepositoryDatabase } from '@repositories/cart'
 
 describe('PagarMe/Customer plugin', () => {
   let licensee

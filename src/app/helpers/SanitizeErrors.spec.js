@@ -1,4 +1,4 @@
-import { sanitizeExpressErrors, sanitizeModelErrors  } from './SanitizeErrors.js'
+import { sanitizeExpressErrors, sanitizeModelErrors } from './SanitizeErrors'
 
 describe('#sanitizeExpressErrors', () => {
   const expressErrors = [

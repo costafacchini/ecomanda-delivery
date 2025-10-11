@@ -1,10 +1,10 @@
-import Template from '@models/Template.js'
-import Dialog from '@plugins/messengers/Dialog.js'
-import TemplatesImporter from '@plugins/importers/template/index.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { template as templateFactory   } from '@factories/template.js'
-import mongoServer from '../../../../../.jest/utils.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import Template from '@models/Template'
+import Dialog from '@plugins/messengers/Dialog'
+import TemplatesImporter from '@plugins/importers/template/index'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { template as templateFactory } from '@factories/template'
+import mongoServer from '../../../../../.jest/utils'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('TemplatesImporter', () => {
   beforeAll(async () => {

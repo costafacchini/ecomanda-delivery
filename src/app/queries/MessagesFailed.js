@@ -1,4 +1,4 @@
-import Message from '@models/Message.js'
+import Message from '@models/Message'
 
 class MessagesFailedQuery {
   constructor(startDate, endDate, licenseeId) {

@@ -1,4 +1,4 @@
-import Parser from './Parser.js'
+import Parser from './Parser'
 
 describe('PagarMe/Parser plugin', () => {
   describe('#parseOrderPaidEvent', () => {

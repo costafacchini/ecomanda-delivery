@@ -1,4 +1,4 @@
-import processWebhook from '../services/Pedidos10Webhook.js'
+import processWebhook from '../services/Pedidos10Webhook'
 
 export default {
   key: 'pedidos10-webhook',

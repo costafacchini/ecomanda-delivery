@@ -1,5 +1,5 @@
-import { MessageRepositoryDatabase  } from '@repositories/message.js'
-import QueryBuilder from '@queries/QueryBuilder.js'
+import { MessageRepositoryDatabase } from '@repositories/message'
+import QueryBuilder from '@queries/QueryBuilder'
 
 class MessagesQuery {
   constructor() {}

@@ -5,6 +5,8 @@ const licensee = Factory.define(({ sequence }) => ({
   active: true,
   licenseKind: 'demo',
   apiToken: sequence,
+  useChatbot: false,
+  chatbotDefault: '',
 }))
 
 const licenseeComplete = Factory.define(() => ({
@@ -51,6 +53,8 @@ const licenseePedidos10 = Factory.define(() => ({
   name: 'Estabelecimento Pedidos10',
   active: true,
   licenseKind: 'demo',
+  useChatbot: false,
+  chatbotDefault: '',
   pedidos10_integration: {
     integration_token: 'integration_token',
     username: 'username',

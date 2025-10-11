@@ -1,7 +1,7 @@
-import mongoServer from '../../../.jest/utils.js'
-import { createTemplate  } from '@repositories/template.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import mongoServer from '../../../.jest/utils'
+import { createTemplate } from '@repositories/template'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('#createTemplate', () => {
   beforeEach(async () => {

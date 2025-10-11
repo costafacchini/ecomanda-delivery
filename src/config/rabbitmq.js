@@ -1,6 +1,6 @@
 import amqp from 'amqplib/callback_api'
 const RABBIT_URL = process.env.CLOUDAMQP_URL
-import jobs from '../app/jobs.js'
+import jobs from '../app/jobs'
 
 function publishMessage(payload) {
   amqp.connect(RABBIT_URL, function (errorOnConnect, connection) {

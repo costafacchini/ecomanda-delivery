@@ -1,6 +1,6 @@
-import request from '../../services/request.js'
-import ChatsBase from './Base.js'
-import { createRoom, getRoomBy  } from '@repositories/room.js'
+import request from '../../services/request'
+import ChatsBase from './Base'
+import { createRoom, getRoomBy } from '@repositories/room'
 import path from 'path'
 import mime from 'mime-types'
 

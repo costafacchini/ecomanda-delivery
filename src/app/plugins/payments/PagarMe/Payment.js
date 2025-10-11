@@ -1,7 +1,7 @@
-import Integrationlog from '@models/Integrationlog.js'
-import request from '../../../services/request.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import Integrationlog from '@models/Integrationlog'
+import request from '../../../services/request'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
 
 const buildBody = (cart, contact, buildPaymentBuilder) => {
   return {

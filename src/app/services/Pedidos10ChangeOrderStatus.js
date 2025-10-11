@@ -1,6 +1,6 @@
-import Body from '@models/Body.js'
-import Pedidos10 from '../plugins/integrations/Pedidos10.js'
-import createIntegrator from '../plugins/integrations/factory.js'
+import Body from '@models/Body'
+import Pedidos10 from '../plugins/integrations/Pedidos10'
+import createIntegrator from '../plugins/integrations/factory'
 
 async function changeOrderStatus(data) {
   const { bodyId } = data

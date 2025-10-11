@@ -1,8 +1,8 @@
-import Template from '@models/Template.js'
-import { sanitizeModelErrors  } from '@helpers/SanitizeErrors.js'
+import Template from '@models/Template'
+import { sanitizeModelErrors } from '@helpers/SanitizeErrors'
 import _ from 'lodash'
-import TemplatesQuery from '@queries/TemplatesQuery.js'
-import TemplatesImporter from '@plugins/importers/template/index.js'
+import TemplatesQuery from '@queries/TemplatesQuery'
+import TemplatesImporter from '@plugins/importers/template/index'
 
 function permit(fields) {
   const permitedFields = ['name', 'namespace', 'licensee']

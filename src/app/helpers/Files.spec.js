@@ -1,4 +1,4 @@
-import files from './Files.js'
+import files from './Files'
 
 const photoExtensions = ['jpg', 'jpeg', 'png', 'gif']
 const videoExtensions = ['avi', 'mp4', 'm4v', 'mov', 'mpg', 'mpeg', 'wmv']

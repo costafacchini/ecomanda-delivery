@@ -1,10 +1,10 @@
-import sendOrder from './IntegrationSendOrder.js'
-import Licensee from '@models/Licensee.js'
-import mongoServer from '.jest/utils.js'
-import { OrderRepositoryDatabase  } from '@repositories/order.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { order as orderFactory   } from '@factories/order.js'
-import IntegratorBase from '../plugins/integrations/IntegratorBase.js'
+import sendOrder from './IntegrationSendOrder'
+import Licensee from '@models/Licensee'
+import mongoServer from '.jest/utils'
+import { OrderRepositoryDatabase } from '@repositories/order'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { order as orderFactory } from '@factories/order'
+import IntegratorBase from '../plugins/integrations/IntegratorBase'
 
 describe('sendOrder', () => {
   const integratorSendOrderFnSpy = jest.spyOn(IntegratorBase.prototype, 'sendOrder')

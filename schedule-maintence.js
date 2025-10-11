@@ -1,12 +1,12 @@
-require('dotenv').config()
-require('module-alias/register')
-require('@models/index')
-const moment = require('moment')
+import 'dotenv/config'
+import 'module-alias/register'
+import '@models/index'
+import moment from 'moment'
 
-const request = require('./src/app/services/request')
-const Body = require('@models/Body')
-const Room = require('@models/Room')
-const connect = require('./src/config/database')
+import request from './src/app/services/request'
+import Body from '@models/Body'
+import Room from '@models/Room'
+import connect from './src/config/database'
 connect()
 
 async function schedule() {

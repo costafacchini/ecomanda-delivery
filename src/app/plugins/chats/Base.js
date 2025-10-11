@@ -1,7 +1,7 @@
-import Trigger from '@models/Trigger.js'
-import { ContactRepositoryDatabase } from '@repositories/contact.js'
-import { MessageRepositoryDatabase } from '@repositories/message.js'
-import emoji from '@helpers/Emoji.js'
+import Trigger from '@models/Trigger'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { MessageRepositoryDatabase } from '@repositories/message'
+import emoji from '@helpers/Emoji'
 import { v4 as uuidv4 } from 'uuid'
 
 class ChatsBase {

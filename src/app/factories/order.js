@@ -1,5 +1,5 @@
-import { Factory  } from 'fishery'
-import { licensee  } from './licensee.js'
+import { Factory } from 'fishery'
+import { licensee } from './licensee'
 import moment from 'moment'
 
 const order = Factory.define(() => ({
@@ -69,4 +69,4 @@ const order = Factory.define(() => ({
   createdAt: moment('2021-07-03T00:00:00-03:00').toDate(),
 }))
 
-export default { order }
+export { order }

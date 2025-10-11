@@ -1,13 +1,13 @@
-import emoji from '@helpers/Emoji.js'
-import NormalizePhone from '@helpers/NormalizePhone.js'
-import { v4 as uuidv4   } from 'uuid'
-import request from '../../services/request.js'
-import Room from '@models/Room.js'
-import Trigger from '@models/Trigger.js'
-import cartFactory from '@plugins/carts/factory.js'
-import files from '@helpers/Files.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
-import { MessageRepositoryDatabase  } from '@repositories/message.js'
+import emoji from '@helpers/Emoji'
+import NormalizePhone from '@helpers/NormalizePhone'
+import { v4 as uuidv4 } from 'uuid'
+import request from '../../services/request'
+import Room from '@models/Room'
+import Trigger from '@models/Trigger'
+import cartFactory from '@plugins/carts/factory'
+import files from '@helpers/Files'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { MessageRepositoryDatabase } from '@repositories/message'
 
 const closeRoom = async (contact) => {
   const room = await Room.findOne({ contact: contact._id, closed: false })

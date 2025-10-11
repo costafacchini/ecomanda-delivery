@@ -1,12 +1,12 @@
-import transformChatBody from './ChatMessage.js'
-import Body from '@models/Body.js'
-import Rocketchat from '../plugins/chats/Rocketchat.js'
-import mongoServer from '.jest/utils.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { body as bodyFactory   } from '@factories/body.js'
-import { contact as contactFactory   } from '@factories/contact.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import transformChatBody from './ChatMessage'
+import Body from '@models/Body'
+import Rocketchat from '../plugins/chats/Rocketchat'
+import mongoServer from '.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { body as bodyFactory } from '@factories/body'
+import { contact as contactFactory } from '@factories/contact'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
 
 describe('transformChatBody', () => {
   let licensee

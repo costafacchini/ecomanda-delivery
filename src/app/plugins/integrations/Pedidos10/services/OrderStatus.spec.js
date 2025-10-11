@@ -1,9 +1,9 @@
-import OrderStatus from './OrderStatus.js'
-import Licensee from '@models/Licensee.js'
-import Integrationlog from '@models/Integrationlog.js'
+import OrderStatus from './OrderStatus'
+import Licensee from '@models/Licensee'
+import Integrationlog from '@models/Integrationlog'
 import fetchMock from 'fetch-mock'
-import mongoServer from '../../../../../../.jest/utils.js'
-import { licenseePedidos10 as licenseeFactory   } from '@factories/licensee.js'
+import mongoServer from '../../../../../../.jest/utils'
+import { licenseePedidos10 as licenseeFactory } from '@factories/licensee'
 
 describe('Pedidos10/OrderStatus plugin', () => {
   let licensee

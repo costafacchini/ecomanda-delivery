@@ -1,13 +1,13 @@
-import Utalk from './Utalk.js'
+import Utalk from './Utalk'
 import fetchMock from 'fetch-mock'
-import mongoServer from '../../../../.jest/utils.js'
-import S3 from '../storage/S3.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { contact as contactFactory   } from '@factories/contact.js'
-import { message as messageFactory   } from '@factories/message.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
-import { MessageRepositoryDatabase  } from '@repositories/message.js'
+import mongoServer from '../../../../.jest/utils'
+import S3 from '../storage/S3'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
+import { message as messageFactory } from '@factories/message'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { MessageRepositoryDatabase } from '@repositories/message'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 

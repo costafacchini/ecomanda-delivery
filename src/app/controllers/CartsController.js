@@ -1,13 +1,13 @@
 import _ from 'lodash'
-import NormalizePhone from '@helpers/NormalizePhone.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
-import { scheduleSendMessageToMessenger  } from '@repositories/messenger.js'
-import { parseCart  } from '@helpers/ParseTriggerText.js'
-import createCartAdapter from '../plugins/carts/adapters/factory.js'
-import cartFactory from '@plugins/carts/factory.js'
-import { publishMessage  } from '@config/rabbitmq.js'
-import { CartRepositoryDatabase  } from '@repositories/cart.js'
-import { MessageRepositoryDatabase  } from '@repositories/message.js'
+import NormalizePhone from '@helpers/NormalizePhone'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { scheduleSendMessageToMessenger } from '@repositories/messenger'
+import { parseCart } from '@helpers/ParseTriggerText'
+import createCartAdapter from '../plugins/carts/adapters/factory'
+import cartFactory from '@plugins/carts/factory'
+import { publishMessage } from '@config/rabbitmq'
+import { CartRepositoryDatabase } from '@repositories/cart'
+import { MessageRepositoryDatabase } from '@repositories/message'
 
 function permit(fields) {
   const permitedFields = [

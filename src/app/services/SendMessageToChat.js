@@ -1,5 +1,5 @@
-import createChatPlugin from '../plugins/chats/factory.js'
-import { MessageRepositoryDatabase  } from '@repositories/message.js'
+import createChatPlugin from '../plugins/chats/factory'
+import { MessageRepositoryDatabase } from '@repositories/message'
 
 async function sendMessageToChat(data) {
   const { messageId, url } = data

@@ -1,7 +1,7 @@
-import Dialog from '@plugins/messengers/Dialog.js'
-import YCloud from '@plugins/messengers/YCloud.js'
-import { createTemplate, destroyAllTemplates  } from '@repositories/template.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import Dialog from '@plugins/messengers/Dialog'
+import YCloud from '@plugins/messengers/YCloud'
+import { createTemplate, destroyAllTemplates } from '@repositories/template'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 class TemplatesImporter {
   constructor(licenseeId) {

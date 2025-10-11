@@ -1,4 +1,4 @@
-import Order from './Pedidos10/Order.js'
+import Order from './Pedidos10/Order'
 
 class Pedidos10 {
   constructor(licensee) {

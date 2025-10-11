@@ -1,12 +1,12 @@
-import Alloy from './Alloy.js'
-import mongoServer from '../../../../.jest/utils.js'
-import { advanceTo, clear  } from 'jest-date-mock'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { contact as contactFactory   } from '@factories/contact.js'
-import { cart as cartFactory   } from '@factories/cart.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
-import { CartRepositoryDatabase  } from '@repositories/cart.js'
+import Alloy from './Alloy'
+import mongoServer from '../../../../.jest/utils'
+import { advanceTo, clear } from 'jest-date-mock'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
+import { cart as cartFactory } from '@factories/cart'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { CartRepositoryDatabase } from '@repositories/cart'
 
 describe('Alloy plugin', () => {
   beforeEach(async () => {

@@ -1,6 +1,6 @@
 import mime from 'mime-types'
-import { S3Client, PutObjectCommand, GetObjectCommand  } from '@aws-sdk/client-s3.js'
-import { getSignedUrl  } from '@aws-sdk/s3-request-presigner.js'
+import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 const getBucketPath = (number) => {
   const date = new Date()

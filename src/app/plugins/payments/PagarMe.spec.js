@@ -1,11 +1,11 @@
-import PagarMe from './PagarMe.js'
-import Recipient from './PagarMe/Recipient.js'
-import Customer from './PagarMe/Customer.js'
-import Payment from './PagarMe/Payment.js'
-import Card from './PagarMe/Card.js'
-import { licenseeIntegrationPagarMe as licenseeFactory   } from '@factories/licensee.js'
-import { contact as contactFactory   } from '@factories/contact.js'
-import { cart as cartFactory   } from '@factories/cart.js'
+import PagarMe from './PagarMe'
+import Recipient from './PagarMe/Recipient'
+import Customer from './PagarMe/Customer'
+import Payment from './PagarMe/Payment'
+import Card from './PagarMe/Card'
+import { licenseeIntegrationPagarMe as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
+import { cart as cartFactory } from '@factories/cart'
 
 describe('PagarMe plugin', () => {
   const recipientCreateFnSpy = jest.spyOn(Recipient.prototype, 'create').mockImplementation(() => {})

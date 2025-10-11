@@ -1,5 +1,5 @@
-import emoji from './Emoji.js'
-import { emojiList  } from './EmojiList.js'
+import emoji from './Emoji'
+import { emojiList } from './EmojiList'
 
 describe('Emoji', () => {
   describe('#replace', () => {

@@ -1,10 +1,10 @@
-import User from '@models/User.js'
+import User from '@models/User'
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils.js'
-import { expressServer  } from '../../../.jest/server-express.js'
-import { userSuper as userSuperFactory, user: userFactory   } from '@factories/user.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import mongoServer from '../../../.jest/utils'
+import { expressServer } from '../../../.jest/server-express'
+import { userSuper as userSuperFactory, user as userFactory } from '@factories/user'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('user controller', () => {
   let token

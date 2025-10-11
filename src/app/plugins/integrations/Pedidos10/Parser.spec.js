@@ -1,4 +1,4 @@
-import Parser from './Parser.js'
+import Parser from './Parser'
 
 describe('Pedidos10/Parser', () => {
   describe('#parseOrder', () => {

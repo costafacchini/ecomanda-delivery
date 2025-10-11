@@ -1,13 +1,13 @@
-import User from '@models/User.js'
+import User from '@models/User'
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils.js'
-import { expressServer  } from '../../../.jest/server-express.js'
-import { licenseeComplete as licenseeCompleteFactory, licensee: licenseeFactory   } from '@factories/licensee.js'
-import { userSuper as userSuperFactory   } from '@factories/user.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
-import LicenseesQuery from '@queries/LicenseesQuery.js'
-import Recipient from '@plugins/payments/PagarMe/Recipient.js'
-import Pedidos10 from '@plugins/integrations/Pedidos10.js'
+import mongoServer from '../../../.jest/utils'
+import { expressServer } from '../../../.jest/server-express'
+import { licenseeComplete as licenseeCompleteFactory, licensee as licenseeFactory } from '@factories/licensee'
+import { userSuper as userSuperFactory } from '@factories/user'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import LicenseesQuery from '@queries/LicenseesQuery'
+import Recipient from '@plugins/payments/PagarMe/Recipient'
+import Pedidos10 from '@plugins/integrations/Pedidos10'
 
 describe('licensee controller', () => {
   let token

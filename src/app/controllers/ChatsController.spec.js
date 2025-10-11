@@ -1,13 +1,15 @@
-import Body from '@models/Body.js'
+import Body from '@models/Body'
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils.js'
-import { expressServer  } from '../../../.jest/server-express.js'
-import queueServer from '@config/queue.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { publishMessage  } from '@config/rabbitmq.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import mongoServer from '../../../.jest/utils'
+import { expressServer } from '../../../.jest/server-express'
+import queueServer from '@config/queue'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { publishMessage } from '@config/rabbitmq'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
-jest.mock('@config/rabbitmq')
+jest.mock('@config/rabbitmq', () => ({
+  publishMessage: jest.fn(),
+}))
 
 describe('chats controller', () => {
   let apiToken

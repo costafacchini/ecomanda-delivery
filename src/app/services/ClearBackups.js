@@ -1,4 +1,4 @@
-import { S3Client, ListObjectsCommand, DeleteObjectCommand  } from '@aws-sdk/client-s3.js'
+import { S3Client, ListObjectsCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
 
 async function clearBackups() {
   const accessKeyId = process.env.AWS_ACCESS_KEY_ID

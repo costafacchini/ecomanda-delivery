@@ -1,13 +1,13 @@
-import Product from '@models/Product.js'
-import mongoServer from '../../../.jest/utils.js'
-import { parseText, parseCart  } from './ParseTriggerText.js'
-import { contact as contactFactory   } from '@factories/contact.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { cart as cartFactory   } from '@factories/cart.js'
-import { product as productFactory   } from '@factories/product.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
-import { CartRepositoryDatabase  } from '@repositories/cart.js'
+import Product from '@models/Product'
+import mongoServer from '../../../.jest/utils'
+import { parseText, parseCart } from './ParseTriggerText'
+import { contact as contactFactory } from '@factories/contact'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { cart as cartFactory } from '@factories/cart'
+import { product as productFactory } from '@factories/product'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { CartRepositoryDatabase } from '@repositories/cart'
 
 describe('ParseTriggerText', () => {
   beforeEach(async () => {

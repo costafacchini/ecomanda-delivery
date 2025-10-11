@@ -1,7 +1,7 @@
-import createCartAdapter from './factory.js'
-import Default from './Default.js'
-import Gallabox from './Gallabox.js'
-import Alloy from './Alloy.js'
+import createCartAdapter from './factory'
+import Default from './Default'
+import Gallabox from './Gallabox'
+import Alloy from './Alloy'
 
 describe('createCartAdapter', () => {
   it('returns the gallabox adapter', () => {

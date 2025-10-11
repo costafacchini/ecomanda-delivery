@@ -1,5 +1,5 @@
-import Body from '@models/Body.js'
-import { publishMessage  } from '@config/rabbitmq.js'
+import Body from '@models/Body'
+import { publishMessage } from '@config/rabbitmq'
 
 class IntegrationsController {
   async create(req, res) {

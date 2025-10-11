@@ -1,13 +1,13 @@
-import processBackgroundjob from './ProcessBackgroundjob.js'
-import Backgroundjob from '@models/Backgroundjob.js'
-import mongoServer from '.jest/utils.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { cart as cartFactory   } from '@factories/cart.js'
-import { contact as contactFactory   } from '@factories/contact.js'
-import { backgroundjob as backgroundjobFactory   } from '@factories/backgroundjob.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
-import { CartRepositoryDatabase  } from '@repositories/cart.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import processBackgroundjob from './ProcessBackgroundjob'
+import Backgroundjob from '@models/Backgroundjob'
+import mongoServer from '.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { cart as cartFactory } from '@factories/cart'
+import { contact as contactFactory } from '@factories/contact'
+import { backgroundjob as backgroundjobFactory } from '@factories/backgroundjob'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { CartRepositoryDatabase } from '@repositories/cart'
+import { ContactRepositoryDatabase } from '@repositories/contact'
 
 describe('processBackgroundjob', () => {
   beforeEach(async () => {

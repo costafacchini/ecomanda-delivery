@@ -1,5 +1,5 @@
 import moment from 'moment-timezone'
-import { CartRepositoryDatabase  } from '@repositories/cart.js'
+import { CartRepositoryDatabase } from '@repositories/cart'
 
 async function parseText(text, contact) {
   return text
@@ -115,4 +115,4 @@ async function parseCart(cartId) {
   return cart ? cartDescription(cart) : ''
 }
 
-export default { parseText, parseCart }
+export { parseText, parseCart }

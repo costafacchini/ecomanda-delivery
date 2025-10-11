@@ -1,11 +1,11 @@
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
-import createMessengerPlugin from '@plugins/messengers/factory.js'
-import { check, validationResult  } from 'express-validator'
-import { sanitizeExpressErrors, sanitizeModelErrors  } from '../helpers/SanitizeErrors.js'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import createMessengerPlugin from '@plugins/messengers/factory'
+import { check, validationResult } from 'express-validator'
+import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors'
 import _ from 'lodash'
-import LicenseesQuery from '@queries/LicenseesQuery.js'
-import PagarMe from '@plugins/payments/PagarMe.js'
-import Pedidos10 from '@plugins/integrations/Pedidos10.js'
+import LicenseesQuery from '@queries/LicenseesQuery'
+import PagarMe from '@plugins/payments/PagarMe'
+import Pedidos10 from '@plugins/integrations/Pedidos10'
 
 function permit(fields) {
   const permitedFields = [

@@ -1,4 +1,4 @@
-import sendMessageToMessenger from '../services/SendMessageToMessenger.js'
+import sendMessageToMessenger from '../services/SendMessageToMessenger'
 
 export default {
   key: 'send-message-to-messenger',

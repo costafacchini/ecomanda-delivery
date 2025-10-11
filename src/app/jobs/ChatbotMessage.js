@@ -1,4 +1,4 @@
-import transformChatbotBody from '../services/ChatbotMessage.js'
+import transformChatbotBody from '../services/ChatbotMessage'
 
 export default {
   key: 'chatbot-message',

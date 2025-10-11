@@ -1,4 +1,4 @@
-import processBackgroundjobInviteCreditCard from '../services/ProcessBackgroundjobInviteCreditCard.js'
+import processBackgroundjobInviteCreditCard from '../services/ProcessBackgroundjobInviteCreditCard'
 
 export default {
   key: 'process-backgroundjob-invite-credit-card',

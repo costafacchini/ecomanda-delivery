@@ -1,5 +1,5 @@
-import MessagesQuery from '@queries/MessagesQuery.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import MessagesQuery from '@queries/MessagesQuery'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import moment from 'moment-timezone'
 
 async function getLicenseeFirstMessage(licensee) {

@@ -1,5 +1,5 @@
-import NormalizePhone from '@helpers/NormalizePhone.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import NormalizePhone from '@helpers/NormalizePhone'
+import { ContactRepositoryDatabase } from '@repositories/contact'
 import _ from 'lodash'
 
 function permit(fields) {

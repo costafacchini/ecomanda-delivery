@@ -1,7 +1,7 @@
-import mongoServer from '../../../.jest/utils.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import Licensee from '@models/Licensee.js'
+import mongoServer from '../../../.jest/utils'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import Licensee from '@models/Licensee'
 
 describe('licensee repository database', () => {
   beforeEach(async () => {

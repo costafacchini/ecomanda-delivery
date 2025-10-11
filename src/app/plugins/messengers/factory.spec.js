@@ -1,7 +1,7 @@
-import createMessengerPlugin from './factory.js'
-import Utalk from './Utalk.js'
-import Dialog from './Dialog.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
+import createMessengerPlugin from './factory'
+import Utalk from './Utalk'
+import Dialog from './Dialog'
+import { licensee as licenseeFactory } from '@factories/licensee'
 
 describe('createMessengerPlugin', () => {
   it('returns the utalk plugin if it is configured on licensee', () => {

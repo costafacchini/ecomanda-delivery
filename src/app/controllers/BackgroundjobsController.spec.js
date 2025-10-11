@@ -1,11 +1,11 @@
-import Backgroundjob from '@models/Backgroundjob.js'
+import Backgroundjob from '@models/Backgroundjob'
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils.js'
-import queueServer from '@config/queue.js'
-import { expressServer  } from '../../../.jest/server-express.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { backgroundjob as backgroundjobFactory   } from '@factories/backgroundjob.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import mongoServer from '../../../.jest/utils'
+import queueServer from '@config/queue'
+import { expressServer } from '../../../.jest/server-express'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { backgroundjob as backgroundjobFactory } from '@factories/backgroundjob'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('backgrounndjobs controller', () => {
   let apiToken

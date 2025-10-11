@@ -1,5 +1,5 @@
-import User from '@models/User.js'
-import mongoServer from '../../../.jest/utils.js'
+import User from '@models/User'
+import mongoServer from '../../../.jest/utils'
 
 describe('User', () => {
   beforeEach(async () => {

@@ -1,11 +1,11 @@
-import Trigger from '@models/Trigger.js'
-import Product from '@models/Product.js'
-import FacebookCatalogImporter from '@plugins/importers/facebook_catalog/index.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { triggerMultiProduct as triggerFactory   } from '@factories/trigger.js'
-import { product as productFactory   } from '@factories/product.js'
-import mongoServer from '../../../../../.jest/utils.js'
-import { LicenseeRepositoryDatabase  } from '@repositories/licensee.js'
+import Trigger from '@models/Trigger'
+import Product from '@models/Product'
+import FacebookCatalogImporter from '@plugins/importers/facebook_catalog/index'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { triggerMultiProduct as triggerFactory } from '@factories/trigger'
+import { product as productFactory } from '@factories/product'
+import mongoServer from '../../../../../.jest/utils'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('FacebookCatalogImporter', () => {
   beforeAll(async () => {

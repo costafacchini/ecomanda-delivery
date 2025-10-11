@@ -1,9 +1,9 @@
-import Webhook from './Webhook.js'
-import Licensee from '@models/Licensee.js'
-import Integrationlog from '@models/Integrationlog.js'
+import Webhook from './Webhook'
+import Licensee from '@models/Licensee'
+import Integrationlog from '@models/Integrationlog'
 import fetchMock from 'fetch-mock'
-import mongoServer from '../../../../../../.jest/utils.js'
-import { licenseePedidos10 as licenseeFactory   } from '@factories/licensee.js'
+import mongoServer from '../../../../../../.jest/utils'
+import { licenseePedidos10 as licenseeFactory } from '@factories/licensee'
 
 describe('Pedidos10/Webhook plugin', () => {
   let licensee

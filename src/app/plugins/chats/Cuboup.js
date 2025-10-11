@@ -1,11 +1,11 @@
-import emoji from '@helpers/Emoji.js'
-import files from '@helpers/Files.js'
-import NormalizePhone from '../../helpers/NormalizePhone.js'
-import { v4 as uuidv4   } from 'uuid'
-import request from '../../services/request.js'
-import ChatsBase from './Base.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
-import { MessageRepositoryDatabase  } from '@repositories/message.js'
+import emoji from '@helpers/Emoji'
+import files from '@helpers/Files'
+import NormalizePhone from '../../helpers/NormalizePhone'
+import { v4 as uuidv4 } from 'uuid'
+import request from '../../services/request'
+import ChatsBase from './Base'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { MessageRepositoryDatabase } from '@repositories/message'
 
 class Cuboup extends ChatsBase {
   constructor(licensee) {

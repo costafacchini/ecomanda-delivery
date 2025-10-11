@@ -1,5 +1,5 @@
-import QueryBuilder from '@queries/QueryBuilder.js'
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
+import QueryBuilder from '@queries/QueryBuilder'
+import { ContactRepositoryDatabase } from '@repositories/contact'
 
 class ContactsQuery {
   constructor() {}

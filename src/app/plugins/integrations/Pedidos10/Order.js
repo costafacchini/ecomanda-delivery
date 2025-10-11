@@ -1,9 +1,9 @@
-import Licensee from '@models/Licensee.js'
-import Parser from './Parser.js'
-import Webhook from './services/Webhook.js'
-import OrderStatus from './services/OrderStatus.js'
-import Auth from './services/Auth.js'
-import { OrderRepositoryDatabase  } from '@repositories/order.js'
+import Licensee from '@models/Licensee'
+import Parser from './Parser'
+import Webhook from './services/Webhook'
+import OrderStatus from './services/OrderStatus'
+import Auth from './services/Auth'
+import { OrderRepositoryDatabase } from '@repositories/order'
 
 class Order {
   constructor(licensee) {

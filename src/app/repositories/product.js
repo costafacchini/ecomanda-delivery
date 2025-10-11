@@ -1,4 +1,4 @@
-import Product from '@models/Product.js'
+import Product from '@models/Product'
 
 async function createProduct(fields) {
   const product = new Product({
@@ -12,4 +12,4 @@ async function getProductBy(filter) {
   return await Product.findOne(filter)
 }
 
-export default { createProduct, getProductBy }
+export { createProduct, getProductBy }

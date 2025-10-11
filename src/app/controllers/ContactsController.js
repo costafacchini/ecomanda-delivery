@@ -1,9 +1,9 @@
-import { ContactRepositoryDatabase  } from '@repositories/contact.js'
-import { check, validationResult  } from 'express-validator'
-import { sanitizeExpressErrors, sanitizeModelErrors  } from '../helpers/SanitizeErrors.js'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { check, validationResult } from 'express-validator'
+import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors'
 import _ from 'lodash'
-import ContactsQuery from '@queries/ContactsQuery.js'
-import queueServer from '@config/queue.js'
+import ContactsQuery from '@queries/ContactsQuery'
+import queueServer from '@config/queue'
 
 function permit(fields) {
   const permitedFields = [
@@ -42,7 +42,7 @@ class ContactsController {
   async create(req, res) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
+      return res.status(422).send({ errors: sanitizeExpressErrors(errors.array()) })
     }
 
     const {
@@ -92,7 +92,7 @@ class ContactsController {
       res.status(201).send(contact)
     } catch (err) {
       if ('errors' in err) {
-        return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
+        return res.status(422).send({ errors: sanitizeModelErrors(err.errors) })
       }
       res.status(500).send({ errors: { message: err.toString() } })
     }
@@ -106,7 +106,7 @@ class ContactsController {
     try {
       await contactRepository.update(req.params.id, { ...fields })
     } catch (err) {
-      return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
+      return res.status(422).send({ errors: sanitizeModelErrors(err.errors) })
     }
 
     try {

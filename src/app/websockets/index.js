@@ -1,1 +1,1 @@
-import './reports/billing/index.js'
+import './reports/billing/index'

@@ -1,5 +1,5 @@
-import { Factory  } from 'fishery'
-import { licensee  } from './licensee.js'
+import { Factory } from 'fishery'
+import { licensee } from './licensee'
 
 const backgroundjob = Factory.define(() => ({
   status: 'scheduled',
@@ -10,4 +10,4 @@ const backgroundjob = Factory.define(() => ({
   licensee: licensee.build(),
 }))
 
-export default { backgroundjob }
+export { backgroundjob }

@@ -1,6 +1,6 @@
-import Gallabox from './Gallabox.js'
-import { licensee as licenseeFactory   } from '@factories/licensee.js'
-import { contact as contactFactory   } from '@factories/contact.js'
+import Gallabox from './Gallabox'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
 
 describe('Gallabox plugin', () => {
   describe('#parseCart', () => {

@@ -1,11 +1,11 @@
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
-import spawn from 'child_process'.spawn
+import spawn from 'child_process'
 import archiver from 'archiver'
 import mime from 'mime-types'
 import bl from 'bl'
-import { S3Client, PutObjectCommand  } from '@aws-sdk/client-s3.js'
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 
 async function backup() {
   const mongoURI = process.env.MONGODB_URI

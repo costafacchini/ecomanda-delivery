@@ -1,5 +1,5 @@
-import createMessengerPlugin from '../plugins/messengers/factory.js'
-import { MessageRepositoryDatabase  } from '@repositories/message.js'
+import createMessengerPlugin from '../plugins/messengers/factory'
+import { MessageRepositoryDatabase } from '@repositories/message'
 
 async function sendMessageToMessenger(data) {
   const { messageId, url, token } = data

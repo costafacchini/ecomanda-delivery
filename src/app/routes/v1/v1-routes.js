@@ -1,14 +1,16 @@
-import router from 'express'.Router()
-import ChatsController from '@controllers/ChatsController.js'
-import ChatbotsController from '@controllers/ChatbotsController.js'
-import MessengersController from '@controllers/MessengersController.js'
-import BackupsController from '@controllers/BackupsController.js'
-import AdressesController from '@controllers/Contacts/AdressesController.js'
-import CartsController from '@controllers/CartsController.js'
-import DelayController from '@controllers/DelayController.js'
-import BackgroundjobsController from '@controllers/BackgroundjobsController.js'
-import IntegrationsController from '@controllers/IntegrationsController.js'
-import OrdersController from '@controllers/OrdersController.js'
+import express from 'express'
+import ChatsController from '@controllers/ChatsController'
+import ChatbotsController from '@controllers/ChatbotsController'
+import MessengersController from '@controllers/MessengersController'
+import BackupsController from '@controllers/BackupsController'
+import AdressesController from '@controllers/Contacts/AdressesController'
+import CartsController from '@controllers/CartsController'
+import DelayController from '@controllers/DelayController'
+import BackgroundjobsController from '@controllers/BackgroundjobsController'
+import IntegrationsController from '@controllers/IntegrationsController'
+import OrdersController from '@controllers/OrdersController'
+
+const router = express.Router()
 
 const chatsController = new ChatsController()
 const chatbotsController = new ChatbotsController()
