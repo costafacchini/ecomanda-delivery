@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { createDefaultUser } from '../setup/database.js'
+import { createDefaultUser } from '../setup/database'
 
 const mongoConnectionOpts = {}
 

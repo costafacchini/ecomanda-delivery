@@ -1,4 +1,5 @@
-import User from '@models/User.js'
+import User from '@models/User'
+
 const DEFAULT_USER = process.env.DEFAULT_USER
 const DEFAULT_PASSWORD = process.env.DEFAULT_PASSWORD
 

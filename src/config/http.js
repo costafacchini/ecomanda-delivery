@@ -1,15 +1,16 @@
 import path from 'path'
 import 'module-alias/register'
-import '@models/index.js'
+import '@models/index'
 
 import createError from 'http-errors'
 import express from 'express'
 import logger from 'morgan'
-import connect from './database.js'
-import enableCors from './cors.js'
-import routes from './routes.js'
+import connect from './database'
+import enableCors from './cors'
+import routes from './routes'
 import http from 'http'
-import { Server  } from 'socket.io'
+import { Server } from 'socket.io'
+import Rollbar from 'rollbar'
 
 const app = express()
 
@@ -29,7 +30,6 @@ app.use(function (req, res, next) {
 
 // error handler
 if (process.env.ROLLBAR_ACCESS_TOKEN) {
-  import Rollbar from 'rollbar'
   const rollbar = new Rollbar({
     accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
     captureUncaught: true,

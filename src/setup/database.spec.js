@@ -1,7 +1,7 @@
 import mongoServer from '../../.jest/utils.js'
 import User from '@models/User.js'
-import { createDefaultUser  } from './database.js'
-import { userSuper as userSuperFactory   } from '../app/factories/user.js'
+import { createDefaultUser } from './database.js'
+import { userSuper as userSuperFactory } from '../app/factories/user.js'
 
 describe('#createDefaultUser', () => {
   beforeEach(async () => {

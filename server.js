@@ -1,7 +1,7 @@
 import 'dotenv/config'
 
 if (process.env.NODE_ENV === 'production') {
-  import 'newrelic'
+  import 'newrelic' // eslint-disable-line import/first
 }
 
 const { server } = import('./src/config/http')

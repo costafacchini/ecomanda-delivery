@@ -41,7 +41,6 @@ export default [
       'default-param-last': 'off',
       camelcase: 'off',
       'space-before-function-paren': 0,
-
       'no-unused-vars': [
         2,
         {
