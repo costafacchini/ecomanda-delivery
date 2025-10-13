@@ -1,4 +1,4 @@
-import resetChatbots from './ResetChatbots'
+import { resetChatbots } from './ResetChatbots.js'
 import mongoServer from '.jest/utils'
 import fetchMock from 'fetch-mock'
 import { licensee as licenseeFactory } from '@factories/licensee'

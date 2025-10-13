@@ -1,4 +1,4 @@
-import processBackgroundjob from '../services/ProcessBackgroundjob'
+import { processBackgroundjob } from '../services/ProcessBackgroundjob.js'
 
 export default {
   key: 'background-job',

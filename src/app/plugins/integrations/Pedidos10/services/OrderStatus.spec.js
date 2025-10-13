@@ -1,4 +1,4 @@
-import OrderStatus from './OrderStatus'
+import { OrderStatus } from './OrderStatus.js'
 import Licensee from '@models/Licensee'
 import Integrationlog from '@models/Integrationlog'
 import fetchMock from 'fetch-mock'

@@ -1,5 +1,5 @@
 import mongoServer from '../../../.jest/utils'
-import MessagesSendedYesterday from './MessagesSendedYesterday'
+import { MessagesSendedYesterday } from './MessagesSendedYesterday'
 import moment from 'moment'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'

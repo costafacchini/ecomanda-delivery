@@ -1,13 +1,13 @@
 import _ from 'lodash'
-import NormalizePhone from '@helpers/NormalizePhone'
-import { ContactRepositoryDatabase } from '@repositories/contact'
-import { scheduleSendMessageToMessenger } from '@repositories/messenger'
-import { parseCart } from '@helpers/ParseTriggerText'
-import createCartAdapter from '../plugins/carts/adapters/factory'
-import cartFactory from '@plugins/carts/factory'
-import { publishMessage } from '@config/rabbitmq'
-import { CartRepositoryDatabase } from '@repositories/cart'
-import { MessageRepositoryDatabase } from '@repositories/message'
+import { NormalizePhone } from '../helpers/NormalizePhone.js'
+import { ContactRepositoryDatabase } from '../repositories/contact.js'
+import { scheduleSendMessageToMessenger } from '../repositories/messenger.js'
+import { parseCart } from '../helpers/ParseTriggerText.js'
+import { createCartAdapter } from '../plugins/carts/adapters/factory.js'
+import { createCartPlugin } from '../plugins/carts/factory.js'
+import { publishMessage } from '../../config/rabbitmq.js'
+import { CartRepositoryDatabase } from '../repositories/cart.js'
+import { MessageRepositoryDatabase } from '../repositories/message.js'
 
 function permit(fields) {
   const permitedFields = [
@@ -366,7 +366,7 @@ class CartsController {
         return res.status(200).send({ errors: { message: `Carrinho não encontrado` } })
       }
 
-      const cartPlugin = cartFactory(req.licensee)
+      const cartPlugin = createCartPlugin(req.licensee)
       const cartTransformed = await cartPlugin.transformCart(req.licensee, cart)
 
       res.status(200).send(cartTransformed)
@@ -408,4 +408,4 @@ class CartsController {
   }
 }
 
-export default CartsController
+export { CartsController }

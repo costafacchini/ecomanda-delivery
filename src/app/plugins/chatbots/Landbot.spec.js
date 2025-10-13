@@ -1,8 +1,7 @@
-import Landbot from './Landbot'
+import { Landbot } from './Landbot.js'
 import Trigger from '@models/Trigger'
 import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../.jest/utils'
-import emoji from '@helpers/Emoji'
 import Room from '@models/Room'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
@@ -22,7 +21,6 @@ describe('Landbot plugin', () => {
   let licensee
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
-  const emojiReplaceSpy = jest.spyOn(emoji, 'replace')
 
   beforeEach(async () => {
     await mongoServer.connect()
@@ -173,12 +171,6 @@ describe('Landbot plugin', () => {
       expect(messages[4].latitude).toEqual(undefined)
       expect(messages[4].longitude).toEqual(undefined)
       expect(messages[4].departament).toEqual(undefined)
-
-      expect(emojiReplaceSpy).toHaveBeenCalledTimes(4)
-      expect(emojiReplaceSpy).toHaveBeenCalledWith('Hello world')
-      expect(emojiReplaceSpy).toHaveBeenCalledWith('Text with image')
-      expect(emojiReplaceSpy).toHaveBeenCalledWith('It is here')
-      expect(emojiReplaceSpy).toHaveBeenCalledWith('send_reply_buttons')
 
       expect(consoleInfoSpy).toHaveBeenCalledTimes(2)
       expect(consoleInfoSpy).toHaveBeenCalledWith(

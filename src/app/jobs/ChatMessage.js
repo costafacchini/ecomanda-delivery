@@ -1,4 +1,4 @@
-import transformChatBody from '../services/ChatMessage'
+import { transformChatBody } from '../services/ChatMessage.js'
 
 export default {
   key: 'chat-message',

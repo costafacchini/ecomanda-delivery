@@ -58,4 +58,4 @@ class Default {
   }
 }
 
-export default Default
+export { Default }

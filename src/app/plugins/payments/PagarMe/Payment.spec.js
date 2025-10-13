@@ -1,4 +1,4 @@
-import Payment from './Payment'
+import { Payment } from './Payment.js'
 import Integrationlog from '@models/Integrationlog'
 import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../../.jest/utils'

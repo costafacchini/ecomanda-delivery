@@ -1,4 +1,4 @@
-import transformChatbotTransferBody from '../services/ChatbotTransfer'
+import { transformChatbotTransferBody } from '../services/ChatbotTransfer.js'
 
 export default {
   key: 'chatbot-transfer-to-chat',

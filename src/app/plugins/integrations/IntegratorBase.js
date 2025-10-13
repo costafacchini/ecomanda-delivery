@@ -4,4 +4,4 @@ class IntegratorBase {
   parseStatus() {}
 }
 
-export default IntegratorBase
+export { IntegratorBase }

@@ -1,6 +1,6 @@
-import Backgroundjob from '@models/Backgroundjob'
-import queueServer from '@config/queue'
-import { sanitizeModelErrors } from '../helpers/SanitizeErrors'
+import Backgroundjob from '../models/Backgroundjob.js'
+import { queueServer } from '../../config/queue.js'
+import { sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
 
 class BackgroundjobsController {
   async create(req, res) {
@@ -75,4 +75,4 @@ class BackgroundjobsController {
   }
 }
 
-export default BackgroundjobsController
+export { BackgroundjobsController }

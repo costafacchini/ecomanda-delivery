@@ -1,7 +1,7 @@
-import createChatPlugin from './factory'
-import Rocketchat from './Rocketchat'
-import Cuboup from './Cuboup'
-import Crisp from './Crisp'
+import { createChatPlugin } from './factory.js'
+import { Rocketchat } from './Rocketchat.js'
+import { Cuboup } from './Cuboup.js'
+import { Crisp } from './Crisp.js'
 import { licensee as licenseeFactory } from '@factories/licensee'
 
 describe('createChatPlugin', () => {

@@ -1,5 +1,5 @@
-import Body from '@models/Body'
-import Pedidos10 from '../plugins/integrations/Pedidos10'
+import Body from '../models/Body.js'
+import { Pedidos10 } from '../plugins/integrations/Pedidos10.js'
 
 async function processWebhook(data) {
   const { bodyId } = data
@@ -20,4 +20,4 @@ async function processWebhook(data) {
   return actions
 }
 
-export default processWebhook
+export { processWebhook }

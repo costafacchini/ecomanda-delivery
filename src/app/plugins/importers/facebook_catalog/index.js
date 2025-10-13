@@ -1,5 +1,5 @@
-import Trigger from '@models/Trigger'
-import Product from '@models/Product'
+import Trigger from '../../../models/Trigger.js'
+import Product from '../../../models/Product.js'
 import _ from 'lodash'
 
 async function importProducts(products, licensee) {
@@ -93,4 +93,4 @@ class FacebookCatalogImporter {
   }
 }
 
-export default FacebookCatalogImporter
+export { FacebookCatalogImporter }

@@ -1,6 +1,6 @@
-import Body from '@models/Body'
-import queueServer from '@config/queue'
-import { publishMessage } from '@config/rabbitmq'
+import Body from '../models/Body.js'
+import { queueServer } from '../../config/queue.js'
+import { publishMessage } from '../../config/rabbitmq.js'
 
 class ChatsController {
   async message(req, res) {
@@ -25,4 +25,4 @@ class ChatsController {
   }
 }
 
-export default ChatsController
+export { ChatsController }

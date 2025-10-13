@@ -1,6 +1,6 @@
-import Go2go from './Go2go'
-import Go2goV2 from './Go2goV2'
-import Alloy from './Alloy'
+import { Go2go } from './Go2go.js'
+import { Go2goV2 } from './Go2goV2.js'
+import { Alloy } from './Alloy.js'
 
 function createCartPlugin(licensee) {
   switch (licensee.cartDefault) {
@@ -15,4 +15,4 @@ function createCartPlugin(licensee) {
   }
 }
 
-export default createCartPlugin
+export { createCartPlugin }

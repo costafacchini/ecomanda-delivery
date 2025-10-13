@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import NormalizePhone from '@helpers/NormalizePhone'
+import { NormalizePhone } from '../helpers/NormalizePhone.js'
 
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId

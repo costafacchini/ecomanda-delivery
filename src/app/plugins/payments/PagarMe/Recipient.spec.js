@@ -1,4 +1,4 @@
-import Recipient from './Recipient'
+import { Recipient } from './Recipient.js'
 import Integrationlog from '@models/Integrationlog'
 import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../../.jest/utils'

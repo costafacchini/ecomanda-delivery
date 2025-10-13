@@ -1,4 +1,4 @@
-import Card from './Card'
+import { Card } from './Card.js'
 import Integrationlog from '@models/Integrationlog'
 import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../../.jest/utils'

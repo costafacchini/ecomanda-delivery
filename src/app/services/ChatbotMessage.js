@@ -1,5 +1,5 @@
-import Body from '@models/Body'
-import createChatbotPlugin from '../plugins/chatbots/factory'
+import Body from '../models/Body.js'
+import { createChatbotPlugin } from '../plugins/chatbots/factory.js'
 
 async function transformChatbotBody(data) {
   const { bodyId } = data
@@ -29,4 +29,4 @@ async function transformChatbotBody(data) {
   return actions
 }
 
-export default transformChatbotBody
+export { transformChatbotBody }

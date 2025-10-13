@@ -100,4 +100,4 @@ class Parser {
   }
 }
 
-export default Parser
+export { Parser }

@@ -1,7 +1,7 @@
-import Body from '@models/Body'
-import createChatPlugin from '../plugins/chats/factory'
-import { ContactRepositoryDatabase } from '@repositories/contact'
-import { MessageRepositoryDatabase } from '@repositories/message'
+import Body from '../models/Body.js'
+import { createChatPlugin } from '../plugins/chats/factory.js'
+import { ContactRepositoryDatabase } from '../repositories/contact.js'
+import { MessageRepositoryDatabase } from '../repositories/message.js'
 
 async function transformChatBody(data) {
   const { bodyId } = data
@@ -56,4 +56,4 @@ async function transformChatBody(data) {
   return actions
 }
 
-export default transformChatBody
+export { transformChatBody }

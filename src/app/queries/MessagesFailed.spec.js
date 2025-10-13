@@ -1,5 +1,5 @@
 import mongoServer from '../../../.jest/utils'
-import MessagesFailedQuery from './MessagesFailed'
+import { MessagesFailedQuery } from './MessagesFailed'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { message as messageFactory } from '@factories/message'

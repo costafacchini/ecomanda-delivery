@@ -1,4 +1,4 @@
-import Webhook from './Webhook'
+import { Webhook } from './Webhook.js'
 import Licensee from '@models/Licensee'
 import Integrationlog from '@models/Integrationlog'
 import fetchMock from 'fetch-mock'

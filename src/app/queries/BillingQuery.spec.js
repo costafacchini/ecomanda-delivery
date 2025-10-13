@@ -1,4 +1,4 @@
-import BillingQuery from '@queries/BillingQuery'
+import { BillingQuery } from '@queries/BillingQuery'
 import mongoServer from '../../../.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'

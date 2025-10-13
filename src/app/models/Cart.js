@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import Contact from '@models/Contact'
+import Contact from './Contact.js'
 
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId

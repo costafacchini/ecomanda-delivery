@@ -1,4 +1,4 @@
-import processWebhookRequest from './ProcessWebhookRequest'
+import { processWebhookRequest } from './ProcessWebhookRequest.js'
 import Body from '@models/Body'
 import mongoServer from '.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'

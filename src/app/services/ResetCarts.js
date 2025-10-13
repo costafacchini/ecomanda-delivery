@@ -1,4 +1,4 @@
-import Cart from '@models/Cart'
+import Cart from '../models/Cart.js'
 import moment from 'moment-timezone'
 
 async function resetCarts() {
@@ -7,4 +7,4 @@ async function resetCarts() {
   return
 }
 
-export default resetCarts
+export { resetCarts }

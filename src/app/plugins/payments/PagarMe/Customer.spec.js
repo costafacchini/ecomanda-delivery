@@ -1,4 +1,4 @@
-import Customer from './Customer'
+import { Customer } from './Customer.js'
 import Integrationlog from '@models/Integrationlog'
 import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../../.jest/utils'

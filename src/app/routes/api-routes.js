@@ -1,6 +1,6 @@
 import express from 'express'
-import v1Routes from './v1/v1-routes'
-import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import v1Routes from './v1/v1-routes.js'
+import { LicenseeRepositoryDatabase } from '../repositories/licensee.js'
 
 const router = express.Router()
 

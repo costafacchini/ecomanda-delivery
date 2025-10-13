@@ -1,12 +1,12 @@
-import Trigger from '@models/Trigger'
-import Template from '@models/Template'
-import NormalizePhone from '@helpers/NormalizePhone'
-import request from '../../services/request'
-import files from '@helpers/Files'
-import cartFactory from '../../plugins/carts/factory'
-import { parseText } from '@helpers/ParseTriggerText'
-import MessengersBase from './Base'
-import { MessageRepositoryDatabase } from '@repositories/message'
+import Trigger from '../../models/Trigger.js'
+import Template from '../../models/Template.js'
+import { NormalizePhone } from '../../helpers/NormalizePhone.js'
+import request from '../../services/request.js'
+import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files.js'
+import { createCartPlugin } from '../../plugins/carts/factory.js'
+import { parseText } from '../../helpers/ParseTriggerText.js'
+import { MessengersBase } from './Base.js'
+import { MessageRepositoryDatabase } from '../../repositories/message.js'
 
 const getWaIdContact = async (number, url, token) => {
   const headers = { 'D360-API-KEY': token }
@@ -324,17 +324,17 @@ class Dialog extends MessengersBase {
     }
 
     if (messageToSend.kind === 'file') {
-      if (files.isPhoto(messageToSend.url)) {
+      if (isPhoto(messageToSend.url)) {
         messageBody.type = 'image'
         messageBody.image = {
           link: messageToSend.url,
         }
-      } else if (files.isVideo(messageToSend.url)) {
+      } else if (isVideo(messageToSend.url)) {
         messageBody.type = 'video'
         messageBody.video = {
           link: messageToSend.url,
         }
-      } else if (files.isMidia(messageToSend.url) || files.isVoice(messageToSend.url)) {
+      } else if (isMidia(messageToSend.url) || isVoice(messageToSend.url)) {
         messageBody.type = 'audio'
         messageBody.audio = {
           link: messageToSend.url,
@@ -357,7 +357,7 @@ class Dialog extends MessengersBase {
     }
 
     if (messageToSend.kind === 'cart') {
-      const cartPlugin = cartFactory(this.licensee)
+      const cartPlugin = createCartPlugin(this.licensee)
       const cartTransformed = await cartPlugin.transformCart(this.licensee, messageToSend.cart)
 
       messageBody.type = 'text'
@@ -399,4 +399,4 @@ class Dialog extends MessengersBase {
   }
 }
 
-export default Dialog
+export { Dialog }

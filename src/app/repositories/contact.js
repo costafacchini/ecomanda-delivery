@@ -1,8 +1,8 @@
-import Repository from './repository'
-import Contact from '@models/Contact'
-import MessagesQuery from '@queries/MessagesQuery'
+import Repository from './repository.js'
+import Contact from '../models/Contact.js'
+import { MessagesQuery } from '../queries/MessagesQuery.js'
 import moment from 'moment-timezone'
-import NormalizePhone from '@helpers/NormalizePhone'
+import { NormalizePhone } from '../helpers/NormalizePhone.js'
 
 class ContactRepositoryDatabase extends Repository {
   model() {

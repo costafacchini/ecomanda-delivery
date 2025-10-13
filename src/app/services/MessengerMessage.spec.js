@@ -1,6 +1,6 @@
-import transformMessengerBody from './MessengerMessage'
+import { transformMessengerBody } from './MessengerMessage.js'
 import Body from '@models/Body'
-import Dialog from '../plugins/messengers/Dialog'
+import { Dialog } from '../plugins/messengers/Dialog.js'
 import mongoServer from '.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { body as bodyFactory } from '@factories/body'

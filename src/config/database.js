@@ -18,4 +18,4 @@ async function connect() {
   await mongoServer.connect()
 }
 
-export default connect
+export { connect }

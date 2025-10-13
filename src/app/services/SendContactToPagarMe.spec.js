@@ -1,5 +1,5 @@
-import sendContactToPagarMe from './SendContactToPagarMe'
-import Customer from '@plugins/payments/PagarMe/Customer'
+import { sendContactToPagarMe } from './SendContactToPagarMe.js'
+import { Customer } from '@plugins/payments/PagarMe/Customer.js'
 import mongoServer from '.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'

@@ -1,4 +1,4 @@
-import Gallabox from './Gallabox'
+import { Gallabox } from './Gallabox.js'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 

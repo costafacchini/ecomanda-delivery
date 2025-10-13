@@ -1,4 +1,4 @@
-import backup from '../services/Backup'
+import { backup } from '../services/Backup.js'
 
 export default {
   key: 'backup',

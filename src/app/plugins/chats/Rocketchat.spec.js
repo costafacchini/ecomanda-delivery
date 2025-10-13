@@ -1,9 +1,8 @@
-import Rocketchat from './Rocketchat'
+import { Rocketchat } from './Rocketchat.js'
 import Room from '@models/Room'
 import Trigger from '@models/Trigger'
 import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../.jest/utils'
-import emoji from '../../helpers/Emoji'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { room as roomFactory } from '@factories/room'
@@ -19,7 +18,6 @@ describe('Rocketchat plugin', () => {
   let licensee
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
-  const emojiReplaceSpy = jest.spyOn(emoji, 'replace')
 
   beforeEach(async () => {
     await mongoServer.connect()
@@ -145,10 +143,6 @@ describe('Rocketchat plugin', () => {
 
       expect(messages[4].kind).toEqual('template')
       expect(messages[4].text).toEqual('{{name}}')
-
-      expect(emojiReplaceSpy).toHaveBeenCalledTimes(4)
-      expect(emojiReplaceSpy).toHaveBeenCalledWith('Hello message')
-      expect(emojiReplaceSpy).toHaveBeenCalledWith('Message with image')
     })
 
     it('return the empty data if body is blank', async () => {
@@ -223,8 +217,6 @@ describe('Rocketchat plugin', () => {
         expect(messages[0].latitude).toEqual(undefined)
         expect(messages[0].longitude).toEqual(undefined)
         expect(messages[0].departament).toEqual(undefined)
-
-        expect(emojiReplaceSpy).not.toHaveBeenCalled()
 
         expect(messages.length).toEqual(1)
       })

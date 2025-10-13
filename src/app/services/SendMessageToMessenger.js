@@ -1,5 +1,5 @@
-import createMessengerPlugin from '../plugins/messengers/factory'
-import { MessageRepositoryDatabase } from '@repositories/message'
+import { createMessengerPlugin } from '../plugins/messengers/factory.js'
+import { MessageRepositoryDatabase } from '../repositories/message.js'
 
 async function sendMessageToMessenger(data) {
   const { messageId, url, token } = data
@@ -12,4 +12,4 @@ async function sendMessageToMessenger(data) {
   await messegnerPlugin.sendMessage(messageId, url, token)
 }
 
-export default sendMessageToMessenger
+export { sendMessageToMessenger }

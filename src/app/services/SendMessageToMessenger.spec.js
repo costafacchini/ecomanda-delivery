@@ -1,5 +1,5 @@
-import sendMessageToMessenger from './SendMessageToMessenger'
-import Dialog from '../plugins/messengers/Dialog'
+import { sendMessageToMessenger } from './SendMessageToMessenger.js'
+import { Dialog } from '../plugins/messengers/Dialog.js'
 import mongoServer from '.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'

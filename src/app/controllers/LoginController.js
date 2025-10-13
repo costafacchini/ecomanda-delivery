@@ -1,4 +1,4 @@
-import User from '@models/User'
+import User from '../models/User.js'
 import jwt from 'jsonwebtoken'
 const SECRET = process.env.SECRET
 
@@ -25,4 +25,4 @@ async function login(req, res) {
   res.status(401).json({ message: 'Login inválido!' })
 }
 
-export default { login }
+export { login }

@@ -1,5 +1,5 @@
-import QueryBuilder from '@queries/QueryBuilder'
-import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { QueryBuilder } from './QueryBuilder.js'
+import { LicenseeRepositoryDatabase } from '../repositories/licensee.js'
 
 class LicenseesQuery {
   constructor() {}
@@ -63,4 +63,4 @@ class LicenseesQuery {
   }
 }
 
-export default LicenseesQuery
+export { LicenseesQuery }

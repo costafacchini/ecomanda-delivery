@@ -1,11 +1,11 @@
-import emoji from '@helpers/Emoji'
-import files from '@helpers/Files'
-import NormalizePhone from '../../helpers/NormalizePhone'
+import { replace } from '../../helpers/Emoji.js'
+import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files.js'
+import { NormalizePhone } from '../../helpers/NormalizePhone.js'
 import { v4 as uuidv4 } from 'uuid'
-import request from '../../services/request'
-import ChatsBase from './Base'
-import { ContactRepositoryDatabase } from '@repositories/contact'
-import { MessageRepositoryDatabase } from '@repositories/message'
+import request from '../../services/request.js'
+import { ChatsBase } from './Base.js'
+import { ContactRepositoryDatabase } from '../../repositories/contact.js'
+import { MessageRepositoryDatabase } from '../../repositories/message.js'
 
 class Cuboup extends ChatsBase {
   constructor(licensee) {
@@ -54,7 +54,7 @@ class Cuboup extends ChatsBase {
     }
 
     if (messageToSend.kind === 'text') {
-      messageToSend.text = { body: emoji.replace(message.text) }
+      messageToSend.text = { body: replace(message.text) }
     } else if (messageToSend.kind === 'location') {
       messageToSend.location = { latitude: message.latitude, longitude: message.longitude }
     } else {
@@ -169,16 +169,16 @@ class Cuboup extends ChatsBase {
 
   static messageType(fileUrl) {
     let type
-    if (files.isPhoto(fileUrl)) {
+    if (isPhoto(fileUrl)) {
       type = 'photo'
     }
-    if (files.isVideo(fileUrl)) {
+    if (isVideo(fileUrl)) {
       type = 'video'
     }
-    if (files.isMidia(fileUrl)) {
+    if (isMidia(fileUrl)) {
       type = 'audio'
     }
-    if (files.isVoice(fileUrl)) {
+    if (isVoice(fileUrl)) {
       type = 'voice'
     }
     if (!type) {
@@ -219,4 +219,4 @@ class Cuboup extends ChatsBase {
   }
 }
 
-export default Cuboup
+export { Cuboup }

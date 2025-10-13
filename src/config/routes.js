@@ -1,8 +1,8 @@
 import path from 'path'
-import loginRoutes from '@routes/login-route.js'
-import resourcesRoutes from '@routes/resources-routes.js'
-import apiRoutes from '@routes/api-routes.js'
-import bullboardRoute from '@routes/bull-board-route.js'
+import { router as loginRoutes } from '../app/routes/login-route.js'
+import resourcesRoutes from '../app/routes/resources-routes.js'
+import apiRoutes from '../app/routes/api-routes.js'
+import bullboardRoute from '../app/routes/bull-board-route.js'
 
 function routes(app) {
   app.use('/resources', resourcesRoutes)
@@ -14,4 +14,4 @@ function routes(app) {
   })
 }
 
-export default routes
+export { routes }

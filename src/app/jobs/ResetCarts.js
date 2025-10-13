@@ -1,4 +1,4 @@
-import resetCarts from '../services/ResetCarts'
+import { resetCarts } from '../services/ResetCarts.js'
 
 export default {
   key: 'reset-carts',

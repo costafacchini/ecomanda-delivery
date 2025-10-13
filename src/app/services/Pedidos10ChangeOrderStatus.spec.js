@@ -1,4 +1,4 @@
-import changeOrderStatus from './Pedidos10ChangeOrderStatus'
+import { changeOrderStatus } from './Pedidos10ChangeOrderStatus.js'
 import Licensee from '@models/Licensee'
 import Body from '@models/Body'
 import mongoServer from '.jest/utils'
@@ -6,8 +6,8 @@ import { OrderRepositoryDatabase } from '@repositories/order'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { order as orderFactory } from '@factories/order'
 import { body as bodyFactory } from '@factories/body'
-import Pedidos10 from '../plugins/integrations/Pedidos10'
-import IntegratorBase from '../plugins/integrations/IntegratorBase'
+import { Pedidos10 } from '../plugins/integrations/Pedidos10.js'
+import { IntegratorBase } from '../plugins/integrations/IntegratorBase.js'
 
 describe('changeOrderStatus', () => {
   const pedidos10ChangeOrderStatusFnSpy = jest

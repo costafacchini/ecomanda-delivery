@@ -87,4 +87,4 @@ async function upload(content, fileName) {
   return results
 }
 
-export default backup
+export { backup }

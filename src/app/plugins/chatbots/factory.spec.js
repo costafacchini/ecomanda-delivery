@@ -1,5 +1,5 @@
-import createChatbotPlugin from './factory'
-import Landbot from './Landbot'
+import { createChatbotPlugin } from './factory.js'
+import { Landbot } from './Landbot.js'
 import { licensee as licenseeFactory } from '@factories/licensee'
 
 describe('createChatbotPlugin', () => {

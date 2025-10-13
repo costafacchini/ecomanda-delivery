@@ -1,7 +1,7 @@
-import NormalizePhone from '../../helpers/NormalizePhone'
-import request from '../../services/request'
-import MessengersBase from './Base'
-import { MessageRepositoryDatabase } from '@repositories/message'
+import { NormalizePhone } from '../../helpers/NormalizePhone.js'
+import request from '../../services/request.js'
+import { MessengersBase } from './Base.js'
+import { MessageRepositoryDatabase } from '../../repositories/message.js'
 
 class Utalk extends MessengersBase {
   constructor(licensee) {
@@ -137,4 +137,4 @@ class Utalk extends MessengersBase {
   }
 }
 
-export default Utalk
+export { Utalk }

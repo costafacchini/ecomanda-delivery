@@ -1,7 +1,7 @@
 import Backgroundjob from '@models/Backgroundjob'
 import request from 'supertest'
 import mongoServer from '../../../.jest/utils'
-import queueServer from '@config/queue'
+import { queueServer } from '@config/queue'
 import { expressServer } from '../../../.jest/server-express'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { backgroundjob as backgroundjobFactory } from '@factories/backgroundjob'

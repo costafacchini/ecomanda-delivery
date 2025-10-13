@@ -1,5 +1,5 @@
-import Body from '@models/Body'
-import createMessengerPlugin from '../plugins/messengers/factory'
+import Body from '../models/Body.js'
+import { createMessengerPlugin } from '../plugins/messengers/factory.js'
 
 async function transformMessengerBody(data) {
   const { bodyId } = data
@@ -42,4 +42,4 @@ async function transformMessengerBody(data) {
   return actions
 }
 
-export default transformMessengerBody
+export { transformMessengerBody }

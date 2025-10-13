@@ -1,6 +1,6 @@
-import transformChatBody from './ChatMessage'
+import { transformChatBody } from './ChatMessage.js'
 import Body from '@models/Body'
-import Rocketchat from '../plugins/chats/Rocketchat'
+import { Rocketchat } from '../plugins/chats/Rocketchat.js'
 import mongoServer from '.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { body as bodyFactory } from '@factories/body'

@@ -1,4 +1,4 @@
-import Default from './Default'
+import { Default } from './Default.js'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 

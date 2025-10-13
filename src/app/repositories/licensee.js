@@ -1,5 +1,5 @@
-import Repository from './repository'
-import Licensee from '@models/Licensee'
+import Repository from './repository.js'
+import Licensee from '../models/Licensee.js'
 
 class LicenseeRepositoryDatabase extends Repository {
   model() {

@@ -22,4 +22,4 @@ class MessagesFailedQuery {
   }
 }
 
-export default MessagesFailedQuery
+export { MessagesFailedQuery }

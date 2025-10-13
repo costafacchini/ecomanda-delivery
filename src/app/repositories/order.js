@@ -1,5 +1,5 @@
-import Repository from './repository'
-import Order from '@models/Order'
+import Repository from './repository.js'
+import Order from '../models/Order.js'
 
 class OrderRepositoryDatabase extends Repository {
   async create(fields) {

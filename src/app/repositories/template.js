@@ -1,4 +1,4 @@
-import Template from '@models/Template'
+import Template from '../models/Template.js'
 
 async function destroyAllTemplates() {
   await Template.deleteMany()

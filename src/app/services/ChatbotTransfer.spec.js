@@ -1,6 +1,6 @@
-import transformChatbotTransferBody from './ChatbotTransfer'
+import { transformChatbotTransferBody } from './ChatbotTransfer.js'
 import Body from '@models/Body'
-import Landbot from '../plugins/chatbots/Landbot'
+import { Landbot } from '../plugins/chatbots/Landbot.js'
 import mongoServer from '.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { body as bodyFactory } from '@factories/body'

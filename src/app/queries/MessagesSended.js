@@ -20,4 +20,4 @@ class MessagesSendedQuery {
   }
 }
 
-export default MessagesSendedQuery
+export { MessagesSendedQuery }

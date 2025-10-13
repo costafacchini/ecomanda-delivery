@@ -1,7 +1,7 @@
-import Integrationlog from '@models/Integrationlog'
-import request from '../../../services/request'
-import { LicenseeRepositoryDatabase } from '@repositories/licensee'
-import { ContactRepositoryDatabase } from '@repositories/contact'
+import Integrationlog from '../../../models/Integrationlog.js'
+import request from '../../../services/request.js'
+import { LicenseeRepositoryDatabase } from '../../../repositories/licensee.js'
+import { ContactRepositoryDatabase } from '../../../repositories/contact.js'
 
 const buildBody = (cart, contact, buildPaymentBuilder) => {
   return {
@@ -205,4 +205,4 @@ class Payment {
   }
 }
 
-export default Payment
+export { Payment }

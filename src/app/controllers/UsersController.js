@@ -1,6 +1,6 @@
-import User from '@models/User'
+import User from '../models/User.js'
 import { check, validationResult } from 'express-validator'
-import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors'
+import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
 import _ from 'lodash'
 
 function permit(fields) {
@@ -87,4 +87,4 @@ class UsersController {
   }
 }
 
-export default UsersController
+export { UsersController }

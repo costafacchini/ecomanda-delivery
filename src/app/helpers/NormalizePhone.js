@@ -30,4 +30,4 @@ class NormalizePhone {
   }
 }
 
-export default NormalizePhone
+export { NormalizePhone }

@@ -1,4 +1,4 @@
-import sendOrder from '../services/IntegrationSendOrder'
+import { sendOrder } from '../services/IntegrationSendOrder.js'
 
 export default {
   key: 'integration-send-order',

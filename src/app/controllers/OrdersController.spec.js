@@ -4,7 +4,7 @@ import Integrationlog from '@models/Integrationlog'
 import request from 'supertest'
 import mongoServer from '../../../.jest/utils'
 import { expressServer } from '../../../.jest/server-express'
-import queueServer from '@config/queue'
+import { queueServer } from '@config/queue'
 import { licensee as licenseeFactory } from '@factories/licensee'
 
 describe('chats controller', () => {

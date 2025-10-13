@@ -11,4 +11,4 @@ class DelayController {
   }
 }
 
-export default DelayController
+export { DelayController }

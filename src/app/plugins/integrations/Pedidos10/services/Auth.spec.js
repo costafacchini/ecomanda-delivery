@@ -1,4 +1,4 @@
-import Auth from './Auth'
+import { Auth } from './Auth.js'
 import Licensee from '@models/Licensee'
 import Integrationlog from '@models/Integrationlog'
 import fetchMock from 'fetch-mock'

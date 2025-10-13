@@ -1,5 +1,5 @@
-import Integrationlog from '@models/Integrationlog'
-import request from '../../../../services/request'
+import Integrationlog from '../../../../models/Integrationlog.js'
+import request from '../../../../services/request.js'
 
 class OrderStatus {
   constructor(licensee) {
@@ -41,4 +41,4 @@ class OrderStatus {
   }
 }
 
-export default OrderStatus
+export { OrderStatus }

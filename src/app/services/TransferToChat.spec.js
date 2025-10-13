@@ -1,5 +1,5 @@
-import transferToChat from './TransferToChat'
-import Rocketchat from '../plugins/chats/Rocketchat'
+import { transferToChat } from './TransferToChat.js'
+import { Rocketchat } from '../plugins/chats/Rocketchat.js'
 import mongoServer from '.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'

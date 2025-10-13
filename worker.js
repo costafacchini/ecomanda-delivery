@@ -1,13 +1,13 @@
 import 'dotenv/config'
-import 'module-alias/register'
-import '@models/index'
+import('./src/app/models/index.js')
 
-const { redisConnection } = import('@config/redis')
-const queueServer = import('@config/queue')
-const { Worker } = import('bullmq')
-const connect = import('./src/config/database')
+import { redisConnection } from './src/config/redis.js'
+import { queueServer } from './src/config/queue.js'
+import { Worker } from 'bullmq'
+import { connect } from './src/config/database.js'
+import { consumeChannel } from './src/config/rabbitmq.js'
+
 connect()
-const { consumeChannel } = import('@config/rabbitmq')
 consumeChannel()
 
 queueServer.queues.forEach((queue) => {

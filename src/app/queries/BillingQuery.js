@@ -1,5 +1,5 @@
-import MessagesQuery from '@queries/MessagesQuery'
-import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { MessagesQuery } from './MessagesQuery.js'
+import { LicenseeRepositoryDatabase } from '../repositories/licensee.js'
 import moment from 'moment-timezone'
 
 async function getLicenseeFirstMessage(licensee) {
@@ -89,4 +89,4 @@ class BillingQuery {
   }
 }
 
-export default BillingQuery
+export { BillingQuery }

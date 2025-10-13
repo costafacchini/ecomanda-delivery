@@ -1,4 +1,4 @@
-import processPagarmeOrderPaid from './ProcessPagarmeOrderPaid'
+import { processPagarmeOrderPaid } from './ProcessPagarmeOrderPaid.js'
 import mongoServer from '.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { cart as cartFactory } from '@factories/cart'

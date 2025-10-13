@@ -1,5 +1,5 @@
-import sendMessageToChat from './SendMessageToChat'
-import Rocketchat from '../plugins/chats/Rocketchat'
+import { sendMessageToChat } from './SendMessageToChat.js'
+import { Rocketchat } from '../plugins/chats/Rocketchat.js'
 import mongoServer from '.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'

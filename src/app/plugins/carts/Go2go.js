@@ -1,4 +1,4 @@
-import { CartRepositoryDatabase } from '@repositories/cart'
+import { CartRepositoryDatabase } from '../../repositories/cart.js'
 
 class Go2go {
   async transformCart(licensee, cartId) {
@@ -89,4 +89,4 @@ class Go2go {
   }
 }
 
-export default Go2go
+export { Go2go }

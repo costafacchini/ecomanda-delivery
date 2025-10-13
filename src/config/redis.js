@@ -19,8 +19,6 @@ const createRedis = function () {
   }
 }
 
-const redisConnection = createRedis()
+export const redisConnection = createRedis()
 
 redisConnection.setMaxListeners(redisConnection.getMaxListeners() + 1)
-
-export default { redisConnection }

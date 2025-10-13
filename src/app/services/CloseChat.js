@@ -1,5 +1,5 @@
-import createChatPlugin from '../plugins/chats/factory'
-import { MessageRepositoryDatabase } from '@repositories/message'
+import { createChatPlugin } from '../plugins/chats/factory.js'
+import { MessageRepositoryDatabase } from '../repositories/message.js'
 
 async function closeChat(data) {
   const { messageId } = data
@@ -30,4 +30,4 @@ async function closeChat(data) {
   return actions
 }
 
-export default closeChat
+export { closeChat }

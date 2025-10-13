@@ -1,6 +1,6 @@
-import Default from './Default'
-import Gallabox from './Gallabox'
-import Alloy from './Alloy'
+import { Default } from './Default.js'
+import { Gallabox } from './Gallabox.js'
+import { Alloy } from './Alloy.js'
 
 function createCartAdapter(plugin) {
   if (plugin == 'gallabox') {
@@ -12,4 +12,4 @@ function createCartAdapter(plugin) {
   }
 }
 
-export default createCartAdapter
+export { createCartAdapter }

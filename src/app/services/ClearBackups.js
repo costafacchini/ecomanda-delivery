@@ -38,4 +38,4 @@ async function clearBackups() {
   }
 }
 
-export default clearBackups
+export { clearBackups }

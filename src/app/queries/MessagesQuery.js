@@ -1,5 +1,5 @@
-import { MessageRepositoryDatabase } from '@repositories/message'
-import QueryBuilder from '@queries/QueryBuilder'
+import { MessageRepositoryDatabase } from '../repositories/message.js'
+import { QueryBuilder } from './QueryBuilder.js'
 
 class MessagesQuery {
   constructor() {}
@@ -83,4 +83,4 @@ class MessagesQuery {
   }
 }
 
-export default MessagesQuery
+export { MessagesQuery }

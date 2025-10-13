@@ -1,6 +1,6 @@
 import Template from '@models/Template'
-import Dialog from '@plugins/messengers/Dialog'
-import TemplatesImporter from '@plugins/importers/template/index'
+import { Dialog } from '@plugins/messengers/Dialog.js'
+import { TemplatesImporter } from '@plugins/importers/template/index.js'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { template as templateFactory } from '@factories/template'
 import mongoServer from '../../../../../.jest/utils'

@@ -1,5 +1,5 @@
-import NormalizePhone from '@helpers/NormalizePhone'
-import { ContactRepositoryDatabase } from '@repositories/contact'
+import { NormalizePhone } from '../../helpers/NormalizePhone.js'
+import { ContactRepositoryDatabase } from '../../repositories/contact.js'
 import _ from 'lodash'
 
 function permit(fields) {
@@ -73,4 +73,4 @@ class AdressesController {
   }
 }
 
-export default AdressesController
+export { AdressesController }

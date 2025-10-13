@@ -1,4 +1,4 @@
-import transferToChat from '../services/TransferToChat'
+import { transferToChat } from '../services/TransferToChat.js'
 
 export default {
   key: 'transfer-to-chat',

@@ -1,5 +1,5 @@
-import Integrationlog from '@models/Integrationlog'
-import request from '../../../services/request'
+import Integrationlog from '../../../models/Integrationlog.js'
+import request from '../../../services/request.js'
 
 class Recipient {
   async create(licensee, token) {
@@ -83,4 +83,4 @@ class Recipient {
   }
 }
 
-export default Recipient
+export { Recipient }

@@ -1,4 +1,4 @@
-import Alloy from './Alloy'
+import { Alloy } from './Alloy.js'
 import mongoServer from '../../../../.jest/utils'
 import { advanceTo, clear } from 'jest-date-mock'
 import { licensee as licenseeFactory } from '@factories/licensee'

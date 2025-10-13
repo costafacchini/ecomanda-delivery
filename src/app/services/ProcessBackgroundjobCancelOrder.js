@@ -1,6 +1,6 @@
-import Backgroundjob from '@models/Backgroundjob'
-import PagarMe from '@plugins/payments/PagarMe'
-import { CartRepositoryDatabase } from '@repositories/cart'
+import Backgroundjob from '../models/Backgroundjob.js'
+import { PagarMe } from '../plugins/payments/PagarMe.js'
+import { CartRepositoryDatabase } from '../repositories/cart.js'
 
 async function processBackgroundjobCancelOrder(data) {
   const { jobId, cart_id: cartId } = data
@@ -28,4 +28,4 @@ async function processBackgroundjobCancelOrder(data) {
   await backgroundjob.save()
 }
 
-export default processBackgroundjobCancelOrder
+export { processBackgroundjobCancelOrder }

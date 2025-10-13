@@ -1,4 +1,4 @@
-import processBackgroundjobGetPix from '../services/ProcessBackgroundjobGetPix'
+import { processBackgroundjobGetPix } from '../services/ProcessBackgroundjobGetPix.js'
 
 export default {
   key: 'process-backgroundjob-get-pix',

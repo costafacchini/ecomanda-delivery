@@ -1,9 +1,8 @@
-import Chatwoot from './Chatwoot'
+import { Chatwoot } from './Chatwoot.js'
 import Room from '@models/Room'
 import Trigger from '@models/Trigger'
 import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../.jest/utils'
-import emoji from '../../helpers/Emoji'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { room as roomFactory } from '@factories/room'
@@ -19,7 +18,6 @@ describe('Chatwoot plugin', () => {
   let licensee
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
-  const emojiReplaceSpy = jest.spyOn(emoji, 'replace')
 
   beforeEach(async () => {
     await mongoServer.connect()
@@ -84,9 +82,6 @@ describe('Chatwoot plugin', () => {
       expect(messages[0].number).toEqual('150bdb15-4c55-42ac-bc6c-970d620fdb6d')
       expect(messages[0].destination).toEqual('to-messenger')
       expect(messages[0].text).toEqual('Hello world')
-
-      expect(emojiReplaceSpy).toHaveBeenCalled()
-      expect(emojiReplaceSpy).toHaveBeenCalledWith('Hello world')
 
       expect(messages.length).toEqual(1)
     })

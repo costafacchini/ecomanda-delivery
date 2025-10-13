@@ -4,4 +4,4 @@ function enableCors(app) {
   app.use(cors())
 }
 
-export default enableCors
+export { enableCors }

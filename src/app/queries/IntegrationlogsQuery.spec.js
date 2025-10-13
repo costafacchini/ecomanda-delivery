@@ -1,4 +1,4 @@
-import IntegrationlogsQuery from '@queries/IntegrationlogsQuery'
+import { IntegrationlogsQuery } from '@queries/IntegrationlogsQuery'
 import mongoServer from '../../../.jest/utils'
 import Integrationlog from '@models/Integrationlog'
 import { licensee as licenseeFactory } from '@factories/licensee'

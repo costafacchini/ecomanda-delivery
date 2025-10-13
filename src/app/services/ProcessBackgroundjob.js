@@ -1,6 +1,6 @@
-import Backgroundjob from '@models/Backgroundjob'
-import { ContactRepositoryDatabase } from '@repositories/contact'
-import { CartRepositoryDatabase } from '@repositories/cart'
+import Backgroundjob from '../models/Backgroundjob.js'
+import { ContactRepositoryDatabase } from '../repositories/contact.js'
+import { CartRepositoryDatabase } from '../repositories/cart.js'
 
 async function processBackgroundjob(data) {
   const { jobId } = data
@@ -48,4 +48,4 @@ async function processBackgroundjob(data) {
   return actions
 }
 
-export default processBackgroundjob
+export { processBackgroundjob }

@@ -1,4 +1,4 @@
-import MessagesQuery from '@queries/MessagesQuery'
+import { MessagesQuery } from '../queries/MessagesQuery.js'
 
 class MessagesController {
   async index(req, res) {
@@ -40,4 +40,4 @@ class MessagesController {
   }
 }
 
-export default MessagesController
+export { MessagesController }

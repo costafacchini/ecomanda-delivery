@@ -1,4 +1,4 @@
-import resetChats from '../services/ResetChats'
+import { resetChats } from '../services/ResetChats.js'
 
 export default {
   key: 'reset-chats',

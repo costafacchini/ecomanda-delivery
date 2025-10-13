@@ -1,5 +1,5 @@
-import MessagesSendedQuery from '@queries/MessagesSended'
-import MessagesFailedQuery from '@queries/MessagesFailed'
+import { MessagesSendedQuery } from '@queries/MessagesSended'
+import { MessagesFailedQuery } from '@queries/MessagesFailed'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import moment from 'moment'
 
@@ -42,4 +42,4 @@ class MessagesSendedYesterday {
   }
 }
 
-export default MessagesSendedYesterday
+export { MessagesSendedYesterday }

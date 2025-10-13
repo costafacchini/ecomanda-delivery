@@ -1,5 +1,5 @@
-import createIntegrator from '../plugins/integrations/factory'
-import { OrderRepositoryDatabase } from '@repositories/order'
+import { createIntegrator } from '../plugins/integrations/factory.js'
+import { OrderRepositoryDatabase } from '../repositories/order.js'
 
 async function sendOrder(data) {
   const { orderId } = data
@@ -19,4 +19,4 @@ async function sendOrder(data) {
   await order.save()
 }
 
-export default sendOrder
+export { sendOrder }

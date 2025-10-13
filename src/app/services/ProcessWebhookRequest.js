@@ -1,4 +1,4 @@
-import Body from '@models/Body'
+import Body from '../models/Body.js'
 
 async function processWebhookRequest(data) {
   const { bodyId } = data
@@ -19,4 +19,4 @@ async function processWebhookRequest(data) {
   return actions
 }
 
-export default processWebhookRequest
+export { processWebhookRequest }

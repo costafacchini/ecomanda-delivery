@@ -1,4 +1,4 @@
-import processBackgroundjob from './ProcessBackgroundjob'
+import { processBackgroundjob } from './ProcessBackgroundjob.js'
 import Backgroundjob from '@models/Backgroundjob'
 import mongoServer from '.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'

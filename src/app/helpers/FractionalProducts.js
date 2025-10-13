@@ -116,4 +116,4 @@ class FractionalProducts {
   }
 }
 
-export default FractionalProducts
+export { FractionalProducts }

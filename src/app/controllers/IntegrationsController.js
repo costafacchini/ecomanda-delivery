@@ -1,5 +1,5 @@
-import Body from '@models/Body'
-import { publishMessage } from '@config/rabbitmq'
+import Body from '../models/Body.js'
+import { publishMessage } from '../../config/rabbitmq.js'
 
 class IntegrationsController {
   async create(req, res) {
@@ -17,4 +17,4 @@ class IntegrationsController {
   }
 }
 
-export default IntegrationsController
+export { IntegrationsController }

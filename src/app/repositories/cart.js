@@ -1,5 +1,5 @@
-import Repository from './repository'
-import Cart from '@models/Cart'
+import Repository from './repository.js'
+import Cart from '../models/Cart.js'
 
 class CartRepositoryDatabase extends Repository {
   model() {

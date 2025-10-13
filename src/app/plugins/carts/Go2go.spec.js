@@ -1,4 +1,4 @@
-import Go2go from './Go2go'
+import { Go2go } from './Go2go.js'
 import mongoServer from '../../../../.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'

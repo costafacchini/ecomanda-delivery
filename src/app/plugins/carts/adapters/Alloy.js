@@ -59,4 +59,4 @@ class Alloy {
   }
 }
 
-export default Alloy
+export { Alloy }

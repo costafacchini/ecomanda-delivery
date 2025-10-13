@@ -1,5 +1,5 @@
-import Body from '@models/Body'
-import queueServer from '@config/queue'
+import Body from '../models/Body.js'
+import { queueServer } from '../../config/queue.js'
 
 class MessengersController {
   async message(req, res) {
@@ -13,4 +13,4 @@ class MessengersController {
   }
 }
 
-export default MessengersController
+export { MessengersController }

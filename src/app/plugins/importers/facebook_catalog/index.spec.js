@@ -1,6 +1,6 @@
 import Trigger from '@models/Trigger'
 import Product from '@models/Product'
-import FacebookCatalogImporter from '@plugins/importers/facebook_catalog/index'
+import { FacebookCatalogImporter } from '@plugins/importers/facebook_catalog/index.js'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { triggerMultiProduct as triggerFactory } from '@factories/trigger'
 import { product as productFactory } from '@factories/product'

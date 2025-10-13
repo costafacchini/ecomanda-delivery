@@ -1,4 +1,4 @@
-import FractionalProducts from '../../../helpers/FractionalProducts'
+import { FractionalProducts } from '../../../helpers/FractionalProducts.js'
 
 class Gallabox {
   parseCart(licensee, contact, cart) {
@@ -51,4 +51,4 @@ class Gallabox {
   }
 }
 
-export default Gallabox
+export { Gallabox }

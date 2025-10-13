@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from 'uuid'
-import Repository from './repository'
-import Message from '@models/Message'
-import Trigger from '@models/Trigger'
-import { parseText } from '@helpers/ParseTriggerText'
-import emoji from '@helpers/Emoji'
+import Repository from './repository.js'
+import Message from '../models/Message.js'
+import Trigger from '../models/Trigger.js'
+import { parseText } from '../helpers/ParseTriggerText.js'
+import { replace } from '../helpers/Emoji.js'
 
 class MessageRepositoryDatabase extends Repository {
   model() {
@@ -36,7 +36,7 @@ class MessageRepositoryDatabase extends Repository {
   async createInteractiveMessages(fields) {
     const messages = []
 
-    const text = emoji.replace(fields.text)
+    const text = replace(fields.text)
 
     const triggers = await Trigger.find({ expression: text, licensee: fields.licensee }).sort({ order: 'asc' })
     if (triggers.length > 0) {

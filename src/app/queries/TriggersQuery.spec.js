@@ -1,4 +1,4 @@
-import TriggersQuery from '@queries/TriggersQuery'
+import { TriggersQuery } from '@queries/TriggersQuery'
 import mongoServer from '../../../.jest/utils'
 import Trigger from '@models/Trigger'
 import { licensee as licenseeFactory } from '@factories/licensee'

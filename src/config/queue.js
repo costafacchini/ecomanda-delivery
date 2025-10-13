@@ -1,5 +1,5 @@
 import { Queue } from 'bullmq'
-import { redisConnection } from '@config/redis.js'
+import { redisConnection } from './redis.js'
 
 import jobs from '../app/jobs/index.js'
 
@@ -36,4 +36,4 @@ class QueueServer {
   }
 }
 
-export default new QueueServer()
+export const queueServer = new QueueServer()

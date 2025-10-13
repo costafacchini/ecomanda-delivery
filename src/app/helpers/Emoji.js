@@ -1,6 +1,6 @@
-import { emojiList } from './EmojiList'
+import { emojiList } from './EmojiList.js'
 
-function replace(message) {
+export const replace = (message) => {
   const regex = /(:[^:]*:)/gm
   const rocketEmojis = []
 
@@ -23,5 +23,3 @@ function replace(message) {
     return accMessage.replace(rocketEmoji, emoji ? emoji.wpp : rocketEmoji)
   }, message)
 }
-
-module.exports.replace = replace

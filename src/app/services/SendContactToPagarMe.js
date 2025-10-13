@@ -1,5 +1,5 @@
-import PagarMe from '@plugins/payments/PagarMe'
-import { ContactRepositoryDatabase } from '@repositories/contact'
+import { PagarMe } from '../plugins/payments/PagarMe.js'
+import { ContactRepositoryDatabase } from '../repositories/contact.js'
 
 async function sendContactToPagarMe(data) {
   const { contactId } = data
@@ -18,4 +18,4 @@ async function sendContactToPagarMe(data) {
   }
 }
 
-export default sendContactToPagarMe
+export { sendContactToPagarMe }

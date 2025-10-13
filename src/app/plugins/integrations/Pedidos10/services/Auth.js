@@ -1,5 +1,5 @@
-import Integrationlog from '@models/Integrationlog'
-import request from '../../../../services/request'
+import Integrationlog from '../../../../models/Integrationlog.js'
+import request from '../../../../services/request.js'
 
 class Auth {
   constructor(licensee) {
@@ -50,4 +50,4 @@ class Auth {
   }
 }
 
-export default Auth
+export { Auth }

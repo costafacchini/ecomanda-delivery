@@ -1,4 +1,4 @@
-import resetCarts from './ResetCarts'
+import { resetCarts } from './ResetCarts.js'
 import mongoServer from '.jest/utils'
 import { licenseeComplete as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'

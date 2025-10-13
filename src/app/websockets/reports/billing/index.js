@@ -1,6 +1,6 @@
-import { io } from '@config/http'
-import BillingQuery from '@queries/BillingQuery'
-import IntegrationlogsQuery from '@queries/IntegrationlogsQuery'
+import { io } from '../../../../config/http.js'
+import { BillingQuery } from '../../../../app/queries/BillingQuery.js'
+import { IntegrationlogsQuery } from '../../../../app/queries/IntegrationlogsQuery.js'
 
 io.on('connect', (socket) => {
   socket.on('load_billing_report', async (params) => {

@@ -1,4 +1,4 @@
-import LicenseesQuery from '@queries/LicenseesQuery'
+import { LicenseesQuery } from '@queries/LicenseesQuery'
 import mongoServer from '../../../.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'

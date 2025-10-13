@@ -1,14 +1,14 @@
 import User from '@models/User'
 import request from 'supertest'
 import mongoServer from '../../../.jest/utils'
-import queueServer from '@config/queue'
+import { queueServer } from '@config/queue'
 import { expressServer } from '../../../.jest/server-express'
 import { userSuper as userSuperFactory } from '@factories/user'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
-import ContactsQuery from '@queries/ContactsQuery'
+import { ContactsQuery } from '@queries/ContactsQuery'
 
 describe('contact controller', () => {
   let token

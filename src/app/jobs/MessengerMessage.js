@@ -1,4 +1,4 @@
-import transformMessengerBody from '../services/MessengerMessage'
+import { transformMessengerBody } from '../services/MessengerMessage.js'
 
 export default {
   key: 'messenger-message',

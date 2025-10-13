@@ -1,9 +1,9 @@
-import { ContactRepositoryDatabase } from '@repositories/contact'
+import { ContactRepositoryDatabase } from '../repositories/contact.js'
 import { check, validationResult } from 'express-validator'
-import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors'
+import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
 import _ from 'lodash'
-import ContactsQuery from '@queries/ContactsQuery'
-import queueServer from '@config/queue'
+import { ContactsQuery } from '../queries/ContactsQuery.js'
+import { queueServer } from '../../config/queue.js'
 
 function permit(fields) {
   const permitedFields = [
@@ -170,4 +170,4 @@ class ContactsController {
   }
 }
 
-export default ContactsController
+export { ContactsController }

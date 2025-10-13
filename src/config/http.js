@@ -1,16 +1,19 @@
 import path from 'path'
-import 'module-alias/register'
-import '@models/index'
+import { fileURLToPath } from 'url'
+import('../app/models/index.js')
 
 import createError from 'http-errors'
 import express from 'express'
 import logger from 'morgan'
-import connect from './database'
-import enableCors from './cors'
-import routes from './routes'
+import { connect } from './database.js'
+import { enableCors } from './cors.js'
+import { routes } from './routes.js'
 import http from 'http'
 import { Server } from 'socket.io'
 import Rollbar from 'rollbar'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const app = express()
 
@@ -54,4 +57,4 @@ const server = http.createServer(app)
 const io = new Server(server)
 io.on('connection', (_) => {})
 
-export default { server, io }
+export { server, io }

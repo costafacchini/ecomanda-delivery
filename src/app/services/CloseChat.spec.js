@@ -1,5 +1,5 @@
-import closeChat from './CloseChat'
-import Rocketchat from '../plugins/chats/Rocketchat'
+import { closeChat } from './CloseChat.js'
+import { Rocketchat } from '../plugins/chats/Rocketchat.js'
 import mongoServer from '../../../.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'

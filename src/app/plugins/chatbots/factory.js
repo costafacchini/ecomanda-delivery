@@ -1,4 +1,4 @@
-import Landbot from './Landbot'
+import { Landbot } from './Landbot.js'
 
 function createChatbotPlugin(licensee) {
   switch (licensee.chatbotDefault) {
@@ -9,4 +9,4 @@ function createChatbotPlugin(licensee) {
   }
 }
 
-export default createChatbotPlugin
+export { createChatbotPlugin }

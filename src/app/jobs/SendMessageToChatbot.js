@@ -1,4 +1,4 @@
-import sendMessageToChatbot from '../services/SendMessageToChatbot'
+import { sendMessageToChatbot } from '../services/SendMessageToChatbot.js'
 
 export default {
   key: 'send-message-to-chatbot',

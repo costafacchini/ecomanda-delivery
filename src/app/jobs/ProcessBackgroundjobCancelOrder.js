@@ -1,8 +1,8 @@
-import processBackgroundjobGetPix from '../services/ProcessBackgroundjobGetPix'
+import { processBackgroundjobCancelOrder } from '../services/ProcessBackgroundjobCancelOrder.js'
 
 export default {
   key: 'process-backgroundjob-cancel-order',
   async handle(data) {
-    return await processBackgroundjobGetPix(data.body)
+    return await processBackgroundjobCancelOrder(data.body)
   },
 }

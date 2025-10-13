@@ -1,4 +1,4 @@
-import TemplatesQuery from '@queries/TemplatesQuery'
+import { TemplatesQuery } from '@queries/TemplatesQuery'
 import mongoServer from '../../../.jest/utils'
 import Template from '@models/Template'
 import { licensee as licenseeFactory } from '@factories/licensee'

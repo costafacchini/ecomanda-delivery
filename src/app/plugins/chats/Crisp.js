@@ -1,10 +1,10 @@
-import files from '@helpers/Files'
-import request from '../../services/request'
+import { isMidia } from '../../helpers/Files.js'
+import request from '../../services/request.js'
 import mime from 'mime-types'
-import ChatsBase from './Base'
-import { createRoom, getRoomBy } from '@repositories/room'
-import { ContactRepositoryDatabase } from '@repositories/contact'
-import { MessageRepositoryDatabase } from '@repositories/message'
+import { ChatsBase } from './Base.js'
+import { createRoom, getRoomBy } from '../../repositories/room.js'
+import { ContactRepositoryDatabase } from '../../repositories/contact.js'
+import { MessageRepositoryDatabase } from '../../repositories/message.js'
 
 const createSession = async (url, headers, contact, segments) => {
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })
@@ -199,7 +199,7 @@ class Crisp extends ChatsBase {
 
   static messageType(fileUrl) {
     let type = 'file'
-    if (files.isMidia(fileUrl)) {
+    if (isMidia(fileUrl)) {
       type = 'audio'
     }
 
@@ -237,4 +237,4 @@ class Crisp extends ChatsBase {
   }
 }
 
-export default Crisp
+export { Crisp }

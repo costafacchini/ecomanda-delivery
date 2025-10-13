@@ -1,5 +1,5 @@
-import Integrationlog from '@models/Integrationlog'
-import request from '../../../services/request'
+import Integrationlog from '../../../models/Integrationlog.js'
+import request from '../../../services/request.js'
 
 class Card {
   async create(contact, creditCard, token) {
@@ -107,4 +107,4 @@ class Card {
   }
 }
 
-export default Card
+export { Card }

@@ -5,9 +5,9 @@ import { expressServer } from '../../../.jest/server-express'
 import { licenseeComplete as licenseeCompleteFactory, licensee as licenseeFactory } from '@factories/licensee'
 import { userSuper as userSuperFactory } from '@factories/user'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
-import LicenseesQuery from '@queries/LicenseesQuery'
-import Recipient from '@plugins/payments/PagarMe/Recipient'
-import Pedidos10 from '@plugins/integrations/Pedidos10'
+import { LicenseesQuery } from '@queries/LicenseesQuery'
+import { Recipient } from '@plugins/payments/PagarMe/Recipient'
+import { Pedidos10 } from '@plugins/integrations/Pedidos10'
 
 describe('licensee controller', () => {
   let token

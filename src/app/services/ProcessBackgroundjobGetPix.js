@@ -1,6 +1,6 @@
-import Backgroundjob from '@models/Backgroundjob'
-import PagarMe from '@plugins/payments/PagarMe'
-import { CartRepositoryDatabase } from '@repositories/cart'
+import Backgroundjob from '../models/Backgroundjob.js'
+import { PagarMe } from '../plugins/payments/PagarMe.js'
+import { CartRepositoryDatabase } from '../repositories/cart.js'
 
 async function processBackgroundjobGetPix(data) {
   const { jobId, cart_id: cartId } = data
@@ -29,4 +29,4 @@ async function processBackgroundjobGetPix(data) {
   await backgroundjob.save()
 }
 
-export default processBackgroundjobGetPix
+export { processBackgroundjobGetPix }

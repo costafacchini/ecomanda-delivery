@@ -1,4 +1,4 @@
-import Product from '@models/Product'
+import Product from '../models/Product.js'
 
 async function createProduct(fields) {
   const product = new Product({

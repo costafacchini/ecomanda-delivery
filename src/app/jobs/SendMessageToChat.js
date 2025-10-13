@@ -1,4 +1,4 @@
-import sendMessageToChat from '../services/SendMessageToChat'
+import { sendMessageToChat } from '../services/SendMessageToChat.js'
 
 export default {
   key: 'send-message-to-chat',

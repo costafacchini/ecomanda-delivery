@@ -1,4 +1,4 @@
-import clearBackups from '../services/ClearBackups'
+import { clearBackups } from '../services/ClearBackups.js'
 
 export default {
   key: 'clear-backups',

@@ -1,5 +1,5 @@
-import sendMessageToChatbot from './SendMessageToChatbot'
-import Landbot from '../plugins/chatbots/Landbot'
+import { sendMessageToChatbot } from './SendMessageToChatbot.js'
+import { Landbot } from '../plugins/chatbots/Landbot.js'
 import mongoServer from '.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'

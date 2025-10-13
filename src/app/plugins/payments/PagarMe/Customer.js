@@ -1,5 +1,5 @@
-import Integrationlog from '@models/Integrationlog'
-import request from '../../../services/request'
+import Integrationlog from '../../../models/Integrationlog.js'
+import request from '../../../services/request.js'
 
 class Customer {
   async create(contact, token) {
@@ -92,4 +92,4 @@ class Customer {
   }
 }
 
-export default Customer
+export { Customer }

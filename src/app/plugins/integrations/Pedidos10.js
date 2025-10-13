@@ -1,4 +1,4 @@
-import Order from './Pedidos10/Order'
+import { Order } from './Pedidos10/Order.js'
 
 class Pedidos10 {
   constructor(licensee) {
@@ -19,4 +19,4 @@ class Pedidos10 {
   }
 }
 
-export default Pedidos10
+export { Pedidos10 }

@@ -1,5 +1,5 @@
 import express from 'express'
-import routes from '../src/config/routes'
+import { routes } from '../src/config/routes.js'
 
 const expressServer = express()
 
