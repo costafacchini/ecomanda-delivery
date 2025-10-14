@@ -23,4 +23,4 @@ class MongoServerTest {
   }
 }
 
-export default MongoServerTest
+export { MongoServerTest }

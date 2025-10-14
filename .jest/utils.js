@@ -1,4 +1,4 @@
-import MongoServerTest from './mongo'
+import { MongoServerTest } from './mongo'
 
 jest.setTimeout(600000)
 
