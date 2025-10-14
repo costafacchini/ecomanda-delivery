@@ -216,7 +216,11 @@ class Chatwoot extends ChatsBase {
       return
     }
 
-    if (responseBody.event !== 'message_created' || responseBody.message_type !== 'outgoing') {
+    if (
+      responseBody.event !== 'message_created' ||
+      responseBody.message_type !== 'outgoing' ||
+      responseBody.private == true
+    ) {
       this.messageParsed = null
       return
     }
