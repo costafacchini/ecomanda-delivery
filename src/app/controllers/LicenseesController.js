@@ -59,6 +59,7 @@ function permit(fields) {
     'holder_kind',
     'holder_document',
     'account_type',
+    'useSenderName',
   ]
 
   return _.pick(fields, permitedFields)
@@ -131,6 +132,7 @@ class LicenseesController {
       holder_kind,
       holder_document,
       account_type,
+      useSenderName,
     } = req.body
 
     try {
@@ -186,6 +188,7 @@ class LicenseesController {
         holder_kind,
         holder_document,
         account_type,
+        useSenderName,
       })
 
       res.status(201).send(licensee)

@@ -63,6 +63,7 @@ class ChatsBase {
               contact: this.messageParsed.contact._id,
               room: this.messageParsed.room?._id || this.messageParsed.room,
               destination: 'to-messenger',
+              senderName: message.senderName,
             }
 
             if (messageToSend.text.includes('{{') && messageToSend.text.includes('}}')) {
@@ -79,6 +80,7 @@ class ChatsBase {
             contact: this.messageParsed.contact._id,
             room: this.messageParsed.room?._id || this.messageParsed.room,
             destination: 'to-messenger',
+            senderName: message.senderName,
           }
 
           messageToSend.text = message.file.text
@@ -94,6 +96,7 @@ class ChatsBase {
             contact: this.messageParsed.contact._id,
             room: this.messageParsed.room?._id || this.messageParsed.room,
             destination: 'to-messenger',
+            senderName: message.senderName,
           }
 
           messageToSend.latitude = message.location.latitude

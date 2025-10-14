@@ -62,6 +62,7 @@ const licenseeInitialValues = {
   holder_kind: '',
   holder_document: '',
   account_type: '',
+  useSenderName: false,
 }
 
 function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
@@ -340,6 +341,24 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
                 </div>
               </div>
 
+              <div className='row pb-2'>
+                <div className='col-3'>
+                  <div className='form-check'>
+                    <input
+                      type='checkbox'
+                      className='form-check-input'
+                      id='useSenderName'
+                      onChange={props.handleChange}
+                      onBlur={props.handleBlur}
+                      checked={props.values.useSenderName}
+                    />
+                    <label className='form-check-label' htmlFor='useSenderName'>
+                      Usa o remetente no nome do chat?
+                    </label>
+                  </div>
+                </div>
+              </div>
+
               {['crisp', 'chatwoot'].includes(props.values.chatDefault) && (
                 <>
                   <div className='row'>
@@ -420,8 +439,8 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
                 </div>
               </div>
 
-              {(((props.values.whatsappDefault === 'dialog' ||
-                props.values.whatsappDefault === 'ycloud') && props.values.apiToken) && (
+              {(props.values.whatsappDefault === 'dialog' || props.values.whatsappDefault === 'ycloud') &&
+                props.values.apiToken && (
                   <div className='row pb-4'>
                     <div className='form-group col-3'>
                       <button
@@ -447,7 +466,7 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
                       </button>
                     </div>
                   </div>
-                ))}
+                )}
             </fieldset>
 
             <fieldset className='pb-4'>

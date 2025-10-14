@@ -249,11 +249,19 @@ class Chatwoot extends ChatsBase {
 
     const messagesToSend = []
 
+    let senderName = null
+    if (this.licensee.useSenderName) {
+      senderName = responseBody.conversation.meta?.assignee?.available_name
+    }
+
     responseBody.conversation.messages?.forEach((message) => {
       if (message.content) {
         const messageToSend = {}
         messageToSend.text = { body: message.content }
         messageToSend.kind = 'text'
+        if (senderName) {
+          messageToSend.senderName = senderName
+        }
         messagesToSend.push(messageToSend)
       }
 
