@@ -3717,10 +3717,10 @@ buffer@^6.0.3:
     base64-js "^1.3.1"
     ieee754 "^1.2.1"
 
-bullmq@5.60.0:
-  version "5.60.0"
-  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-5.60.0.tgz#8c03a88d510a27f965a7cb18e7cdd7510114f6ef"
-  integrity sha512-hQPfUOLE7/aidCiQSMc5K1EYF6eAuOYSGNdKoLbTpYuRsjYsY0uGUBNX7VrESvAerUpklrsgPLqbunySUxWh5Q==
+bullmq@5.61.0:
+  version "5.61.0"
+  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-5.61.0.tgz#3c5c7bc733acea3e29a93069874030a8646f7c8e"
+  integrity sha512-khaTjc1JnzaYFl4FrUtsSsqugAW/urRrcZ9Q0ZE+REAw8W+gkHFqxbGlutOu6q7j7n91wibVaaNlOUMdiEvoSQ==
   dependencies:
     cron-parser "^4.9.0"
     ioredis "^5.4.1"
@@ -8222,11 +8222,6 @@ undefsafe@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/undefsafe/-/undefsafe-2.0.5.tgz#38733b9327bdcd226db889fb723a6efd162e6e2c"
   integrity sha512-WxONCrssBM8TSPRqN5EmsjVrsv4A8X12J4ArBiiayv3DyyG3ZlIg6yysuuSYdZsVz3TKcTg2fd//Ujd4CHV1iA==
-
-undici-types@~7.14.0:
-  version "7.14.0"
-  resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-7.14.0.tgz#4c037b32ca4d7d62fae042174604341588bc0840"
-  integrity sha512-QQiYxHuyZ9gQUIrmPo3IA+hUl4KYk8uSA7cHrcKd/l3p1OTpZcM0Tbp9x7FAtXdAYhlasd60ncPpgu6ihG6TOA==
 
 undici-types@~7.14.0:
   version "7.14.0"
