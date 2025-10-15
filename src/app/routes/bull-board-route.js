@@ -1,7 +1,7 @@
-const { createBullBoard } = require('@bull-board/api')
-const { BullMQAdapter } = require('@bull-board/api/bullMQAdapter')
-const { ExpressAdapter } = require('@bull-board/express')
-const queueServer = require('@config/queue')
+import { createBullBoard } from '@bull-board/api'
+import { BullMQAdapter } from '@bull-board/api/bullMQAdapter'
+import { ExpressAdapter } from '@bull-board/express'
+import { queueServer } from '../../config/queue.js'
 
 const adapters = queueServer.queues.map((queue) => new BullMQAdapter(queue.bull), { readOnlyMode: true })
 
@@ -13,4 +13,4 @@ createBullBoard({
   serverAdapter: serverAdapter,
 })
 
-module.exports = serverAdapter.getRouter()
+export default serverAdapter.getRouter()

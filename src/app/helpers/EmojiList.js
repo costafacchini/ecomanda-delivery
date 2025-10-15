@@ -1,4 +1,4 @@
-const emojiList = [
+export const emojiList = [
   {
     rocket: ':grinning:',
     wpp: '😀',
@@ -6276,5 +6276,3 @@ const emojiList = [
     wpp: '🇺🇳',
   },
 ]
-
-module.exports.emojiList = emojiList

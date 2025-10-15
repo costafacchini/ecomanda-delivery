@@ -1,10 +1,10 @@
-const request = require('supertest')
-const mongoServer = require('../../../../.jest/utils')
-const { expressServer } = require('../../../../.jest/server-express')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
+import request from 'supertest'
+import mongoServer from '../../../../.jest/utils'
+import { expressServer } from '../../../../.jest/server-express'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
 
 describe('addresses controller', () => {
   let licensee

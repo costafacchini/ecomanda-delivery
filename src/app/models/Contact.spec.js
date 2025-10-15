@@ -1,8 +1,8 @@
-const Contact = require('@models/Contact')
-const mongoServer = require('../../../.jest/utils')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+import Contact from '@models/Contact'
+import mongoServer from '../../../.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('Contact', () => {
   let licensee

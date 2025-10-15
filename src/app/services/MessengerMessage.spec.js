@@ -1,10 +1,10 @@
-const transformMessengerBody = require('./MessengerMessage')
-const Body = require('@models/Body')
-const Dialog = require('../plugins/messengers/Dialog')
-const mongoServer = require('.jest/utils')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { body: bodyFactory } = require('@factories/body')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+import { transformMessengerBody } from './MessengerMessage.js'
+import Body from '@models/Body'
+import { Dialog } from '../plugins/messengers/Dialog.js'
+import mongoServer from '.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { body as bodyFactory } from '@factories/body'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('transformMessengerBody', () => {
   let licensee

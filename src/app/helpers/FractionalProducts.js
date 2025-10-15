@@ -116,4 +116,4 @@ class FractionalProducts {
   }
 }
 
-module.exports = FractionalProducts
+export { FractionalProducts }

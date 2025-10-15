@@ -1,4 +1,4 @@
-const { publishMessage } = require('@config/rabbitmq')
+import { publishMessage } from '../../config/rabbitmq.js'
 
 class BackupsController {
   schedule(_, res) {
@@ -18,4 +18,4 @@ class BackupsController {
   }
 }
 
-module.exports = BackupsController
+export { BackupsController }

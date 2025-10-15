@@ -1,5 +1,5 @@
-const { Factory } = require('fishery')
-const { contact } = require('./contact')
+import { Factory } from 'fishery'
+import { contact } from './contact'
 
 const room = Factory.define(() => ({
   roomId: 'ka3DiV9CuHD765',
@@ -8,4 +8,4 @@ const room = Factory.define(() => ({
   closed: false,
 }))
 
-module.exports = { room }
+export { room }

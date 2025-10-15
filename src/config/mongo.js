@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const { createDefaultUser } = require('../setup/database')
+import mongoose from 'mongoose'
+import { createDefaultUser } from '../setup/database.js'
 
 const mongoConnectionOpts = {}
 
@@ -25,4 +25,4 @@ class MongoServer {
   }
 }
 
-module.exports = { MongoServer }
+export { MongoServer }

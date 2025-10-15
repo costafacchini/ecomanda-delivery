@@ -1,7 +1,7 @@
-const Integrationlog = require('@models/Integrationlog')
-const request = require('../../../services/request')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
+import Integrationlog from '../../../models/Integrationlog.js'
+import request from '../../../services/request.js'
+import { LicenseeRepositoryDatabase } from '../../../repositories/licensee.js'
+import { ContactRepositoryDatabase } from '../../../repositories/contact.js'
 
 const buildBody = (cart, contact, buildPaymentBuilder) => {
   return {
@@ -205,4 +205,4 @@ class Payment {
   }
 }
 
-module.exports = Payment
+export { Payment }

@@ -1,5 +1,5 @@
-const Integrationlog = require('@models/Integrationlog')
-const request = require('../../../../services/request')
+import Integrationlog from '../../../../models/Integrationlog.js'
+import request from '../../../../services/request.js'
 
 class OrderStatus {
   constructor(licensee) {
@@ -41,4 +41,4 @@ class OrderStatus {
   }
 }
 
-module.exports = OrderStatus
+export { OrderStatus }

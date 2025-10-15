@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
+
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
 
@@ -161,4 +162,4 @@ orderSchema.set('toJSON', {
 
 const Order = mongoose.model('Order', orderSchema)
 
-module.exports = Order
+export default Order

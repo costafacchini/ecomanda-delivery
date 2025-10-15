@@ -1,4 +1,4 @@
-const Order = require('./Pedidos10/Order')
+import { Order } from './Pedidos10/Order.js'
 
 class Pedidos10 {
   constructor(licensee) {
@@ -19,4 +19,4 @@ class Pedidos10 {
   }
 }
 
-module.exports = Pedidos10
+export { Pedidos10 }

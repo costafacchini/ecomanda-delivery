@@ -1,5 +1,5 @@
-const { Factory } = require('fishery')
-const { licensee } = require('./licensee')
+import { Factory } from 'fishery'
+import { licensee } from './licensee'
 
 const userSuper = Factory.define(() => ({
   name: 'John Doe',
@@ -18,4 +18,4 @@ const user = Factory.define(() => ({
   licensee: licensee.build(),
 }))
 
-module.exports = { user, userSuper }
+export { user, userSuper }

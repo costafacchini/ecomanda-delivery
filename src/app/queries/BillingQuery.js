@@ -1,6 +1,6 @@
-const MessagesQuery = require('@queries/MessagesQuery')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const moment = require('moment-timezone')
+import { MessagesQuery } from './MessagesQuery.js'
+import { LicenseeRepositoryDatabase } from '../repositories/licensee.js'
+import moment from 'moment-timezone'
 
 async function getLicenseeFirstMessage(licensee) {
   const messagesQuery = new MessagesQuery()
@@ -89,4 +89,4 @@ class BillingQuery {
   }
 }
 
-module.exports = BillingQuery
+export { BillingQuery }

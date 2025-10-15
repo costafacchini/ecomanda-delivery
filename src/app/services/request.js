@@ -1,4 +1,4 @@
-require('isomorphic-fetch')
+import 'isomorphic-fetch'
 
 async function request(url, method, { headers, body, isDownload }) {
   const requestOptions = {
@@ -18,7 +18,6 @@ async function request(url, method, { headers, body, isDownload }) {
   let result
 
   try {
-    // eslint-disable-next-line no-undef
     const response = await fetch(url, requestOptions)
     const data = isDownload ? await response.arrayBuffer() : await response.text()
 
@@ -43,7 +42,7 @@ function isJSON(response) {
   return response.headers.get('content-type') && response.headers.get('content-type').includes('application/json')
 }
 
-module.exports = {
+export default {
   get(url, requestOpts = {}) {
     return request(url, 'GET', requestOpts)
   },

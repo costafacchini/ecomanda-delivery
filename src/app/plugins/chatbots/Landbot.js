@@ -1,13 +1,13 @@
-const emoji = require('@helpers/Emoji')
-const NormalizePhone = require('@helpers/NormalizePhone')
-const { v4: uuidv4 } = require('uuid')
-const request = require('../../services/request')
-const Room = require('@models/Room')
-const Trigger = require('@models/Trigger')
-const cartFactory = require('@plugins/carts/factory')
-const files = require('@helpers/Files')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { MessageRepositoryDatabase } = require('@repositories/message')
+import { replace } from '../../helpers/Emoji.js'
+import { NormalizePhone } from '../../helpers/NormalizePhone.js'
+import { v4 as uuidv4 } from 'uuid'
+import request from '../../services/request.js'
+import Room from '../../models/Room.js'
+import Trigger from '../../models/Trigger.js'
+import { createCartPlugin } from '../../plugins/carts/factory.js'
+import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files.js'
+import { ContactRepositoryDatabase } from '../../repositories/contact.js'
+import { MessageRepositoryDatabase } from '../../repositories/message.js'
 
 const closeRoom = async (contact) => {
   const room = await Room.findOne({ contact: contact._id, closed: false })
@@ -59,7 +59,7 @@ class Landbot {
         continue
       }
 
-      const text = emoji.replace(message.message)
+      const text = replace(message.message)
 
       const messageRepository = new MessageRepositoryDatabase()
       if (kind === 'text') {
@@ -199,9 +199,9 @@ class Landbot {
     if (messageToSend.kind === 'file') {
       body.message.url = messageToSend.url
 
-      if (files.isPhoto(messageToSend.url)) body.message.type = 'image'
-      if (files.isVideo(messageToSend.url)) body.message.type = 'video'
-      if (files.isMidia(messageToSend.url) || files.isVoice(messageToSend.url)) body.message.type = 'audio'
+      if (isPhoto(messageToSend.url)) body.message.type = 'image'
+      if (isVideo(messageToSend.url)) body.message.type = 'video'
+      if (isMidia(messageToSend.url) || isVoice(messageToSend.url)) body.message.type = 'audio'
       if (!body.message.type) body.message.type = 'document'
     } else if (messageToSend.kind === 'location') {
       body.message.type = 'location'
@@ -213,7 +213,7 @@ class Landbot {
       body.message.payload = '$1'
 
       if (messageToSend.kind === 'cart') {
-        const cartPlugin = cartFactory(this.licensee)
+        const cartPlugin = createCartPlugin(this.licensee)
         const cartTransformed = await cartPlugin.transformCart(this.licensee, messageToSend.cart)
 
         body.message.message = JSON.stringify(cartTransformed)
@@ -259,4 +259,4 @@ class Landbot {
   }
 }
 
-module.exports = Landbot
+export { Landbot }

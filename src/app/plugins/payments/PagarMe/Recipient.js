@@ -1,5 +1,5 @@
-const Integrationlog = require('@models/Integrationlog')
-const request = require('../../../services/request')
+import Integrationlog from '../../../models/Integrationlog.js'
+import request from '../../../services/request.js'
 
 class Recipient {
   async create(licensee, token) {
@@ -83,4 +83,4 @@ class Recipient {
   }
 }
 
-module.exports = Recipient
+export { Recipient }

@@ -1,6 +1,6 @@
-const Backgroundjob = require('@models/Backgroundjob')
-const PagarMe = require('@plugins/payments/PagarMe')
-const { CartRepositoryDatabase } = require('@repositories/cart')
+import Backgroundjob from '../models/Backgroundjob.js'
+import { PagarMe } from '../plugins/payments/PagarMe.js'
+import { CartRepositoryDatabase } from '../repositories/cart.js'
 
 async function processBackgroundjobGetPix(data) {
   const { jobId, cart_id: cartId } = data
@@ -29,4 +29,4 @@ async function processBackgroundjobGetPix(data) {
   await backgroundjob.save()
 }
 
-module.exports = processBackgroundjobGetPix
+export { processBackgroundjobGetPix }

@@ -1,5 +1,5 @@
-const { MessageRepositoryDatabase } = require('@repositories/message')
-const QueryBuilder = require('@queries/QueryBuilder')
+import { MessageRepositoryDatabase } from '@repositories/message'
+import { QueryBuilder } from '@queries/QueryBuilder'
 
 describe('QueryBuilder', () => {
   describe('sortBy', () => {

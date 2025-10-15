@@ -1,8 +1,8 @@
-const path = require('path')
-const loginRoutes = require('@routes/login-route')
-const resourcesRoutes = require('@routes/resources-routes')
-const apiRoutes = require('@routes/api-routes')
-const bullboardRoute = require('@routes/bull-board-route')
+import path from 'path'
+import { router as loginRoutes } from '../app/routes/login-route.js'
+import resourcesRoutes from '../app/routes/resources-routes.js'
+import apiRoutes from '../app/routes/api-routes.js'
+import bullboardRoute from '../app/routes/bull-board-route.js'
 
 function routes(app) {
   app.use('/resources', resourcesRoutes)
@@ -14,4 +14,4 @@ function routes(app) {
   })
 }
 
-module.exports = routes
+export { routes }

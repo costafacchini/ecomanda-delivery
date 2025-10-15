@@ -1,10 +1,10 @@
-const Message = require('@models/Message')
-const mongoServer = require('../../../.jest/utils')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
-const { message: messageFactory } = require('@factories/message')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
+import Message from '@models/Message'
+import mongoServer from '../../../.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
+import { message as messageFactory } from '@factories/message'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
 
 describe('Message', () => {
   let licensee

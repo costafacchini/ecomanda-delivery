@@ -1,12 +1,12 @@
-const Trigger = require('@models/Trigger')
-const User = require('@models/User')
-const request = require('supertest')
-const mongoServer = require('../../../.jest/utils')
-const { expressServer } = require('../../../.jest/server-express')
-const { userSuper: userSuperFactory } = require('@factories/user')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { triggerMultiProduct: triggerFactory } = require('@factories/trigger')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+import Trigger from '@models/Trigger'
+import User from '@models/User'
+import request from 'supertest'
+import mongoServer from '../../../.jest/utils'
+import { expressServer } from '../../../.jest/server-express'
+import { userSuper as userSuperFactory } from '@factories/user'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { triggerMultiProduct as triggerFactory } from '@factories/trigger'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('trigger controller', () => {
   let token

@@ -1,8 +1,8 @@
-const Template = require('@models/Template')
-const mongoServer = require('../../../.jest/utils')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { template: templateFactory } = require('@factories/template')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+import Template from '@models/Template'
+import mongoServer from '../../../.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { template as templateFactory } from '@factories/template'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('Template', () => {
   let licensee

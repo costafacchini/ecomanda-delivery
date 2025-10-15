@@ -1,6 +1,6 @@
-const transformMessengerBody = require('../services/MessengerMessage')
+import { transformMessengerBody } from '../services/MessengerMessage.js'
 
-module.exports = {
+export default {
   key: 'messenger-message',
   async handle(data) {
     return await transformMessengerBody(data.body)

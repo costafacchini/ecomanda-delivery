@@ -1,4 +1,4 @@
-const MessagesQuery = require('@queries/MessagesQuery')
+import { MessagesQuery } from '../queries/MessagesQuery.js'
 
 class MessagesController {
   async index(req, res) {
@@ -40,4 +40,4 @@ class MessagesController {
   }
 }
 
-module.exports = MessagesController
+export { MessagesController }

@@ -1,8 +1,14 @@
-require('dotenv').config()
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const jest = {
   testEnvironment: 'node',
   modulePathIgnorePatterns: ['<rootDir>/client/'],
+  transform: {
+    '^.+\\.js$': 'babel-jest',
+  },
+  transformIgnorePatterns: ['node_modules/(?!(module-alias|isomorphic-fetch)/)'],
   moduleNameMapper: {
     '^\\.jest(.*)$': '<rootDir>/.jest$1',
     '@models(.*)$': '<rootDir>/src/app/models$1',
@@ -32,4 +38,4 @@ const jest = {
   clearMocks: true,
 }
 
-module.exports = jest
+export default jest

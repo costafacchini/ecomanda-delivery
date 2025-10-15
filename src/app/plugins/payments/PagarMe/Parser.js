@@ -18,4 +18,4 @@ class Parser {
   }
 }
 
-module.exports = Parser
+export { Parser }

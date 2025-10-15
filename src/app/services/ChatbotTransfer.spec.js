@@ -1,10 +1,10 @@
-const transformChatbotTransferBody = require('./ChatbotTransfer')
-const Body = require('@models/Body')
-const Landbot = require('../plugins/chatbots/Landbot')
-const mongoServer = require('.jest/utils')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { body: bodyFactory } = require('@factories/body')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+import { transformChatbotTransferBody } from './ChatbotTransfer.js'
+import Body from '@models/Body'
+import { Landbot } from '../plugins/chatbots/Landbot.js'
+import mongoServer from '.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { body as bodyFactory } from '@factories/body'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('transformChatbotTransferBody', () => {
   let licensee

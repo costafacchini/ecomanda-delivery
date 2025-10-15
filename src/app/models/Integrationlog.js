@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
+
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
 
@@ -39,4 +40,4 @@ integrationlogSchema.set('toJSON', {
 
 const Integrationlog = mongoose.model('Integrationlog', integrationlogSchema)
 
-module.exports = Integrationlog
+export default Integrationlog

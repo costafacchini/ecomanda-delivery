@@ -1,9 +1,9 @@
-const emoji = require('@helpers/Emoji')
-const Room = require('@models/Room')
-const request = require('../../services/request')
-const ChatsBase = require('./Base')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { MessageRepositoryDatabase } = require('@repositories/message')
+import { replace } from '../../helpers/Emoji.js'
+import Room from '../../models/Room.js'
+import request from '../../services/request.js'
+import { ChatsBase } from './Base.js'
+import { ContactRepositoryDatabase } from '../../repositories/contact.js'
+import { MessageRepositoryDatabase } from '../../repositories/message.js'
 
 const createVisitor = async (contact, token, url) => {
   const body = {
@@ -108,7 +108,7 @@ class Rocketchat extends ChatsBase {
       if (message.attachments) {
         messageToSend.kind = 'file'
         messageToSend.file = {
-          text: emoji.replace(message.attachments[0].description),
+          text: replace(message.attachments[0].description),
           url: message.fileUpload.publicFilePath,
           fileName: message.attachments[0].title,
         }
@@ -222,4 +222,4 @@ class Rocketchat extends ChatsBase {
   }
 }
 
-module.exports = Rocketchat
+export { Rocketchat }

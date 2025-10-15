@@ -1,6 +1,6 @@
-const Backgroundjob = require('@models/Backgroundjob')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { CartRepositoryDatabase } = require('@repositories/cart')
+import Backgroundjob from '../models/Backgroundjob.js'
+import { ContactRepositoryDatabase } from '../repositories/contact.js'
+import { CartRepositoryDatabase } from '../repositories/cart.js'
 
 async function processBackgroundjob(data) {
   const { jobId } = data
@@ -48,4 +48,4 @@ async function processBackgroundjob(data) {
   return actions
 }
 
-module.exports = processBackgroundjob
+export { processBackgroundjob }

@@ -1,4 +1,4 @@
-const { CartRepositoryDatabase } = require('@repositories/cart')
+import { CartRepositoryDatabase } from '../../repositories/cart.js'
 
 class Go2go {
   async transformCart(licensee, cartId) {
@@ -89,4 +89,4 @@ class Go2go {
   }
 }
 
-module.exports = Go2go
+export { Go2go }

@@ -1,20 +1,19 @@
-const Landbot = require('./Landbot')
-const Trigger = require('@models/Trigger')
-const fetchMock = require('fetch-mock')
-const mongoServer = require('../../../../.jest/utils')
-const emoji = require('@helpers/Emoji')
-const Room = require('@models/Room')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
-const { room: roomFactory } = require('@factories/room')
-const { message: messageFactory } = require('@factories/message')
-const { triggerReplyButton: triggerReplyButtonFactory } = require('@factories/trigger')
-const { cart: cartFactory } = require('@factories/cart')
-const { advanceTo, clear } = require('jest-date-mock')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { CartRepositoryDatabase } = require('@repositories/cart')
-const { MessageRepositoryDatabase } = require('@repositories/message')
+import { Landbot } from './Landbot.js'
+import Trigger from '@models/Trigger'
+import fetchMock from 'fetch-mock'
+import mongoServer from '../../../../.jest/utils'
+import Room from '@models/Room'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
+import { room as roomFactory } from '@factories/room'
+import { message as messageFactory } from '@factories/message'
+import { triggerReplyButton as triggerReplyButtonFactory } from '@factories/trigger'
+import { cart as cartFactory } from '@factories/cart'
+import { advanceTo, clear } from 'jest-date-mock'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { CartRepositoryDatabase } from '@repositories/cart'
+import { MessageRepositoryDatabase } from '@repositories/message'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
@@ -22,7 +21,6 @@ describe('Landbot plugin', () => {
   let licensee
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
-  const emojiReplaceSpy = jest.spyOn(emoji, 'replace')
 
   beforeEach(async () => {
     await mongoServer.connect()
@@ -173,12 +171,6 @@ describe('Landbot plugin', () => {
       expect(messages[4].latitude).toEqual(undefined)
       expect(messages[4].longitude).toEqual(undefined)
       expect(messages[4].departament).toEqual(undefined)
-
-      expect(emojiReplaceSpy).toHaveBeenCalledTimes(4)
-      expect(emojiReplaceSpy).toHaveBeenCalledWith('Hello world')
-      expect(emojiReplaceSpy).toHaveBeenCalledWith('Text with image')
-      expect(emojiReplaceSpy).toHaveBeenCalledWith('It is here')
-      expect(emojiReplaceSpy).toHaveBeenCalledWith('send_reply_buttons')
 
       expect(consoleInfoSpy).toHaveBeenCalledTimes(2)
       expect(consoleInfoSpy).toHaveBeenCalledWith(

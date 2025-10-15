@@ -1,6 +1,6 @@
-const { Factory } = require('fishery')
-const { licensee } = require('./licensee')
-const { contact } = require('./contact')
+import { Factory } from 'fishery'
+import { licensee } from './licensee'
+import { contact } from './contact'
 
 const message = Factory.define(() => ({
   text: 'Message 1',
@@ -12,4 +12,4 @@ const message = Factory.define(() => ({
   createdAt: new Date(2021, 6, 3, 0, 0, 0),
 }))
 
-module.exports = { message }
+export { message }

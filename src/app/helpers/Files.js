@@ -14,4 +14,4 @@ function isVoice(fileUrl) {
   return !!fileUrl.match(/.(opus|oga)$/i)
 }
 
-module.exports = { isPhoto, isVideo, isMidia, isVoice }
+export { isPhoto, isVideo, isMidia, isVoice }

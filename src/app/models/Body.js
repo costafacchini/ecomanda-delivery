@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
+
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
 
@@ -40,4 +41,4 @@ bodySchema.set('toJSON', {
 
 const Body = mongoose.model('Body', bodySchema)
 
-module.exports = Body
+export default Body

@@ -1,5 +1,5 @@
-const Integrationlog = require('@models/Integrationlog')
-const QueryBuilder = require('@queries/QueryBuilder')
+import Integrationlog from '../models/Integrationlog.js'
+import { QueryBuilder } from './QueryBuilder.js'
 
 class IntegrationlogsQuery {
   constructor() {}
@@ -40,4 +40,4 @@ class IntegrationlogsQuery {
   }
 }
 
-module.exports = IntegrationlogsQuery
+export { IntegrationlogsQuery }

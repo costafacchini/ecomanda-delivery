@@ -1,8 +1,8 @@
-const Trigger = require('@models/Trigger')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { MessageRepositoryDatabase } = require('@repositories/message')
-const emoji = require('@helpers/Emoji')
-const { v4: uuidv4 } = require('uuid')
+import Trigger from '../../models/Trigger.js'
+import { ContactRepositoryDatabase } from '../../repositories/contact.js'
+import { MessageRepositoryDatabase } from '../../repositories/message.js'
+import { replace } from '../../helpers/Emoji.js'
+import { v4 as uuidv4 } from 'uuid'
 
 class ChatsBase {
   constructor(licensee) {
@@ -36,7 +36,7 @@ class ChatsBase {
     } else {
       for (const message of this.messageParsed.messages) {
         if (message.kind === 'text') {
-          const text = message.text.body ? emoji.replace(message.text.body) : ''
+          const text = message.text.body ? replace(message.text.body) : ''
 
           const triggers = await Trigger.find({ expression: text, licensee: this.licensee._id }).sort({ order: 'asc' })
           if (triggers.length > 0) {
@@ -111,4 +111,4 @@ class ChatsBase {
   }
 }
 
-module.exports = ChatsBase
+export { ChatsBase }

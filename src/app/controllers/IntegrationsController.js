@@ -1,5 +1,5 @@
-const Body = require('@models/Body')
-const { publishMessage } = require('@config/rabbitmq')
+import Body from '../models/Body.js'
+import { publishMessage } from '../../config/rabbitmq.js'
 
 class IntegrationsController {
   async create(req, res) {
@@ -17,4 +17,4 @@ class IntegrationsController {
   }
 }
 
-module.exports = IntegrationsController
+export { IntegrationsController }

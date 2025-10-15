@@ -11,4 +11,4 @@ class DelayController {
   }
 }
 
-module.exports = DelayController
+export { DelayController }

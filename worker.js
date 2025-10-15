@@ -1,13 +1,13 @@
-require('dotenv').config()
-require('module-alias/register')
-require('@models/index')
+import 'dotenv/config'
+import('./src/app/models/index.js')
 
-const { redisConnection } = require('@config/redis')
-const queueServer = require('@config/queue')
-const { Worker } = require('bullmq')
-const connect = require('./src/config/database')
+import { redisConnection } from './src/config/redis.js'
+import { queueServer } from './src/config/queue.js'
+import { Worker } from 'bullmq'
+import { connect } from './src/config/database.js'
+import { consumeChannel } from './src/config/rabbitmq.js'
+
 connect()
-const { consumeChannel } = require('@config/rabbitmq')
 consumeChannel()
 
 queueServer.queues.forEach((queue) => {
@@ -23,7 +23,7 @@ queueServer.queues.forEach((queue) => {
         }
       }
     },
-    { connection: redisConnection }
+    { connection: redisConnection },
   )
 
   redisConnection.setMaxListeners(redisConnection.getMaxListeners() + 1)

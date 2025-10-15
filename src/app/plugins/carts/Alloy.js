@@ -1,4 +1,4 @@
-const { CartRepositoryDatabase } = require('@repositories/cart')
+import { CartRepositoryDatabase } from '../../repositories/cart.js'
 
 class Alloy {
   async transformCart(_, cartId) {
@@ -83,4 +83,4 @@ class Alloy {
   }
 }
 
-module.exports = Alloy
+export { Alloy }

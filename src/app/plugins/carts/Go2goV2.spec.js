@@ -1,12 +1,12 @@
-const Go2go = require('./Go2goV2')
-const mongoServer = require('../../../../.jest/utils')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
-const { cart: cartFactory } = require('@factories/cart')
-const { advanceTo, clear } = require('jest-date-mock')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { CartRepositoryDatabase } = require('@repositories/cart')
+import { Go2goV2 } from './Go2goV2.js'
+import mongoServer from '../../../../.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
+import { cart as cartFactory } from '@factories/cart'
+import { advanceTo, clear } from 'jest-date-mock'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { CartRepositoryDatabase } from '@repositories/cart'
 
 describe('Go2goV2 plugin', () => {
   beforeEach(async () => {
@@ -47,7 +47,7 @@ describe('Go2goV2 plugin', () => {
         cartFactory.build({ contact, licensee, delivery_tax: 3.5, note: 'without onion' }),
       )
 
-      const go2go = new Go2go()
+      const go2go = new Go2goV2()
       const cartTransformed = await go2go.transformCart(licensee, cart._id)
 
       expect(cartTransformed.order.unidadeId).toEqual('123')

@@ -4,4 +4,4 @@ class IntegratorBase {
   parseStatus() {}
 }
 
-module.exports = IntegratorBase
+export { IntegratorBase }

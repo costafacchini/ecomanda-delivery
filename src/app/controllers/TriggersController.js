@@ -1,8 +1,8 @@
-const Trigger = require('@models/Trigger')
-const { sanitizeModelErrors } = require('@helpers/SanitizeErrors')
-const _ = require('lodash')
-const TriggersQuery = require('@queries/TriggersQuery')
-const FacebookCatalogImporter = require('@plugins/importers/facebook_catalog/index')
+import Trigger from '../models/Trigger.js'
+import { sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
+import _ from 'lodash'
+import { TriggersQuery } from '../queries/TriggersQuery.js'
+import { FacebookCatalogImporter } from '../plugins/importers/facebook_catalog/index.js'
 
 function permit(fields) {
   const permitedFields = [
@@ -143,4 +143,4 @@ class TriggersController {
   }
 }
 
-module.exports = TriggersController
+export { TriggersController }

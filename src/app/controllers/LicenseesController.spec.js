@@ -1,13 +1,13 @@
-const User = require('@models/User')
-const request = require('supertest')
-const mongoServer = require('../../../.jest/utils')
-const { expressServer } = require('../../../.jest/server-express')
-const { licenseeComplete: licenseeCompleteFactory, licensee: licenseeFactory } = require('@factories/licensee')
-const { userSuper: userSuperFactory } = require('@factories/user')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const LicenseesQuery = require('@queries/LicenseesQuery')
-const Recipient = require('@plugins/payments/PagarMe/Recipient')
-const Pedidos10 = require('@plugins/integrations/Pedidos10')
+import User from '@models/User'
+import request from 'supertest'
+import mongoServer from '../../../.jest/utils'
+import { expressServer } from '../../../.jest/server-express'
+import { licenseeComplete as licenseeCompleteFactory, licensee as licenseeFactory } from '@factories/licensee'
+import { userSuper as userSuperFactory } from '@factories/user'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { LicenseesQuery } from '@queries/LicenseesQuery'
+import { Recipient } from '@plugins/payments/PagarMe/Recipient'
+import { Pedidos10 } from '@plugins/integrations/Pedidos10'
 
 describe('licensee controller', () => {
   let token

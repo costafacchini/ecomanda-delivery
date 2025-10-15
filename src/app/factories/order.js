@@ -1,6 +1,6 @@
-const { Factory } = require('fishery')
-const { licensee } = require('./licensee')
-const moment = require('moment')
+import { Factory } from 'fishery'
+import { licensee } from './licensee'
+import moment from 'moment'
 
 const order = Factory.define(() => ({
   merchant_external_code: '358b9068-34cf-4f96-b883-0d8192bc12dd',
@@ -69,4 +69,4 @@ const order = Factory.define(() => ({
   createdAt: moment('2021-07-03T00:00:00-03:00').toDate(),
 }))
 
-module.exports = { order }
+export { order }

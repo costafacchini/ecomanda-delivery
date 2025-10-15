@@ -1,6 +1,6 @@
-const processBackgroundjob = require('../services/ProcessBackgroundjob')
+import { processBackgroundjob } from '../services/ProcessBackgroundjob.js'
 
-module.exports = {
+export default {
   key: 'background-job',
   async handle(data) {
     return await processBackgroundjob(data.body)

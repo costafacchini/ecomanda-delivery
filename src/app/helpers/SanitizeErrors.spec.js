@@ -1,4 +1,4 @@
-const { sanitizeExpressErrors, sanitizeModelErrors } = require('./SanitizeErrors')
+import { sanitizeExpressErrors, sanitizeModelErrors } from './SanitizeErrors'
 
 describe('#sanitizeExpressErrors', () => {
   const expressErrors = [

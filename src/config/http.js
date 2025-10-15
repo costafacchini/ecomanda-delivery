@@ -1,15 +1,19 @@
-const path = require('path')
-require('module-alias/register')
-require('@models/index')
+import path from 'path'
+import { fileURLToPath } from 'url'
+import('../app/models/index.js')
 
-const createError = require('http-errors')
-const express = require('express')
-const logger = require('morgan')
-const connect = require('./database')
-const enableCors = require('./cors')
-const routes = require('./routes')
-const http = require('http')
-const { Server } = require('socket.io')
+import createError from 'http-errors'
+import express from 'express'
+import logger from 'morgan'
+import { connect } from './database.js'
+import { enableCors } from './cors.js'
+import { routes } from './routes.js'
+import http from 'http'
+import { Server } from 'socket.io'
+import Rollbar from 'rollbar'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const app = express()
 
@@ -29,7 +33,6 @@ app.use(function (req, res, next) {
 
 // error handler
 if (process.env.ROLLBAR_ACCESS_TOKEN) {
-  const Rollbar = require('rollbar')
   const rollbar = new Rollbar({
     accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
     captureUncaught: true,
@@ -54,4 +57,4 @@ const server = http.createServer(app)
 const io = new Server(server)
 io.on('connection', (_) => {})
 
-module.exports = { server, io }
+export { server, io }

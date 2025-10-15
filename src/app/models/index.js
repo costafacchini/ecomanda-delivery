@@ -1,12 +1,12 @@
-require('@models/Body')
-require('@models/Cart')
-require('@models/Contact')
-require('@models/Licensee')
-require('@models/Message')
-require('@models/Product')
-require('@models/Room')
-require('@models/Trigger')
-require('@models/User')
-require('@models/Backgroundjob')
-require('@models/Integrationlog')
-require('@models/Order')
+import './Body.js'
+import './Cart.js'
+import './Contact.js'
+import './Licensee.js'
+import './Message.js'
+import './Product.js'
+import './Room.js'
+import './Trigger.js'
+import './User.js'
+import './Backgroundjob.js'
+import './Integrationlog.js'
+import './Order.js'

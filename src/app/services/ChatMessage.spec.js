@@ -1,12 +1,12 @@
-const transformChatBody = require('./ChatMessage')
-const Body = require('@models/Body')
-const Rocketchat = require('../plugins/chats/Rocketchat')
-const mongoServer = require('.jest/utils')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { body: bodyFactory } = require('@factories/body')
-const { contact: contactFactory } = require('@factories/contact')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
+import { transformChatBody } from './ChatMessage.js'
+import Body from '@models/Body'
+import { Rocketchat } from '../plugins/chats/Rocketchat.js'
+import mongoServer from '.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { body as bodyFactory } from '@factories/body'
+import { contact as contactFactory } from '@factories/contact'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
 
 describe('transformChatBody', () => {
   let licensee

@@ -1,6 +1,6 @@
-const amqp = require('amqplib/callback_api')
+import amqp from 'amqplib/callback_api.js'
 const RABBIT_URL = process.env.CLOUDAMQP_URL
-const jobs = require('../app/jobs')
+import jobs from '../app/jobs/index.js'
 
 function publishMessage(payload) {
   amqp.connect(RABBIT_URL, function (errorOnConnect, connection) {
@@ -56,4 +56,4 @@ function consumeChannel() {
   })
 }
 
-module.exports = { publishMessage, consumeChannel }
+export { publishMessage, consumeChannel }

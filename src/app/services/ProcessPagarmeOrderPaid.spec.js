@@ -1,11 +1,11 @@
-const processPagarmeOrderPaid = require('./ProcessPagarmeOrderPaid')
-const mongoServer = require('.jest/utils')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { cart: cartFactory } = require('@factories/cart')
-const { contact: contactFactory } = require('@factories/contact')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { CartRepositoryDatabase } = require('@repositories/cart')
+import { processPagarmeOrderPaid } from './ProcessPagarmeOrderPaid.js'
+import mongoServer from '.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { cart as cartFactory } from '@factories/cart'
+import { contact as contactFactory } from '@factories/contact'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { CartRepositoryDatabase } from '@repositories/cart'
 
 describe('processPagarmeOrderPaid', () => {
   beforeEach(async () => {

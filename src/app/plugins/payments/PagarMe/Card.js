@@ -1,5 +1,5 @@
-const Integrationlog = require('@models/Integrationlog')
-const request = require('../../../services/request')
+import Integrationlog from '../../../models/Integrationlog.js'
+import request from '../../../services/request.js'
 
 class Card {
   async create(contact, creditCard, token) {
@@ -107,4 +107,4 @@ class Card {
   }
 }
 
-module.exports = Card
+export { Card }

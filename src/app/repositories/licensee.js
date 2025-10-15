@@ -1,5 +1,5 @@
-const Repository = require('./repository')
-const Licensee = require('@models/Licensee')
+import Repository from './repository.js'
+import Licensee from '../models/Licensee.js'
 
 class LicenseeRepositoryDatabase extends Repository {
   model() {
@@ -23,4 +23,4 @@ class LicenseeRepositoryDatabase extends Repository {
   }
 }
 
-module.exports = { LicenseeRepositoryDatabase }
+export { LicenseeRepositoryDatabase }

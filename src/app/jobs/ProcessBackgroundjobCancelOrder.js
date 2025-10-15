@@ -1,8 +1,8 @@
-const processBackgroundjobGetPix = require('../services/ProcessBackgroundjobGetPix')
+import { processBackgroundjobCancelOrder } from '../services/ProcessBackgroundjobCancelOrder.js'
 
-module.exports = {
+export default {
   key: 'process-backgroundjob-cancel-order',
   async handle(data) {
-    return await processBackgroundjobGetPix(data.body)
+    return await processBackgroundjobCancelOrder(data.body)
   },
 }

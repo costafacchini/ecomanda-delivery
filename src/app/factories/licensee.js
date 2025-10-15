@@ -1,10 +1,12 @@
-const { Factory } = require('fishery')
+import { Factory } from 'fishery'
 
 const licensee = Factory.define(({ sequence }) => ({
   name: 'Alcateia Ltds',
   active: true,
   licenseKind: 'demo',
   apiToken: sequence,
+  useChatbot: false,
+  chatbotDefault: '',
 }))
 
 const licenseeComplete = Factory.define(() => ({
@@ -51,6 +53,8 @@ const licenseePedidos10 = Factory.define(() => ({
   name: 'Estabelecimento Pedidos10',
   active: true,
   licenseKind: 'demo',
+  useChatbot: false,
+  chatbotDefault: '',
   pedidos10_integration: {
     integration_token: 'integration_token',
     username: 'username',
@@ -61,4 +65,4 @@ const licenseePedidos10 = Factory.define(() => ({
   pedidos10_integrator: '',
 }))
 
-module.exports = { licensee, licenseeComplete, licenseeIntegrationPagarMe, licenseePedidos10 }
+export { licensee, licenseeComplete, licenseeIntegrationPagarMe, licenseePedidos10 }

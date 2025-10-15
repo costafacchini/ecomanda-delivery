@@ -1,11 +1,11 @@
-const Licensee = require('@models/Licensee')
-const Body = require('@models/Body')
-const Integrationlog = require('@models/Integrationlog')
-const request = require('supertest')
-const mongoServer = require('../../../.jest/utils')
-const { expressServer } = require('../../../.jest/server-express')
-const queueServer = require('@config/queue')
-const { licensee: licenseeFactory } = require('@factories/licensee')
+import Licensee from '@models/Licensee'
+import Body from '@models/Body'
+import Integrationlog from '@models/Integrationlog'
+import request from 'supertest'
+import mongoServer from '../../../.jest/utils'
+import { expressServer } from '../../../.jest/server-express'
+import { queueServer } from '@config/queue'
+import { licensee as licenseeFactory } from '@factories/licensee'
 
 describe('chats controller', () => {
   let apiToken

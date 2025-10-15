@@ -1,29 +1,29 @@
-const chatMessage = require('./ChatMessage')
-const chatbotMessage = require('./ChatbotMessage')
-const chatbotTransferToChat = require('./ChatbotTransferToChat')
-const closeChat = require('./CloseChat')
-const messengerMessage = require('./MessengerMessage')
-const sendMessageToChat = require('./SendMessageToChat')
-const sendMessageToChatbot = require('./SendMessageToChatbot')
-const sendMessageToMessenger = require('./SendMessageToMessenger')
-const transferToChat = require('./TransferToChat')
-const backup = require('./Backup')
-const clearBackups = require('./ClearBackups')
-const resetChatbots = require('./ResetChatbots')
-const resetChats = require('./ResetChats')
-const resetCarts = require('./ResetCarts')
-const sendContactToPagarMe = require('./SendContactToPagarMe')
-const processBackgroundJob = require('./ProcessBackgroundjob')
-const processBackgroundjobGetPix = require('./ProcessBackgroundjobGetPix')
-const processBackgroundjobGetCreditCard = require('./ProcessBackgroundjobGetCreditCard')
-const processBackgroundjobChargeCreditCard = require('./ProcessBackgroundjobChargeCreditCard')
-const processBackgroundjobInviteCreditCard = require('./ProcessBackgroundjobInviteCreditCard')
-const processBackgroundjobCancelOrder = require('./ProcessBackgroundjobCancelOrder')
-const processWebhookRequest = require('./ProcessWebhookRequest')
-const processPagarmeOrderPaid = require('./ProcessPagarmeOrderPaid')
-const pedidos10Webhook = require('./Pedidos10Webhook')
-const IntegrationSendOrder = require('./Integration10SendOrder')
-const pedidos10ChangeOrderStatus = require('./Pedidos10ChangeOrderStatus')
+import chatMessage from './ChatMessage.js'
+import chatbotMessage from './ChatbotMessage.js'
+import chatbotTransferToChat from './ChatbotTransferToChat.js'
+import closeChat from './CloseChat.js'
+import messengerMessage from './MessengerMessage.js'
+import sendMessageToChat from './SendMessageToChat.js'
+import sendMessageToChatbot from './SendMessageToChatbot.js'
+import sendMessageToMessenger from './SendMessageToMessenger.js'
+import transferToChat from './TransferToChat.js'
+import backup from './Backup.js'
+import clearBackups from './ClearBackups.js'
+import resetChatbots from './ResetChatbots.js'
+import resetChats from './ResetChats.js'
+import resetCarts from './ResetCarts.js'
+import sendContactToPagarMe from './SendContactToPagarMe.js'
+import processBackgroundJob from './ProcessBackgroundjob.js'
+import processBackgroundjobGetPix from './ProcessBackgroundjobGetPix.js'
+import processBackgroundjobGetCreditCard from './ProcessBackgroundjobGetCreditCard.js'
+import processBackgroundjobChargeCreditCard from './ProcessBackgroundjobChargeCreditCard.js'
+import processBackgroundjobInviteCreditCard from './ProcessBackgroundjobInviteCreditCard.js'
+import processBackgroundjobCancelOrder from './ProcessBackgroundjobCancelOrder.js'
+import processWebhookRequest from './ProcessWebhookRequest.js'
+import processPagarmeOrderPaid from './ProcessPagarmeOrderPaid.js'
+import pedidos10Webhook from './Pedidos10Webhook.js'
+import IntegrationSendOrder from './Integration10SendOrder.js'
+import pedidos10ChangeOrderStatus from './Pedidos10ChangeOrderStatus.js'
 
 const jobs = [
   chatMessage,
@@ -54,4 +54,4 @@ const jobs = [
   pedidos10ChangeOrderStatus,
 ]
 
-module.exports = jobs
+export default jobs

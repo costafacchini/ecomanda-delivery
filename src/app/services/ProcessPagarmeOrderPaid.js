@@ -1,5 +1,5 @@
-const PagarMe = require('@plugins/payments/PagarMe')
-const { CartRepositoryDatabase } = require('@repositories/cart')
+import { PagarMe } from '../plugins/payments/PagarMe.js'
+import { CartRepositoryDatabase } from '../repositories/cart.js'
 
 async function processPagarmeOrderPaid(body) {
   const pagarMe = new PagarMe()
@@ -17,4 +17,4 @@ async function processPagarmeOrderPaid(body) {
   }
 }
 
-module.exports = processPagarmeOrderPaid
+export { processPagarmeOrderPaid }

@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
+
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
 
@@ -46,4 +47,4 @@ templateSchema.set('toJSON', {
 
 const Template = mongoose.model('Template', templateSchema)
 
-module.exports = Template
+export default Template

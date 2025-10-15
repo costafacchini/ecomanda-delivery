@@ -1,4 +1,4 @@
-const Template = require('@models/Template')
+import Template from '../models/Template.js'
 
 async function destroyAllTemplates() {
   await Template.deleteMany()
@@ -12,4 +12,4 @@ async function createTemplate(fields) {
   return templateSaved
 }
 
-module.exports = { createTemplate, destroyAllTemplates }
+export { createTemplate, destroyAllTemplates }

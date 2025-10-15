@@ -1,7 +1,7 @@
-const Dialog = require('@plugins/messengers/Dialog')
-const YCloud = require('@plugins/messengers/YCloud')
-const { createTemplate, destroyAllTemplates } = require('@repositories/template')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+import { Dialog } from '../../messengers/Dialog.js'
+import { YCloud } from '../../messengers/YCloud.js'
+import { createTemplate, destroyAllTemplates } from '../../../repositories/template.js'
+import { LicenseeRepositoryDatabase } from '../../../repositories/licensee.js'
 
 class TemplatesImporter {
   constructor(licenseeId) {
@@ -28,4 +28,4 @@ class TemplatesImporter {
   }
 }
 
-module.exports = TemplatesImporter
+export { TemplatesImporter }

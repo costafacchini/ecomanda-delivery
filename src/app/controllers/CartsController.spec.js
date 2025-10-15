@@ -1,21 +1,27 @@
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const request = require('supertest')
-const mongoServer = require('../../../.jest/utils')
-const { expressServer } = require('../../../.jest/server-express')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
-const { cart: cartFactory } = require('@factories/cart')
-const { publishMessage } = require('@config/rabbitmq')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { CartRepositoryDatabase } = require('@repositories/cart')
-const { MessageRepositoryDatabase } = require('@repositories/message')
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import request from 'supertest'
+import mongoServer from '../../../.jest/utils'
+import { expressServer } from '../../../.jest/server-express'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
+import { cart as cartFactory } from '@factories/cart'
+import { publishMessage } from '@config/rabbitmq'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { CartRepositoryDatabase } from '@repositories/cart'
+import { MessageRepositoryDatabase } from '@repositories/message'
 
-jest.mock('@config/rabbitmq')
+jest.mock('@config/rabbitmq', () => ({
+  publishMessage: jest.fn(),
+}))
 
 describe('carts controller', () => {
   let licensee, contact
   let anotherLicensee, anotherContact
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
 
   beforeAll(async () => {
     await mongoServer.connect()

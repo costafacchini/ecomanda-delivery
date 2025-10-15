@@ -1,6 +1,6 @@
-const transformChatbotBody = require('../services/ChatbotMessage')
+import { transformChatbotBody } from '../services/ChatbotMessage.js'
 
-module.exports = {
+export default {
   key: 'chatbot-message',
   async handle(data) {
     return await transformChatbotBody(data.body)

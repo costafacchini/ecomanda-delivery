@@ -1,4 +1,4 @@
-const Parser = require('./Parser')
+import { Parser } from './Parser.js'
 
 describe('Pedidos10/Parser', () => {
   describe('#parseOrder', () => {

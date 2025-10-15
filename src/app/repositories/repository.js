@@ -6,4 +6,4 @@ class Repository {
   async find() {}
 }
 
-module.exports = Repository
+export default Repository

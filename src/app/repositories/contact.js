@@ -1,8 +1,8 @@
-const Repository = require('./repository')
-const Contact = require('@models/Contact')
-const MessagesQuery = require('@queries/MessagesQuery')
-const moment = require('moment-timezone')
-const NormalizePhone = require('@helpers/NormalizePhone')
+import Repository from './repository.js'
+import Contact from '../models/Contact.js'
+import { MessagesQuery } from '../queries/MessagesQuery.js'
+import moment from 'moment-timezone'
+import { NormalizePhone } from '../helpers/NormalizePhone.js'
 
 class ContactRepositoryDatabase extends Repository {
   model() {
@@ -60,4 +60,4 @@ class ContactRepositoryDatabase extends Repository {
   }
 }
 
-module.exports = { ContactRepositoryDatabase }
+export { ContactRepositoryDatabase }

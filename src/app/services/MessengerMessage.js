@@ -1,5 +1,5 @@
-const Body = require('@models/Body')
-const createMessengerPlugin = require('../plugins/messengers/factory')
+import Body from '../models/Body.js'
+import { createMessengerPlugin } from '../plugins/messengers/factory.js'
 
 async function transformMessengerBody(data) {
   const { bodyId } = data
@@ -42,4 +42,4 @@ async function transformMessengerBody(data) {
   return actions
 }
 
-module.exports = transformMessengerBody
+export { transformMessengerBody }

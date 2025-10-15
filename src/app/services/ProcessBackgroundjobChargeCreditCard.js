@@ -1,7 +1,7 @@
-const Backgroundjob = require('@models/Backgroundjob')
-const PagarMe = require('@plugins/payments/PagarMe')
-const { CartRepositoryDatabase } = require('@repositories/cart')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
+import Backgroundjob from '../models/Backgroundjob.js'
+import { PagarMe } from '../plugins/payments/PagarMe.js'
+import { CartRepositoryDatabase } from '../repositories/cart.js'
+import { ContactRepositoryDatabase } from '../repositories/contact.js'
 
 async function processBackgroundjobChargeCreditCard(data) {
   const { jobId, credit_card_data, cart_id: cartId } = data
@@ -54,4 +54,4 @@ async function processBackgroundjobChargeCreditCard(data) {
   await backgroundjob.save()
 }
 
-module.exports = processBackgroundjobChargeCreditCard
+export { processBackgroundjobChargeCreditCard }

@@ -1,5 +1,5 @@
-const User = require('@models/User')
-const mongoServer = require('../../../.jest/utils')
+import User from '@models/User'
+import mongoServer from '../../../.jest/utils'
 
 describe('User', () => {
   beforeEach(async () => {

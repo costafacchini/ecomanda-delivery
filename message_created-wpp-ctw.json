@@ -1,0 +1,115 @@
+{
+  "account": { "id": 4, "name": "Estância Supermercados" },
+  "additional_attributes": {},
+  "content_attributes": {},
+  "content_type": "text",
+  "content": "Mensagem do whatsapp para o chatwoot",
+  "conversation": {
+    "additional_attributes": {},
+    "can_reply": true,
+    "channel": "Channel::Api",
+    "contact_inbox": {
+      "id": 208,
+      "contact_id": 7785,
+      "inbox_id": 2,
+      "source_id": "a795f04a-fcd6-40d9-92ad-e402d90b6b87",
+      "created_at": "2025-08-02T12:58:02.340Z",
+      "updated_at": "2025-08-02T12:58:02.340Z",
+      "hmac_verified": false,
+      "pubsub_token": "fUcuGxmrKqxfqTyZoMRCAJoj"
+    },
+    "id": 67,
+    "inbox_id": 2,
+    "messages": [
+      {
+        "id": 15045,
+        "content": "Mensagem do whatsapp para o chatwoot",
+        "account_id": 4,
+        "inbox_id": 2,
+        "conversation_id": 67,
+        "message_type": 0,
+        "created_at": 1754139844,
+        "updated_at": "2025-08-02T13:04:04.531Z",
+        "private": false,
+        "status": "sent",
+        "source_id": null,
+        "content_type": "text",
+        "content_attributes": {},
+        "sender_type": "Contact",
+        "sender_id": 7785,
+        "external_source_ids": {},
+        "additional_attributes": {},
+        "processed_message_content": "Mensagem do whatsapp para o chatwoot",
+        "sentiment": {},
+        "conversation": {
+          "assignee_id": null,
+          "unread_count": 0,
+          "last_activity_at": 1754139844,
+          "contact_inbox": {
+            "source_id": "a795f04a-fcd6-40d9-92ad-e402d90b6b87"
+          }
+        },
+        "sender": {
+          "additional_attributes": {},
+          "custom_attributes": { "test": "test", "hello": "hello" },
+          "email": null,
+          "id": 7785,
+          "identifier": null,
+          "name": "Alan",
+          "phone_number": "+5548999290820",
+          "thumbnail": "",
+          "type": "contact"
+        }
+      }
+    ],
+    "labels": [],
+    "meta": {
+      "sender": {
+        "additional_attributes": {},
+        "custom_attributes": { "test": "test", "hello": "hello" },
+        "email": null,
+        "id": 7785,
+        "identifier": null,
+        "name": "Alan",
+        "phone_number": "+5548999290820",
+        "thumbnail": "",
+        "type": "contact"
+      },
+      "assignee": null,
+      "team": null,
+      "hmac_verified": false
+    },
+    "status": "pending",
+    "custom_attributes": {},
+    "snoozed_until": null,
+    "unread_count": 0,
+    "first_reply_created_at": "2025-08-02T13:02:03.518Z",
+    "priority": null,
+    "waiting_since": 1754139815,
+    "agent_last_seen_at": 1754139844,
+    "contact_last_seen_at": 0,
+    "last_activity_at": 1754139844,
+    "timestamp": 1754139844,
+    "created_at": 1754139593
+  },
+  "created_at": "2025-08-02T13:04:04.531Z",
+  "id": 15045,
+  "inbox": { "id": 2, "name": "estancia" },
+  "message_type": "incoming",
+  "status": "sent",
+  "private": false,
+  "sender": {
+    "account": { "id": 4, "name": "Estância Supermercados" },
+    "additional_attributes": {},
+    "avatar": "",
+    "custom_attributes": { "test": "test", "hello": "hello" },
+    "email": null,
+    "id": 7785,
+    "identifier": null,
+    "name": "Alan",
+    "phone_number": "+5548999290820",
+    "thumbnail": ""
+  },
+  "source_id": null,
+  "event": "message_created"
+}

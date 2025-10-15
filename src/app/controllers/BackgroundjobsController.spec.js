@@ -1,11 +1,11 @@
-const Backgroundjob = require('@models/Backgroundjob')
-const request = require('supertest')
-const mongoServer = require('../../../.jest/utils')
-const queueServer = require('@config/queue')
-const { expressServer } = require('../../../.jest/server-express')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { backgroundjob: backgroundjobFactory } = require('@factories/backgroundjob')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+import Backgroundjob from '@models/Backgroundjob'
+import request from 'supertest'
+import mongoServer from '../../../.jest/utils'
+import { queueServer } from '@config/queue'
+import { expressServer } from '../../../.jest/server-express'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { backgroundjob as backgroundjobFactory } from '@factories/backgroundjob'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('backgrounndjobs controller', () => {
   let apiToken

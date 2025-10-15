@@ -1,4 +1,4 @@
-const { MessageRepositoryDatabase } = require('@repositories/message')
+import { MessageRepositoryDatabase } from '@repositories/message'
 
 class MessagesSendedQuery {
   constructor(startDate, endDate, licenseeId) {
@@ -20,4 +20,4 @@ class MessagesSendedQuery {
   }
 }
 
-module.exports = MessagesSendedQuery
+export { MessagesSendedQuery }

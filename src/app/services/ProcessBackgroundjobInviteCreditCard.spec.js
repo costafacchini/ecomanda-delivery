@@ -1,14 +1,14 @@
-const processBackgroundjobInviteCreditCard = require('./ProcessBackgroundjobInviteCreditCard')
-const Backgroundjob = require('@models/Backgroundjob')
-const mongoServer = require('.jest/utils')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { backgroundjob: backgroundjobFactory } = require('@factories/backgroundjob')
-const { cart: cartFactory } = require('@factories/cart')
-const { contact: contactFactory } = require('@factories/contact')
-const Card = require('@plugins/payments/PagarMe/Card')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { CartRepositoryDatabase } = require('@repositories/cart')
+import { processBackgroundjobInviteCreditCard } from './ProcessBackgroundjobInviteCreditCard.js'
+import Backgroundjob from '@models/Backgroundjob'
+import mongoServer from '.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { backgroundjob as backgroundjobFactory } from '@factories/backgroundjob'
+import { cart as cartFactory } from '@factories/cart'
+import { contact as contactFactory } from '@factories/contact'
+import { Card } from '@plugins/payments/PagarMe/Card.js'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { CartRepositoryDatabase } from '@repositories/cart'
 
 describe('processBackgroundjobInviteCreditCard', () => {
   beforeEach(async () => {

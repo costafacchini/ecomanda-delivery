@@ -1,6 +1,6 @@
-const Integrationlog = require('@models/Integrationlog')
-const Body = require('@models/Body')
-const queueServer = require('@config/queue')
+import Integrationlog from '../models/Integrationlog.js'
+import Body from '../models/Body.js'
+import { queueServer } from '../../config/queue.js'
 
 class OrdersController {
   async create(req, res) {
@@ -40,4 +40,4 @@ class OrdersController {
   }
 }
 
-module.exports = OrdersController
+export { OrdersController }

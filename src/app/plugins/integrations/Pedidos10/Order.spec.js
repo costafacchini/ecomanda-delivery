@@ -1,12 +1,12 @@
-const Licensee = require('@models/Licensee')
-const { OrderRepositoryDatabase } = require('@repositories/order')
-const mongoServer = require('../../../../../.jest/utils')
-const Order = require('./Order')
-const Webhook = require('./services/Webhook')
-const OrderStatus = require('./services/OrderStatus')
-const Auth = require('./services/Auth')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { order: orderFactory } = require('@factories/order')
+import Licensee from '@models/Licensee'
+import { OrderRepositoryDatabase } from '@repositories/order'
+import mongoServer from '../../../../../.jest/utils'
+import { Order } from './Order.js'
+import { Webhook } from './services/Webhook.js'
+import { OrderStatus } from './services/OrderStatus.js'
+import { Auth } from './services/Auth.js'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { order as orderFactory } from '@factories/order'
 
 describe('Pedidos10/Order', () => {
   beforeAll(async () => {

@@ -1,5 +1,5 @@
-const createIntegrator = require('./factory')
-const IntegratorBase = require('./IntegratorBase')
+import { createIntegrator } from './factory.js'
+import { IntegratorBase } from './IntegratorBase.js'
 
 describe('createIntegrator', () => {
   it('returns the base integrator', () => {

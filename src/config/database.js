@@ -1,4 +1,4 @@
-const { MongoServer } = require('./mongo')
+import { MongoServer } from './mongo.js'
 
 async function connect() {
   const config = {
@@ -18,4 +18,4 @@ async function connect() {
   await mongoServer.connect()
 }
 
-module.exports = connect
+export { connect }

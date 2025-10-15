@@ -1,12 +1,12 @@
-const resetChatbots = require('./ResetChatbots')
-const mongoServer = require('.jest/utils')
-const fetchMock = require('fetch-mock')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
-const { message: messageFactory } = require('@factories/message')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { MessageRepositoryDatabase } = require('@repositories/message')
+import { resetChatbots } from './ResetChatbots.js'
+import mongoServer from '.jest/utils'
+import fetchMock from 'fetch-mock'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
+import { message as messageFactory } from '@factories/message'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { MessageRepositoryDatabase } from '@repositories/message'
 
 describe('resetChatbots', () => {
   jest.spyOn(global.console, 'info').mockImplementation()

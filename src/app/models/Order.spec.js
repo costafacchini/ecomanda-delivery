@@ -1,8 +1,8 @@
-const Order = require('@models/Order')
-const Licensee = require('@models/Licensee')
-const mongoServer = require('../../../.jest/utils')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { order: orderFactory } = require('@factories/order')
+import Order from '@models/Order'
+import Licensee from '@models/Licensee'
+import mongoServer from '../../../.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { order as orderFactory } from '@factories/order'
 
 describe('Order', () => {
   let licensee

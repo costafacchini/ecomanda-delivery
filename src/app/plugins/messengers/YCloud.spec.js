@@ -1,8 +1,8 @@
-const YCloud = require('./YCloud')
-const Trigger = require('@models/Trigger')
-const Template = require('@models/Template')
-const { MessageRepositoryDatabase } = require('@repositories/message')
-const NormalizePhone = require('@helpers/NormalizePhone')
+import { YCloud } from './YCloud.js'
+import Trigger from '@models/Trigger.js'
+import Template from '@models/Template'
+import { MessageRepositoryDatabase } from '@repositories/message'
+import { NormalizePhone } from '@helpers/NormalizePhone'
 
 jest.mock('@models/Trigger')
 jest.mock('@models/Template')
@@ -12,8 +12,8 @@ jest.mock('@helpers/Files')
 jest.mock('@helpers/NormalizePhone')
 jest.mock('@helpers/ParseTriggerText')
 
-const request = require('../../services/request')
-const files = require('@helpers/Files')
+import request from '../../services/request'
+import { isPhoto, isVideo, isMidia, isVoice } from '@helpers/Files.js'
 
 describe('YCloud Plugin', () => {
   let ycloud
@@ -595,10 +595,10 @@ describe('YCloud Plugin', () => {
     })
 
     it('should send image file message successfully', async () => {
-      files.isPhoto.mockReturnValue(true)
-      files.isVideo.mockReturnValue(false)
-      files.isMidia.mockReturnValue(false)
-      files.isVoice.mockReturnValue(false)
+      isPhoto.mockReturnValue(true)
+      isVideo.mockReturnValue(false)
+      isMidia.mockReturnValue(false)
+      isVoice.mockReturnValue(false)
 
       mockMessage.kind = 'file'
       mockMessage.url = 'https://example.com/image.jpg'

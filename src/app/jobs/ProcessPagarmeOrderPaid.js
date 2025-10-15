@@ -1,6 +1,6 @@
-const processPagarmeOrderPaid = require('../services/ProcessPagarmeOrderPaid')
+import { processPagarmeOrderPaid } from '../services/ProcessPagarmeOrderPaid.js'
 
-module.exports = {
+export default {
   key: 'process-pagarme-order-paid',
   async handle(data) {
     return await processPagarmeOrderPaid(data.body)

@@ -58,4 +58,4 @@ class Default {
   }
 }
 
-module.exports = Default
+export { Default }

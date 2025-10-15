@@ -1,6 +1,6 @@
-const processBackgroundjobChargeCreditCard = require('../services/ProcessBackgroundjobChargeCreditCard')
+import { processBackgroundjobChargeCreditCard } from '../services/ProcessBackgroundjobChargeCreditCard.js'
 
-module.exports = {
+export default {
   key: 'process-backgroundjob-charge-credit-card',
   async handle(data) {
     return await processBackgroundjobChargeCreditCard(data.body)

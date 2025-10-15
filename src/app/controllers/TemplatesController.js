@@ -1,8 +1,8 @@
-const Template = require('@models/Template')
-const { sanitizeModelErrors } = require('@helpers/SanitizeErrors')
-const _ = require('lodash')
-const TemplatesQuery = require('@queries/TemplatesQuery')
-const TemplatesImporter = require('@plugins/importers/template/index')
+import Template from '../models/Template.js'
+import { sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
+import _ from 'lodash'
+import { TemplatesQuery } from '../queries/TemplatesQuery.js'
+import { TemplatesImporter } from '../plugins/importers/template/index.js'
 
 function permit(fields) {
   const permitedFields = ['name', 'namespace', 'licensee']
@@ -106,4 +106,4 @@ class TemplatesController {
   }
 }
 
-module.exports = TemplatesController
+export { TemplatesController }

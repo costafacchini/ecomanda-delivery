@@ -1,7 +1,7 @@
-const mongoServer = require('../../.jest/utils')
-const User = require('@models/User')
-const { createDefaultUser } = require('./database')
-const { userSuper: userSuperFactory } = require('../app/factories/user')
+import mongoServer from '../../.jest/utils.js'
+import User from '@models/User.js'
+import { createDefaultUser } from './database.js'
+import { userSuper as userSuperFactory } from '../app/factories/user.js'
 
 describe('#createDefaultUser', () => {
   beforeEach(async () => {

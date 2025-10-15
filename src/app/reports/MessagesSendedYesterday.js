@@ -1,7 +1,7 @@
-const MessagesSendedQuery = require('@queries/MessagesSended')
-const MessagesFailedQuery = require('@queries/MessagesFailed')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const moment = require('moment')
+import { MessagesSendedQuery } from '@queries/MessagesSended'
+import { MessagesFailedQuery } from '@queries/MessagesFailed'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import moment from 'moment'
 
 class MessagesSendedYesterday {
   constructor() {
@@ -42,4 +42,4 @@ class MessagesSendedYesterday {
   }
 }
 
-module.exports = MessagesSendedYesterday
+export { MessagesSendedYesterday }

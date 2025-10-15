@@ -1,6 +1,6 @@
-const sendMessageToChat = require('../services/SendMessageToChat')
+import { sendMessageToChat } from '../services/SendMessageToChat.js'
 
-module.exports = {
+export default {
   key: 'send-message-to-chat',
   async handle(data) {
     return await sendMessageToChat(data.body)

@@ -1,10 +1,10 @@
-const Template = require('@models/Template')
-const Dialog = require('@plugins/messengers/Dialog')
-const TemplatesImporter = require('@plugins/importers/template/index')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { template: templateFactory } = require('@factories/template')
-const mongoServer = require('../../../../../.jest/utils')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+import Template from '@models/Template'
+import { Dialog } from '@plugins/messengers/Dialog.js'
+import { TemplatesImporter } from '@plugins/importers/template/index.js'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { template as templateFactory } from '@factories/template'
+import mongoServer from '../../../../../.jest/utils'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('TemplatesImporter', () => {
   beforeAll(async () => {

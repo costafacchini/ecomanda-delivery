@@ -1,6 +1,6 @@
-const Utalk = require('./Utalk')
-const Dialog = require('./Dialog')
-const YCloud = require('./YCloud')
+import { Utalk } from './Utalk.js'
+import { Dialog } from './Dialog.js'
+import { YCloud } from './YCloud.js'
 
 function createMessengerPlugin(licensee) {
   switch (licensee.whatsappDefault) {
@@ -15,4 +15,4 @@ function createMessengerPlugin(licensee) {
   }
 }
 
-module.exports = createMessengerPlugin
+export { createMessengerPlugin }

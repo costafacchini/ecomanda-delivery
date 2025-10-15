@@ -1,12 +1,12 @@
-const Go2go = require('./Go2go')
-const mongoServer = require('../../../../.jest/utils')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
-const { cart: cartFactory } = require('@factories/cart')
-const { advanceTo, clear } = require('jest-date-mock')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { CartRepositoryDatabase } = require('@repositories/cart')
+import { Go2go } from './Go2go.js'
+import mongoServer from '../../../../.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
+import { cart as cartFactory } from '@factories/cart'
+import { advanceTo, clear } from 'jest-date-mock'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ContactRepositoryDatabase } from '@repositories/contact'
+import { CartRepositoryDatabase } from '@repositories/cart'
 
 describe('Go2go plugin', () => {
   beforeEach(async () => {

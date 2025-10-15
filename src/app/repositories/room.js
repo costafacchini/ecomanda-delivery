@@ -1,4 +1,4 @@
-const Room = require('@models/Room')
+import Room from '../models/Room.js'
 
 async function createRoom(fields) {
   const room = new Room({
@@ -12,4 +12,4 @@ async function getRoomBy(filter) {
   return await Room.findOne(filter).populate('contact')
 }
 
-module.exports = { createRoom, getRoomBy }
+export { createRoom, getRoomBy }

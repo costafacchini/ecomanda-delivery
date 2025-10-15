@@ -1,7 +1,7 @@
-const cors = require('cors')
+import cors from 'cors'
 
 function enableCors(app) {
   app.use(cors())
 }
 
-module.exports = enableCors
+export { enableCors }

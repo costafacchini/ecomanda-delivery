@@ -1,6 +1,6 @@
-const Default = require('./Default')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { contact: contactFactory } = require('@factories/contact')
+import { Default } from './Default.js'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
 
 describe('Default plugin', () => {
   describe('#parseCart', () => {

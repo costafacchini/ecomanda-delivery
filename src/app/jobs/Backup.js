@@ -1,6 +1,6 @@
-const backup = require('../services/Backup')
+import { backup } from '../services/Backup.js'
 
-module.exports = {
+export default {
   key: 'backup',
   async handle() {
     return await backup()

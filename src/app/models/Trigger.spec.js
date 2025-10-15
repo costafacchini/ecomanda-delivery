@@ -1,8 +1,8 @@
-const Trigger = require('@models/Trigger')
-const mongoServer = require('../../../.jest/utils')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { triggerMultiProduct: triggerFactory } = require('@factories/trigger')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+import Trigger from '@models/Trigger'
+import mongoServer from '../../../.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { triggerMultiProduct as triggerFactory } from '@factories/trigger'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('Trigger', () => {
   let licensee

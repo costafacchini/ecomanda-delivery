@@ -1,6 +1,6 @@
-const sendOrder = require('../services/IntegrationSendOrder')
+import { sendOrder } from '../services/IntegrationSendOrder.js'
 
-module.exports = {
+export default {
   key: 'integration-send-order',
   async handle(data) {
     return await sendOrder(data.body)

@@ -1,7 +1,7 @@
-const Body = require('@models/Body')
-const createChatPlugin = require('../plugins/chats/factory')
-const { ContactRepositoryDatabase } = require('@repositories/contact')
-const { MessageRepositoryDatabase } = require('@repositories/message')
+import Body from '../models/Body.js'
+import { createChatPlugin } from '../plugins/chats/factory.js'
+import { ContactRepositoryDatabase } from '../repositories/contact.js'
+import { MessageRepositoryDatabase } from '../repositories/message.js'
 
 async function transformChatBody(data) {
   const { bodyId } = data
@@ -56,4 +56,4 @@ async function transformChatBody(data) {
   return actions
 }
 
-module.exports = transformChatBody
+export { transformChatBody }

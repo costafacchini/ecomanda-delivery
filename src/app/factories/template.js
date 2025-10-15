@@ -1,5 +1,5 @@
-const { Factory } = require('fishery')
-const { licensee } = require('./licensee')
+import { Factory } from 'fishery'
+import { licensee } from './licensee'
 
 const template = Factory.define(() => ({
   name: 'template',
@@ -7,4 +7,4 @@ const template = Factory.define(() => ({
   licensee: licensee.build(),
 }))
 
-module.exports = { template }
+export { template }

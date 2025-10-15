@@ -1,11 +1,13 @@
-require('dotenv').config()
+import 'dotenv/config'
+import debug from 'debug'
+import { server } from './src/config/http.js'
+import('./src/app/websockets/index.js')
 
-if (process.env.NODE_ENV === 'production') require('newrelic')
+if (process.env.NODE_ENV === 'production') {
+  import('newrelic')
+}
 
-const { server } = require('./src/config/http')
-const debug = require('debug')('ecomanda-delivery:server')
-
-require('./src/app/websockets/index')
+const errorDebug = debug('ecomanda-delivery:server')
 
 const PORT = process.env.PORT || '5000'
 
@@ -38,5 +40,5 @@ function onError(error) {
 function onListening() {
   const addr = server.address()
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'PORT ' + addr.PORT
-  debug('Listening on ' + bind)
+  errorDebug('Listening on ' + bind)
 }

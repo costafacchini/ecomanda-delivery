@@ -1,6 +1,6 @@
-const closeChat = require('../services/CloseChat')
+import { closeChat } from '../services/CloseChat.js'
 
-module.exports = {
+export default {
   key: 'close-chat',
   async handle(data) {
     return await closeChat(data.body)

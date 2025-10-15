@@ -1,6 +1,6 @@
-const clearBackups = require('../services/ClearBackups')
+import { clearBackups } from '../services/ClearBackups.js'
 
-module.exports = {
+export default {
   key: 'clear-backups',
   async handle() {
     return await clearBackups()

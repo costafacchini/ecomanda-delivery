@@ -1,10 +1,10 @@
-require('dotenv').config()
-require('module-alias/register')
-require('@models/index')
-const MessagesSendedYesterday = require('@reports/MessagesSendedYesterday')
+import 'dotenv/config'
+import 'module-alias/register'
+import '@models/index'
+import MessagesSendedYesterday from '@reports/MessagesSendedYesterday'
 
-const request = require('./src/app/services/request')
-const connect = require('./src/config/database')
+import request from './src/app/services/request'
+import connect from './src/config/database'
 connect()
 
 async function schedule() {
@@ -14,7 +14,7 @@ async function schedule() {
 
   for (const data of reportData) {
     console.log(
-      `Licenciado - ${data.licensee.name}\nMensagens disparadas com sucesso: ${data.success.count}\nMensagens não disparadas: ${data.error.count}\n\n`
+      `Licenciado - ${data.licensee.name}\nMensagens disparadas com sucesso: ${data.success.count}\nMensagens não disparadas: ${data.error.count}\n\n`,
     )
   }
 

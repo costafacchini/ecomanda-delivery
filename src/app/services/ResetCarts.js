@@ -1,5 +1,5 @@
-const Cart = require('@models/Cart')
-const moment = require('moment-timezone')
+import Cart from '../models/Cart.js'
+import moment from 'moment-timezone'
 
 async function resetCarts() {
   const timeLimit = moment().tz('UTC').subtract(1, 'hour')
@@ -7,4 +7,4 @@ async function resetCarts() {
   return
 }
 
-module.exports = resetCarts
+export { resetCarts }

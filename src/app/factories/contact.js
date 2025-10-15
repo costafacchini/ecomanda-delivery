@@ -1,5 +1,5 @@
-const { Factory } = require('fishery')
-const { licensee } = require('./licensee')
+import { Factory } from 'fishery'
+import { licensee } from './licensee'
 
 const contact = Factory.define(() => ({
   number: '5511990283745',
@@ -7,4 +7,4 @@ const contact = Factory.define(() => ({
   licensee: licensee.build(),
 }))
 
-module.exports = { contact }
+export { contact }

@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
+
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
 
@@ -32,4 +33,4 @@ productSchema.set('toJSON', {
 
 const Product = mongoose.model('Product', productSchema)
 
-module.exports = Product
+export default Product

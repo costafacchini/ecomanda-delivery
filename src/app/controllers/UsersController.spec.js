@@ -1,10 +1,10 @@
-const User = require('@models/User')
-const request = require('supertest')
-const mongoServer = require('../../../.jest/utils')
-const { expressServer } = require('../../../.jest/server-express')
-const { userSuper: userSuperFactory, user: userFactory } = require('@factories/user')
-const { licensee: licenseeFactory } = require('@factories/licensee')
-const { LicenseeRepositoryDatabase } = require('@repositories/licensee')
+import User from '@models/User'
+import request from 'supertest'
+import mongoServer from '../../../.jest/utils'
+import { expressServer } from '../../../.jest/server-express'
+import { userSuper as userSuperFactory, user as userFactory } from '@factories/user'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('user controller', () => {
   let token

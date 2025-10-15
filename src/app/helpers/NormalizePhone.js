@@ -30,4 +30,4 @@ class NormalizePhone {
   }
 }
 
-module.exports = NormalizePhone
+export { NormalizePhone }

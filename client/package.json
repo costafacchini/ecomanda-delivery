@@ -32,7 +32,7 @@
     "eject": "react-scripts eject",
     "jest:watch": "react-scripts test --no-coverage --verbose --watch --runInBand --notify --notifyMode always"
   },
-  "proxy": "http://localhost:5000",
+  "proxy": "http://localhost:6000",
   "eslintConfig": {
     "extends": [
       "react-app",

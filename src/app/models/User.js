@@ -1,7 +1,8 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
+import bcrypt from 'bcrypt'
+
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
-const bcrypt = require('bcrypt')
 const saltRounds = 14
 
 const userSchema = new Schema(
@@ -75,4 +76,4 @@ userSchema.set('toJSON', {
 
 const User = mongoose.model('User', userSchema)
 
-module.exports = User
+export default User

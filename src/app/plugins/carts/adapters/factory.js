@@ -1,6 +1,6 @@
-const Default = require('./Default')
-const Gallabox = require('./Gallabox')
-const Alloy = require('./Alloy')
+import { Default } from './Default.js'
+import { Gallabox } from './Gallabox.js'
+import { Alloy } from './Alloy.js'
 
 function createCartAdapter(plugin) {
   if (plugin == 'gallabox') {
@@ -12,4 +12,4 @@ function createCartAdapter(plugin) {
   }
 }
 
-module.exports = createCartAdapter
+export { createCartAdapter }

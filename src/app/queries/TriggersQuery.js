@@ -1,5 +1,5 @@
-const Trigger = require('@models/Trigger')
-const QueryBuilder = require('@queries/QueryBuilder')
+import Trigger from '../models/Trigger.js'
+import { QueryBuilder } from './QueryBuilder.js'
 
 class TriggersQuery {
   constructor() {}
@@ -44,4 +44,4 @@ class TriggersQuery {
   }
 }
 
-module.exports = TriggersQuery
+export { TriggersQuery }

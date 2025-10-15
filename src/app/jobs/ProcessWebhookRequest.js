@@ -1,6 +1,6 @@
-const processWebhookRequest = require('../services/ProcessWebhookRequest')
+import { processWebhookRequest } from '../services/ProcessWebhookRequest.js'
 
-module.exports = {
+export default {
   key: 'process-webhook-request',
   async handle(data) {
     return await processWebhookRequest(data.body)

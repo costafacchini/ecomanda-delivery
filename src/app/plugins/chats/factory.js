@@ -1,7 +1,7 @@
-const Rocketchat = require('./Rocketchat')
-const Crisp = require('./Crisp')
-const Cuboup = require('./Cuboup')
-const Chatwoot = require('./Chatwoot')
+import { Rocketchat } from './Rocketchat.js'
+import { Crisp } from './Crisp.js'
+import { Cuboup } from './Cuboup.js'
+import { Chatwoot } from './Chatwoot.js'
 
 function createChatPlugin(licensee) {
   switch (licensee.chatDefault) {
@@ -18,4 +18,4 @@ function createChatPlugin(licensee) {
   }
 }
 
-module.exports = createChatPlugin
+export { createChatPlugin }
