@@ -1,0 +1,17 @@
+{
+  "status": "success",
+  "message": "A message has been successfully sent to the user.",
+  "data": {
+    "name": "message_sent",
+    "source": "pabbly_chatflow",
+    "timestamp": "2025-10-19T12:12:09.069Z",
+    "event_data": {
+      "messaging_product": "whatsapp",
+      "recipient_type": "individual",
+      "to": "5548999290820",
+      "type": "text",
+      "text": { "preview_url": false, "body": "Test" }
+    },
+    "error": null
+  }
+}

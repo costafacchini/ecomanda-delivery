@@ -1,0 +1,24 @@
+{
+  "name": "message_received",
+  "source": "pabbly_chatflow",
+  "timestamp": "2025-10-19T12:33:14.524Z",
+  "event_data": {
+    "from": "554899290820",
+    "id": "wamid.HBgMNTU0ODk5MjkwODIwFQIAEhgUM0I4M0VGMTY5MDhDMkE4MjcwRkMA",
+    "timestamp": "1760877193",
+    "type": "contacts",
+    "contacts": [
+      {
+        "name": { "first_name": "Alan", "formatted_name": "Alan" },
+        "phones": [
+          {
+            "phone": "+55 48 99929-0820",
+            "wa_id": "554899290820",
+            "type": "CELL"
+          }
+        ]
+      }
+    ]
+  },
+  "error": null
+}

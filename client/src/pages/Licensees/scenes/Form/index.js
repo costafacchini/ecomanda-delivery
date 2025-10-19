@@ -406,6 +406,7 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
                   <option value='utalk'>Utalk</option>
                   <option value='dialog'>Dialog360</option>
                   <option value='ycloud'>YCloud</option>
+                  <option value='pabbly'>Pabbly</option>
                 </select>
               </div>
             </div>

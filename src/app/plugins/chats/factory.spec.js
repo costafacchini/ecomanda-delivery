@@ -2,6 +2,7 @@ import { createChatPlugin } from './factory.js'
 import { Rocketchat } from './Rocketchat.js'
 import { Cuboup } from './Cuboup.js'
 import { Crisp } from './Crisp.js'
+import { Chatwoot } from './Chatwoot.js'
 import { licensee as licenseeFactory } from '@factories/licensee'
 
 describe('createChatPlugin', () => {
@@ -19,6 +20,14 @@ describe('createChatPlugin', () => {
     const plugin = createChatPlugin(licensee)
 
     expect(plugin).toBeInstanceOf(Crisp)
+  })
+
+  it('returns the chatwooty plugin if it is configured on licensee', () => {
+    const licensee = licenseeFactory.build({ chatDefault: 'chatwoot' })
+
+    const plugin = createChatPlugin(licensee)
+
+    expect(plugin).toBeInstanceOf(Chatwoot)
   })
 
   it('returns the cuboup plugin if it is configured on licensee', () => {

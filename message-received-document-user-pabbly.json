@@ -1,0 +1,19 @@
+{
+  "name": "message_received",
+  "source": "pabbly_chatflow",
+  "timestamp": "2025-10-19T12:32:49.262Z",
+  "event_data": {
+    "from": "554899290820",
+    "id": "wamid.HBgMNTU0ODk5MjkwODIwFQIAEhgUM0I1NjNGQjhFMDJBRTJGNDZEMUMA",
+    "timestamp": "1760877166",
+    "type": "document",
+    "document": {
+      "filename": "Screen Recording 2025-10-16 at 17.19.28.mov",
+      "mime_type": "video/quicktime",
+      "sha256": "5gV4s2orHKzVhnjF38j71hdMRK/34l7cu/geOJdDEM8=",
+      "id": "1505073903978250",
+      "url": "https://lookaside.fbsbx.com/whatsapp_business/attachments/?mid=1505073903978250&source=webhook&ext=1760877468&hash=ARnoWyy03Z15NCgF9odhxzpO5gqjDAEFOBXZJGoC6MZVGg"
+    }
+  },
+  "error": null
+}

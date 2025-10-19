@@ -1,0 +1,13 @@
+{
+  "name": "message_received",
+  "source": "pabbly_chatflow",
+  "timestamp": "2025-10-19T12:37:24.858Z",
+  "event_data": {
+    "from": "554899290820",
+    "id": "wamid.HBgMNTU0ODk5MjkwODIwFQIAEhgUM0E1RjBFQkRBNjZBQUVBMzM1MUIA",
+    "timestamp": "1760877444",
+    "location": { "latitude": -26.899169921875, "longitude": -48.684787750244 },
+    "type": "location"
+  },
+  "error": null
+}
