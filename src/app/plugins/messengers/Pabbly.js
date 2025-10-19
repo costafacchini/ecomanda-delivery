@@ -162,7 +162,7 @@ class Pabbly extends MessengersBase {
   }
 
   parseMessage(responseBody) {
-    if (!responseBody.data && !responseBody.data.name == 'message_received') {
+    if (!responseBody.data || responseBody.data.name !== 'message_received') {
       this.messageData = null
       return
     }
@@ -261,7 +261,7 @@ class Pabbly extends MessengersBase {
   }
 
   parseContactData(responseBody) {
-    if (!responseBody.data && !responseBody.data.name == 'message_received') {
+    if (!responseBody.data || responseBody.data.name !== 'message_received') {
       this.contactData = null
       return
     }
