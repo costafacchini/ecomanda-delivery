@@ -1,0 +1,17 @@
+{
+  "status": "success",
+  "message": "A new message has been received from the user.",
+  "data": {
+    "name": "message_received",
+    "source": "pabbly_chatflow",
+    "timestamp": "2025-10-19T11:07:06.576Z",
+    "event_data": {
+      "from": "554899290820",
+      "id": "wamid.HBgMNTU0ODk5MjkwODIwFQIAEhgUM0JFMjkxNjI1MDI2QjMzNEU3QjUA",
+      "timestamp": "1760872025",
+      "text": { "body": "Bom dia" },
+      "type": "text"
+    },
+    "error": null
+  }
+}

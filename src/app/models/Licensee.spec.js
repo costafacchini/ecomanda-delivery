@@ -194,6 +194,16 @@ describe('Licensee', () => {
         validation = licensee.validateSync()
 
         expect(validation.errors['whatsappDefault']).not.toBeDefined()
+
+        licensee.whatsappDefault = 'pabbly'
+        validation = licensee.validateSync()
+
+        expect(validation.errors['whatsappDefault']).not.toBeDefined()
+
+        licensee.whatsappDefault = 'ycloud'
+        validation = licensee.validateSync()
+
+        expect(validation.errors['whatsappDefault']).not.toBeDefined()
       })
 
       it('does not accepts another values', () => {

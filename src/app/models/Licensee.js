@@ -57,7 +57,7 @@ const licenseeSchema = new Schema(
     },
     whatsappDefault: {
       type: String,
-      enum: ['utalk', 'dialog', 'ycloud', ''],
+      enum: ['utalk', 'dialog', 'ycloud', 'pabbly', ''],
     },
     whatsappToken: {
       type: String,

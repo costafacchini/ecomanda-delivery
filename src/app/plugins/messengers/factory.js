@@ -1,6 +1,7 @@
 import { Utalk } from './Utalk.js'
 import { Dialog } from './Dialog.js'
 import { YCloud } from './YCloud.js'
+import { Pabbly } from './Pabbly.js'
 
 function createMessengerPlugin(licensee) {
   switch (licensee.whatsappDefault) {
@@ -10,6 +11,8 @@ function createMessengerPlugin(licensee) {
       return new Dialog(licensee)
     case 'ycloud':
       return new YCloud(licensee)
+    case 'pabbly':
+      return new Pabbly(licensee)
     default:
       throw `Plugin de messenger não configurado: ${licensee.whatsappDefault}`
   }

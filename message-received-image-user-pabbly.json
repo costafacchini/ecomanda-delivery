@@ -1,0 +1,22 @@
+{
+  "status": "success",
+  "message": "A new message has been received from the user.",
+  "data": {
+    "name": "message_received",
+    "source": "pabbly_chatflow",
+    "timestamp": "2025-10-19T11:11:01.326Z",
+    "event_data": {
+      "from": "554899290820",
+      "id": "wamid.HBgMNTU0ODk5MjkwODIwFQIAEhgUM0JGOEMzRjJEMkJFNjRBMjcxNjMA",
+      "timestamp": "1760872259",
+      "type": "image",
+      "image": {
+        "mime_type": "image/jpeg",
+        "sha256": "ZFggnkXx4Tb7i8BC0SZYskUdRLpEDPyJiFeGLRWgXhk=",
+        "id": "24842234525462760",
+        "url": "https://lookaside.fbsbx.com/whatsapp_business/attachments/?mid=24842234525462760&source=webhook&ext=1760872560&hash=ARkVM0p9oLzAUiY1fmE2RekXWazC6X_teLCPOkBWVupxdA"
+      }
+    },
+    "error": null
+  }
+}

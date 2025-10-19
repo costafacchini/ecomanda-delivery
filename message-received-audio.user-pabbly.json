@@ -1,0 +1,19 @@
+{
+  "name": "message_received",
+  "source": "pabbly_chatflow",
+  "timestamp": "2025-10-19T12:37:18.117Z",
+  "event_data": {
+    "from": "554899290820",
+    "id": "wamid.HBgMNTU0ODk5MjkwODIwFQIAEhgUM0EyN0ZBQjgzOTI2NUVFMkM0QTgA",
+    "timestamp": "1760877436",
+    "type": "audio",
+    "audio": {
+      "mime_type": "audio/ogg; codecs=opus",
+      "sha256": "G5uA1lMUPxM8z0qLrk0xjO4koOUjj0ZTwlvHHHEUFF8=",
+      "id": "1790165781862176",
+      "url": "https://lookaside.fbsbx.com/whatsapp_business/attachments/?mid=1790165781862176&source=webhook&ext=1760877737&hash=ARlfUiHVrkOx80TkIB1wgjInBQSzoUmTBfe5HeY-6MeHmw",
+      "voice": true
+    }
+  },
+  "error": null
+}
