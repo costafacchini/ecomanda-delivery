@@ -185,12 +185,15 @@ class YCloud extends MessengersBase {
   }
 
   parseMessage(responseBody) {
-    if (!responseBody.whatsappInboundMessage) {
+    if (
+      !responseBody.whatsappInboundMessage &&
+      !(responseBody.whatsappMessage && responseBody.type === 'whatsapp.smb.message.echoes')
+    ) {
       this.messageData = null
       return
     }
 
-    const message = responseBody.whatsappInboundMessage
+    const message = responseBody.whatsappInboundMessage || responseBody.whatsappMessage
 
     if (
       message.type === 'sticker' ||
