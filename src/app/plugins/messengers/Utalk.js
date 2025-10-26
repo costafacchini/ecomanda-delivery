@@ -88,19 +88,61 @@ class Utalk extends MessengersBase {
     }
   }
 
-  parseContactData() {
-    const chatId = this.messageData.contact.chatId
-    const normalizePhone = new NormalizePhone(chatId)
-    this.contactData = {
-      number: normalizePhone.number,
-      type: normalizePhone.type,
-      name: this.messageData.contact.name,
-      waId: null,
+  parseContactData(responseBody) {
+    if (!responseBody.event || !['chat', 'file'].includes(responseBody.event)) {
+      this.contactData = null
+      return
+    }
+
+    if (responseBody.event === 'chat') {
+      if (responseBody['chat[dir]'] === 'o' || !responseBody['contact[server]']) {
+        this.contactData = null
+        return
+      }
+
+      const chatNumber =
+        responseBody['contact[server]'] === 'g.us'
+          ? responseBody['contact[groupNumber]']
+          : responseBody['contact[number]']
+      const chatName =
+        responseBody['contact[server]'] === 'g.us' ? responseBody['contact[groupName]'] : responseBody['contact[name]']
+
+      const chatId = chatNumber + '@' + responseBody['contact[server]']
+      const normalizePhone = new NormalizePhone(chatId)
+      this.contactData = {
+        name: chatName,
+        server: responseBody['contact[server]'],
+        number: normalizePhone.number,
+        type: normalizePhone.type,
+        waId: null,
+      }
+    }
+
+    if (responseBody.event === 'file') {
+      if (responseBody['dir'] === 'o' || !responseBody['number']) {
+        this.contactData = null
+        return
+      }
+
+      const normalizePhone = new NormalizePhone(responseBody['number'])
+      this.contactData = {
+        name: normalizePhone.number,
+        server: '',
+        number: normalizePhone.number,
+        type: normalizePhone.type,
+        waId: null,
+      }
     }
   }
 
   contactWithDifferentData(contact) {
-    return contact.name !== this.contactData.name && this.messageData.kind !== 'file' && this.contactData.name
+    return (
+      this.contactData &&
+      this.contactData.name &&
+      contact.name !== this.contactData.name &&
+      this.messageData &&
+      this.messageData.kind !== 'file'
+    )
   }
 
   shouldUpdateWaStartChat(_) {
