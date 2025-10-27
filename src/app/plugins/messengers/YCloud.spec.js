@@ -312,6 +312,74 @@ describe('YCloud Plugin', () => {
       expect(ycloud.messageData).toBeNull()
     })
 
+    it('should parse message from whatsappMessage with correct type', () => {
+      const responseBody = {
+        whatsappMessage: {
+          id: 'message-id',
+          type: 'text',
+          text: { body: 'Hello from whatsappMessage' },
+        },
+        type: 'whatsapp.smb.message.echoes',
+      }
+
+      ycloud.parseMessage(responseBody)
+      expect(ycloud.messageData).toEqual({
+        kind: 'text',
+        waId: 'message-id',
+        text: { body: 'Hello from whatsappMessage' },
+      })
+    })
+
+    it('should handle whatsappMessage with wrong type', () => {
+      const responseBody = {
+        whatsappMessage: {
+          id: 'message-id',
+          type: 'text',
+          text: { body: 'Hello' },
+        },
+        type: 'wrong.type',
+      }
+
+      ycloud.parseMessage(responseBody)
+      expect(ycloud.messageData).toBeNull()
+    })
+
+    it('should handle whatsappMessage without type', () => {
+      const responseBody = {
+        whatsappMessage: {
+          id: 'message-id',
+          type: 'text',
+          text: { body: 'Hello' },
+        },
+      }
+
+      ycloud.parseMessage(responseBody)
+      expect(ycloud.messageData).toBeNull()
+    })
+
+    it('should prioritize whatsappInboundMessage over whatsappMessage', () => {
+      const responseBody = {
+        whatsappInboundMessage: {
+          id: 'inbound-message-id',
+          type: 'text',
+          text: { body: 'Hello from inbound' },
+        },
+        whatsappMessage: {
+          id: 'message-id',
+          type: 'text',
+          text: { body: 'Hello from message' },
+        },
+        type: 'whatsapp.smb.message.echoes',
+      }
+
+      ycloud.parseMessage(responseBody)
+      expect(ycloud.messageData).toEqual({
+        kind: 'text',
+        waId: 'inbound-message-id',
+        text: { body: 'Hello from inbound' },
+      })
+    })
+
     it('should skip unsupported message types', () => {
       const unsupportedTypes = ['sticker', 'ephemeral', 'reaction', 'contacts', 'unsupported', 'system', 'interactive']
 

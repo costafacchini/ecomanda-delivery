@@ -220,6 +220,15 @@ class Dialog extends MessengersBase {
   }
 
   parseContactData(responseBody) {
+    if (
+      !responseBody.messages ||
+      responseBody.messages[0].type === 'sticker' ||
+      responseBody.messages[0].type === 'ephemeral'
+    ) {
+      this.contactData = null
+      return
+    }
+
     const chatId = responseBody.messages[0].from
     const normalizePhone = new NormalizePhone(chatId)
     this.contactData = {

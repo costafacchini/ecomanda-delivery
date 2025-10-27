@@ -71,12 +71,11 @@ class MessengersBase {
       return []
     }
 
-    this.parseMessage(responseBody)
-    if (!this.messageData) return []
-
-    const processedMessages = []
-
     this.parseContactData(responseBody)
+    this.parseMessage(responseBody)
+
+    if (!this.contactData) return []
+
     let contact = await this.findContact(this.contactData.number, this.contactData.type)
     if (!contact) {
       const contactRepository = new ContactRepositoryDatabase()
@@ -103,6 +102,10 @@ class MessengersBase {
         await contact.save()
       }
     }
+
+    if (!this.messageData) return []
+
+    const processedMessages = []
 
     if (this.messageData.kind === 'interactive') {
       const triggers = await getAllTriggerBy(

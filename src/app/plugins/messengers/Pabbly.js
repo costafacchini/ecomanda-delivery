@@ -261,19 +261,19 @@ class Pabbly extends MessengersBase {
   }
 
   parseContactData(responseBody) {
-    if (!responseBody.data || responseBody.data.name !== 'message_received') {
+    if (!responseBody.data || !['message_received', 'contact_created'].includes(responseBody.data.name)) {
       this.contactData = null
       return
     }
 
-    const chatId = responseBody.data.event_data.from
+    const chatId = responseBody.data.event_data.from || responseBody.data.event_data.mobile
     // const contact = responseBody.whatsappInboundMessage.customerProfile
     const normalizePhone = new NormalizePhone(chatId)
 
     this.contactData = {
       number: normalizePhone.number,
       type: normalizePhone.type,
-      name: normalizePhone.number,
+      name: responseBody.data.event_data.name || normalizePhone.number,
       wa_start_chat: new Date(),
     }
   }
@@ -371,7 +371,7 @@ class Pabbly extends MessengersBase {
       }
       case 'file': {
         const mediaUrl = await getMediaURL(messageToSend.fileId, url, token)
-        messageBody.link = messageToSend.url
+        messageBody.link = mediaUrl
 
         if (isPhoto(mediaUrl)) {
           messageBody.type = 'image'
