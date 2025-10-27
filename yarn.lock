@@ -1560,9 +1560,9 @@
     redis-info "^3.1.0"
 
 "@bull-board/api@^6.12.0":
-  version "6.13.1"
-  resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-6.13.1.tgz#e80f57be6028dd454e1da12ed5c09b314dc67508"
-  integrity sha512-L9Ukfd/gxg8VIUb+vXRcU31yJsAaLLKG2qU/OMXQJ5EoXm2JhWBat+26YgrH/oKIb9zbZsg8xwHyqxa7sHEkVg==
+  version "6.14.0"
+  resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-6.14.0.tgz#c3fdfa5568990f11fb838eb28262581bbc554462"
+  integrity sha512-oMDwXwoPn0RsdZ3Y68/bOErZ/qGZE5H97vgE/Pc8Uul/OHajlvajKW4NV+ZGTix82liUfH9CkjYx7PpwvBWhxg==
   dependencies:
     redis-info "^3.1.0"
 
