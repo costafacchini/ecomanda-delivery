@@ -388,6 +388,7 @@ class Pabbly extends MessengersBase {
         body: messageBody,
       })
 
+      console.info(`Pabbly: body PENDENTE ${JSON.stringify(messageResponse)}`)
       if (messageResponse.status === 200 || messageResponse.status === 201) {
         messageToSend.messageWaId = messageResponse.data?.messages[0]?.id
         messageToSend.sended = true
