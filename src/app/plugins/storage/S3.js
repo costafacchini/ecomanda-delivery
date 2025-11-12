@@ -60,10 +60,15 @@ class S3 {
       ContentType: mime.lookup(fileFullPath),
     }
 
-    const results = await this.aws.send(new PutObjectCommand(params))
-    console.info(`Arquivo enviado para S3 com sucesso. ${results}`)
+    try {
+      const results = await this.aws.send(new PutObjectCommand(params))
+      console.info(`AWS: Arquivo enviado para S3 com sucesso. ${results}`)
 
-    return results
+      return results
+    } catch (error) {
+      console.error('AWS: Erro ao enviar arquivo para S3', error)
+      throw new Error('Erro ao enviar arquivo para S3')
+    }
   }
 }
 
