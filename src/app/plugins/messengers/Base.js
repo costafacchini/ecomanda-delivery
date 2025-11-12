@@ -9,7 +9,7 @@ import request from '../../services/request.js'
 import mime from 'mime-types'
 
 const uploadMediaToS3 = async (licensee, contact, { mediaWaId, fileName, fileBase64 }) => {
-  if (mediaWaId) {
+  if (mediaWaId && licensee.whatsappDefault === 'dialog') {
     const response = await downloadMedia(mediaWaId, licensee.whatsappToken)
     const extension = mime.extension(response.headers.get('content-type'))
     const fileName = `${mediaWaId}.${extension}`
