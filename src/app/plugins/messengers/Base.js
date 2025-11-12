@@ -205,6 +205,8 @@ class MessengersBase {
 
             return processedMessages
           }
+        } else {
+          messageToSend.url = this.messageData.file.id
         }
       }
 
