@@ -7,20 +7,6 @@ import { parseText } from '../../helpers/ParseTriggerText.js'
 import { MessengersBase } from './Base.js'
 import { MessageRepositoryDatabase } from '../../repositories/message.js'
 
-const getMediaURL = async (mediaId, url, token) => {
-  const headers = {
-    Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json',
-  }
-
-  try {
-    const response = await request.get(`${url}/media?id=${mediaId}`, { headers })
-    if (response.status === 200 && response.data.status === 'success') return response.data.data.mediaUrl
-  } catch (error) {
-    console.error('Pabbly - erro: Erro ao buscar midia na Pabbly:', error)
-  }
-}
-
 const getTemplates = async (url, token) => {
   const headers = {
     Authorization: `Bearer ${token}`,
@@ -370,14 +356,13 @@ class Pabbly extends MessengersBase {
         break
       }
       case 'file': {
-        const mediaUrl = await getMediaURL(messageToSend.fileId, url, token)
-        messageBody.link = mediaUrl
+        messageBody.link = messageToSend.url
 
-        if (isPhoto(mediaUrl)) {
+        if (isPhoto(messageToSend.url)) {
           messageBody.type = 'image'
-        } else if (isVideo(mediaUrl)) {
+        } else if (isVideo(messageToSend.url)) {
           messageBody.type = 'video'
-        } else if (isMidia(mediaUrl) || isVoice(mediaUrl)) {
+        } else if (isMidia(messageToSend.url) || isVoice(messageToSend.url)) {
           messageBody.type = 'audio'
         } else {
           messageBody.type = 'document'
@@ -432,6 +417,20 @@ class Pabbly extends MessengersBase {
     } catch (error) {
       console.error('Pabbly - erro: Erro ao buscar templates Pabbly:', error)
       return []
+    }
+  }
+
+  async getMediaURL(mediaId, url, token) {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    }
+
+    try {
+      const response = await request.get(`${url}/media?id=${mediaId}`, { headers })
+      if (response.status === 200 && response.data.status === 'success') return response.data.data.mediaUrl
+    } catch (error) {
+      console.error('Pabbly - erro: Erro ao buscar midia na Pabbly:', error)
     }
   }
 }

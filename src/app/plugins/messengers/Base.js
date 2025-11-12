@@ -206,7 +206,11 @@ class MessengersBase {
             return processedMessages
           }
         } else {
-          messageToSend.url = this.messageData.file.id
+          messageToSend.url = await this.getMediaUrl(
+            messageToSend.attachmentWaId,
+            this.licensee.whatsappUrl,
+            this.licensee.whatsappToken,
+          )
         }
       }
 
