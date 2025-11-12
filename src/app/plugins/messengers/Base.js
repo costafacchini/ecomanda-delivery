@@ -193,7 +193,7 @@ class MessengersBase {
 
         if (this.messageData.file.url) {
           messageToSend.url = this.messageData.file.url
-        } else {
+        } else if (this.messageData.file.fileBase64) {
           try {
             messageToSend.url = await uploadMediaToS3(this.licensee, contact, {
               mediaWaId: messageToSend.attachmentWaId,
