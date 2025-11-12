@@ -420,7 +420,7 @@ class Pabbly extends MessengersBase {
     }
   }
 
-  async getMediaURL(mediaId, url, token) {
+  async getMediaUrl(mediaId, url, token) {
     const headers = {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',

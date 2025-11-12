@@ -42,6 +42,13 @@ class MessengersBase {
     this.licensee = licensee
   }
 
+  // eslint-disable-next-line require-await
+  async getMediaUrl(_mediaId, _url, _token) {
+    // Método padrão que pode ser sobrescrito pelas classes filhas
+    // Retorna null se não for implementado
+    return null
+  }
+
   async findContact(number, type) {
     const contactRepository = new ContactRepositoryDatabase()
     return await contactRepository.findFirst({
