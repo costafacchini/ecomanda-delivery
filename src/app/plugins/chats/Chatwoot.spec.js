@@ -803,7 +803,7 @@ describe('Chatwoot plugin', () => {
         expect(messageUpdated.error).toEqual('mensagem: {"error":true,"message":"Invalid message"}')
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          `Mensagem 60958703f415ed4008748637 não enviada para Chatwoot.
+          `Chatwoot - erro: Mensagem 60958703f415ed4008748637 não enviada para Chatwoot.
            status: 400
            mensagem: {"error":true,"message":"Invalid message"}`,
         )
@@ -854,7 +854,7 @@ describe('Chatwoot plugin', () => {
         expect(fetchMock.calls()).toHaveLength(1)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 enviada para Chatwoot com sucesso!',
+          'Chatwoot: Mensagem 60958703f415ed4008748637 enviada para Chatwoot com sucesso!',
         )
       })
     })

@@ -13,6 +13,11 @@ const searchContact = async (url, headers, contact, licensee, contactRepository)
     )
 
     if (!contactInbox) {
+      console.error(
+        `Chatwoot - erro: Contato ${contact.number} não encontrado para a inbox ${licensee.chatIdentifier}.
+         Possivelmente o contato existe mas não para essa inbox específica.
+         O Payload de resposta é esse: ${response.data}`,
+      )
       return null
     }
 
@@ -50,7 +55,9 @@ const createContact = async (url, headers, contact, licensee, contactRepository)
   const response = await request.post(`${url}contacts`, { headers, body })
 
   if (!response.status == 200) {
-    console.error(`Não foi possível criar o contato na Chatwoot ${JSON.stringify(response.data)}`)
+    console.error(
+      `Chatwoot - erro: Não foi possível criar o contato na Chatwoot. Essa é a resposta do servidor ${JSON.stringify(response.data)}`,
+    )
     return
   } else if (response.data?.payload?.contact_inbox) {
     await contactRepository.update(contact._id, {
@@ -74,7 +81,9 @@ const createConversation = async (url, headers, contact) => {
   const response = await request.post(`${url}conversations`, { headers, body })
 
   if (response.status !== 200) {
-    console.error(`Não foi possível criar a conversa na Chatwoot ${JSON.stringify(response.data)}`)
+    console.error(
+      `Chatwoot - erro: Não foi possível criar a conversa na Chatwoot. A resposta do servidor é essa ${JSON.stringify(response.data)}`,
+    )
     return
   } else {
     const room = await createRoom({
@@ -104,8 +113,8 @@ const postMessage = async (url, headers, contact, message, room) => {
     const fileResponse = await request.download(message.url)
 
     if (!fileResponse || !fileResponse.data) {
-      console.error('Erro: fileResponse ou fileResponse.data é null/undefined', fileResponse)
-      message.error = 'Erro ao baixar arquivo: resposta inválida'
+      console.error('Chatwoot - erro: Erro: fileResponse ou fileResponse.data é null/undefined', fileResponse)
+      message.error = 'Chatwoot - erro: Erro ao baixar arquivo: resposta inválida'
       await message.save()
       return false
     }
@@ -157,12 +166,12 @@ const postMessage = async (url, headers, contact, message, room) => {
     message.sended = true
     await message.save()
 
-    console.info(`Mensagem ${message._id} enviada para Chatwoot com sucesso!`)
+    console.info(`Chatwoot: Mensagem ${message._id} enviada para Chatwoot com sucesso!`)
   } else {
     message.error = `mensagem: ${JSON.stringify(response.data)}`
     await message.save()
     console.error(
-      `Mensagem ${message._id} não enviada para Chatwoot.
+      `Chatwoot - erro: Mensagem ${message._id} não enviada para Chatwoot.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}`,
     )
@@ -311,7 +320,10 @@ class Chatwoot extends ChatsBase {
     }
 
     if (!messageToSend.contact.chatwootSourceId) {
-      console.error(`Não foi possível criar o contato na Chatwoot e o envio da mensagem foi abortado!`)
+      messageToSend.error =
+        'Chatwoot - erro: Não foi possível encontrar ou criar o contato na Chatwoot! Você vai encontrar mais detalhes nos logs do servidor.'
+      await messageToSend.save()
+
       return
     }
 
@@ -321,6 +333,10 @@ class Chatwoot extends ChatsBase {
     if (!room) {
       room = await createConversation(url, headers, messageToSend.contact, this.licensee)
       if (!room) {
+        messageToSend.error =
+          'Chatwoot - erro: Não foi possível criar a conversa na Chatwoot! Você vai encontrar mais detalhes nos logs do servidor.'
+        await messageToSend.save()
+
         return
       }
     }

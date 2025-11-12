@@ -17,7 +17,7 @@ const getMediaURL = async (mediaId, url, token) => {
     const response = await request.get(`${url}/media?id=${mediaId}`, { headers })
     if (response.status === 200 && response.data.status === 'success') return response.data.data.mediaUrl
   } catch (error) {
-    console.error('Erro ao buscar midia na Pabbly:', error)
+    console.error('Pabbly - erro: Erro ao buscar midia na Pabbly:', error)
   }
 }
 
@@ -31,7 +31,7 @@ const getTemplates = async (url, token) => {
     const response = await request.get(`${url}/templates?limit=20&page=1`, { headers })
     return response.data.templates
   } catch (error) {
-    console.error('Erro ao buscar templates Pabbly:', error)
+    console.error('Pabbly - erro: Erro ao buscar templates Pabbly:', error)
     return { templates: [] }
   }
 }
@@ -394,7 +394,7 @@ class Pabbly extends MessengersBase {
         messageBody.type = 'text'
         messageBody.message = messageToSend.senderName
           ? `${messageToSend.senderName}: ${messageToSend.text}`
-          : messageToSend.text || 'Mensagem não suportada'
+          : messageToSend.text || 'Mensagem não suportada pela Pabbly'
     }
 
     try {
@@ -407,16 +407,20 @@ class Pabbly extends MessengersBase {
         messageToSend.messageWaId = messageResponse.data?.messages[0]?.id
         messageToSend.sended = true
         await messageToSend.save()
-        console.info(`Mensagem ${messageId} enviada para Pabbly com sucesso! ${JSON.stringify(messageResponse.data)}`)
+        console.info(
+          `Pabbly: Mensagem ${messageId} enviada para Pabbly com sucesso! ${JSON.stringify(messageResponse.data)}`,
+        )
       } else {
         messageToSend.error = JSON.stringify(messageResponse.data)
         await messageToSend.save()
-        console.error(`Mensagem ${messageId} não enviada para Pabbly. ${JSON.stringify(messageResponse.data)}`)
+        console.error(
+          `Pabbly - erro: Mensagem ${messageId} não enviada para Pabbly. ${JSON.stringify(messageResponse.data)}`,
+        )
       }
     } catch (error) {
       messageToSend.error = JSON.stringify(error.response?.data || error.message)
       await messageToSend.save()
-      console.error(`Erro ao enviar mensagem ${messageId} para Pabbly:`, error)
+      console.error(`Pabbly - erro: Erro ao enviar mensagem ${messageId} para Pabbly:`, error)
     }
   }
 
@@ -426,7 +430,7 @@ class Pabbly extends MessengersBase {
       const templates = parseTemplates(pabblyTemplates, this.licensee._id)
       return templates
     } catch (error) {
-      console.error('Erro ao buscar templates Pabbly:', error)
+      console.error('Pabbly - erro: Erro ao buscar templates Pabbly:', error)
       return []
     }
   }

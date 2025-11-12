@@ -8,7 +8,7 @@ import { S3 } from '../storage/S3.js'
 import request from '../../services/request.js'
 import mime from 'mime-types'
 
-const getMediaURL = async (licensee, contact, { mediaWaId, fileName, fileBase64 }) => {
+const uploadMediaToS3 = async (licensee, contact, { mediaWaId, fileName, fileBase64 }) => {
   if (mediaWaId) {
     const response = await downloadMedia(mediaWaId, licensee.whatsappToken)
     const extension = mime.extension(response.headers.get('content-type'))
@@ -194,11 +194,17 @@ class MessengersBase {
         if (this.messageData.file.url) {
           messageToSend.url = this.messageData.file.url
         } else {
-          messageToSend.url = await getMediaURL(this.licensee, contact, {
-            mediaWaId: messageToSend.attachmentWaId,
-            fileName: this.messageData.file.fileName,
-            fileBase64: this.messageData.file.fileBase64,
-          })
+          try {
+            messageToSend.url = await uploadMediaToS3(this.licensee, contact, {
+              mediaWaId: messageToSend.attachmentWaId,
+              fileName: this.messageData.file.fileName,
+              fileBase64: this.messageData.file.fileBase64,
+            })
+          } catch (error) {
+            console.error('Erro no parse de payload de webhook tentando fazer upload do arquivo para o S3', error)
+
+            return processedMessages
+          }
         }
       }
 
