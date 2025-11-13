@@ -13,12 +13,11 @@ const searchContact = async (url, headers, contact, licensee, contactRepository)
     )
 
     if (!contactInbox) {
-      console.error(
-        `Chatwoot - erro: Contato ${contact.number} não encontrado para a inbox ${licensee.chatIdentifier}.
-         Possivelmente o contato existe mas não para essa inbox específica.
-         O Payload de resposta é esse: ${response.data}`,
-      )
-      return null
+      await contactRepository.update(contact._id, {
+        chatwootId: response.data.payload[0].id,
+      })
+
+      return { sourceId: null, id: response.data.payload[0].id }
     }
 
     await contactRepository.update(contact._id, {
@@ -26,9 +25,9 @@ const searchContact = async (url, headers, contact, licensee, contactRepository)
       chatwootSourceId: contactInbox.source_id,
     })
 
-    return contactInbox.source_id
+    return { sourceId: contactInbox.source_id, id: response.data.payload[0].id }
   } else {
-    return null
+    return { sourceId: null, id: null }
   }
 }
 
@@ -71,11 +70,16 @@ const createContact = async (url, headers, contact, licensee, contactRepository)
   }
 }
 
-const createConversation = async (url, headers, contact) => {
+const createConversation = async (url, headers, contact, inboxId) => {
   const body = {
-    source_id: contact.chatwootSourceId,
     contact_id: contact.chatwootId,
     status: 'open',
+  }
+
+  if (contact.chatwootSourceId) {
+    body.source_id = contact.chatwootSourceId
+  } else {
+    body.inbox_id = inboxId
   }
 
   const response = await request.post(`${url}conversations`, { headers, body })
@@ -305,8 +309,14 @@ class Chatwoot extends ChatsBase {
     const headers = { api_access_token: this.licensee.chatKey, 'Content-Type': 'application/json' }
 
     if (!messageToSend.contact.chatwootSourceId) {
-      const sourceId = await searchContact(url, headers, messageToSend.contact, this.licensee, this.contactRepository)
-      if (!sourceId) {
+      const { sourceId, id: chatwootId } = await searchContact(
+        url,
+        headers,
+        messageToSend.contact,
+        this.licensee,
+        this.contactRepository,
+      )
+      if (!sourceId && !chatwootId) {
         messageToSend.contact.chatwootSourceId = await createContact(
           url,
           headers,
@@ -316,12 +326,12 @@ class Chatwoot extends ChatsBase {
         )
       } else {
         messageToSend.contact.chatwootSourceId = sourceId
+        messageToSend.contact.chatwootId = chatwootId
       }
     }
 
-    if (!messageToSend.contact.chatwootSourceId) {
-      messageToSend.error =
-        'Chatwoot - erro: Não foi possível encontrar ou criar o contato na Chatwoot! Você vai encontrar mais detalhes nos logs do servidor.'
+    if (!messageToSend.contact.chatwootSourceId && !messageToSend.contact.chatwootId) {
+      messageToSend.error = 'Chatwoot - erro: Não foi possível encontrar ou criar o contato na Chatwoot!'
       await messageToSend.save()
 
       return
@@ -331,7 +341,7 @@ class Chatwoot extends ChatsBase {
     let room = openRoom
 
     if (!room) {
-      room = await createConversation(url, headers, messageToSend.contact, this.licensee)
+      room = await createConversation(url, headers, messageToSend.contact, this.licensee.chatIdentifier)
       if (!room) {
         messageToSend.error =
           'Chatwoot - erro: Não foi possível criar a conversa na Chatwoot! Você vai encontrar mais detalhes nos logs do servidor.'

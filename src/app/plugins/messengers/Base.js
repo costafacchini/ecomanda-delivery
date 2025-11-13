@@ -9,7 +9,7 @@ import request from '../../services/request.js'
 import mime from 'mime-types'
 
 const uploadMediaToS3 = async (licensee, contact, { mediaWaId, fileName, fileBase64 }) => {
-  if (mediaWaId) {
+  if (mediaWaId && licensee.whatsappDefault === 'dialog') {
     const response = await downloadMedia(mediaWaId, licensee.whatsappToken)
     const extension = mime.extension(response.headers.get('content-type'))
     const fileName = `${mediaWaId}.${extension}`
@@ -40,6 +40,13 @@ const uploadFile = (licensee, contact, fileName, fileBase64) => {
 class MessengersBase {
   constructor(licensee) {
     this.licensee = licensee
+  }
+
+  // eslint-disable-next-line require-await
+  async getMediaUrl(_mediaId, _url, _token) {
+    // Método padrão que pode ser sobrescrito pelas classes filhas
+    // Retorna null se não for implementado
+    return null
   }
 
   async findContact(number, type) {
@@ -193,7 +200,7 @@ class MessengersBase {
 
         if (this.messageData.file.url) {
           messageToSend.url = this.messageData.file.url
-        } else {
+        } else if (this.messageData.file.fileBase64) {
           try {
             messageToSend.url = await uploadMediaToS3(this.licensee, contact, {
               mediaWaId: messageToSend.attachmentWaId,
@@ -205,6 +212,12 @@ class MessengersBase {
 
             return processedMessages
           }
+        } else {
+          messageToSend.url = await this.getMediaUrl(
+            messageToSend.attachmentWaId,
+            this.licensee.whatsappUrl,
+            this.licensee.whatsappToken,
+          )
         }
       }
 
