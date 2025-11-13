@@ -7,6 +7,8 @@ import { createCartPlugin } from '../../plugins/carts/factory.js'
 import { parseText } from '../../helpers/ParseTriggerText.js'
 import { MessengersBase } from './Base.js'
 import { MessageRepositoryDatabase } from '../../repositories/message.js'
+import { S3 } from '../storage/S3.js'
+import mime from 'mime-types'
 
 const getWaIdContact = async (number, url, token) => {
   const headers = { 'D360-API-KEY': token }
@@ -128,6 +130,22 @@ const parseComponentParam = (param, value) => {
       text: value.replace('{{', '').replace('}}', ''),
     }
   }
+}
+
+const downloadMedia = async (mediaId, whatsappToken) => {
+  const headers = { 'D360-API-KEY': whatsappToken }
+  const response = await request.download(`https://waba.360dialog.io/v1/media/${mediaId}`, {
+    headers,
+  })
+
+  return response
+}
+
+const uploadFile = (licensee, contact, fileName, fileBase64) => {
+  const s3 = new S3(licensee, contact, fileName, fileBase64)
+  s3.uploadFile()
+
+  return s3.presignedUrl()
 }
 
 class Dialog extends MessengersBase {
@@ -405,6 +423,15 @@ class Dialog extends MessengersBase {
     const templates = parseTemplates(dialogTemplates, this.licensee._id)
 
     return templates
+  }
+
+  async getMediaUrl(mediaId, _url, token, contact) {
+    const response = await downloadMedia(mediaId, token)
+    const extension = mime.extension(response.headers.get('content-type'))
+    const fileName = `${mediaId}.${extension}`
+    const fileBase64 = Buffer.from(response.data).toString('base64')
+
+    return uploadFile(this.licensee, contact, fileName, fileBase64)
   }
 }
 

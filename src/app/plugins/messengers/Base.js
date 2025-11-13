@@ -43,7 +43,7 @@ class MessengersBase {
   }
 
   // eslint-disable-next-line require-await
-  async getMediaUrl(_mediaId, _url, _token) {
+  async getMediaUrl(_mediaId, _url, _token, _contact) {
     // Método padrão que pode ser sobrescrito pelas classes filhas
     // Retorna null se não for implementado
     return null
@@ -217,6 +217,7 @@ class MessengersBase {
             messageToSend.attachmentWaId,
             this.licensee.whatsappUrl,
             this.licensee.whatsappToken,
+            contact,
           )
         }
       }
