@@ -5,30 +5,6 @@ import { MessageRepositoryDatabase } from '../../repositories/message.js'
 import { getProductBy } from '../../repositories/product.js'
 import { v4 as uuidv4 } from 'uuid'
 import { S3 } from '../storage/S3.js'
-import request from '../../services/request.js'
-import mime from 'mime-types'
-
-const uploadMediaToS3 = async (licensee, contact, { mediaWaId, fileName, fileBase64 }) => {
-  if (mediaWaId && licensee.whatsappDefault === 'dialog') {
-    const response = await downloadMedia(mediaWaId, licensee.whatsappToken)
-    const extension = mime.extension(response.headers.get('content-type'))
-    const fileName = `${mediaWaId}.${extension}`
-    const fileBase64 = Buffer.from(response.data).toString('base64')
-
-    return uploadFile(licensee, contact, fileName, fileBase64)
-  } else {
-    return uploadFile(licensee, contact, fileName, fileBase64)
-  }
-}
-
-const downloadMedia = async (mediaId, whatsappToken) => {
-  const headers = { 'D360-API-KEY': whatsappToken }
-  const response = await request.download(`https://waba.360dialog.io/v1/media/${mediaId}`, {
-    headers,
-  })
-
-  return response
-}
 
 const uploadFile = (licensee, contact, fileName, fileBase64) => {
   const s3 = new S3(licensee, contact, fileName, fileBase64)
@@ -201,17 +177,12 @@ class MessengersBase {
         if (this.messageData.file.url) {
           messageToSend.url = this.messageData.file.url
         } else if (this.messageData.file.fileBase64) {
-          try {
-            messageToSend.url = await uploadMediaToS3(this.licensee, contact, {
-              mediaWaId: messageToSend.attachmentWaId,
-              fileName: this.messageData.file.fileName,
-              fileBase64: this.messageData.file.fileBase64,
-            })
-          } catch (error) {
-            console.error('Erro no parse de payload de webhook tentando fazer upload do arquivo para o S3', error)
-
-            return processedMessages
-          }
+          messageToSend.url = await uploadFile(
+            this.licensee,
+            contact,
+            this.messageData.file.fileName,
+            this.messageData.file.fileBase64,
+          )
         } else {
           messageToSend.url = await this.getMediaUrl(
             messageToSend.attachmentWaId,
