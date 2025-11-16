@@ -1,16 +1,23 @@
 import UserEdit from './'
 import { fireEvent, screen, waitFor, render } from '@testing-library/react'
 import { getUser, updateUser } from '../../../../services/user'
-import { MemoryRouter } from 'react-router';
+import { createRoutesStub } from 'react-router';
 
 jest.mock('../../../../services/user')
 
 describe('<UserEdit />', () => {
   function mount() {
-    render(
-      <MemoryRouter>
-        <UserEdit />
-      </MemoryRouter>)
+    const Stub = createRoutesStub([
+      {
+        path: '/users/:id',
+        Component: UserEdit,
+      },
+      {
+        path: '/users',
+        Component: () => <div>Users Index</div>,
+      },
+    ])
+    render(<Stub initialEntries={['/users/1']} />)
   }
 
   it('renders the form with the received user', async () => {

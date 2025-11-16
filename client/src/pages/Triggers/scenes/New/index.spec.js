@@ -1,6 +1,6 @@
 import TriggerNew from '.'
-import { fireEvent, render, screen, waitFor, cleanup } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { createRoutesStub } from 'react-router'
 import { createTrigger } from '../../../../services/trigger'
 
 jest.mock('../../../../services/trigger')
@@ -12,13 +12,20 @@ describe('<TriggerNew />', () => {
   }
 
   function mount() {
-    render(
-      <MemoryRouter>
-        <TriggerNew currentUser={currentUser} />
-      </MemoryRouter>)
+    const Stub = createRoutesStub([
+      {
+        path: '/triggers/new',
+        Component: () => <TriggerNew currentUser={currentUser} />,
+      },
+      {
+        path: '/triggers',
+        Component: () => <div>Triggers Index</div>,
+      },
+    ])
+    render(<Stub initialEntries={['/triggers/new']} />)
   }
 
-  it('creates a new trigger when the backend returns success', async () => {
+  it('creates a new trigger when the backend returns success and user is not super', async () => {
     mount()
 
     createTrigger.mockResolvedValue({ status: 201 })
@@ -37,9 +44,9 @@ describe('<TriggerNew />', () => {
       messagesList: '',
       order: 1,
     }))
+  })
 
-    cleanup()
-
+  it('creates a new trigger when the backend returns success and user is super', async () => {
     currentUser = {
       isSuper: true,
     }

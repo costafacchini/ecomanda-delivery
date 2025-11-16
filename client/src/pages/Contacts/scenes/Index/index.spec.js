@@ -2,7 +2,7 @@ import ContactsIndex from './'
 import { fireEvent, screen, waitFor, render } from '@testing-library/react'
 import { getContacts } from '../../../../services/contact'
 import { getLicensees } from '../../../../services/licensee'
-import { MemoryRouter } from 'react-router'
+import { createRoutesStub } from 'react-router'
 import { contactFactory } from '../../../../factories/contact'
 import { SimpleCrudContextProvider } from '../../../../contexts/SimpleCrud'
 
@@ -13,11 +13,15 @@ describe('<ContactsIndex />', () => {
   const currentUser = { isSuper: true }
 
   function mount({ currentUser }) {
+    const Stub = createRoutesStub([
+      {
+        path: '/contacts',
+        Component: () => <ContactsIndex currentUser={currentUser} />,
+      },
+    ])
     render(
       <SimpleCrudContextProvider>
-        <MemoryRouter>
-          <ContactsIndex currentUser={currentUser} />
-        </MemoryRouter>
+        <Stub initialEntries={['/contacts']} />
       </SimpleCrudContextProvider>
     )
   }

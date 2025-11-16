@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router'
 import LicenseesIndex from './scenes/Index'
 import LicenseeNew from './scenes/New'
 import LicenseeEdit from './scenes/Edit'

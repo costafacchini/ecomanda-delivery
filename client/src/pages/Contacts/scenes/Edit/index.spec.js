@@ -1,17 +1,23 @@
 import ContactEdit from './'
 import { fireEvent, screen, waitFor, render } from '@testing-library/react'
 import { getContact, updateContact } from '../../../../services/contact'
-import { MemoryRouter } from 'react-router';
+import { createRoutesStub } from 'react-router';
 
 jest.mock('../../../../services/contact')
 
 describe('<ContactEdit />', () => {
   function mount() {
-    render(
-      <MemoryRouter>
-        <ContactEdit />
-      </MemoryRouter>
-    )
+    const Stub = createRoutesStub([
+      {
+        path: '/contacts/:id',
+        Component: ContactEdit,
+      },
+      {
+        path: '/contacts',
+        Component: () => <div>Contacts Index</div>,
+      },
+    ])
+    render(<Stub initialEntries={['/contacts/1']} />)
   }
 
   it('renders the form with the received contact', async () => {

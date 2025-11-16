@@ -2,7 +2,7 @@ import Form from '../Form'
 import { toast } from 'react-toastify';
 import { useState } from 'react';
 import { createLicensee } from '../../../../services/licensee'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 function LicenseeNew({ currentUser }) {
   let navigate = useNavigate()

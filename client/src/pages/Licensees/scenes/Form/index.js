@@ -1,6 +1,6 @@
 import { FieldWithError, Form } from '../../../../components/form'
 import * as Yup from 'yup'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import {
   setLicenseeWebhook,
   importLicenseeTemplate,

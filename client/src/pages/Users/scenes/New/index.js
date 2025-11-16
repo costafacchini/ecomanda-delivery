@@ -2,7 +2,7 @@ import Form from '../Form'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
 import { createUser } from '../../../../services/user'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 function UserNew({ currentUser }) {
   let navigate = useNavigate()

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router'
 import UsersIndex from './scenes/Index'
 import UserNew from './scenes/New'
 import UserEdit from './scenes/Edit'

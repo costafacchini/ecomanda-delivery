@@ -2,7 +2,7 @@ import UsersIndex from './'
 import { fireEvent, screen, waitFor, render } from '@testing-library/react'
 import { getUsers } from '../../../../services/user'
 import { getLicensees } from '../../../../services/licensee'
-import { MemoryRouter } from 'react-router'
+import { createRoutesStub } from 'react-router'
 import { userFactory } from '../../../../factories/user'
 import { SimpleCrudContextProvider } from '../../../../contexts/SimpleCrud'
 
@@ -13,11 +13,15 @@ describe('<UsersIndex />', () => {
   const currentUser = { isSuper: true }
 
   function mount({ currentUser }) {
+    const Stub = createRoutesStub([
+      {
+        path: '/users',
+        Component: () => <UsersIndex currentUser={currentUser} />,
+      },
+    ])
     render(
       <SimpleCrudContextProvider>
-        <MemoryRouter>
-          <UsersIndex currentUser={currentUser} />
-        </MemoryRouter>
+        <Stub initialEntries={['/users']} />
       </SimpleCrudContextProvider>
     )
   }

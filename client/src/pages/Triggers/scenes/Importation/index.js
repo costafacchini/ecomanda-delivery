@@ -1,6 +1,6 @@
 import { Form } from '../../../../components/form'
 import * as Yup from 'yup'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
 import { importTriggerMultiProduct } from '../../../../services/trigger'

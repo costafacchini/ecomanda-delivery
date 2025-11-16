@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router'
 import MessagesIndex from './scenes/Index'
 import { SimpleCrudContextProvider } from '../../contexts/SimpleCrud'
 import { AppContext } from '../../contexts/App'

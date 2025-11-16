@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router'
 import TriggersIndex from './scenes/Index'
 import TriggerNew from './scenes/New'
 import TriggerEdit from './scenes/Edit'

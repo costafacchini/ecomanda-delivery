@@ -2,7 +2,7 @@ import TriggersIndex from './'
 import { fireEvent, screen, waitFor, render } from '@testing-library/react'
 import { getTriggers } from '../../../../services/trigger'
 import { getLicensees } from '../../../../services/licensee'
-import { MemoryRouter } from 'react-router'
+import { createRoutesStub } from 'react-router'
 import { triggerFactory, triggerSingleProduct, triggerReplyButton, triggerListMessage, triggerText } from '../../../../factories/trigger'
 import { SimpleCrudContextProvider } from '../../../../contexts/SimpleCrud'
 
@@ -13,11 +13,15 @@ describe('<TriggersIndex />', () => {
   const currentUser = { isSuper: true }
 
   function mount({ currentUser }) {
+    const Stub = createRoutesStub([
+      {
+        path: '/triggers',
+        Component: () => <TriggersIndex currentUser={currentUser} />,
+      },
+    ])
     render(
       <SimpleCrudContextProvider>
-        <MemoryRouter>
-          <TriggersIndex currentUser={currentUser} />
-        </MemoryRouter>
+        <Stub initialEntries={['/triggers']} />
       </SimpleCrudContextProvider>
     )
   }

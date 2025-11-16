@@ -1,15 +1,18 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { createRoutesStub } from 'react-router'
 import ContactForm from './'
 
 describe('<ContactForm />', () => {
   const onSubmit = jest.fn()
 
   function mount(props = {}) {
-    render(
-      <MemoryRouter>
-        <ContactForm onSubmit={onSubmit} {...props} />
-      </MemoryRouter>)
+    const Stub = createRoutesStub([
+      {
+        path: '/test',
+        Component: () => <ContactForm onSubmit={onSubmit} {...props} />,
+      },
+    ])
+    render(<Stub initialEntries={['/test']} />)
   }
 
   it('is rendered with the default initial values', () => {

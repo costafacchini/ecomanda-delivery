@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor, cleanup } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { createRoutesStub } from 'react-router'
 import LicenseeForm from './'
 import { setLicenseeWebhook, signOrderWebhook } from '../../../../services/licensee'
 
@@ -9,10 +9,13 @@ describe('<LicenseeForm />', () => {
   const onSubmit = jest.fn()
 
   function mount(props = {}) {
-    render(
-      <MemoryRouter>
-        <LicenseeForm onSubmit={onSubmit} {...props} />
-      </MemoryRouter>)
+    const Stub = createRoutesStub([
+      {
+        path: '/test',
+        Component: () => <LicenseeForm onSubmit={onSubmit} {...props} />,
+      },
+    ])
+    render(<Stub initialEntries={['/test']} />)
   }
 
   it('is rendered with the default initial values', () => {

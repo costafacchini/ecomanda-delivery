@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router'
 import BillingIndex from './Billing/scenes/Index'
 import IntegrationlogIndex from './Integrationlog/scenes/Index'
 import { AppContext } from '../../contexts/App'

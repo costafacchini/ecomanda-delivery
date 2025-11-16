@@ -1,7 +1,7 @@
 import LicenseeIndex from './'
 import { fireEvent, screen, render, waitFor } from '@testing-library/react'
 import { getLicensees } from '../../../../services/licensee'
-import { MemoryRouter } from 'react-router'
+import { createRoutesStub } from 'react-router'
 import { licenseeFactory } from '../../../../factories/licensee'
 import { SimpleCrudContextProvider } from '../../../../contexts/SimpleCrud'
 
@@ -13,11 +13,15 @@ describe('<LicenseeIndex />', () => {
   }
 
   function mount() {
+    const Stub = createRoutesStub([
+      {
+        path: '/licensees',
+        Component: () => <LicenseeIndex currentUser={currentUser} />,
+      },
+    ])
     render(
       <SimpleCrudContextProvider>
-        <MemoryRouter>
-          <LicenseeIndex currentUser={currentUser} />
-        </MemoryRouter>
+        <Stub initialEntries={['/licensees']} />
       </SimpleCrudContextProvider>,
     )
   }

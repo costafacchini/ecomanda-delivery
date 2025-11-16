@@ -1,6 +1,6 @@
 import ContactNew from '.'
-import { fireEvent, render, screen, waitFor, cleanup } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { createRoutesStub } from 'react-router'
 import { createContact } from '../../../../services/contact'
 
 jest.mock('../../../../services/contact')
@@ -12,13 +12,20 @@ describe('<ContactNew />', () => {
   }
 
   function mount() {
-    render(
-      <MemoryRouter>
-        <ContactNew currentUser={currentUser} />
-      </MemoryRouter>)
+    const Stub = createRoutesStub([
+      {
+        path: '/contacts/new',
+        Component: () => <ContactNew currentUser={currentUser} />,
+      },
+      {
+        path: '/contacts',
+        Component: () => <div>Contacts Index</div>,
+      },
+    ])
+    render(<Stub initialEntries={['/contacts/new']} />)
   }
 
-  it('creates a new contact when the backend returns success', async () => {
+  it('creates a new contact when the backend returns success and user is not super', async () => {
     mount()
 
     createContact.mockResolvedValue({ status: 201 })
@@ -43,9 +50,9 @@ describe('<ContactNew />', () => {
       delivery_tax: 0,
       plugin_cart_id: ''
     }))
+  })
 
-    cleanup()
-
+  it('creates a new contact when the backend returns success and user is super', async () => {
     currentUser = {
       isSuper: true,
     }

@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext, useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { getLicensees } from '../../../../services/licensee'
 import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'
 import isEmpty from 'lodash/isEmpty'

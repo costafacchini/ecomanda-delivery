@@ -1,23 +1,23 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { createRoutesStub } from 'react-router'
 import { importTriggerMultiProduct } from '../../../../services/trigger'
 import TriggerImportation from './'
 
 jest.mock('../../../../services/trigger')
 
-jest.mock('react-router-dom', () => ({
-  useParams: () => ({
-    id: 1,
-  }),
-  useNavigate: jest.fn(),
-}))
-
 describe('<TriggerImportation />', () => {
   function mount() {
-    render(
-      <MemoryRouter>
-        <TriggerImportation />
-      </MemoryRouter>)
+    const Stub = createRoutesStub([
+      {
+        path: '/triggers/:id/importation',
+        Component: TriggerImportation,
+      },
+      {
+        path: '/triggers',
+        Component: () => <div>Triggers Index</div>,
+      },
+    ])
+    render(<Stub initialEntries={['/triggers/1/importation']} />)
   }
 
   it('renders the form', async () => {
@@ -37,7 +37,7 @@ describe('<TriggerImportation />', () => {
 
     fireEvent.click(screen.getByText('Importar'))
 
-    await waitFor(() => expect(importTriggerMultiProduct).toHaveBeenCalledWith(1, { text: '83863 Double Monster Bacon' }))
+    await waitFor(() => expect(importTriggerMultiProduct).toHaveBeenCalledWith("1", { text: '83863 Double Monster Bacon' }))
   })
 
   it('renders the errors when the backend returns error', async () => {
