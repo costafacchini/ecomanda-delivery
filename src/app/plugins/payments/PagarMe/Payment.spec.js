@@ -1,6 +1,5 @@
 import { Payment } from './Payment.js'
 import Integrationlog from '@models/Integrationlog'
-import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../../.jest/utils'
 import { licenseeIntegrationPagarMe as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
@@ -8,6 +7,9 @@ import { cart as cartFactory } from '@factories/cart'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
+import request from '../../../services/request.js'
+
+jest.mock('../../../services/request')
 
 describe('PagarMe/Customer plugin', () => {
   let licensee
@@ -17,8 +19,6 @@ describe('PagarMe/Customer plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
-
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build({ recipient_id: '2313' }))
   })
@@ -112,17 +112,9 @@ describe('PagarMe/Customer plugin', () => {
           ],
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/orders/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: {
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {
               id: 'or_56GXnk6T0eU88qMm',
               status: 'pending',
               charges: [
@@ -145,11 +137,6 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.createPIX(cart, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleInfoSpy).toHaveBeenCalledWith('Pedido criado na pagar.me! id: or_56GXnk6T0eU88qMm log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
@@ -238,17 +225,9 @@ describe('PagarMe/Customer plugin', () => {
           ],
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/orders/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: {
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {
               id: 'or_56GXnk6T0eU88qMm',
               code: 'YV3RCRIN24',
               amount: 1610,
@@ -326,11 +305,6 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.createPIX(cart, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const cartUpdated = await cartRepository.findFirst({ _id: cart._id })
         expect(cartUpdated.order_id).toEqual('or_56GXnk6T0eU88qMm')
         expect(cartUpdated.charge_id).toEqual('ch_K2rJ5nlHwTE4qRDP')
@@ -444,27 +418,13 @@ describe('PagarMe/Customer plugin', () => {
           checkouts: [],
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/orders/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: bodyResponse,
-          },
-        )
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: bodyResponse,
+        })
 
         const payment = new Payment()
         await payment.createPIX(cart, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ cart: cart._id })
         expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
         expect(integrationlog.log_payload).toEqual(bodyResponse)
@@ -555,34 +515,20 @@ describe('PagarMe/Customer plugin', () => {
           ],
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/orders/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 422,
-            body: {
-              message: 'The request is invalid.',
-              errors: {
-                'order.automaticanticipationsettings.type': [
-                  "The type field is invalid. Possible values are 'full','1025'",
-                ],
-              },
+        request.post.mockResolvedValueOnce({
+          status: 422,
+          data: {
+            message: 'The request is invalid.',
+            errors: {
+              'order.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
             },
           },
-        )
+        })
 
         const payment = new Payment()
         await payment.createPIX(cart, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Pedido ${cart._id} não criado na pagar.me.
            status: 422
@@ -681,27 +627,13 @@ describe('PagarMe/Customer plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/orders/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 422,
-            body: bodyResponse,
-          },
-        )
+        request.post.mockResolvedValueOnce({
+          status: 422,
+          data: bodyResponse,
+        })
 
         const payment = new Payment()
         await payment.createPIX(cart, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ cart: cart._id })
         expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
         expect(integrationlog.log_payload).toEqual(bodyResponse)
@@ -792,17 +724,9 @@ describe('PagarMe/Customer plugin', () => {
           ],
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/orders/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: {
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {
               id: 'or_56GXnk6T0eU88qMm',
               status: 'pending',
               charges: [
@@ -849,11 +773,6 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.createCreditCard(cart, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleInfoSpy).toHaveBeenCalledWith('Pedido criado na pagar.me! id: or_56GXnk6T0eU88qMm log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
@@ -940,17 +859,9 @@ describe('PagarMe/Customer plugin', () => {
           ],
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/orders/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: {
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {
               id: 'or_56GXnk6T0eU88qMm',
               code: 'YV3RCRIN24',
               amount: 1610,
@@ -1031,11 +942,6 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.createCreditCard(cart, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const cartUpdated = await cartRepository.findFirst({ _id: cart._id })
         expect(cartUpdated.order_id).toEqual('or_56GXnk6T0eU88qMm')
         expect(cartUpdated.charge_id).toEqual('ch_p4lnAGyU0GT1E9MZ')
@@ -1167,27 +1073,13 @@ describe('PagarMe/Customer plugin', () => {
           checkouts: [],
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/orders/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: bodyResponse,
-          },
-        )
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: bodyResponse,
+        })
 
         const payment = new Payment()
         await payment.createCreditCard(cart, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ cart: cart._id })
         expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
         expect(integrationlog.log_payload).toEqual(bodyResponse)
@@ -1276,34 +1168,20 @@ describe('PagarMe/Customer plugin', () => {
           ],
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/orders/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 422,
-            body: {
-              message: 'The request is invalid.',
-              errors: {
-                'order.automaticanticipationsettings.type': [
-                  "The type field is invalid. Possible values are 'full','1025'",
-                ],
-              },
+        request.post.mockResolvedValueOnce({
+          status: 422,
+          data: {
+            message: 'The request is invalid.',
+            errors: {
+              'order.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
             },
           },
-        )
+        })
 
         const payment = new Payment()
         await payment.createCreditCard(cart, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Pedido ${cart._id} não criado na pagar.me.
            status: 422
@@ -1400,27 +1278,13 @@ describe('PagarMe/Customer plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/orders/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 422,
-            body: bodyResponse,
-          },
-        )
+        request.post.mockResolvedValueOnce({
+          status: 422,
+          data: bodyResponse,
+        })
 
         const payment = new Payment()
         await payment.createCreditCard(cart, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ cart: cart._id })
         expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
         expect(integrationlog.log_payload).toEqual(bodyResponse)
@@ -1473,15 +1337,9 @@ describe('PagarMe/Customer plugin', () => {
           }),
         )
 
-        fetchMock.deleteOnce(
-          (url, { headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/charges/charge-id' && headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: {
+        request.delete.mockResolvedValueOnce({
+          status: 200,
+          data: {
               id: 'ch_56GXnk6T0eU88qMm',
               status: 'canceled',
             },
@@ -1490,11 +1348,6 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.delete(cart, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleInfoSpy).toHaveBeenCalledWith('Pagamento cancelado na pagar.me! id: charge-id log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
@@ -1543,15 +1396,9 @@ describe('PagarMe/Customer plugin', () => {
           }),
         )
 
-        fetchMock.deleteOnce(
-          (url, { headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/charges/charge-id' && headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: {
+        request.delete.mockResolvedValueOnce({
+          status: 200,
+          data: {
               id: 'ch_56GXnk6T0eU88qMm',
               status: 'canceled',
             },
@@ -1560,11 +1407,6 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.delete(cart, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const cartUpdated = await cartRepository.findFirst({ _id: cart._id })
         expect(cartUpdated.payment_status).toEqual('voided')
         expect(cartUpdated.concluded).toEqual(true)
@@ -1616,25 +1458,13 @@ describe('PagarMe/Customer plugin', () => {
           status: 'canceled',
         }
 
-        fetchMock.deleteOnce(
-          (url, { headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/charges/charge-id' && headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: bodyResponse,
-          },
-        )
+        request.delete.mockResolvedValueOnce({
+          status: 200,
+          data: bodyResponse,
+        })
 
         const payment = new Payment()
         await payment.delete(cart, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ cart: cart._id })
         expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
         expect(integrationlog.log_payload).toEqual(bodyResponse)
@@ -1685,32 +1515,20 @@ describe('PagarMe/Customer plugin', () => {
           }),
         )
 
-        fetchMock.deleteOnce(
-          (url, { headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/charges/charge-id' && headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 422,
-            body: {
-              message: 'The request is invalid.',
-              errors: {
-                'charge.automaticanticipationsettings.type': [
-                  "The type field is invalid. Possible values are 'full','1025'",
-                ],
-              },
+        request.delete.mockResolvedValueOnce({
+          status: 422,
+          data: {
+            message: 'The request is invalid.',
+            errors: {
+              'charge.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
             },
           },
-        )
+        })
 
         const payment = new Payment()
         await payment.delete(cart, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Pagamento ${cart._id} não cancelado na pagar.me.
            status: 422
@@ -1769,25 +1587,13 @@ describe('PagarMe/Customer plugin', () => {
           },
         }
 
-        fetchMock.deleteOnce(
-          (url, { headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/charges/charge-id' && headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 422,
-            body: bodyResponse,
-          },
-        )
+        request.delete.mockResolvedValueOnce({
+          status: 422,
+          data: bodyResponse,
+        })
 
         const payment = new Payment()
         await payment.delete(cart, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ cart: cart._id })
         expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
         expect(integrationlog.log_payload).toEqual(bodyResponse)

@@ -1,7 +1,6 @@
 import { Chatwoot } from './Chatwoot.js'
 import Room from '@models/Room'
 import Trigger from '@models/Trigger'
-import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
@@ -11,8 +10,10 @@ import { triggerReplyButton as triggerReplyButtonFactory } from '@factories/trig
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { MessageRepositoryDatabase } from '@repositories/message'
+import request from '../../services/request.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
+jest.mock('../../services/request')
 
 describe('Chatwoot plugin', () => {
   let licensee
@@ -22,7 +23,6 @@ describe('Chatwoot plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(
@@ -427,9 +427,9 @@ describe('Chatwoot plugin', () => {
           }),
         )
 
-        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations/conversation_456/messages', {
+        request.post.mockResolvedValue({
           status: 200,
-          body: {
+          data: {
             error: false,
             success: true,
           },
@@ -437,10 +437,16 @@ describe('Chatwoot plugin', () => {
 
         const chatwoot = new Chatwoot(licensee)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
-        await fetchMock.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(request.post).toHaveBeenCalledWith(
+          'https://api.chatwoot.com/api/v1/conversations/conversation_456/messages',
+          expect.objectContaining({
+            headers: expect.objectContaining({
+              api_access_token: 'api_token_123',
+            }),
+          }),
+        )
+        expect(request.post).toHaveBeenCalledTimes(1)
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
@@ -467,27 +473,43 @@ describe('Chatwoot plugin', () => {
           }),
         )
 
-        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations', {
-          status: 200,
-          body: {
-            id: 'new_conversation_789',
-          },
-        })
-
-        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations/new_conversation_789/messages', {
-          status: 200,
-          body: {
-            error: false,
-            success: true,
-          },
-        })
+        request.post
+          .mockResolvedValueOnce({
+            status: 200,
+            data: {
+              id: 'new_conversation_789',
+            },
+          })
+          .mockResolvedValueOnce({
+            status: 200,
+            data: {
+              error: false,
+              success: true,
+            },
+          })
 
         const chatwoot = new Chatwoot(licensee)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
-        await fetchMock.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(2)
+        expect(request.post).toHaveBeenCalledTimes(2)
+        expect(request.post).toHaveBeenNthCalledWith(
+          1,
+          'https://api.chatwoot.com/api/v1/conversations',
+          expect.objectContaining({
+            headers: expect.objectContaining({
+              api_access_token: 'api_token_123',
+            }),
+          }),
+        )
+        expect(request.post).toHaveBeenNthCalledWith(
+          2,
+          'https://api.chatwoot.com/api/v1/conversations/new_conversation_789/messages',
+          expect.objectContaining({
+            headers: expect.objectContaining({
+              api_access_token: 'api_token_123',
+            }),
+          }),
+        )
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
@@ -515,9 +537,9 @@ describe('Chatwoot plugin', () => {
           }),
         )
 
-        fetchMock.getOnce('https://api.chatwoot.com/api/v1/contacts/search?q=+5511999999999', {
+        request.get.mockResolvedValueOnce({
           status: 200,
-          body: {
+          data: {
             payload: [
               {
                 id: 'contact_123',
@@ -534,27 +556,26 @@ describe('Chatwoot plugin', () => {
           },
         })
 
-        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations', {
-          status: 200,
-          body: {
-            id: 'new_conversation_789',
-          },
-        })
-
-        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations/new_conversation_789/messages', {
-          status: 200,
-          body: {
-            error: false,
-            success: true,
-          },
-        })
+        request.post
+          .mockResolvedValueOnce({
+            status: 200,
+            data: {
+              id: 'new_conversation_789',
+            },
+          })
+          .mockResolvedValueOnce({
+            status: 200,
+            data: {
+              error: false,
+              success: true,
+            },
+          })
 
         const chatwoot = new Chatwoot(licensee)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
-        await fetchMock.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(3)
+        expect(request.get).toHaveBeenCalledTimes(1)
+        expect(request.post).toHaveBeenCalledTimes(2)
 
         const contactUpdated = await contactRepository.findFirst({ _id: contact._id })
         expect(contactUpdated.chatwootId).toEqual('contact_123')
@@ -593,17 +614,17 @@ describe('Chatwoot plugin', () => {
         )
 
         // Mock contact search - no results
-        fetchMock.getOnce('https://api.chatwoot.com/api/v1/contacts/search?q=+5511999999999', {
+        request.get.mockResolvedValueOnce({
           status: 200,
-          body: {
+          data: {
             payload: [],
           },
         })
 
         // Mock contact creation
-        fetchMock.postOnce('https://api.chatwoot.com/api/v1/contacts', {
+        request.post.mockResolvedValueOnce({
           status: 200,
-          body: {
+          data: {
             payload: {
               contact: {
                 id: 'contact_123',
@@ -616,17 +637,17 @@ describe('Chatwoot plugin', () => {
         })
 
         // Mock conversation creation
-        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations', {
+        request.post.mockResolvedValueOnce({
           status: 200,
-          body: {
+          data: {
             id: 'new_conversation_789',
           },
         })
 
         // Mock message sending
-        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations/new_conversation_789/messages', {
+        request.post.mockResolvedValueOnce({
           status: 200,
-          body: {
+          data: {
             error: false,
             success: true,
           },
@@ -634,10 +655,9 @@ describe('Chatwoot plugin', () => {
 
         const chatwoot = new Chatwoot(licensee)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
-        await fetchMock.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(4)
+        expect(request.get).toHaveBeenCalledTimes(1)
+        expect(request.post).toHaveBeenCalledTimes(3)
 
         const contactUpdated = await contactRepository.findFirst({ _id: contact._id })
         expect(contactUpdated.chatwootId).toEqual('contact_123')
@@ -680,15 +700,17 @@ describe('Chatwoot plugin', () => {
         )
 
         // Mock file download
-        fetchMock.getOnce('https://example.com/file.pdf', {
+        request.download.mockResolvedValueOnce({
           status: 200,
-          body: 'file content',
-          headers: { 'content-type': 'application/pdf' },
+          data: Buffer.from('file content'),
+          headers: {
+            get: (name) => (name === 'content-type' ? 'application/pdf' : null),
+          },
         })
 
-        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations/conversation_456/messages', {
+        request.post.mockResolvedValueOnce({
           status: 200,
-          body: {
+          data: {
             error: false,
             success: true,
           },
@@ -696,10 +718,9 @@ describe('Chatwoot plugin', () => {
 
         const chatwoot = new Chatwoot(licensee)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
-        await fetchMock.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(2)
+        expect(request.download).toHaveBeenCalledTimes(1)
+        expect(request.post).toHaveBeenCalledTimes(1)
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
@@ -733,9 +754,9 @@ describe('Chatwoot plugin', () => {
           }),
         )
 
-        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations/conversation_456/messages', {
+        request.post.mockResolvedValue({
           status: 200,
-          body: {
+          data: {
             error: false,
             success: true,
           },
@@ -743,10 +764,8 @@ describe('Chatwoot plugin', () => {
 
         const chatwoot = new Chatwoot(licensee)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
-        await fetchMock.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(request.post).toHaveBeenCalledTimes(1)
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
@@ -783,9 +802,9 @@ describe('Chatwoot plugin', () => {
           }),
         )
 
-        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations/conversation_456/messages', {
+        request.post.mockResolvedValue({
           status: 400,
-          body: {
+          data: {
             error: true,
             message: 'Invalid message',
           },
@@ -793,10 +812,8 @@ describe('Chatwoot plugin', () => {
 
         const chatwoot = new Chatwoot(licensee)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
-        await fetchMock.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(request.post).toHaveBeenCalledTimes(1)
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(false)
@@ -838,9 +855,9 @@ describe('Chatwoot plugin', () => {
           }),
         )
 
-        fetchMock.postOnce('https://api.chatwoot.com/api/v1/conversations/conversation_456/messages', {
+        request.post.mockResolvedValue({
           status: 200,
-          body: {
+          data: {
             error: false,
             success: true,
           },
@@ -848,10 +865,8 @@ describe('Chatwoot plugin', () => {
 
         const chatwoot = new Chatwoot(licensee)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
-        await fetchMock.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(request.post).toHaveBeenCalledTimes(1)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           'Chatwoot: Mensagem 60958703f415ed4008748637 enviada para Chatwoot com sucesso!',

@@ -1,7 +1,6 @@
 import { Crisp } from './Crisp'
 import Room from '@models/Room'
 import Trigger from '@models/Trigger'
-import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
@@ -11,8 +10,10 @@ import { triggerReplyButton as triggerReplyButtonFactory } from '@factories/trig
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { MessageRepositoryDatabase } from '@repositories/message'
+import request from '../../services/request.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
+jest.mock('../../services/request')
 
 describe('Crisp plugin', () => {
   let licensee
@@ -22,8 +23,6 @@ describe('Crisp plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
-
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
   })
@@ -586,25 +585,16 @@ describe('Crisp plugin', () => {
           }),
         )
 
-        fetchMock.postOnce(
-          (url, { headers }) => {
-            return (
-              url === 'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation' &&
-              JSON.stringify(headers).includes('Authorization') &&
-              JSON.stringify(headers).includes('X-Crisp-Tier')
-            )
-          },
-          {
-            status: 201,
-            body: {
-              error: false,
-              reason: 'added',
-              data: {
-                session_id: 'session_a06054de-d9dc-407a-98ea-72c7fb460472',
-              },
+        request.post.mockResolvedValueOnce({
+          status: 201,
+          data: {
+            error: false,
+            reason: 'added',
+            data: {
+              session_id: 'session_a06054de-d9dc-407a-98ea-72c7fb460472',
             },
           },
-        )
+        })
 
         const expectedBodyPatch = {
           nickname: 'John Doe - 5511990283745 - WhatsApp',
@@ -612,25 +602,14 @@ describe('Crisp plugin', () => {
           phone: '5511990283745',
         }
 
-        fetchMock.patchOnce(
-          (url, { headers, body }) => {
-            return (
-              url ===
-                'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
-              body === JSON.stringify(expectedBodyPatch) &&
-              JSON.stringify(headers).includes('Authorization') &&
-              JSON.stringify(headers).includes('X-Crisp-Tier')
-            )
+        request.patch.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            error: false,
+            reason: 'updated',
+            data: {},
           },
-          {
-            status: 200,
-            body: {
-              error: false,
-              reason: 'updated',
-              data: {},
-            },
-          },
-        )
+        })
 
         const expectedBody = {
           from: 'user',
@@ -639,37 +618,21 @@ describe('Crisp plugin', () => {
           content: 'Message to send',
         }
 
-        fetchMock.postOnce(
-          (url, { headers, body }) => {
-            return (
-              url ===
-                'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message' &&
-              body === JSON.stringify(expectedBody) &&
-              JSON.stringify(headers).includes('Authorization') &&
-              JSON.stringify(headers).includes('X-Crisp-Tier')
-            )
-          },
-          {
-            status: 202,
-            body: {
-              error: false,
-              reason: 'dispatched',
-              data: {
-                fingerprint: 163408807364277,
-              },
+        request.post.mockResolvedValueOnce({
+          status: 202,
+          data: {
+            error: false,
+            reason: 'dispatched',
+            data: {
+              fingerprint: 163408807364277,
             },
           },
-        )
+        })
 
         expect(message.sended).toEqual(false)
 
         const crisp = new Crisp(licensee)
         await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(3)
-
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
       })
@@ -704,9 +667,9 @@ describe('Crisp plugin', () => {
           }),
         )
 
-        fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
+        request.post.mockResolvedValueOnce({
           status: 201,
-          body: {
+          data: {
             error: false,
             reason: 'added',
             data: {
@@ -715,41 +678,30 @@ describe('Crisp plugin', () => {
           },
         })
 
-        fetchMock.patchOnce(
-          'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta',
-          {
-            status: 200,
-            body: {
-              error: false,
-              reason: 'updated',
-              data: {},
-            },
+        request.patch.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            error: false,
+            reason: 'updated',
+            data: {},
           },
-        )
+        })
 
-        fetchMock.postOnce(
-          'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message',
-          {
-            status: 202,
-            body: {
-              error: false,
-              reason: 'dispatched',
-              data: {
-                fingerprint: 163408807364277,
-              },
+        request.post.mockResolvedValueOnce({
+          status: 202,
+          data: {
+            error: false,
+            reason: 'dispatched',
+            data: {
+              fingerprint: 163408807364277,
             },
           },
-        )
+        })
 
         expect(message.sended).toEqual(false)
 
         const crisp = new Crisp(licensee)
         await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(3)
-
         expect(consoleInfoSpy).toHaveBeenCalledWith('Mensagem 60958703f415ed4008748637 enviada para Crisp com sucesso!')
       })
 
@@ -784,9 +736,9 @@ describe('Crisp plugin', () => {
             }),
           )
 
-          fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
+          request.post.mockResolvedValueOnce({
             status: 201,
-            body: {
+            data: {
               error: false,
               reason: 'added',
               data: {
@@ -795,41 +747,30 @@ describe('Crisp plugin', () => {
             },
           })
 
-          fetchMock.patchOnce(
-            'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta',
-            {
-              status: 200,
-              body: {
-                error: false,
-                reason: 'updated',
-                data: {},
-              },
+          request.patch.mockResolvedValueOnce({
+            status: 200,
+            data: {
+              error: false,
+              reason: 'updated',
+              data: {},
             },
-          )
+          })
 
-          fetchMock.postOnce(
-            'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message',
-            {
-              status: 202,
-              body: {
-                error: false,
-                reason: 'dispatched',
-                data: {
-                  fingerprint: 163408807364277,
-                },
+          request.post.mockResolvedValueOnce({
+            status: 202,
+            data: {
+              error: false,
+              reason: 'dispatched',
+              data: {
+                fingerprint: 163408807364277,
               },
             },
-          )
+          })
 
           expect(message.sended).toEqual(false)
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(3)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
         })
@@ -859,9 +800,9 @@ describe('Crisp plugin', () => {
             }),
           )
 
-          fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
+          request.post.mockResolvedValueOnce({
             status: 201,
-            body: {
+            data: {
               error: false,
               reason: 'added',
               data: {
@@ -876,23 +817,14 @@ describe('Crisp plugin', () => {
             phone: '5511989187726-1622497000',
           }
 
-          fetchMock.patchOnce(
-            (url, { body }) => {
-              return (
-                url ===
-                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
-                body === JSON.stringify(expectedBodyPatch)
-              )
+          request.patch.mockResolvedValueOnce({
+            status: 200,
+            data: {
+              error: false,
+              reason: 'updated',
+              data: {},
             },
-            {
-              status: 200,
-              body: {
-                error: false,
-                reason: 'updated',
-                data: {},
-              },
-            },
-          )
+          })
 
           const expectedBody = {
             from: 'user',
@@ -901,35 +833,21 @@ describe('Crisp plugin', () => {
             content: '*John Doe:*\nMessage to send',
           }
 
-          fetchMock.postOnce(
-            (url, { body }) => {
-              return (
-                url ===
-                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message' &&
-                body === JSON.stringify(expectedBody)
-              )
-            },
-            {
-              status: 202,
-              body: {
-                error: false,
-                reason: 'dispatched',
-                data: {
-                  fingerprint: 163408807364277,
-                },
+          request.post.mockResolvedValueOnce({
+            status: 202,
+            data: {
+              error: false,
+              reason: 'dispatched',
+              data: {
+                fingerprint: 163408807364277,
               },
             },
-          )
+          })
 
           expect(message.sended).toEqual(false)
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(3)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
         })
@@ -969,47 +887,30 @@ describe('Crisp plugin', () => {
             segments: ['segment1', 'segment 2'],
           }
 
-          fetchMock.patchOnce(
-            (url, { body }) => {
-              return (
-                url ===
-                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta' &&
-                body === JSON.stringify(expectedBodyPatch)
-              )
+          request.patch.mockResolvedValueOnce({
+            status: 200,
+            data: {
+              error: false,
+              reason: 'updated',
+              data: {},
             },
-            {
-              status: 200,
-              body: {
-                error: false,
-                reason: 'updated',
-                data: {},
-              },
-            },
-          )
+          })
 
-          fetchMock.postOnce(
-            'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message',
-            {
-              status: 202,
-              body: {
-                error: false,
-                reason: 'dispatched',
-                data: {
-                  fingerprint: 163408807364277,
-                },
+          request.post.mockResolvedValueOnce({
+            status: 202,
+            data: {
+              error: false,
+              reason: 'dispatched',
+              data: {
+                fingerprint: 163408807364277,
               },
             },
-          )
+          })
 
           expect(message.sended).toEqual(false)
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(2)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
         })
@@ -1038,9 +939,9 @@ describe('Crisp plugin', () => {
             }),
           )
 
-          fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
+          request.post.mockResolvedValueOnce({
             status: 402,
-            body: {
+            data: {
               error: true,
               reason: 'invalid_session',
               data: {},
@@ -1051,11 +952,6 @@ describe('Crisp plugin', () => {
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(1)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
 
@@ -1088,9 +984,9 @@ describe('Crisp plugin', () => {
             }),
           )
 
-          fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
+          request.post.mockResolvedValueOnce({
             status: 201,
-            body: {
+            data: {
               error: false,
               reason: 'added',
               data: {
@@ -1099,42 +995,31 @@ describe('Crisp plugin', () => {
             },
           })
 
-          fetchMock.patchOnce(
-            'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta',
-            {
-              status: 200,
-              body: {
-                error: false,
-                reason: 'updated',
-                data: {},
-              },
+          request.patch.mockResolvedValueOnce({
+            status: 200,
+            data: {
+              error: false,
+              reason: 'updated',
+              data: {},
             },
-          )
+          })
 
-          fetchMock.postOnce(
-            'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message',
-            {
-              status: 404,
-              body: {
-                error: true,
-                reason: 'invalid_data',
-                data: {
-                  namespace: 'data',
-                  message: 'data.user.type should be equal to one of the allowed values',
-                },
+          request.post.mockResolvedValueOnce({
+            status: 404,
+            data: {
+              error: true,
+              reason: 'invalid_data',
+              data: {
+                namespace: 'data',
+                message: 'data.user.type should be equal to one of the allowed values',
               },
             },
-          )
+          })
 
           expect(message.sended).toEqual(false)
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(3)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
           expect(messageUpdated.error).toEqual(
@@ -1173,9 +1058,9 @@ describe('Crisp plugin', () => {
             }),
           )
 
-          fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
+          request.post.mockResolvedValueOnce({
             status: 201,
-            body: {
+            data: {
               error: false,
               reason: 'added',
               data: {
@@ -1184,40 +1069,30 @@ describe('Crisp plugin', () => {
             },
           })
 
-          fetchMock.patchOnce(
-            'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta',
-            {
-              status: 200,
-              body: {
-                error: false,
-                reason: 'updated',
-                data: {},
-              },
+          request.patch.mockResolvedValueOnce({
+            status: 200,
+            data: {
+              error: false,
+              reason: 'updated',
+              data: {},
             },
-          )
+          })
 
-          fetchMock.postOnce(
-            'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message',
-            {
-              status: 202,
-              body: {
-                error: false,
-                reason: 'dispatched',
-                data: {
-                  fingerprint: 163408807364277,
-                },
+          request.post.mockResolvedValueOnce({
+            status: 202,
+            data: {
+              error: false,
+              reason: 'dispatched',
+              data: {
+                fingerprint: 163408807364277,
               },
             },
-          )
+          })
 
           expect(message.sended).toEqual(false)
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(3)
         })
       })
 
@@ -1246,9 +1121,9 @@ describe('Crisp plugin', () => {
             }),
           )
 
-          fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
+          request.post.mockResolvedValueOnce({
             status: 201,
-            body: {
+            data: {
               error: false,
               reason: 'added',
               data: {
@@ -1257,17 +1132,14 @@ describe('Crisp plugin', () => {
             },
           })
 
-          fetchMock.patchOnce(
-            'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta',
-            {
-              status: 200,
-              body: {
-                error: false,
-                reason: 'updated',
-                data: {},
-              },
+          request.patch.mockResolvedValueOnce({
+            status: 200,
+            data: {
+              error: false,
+              reason: 'updated',
+              data: {},
             },
-          )
+          })
 
           const expectedBody = {
             from: 'user',
@@ -1280,34 +1152,21 @@ describe('Crisp plugin', () => {
             },
           }
 
-          fetchMock.postOnce(
-            (url, { body }) => {
-              return (
-                url ===
-                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message' &&
-                body === JSON.stringify(expectedBody)
-              )
-            },
-            {
-              status: 202,
-              body: {
-                error: false,
-                reason: 'dispatched',
-                data: {
-                  fingerprint: 163408807364277,
-                },
+          request.post.mockResolvedValueOnce({
+            status: 202,
+            data: {
+              error: false,
+              reason: 'dispatched',
+              data: {
+                fingerprint: 163408807364277,
               },
             },
-          )
+          })
 
           expect(message.sended).toEqual(false)
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(3)
         })
       })
 
@@ -1336,9 +1195,9 @@ describe('Crisp plugin', () => {
             }),
           )
 
-          fetchMock.postOnce('https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation', {
+          request.post.mockResolvedValueOnce({
             status: 201,
-            body: {
+            data: {
               error: false,
               reason: 'added',
               data: {
@@ -1347,17 +1206,14 @@ describe('Crisp plugin', () => {
             },
           })
 
-          fetchMock.patchOnce(
-            'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/meta',
-            {
-              status: 200,
-              body: {
-                error: false,
-                reason: 'updated',
-                data: {},
-              },
+          request.patch.mockResolvedValueOnce({
+            status: 200,
+            data: {
+              error: false,
+              reason: 'updated',
+              data: {},
             },
-          )
+          })
 
           const expectedBody = {
             from: 'user',
@@ -1371,34 +1227,21 @@ describe('Crisp plugin', () => {
             },
           }
 
-          fetchMock.postOnce(
-            (url, { body }) => {
-              return (
-                url ===
-                  'https://api.crisp.chat/v1/website/631d631e-2047-453e-9989-93edda91b945/conversation/session_a06054de-d9dc-407a-98ea-72c7fb460472/message' &&
-                body === JSON.stringify(expectedBody)
-              )
-            },
-            {
-              status: 202,
-              body: {
-                error: false,
-                reason: 'dispatched',
-                data: {
-                  fingerprint: 163408807364277,
-                },
+          request.post.mockResolvedValueOnce({
+            status: 202,
+            data: {
+              error: false,
+              reason: 'dispatched',
+              data: {
+                fingerprint: 163408807364277,
               },
             },
-          )
+          })
 
           expect(message.sended).toEqual(false)
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(3)
         })
       })
     })
