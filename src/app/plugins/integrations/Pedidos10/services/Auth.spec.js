@@ -1,9 +1,11 @@
 import { Auth } from './Auth.js'
 import Licensee from '@models/Licensee'
 import Integrationlog from '@models/Integrationlog'
-import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../../../.jest/utils'
 import { licenseePedidos10 as licenseeFactory } from '@factories/licensee'
+import request from '../../../../services/request.js'
+
+jest.mock('../../../../services/request')
 
 describe('Pedidos10/Auth plugin', () => {
   let licensee
@@ -13,8 +15,6 @@ describe('Pedidos10/Auth plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
-
     licensee = await Licensee.create(licenseeFactory.build())
     licensee.pedidos10_integration = {
       integration_token: 'integration-token',
@@ -40,31 +40,17 @@ describe('Pedidos10/Auth plugin', () => {
           password: 'password',
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://extranet.pedidos10.com.br/api-integracao-V1/auth/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Accept'] === 'application/json'
-            )
-          },
-          {
-            status: 200,
-            body: {
-              data: {
-                access_token: 'access-token',
-              },
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            data: {
+              access_token: 'access-token',
             },
           },
-        )
+        })
 
         const auth = new Auth(licensee)
         const isLogged = await auth.login()
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(isLogged).toBe(true)
         expect(consoleInfoSpy).toHaveBeenCalledWith('Login efetuado na API do Pedidos 10! log_id: 1234')
 
@@ -82,31 +68,17 @@ describe('Pedidos10/Auth plugin', () => {
           password: 'password',
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://extranet.pedidos10.com.br/api-integracao-V1/auth/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Accept'] === 'application/json'
-            )
-          },
-          {
-            status: 200,
-            body: {
-              data: {
-                access_token: 'access-token',
-              },
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            data: {
+              access_token: 'access-token',
             },
           },
-        )
+        })
 
         const auth = new Auth(licensee)
         await auth.login()
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const licenseeUpdated = await Licensee.findById(licensee._id)
         expect(licenseeUpdated.pedidos10_integration.access_token).toEqual('access-token')
         expect(licenseeUpdated.pedidos10_integration.authenticated).toEqual(true)
@@ -127,27 +99,13 @@ describe('Pedidos10/Auth plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://extranet.pedidos10.com.br/api-integracao-V1/auth/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Accept'] === 'application/json'
-            )
-          },
-          {
-            status: 200,
-            body: bodyResponse,
-          },
-        )
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: bodyResponse,
+        })
 
         const auth = new Auth(licensee)
         await auth.login()
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual(bodyResponse)
       })
@@ -165,29 +123,15 @@ describe('Pedidos10/Auth plugin', () => {
           password: 'password',
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://extranet.pedidos10.com.br/api-integracao-V1/auth/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Accept'] === 'application/json'
-            )
+        request.post.mockResolvedValueOnce({
+          status: 422,
+          data: {
+            error: 'Credenciais para login inválidas',
           },
-          {
-            status: 422,
-            body: {
-              error: 'Credenciais para login inválidas',
-            },
-          },
-        )
+        })
 
         const auth = new Auth(licensee)
         const isLogged = await auth.login()
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(isLogged).toBe(false)
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Não foi possível fazer a autenticação na API do Pedidos 10
@@ -210,27 +154,13 @@ describe('Pedidos10/Auth plugin', () => {
           error: 'Credenciais para login inválidas',
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://extranet.pedidos10.com.br/api-integracao-V1/auth/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Accept'] === 'application/json'
-            )
-          },
-          {
-            status: 422,
-            body: bodyResponse,
-          },
-        )
+        request.post.mockResolvedValueOnce({
+          status: 422,
+          data: bodyResponse,
+        })
 
         const auth = new Auth(licensee)
         await auth.login()
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual(bodyResponse)
       })

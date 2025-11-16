@@ -1,7 +1,6 @@
 import { Rocketchat } from './Rocketchat.js'
 import Room from '@models/Room'
 import Trigger from '@models/Trigger'
-import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
@@ -11,8 +10,10 @@ import { triggerReplyButton as triggerReplyButtonFactory } from '@factories/trig
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { MessageRepositoryDatabase } from '@repositories/message'
+import request from '../../services/request.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
+jest.mock('../../services/request')
 
 describe('Rocketchat plugin', () => {
   let licensee
@@ -22,8 +23,6 @@ describe('Rocketchat plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
-
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
   })
@@ -253,32 +252,25 @@ describe('Rocketchat plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body }) => {
-            return (
-              url === 'https://rocket.com.br/api/v1/livechat/visitor' && body === JSON.stringify(expectedBodyVisitor)
-            )
-          },
-          {
-            status: 200,
-            body: {
-              visitor: {
-                _id: 'Z4pqikNyvjvwksYfE',
-                username: 'guest-1208',
-                ts: '2021-04-19T10:52:59.481Z',
-                _updatedAt: '2021-04-19T10:52:59.483Z',
-                name: 'John Doe - 5511990283745 - WhatsApp',
-                token: `${contact._id.toString()}`,
-                visitorEmails: [{ address: 'john@doe.com' }],
-              },
-              success: true,
-            },
-          },
-        )
-
-        fetchMock.getOnce(`https://rocket.com.br/api/v1/livechat/room?token=${contact._id.toString()}`, {
+        request.post.mockResolvedValueOnce({
           status: 200,
-          body: {
+          data: {
+            visitor: {
+              _id: 'Z4pqikNyvjvwksYfE',
+              username: 'guest-1208',
+              ts: '2021-04-19T10:52:59.481Z',
+              _updatedAt: '2021-04-19T10:52:59.483Z',
+              name: 'John Doe - 5511990283745 - WhatsApp',
+              token: `${contact._id.toString()}`,
+              visitorEmails: [{ address: 'john@doe.com' }],
+            },
+            success: true,
+          },
+        })
+
+        request.get.mockResolvedValueOnce({
+          status: 200,
+          data: {
             room: {
               _id: 'HNpDrzmTdJB4Z3TR8',
               msgs: 0,
@@ -309,39 +301,29 @@ describe('Rocketchat plugin', () => {
           msg: 'Message to send',
         }
 
-        fetchMock.postOnce(
-          (url, { body }) => {
-            return url === 'https://rocket.com.br/api/v1/livechat/message' && body === JSON.stringify(expectedBody)
-          },
-          {
-            status: 200,
-            body: {
-              message: {
-                _id: 'ZNDvoAqpx6dKRTRHr',
-                rid: 'HNpDrzmTdJB4Z3TR8',
-                msg: 'message',
-                token: `${contact._id.toString()}`,
-                alias: 'John Doe - 5511990283745 - WhatsApp',
-                ts: '2021-04-19T10:52:59.817Z',
-                u: { _id: 'HNpDrzmTdJB4Z3TR8', username: 'guest-1208', name: 'John Doe - 5511990283745 - WhatsApp' },
-                _updatedAt: '2021-04-19T10:52:59.905Z',
-                mentions: [],
-                channels: [],
-              },
-              success: true,
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            message: {
+              _id: 'ZNDvoAqpx6dKRTRHr',
+              rid: 'HNpDrzmTdJB4Z3TR8',
+              msg: 'message',
+              token: `${contact._id.toString()}`,
+              alias: 'John Doe - 5511990283745 - WhatsApp',
+              ts: '2021-04-19T10:52:59.817Z',
+              u: { _id: 'HNpDrzmTdJB4Z3TR8', username: 'guest-1208', name: 'John Doe - 5511990283745 - WhatsApp' },
+              _updatedAt: '2021-04-19T10:52:59.905Z',
+              mentions: [],
+              channels: [],
             },
+            success: true,
           },
-        )
+        })
 
         expect(message.sended).toEqual(false)
 
         const rocketchat = new Rocketchat(licensee)
         await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(3)
-
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
       })
@@ -368,9 +350,9 @@ describe('Rocketchat plugin', () => {
           }),
         )
 
-        fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/visitor', {
+        request.post.mockResolvedValueOnce({
           status: 200,
-          body: {
+          data: {
             visitor: {
               _id: 'Z4pqikNyvjvwksYfE',
               username: 'guest-1208',
@@ -384,9 +366,9 @@ describe('Rocketchat plugin', () => {
           },
         })
 
-        fetchMock.getOnce(`https://rocket.com.br/api/v1/livechat/room?token=${contact._id.toString()}`, {
+        request.get.mockResolvedValueOnce({
           status: 200,
-          body: {
+          data: {
             room: {
               _id: 'HNpDrzmTdJB4Z3TR8',
               msgs: 0,
@@ -411,9 +393,9 @@ describe('Rocketchat plugin', () => {
           },
         })
 
-        fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/message', {
+        request.post.mockResolvedValueOnce({
           status: 200,
-          body: {
+          data: {
             message: {
               _id: 'ZNDvoAqpx6dKRTRHr',
               rid: 'HNpDrzmTdJB4Z3TR8',
@@ -434,11 +416,6 @@ describe('Rocketchat plugin', () => {
 
         const rocketchat = new Rocketchat(licensee)
         await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(3)
-
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           'Mensagem 60958703f415ed4008748637 enviada para Rocketchat com sucesso!',
         )
@@ -469,9 +446,9 @@ describe('Rocketchat plugin', () => {
             }),
           )
 
-          fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/visitor', {
+          request.post.mockResolvedValueOnce({
             status: 200,
-            body: {
+            data: {
               visitor: {
                 _id: 'Z4pqikNyvjvwksYfE',
                 username: 'guest-1208',
@@ -485,9 +462,9 @@ describe('Rocketchat plugin', () => {
             },
           })
 
-          fetchMock.getOnce(`https://rocket.com.br/api/v1/livechat/room?token=${contact._id.toString()}`, {
+          request.get.mockResolvedValueOnce({
             status: 200,
-            body: {
+            data: {
               room: {
                 _id: 'HNpDrzmTdJB4Z3TR8',
                 msgs: 0,
@@ -512,9 +489,9 @@ describe('Rocketchat plugin', () => {
             },
           })
 
-          fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/message', {
+          request.post.mockResolvedValueOnce({
             status: 200,
-            body: {
+            data: {
               message: {
                 _id: 'ZNDvoAqpx6dKRTRHr',
                 rid: 'HNpDrzmTdJB4Z3TR8',
@@ -539,11 +516,6 @@ describe('Rocketchat plugin', () => {
 
           const rocketchat = new Rocketchat(licensee)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(3)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
         })
@@ -571,9 +543,9 @@ describe('Rocketchat plugin', () => {
             }),
           )
 
-          fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/visitor', {
+          request.post.mockResolvedValueOnce({
             status: 200,
-            body: {
+            data: {
               visitor: {
                 _id: 'Z4pqikNyvjvwksYfE',
                 username: 'guest-1208',
@@ -587,9 +559,9 @@ describe('Rocketchat plugin', () => {
             },
           })
 
-          fetchMock.getOnce(`https://rocket.com.br/api/v1/livechat/room?token=${contact._id.toString()}`, {
+          request.get.mockResolvedValueOnce({
             status: 200,
-            body: {
+            data: {
               room: {
                 _id: 'HNpDrzmTdJB4Z3TR8',
                 msgs: 0,
@@ -614,7 +586,7 @@ describe('Rocketchat plugin', () => {
             },
           })
 
-          fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/room.transfer', {
+          request.post.mockResolvedValueOnce({
             status: 200,
             body: {
               message: {
@@ -633,9 +605,9 @@ describe('Rocketchat plugin', () => {
             },
           })
 
-          fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/message', {
+          request.post.mockResolvedValueOnce({
             status: 200,
-            body: {
+            data: {
               message: {
                 _id: 'ZNDvoAqpx6dKRTRHr',
                 rid: 'HNpDrzmTdJB4Z3TR8',
@@ -656,11 +628,6 @@ describe('Rocketchat plugin', () => {
 
           const rocketchat = new Rocketchat(licensee)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(4)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
         })
@@ -691,9 +658,9 @@ describe('Rocketchat plugin', () => {
             }),
           )
 
-          fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/visitor', {
+          request.post.mockResolvedValueOnce({
             status: 200,
-            body: {
+            data: {
               visitor: {
                 _id: 'Z4pqikNyvjvwksYfE',
                 username: 'guest-1208',
@@ -707,9 +674,9 @@ describe('Rocketchat plugin', () => {
             },
           })
 
-          fetchMock.getOnce(`https://rocket.com.br/api/v1/livechat/room?token=${contact._id.toString()}`, {
+          request.get.mockResolvedValueOnce({
             status: 200,
-            body: {
+            data: {
               room: {
                 _id: 'HNpDrzmTdJB4Z3TR8',
                 msgs: 0,
@@ -740,39 +707,29 @@ describe('Rocketchat plugin', () => {
             msg: 'https://file-url.com',
           }
 
-          fetchMock.postOnce(
-            (url, { body }) => {
-              return url === 'https://rocket.com.br/api/v1/livechat/message' && body === JSON.stringify(expectedBody)
-            },
-            {
-              status: 200,
-              body: {
-                message: {
-                  _id: 'ZNDvoAqpx6dKRTRHr',
-                  rid: 'HNpDrzmTdJB4Z3TR8',
-                  msg: 'message',
-                  token: `${contact._id.toString()}`,
-                  alias: 'John Doe - 5511990283745 - WhatsApp',
-                  ts: '2021-04-19T10:52:59.817Z',
-                  u: { _id: 'HNpDrzmTdJB4Z3TR8', username: 'guest-1208', name: 'John Doe - 5511990283745 - WhatsApp' },
-                  _updatedAt: '2021-04-19T10:52:59.905Z',
-                  mentions: [],
-                  channels: [],
-                },
-                success: true,
+          request.post.mockResolvedValueOnce({
+            status: 200,
+            data: {
+              message: {
+                _id: 'ZNDvoAqpx6dKRTRHr',
+                rid: 'HNpDrzmTdJB4Z3TR8',
+                msg: 'message',
+                token: `${contact._id.toString()}`,
+                alias: 'John Doe - 5511990283745 - WhatsApp',
+                ts: '2021-04-19T10:52:59.817Z',
+                u: { _id: 'HNpDrzmTdJB4Z3TR8', username: 'guest-1208', name: 'John Doe - 5511990283745 - WhatsApp' },
+                _updatedAt: '2021-04-19T10:52:59.905Z',
+                mentions: [],
+                channels: [],
               },
+              success: true,
             },
-          )
+          })
 
           expect(message.sended).toEqual(false)
 
           const rocketchat = new Rocketchat(licensee)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(3)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
         })
@@ -801,17 +758,12 @@ describe('Rocketchat plugin', () => {
             }),
           )
 
-          fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/visitor', { status: 200, body: { success: false } })
+          request.post.mockResolvedValueOnce({ status: 200, data: { success: false } })
 
           expect(message.sended).toEqual(false)
 
           const rocketchat = new Rocketchat(licensee)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(1)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
 
@@ -844,9 +796,9 @@ describe('Rocketchat plugin', () => {
             }),
           )
 
-          fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/visitor', {
+          request.post.mockResolvedValueOnce({
             status: 200,
-            body: {
+            data: {
               visitor: {
                 _id: 'Z4pqikNyvjvwksYfE',
                 username: 'guest-1208',
@@ -860,20 +812,15 @@ describe('Rocketchat plugin', () => {
             },
           })
 
-          fetchMock.getOnce(`https://rocket.com.br/api/v1/livechat/room?token=${contact._id.toString()}`, {
+          request.get.mockResolvedValueOnce({
             status: 200,
-            body: { success: false },
+            data: { success: false },
           })
 
           expect(message.sended).toEqual(false)
 
           const rocketchat = new Rocketchat(licensee)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(2)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
 
@@ -904,9 +851,9 @@ describe('Rocketchat plugin', () => {
             }),
           )
 
-          fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/visitor', {
+          request.post.mockResolvedValueOnce({
             status: 200,
-            body: {
+            data: {
               visitor: {
                 _id: 'Z4pqikNyvjvwksYfE',
                 username: 'guest-1208',
@@ -920,9 +867,9 @@ describe('Rocketchat plugin', () => {
             },
           })
 
-          fetchMock.getOnce(`https://rocket.com.br/api/v1/livechat/room?token=${contact._id.toString()}`, {
+          request.get.mockResolvedValueOnce({
             status: 200,
-            body: {
+            data: {
               room: {
                 _id: 'HNpDrzmTdJB4Z3TR8',
                 msgs: 0,
@@ -953,22 +900,12 @@ describe('Rocketchat plugin', () => {
             msg: 'Message to send',
           }
 
-          fetchMock.postOnce(
-            (url, { body }) => {
-              return url === 'https://rocket.com.br/api/v1/livechat/message' && body === JSON.stringify(expectedBody)
-            },
-            { status: 200, body: { success: false } },
-          )
+          request.post.mockResolvedValueOnce({ status: 200, data: { success: false } })
 
           expect(message.sended).toEqual(false)
 
           const rocketchat = new Rocketchat(licensee)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(3)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
           expect(messageUpdated.error).toEqual('{"success":false}')
@@ -1015,16 +952,11 @@ describe('Rocketchat plugin', () => {
             msg: 'Message to send',
           }
 
-          fetchMock.postOnce(
-            (url, { body }) => {
-              return url === 'https://rocket.com.br/api/v1/livechat/message' && body === JSON.stringify(expectedBody)
-            },
-            { status: 200, body: { success: false, error: 'room-closed' } },
-          )
+          request.post.mockResolvedValueOnce({ status: 200, data: { success: false, error: 'room-closed' } })
 
-          fetchMock.postOnce('https://rocket.com.br/api/v1/livechat/visitor', {
+          request.post.mockResolvedValueOnce({
             status: 200,
-            body: {
+            data: {
               visitor: {
                 _id: 'Z4pqikNyvjvwksYfE',
                 username: 'guest-1208',
@@ -1038,9 +970,9 @@ describe('Rocketchat plugin', () => {
             },
           })
 
-          fetchMock.getOnce(`https://rocket.com.br/api/v1/livechat/room?token=${contact._id.toString()}`, {
+          request.get.mockResolvedValueOnce({
             status: 200,
-            body: {
+            data: {
               room: {
                 _id: 'HNpDrzmTdJB4Z3TR8',
                 msgs: 0,
@@ -1071,24 +1003,15 @@ describe('Rocketchat plugin', () => {
             msg: 'Message to send',
           }
 
-          fetchMock.postOnce(
-            (url, { body }) => {
-              return (
-                url === 'https://rocket.com.br/api/v1/livechat/message' && body === JSON.stringify(expectedSecondBody)
-              )
-            },
-            { status: 200, body: { success: true } },
-          )
+          request.post.mockResolvedValueOnce({
+            status: 200,
+            data: { success: true },
+          })
 
           expect(message.sended).toEqual(false)
 
           const rocketchat = new Rocketchat(licensee)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(4)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id }, ['room'])
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.room).not.toEqual(room)

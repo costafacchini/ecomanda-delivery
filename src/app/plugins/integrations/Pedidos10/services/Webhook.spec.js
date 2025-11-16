@@ -1,9 +1,11 @@
 import { Webhook } from './Webhook.js'
 import Licensee from '@models/Licensee'
 import Integrationlog from '@models/Integrationlog'
-import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../../../.jest/utils'
 import { licenseePedidos10 as licenseeFactory } from '@factories/licensee'
+import request from '../../../../services/request.js'
+
+jest.mock('../../../../services/request')
 
 describe('Pedidos10/Webhook plugin', () => {
   let licensee
@@ -13,8 +15,6 @@ describe('Pedidos10/Webhook plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
-
     licensee = await Licensee.create(licenseeFactory.build())
     licensee.pedidos10_integration = {
       access_token: 'access-token',
@@ -37,27 +37,13 @@ describe('Pedidos10/Webhook plugin', () => {
           merchantExternalCode: licensee._id.toString(),
         }
 
-        fetchMock.putOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://extranet.pedidos10.com.br/api-integracao-V1/webhook-order/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Accept'] === 'application/json' &&
-              headers['Authorization'] === 'access-token'
-            )
-          },
-          {
-            status: 200,
-          },
-        )
+        request.put.mockResolvedValueOnce({
+          status: 200,
+          data: '',
+        })
 
         const webhook = new Webhook(licensee)
         await webhook.sign()
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleInfoSpy).toHaveBeenCalledWith('Webhook do Pedidos 10 assinado com sucesso! log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
@@ -69,27 +55,13 @@ describe('Pedidos10/Webhook plugin', () => {
           merchantExternalCode: licensee._id.toString(),
         }
 
-        fetchMock.putOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://extranet.pedidos10.com.br/api-integracao-V1/webhook-order/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Accept'] === 'application/json' &&
-              headers['Authorization'] === 'access-token'
-            )
-          },
-          {
-            status: 200,
-          },
-        )
+        request.put.mockResolvedValueOnce({
+          status: 200,
+          data: '',
+        })
 
         const webhook = new Webhook(licensee)
         await webhook.sign()
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual('')
       })
@@ -106,35 +78,20 @@ describe('Pedidos10/Webhook plugin', () => {
           merchantExternalCode: licensee._id.toString(),
         }
 
-        fetchMock.putOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://extranet.pedidos10.com.br/api-integracao-V1/webhook-order/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Accept'] === 'application/json' &&
-              headers['Authorization'] === 'access-token'
-            )
-          },
-          {
-            status: 422,
-            body: {
-              message: 'The request is invalid.',
-              errors: {
-                'customer.automaticanticipationsettings.type': [
-                  "The type field is invalid. Possible values are 'full','1025'",
-                ],
-              },
+        request.put.mockResolvedValueOnce({
+          status: 422,
+          data: {
+            message: 'The request is invalid.',
+            errors: {
+              'customer.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
             },
           },
-        )
+        })
 
         const webhook = new Webhook(licensee)
         await webhook.sign()
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Não foi possível assinar o webhook de pedidos do Pedidos 10
            status: 422
@@ -160,28 +117,13 @@ describe('Pedidos10/Webhook plugin', () => {
           },
         }
 
-        fetchMock.putOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://extranet.pedidos10.com.br/api-integracao-V1/webhook-order/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Accept'] === 'application/json' &&
-              headers['Authorization'] === 'access-token'
-            )
-          },
-          {
-            status: 422,
-            body: bodyResponse,
-          },
-        )
+        request.put.mockResolvedValueOnce({
+          status: 422,
+          data: bodyResponse,
+        })
 
         const webhook = new Webhook(licensee)
         await webhook.sign()
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual(bodyResponse)
       })

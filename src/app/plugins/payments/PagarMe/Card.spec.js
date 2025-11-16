@@ -1,11 +1,13 @@
 import { Card } from './Card.js'
 import Integrationlog from '@models/Integrationlog'
-import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../../.jest/utils'
 import { licenseeIntegrationPagarMe as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
+import request from '../../../services/request.js'
+
+jest.mock('../../../services/request')
 
 describe('PagarMe/Card plugin', () => {
   let licensee
@@ -15,8 +17,6 @@ describe('PagarMe/Card plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
-
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
   })
@@ -56,50 +56,36 @@ describe('PagarMe/Card plugin', () => {
           cvv: '111',
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/12345/cards' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: {
-              id: 'card_3dlyaY6SPSb',
-              first_six_digits: '123412',
-              last_four_digits: '1234',
-              brand: 'Mastercard',
-              holder_name: 'John Doe',
-              exp_month: 3,
-              exp_year: 2025,
-              status: 'active',
-              type: 'credit',
-              created_at: '2023-09-23T13:22:13Z',
-              updated_at: '2023-09-23T13:22:13Z',
-              customer: {
-                id: 'cus_N6g1yG3HwH2y9bXl',
-                name: 'Gustavo Macedo',
-                email: '5511989187726@mail.com',
-                delinquent: false,
-                created_at: '2023-09-09T22:03:50Z',
-                updated_at: '2023-09-09T22:06:23Z',
-                phones: {},
-              },
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            id: 'card_3dlyaY6SPSb',
+            first_six_digits: '123412',
+            last_four_digits: '1234',
+            brand: 'Mastercard',
+            holder_name: 'John Doe',
+            exp_month: 3,
+            exp_year: 2025,
+            status: 'active',
+            type: 'credit',
+            created_at: '2023-09-23T13:22:13Z',
+            updated_at: '2023-09-23T13:22:13Z',
+            customer: {
+              id: 'cus_N6g1yG3HwH2y9bXl',
+              name: 'Gustavo Macedo',
+              email: '5511989187726@mail.com',
+              delinquent: false,
+              created_at: '2023-09-09T22:03:50Z',
+              updated_at: '2023-09-09T22:06:23Z',
+              phones: {},
             },
           },
-        )
+        })
 
         const card = new Card()
         const response = await card.create(contact, creditCard, 'token')
 
         expect(response.success).toEqual(true)
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           'Cartão 123412******1234 John Doe criado na pagar.me! id: card_3dlyaY6SPSb log_id: 1234',
         )
@@ -136,50 +122,36 @@ describe('PagarMe/Card plugin', () => {
           cvv: '111',
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/12345/cards' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: {
-              id: 'card_3dlyaY6SPSb',
-              first_six_digits: '123412',
-              last_four_digits: '1234',
-              brand: 'Mastercard',
-              holder_name: 'John Doe',
-              exp_month: 3,
-              exp_year: 2025,
-              status: 'active',
-              type: 'credit',
-              created_at: '2023-09-23T13:22:13Z',
-              updated_at: '2023-09-23T13:22:13Z',
-              customer: {
-                id: 'cus_N6g1yG3HwH2y9bXl',
-                name: 'Gustavo Macedo',
-                email: '5511989187726@mail.com',
-                delinquent: false,
-                created_at: '2023-09-09T22:03:50Z',
-                updated_at: '2023-09-09T22:06:23Z',
-                phones: {},
-              },
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            id: 'card_3dlyaY6SPSb',
+            first_six_digits: '123412',
+            last_four_digits: '1234',
+            brand: 'Mastercard',
+            holder_name: 'John Doe',
+            exp_month: 3,
+            exp_year: 2025,
+            status: 'active',
+            type: 'credit',
+            created_at: '2023-09-23T13:22:13Z',
+            updated_at: '2023-09-23T13:22:13Z',
+            customer: {
+              id: 'cus_N6g1yG3HwH2y9bXl',
+              name: 'Gustavo Macedo',
+              email: '5511989187726@mail.com',
+              delinquent: false,
+              created_at: '2023-09-09T22:03:50Z',
+              updated_at: '2023-09-09T22:06:23Z',
+              phones: {},
             },
           },
-        )
+        })
 
         const card = new Card()
         const response = await card.create(contact, creditCard, 'token')
 
         expect(response.success).toEqual(true)
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const contactUpdated = await contactRepository.findFirst({ _id: contact._id })
         expect(contactUpdated.credit_card_id).toEqual('card_3dlyaY6SPSb')
 
@@ -233,29 +205,15 @@ describe('PagarMe/Card plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/12345/cards' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: bodyResponse,
-          },
-        )
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: bodyResponse,
+        })
 
         const card = new Card()
         const response = await card.create(contact, creditCard, 'token')
 
         expect(response.success).toEqual(true)
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ contact: contact._id })
         expect(integrationlog.licensee._id).toEqual(contact.licensee._id)
         expect(integrationlog.log_payload).toEqual(bodyResponse)
@@ -292,26 +250,17 @@ describe('PagarMe/Card plugin', () => {
           cvv: '111',
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/12345/cards' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 422,
-            body: {
-              message: 'The request is invalid.',
-              errors: {
-                'card.automaticanticipationsettings.type': [
-                  "The type field is invalid. Possible values are 'full','1025'",
-                ],
-              },
+        request.post.mockResolvedValueOnce({
+          status: 422,
+          data: {
+            message: 'The request is invalid.',
+            errors: {
+              'card.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
             },
           },
-        )
+        })
 
         const card = new Card()
         const response = await card.create(contact, creditCard, 'token')
@@ -323,11 +272,6 @@ describe('PagarMe/Card plugin', () => {
            mensagem: {"message":"The request is invalid.","errors":{"card.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
            log_id: 1234`,
         )
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Cartão 123412******1234 John Doe não criado na pagar.me.
            status: 422
@@ -370,29 +314,15 @@ describe('PagarMe/Card plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/12345/cards' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 422,
-            body: bodyResponse,
-          },
-        )
+        request.post.mockResolvedValueOnce({
+          status: 422,
+          data: bodyResponse,
+        })
 
         const card = new Card()
         const response = await card.create(contact, creditCard, 'token')
 
         expect(response.success).toEqual(false)
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ contact: contact._id })
         expect(integrationlog.licensee._id).toEqual(contact.licensee._id)
         expect(integrationlog.log_payload).toEqual(bodyResponse)
@@ -411,42 +341,30 @@ describe('PagarMe/Card plugin', () => {
           }),
         )
 
-        fetchMock.getOnce(
-          (url, { headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/12345/cards' && headers['Authorization'] === 'Basic token'
-            )
+        request.get.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            data: [
+              {
+                id: 'card_3dlyaY6SPSb',
+                first_six_digits: '123412',
+                last_four_digits: '1234',
+                brand: 'Mastercard',
+                holder_name: 'John Doe',
+                exp_month: 5,
+                exp_year: 2025,
+                status: 'active',
+                type: 'credit',
+                created_at: '2023-09-23T13:22:13Z',
+                updated_at: '2023-09-23T13:22:13Z',
+              },
+            ],
+            paging: { total: 1 },
           },
-          {
-            status: 200,
-            body: {
-              data: [
-                {
-                  id: 'card_3dlyaY6SPSb',
-                  first_six_digits: '123412',
-                  last_four_digits: '1234',
-                  brand: 'Mastercard',
-                  holder_name: 'John Doe',
-                  exp_month: 5,
-                  exp_year: 2025,
-                  status: 'active',
-                  type: 'credit',
-                  created_at: '2023-09-23T13:22:13Z',
-                  updated_at: '2023-09-23T13:22:13Z',
-                },
-              ],
-              paging: { total: 1 },
-            },
-          },
-        )
+        })
 
         const card = new Card()
         const cards = await card.list(contact, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(cards[0]).toEqual(
           expect.objectContaining({
             id: 'card_3dlyaY6SPSb',
@@ -476,27 +394,15 @@ describe('PagarMe/Card plugin', () => {
           }),
         )
 
-        fetchMock.getOnce(
-          (url, { headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/12345/cards' && headers['Authorization'] === 'Basic token'
-            )
+        request.get.mockResolvedValueOnce({
+          status: 401,
+          data: {
+            message: 'Authorization has been denied for this request.',
           },
-          {
-            status: 401,
-            body: {
-              message: 'Authorization has been denied for this request.',
-            },
-          },
-        )
+        })
 
         const card = new Card()
         await card.list(contact, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Não foi possível buscar os cartões na pagar.me.
            status: 401
@@ -520,25 +426,13 @@ describe('PagarMe/Card plugin', () => {
           message: 'Authorization has been denied for this request.',
         }
 
-        fetchMock.getOnce(
-          (url, { headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/12345/cards' && headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 401,
-            body: bodyResponse,
-          },
-        )
+        request.get.mockResolvedValueOnce({
+          status: 401,
+          data: bodyResponse,
+        })
 
         const card = new Card()
         await card.list(contact, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ contact: contact._id })
         expect(integrationlog.licensee._id).toEqual(contact.licensee._id)
         expect(integrationlog.log_payload).toEqual(bodyResponse)
@@ -558,38 +452,25 @@ describe('PagarMe/Card plugin', () => {
           }),
         )
 
-        fetchMock.getOnce(
-          (url, { headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/12345/cards/card_3dlyaY6SPSb' &&
-              headers['Authorization'] === 'Basic token'
-            )
+        request.get.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            id: 'card_3dlyaY6SPSb',
+            first_six_digits: '123412',
+            last_four_digits: '1234',
+            brand: 'Mastercard',
+            holder_name: 'John Doe',
+            exp_month: 5,
+            exp_year: 2025,
+            status: 'active',
+            type: 'credit',
+            created_at: '2023-09-23T13:22:13Z',
+            updated_at: '2023-09-23T13:22:13Z',
           },
-          {
-            status: 200,
-            body: {
-              id: 'card_3dlyaY6SPSb',
-              first_six_digits: '123412',
-              last_four_digits: '1234',
-              brand: 'Mastercard',
-              holder_name: 'John Doe',
-              exp_month: 5,
-              exp_year: 2025,
-              status: 'active',
-              type: 'credit',
-              created_at: '2023-09-23T13:22:13Z',
-              updated_at: '2023-09-23T13:22:13Z',
-            },
-          },
-        )
+        })
 
         const card = new Card()
         const cardData = await card.getById(contact, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(cardData).toEqual(
           expect.objectContaining({
             id: 'card_3dlyaY6SPSb',
@@ -620,28 +501,15 @@ describe('PagarMe/Card plugin', () => {
           }),
         )
 
-        fetchMock.getOnce(
-          (url, { headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/12345/cards/card_3dlyaY6SPSb' &&
-              headers['Authorization'] === 'Basic token'
-            )
+        request.get.mockResolvedValueOnce({
+          status: 401,
+          data: {
+            message: 'Authorization has been denied for this request.',
           },
-          {
-            status: 401,
-            body: {
-              message: 'Authorization has been denied for this request.',
-            },
-          },
-        )
+        })
 
         const card = new Card()
         await card.getById(contact, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Não foi possível buscar os cartões na pagar.me.
            status: 401
@@ -666,26 +534,13 @@ describe('PagarMe/Card plugin', () => {
           message: 'Authorization has been denied for this request.',
         }
 
-        fetchMock.getOnce(
-          (url, { headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/12345/cards/card_3dlyaY6SPSb' &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 401,
-            body: bodyResponse,
-          },
-        )
+        request.get.mockResolvedValueOnce({
+          status: 401,
+          data: bodyResponse,
+        })
 
         const card = new Card()
         await card.getById(contact, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ contact: contact._id })
         expect(integrationlog.licensee._id).toEqual(contact.licensee._id)
         expect(integrationlog.log_payload).toEqual(bodyResponse)

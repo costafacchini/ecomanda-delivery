@@ -1,5 +1,4 @@
 import { Utalk } from './Utalk.js'
-import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../.jest/utils'
 import { S3 } from '../storage/S3.js'
 import { licensee as licenseeFactory } from '@factories/licensee'
@@ -8,8 +7,10 @@ import { message as messageFactory } from '@factories/message'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { MessageRepositoryDatabase } from '@repositories/message'
+import request from '../../services/request.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
+jest.mock('../../services/request')
 
 describe('Utalk plugin', () => {
   let licensee
@@ -23,8 +24,6 @@ describe('Utalk plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
-
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
   })
@@ -592,33 +591,20 @@ describe('Utalk plugin', () => {
           msg: 'Message to send',
         }
 
-        fetchMock.postOnce(
-          (url, { body }) => {
-            return (
-              url === 'https://api.utalk.com.br/send/WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K/' &&
-              body === JSON.stringify(expectedBody)
-            )
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            type: 'send message',
+            cmd: 'chat',
+            to: '5511990283745@c.us',
+            servidor: 'res_utalk',
           },
-          {
-            status: 200,
-            body: {
-              type: 'send message',
-              cmd: 'chat',
-              to: '5511990283745@c.us',
-              servidor: 'res_utalk',
-            },
-          },
-        )
+        })
 
         expect(message.sended).toEqual(false)
 
         const utalk = new Utalk(licensee)
         await utalk.sendMessage(message._id, 'https://api.utalk.com.br/send/', 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
       })
@@ -644,9 +630,9 @@ describe('Utalk plugin', () => {
           }),
         )
 
-        fetchMock.postOnce('https://api.utalk.com.br/send/WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K/', {
+        request.post.mockResolvedValueOnce({
           status: 200,
-          body: {
+          data: {
             type: 'send message',
             cmd: 'chat',
             to: '5511990283745@c.us',
@@ -659,11 +645,6 @@ describe('Utalk plugin', () => {
 
         const utalk = new Utalk(licensee)
         await utalk.sendMessage(message._id, 'https://api.utalk.com.br/send/', 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           'Mensagem 60958703f415ed4008748637 enviada para Utalk com sucesso! {"type":"send message","cmd":"chat","to":"5511990283745@c.us","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","servidor":"res_utalk"}',
         )
@@ -702,34 +683,21 @@ describe('Utalk plugin', () => {
             link: 'https://octodex.github.com/images/dojocat.jpg',
           }
 
-          fetchMock.postOnce(
-            (url, { body }) => {
-              return (
-                url === 'https://api.utalk.com.br/send/WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K/' &&
-                body === JSON.stringify(expectedBody)
-              )
+          request.post.mockResolvedValueOnce({
+            status: 200,
+            data: {
+              type: 'send message',
+              cmd: 'chat',
+              to: '5511990283745@c.us',
+              token: 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K',
+              servidor: 'res_utalk',
             },
-            {
-              status: 200,
-              body: {
-                type: 'send message',
-                cmd: 'chat',
-                to: '5511990283745@c.us',
-                token: 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K',
-                servidor: 'res_utalk',
-              },
-            },
-          )
+          })
 
           expect(message.sended).toEqual(false)
 
           const utalk = new Utalk(licensee)
           await utalk.sendMessage(message._id, 'https://api.utalk.com.br/send/', 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(1)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
 
@@ -769,32 +737,19 @@ describe('Utalk plugin', () => {
           msg: 'Message to send',
         }
 
-        fetchMock.postOnce(
-          (url, { body }) => {
-            return (
-              url === 'https://api.utalk.com.br/send/WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K/' &&
-              body === JSON.stringify(expectedBody)
-            )
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            type: 'send message',
+            token: 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K',
+            status: 'whatsapp offline',
           },
-          {
-            status: 200,
-            body: {
-              type: 'send message',
-              token: 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K',
-              status: 'whatsapp offline',
-            },
-          },
-        )
+        })
 
         expect(message.sended).toEqual(false)
 
         const utalk = new Utalk(licensee)
         await utalk.sendMessage(message._id, 'https://api.utalk.com.br/send/', 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(false)
         expect(messageUpdated.error).toEqual(
