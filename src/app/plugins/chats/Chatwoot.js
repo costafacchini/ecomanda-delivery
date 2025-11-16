@@ -267,6 +267,19 @@ class Chatwoot extends ChatsBase {
       senderName = responseBody.conversation.meta?.assignee?.available_name
     }
 
+    if (responseBody.content && responseBody.content_type === 'text') {
+      const messageToSend = {}
+      messageToSend.text = { body: responseBody.content }
+      messageToSend.kind = 'text'
+      if (senderName) {
+        messageToSend.senderName = senderName
+      }
+      messagesToSend.push(messageToSend)
+
+      this.messageParsed.messages = messagesToSend
+      return
+    }
+
     responseBody.conversation.messages?.forEach((message) => {
       if (message.content) {
         const messageToSend = {}
