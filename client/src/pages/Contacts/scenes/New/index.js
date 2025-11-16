@@ -2,7 +2,7 @@ import Form from '../Form'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
 import { createContact } from '../../../../services/contact'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 function ContactNew({ currentUser }) {
   let navigate = useNavigate()

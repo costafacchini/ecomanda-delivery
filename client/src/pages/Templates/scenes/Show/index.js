@@ -1,7 +1,7 @@
 import Form from '../Form'
 import { useState } from 'react'
 import { getTemplate } from '../../../../services/template'
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router'
 import { useEffect } from 'react'
 
 function TemplateShow({ currentUser }) {

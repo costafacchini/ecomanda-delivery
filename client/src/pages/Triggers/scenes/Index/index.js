@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { getTriggers } from '../../../../services/trigger'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'

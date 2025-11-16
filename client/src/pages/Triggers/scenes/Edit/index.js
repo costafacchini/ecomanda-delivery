@@ -2,7 +2,7 @@ import Form from '../Form'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
 import { getTrigger, updateTrigger } from '../../../../services/trigger'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router'
 import { useEffect } from 'react'
 
 function TriggerEdit({ currentUser }) {

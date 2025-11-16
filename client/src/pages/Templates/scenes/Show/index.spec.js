@@ -1,17 +1,19 @@
 import TemplateShow from '.'
 import { screen, render } from '@testing-library/react'
 import { getTemplate } from '../../../../services/template'
-import { MemoryRouter } from 'react-router'
+import { createRoutesStub } from 'react-router'
 
 jest.mock('../../../../services/template')
 
 describe('<TemplateShow />', () => {
   function mount() {
-    render(
-      <MemoryRouter>
-        <TemplateShow />
-      </MemoryRouter>
-    )
+    const Stub = createRoutesStub([
+      {
+        path: '/templates/:id',
+        Component: TemplateShow,
+      },
+    ])
+    render(<Stub initialEntries={['/templates/1']} />)
   }
 
   it('renders the form with the received template', async () => {

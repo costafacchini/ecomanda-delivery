@@ -1,6 +1,6 @@
 import UserNew from '.'
-import { fireEvent, render, screen, waitFor, cleanup } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { createRoutesStub } from 'react-router'
 import { createUser } from '../../../../services/user'
 
 jest.mock('../../../../services/user')
@@ -12,13 +12,20 @@ describe('<UserNew />', () => {
   }
 
   function mount() {
-    render(
-      <MemoryRouter>
-        <UserNew currentUser={currentUser} />
-      </MemoryRouter>)
+    const Stub = createRoutesStub([
+      {
+        path: '/users/new',
+        Component: () => <UserNew currentUser={currentUser} />,
+      },
+      {
+        path: '/users',
+        Component: () => <div>Users Index</div>,
+      },
+    ])
+    render(<Stub initialEntries={['/users/new']} />)
   }
 
-  it('creates a new user when the backend returns success', async () => {
+  it('creates a new user when the backend returns success and user is not super', async () => {
     mount()
 
     createUser.mockResolvedValue({ status: 201 })
@@ -34,9 +41,9 @@ describe('<UserNew />', () => {
       isSuper: false,
       licensee: 'id'
     }))
+  })
 
-    cleanup()
-
+  it('creates a new user when the backend returns success and user is super', async () => {
     currentUser = {
       isSuper: true,
     }

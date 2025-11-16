@@ -1,13 +1,16 @@
 import { render, screen } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { createRoutesStub } from 'react-router'
 import TemplateForm from './'
 
 describe('<TemplateForm />', () => {
   function mount(props = {}) {
-    render(
-      <MemoryRouter>
-        <TemplateForm {...props} />
-      </MemoryRouter>)
+    const Stub = createRoutesStub([
+      {
+        path: '/test',
+        Component: () => <TemplateForm {...props} />,
+      },
+    ])
+    render(<Stub initialEntries={['/test']} />)
   }
 
   it('is rendered with the default initial values', () => {

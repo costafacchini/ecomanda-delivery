@@ -1,17 +1,23 @@
 import LicenseeNew from '.'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { createRoutesStub } from 'react-router'
 import { createLicensee } from '../../../../services/licensee'
 
 jest.mock('../../../../services/licensee')
 
 describe('<LicenseeNew />', () => {
   function mount() {
-    render(
-      <MemoryRouter>
-        <LicenseeNew />
-      </MemoryRouter>
-    )
+    const Stub = createRoutesStub([
+      {
+        path: '/licensees/new',
+        Component: LicenseeNew,
+      },
+      {
+        path: '/licensees',
+        Component: () => <div>Licensees Index</div>,
+      },
+    ])
+    render(<Stub initialEntries={['/licensees/new']} />)
   }
 
   it('creates a new licensee when the backend returns success', async () => {

@@ -1,17 +1,23 @@
 import LicenseeEdit from './';
 import { fireEvent, screen, waitFor, render } from '@testing-library/react'
 import { getLicensee, updateLicensee } from '../../../../services/licensee'
-import { MemoryRouter } from 'react-router';
+import { createRoutesStub } from 'react-router';
 
 jest.mock('../../../../services/licensee')
 
 describe('<LicenseeEdit />', () => {
   function mount() {
-    render(
-      <MemoryRouter>
-        <LicenseeEdit />
-      </MemoryRouter>
-    )
+    const Stub = createRoutesStub([
+      {
+        path: '/licensees/:id',
+        Component: LicenseeEdit,
+      },
+      {
+        path: '/licensees',
+        Component: () => <div>Licensees Index</div>,
+      },
+    ])
+    render(<Stub initialEntries={['/licensees/1']} />)
   }
 
   it('renders the form with the received licensee', async () => {

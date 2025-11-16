@@ -2,7 +2,7 @@ import Form from '../Form'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
 import { createTrigger } from '../../../../services/trigger'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 function TriggerNew({ currentUser }) {
   let navigate = useNavigate()

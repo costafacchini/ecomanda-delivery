@@ -1,17 +1,23 @@
 import TriggerEdit from './'
 import { fireEvent, screen, waitFor, render } from '@testing-library/react'
 import { getTrigger, updateTrigger } from '../../../../services/trigger'
-import { MemoryRouter } from 'react-router'
+import { createRoutesStub } from 'react-router'
 
 jest.mock('../../../../services/trigger')
 
 describe('<TriggerEdit />', () => {
   function mount() {
-    render(
-      <MemoryRouter>
-        <TriggerEdit />
-      </MemoryRouter>
-    )
+    const Stub = createRoutesStub([
+      {
+        path: '/triggers/:id',
+        Component: TriggerEdit,
+      },
+      {
+        path: '/triggers',
+        Component: () => <div>Triggers Index</div>,
+      },
+    ])
+    render(<Stub initialEntries={['/triggers/1']} />)
   }
 
   it('renders the form with the received trigger', async () => {

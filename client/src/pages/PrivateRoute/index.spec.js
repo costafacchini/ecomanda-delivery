@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route } from 'react-router'
 import { screen, render } from '@testing-library/react'
 import PrivateRoute from '../PrivateRoute'
 import * as auth from '../../services/auth'
@@ -22,7 +22,7 @@ describe('<PrivateRoute>', () => {
                   </PrivateRoute>
                 }
               />
-              <Route exact path='/another' element={<p>Root route</p>} />
+              <Route path='/another' element={<p>Root route</p>} />
             </Routes>
         </HashRouter>
       </AppContextProvider>
@@ -49,7 +49,7 @@ describe('<PrivateRoute>', () => {
                 </PrivateRoute>
               }
             />
-            <Route exact path='/another' element={<p>Root route</p>} />
+            <Route path='/another' element={<p>Root route</p>} />
           </Routes>
         </HashRouter>
       </AppContextProvider>

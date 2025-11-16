@@ -1,7 +1,7 @@
 import MessageIndex from './'
 import { fireEvent, screen, cleanup, render } from '@testing-library/react'
 import { getMessages } from '../../../../services/message'
-import { MemoryRouter } from 'react-router'
+import { createRoutesStub } from 'react-router'
 import { getLicensees } from '../../../../services/licensee'
 import { getContacts } from '../../../../services/contact'
 import { messageFactory } from '../../../../factories/message'
@@ -14,11 +14,13 @@ describe('<MessageIndex />', () => {
   const currentUser = { isSuper: true }
 
   function mount({ currentUser }) {
-    render(
-      <MemoryRouter>
-        <MessageIndex currentUser={currentUser} />
-      </MemoryRouter>
-    )
+    const Stub = createRoutesStub([
+      {
+        path: '/messages',
+        Component: () => <MessageIndex currentUser={currentUser} />,
+      },
+    ])
+    render(<Stub initialEntries={['/messages']} />)
   }
 
   it('renders the messages when the user clicks on the search button', async () => {
