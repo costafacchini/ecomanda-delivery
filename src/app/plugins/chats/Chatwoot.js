@@ -361,6 +361,10 @@ class Chatwoot extends ChatsBase {
     const contact = await this.contactRepository.findFirst({ _id: message.contact._id })
     const messages = []
 
+    const room = await getRoomBy({ roomId: message.room.roomId })
+    room.closed = true
+    await room.save()
+
     if (licensee.messageOnCloseChat) {
       const messagesCloseChat = await this.messageRepository.createInteractiveMessages({
         kind: 'text',
