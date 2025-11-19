@@ -148,7 +148,7 @@ class Pabbly extends MessengersBase {
   }
 
   parseMessage(responseBody) {
-    if (!responseBody.data || responseBody.data.name !== 'message_received') {
+    if (!responseBody.data || !['smb_message_echoes', 'message_received'].includes(responseBody.data.name)) {
       this.messageData = null
       return
     }
