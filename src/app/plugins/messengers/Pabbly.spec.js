@@ -315,6 +315,26 @@ describe('Pabbly Plugin', () => {
         expect(pabbly.messageData).toBeNull()
       })
     })
+
+    it('should parse echoes message correctly', () => {
+      const responseBody = {
+        data: {
+          name: 'smb_message_echoes',
+          event_data: {
+            id: 'message-id',
+            type: 'text',
+            text: { body: 'Hello World' },
+          },
+        },
+      }
+
+      pabbly.parseMessage(responseBody)
+      expect(pabbly.messageData).toEqual({
+        kind: 'text',
+        waId: 'message-id',
+        text: { body: 'Hello World' },
+      })
+    })
   })
 
   describe('parseContactData', () => {
