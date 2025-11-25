@@ -1,6 +1,7 @@
 import request from '../../services/request.js'
 import { ChatsBase } from './Base.js'
 import { createRoom, getRoomBy } from '../../repositories/room.js'
+import { ContactRepositoryDatabase } from '../../repositories/contact.js'
 import path from 'path'
 import mime from 'mime-types'
 
@@ -171,17 +172,30 @@ const postMessage = async (url, headers, contact, message, room) => {
     await message.save()
 
     console.info(`Chatwoot: Mensagem ${message._id} enviada para Chatwoot com sucesso!`)
+    return true
   } else {
     message.error = `mensagem: ${JSON.stringify(response.data)}`
     await message.save()
+    if (response.data.error === 'Resource could not be found') {
+      const roomSaved = await getRoomBy({ roomId: room.roomId })
+      roomSaved.closed = true
+      await roomSaved.save()
+
+      const contactRepository = new ContactRepositoryDatabase()
+      await contactRepository.update(contact._id, {
+        chatwootSourceId: null,
+        chatwootId: null,
+      })
+
+      return false
+    }
     console.error(
       `Chatwoot - erro: Mensagem ${message._id} não enviada para Chatwoot.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}`,
     )
+    return true
   }
-
-  return response.data.success === true
 }
 
 const formatMessage = (message, contact) => {
@@ -364,7 +378,34 @@ class Chatwoot extends ChatsBase {
       }
     }
 
-    await postMessage(url, headers, messageToSend.contact, messageToSend, room)
+    const sent = await postMessage(url, headers, messageToSend.contact, messageToSend, room)
+    if (!sent) {
+      const contact = await this.contactRepository.findFirst({ _id: messageToSend.contact._id })
+      const { sourceId, id: chatwootId } = await searchContact(
+        url,
+        headers,
+        contact,
+        this.licensee,
+        this.contactRepository,
+      )
+      if (!sourceId && !chatwootId) {
+        contact.chatwootSourceId = await createContact(url, headers, contact, this.licensee, this.contactRepository)
+      } else {
+        contact.chatwootSourceId = sourceId
+        contact.chatwootId = chatwootId
+      }
+
+      room = await createConversation(url, headers, contact, this.licensee.chatIdentifier)
+      if (!room) {
+        messageToSend.error =
+          'Chatwoot - erro 2: Não foi possível criar a conversa na Chatwoot! Você vai encontrar mais detalhes nos logs do servidor.'
+        await messageToSend.save()
+
+        return
+      }
+
+      await postMessage(url, headers, contact, messageToSend, room)
+    }
   }
 
   async closeChat(messageId) {
