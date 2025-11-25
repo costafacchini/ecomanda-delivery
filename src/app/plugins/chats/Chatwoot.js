@@ -1,6 +1,7 @@
 import request from '../../services/request.js'
 import { ChatsBase } from './Base.js'
 import { createRoom, getRoomBy } from '../../repositories/room.js'
+import { ContactRepositoryDatabase } from '../../repositories/contact.js'
 import path from 'path'
 import mime from 'mime-types'
 
@@ -176,9 +177,15 @@ const postMessage = async (url, headers, contact, message, room) => {
     message.error = `mensagem: ${JSON.stringify(response.data)}`
     await message.save()
     if (response.data.error === 'Resource could not be found') {
-      const room = await getRoomBy({ roomId: room.roomId })
-      room.closed = true
-      await room.save()
+      const roomSaved = await getRoomBy({ roomId: room.roomId })
+      roomSaved.closed = true
+      await roomSaved.save()
+
+      const contactRepository = new ContactRepositoryDatabase()
+      await contactRepository.update(contact._id, {
+        chatwootSourceId: null,
+        chatwootId: null,
+      })
 
       return false
     }
@@ -373,7 +380,22 @@ class Chatwoot extends ChatsBase {
 
     const sent = await postMessage(url, headers, messageToSend.contact, messageToSend, room)
     if (!sent) {
-      room = await createConversation(url, headers, messageToSend.contact, this.licensee.chatIdentifier)
+      const contact = await this.contactRepository.findFirst({ _id: messageToSend.contact._id })
+      const { sourceId, id: chatwootId } = await searchContact(
+        url,
+        headers,
+        contact,
+        this.licensee,
+        this.contactRepository,
+      )
+      if (!sourceId && !chatwootId) {
+        contact.chatwootSourceId = await createContact(url, headers, contact, this.licensee, this.contactRepository)
+      } else {
+        contact.chatwootSourceId = sourceId
+        contact.chatwootId = chatwootId
+      }
+
+      room = await createConversation(url, headers, contact, this.licensee.chatIdentifier)
       if (!room) {
         messageToSend.error =
           'Chatwoot - erro 2: Não foi possível criar a conversa na Chatwoot! Você vai encontrar mais detalhes nos logs do servidor.'
@@ -382,7 +404,7 @@ class Chatwoot extends ChatsBase {
         return
       }
 
-      await postMessage(url, headers, messageToSend.contact, messageToSend, room)
+      await postMessage(url, headers, contact, messageToSend, room)
     }
   }
 
