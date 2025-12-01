@@ -184,7 +184,7 @@ class Pabbly extends MessengersBase {
         this.messageData.kind = 'file'
         this.messageData.file = {
           id: message.image?.id,
-          url: message.image?.url,
+          // url: message.image?.url,
           fileName: message.image?.sha256,
           caption: message.image?.caption,
           fileBase64: null,
@@ -429,6 +429,7 @@ class Pabbly extends MessengersBase {
 
     try {
       const response = await request.get(`${url}/media?id=${mediaId}`, { headers })
+      console.info(`Pabbly: getMediaUrl status: ${response.status} payload: ${JSON.stringify(response.data)}`)
       if (response.status === 200 && response.data.status === 'success') return response.data.data.mediaUrl
     } catch (error) {
       console.error('Pabbly - erro: Erro ao buscar midia na Pabbly:', error)
