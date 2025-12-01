@@ -184,7 +184,6 @@ class Pabbly extends MessengersBase {
         this.messageData.kind = 'file'
         this.messageData.file = {
           id: message.image?.id,
-          url: message.image?.url,
           fileName: message.image?.sha256,
           caption: message.image?.caption,
           fileBase64: null,
@@ -195,7 +194,6 @@ class Pabbly extends MessengersBase {
         this.messageData.kind = 'file'
         this.messageData.file = {
           id: message.video?.id,
-          url: message.video?.url,
           fileName: message.video?.sha256,
           caption: message.video?.caption,
           fileBase64: null,
@@ -206,7 +204,6 @@ class Pabbly extends MessengersBase {
         this.messageData.kind = 'file'
         this.messageData.file = {
           id: message.voice?.id,
-          url: message.voice?.url,
           fileName: message.voice?.sha256,
           caption: message.voice?.caption,
           fileBase64: null,
@@ -217,7 +214,6 @@ class Pabbly extends MessengersBase {
         this.messageData.kind = 'file'
         this.messageData.file = {
           id: message.audio?.id,
-          url: message.audio?.url,
           fileName: message.audio?.sha256,
           caption: message.audio?.caption,
           fileBase64: null,
@@ -228,7 +224,6 @@ class Pabbly extends MessengersBase {
         this.messageData.kind = 'file'
         this.messageData.file = {
           id: message.document?.id,
-          url: message.document?.url,
           fileName: message.document?.filename,
           caption: message.document?.caption,
           fileBase64: null,
@@ -429,6 +424,7 @@ class Pabbly extends MessengersBase {
 
     try {
       const response = await request.get(`${url}/media?id=${mediaId}`, { headers })
+      console.info(`Pabbly: getMediaUrl status: ${response.status} payload: ${JSON.stringify(response.data)}`)
       if (response.status === 200 && response.data.status === 'success') return response.data.data.mediaUrl
     } catch (error) {
       console.error('Pabbly - erro: Erro ao buscar midia na Pabbly:', error)

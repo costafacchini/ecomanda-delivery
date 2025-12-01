@@ -109,7 +109,6 @@ describe('Pabbly Plugin', () => {
         waId: 'message-id',
         file: {
           id: 'image-id',
-          url: 'https://example.com/image.jpg',
           fileName: 'image-hash',
           caption: 'Image caption',
           fileBase64: null,
@@ -140,7 +139,6 @@ describe('Pabbly Plugin', () => {
         waId: 'message-id',
         file: {
           id: 'video-id',
-          url: 'https://example.com/video.mp4',
           fileName: 'video-hash',
           caption: 'Video caption',
           fileBase64: null,
@@ -171,7 +169,6 @@ describe('Pabbly Plugin', () => {
         waId: 'message-id',
         file: {
           id: 'voice-id',
-          url: 'https://example.com/voice.opus',
           fileName: 'voice-hash',
           caption: 'Voice caption',
           fileBase64: null,
@@ -202,7 +199,6 @@ describe('Pabbly Plugin', () => {
         waId: 'message-id',
         file: {
           id: 'audio-id',
-          url: 'https://example.com/audio.mp3',
           fileName: 'audio-hash',
           caption: 'Audio caption',
           fileBase64: null,
@@ -233,7 +229,6 @@ describe('Pabbly Plugin', () => {
         waId: 'message-id',
         file: {
           id: 'doc-id',
-          url: 'https://example.com/document.pdf',
           fileName: 'document.pdf',
           caption: 'Document caption',
           fileBase64: null,
