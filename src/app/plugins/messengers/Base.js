@@ -170,6 +170,9 @@ class MessengersBase {
         cart.products = products
 
         messageToSend.cart = await cart.save()
+      } else if (messageToSend.kind === 'location') {
+        messageToSend.latitude = this.messageData.latitude
+        messageToSend.longitude = this.messageData.longitude
       } else {
         messageToSend.attachmentWaId = this.messageData.file.id
         messageToSend.fileName = this.messageData.file.fileName
