@@ -242,7 +242,10 @@ class Pabbly extends MessengersBase {
   }
 
   parseContactData(responseBody) {
-    if (!responseBody.data || !['message_received', 'contact_created'].includes(responseBody.data.name)) {
+    if (
+      !responseBody.data ||
+      !['message_received', 'contact_created', 'smb_message_echoes'].includes(responseBody.data.name)
+    ) {
       this.contactData = null
       return
     }
