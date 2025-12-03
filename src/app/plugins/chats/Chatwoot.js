@@ -55,6 +55,11 @@ const createContact = async (url, headers, contact, licensee, contactRepository)
   const response = await request.post(`${url}contacts`, { headers, body })
 
   if (!response.status == 200) {
+    await contactRepository.update(contact._id, {
+      chatwootId: null,
+      chatwootSourceId: null,
+    })
+
     console.error(
       `Chatwoot - erro: Não foi possível criar o contato na Chatwoot. Essa é a resposta do servidor ${JSON.stringify(response.data)}`,
     )
