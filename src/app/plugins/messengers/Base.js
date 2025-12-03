@@ -198,7 +198,11 @@ class MessengersBase {
 
       if (this.messageData.sender) messageToSend.senderName = this.messageData.sender
 
-      processedMessages.push(await messageRepository.create(messageToSend))
+      try {
+        processedMessages.push(await messageRepository.create(messageToSend))
+      } catch (error) {
+        console.error('Não consegui criar a mensagem, verifique os erros:', error)
+      }
     }
 
     return processedMessages
