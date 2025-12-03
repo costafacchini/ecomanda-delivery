@@ -231,7 +231,7 @@ function MessagesIndex({ currentUser}) {
                       <a href={`http://maps.google.com/maps?q=${message.latitude}&ll=${message.longitude}&z=17`} target='_blank' rel='noreferrer'>
                         <i className='bi bi-geo-alt'></i>
                       </a>
-                      {` (${message.text})`}
+                      {` (${message.latitude}, ${message.longitude})`}
                     </>
                   )}
                   {message.kind === 'cart' && (
