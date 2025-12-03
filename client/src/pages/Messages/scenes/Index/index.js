@@ -228,7 +228,7 @@ function MessagesIndex({ currentUser}) {
                 <td>
                   {message.kind === 'location' && (
                     <>
-                      <a href={`http://maps.google.com/maps?q=${message.text.replace(';', ',')}&ll=${message.text.replace(';', ',')}&z=17`} target='_blank' rel='noreferrer'>
+                      <a href={`http://maps.google.com/maps?q=${message.latitude}&ll=${message.longitude}&z=17`} target='_blank' rel='noreferrer'>
                         <i className='bi bi-geo-alt'></i>
                       </a>
                       {` (${message.text})`}
