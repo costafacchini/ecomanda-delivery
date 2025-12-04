@@ -2,6 +2,7 @@ class QueryBuilder {
   constructor(model) {
     this.query = model
     this.filterByClause = []
+    this.filterDifferent = []
     this.filterByIntervalClause = []
     this.filterByExpressionClause
     this.filterByLessThanClause
@@ -18,6 +19,10 @@ class QueryBuilder {
 
   filterBy(field, value) {
     this.filterByClause.push({ field, value })
+  }
+
+  filterNotEqual(field, value) {
+    this.filterDifferent.push({ field, value })
   }
 
   filterByInterval(field, start, end) {
@@ -46,6 +51,12 @@ class QueryBuilder {
     if (this.filterByClause.length > 0) {
       this.filterByClause.forEach((filter) => {
         this.query.where(filter.field).equals(filter.value)
+      })
+    }
+
+    if (this.filterNotEqual.length > 0) {
+      this.filterDifferent.forEach((filter) => {
+        this.query.where(filter.field).ne(filter.value)
       })
     }
 
