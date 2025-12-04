@@ -27,6 +27,8 @@ async function transformMessengerBody(data) {
 
     const bodyToSend = {
       messageId: message._id,
+      contactId: message.contact._id,
+      licenseeId: licensee._id,
       url,
       token,
     }

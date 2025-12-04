@@ -93,6 +93,8 @@ describe('closeChat', () => {
           action: 'send-message-to-messenger',
           body: {
             messageId: 'KSDF656DSD91NSE',
+            licenseeId: licensee._id,
+            contactId: contact._id,
             token: 'token-whats',
             url: 'www.whatsappurl.com',
           },

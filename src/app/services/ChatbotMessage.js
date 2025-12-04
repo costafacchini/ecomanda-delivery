@@ -14,6 +14,8 @@ async function transformChatbotBody(data) {
   for (const message of messages) {
     const bodyToSend = {
       messageId: message._id,
+      contactId: message.contact._id,
+      licenseeId: licensee._id,
       url: licensee.whatsappUrl,
       token: licensee.whatsappToken,
     }

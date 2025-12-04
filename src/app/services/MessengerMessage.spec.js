@@ -35,9 +35,9 @@ describe('transformMessengerBody', () => {
       .spyOn(Dialog.prototype, 'responseToMessages')
       .mockImplementation(() => {
         return [
-          { _id: 'KSDF656DSD91NSE', destination: 'to-chatbot' },
-          { _id: 'OAR8Q54LDN02T', destination: 'to-chat' },
-          { _id: 'OAR8Q54743HGD', destination: 'to-messenger' },
+          { _id: 'KSDF656DSD91NSE', destination: 'to-chatbot', contact: { _id: 'id-contact-1' } },
+          { _id: 'OAR8Q54LDN02T', destination: 'to-chat', contact: { _id: 'id-contact-2' } },
+          { _id: 'OAR8Q54743HGD', destination: 'to-messenger', contact: { _id: 'id-contact-3' } },
         ]
       })
 
@@ -82,13 +82,31 @@ describe('transformMessengerBody', () => {
     expect(actions.length).toEqual(3)
 
     expect(actions[0].action).toEqual('send-message-to-chatbot')
-    expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://whatsapp.url', token: 'ljsdf12g' })
+    expect(actions[0].body).toEqual({
+      messageId: 'KSDF656DSD91NSE',
+      licenseeId: licensee._id,
+      contactId: 'id-contact-1',
+      url: 'https://whatsapp.url',
+      token: 'ljsdf12g',
+    })
 
     expect(actions[1].action).toEqual('send-message-to-chat')
-    expect(actions[1].body).toEqual({ messageId: 'OAR8Q54LDN02T', url: 'https://chat.url', token: '' })
+    expect(actions[1].body).toEqual({
+      messageId: 'OAR8Q54LDN02T',
+      licenseeId: licensee._id,
+      contactId: 'id-contact-2',
+      url: 'https://chat.url',
+      token: '',
+    })
 
     expect(actions[2].action).toEqual('send-message-to-messenger')
-    expect(actions[2].body).toEqual({ messageId: 'OAR8Q54743HGD', url: 'https://waba.360dialog.io/', token: 'bshg25f' })
+    expect(actions[2].body).toEqual({
+      messageId: 'OAR8Q54743HGD',
+      licenseeId: licensee._id,
+      contactId: 'id-contact-3',
+      url: 'https://waba.360dialog.io/',
+      token: 'bshg25f',
+    })
   })
 
   it('responds with blank actions if body is invalid and delete body', async () => {
