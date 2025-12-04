@@ -21,7 +21,7 @@ class BackgroundjobsController {
         await backgroundjob.save()
       }
 
-      await queueServer.addJob('background-job', { jobId: backgroundjob._id.toString() })
+      await queueServer.addJob('background-job', { jobId: backgroundjob._id.toString(), licenseeId: req.licensee._id })
 
       res.status(200).send({
         body: {

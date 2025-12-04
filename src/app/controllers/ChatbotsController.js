@@ -8,7 +8,7 @@ class ChatbotsController {
     const body = new Body({ content: req.body, licensee: req.licensee._id, kind: 'normal' })
     await body.save()
 
-    await queueServer.addJob('chatbot-message', { bodyId: body._id })
+    await queueServer.addJob('chatbot-message', { bodyId: body._id, licenseeId: req.licensee._id })
 
     res.status(200).send({ body: 'Solicitação de mensagem para a plataforma de chatbot agendado' })
   }
@@ -18,7 +18,7 @@ class ChatbotsController {
     const body = new Body({ content: req.body, licensee: req.licensee._id, kind: 'normal' })
     await body.save()
 
-    await queueServer.addJob('chatbot-transfer-to-chat', { bodyId: body._id })
+    await queueServer.addJob('chatbot-transfer-to-chat', { bodyId: body._id, licenseeId: req.licensee._id })
 
     res.status(200).send({ body: 'Solicitação de transferência do chatbot para a plataforma de chat agendado' })
   }
