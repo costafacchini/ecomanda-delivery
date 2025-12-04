@@ -47,6 +47,6 @@ export async function withTrafficlight(lockKey, handler) {
   try {
     return await handler()
   } finally {
-    await Trafficlight.deleteOne({ _id: lockKey, token })
+    await Trafficlight.deleteOne({ key: lockKey, token })
   }
 }
