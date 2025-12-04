@@ -340,6 +340,8 @@ class CartsController {
 
       await scheduleSendMessageToMessenger({
         messageId: message._id,
+        contactId: cart.contact._id,
+        licenseeId: req.licensee._id,
         url: req.licensee.whatsappUrl,
         token: req.licensee.whatsappToken,
       })

@@ -32,7 +32,10 @@ describe('transformChatbotBody', () => {
     const chatbotPluginResponseToMessages = jest
       .spyOn(Landbot.prototype, 'responseToMessages')
       .mockImplementation(() => {
-        return [{ _id: 'KSDF656DSD91NSE' }, { _id: 'OAR8Q54LDN02T' }]
+        return [
+          { _id: 'KSDF656DSD91NSE', contact: { _id: 'id-contact-1' } },
+          { _id: 'OAR8Q54LDN02T', contact: { _id: 'id-contact-2' } },
+        ]
       })
 
     const body = await Body.create(
@@ -53,10 +56,22 @@ describe('transformChatbotBody', () => {
     expect(bodyDeleted).toEqual(null)
 
     expect(actions[0].action).toEqual('send-message-to-messenger')
-    expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://waba.360dialog.io/', token: 'token' })
+    expect(actions[0].body).toEqual({
+      messageId: 'KSDF656DSD91NSE',
+      licenseeId: licensee._id,
+      contactId: 'id-contact-1',
+      url: 'https://waba.360dialog.io/',
+      token: 'token',
+    })
 
     expect(actions[1].action).toEqual('send-message-to-messenger')
-    expect(actions[1].body).toEqual({ messageId: 'OAR8Q54LDN02T', url: 'https://waba.360dialog.io/', token: 'token' })
+    expect(actions[1].body).toEqual({
+      messageId: 'OAR8Q54LDN02T',
+      licenseeId: licensee._id,
+      contactId: 'id-contact-2',
+      url: 'https://waba.360dialog.io/',
+      token: 'token',
+    })
 
     expect(actions.length).toEqual(2)
   })

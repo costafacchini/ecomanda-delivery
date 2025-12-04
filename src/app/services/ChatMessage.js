@@ -26,6 +26,8 @@ async function transformChatBody(data) {
 
         const bodyToSend = {
           messageId: messageToSend._id,
+          contactId: message.contact._id,
+          licenseeId: licensee._id,
           url: licensee.chatUrl,
           token: '',
         }
@@ -41,6 +43,8 @@ async function transformChatBody(data) {
 
     const bodyToSend = {
       messageId: message._id,
+      contactId: message.contact._id,
+      licenseeId: licensee._id,
       url: licensee.whatsappUrl,
       token: licensee.whatsappToken,
     }

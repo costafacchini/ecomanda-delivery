@@ -30,7 +30,7 @@ describe('transformChatbotTransferBody', () => {
     const chatbotPluginResponseToMessages = jest
       .spyOn(Landbot.prototype, 'responseTransferToMessage')
       .mockImplementation(() => {
-        return { _id: 'KSDF656DSD91NSE' }
+        return { _id: 'KSDF656DSD91NSE', contact: { _id: 'id-contact-1' } }
       })
 
     const body = await Body.create(
@@ -51,7 +51,12 @@ describe('transformChatbotTransferBody', () => {
     expect(bodyDeleted).toEqual(null)
 
     expect(actions[0].action).toEqual('transfer-to-chat')
-    expect(actions[0].body).toEqual({ messageId: 'KSDF656DSD91NSE', url: 'https://chat.url' })
+    expect(actions[0].body).toEqual({
+      messageId: 'KSDF656DSD91NSE',
+      licenseeId: licensee._id,
+      contactId: 'id-contact-1',
+      url: 'https://chat.url',
+    })
 
     expect(actions.length).toEqual(1)
   })
