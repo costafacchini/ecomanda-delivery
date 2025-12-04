@@ -73,7 +73,10 @@ describe('backgrounndjobs controller', () => {
               },
             })
             expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('background-job', { jobId: backgroundjob._id.toString() })
+            expect(queueServerAddJobSpy).toHaveBeenCalledWith('background-job', {
+              jobId: backgroundjob._id.toString(),
+              licenseeId: backgroundjob.licensee,
+            })
           })
       })
 

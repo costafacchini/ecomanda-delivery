@@ -68,7 +68,10 @@ describe('chatbots controller', () => {
             expect(body.kind).toEqual('normal')
             expect(response.body).toEqual({ body: 'Solicitação de mensagem para a plataforma de chatbot agendado' })
             expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('chatbot-message', { bodyId: body._id })
+            expect(queueServerAddJobSpy).toHaveBeenCalledWith('chatbot-message', {
+              bodyId: body._id,
+              licenseeId: body.licensee,
+            })
           })
       })
     })
@@ -115,7 +118,10 @@ describe('chatbots controller', () => {
               body: 'Solicitação de transferência do chatbot para a plataforma de chat agendado',
             })
             expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('chatbot-transfer-to-chat', { bodyId: body._id })
+            expect(queueServerAddJobSpy).toHaveBeenCalledWith('chatbot-transfer-to-chat', {
+              bodyId: body._id,
+              licenseeId: body.licensee,
+            })
           })
       })
     })

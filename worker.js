@@ -6,6 +6,7 @@ import { queueServer } from './src/config/queue.js'
 import { Worker } from 'bullmq'
 import { connect } from './src/config/database.js'
 import { consumeChannel } from './src/config/rabbitmq.js'
+import { withTrafficlight, resolveTrafficlightKey } from './src/app/helpers/Trafficlight.js'
 
 connect()
 consumeChannel()
@@ -14,7 +15,10 @@ queueServer.queues.forEach((queue) => {
   const worker = new Worker(
     queue.name,
     async (job) => {
-      const handleResult = await queue.handle(job.data)
+      const lockKey = resolveTrafficlightKey(job?.data)
+      const handleResult = await withTrafficlight(lockKey, async () => {
+        return await queue.handle(job.data)
+      })
       if (handleResult) {
         for (const actionJob of handleResult) {
           const { action, body } = actionJob
