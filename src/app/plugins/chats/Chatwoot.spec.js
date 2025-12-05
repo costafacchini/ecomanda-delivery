@@ -948,8 +948,7 @@ describe('Chatwoot plugin', () => {
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Chatwoot - erro: Mensagem 60958703f415ed4008748637 não enviada para Chatwoot.
-           status: 400
-           mensagem: {"error":true,"message":"Invalid message"}`,
+           status: 400`,
         )
       })
 

@@ -424,7 +424,7 @@ describe('Pabbly Plugin', () => {
     it('should send text message successfully', async () => {
       request.post.mockResolvedValue({
         status: 200,
-        data: { messages: [{ id: 'sent-message-id' }] },
+        data: { data: { metaResponse: { messages: [{ id: 'sent-message-id' }] } } },
       })
 
       await pabbly.sendMessage('message-id', 'https://api.pabbly.com/v1', 'test-token')
