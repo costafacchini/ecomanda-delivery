@@ -255,6 +255,7 @@ class Pabbly extends MessengersBase {
       chatId = responseBody.data.event_data.from || responseBody.data.event_data.mobile
     } else {
       chatId = responseBody.data.event_data.to || responseBody.data.event_data.mobile
+      this.messageData.departament = 'outgoing'
     }
     // const contact = responseBody.whatsappInboundMessage.customerProfile
     const normalizePhone = new NormalizePhone(chatId)
