@@ -113,7 +113,7 @@ const postMessage = async (url, headers, contact, message, room) => {
   if (message.kind === 'text') {
     const body = {
       private: false,
-      message_type: 'incoming',
+      message_type: message.departament == 'outgoing' ? 'outgoing' : 'incoming',
       content_type: 'text',
       content: formatMessage(message, contact),
     }
