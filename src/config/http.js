@@ -4,7 +4,7 @@ import('../app/models/index.js')
 
 import createError from 'http-errors'
 import express from 'express'
-// import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/node'
 import { connect } from './database.js'
 import { enableCors } from './cors.js'
 import { routes } from './routes.js'
@@ -17,12 +17,12 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const app = express()
-// const sentryEnabled = Boolean(process.env.SENTRY_DSN)
+const sentryEnabled = Boolean(process.env.SENTRY_DSN)
 
 app.use(httpLogger)
-// if (sentryEnabled) {
-//   app.use(Sentry.Handlers.requestHandler())
-// }
+if (sentryEnabled) {
+  app.use(Sentry.Handlers.requestHandler())
+}
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ limit: '50mb', extended: false }))
 connect()
@@ -36,9 +36,9 @@ app.use(function (req, res, next) {
   next(createError(404))
 })
 
-// if (sentryEnabled) {
-//   app.use(Sentry.Handlers.errorHandler())
-// }
+if (sentryEnabled) {
+  app.use(Sentry.Handlers.errorHandler())
+}
 
 app.use(function (err, req, res, next) {
   logger.error(
