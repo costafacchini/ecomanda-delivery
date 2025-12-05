@@ -170,9 +170,14 @@ class Pabbly extends MessengersBase {
       return
     }
 
-    this.messageData = {
-      kind: message.type,
-      waId: message.id,
+    if (this.messageData) {
+      this.messageData.kind = message.type
+      this.messageData.waId = message.id
+    } else {
+      this.messageData = {
+        kind: message.type,
+        waId: message.id,
+      }
     }
 
     switch (message.type) {
@@ -255,7 +260,7 @@ class Pabbly extends MessengersBase {
       chatId = responseBody.data.event_data.from || responseBody.data.event_data.mobile
     } else {
       chatId = responseBody.data.event_data.to || responseBody.data.event_data.mobile
-      this.messageData.departament = 'outgoing'
+      this.messageData = { departament: 'outgoing' }
     }
     // const contact = responseBody.whatsappInboundMessage.customerProfile
     const normalizePhone = new NormalizePhone(chatId)
