@@ -308,27 +308,26 @@ describe('<MessageIndex />', () => {
 
   describe('location link', () => {
     it('is rendered when theres a cordinate', async () => {
-      getMessages.mockResolvedValueOnce(
-        {
-          status: 201,
-          data: [
-            {
-              id: '1',
-              contact: {
-                name: 'Contact',
-              },
-              kind: 'location',
-              text: '-25.5617048;-49.3086837',
-            }
-          ]
-        }
-      )
+      getMessages.mockResolvedValueOnce({
+        status: 201,
+        data: [
+          {
+            id: '1',
+            contact: {
+              name: 'Contact',
+            },
+            kind: 'location',
+            latitude: '-25.5617048',
+            longitude: '-49.3086837',
+          },
+        ],
+      })
 
       mount({ currentUser })
 
       fireEvent.click(screen.getByText('Pesquisar'))
 
-      expect(await screen.findByText('(-25.5617048;-49.3086837)')).toBeInTheDocument()
+      expect(await screen.findByText('(-25.5617048, -49.3086837)')).toBeInTheDocument()
 
       const link = screen.getByRole('link')
 

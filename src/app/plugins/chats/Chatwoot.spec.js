@@ -219,6 +219,150 @@ describe('Chatwoot plugin', () => {
     })
 
     describe('message types', () => {
+      it('returns message from responseBody.content when content and content_type are present', async () => {
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
+          contactFactory.build({
+            name: 'John Doe',
+            chatwootId: 'contact_123',
+            licensee,
+          }),
+        )
+
+        await Room.create(
+          roomFactory.build({
+            roomId: 'conversation_456',
+            contact,
+          }),
+        )
+
+        const responseBody = {
+          event: 'message_created',
+          message_type: 'outgoing',
+          content: 'Direct message from content',
+          content_type: 'text',
+          conversation: {
+            id: 'conversation_456',
+            contact_inbox: {
+              contact_id: 'contact_123',
+            },
+            messages: [
+              {
+                content: 'This should be ignored',
+                attachments: [],
+              },
+            ],
+          },
+        }
+
+        const chatwoot = new Chatwoot(licensee)
+        const messages = await chatwoot.responseToMessages(responseBody)
+
+        expect(messages.length).toEqual(1)
+        expect(messages[0].kind).toEqual('text')
+        expect(messages[0].text).toEqual('Direct message from content')
+        expect(messages[0].text).not.toEqual('This should be ignored')
+      })
+
+      it('includes senderName when useSenderName is true and responseBody.content exists', async () => {
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licenseeWithSenderName = await licenseeRepository.create(
+          licenseeFactory.build({
+            chatIdentifier: 'inbox_123',
+            chatKey: 'api_token_123',
+            useSenderName: true,
+          }),
+        )
+
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
+          contactFactory.build({
+            name: 'John Doe',
+            chatwootId: 'contact_123',
+            licensee: licenseeWithSenderName,
+          }),
+        )
+
+        await Room.create(
+          roomFactory.build({
+            roomId: 'conversation_456',
+            contact,
+          }),
+        )
+
+        const responseBody = {
+          event: 'message_created',
+          message_type: 'outgoing',
+          content: 'Message with sender name',
+          content_type: 'text',
+          conversation: {
+            id: 'conversation_456',
+            contact_inbox: {
+              contact_id: 'contact_123',
+            },
+            meta: {
+              assignee: {
+                available_name: 'Agent Smith',
+              },
+            },
+            messages: [],
+          },
+        }
+
+        const chatwoot = new Chatwoot(licenseeWithSenderName)
+        const messages = await chatwoot.responseToMessages(responseBody)
+
+        expect(messages.length).toEqual(1)
+        expect(messages[0].kind).toEqual('text')
+        expect(messages[0].text).toEqual('Message with sender name')
+        expect(messages[0].senderName).toEqual('Agent Smith')
+      })
+
+      it('does not include senderName when useSenderName is false and responseBody.content exists', async () => {
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
+          contactFactory.build({
+            name: 'John Doe',
+            chatwootId: 'contact_123',
+            licensee,
+          }),
+        )
+
+        await Room.create(
+          roomFactory.build({
+            roomId: 'conversation_456',
+            contact,
+          }),
+        )
+
+        const responseBody = {
+          event: 'message_created',
+          message_type: 'outgoing',
+          content: 'Message without sender name',
+          content_type: 'text',
+          conversation: {
+            id: 'conversation_456',
+            contact_inbox: {
+              contact_id: 'contact_123',
+            },
+            meta: {
+              assignee: {
+                available_name: 'Agent Smith',
+              },
+            },
+            messages: [],
+          },
+        }
+
+        const chatwoot = new Chatwoot(licensee)
+        const messages = await chatwoot.responseToMessages(responseBody)
+
+        expect(messages.length).toEqual(1)
+        expect(messages[0].kind).toEqual('text')
+        expect(messages[0].text).toEqual('Message without sender name')
+        expect(messages[0].senderName).toEqual(undefined)
+      })
+
       it('returns messages with file data if message has attachments', async () => {
         const contactRepository = new ContactRepositoryDatabase()
         const contact = await contactRepository.create(

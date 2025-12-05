@@ -148,7 +148,7 @@ class Pabbly extends MessengersBase {
   }
 
   parseMessage(responseBody) {
-    if (!responseBody.data || responseBody.data.name !== 'message_received') {
+    if (!responseBody.data || !['smb_message_echoes', 'message_received'].includes(responseBody.data.name)) {
       this.messageData = null
       return
     }
@@ -170,9 +170,14 @@ class Pabbly extends MessengersBase {
       return
     }
 
-    this.messageData = {
-      kind: message.type,
-      waId: message.id,
+    if (this.messageData) {
+      this.messageData.kind = message.type
+      this.messageData.waId = message.id
+    } else {
+      this.messageData = {
+        kind: message.type,
+        waId: message.id,
+      }
     }
 
     switch (message.type) {
@@ -184,7 +189,6 @@ class Pabbly extends MessengersBase {
         this.messageData.kind = 'file'
         this.messageData.file = {
           id: message.image?.id,
-          url: message.image?.url,
           fileName: message.image?.sha256,
           caption: message.image?.caption,
           fileBase64: null,
@@ -195,7 +199,6 @@ class Pabbly extends MessengersBase {
         this.messageData.kind = 'file'
         this.messageData.file = {
           id: message.video?.id,
-          url: message.video?.url,
           fileName: message.video?.sha256,
           caption: message.video?.caption,
           fileBase64: null,
@@ -206,7 +209,6 @@ class Pabbly extends MessengersBase {
         this.messageData.kind = 'file'
         this.messageData.file = {
           id: message.voice?.id,
-          url: message.voice?.url,
           fileName: message.voice?.sha256,
           caption: message.voice?.caption,
           fileBase64: null,
@@ -217,7 +219,6 @@ class Pabbly extends MessengersBase {
         this.messageData.kind = 'file'
         this.messageData.file = {
           id: message.audio?.id,
-          url: message.audio?.url,
           fileName: message.audio?.sha256,
           caption: message.audio?.caption,
           fileBase64: null,
@@ -228,7 +229,6 @@ class Pabbly extends MessengersBase {
         this.messageData.kind = 'file'
         this.messageData.file = {
           id: message.document?.id,
-          url: message.document?.url,
           fileName: message.document?.filename,
           caption: message.document?.caption,
           fileBase64: null,
@@ -247,12 +247,21 @@ class Pabbly extends MessengersBase {
   }
 
   parseContactData(responseBody) {
-    if (!responseBody.data || !['message_received', 'contact_created'].includes(responseBody.data.name)) {
+    if (
+      !responseBody.data ||
+      !['message_received', 'contact_created', 'smb_message_echoes'].includes(responseBody.data.name)
+    ) {
       this.contactData = null
       return
     }
 
-    const chatId = responseBody.data.event_data.from || responseBody.data.event_data.mobile
+    let chatId
+    if (['message_received', 'contact_created'].includes(responseBody.data.name)) {
+      chatId = responseBody.data.event_data.from || responseBody.data.event_data.mobile
+    } else {
+      chatId = responseBody.data.event_data.to || responseBody.data.event_data.mobile
+      this.messageData = { departament: 'outgoing' }
+    }
     // const contact = responseBody.whatsappInboundMessage.customerProfile
     const normalizePhone = new NormalizePhone(chatId)
 
@@ -429,6 +438,7 @@ class Pabbly extends MessengersBase {
 
     try {
       const response = await request.get(`${url}/media?id=${mediaId}`, { headers })
+      console.info(`Pabbly: getMediaUrl status: ${response.status} payload: ${JSON.stringify(response.data)}`)
       if (response.status === 200 && response.data.status === 'success') return response.data.data.mediaUrl
     } catch (error) {
       console.error('Pabbly - erro: Erro ao buscar midia na Pabbly:', error)

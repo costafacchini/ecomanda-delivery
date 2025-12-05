@@ -65,7 +65,10 @@ describe('messengers controller', () => {
               body: 'Solicitação de mensagem para a plataforma de messenger agendado',
             })
             expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('messenger-message', { bodyId: body._id })
+            expect(queueServerAddJobSpy).toHaveBeenCalledWith('messenger-message', {
+              bodyId: body._id,
+              licenseeId: body.licensee,
+            })
           })
       })
     })

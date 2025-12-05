@@ -6,7 +6,7 @@ import { queueServer } from '../../config/queue.js'
 const adapters = queueServer.queues.map((queue) => new BullMQAdapter(queue.bull), { readOnlyMode: true })
 
 const serverAdapter = new ExpressAdapter()
-serverAdapter.setBasePath('queue')
+serverAdapter.setBasePath('/queue')
 
 createBullBoard({
   queues: adapters,

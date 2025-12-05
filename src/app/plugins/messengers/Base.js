@@ -129,6 +129,7 @@ class MessengersBase {
         contact: contact._id,
         destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
         kind: this.messageData.kind,
+        departament: this.messageData.departament,
       }
 
       if (messageToSend.kind === 'text') {
@@ -170,6 +171,9 @@ class MessengersBase {
         cart.products = products
 
         messageToSend.cart = await cart.save()
+      } else if (messageToSend.kind === 'location') {
+        messageToSend.latitude = this.messageData.latitude
+        messageToSend.longitude = this.messageData.longitude
       } else {
         messageToSend.attachmentWaId = this.messageData.file.id
         messageToSend.fileName = this.messageData.file.fileName
@@ -195,7 +199,11 @@ class MessengersBase {
 
       if (this.messageData.sender) messageToSend.senderName = this.messageData.sender
 
-      processedMessages.push(await messageRepository.create(messageToSend))
+      try {
+        processedMessages.push(await messageRepository.create(messageToSend))
+      } catch (error) {
+        console.error('Não consegui criar a mensagem, verifique os erros:', error)
+      }
     }
 
     return processedMessages

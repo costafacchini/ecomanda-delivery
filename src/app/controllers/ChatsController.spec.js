@@ -72,7 +72,10 @@ describe('chats controller', () => {
             })
             expect(body.content).not.toEqual(expect.objectContaining({ crmData: '' }))
             expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('chat-message', { bodyId: body._id })
+            expect(queueServerAddJobSpy).toHaveBeenCalledWith('chat-message', {
+              bodyId: body._id,
+              licenseeId: body.licensee,
+            })
           })
       })
     })

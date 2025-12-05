@@ -16,7 +16,7 @@ class OrdersController {
 
     console.info(`Requisição do Pedidos 10 para processar pedidos recebida: ${integrationlog._id}`)
 
-    await queueServer.addJob('pedidos10-webhook', { bodyId: bodySaved._id })
+    await queueServer.addJob('pedidos10-webhook', { bodyId: bodySaved._id, licenseeId: req.licensee._id })
 
     res.status(202).send({ id: bodySaved._id })
   }
@@ -34,7 +34,7 @@ class OrdersController {
 
     console.info(`Requisição para mudar o status do pedido recebida: ${integrationlog._id}`)
 
-    await queueServer.addJob('pedidos10-change-order-status', { bodyId: bodySaved._id })
+    await queueServer.addJob('pedidos10-change-order-status', { bodyId: bodySaved._id, licenseeId: req.licensee._id })
 
     res.status(200).send({ id: bodySaved._id })
   }

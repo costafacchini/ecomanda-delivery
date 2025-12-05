@@ -14,6 +14,8 @@ async function transformChatbotTransferBody(data) {
   if (message) {
     const bodyToSend = {
       messageId: message._id,
+      contactId: message.contact._id,
+      licenseeId: licensee._id,
       url: licensee.chatUrl,
     }
 

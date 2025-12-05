@@ -16,6 +16,8 @@ async function closeChat(data) {
     for (const messageCloseChat of messagesOnCloseChat) {
       const bodyToSend = {
         messageId: messageCloseChat._id,
+        contactId: message.contact._id,
+        licenseeId: licensee._id,
         url: licensee.whatsappUrl,
         token: licensee.whatsappToken,
       }

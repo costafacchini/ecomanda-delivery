@@ -58,7 +58,10 @@ class MessagesQuery {
 
     if (this.destinationClause) query.filterBy('destination', this.destinationClause)
 
-    if (this.sendedClause) query.filterBy('sended', this.sendedClause)
+    if (this.sendedClause) {
+      query.filterBy('sended', this.sendedClause)
+      query.filterNotEqual('text', 'Chat encerrado pelo agente')
+    }
   }
 
   async all() {

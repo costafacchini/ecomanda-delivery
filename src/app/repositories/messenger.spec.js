@@ -15,7 +15,13 @@ describe('#scheduleSendMessageToMessenger', () => {
   })
 
   it('schedules a job to send message to messenger', async () => {
-    await scheduleSendMessageToMessenger({ messageId: 'messageId', url: 'url', token: 'token' })
+    await scheduleSendMessageToMessenger({
+      messageId: 'messageId',
+      url: 'url',
+      token: 'token',
+      contactId: 'contactId',
+      licenseeId: 'licenseeId',
+    })
 
     const counts = await queueSendMessageToMessenger.bull.getJobCounts('wait')
 

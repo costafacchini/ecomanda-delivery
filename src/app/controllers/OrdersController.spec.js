@@ -77,7 +77,10 @@ describe('chats controller', () => {
             expect(integrationlog.log_payload).toEqual(body.content)
 
             expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('pedidos10-webhook', { bodyId: body._id })
+            expect(queueServerAddJobSpy).toHaveBeenCalledWith('pedidos10-webhook', {
+              bodyId: body._id,
+              licenseeId: body.licensee,
+            })
           })
       })
     })
@@ -110,7 +113,10 @@ describe('chats controller', () => {
             expect(integrationlog.log_payload).toEqual(body.content)
 
             expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('pedidos10-change-order-status', { bodyId: body._id })
+            expect(queueServerAddJobSpy).toHaveBeenCalledWith('pedidos10-change-order-status', {
+              bodyId: body._id,
+              licenseeId: body.licensee,
+            })
           })
       })
     })

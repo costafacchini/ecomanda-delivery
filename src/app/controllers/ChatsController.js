@@ -11,7 +11,7 @@ class ChatsController {
     console.info(`Mensagem chegando do plugin de chat: ${JSON.stringify(body)}`)
     const bodySaved = await Body.create({ content: body, licensee: req.licensee._id, kind: 'normal' })
 
-    await queueServer.addJob('chat-message', { bodyId: bodySaved._id })
+    await queueServer.addJob('chat-message', { bodyId: bodySaved._id, licenseeId: req.licensee._id })
 
     res.status(200).send({ body: 'Solicitação de mensagem para a plataforma de chat agendado' })
   }
