@@ -6,6 +6,7 @@ import archiver from 'archiver'
 import mime from 'mime-types'
 import bl from 'bl'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { logger } from '../../setup/logger.js'
 
 async function backup() {
   const mongoURI = process.env.MONGODB_URI
@@ -29,9 +30,9 @@ async function backup() {
 
     await upload(buf, filename)
 
-    console.info('Backup efetuado com sucesso!')
+    logger.info('Backup efetuado com sucesso!')
   } catch (err) {
-    console.info(`Erro ao tentar efetuar o backup ${err.toString()}`)
+    logger.error({ err }, 'Erro ao tentar efetuar o backup')
   }
 }
 
@@ -48,7 +49,7 @@ function doBackup(mongoURI) {
 
     mongodump.stdout.pipe(fs.createWriteStream(output))
     mongodump.stderr.on('data', function (data) {
-      console.log(data.toString('ascii'))
+      logger.warn({ stderr: data.toString('ascii') }, 'mongodump stderr')
     })
     mongodump.on('error', reject)
 
