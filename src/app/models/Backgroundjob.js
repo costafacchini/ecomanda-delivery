@@ -32,14 +32,12 @@ const backgroundjobSchema = new Schema(
   { timestamps: true },
 )
 
-backgroundjobSchema.pre('save', function (next) {
+backgroundjobSchema.pre('save', function () {
   const backgroundjob = this
 
   if (!backgroundjob._id) {
     backgroundjob._id = new mongoose.Types.ObjectId()
   }
-
-  next()
 })
 
 backgroundjobSchema.set('toJSON', {

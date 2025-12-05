@@ -88,13 +88,12 @@ const messageSchema = new Schema(
   { timestamps: true },
 )
 
-messageSchema.pre('save', function (next) {
+messageSchema.pre('save', function () {
   const message = this
 
   if (!message._id) {
     message._id = new mongoose.Types.ObjectId()
   }
-  next()
 })
 
 messageSchema.set('toJSON', {
