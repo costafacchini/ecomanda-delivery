@@ -386,20 +386,15 @@ class Pabbly extends MessengersBase {
         body: messageBody,
       })
 
-      console.info(`Pabbly: body PENDENTE ${JSON.stringify(messageResponse)}`)
       if (messageResponse.status === 200 || messageResponse.status === 201) {
-        messageToSend.messageWaId = messageResponse.data?.messages[0]?.id
+        messageToSend.messageWaId = messageResponse.data?.data?.metaResponse?.messages[0]?.id
         messageToSend.sended = true
+        messageToSend.payload = JSON.stringify(messageResponse.data)
         await messageToSend.save()
-        console.info(
-          `Pabbly: Mensagem ${messageId} enviada para Pabbly com sucesso! ${JSON.stringify(messageResponse.data)}`,
-        )
       } else {
         messageToSend.error = JSON.stringify(messageResponse.data)
         await messageToSend.save()
-        console.error(
-          `Pabbly - erro: Mensagem ${messageId} não enviada para Pabbly. ${JSON.stringify(messageResponse.data)}`,
-        )
+        console.error(`Pabbly - erro: Mensagem ${messageId} não enviada para Pabbly.`)
       }
     } catch (error) {
       messageToSend.error = JSON.stringify(error.response?.data || error.message)
@@ -427,7 +422,6 @@ class Pabbly extends MessengersBase {
 
     try {
       const response = await request.get(`${url}/media?id=${mediaId}`, { headers })
-      console.info(`Pabbly: getMediaUrl status: ${response.status} payload: ${JSON.stringify(response.data)}`)
       if (response.status === 200 && response.data.status === 'success') return response.data.data.mediaUrl
     } catch (error) {
       console.error('Pabbly - erro: Erro ao buscar midia na Pabbly:', error)

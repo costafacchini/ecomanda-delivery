@@ -1,5 +1,4 @@
 import 'dotenv/config'
-import './instrument.js'
 import debug from 'debug'
 import { server } from './src/config/http.js'
 import('./src/app/websockets/index.js')
