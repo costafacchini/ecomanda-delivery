@@ -250,7 +250,12 @@ class Pabbly extends MessengersBase {
       return
     }
 
-    const chatId = responseBody.data.event_data.from || responseBody.data.event_data.mobile
+    let chatId
+    if (['message_received', 'contact_created'].includes(responseBody.data.name)) {
+      chatId = responseBody.data.event_data.from || responseBody.data.event_data.mobile
+    } else {
+      chatId = responseBody.data.event_data.to || responseBody.data.event_data.mobile
+    }
     // const contact = responseBody.whatsappInboundMessage.customerProfile
     const normalizePhone = new NormalizePhone(chatId)
 
