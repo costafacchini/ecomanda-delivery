@@ -1,5 +1,4 @@
 import 'dotenv/config'
-import './instrument.mjs'
 import('./src/app/models/index.js')
 
 import { redisConnection } from './src/config/redis.js'
@@ -8,7 +7,6 @@ import { Worker } from 'bullmq'
 import { connect } from './src/config/database.js'
 import { consumeChannel } from './src/config/rabbitmq.js'
 import { withTrafficlight, resolveTrafficlightKey } from './src/app/helpers/Trafficlight.js'
-import { logger } from './src/setup/logger.js'
 
 connect()
 consumeChannel()
@@ -35,14 +33,6 @@ queueServer.queues.forEach((queue) => {
   redisConnection.setMaxListeners(redisConnection.getMaxListeners() + 1)
 
   worker.on('failed', (job, failedReason) => {
-    logger.error(
-      {
-        err: failedReason,
-        queue: queue.name,
-        jobId: job?.id,
-        requestId: job?.data?.requestId,
-      },
-      'Failed to process job',
-    )
+    console.error(`Fail process job ${JSON.stringify(job)} `, failedReason)
   })
 })

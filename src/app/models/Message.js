@@ -84,7 +84,6 @@ const messageSchema = new Schema(
     readAt: Date,
     deliveredAt: Date,
     error: String,
-    payload: String,
   },
   { timestamps: true },
 )
