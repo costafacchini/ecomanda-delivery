@@ -548,6 +548,17 @@ describe('Landbot plugin', () => {
 
         const landbot = new Landbot(licensee)
         await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
+
+        expect(request.post).toHaveBeenCalledWith(
+          'https://url.com.br/5511990283745/',
+          expect.objectContaining({
+            body: expectedBody,
+            headers: expect.objectContaining({
+              Authorization: 'Token token',
+            }),
+          }),
+        )
+
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
       })
@@ -667,6 +678,17 @@ describe('Landbot plugin', () => {
 
           const landbot = new Landbot(licensee)
           await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
+
+          expect(request.post).toHaveBeenCalledWith(
+            'https://url.com.br/5511990283745/',
+            expect.objectContaining({
+              body: expectedBody,
+              headers: expect.objectContaining({
+                Authorization: 'Token token',
+              }),
+            }),
+          )
+
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
 
@@ -728,6 +750,17 @@ describe('Landbot plugin', () => {
 
           const landbot = new Landbot(licensee)
           await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
+
+          expect(request.post).toHaveBeenCalledWith(
+            'https://url.com.br/5511990283745/',
+            expect.objectContaining({
+              body: expectedBody,
+              headers: expect.objectContaining({
+                Authorization: 'Token token',
+              }),
+            }),
+          )
+
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
         })
@@ -1074,12 +1107,23 @@ describe('Landbot plugin', () => {
         }),
       )
 
-      request.delete.mockResolvedValueOnce((url, { headers }) => {
-        return url === 'https://api.landbot.io/v1/customers/20000/' && headers['Authorization'] === 'Token token'
-      }, 204)
+      request.delete.mockResolvedValueOnce({
+        status: 204,
+        data: {},
+      })
 
       const landbot = new Landbot(licensee)
-      await landbot.dropConversation(contact._id, 'token')
+      const result = await landbot.dropConversation(contact._id, 'token')
+
+      expect(request.delete).toHaveBeenCalledWith(
+        'https://api.landbot.io/v1/customers/20000/',
+        expect.objectContaining({
+          headers: {
+            Authorization: 'Token token',
+          },
+        }),
+      )
+      expect(result).toEqual(true)
     })
   })
 })

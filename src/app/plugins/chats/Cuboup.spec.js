@@ -642,6 +642,13 @@ describe('Cuboup plugin', () => {
 
           const cuboup = new Cuboup(licensee)
           await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
+
+          expect(request.post).toHaveBeenCalledWith(
+            'https://url.com.br/jkJGs5a4ea/pAOqw2340',
+            expect.objectContaining({
+              body: expectedBody,
+            }),
+          )
         })
       })
 

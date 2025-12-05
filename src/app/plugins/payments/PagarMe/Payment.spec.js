@@ -115,25 +115,24 @@ describe('PagarMe/Customer plugin', () => {
         request.post.mockResolvedValueOnce({
           status: 200,
           data: {
-              id: 'or_56GXnk6T0eU88qMm',
-              status: 'pending',
-              charges: [
-                {
-                  id: 'ch_K2rJ5nlHwTE4qRDP',
-                  status: 'pending',
-                  last_transaction: {
-                    id: 'tran_bZ0N3DjjUzTW68eq',
-                    status: 'waiting_payment',
-                    qr_code:
-                      '00020101021226480019BR.COM.STONE.QRCODE0108A37F8712020912345678927820 014BR.GOV.BCB.PIX2560sandbox-qrcode.stone.com.br/api/v2/qr/sGY7FyVExavqkzFvkQu MXA28580010BR.COM.ELO0104516002151234567890000000308933BB1100401P520400 00530398654041.005802BR5911STONE TESTE6009SAO PAULO62600522sGY7FyVExavqkzFvkQuMXA50300017BR.GOV.BCB.BRCODE01051.0.0 80500010BR.COM.ELO01100915132023020200030201040613202363043BA1',
-                    qr_code_url: 'https://api.pagar.me/core/v1/transactions/tran_bZ0N3DjjUzTW68eq/qrcode.png',
-                  },
+            id: 'or_56GXnk6T0eU88qMm',
+            status: 'pending',
+            charges: [
+              {
+                id: 'ch_K2rJ5nlHwTE4qRDP',
+                status: 'pending',
+                last_transaction: {
+                  id: 'tran_bZ0N3DjjUzTW68eq',
+                  status: 'waiting_payment',
+                  qr_code:
+                    '00020101021226480019BR.COM.STONE.QRCODE0108A37F8712020912345678927820 014BR.GOV.BCB.PIX2560sandbox-qrcode.stone.com.br/api/v2/qr/sGY7FyVExavqkzFvkQu MXA28580010BR.COM.ELO0104516002151234567890000000308933BB1100401P520400 00530398654041.005802BR5911STONE TESTE6009SAO PAULO62600522sGY7FyVExavqkzFvkQuMXA50300017BR.GOV.BCB.BRCODE01051.0.0 80500010BR.COM.ELO01100915132023020200030201040613202363043BA1',
+                  qr_code_url: 'https://api.pagar.me/core/v1/transactions/tran_bZ0N3DjjUzTW68eq/qrcode.png',
                 },
-              ],
-              checkouts: [],
-            },
+              },
+            ],
+            checkouts: [],
           },
-        )
+        })
 
         const payment = new Payment()
         await payment.createPIX(cart, 'token')
@@ -228,80 +227,79 @@ describe('PagarMe/Customer plugin', () => {
         request.post.mockResolvedValueOnce({
           status: 200,
           data: {
-              id: 'or_56GXnk6T0eU88qMm',
-              code: 'YV3RCRIN24',
-              amount: 1610,
-              currency: 'BRL',
-              closed: false,
-              items: [
-                {
-                  id: 'oi_6rXqKEzuZYcRo2zL',
-                  description: 'Product 1',
-                  amount: 780,
-                  quantity: 2,
-                  status: 'active',
-                },
-              ],
-              customer: {
-                id: '1234',
-                name: 'John Doe',
+            id: 'or_56GXnk6T0eU88qMm',
+            code: 'YV3RCRIN24',
+            amount: 1610,
+            currency: 'BRL',
+            closed: false,
+            items: [
+              {
+                id: 'oi_6rXqKEzuZYcRo2zL',
+                description: 'Product 1',
+                amount: 780,
+                quantity: 2,
+                status: 'active',
               },
-              shipping: {
-                amount: 50,
-                recipient_name: 'John Doe',
-                recipient_phone: '5511990283745',
-                address: {
-                  country: 'BR',
-                  state: 'SP',
-                  city: 'Sorocaba',
-                  zip_code: '99876222',
-                  line_1: `10, Rua qualquer da cidade, Bairro`,
-                  line_2: 'Perto daquela parada lá',
-                },
-              },
-              status: 'pending',
-              location: {
-                latitude: '-22.970722',
-                longitude: '43.182365',
-              },
-              charges: [
-                {
-                  id: 'ch_K2rJ5nlHwTE4qRDP',
-                  code: 'YV3RCRIN24',
-                  gateway_id: '3b4bb2d9-19b3-4638-a974-0bb914fff472',
-                  amount: 1610,
-                  status: 'pending',
-                  currency: 'BRL',
-                  payment_method: 'Pix',
-                  created_at: '2019-10-16T17:36:30Z',
-                  updated_at: '2019-10-16T17:36:31Z',
-                  customer: {
-                    id: '1234',
-                    name: 'John Doe',
-                  },
-                  last_transaction: {
-                    id: 'tran_bZ0N3DjjUzTW68eq',
-                    transaction_type: 'Pix',
-                    gateway_id: '044581ea-67e8-4772-bd56-f10ade5499de',
-                    amount: 1610,
-                    status: 'waiting_payment',
-                    success: true,
-                    qr_code:
-                      '00020101021226480019BR.COM.STONE.QRCODE0108A37F8712020912345678927820 014BR.GOV.BCB.PIX2560sandbox-qrcode.stone.com.br/api/v2/qr/sGY7FyVExavqkzFvkQu MXA28580010BR.COM.ELO0104516002151234567890000000308933BB1100401P520400 00530398654041.005802BR5911STONE TESTE6009SAO PAULO62600522sGY7FyVExavqkzFvkQuMXA50300017BR.GOV.BCB.BRCODE01051.0.0 80500010BR.COM.ELO01100915132023020200030201040613202363043BA1',
-                    qr_code_url: 'https://api.pagar.me/core/v1/transactions/tran_bZ0N3DjjUzTW68eq/qrcode.png',
-                    expires_at: '2020-09-20T00:00:00Z',
-                    created_at: '2019-10-16T17:36:30Z',
-                    updated_at: '2019-10-16T17:36:30Z',
-                    gateway_response: {},
-                    antifraud_response: {},
-                    metadata: {},
-                  },
-                },
-              ],
-              checkouts: [],
+            ],
+            customer: {
+              id: '1234',
+              name: 'John Doe',
             },
+            shipping: {
+              amount: 50,
+              recipient_name: 'John Doe',
+              recipient_phone: '5511990283745',
+              address: {
+                country: 'BR',
+                state: 'SP',
+                city: 'Sorocaba',
+                zip_code: '99876222',
+                line_1: `10, Rua qualquer da cidade, Bairro`,
+                line_2: 'Perto daquela parada lá',
+              },
+            },
+            status: 'pending',
+            location: {
+              latitude: '-22.970722',
+              longitude: '43.182365',
+            },
+            charges: [
+              {
+                id: 'ch_K2rJ5nlHwTE4qRDP',
+                code: 'YV3RCRIN24',
+                gateway_id: '3b4bb2d9-19b3-4638-a974-0bb914fff472',
+                amount: 1610,
+                status: 'pending',
+                currency: 'BRL',
+                payment_method: 'Pix',
+                created_at: '2019-10-16T17:36:30Z',
+                updated_at: '2019-10-16T17:36:31Z',
+                customer: {
+                  id: '1234',
+                  name: 'John Doe',
+                },
+                last_transaction: {
+                  id: 'tran_bZ0N3DjjUzTW68eq',
+                  transaction_type: 'Pix',
+                  gateway_id: '044581ea-67e8-4772-bd56-f10ade5499de',
+                  amount: 1610,
+                  status: 'waiting_payment',
+                  success: true,
+                  qr_code:
+                    '00020101021226480019BR.COM.STONE.QRCODE0108A37F8712020912345678927820 014BR.GOV.BCB.PIX2560sandbox-qrcode.stone.com.br/api/v2/qr/sGY7FyVExavqkzFvkQu MXA28580010BR.COM.ELO0104516002151234567890000000308933BB1100401P520400 00530398654041.005802BR5911STONE TESTE6009SAO PAULO62600522sGY7FyVExavqkzFvkQuMXA50300017BR.GOV.BCB.BRCODE01051.0.0 80500010BR.COM.ELO01100915132023020200030201040613202363043BA1',
+                  qr_code_url: 'https://api.pagar.me/core/v1/transactions/tran_bZ0N3DjjUzTW68eq/qrcode.png',
+                  expires_at: '2020-09-20T00:00:00Z',
+                  created_at: '2019-10-16T17:36:30Z',
+                  updated_at: '2019-10-16T17:36:30Z',
+                  gateway_response: {},
+                  antifraud_response: {},
+                  metadata: {},
+                },
+              },
+            ],
+            checkouts: [],
           },
-        )
+        })
 
         const payment = new Payment()
         await payment.createPIX(cart, 'token')
@@ -727,49 +725,48 @@ describe('PagarMe/Customer plugin', () => {
         request.post.mockResolvedValueOnce({
           status: 200,
           data: {
-              id: 'or_56GXnk6T0eU88qMm',
-              status: 'pending',
-              charges: [
-                {
-                  id: 'ch_p4lnAGyU0GT1E9MZ',
-                  code: 'GP8KUL0B2D',
-                  status: 'pending',
-                  payment_method: 'credit_card',
+            id: 'or_56GXnk6T0eU88qMm',
+            status: 'pending',
+            charges: [
+              {
+                id: 'ch_p4lnAGyU0GT1E9MZ',
+                code: 'GP8KUL0B2D',
+                status: 'pending',
+                payment_method: 'credit_card',
+                funding_source: 'prepaid',
+                last_transaction: {
+                  operation_key: '830608357',
+                  id: 'tran_ywqNVaxiorcpde8W',
+                  transaction_type: 'credit_card',
+                  gateway_id: 'e98d2459-7b0e-43c1-b5e6-adea2c751427',
+                  amount: 2990,
+                  status: 'authorized_pending_capture',
+                  success: true,
+                  installments: 1,
                   funding_source: 'prepaid',
-                  last_transaction: {
-                    operation_key: '830608357',
-                    id: 'tran_ywqNVaxiorcpde8W',
-                    transaction_type: 'credit_card',
-                    gateway_id: 'e98d2459-7b0e-43c1-b5e6-adea2c751427',
-                    amount: 2990,
-                    status: 'authorized_pending_capture',
-                    success: true,
-                    installments: 1,
-                    funding_source: 'prepaid',
-                    statement_descriptor: 'Alcateia Ltds',
-                    acquirer_name: 'simulator',
-                    acquirer_tid: '806863466',
-                    acquirer_nsu: '66184',
-                    acquirer_auth_code: '890',
-                    acquirer_message: 'Transação autorizada com sucesso',
-                    acquirer_return_code: '00',
-                    operation_type: 'auth_only',
-                    payment_type: 'PAN',
-                    created_at: '2023-03-03T19:49:15Z',
-                    updated_at: '2023-03-03T19:49:15Z',
-                    gateway_response: {
-                      code: '200',
-                      errors: [],
-                    },
-                    antifraud_response: {},
-                    metadata: {},
+                  statement_descriptor: 'Alcateia Ltds',
+                  acquirer_name: 'simulator',
+                  acquirer_tid: '806863466',
+                  acquirer_nsu: '66184',
+                  acquirer_auth_code: '890',
+                  acquirer_message: 'Transação autorizada com sucesso',
+                  acquirer_return_code: '00',
+                  operation_type: 'auth_only',
+                  payment_type: 'PAN',
+                  created_at: '2023-03-03T19:49:15Z',
+                  updated_at: '2023-03-03T19:49:15Z',
+                  gateway_response: {
+                    code: '200',
+                    errors: [],
                   },
+                  antifraud_response: {},
+                  metadata: {},
                 },
-              ],
-              checkouts: [],
-            },
+              },
+            ],
+            checkouts: [],
           },
-        )
+        })
 
         const payment = new Payment()
         await payment.createCreditCard(cart, 'token')
@@ -862,83 +859,82 @@ describe('PagarMe/Customer plugin', () => {
         request.post.mockResolvedValueOnce({
           status: 200,
           data: {
-              id: 'or_56GXnk6T0eU88qMm',
-              code: 'YV3RCRIN24',
-              amount: 1610,
-              currency: 'BRL',
-              closed: false,
-              items: [
-                {
-                  id: 'oi_6rXqKEzuZYcRo2zL',
-                  description: 'Product 1',
-                  amount: 780,
-                  quantity: 2,
-                  status: 'active',
-                },
-              ],
-              customer: {
-                id: '1234',
-                name: 'John Doe',
+            id: 'or_56GXnk6T0eU88qMm',
+            code: 'YV3RCRIN24',
+            amount: 1610,
+            currency: 'BRL',
+            closed: false,
+            items: [
+              {
+                id: 'oi_6rXqKEzuZYcRo2zL',
+                description: 'Product 1',
+                amount: 780,
+                quantity: 2,
+                status: 'active',
               },
-              shipping: {
-                amount: 50,
-                recipient_name: 'John Doe',
-                recipient_phone: '5511990283745',
-                address: {
-                  country: 'BR',
-                  state: 'SP',
-                  city: 'Sorocaba',
-                  zip_code: '99876222',
-                  line_1: `10, Rua qualquer da cidade, Bairro`,
-                  line_2: 'Perto daquela parada lá',
-                },
-              },
-              status: 'pending',
-              location: {
-                latitude: '-22.970722',
-                longitude: '43.182365',
-              },
-              charges: [
-                {
-                  id: 'ch_p4lnAGyU0GT1E9MZ',
-                  code: 'GP8KUL0B2D',
-                  status: 'pending',
-                  payment_method: 'credit_card',
-                  funding_source: 'prepaid',
-                  last_transaction: {
-                    operation_key: '830608357',
-                    id: 'tran_ywqNVaxiorcpde8W',
-                    transaction_type: 'credit_card',
-                    gateway_id: 'e98d2459-7b0e-43c1-b5e6-adea2c751427',
-                    amount: 2990,
-                    status: 'authorized_pending_capture',
-                    success: true,
-                    installments: 1,
-                    funding_source: 'prepaid',
-                    statement_descriptor: 'Alcateia Ltds',
-                    acquirer_name: 'simulator',
-                    acquirer_tid: '806863466',
-                    acquirer_nsu: '66184',
-                    acquirer_auth_code: '890',
-                    acquirer_message: 'Transação autorizada com sucesso',
-                    acquirer_return_code: '00',
-                    operation_type: 'auth_only',
-                    payment_type: 'PAN',
-                    created_at: '2023-03-03T19:49:15Z',
-                    updated_at: '2023-03-03T19:49:15Z',
-                    gateway_response: {
-                      code: '200',
-                      errors: [],
-                    },
-                    antifraud_response: {},
-                    metadata: {},
-                  },
-                },
-              ],
-              checkouts: [],
+            ],
+            customer: {
+              id: '1234',
+              name: 'John Doe',
             },
+            shipping: {
+              amount: 50,
+              recipient_name: 'John Doe',
+              recipient_phone: '5511990283745',
+              address: {
+                country: 'BR',
+                state: 'SP',
+                city: 'Sorocaba',
+                zip_code: '99876222',
+                line_1: `10, Rua qualquer da cidade, Bairro`,
+                line_2: 'Perto daquela parada lá',
+              },
+            },
+            status: 'pending',
+            location: {
+              latitude: '-22.970722',
+              longitude: '43.182365',
+            },
+            charges: [
+              {
+                id: 'ch_p4lnAGyU0GT1E9MZ',
+                code: 'GP8KUL0B2D',
+                status: 'pending',
+                payment_method: 'credit_card',
+                funding_source: 'prepaid',
+                last_transaction: {
+                  operation_key: '830608357',
+                  id: 'tran_ywqNVaxiorcpde8W',
+                  transaction_type: 'credit_card',
+                  gateway_id: 'e98d2459-7b0e-43c1-b5e6-adea2c751427',
+                  amount: 2990,
+                  status: 'authorized_pending_capture',
+                  success: true,
+                  installments: 1,
+                  funding_source: 'prepaid',
+                  statement_descriptor: 'Alcateia Ltds',
+                  acquirer_name: 'simulator',
+                  acquirer_tid: '806863466',
+                  acquirer_nsu: '66184',
+                  acquirer_auth_code: '890',
+                  acquirer_message: 'Transação autorizada com sucesso',
+                  acquirer_return_code: '00',
+                  operation_type: 'auth_only',
+                  payment_type: 'PAN',
+                  created_at: '2023-03-03T19:49:15Z',
+                  updated_at: '2023-03-03T19:49:15Z',
+                  gateway_response: {
+                    code: '200',
+                    errors: [],
+                  },
+                  antifraud_response: {},
+                  metadata: {},
+                },
+              },
+            ],
+            checkouts: [],
           },
-        )
+        })
 
         const payment = new Payment()
         await payment.createCreditCard(cart, 'token')
@@ -1340,11 +1336,10 @@ describe('PagarMe/Customer plugin', () => {
         request.delete.mockResolvedValueOnce({
           status: 200,
           data: {
-              id: 'ch_56GXnk6T0eU88qMm',
-              status: 'canceled',
-            },
+            id: 'ch_56GXnk6T0eU88qMm',
+            status: 'canceled',
           },
-        )
+        })
 
         const payment = new Payment()
         await payment.delete(cart, 'token')
@@ -1399,11 +1394,10 @@ describe('PagarMe/Customer plugin', () => {
         request.delete.mockResolvedValueOnce({
           status: 200,
           data: {
-              id: 'ch_56GXnk6T0eU88qMm',
-              status: 'canceled',
-            },
+            id: 'ch_56GXnk6T0eU88qMm',
+            status: 'canceled',
           },
-        )
+        })
 
         const payment = new Payment()
         await payment.delete(cart, 'token')

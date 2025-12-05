@@ -51,16 +51,15 @@ describe('PagarMe/Recipient plugin', () => {
         request.post.mockResolvedValueOnce({
           status: 200,
           data: {
-              id: 23717165,
-              name: 'Alcateia Ltds',
+            id: 23717165,
+            name: 'Alcateia Ltds',
+            status: '',
+            default_bank_account: {
+              id: 345345,
               status: '',
-              default_bank_account: {
-                id: 345345,
-                status: '',
-              },
             },
           },
-        )
+        })
 
         const recipient = new Recipient()
         await recipient.create(licensee, 'token')
@@ -97,16 +96,15 @@ describe('PagarMe/Recipient plugin', () => {
         request.post.mockResolvedValueOnce({
           status: 200,
           data: {
-              id: 23717165,
-              name: 'Alcateia Ltds',
+            id: 23717165,
+            name: 'Alcateia Ltds',
+            status: '',
+            default_bank_account: {
+              id: 345345,
               status: '',
-              default_bank_account: {
-                id: 345345,
-                status: '',
-              },
             },
           },
-        )
+        })
 
         const recipient = new Recipient()
         await recipient.create(licensee, 'token')
@@ -185,15 +183,14 @@ describe('PagarMe/Recipient plugin', () => {
         request.post.mockResolvedValueOnce({
           status: 400,
           data: {
-              message: 'The request is invalid.',
-              errors: {
-                'recipient.automaticanticipationsettings.type': [
-                  "The type field is invalid. Possible values are 'full','1025'",
-                ],
-              },
+            message: 'The request is invalid.',
+            errors: {
+              'recipient.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
             },
           },
-        )
+        })
 
         const recipient = new Recipient()
         await recipient.create(licensee, 'token')
@@ -263,10 +260,9 @@ describe('PagarMe/Recipient plugin', () => {
         request.put.mockResolvedValueOnce({
           status: 200,
           data: {
-              id: 23717165,
-            },
+            id: 23717165,
           },
-        )
+        })
 
         const recipient = new Recipient()
         licensee.recipient_id = '98765'
@@ -315,15 +311,14 @@ describe('PagarMe/Recipient plugin', () => {
         request.put.mockResolvedValueOnce({
           status: 400,
           data: {
-              message: 'The request is invalid.',
-              errors: {
-                'recipient.automaticanticipationsettings.type': [
-                  "The type field is invalid. Possible values are 'full','1025'",
-                ],
-              },
+            message: 'The request is invalid.',
+            errors: {
+              'recipient.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
             },
           },
-        )
+        })
 
         const recipient = new Recipient()
         licensee.recipient_id = '98765'

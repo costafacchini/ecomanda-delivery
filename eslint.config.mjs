@@ -67,6 +67,7 @@ export default [
 
     rules: {
       'jest/no-standalone-expect': 'off',
+      'no-unused-vars': 'off',
     },
   },
 ]

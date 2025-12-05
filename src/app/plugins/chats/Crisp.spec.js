@@ -633,6 +633,20 @@ describe('Crisp plugin', () => {
 
         const crisp = new Crisp(licensee)
         await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
+
+        expect(request.patch).toHaveBeenCalledWith(
+          expect.stringContaining('/meta'),
+          expect.objectContaining({
+            body: expectedBodyPatch,
+          }),
+        )
+        expect(request.post).toHaveBeenLastCalledWith(
+          expect.stringContaining('/message'),
+          expect.objectContaining({
+            body: expectedBody,
+          }),
+        )
+
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
       })
@@ -736,6 +750,13 @@ describe('Crisp plugin', () => {
             }),
           )
 
+          const expectedBodyPatch = {
+            nickname: 'John Doe - 5511990283745 - WhatsApp',
+            email: 'john@doe.com',
+            phone: '5511990283745',
+            segments: ['segment1', 'segment 2'],
+          }
+
           request.post.mockResolvedValueOnce({
             status: 201,
             data: {
@@ -746,6 +767,13 @@ describe('Crisp plugin', () => {
               },
             },
           })
+
+          const expectedBody = {
+            from: 'user',
+            origin: 'chat',
+            type: 'text',
+            content: 'Message to send',
+          }
 
           request.patch.mockResolvedValueOnce({
             status: 200,
@@ -771,6 +799,20 @@ describe('Crisp plugin', () => {
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
+
+          expect(request.patch).toHaveBeenCalledWith(
+            expect.stringContaining('/meta'),
+            expect.objectContaining({
+              body: expectedBodyPatch,
+            }),
+          )
+          expect(request.post).toHaveBeenLastCalledWith(
+            expect.stringContaining('/message'),
+            expect.objectContaining({
+              body: expectedBody,
+            }),
+          )
+
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
         })
@@ -848,6 +890,20 @@ describe('Crisp plugin', () => {
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
+
+          expect(request.patch).toHaveBeenCalledWith(
+            expect.stringContaining('/meta'),
+            expect.objectContaining({
+              body: expectedBodyPatch,
+            }),
+          )
+          expect(request.post).toHaveBeenLastCalledWith(
+            expect.stringContaining('/message'),
+            expect.objectContaining({
+              body: expectedBody,
+            }),
+          )
+
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
         })
@@ -911,6 +967,14 @@ describe('Crisp plugin', () => {
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
+
+          expect(request.patch).toHaveBeenCalledWith(
+            expect.stringContaining('/meta'),
+            expect.objectContaining({
+              body: expectedBodyPatch,
+            }),
+          )
+
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
         })
@@ -1167,6 +1231,13 @@ describe('Crisp plugin', () => {
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
+
+          expect(request.post).toHaveBeenLastCalledWith(
+            expect.stringContaining('/message'),
+            expect.objectContaining({
+              body: expectedBody,
+            }),
+          )
         })
       })
 
@@ -1242,6 +1313,13 @@ describe('Crisp plugin', () => {
 
           const crisp = new Crisp(licensee)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
+
+          expect(request.post).toHaveBeenLastCalledWith(
+            expect.stringContaining('/message'),
+            expect.objectContaining({
+              body: expectedBody,
+            }),
+          )
         })
       })
     })

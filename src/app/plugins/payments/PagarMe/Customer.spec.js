@@ -72,15 +72,14 @@ describe('PagarMe/Customer plugin', () => {
         request.post.mockResolvedValueOnce({
           status: 200,
           data: {
-              id: 23717165,
-              name: 'John Doe',
-              status: '',
-              address: {
-                id: 34224,
-              },
+            id: 23717165,
+            name: 'John Doe',
+            status: '',
+            address: {
+              id: 34224,
             },
           },
-        )
+        })
 
         const customer = new Customer()
         await customer.create(contact, 'token')
@@ -119,15 +118,14 @@ describe('PagarMe/Customer plugin', () => {
         request.post.mockResolvedValueOnce({
           status: 200,
           data: {
-              id: 23717165,
-              name: 'John Doe',
-              status: '',
-              address: {
-                id: 34224,
-              },
+            id: 23717165,
+            name: 'John Doe',
+            status: '',
+            address: {
+              id: 34224,
             },
           },
-        )
+        })
 
         const customer = new Customer()
         await customer.create(contact, 'token')
@@ -182,15 +180,14 @@ describe('PagarMe/Customer plugin', () => {
         request.post.mockResolvedValueOnce({
           status: 200,
           data: {
-              id: 23717165,
-              name: 'John Doe',
-              status: '',
-              address: {
-                id: 34224,
-              },
+            id: 23717165,
+            name: 'John Doe',
+            status: '',
+            address: {
+              id: 34224,
             },
           },
-        )
+        })
 
         const customer = new Customer()
         await customer.create(contact, 'token')
@@ -375,10 +372,9 @@ describe('PagarMe/Customer plugin', () => {
         request.put.mockResolvedValueOnce({
           status: 200,
           data: {
-              id: 23717165,
-            },
+            id: 23717165,
           },
-        )
+        })
 
         const customer = new Customer()
         contact.customer_id = '98765'
@@ -460,15 +456,14 @@ describe('PagarMe/Customer plugin', () => {
         request.put.mockResolvedValueOnce({
           status: 400,
           data: {
-              message: 'The request is invalid.',
-              errors: {
-                'customer.automaticanticipationsettings.type': [
-                  "The type field is invalid. Possible values are 'full','1025'",
-                ],
-              },
+            message: 'The request is invalid.',
+            errors: {
+              'customer.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
             },
           },
-        )
+        })
 
         const customer = new Customer()
         contact.customer_id = '98765'
