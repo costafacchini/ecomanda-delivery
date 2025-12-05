@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import './instrument.mjs'
 import('./src/app/models/index.js')
 
 import { redisConnection } from './src/config/redis.js'

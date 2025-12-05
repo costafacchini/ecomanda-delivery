@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import './instrument.mjs'
 import { server } from './src/config/http.js'
 import { logger } from './src/setup/logger.js'
 import('./src/app/websockets/index.js')
