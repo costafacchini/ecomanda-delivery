@@ -2,7 +2,6 @@ import { Dialog } from './Dialog.js'
 import Trigger from '@models/Trigger.js'
 import Template from '@models/Template.js'
 import Product from '@models/Product.js'
-import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../.jest/utils'
 import { S3 } from '../storage/S3.js'
 import { licensee as licenseeFactory } from '@factories/licensee'
@@ -23,8 +22,10 @@ import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
 import { MessageRepositoryDatabase } from '@repositories/message'
+import request from '../../services/request.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
+jest.mock('../../services/request')
 
 describe('Dialog plugin', () => {
   let licensee
@@ -38,8 +39,6 @@ describe('Dialog plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
-
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build({ whatsappToken: 'whats-token' }))
   })
@@ -193,18 +192,13 @@ describe('Dialog plugin', () => {
           ],
         }
 
-        fetchMock.getOnce(
-          (url) => {
-            return url === 'https://waba.360dialog.io/v1/media/image-media-id'
+        request.download.mockResolvedValueOnce({
+          status: 200,
+          headers: {
+            get: (name) => (name === 'content-type' ? 'image/jpeg' : null),
           },
-          {
-            status: 200,
-            headers: {
-              'content-type': 'image/jpeg',
-            },
-            body: Buffer.from('test'),
-          },
-        )
+          data: Buffer.from('test'),
+        })
 
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
@@ -264,18 +258,13 @@ describe('Dialog plugin', () => {
           ],
         }
 
-        fetchMock.getOnce(
-          (url) => {
-            return url === 'https://waba.360dialog.io/v1/media/image-media-id'
+        request.download.mockResolvedValueOnce({
+          status: 200,
+          headers: {
+            get: (name) => (name === 'content-type' ? 'video/mov' : null),
           },
-          {
-            status: 200,
-            headers: {
-              'content-type': 'video/mov',
-            },
-            body: Buffer.from('test'),
-          },
-        )
+          data: Buffer.from('test'),
+        })
 
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
@@ -335,18 +324,13 @@ describe('Dialog plugin', () => {
           ],
         }
 
-        fetchMock.getOnce(
-          (url) => {
-            return url === 'https://waba.360dialog.io/v1/media/image-media-id'
+        request.download.mockResolvedValueOnce({
+          status: 200,
+          headers: {
+            get: (name) => (name === 'content-type' ? 'voice/ogg' : null),
           },
-          {
-            status: 200,
-            headers: {
-              'content-type': 'voice/ogg',
-            },
-            body: Buffer.from('test'),
-          },
-        )
+          data: Buffer.from('test'),
+        })
 
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
@@ -406,18 +390,13 @@ describe('Dialog plugin', () => {
           ],
         }
 
-        fetchMock.getOnce(
-          (url) => {
-            return url === 'https://waba.360dialog.io/v1/media/image-media-id'
+        request.download.mockResolvedValueOnce({
+          status: 200,
+          headers: {
+            get: (name) => (name === 'content-type' ? 'audio/mp3' : null),
           },
-          {
-            status: 200,
-            headers: {
-              'content-type': 'audio/mp3',
-            },
-            body: Buffer.from('test'),
-          },
-        )
+          data: Buffer.from('test'),
+        })
 
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
@@ -477,18 +456,13 @@ describe('Dialog plugin', () => {
           ],
         }
 
-        fetchMock.getOnce(
-          (url) => {
-            return url === 'https://waba.360dialog.io/v1/media/image-media-id'
+        request.download.mockResolvedValueOnce({
+          status: 200,
+          headers: {
+            get: (name) => (name === 'content-type' ? 'application/pdf' : null),
           },
-          {
-            status: 200,
-            headers: {
-              'content-type': 'application/pdf',
-            },
-            body: Buffer.from('test'),
-          },
-        )
+          data: Buffer.from('test'),
+        })
 
         const dialog = new Dialog(licensee)
         const messages = await dialog.responseToMessages(responseBody)
@@ -1490,32 +1464,18 @@ describe('Dialog plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://waba.360dialog.io/v1/messages/' &&
-              body === JSON.stringify(expectedBodySendMessage) &&
-              headers['D360-API-KEY'] === 'token-dialog'
-            )
+        request.post.mockResolvedValueOnce({
+          status: 201,
+          data: {
+            messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+            meta: { api_status: 'stable', version: '2.35.4' },
           },
-          {
-            status: 201,
-            body: {
-              messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
-              meta: { api_status: 'stable', version: '2.35.4' },
-            },
-          },
-        )
+        })
 
         expect(message.sended).toEqual(false)
 
         const dialog = new Dialog(licensee)
         await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
         expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
@@ -1550,9 +1510,9 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+          request.post.mockResolvedValueOnce({
             status: 200,
-            body: {
+            data: {
               contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
               meta: { api_status: 'stable', version: '2.35.4' },
             },
@@ -1567,32 +1527,18 @@ describe('Dialog plugin', () => {
             },
           }
 
-          fetchMock.postOnce(
-            (url, { body, headers }) => {
-              return (
-                url === 'https://waba.360dialog.io/v1/messages/' &&
-                body === JSON.stringify(expectedBodySendMessage) &&
-                headers['D360-API-KEY'] === 'token-dialog'
-              )
+          request.post.mockResolvedValueOnce({
+            status: 201,
+            data: {
+              messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+              meta: { api_status: 'stable', version: '2.35.4' },
             },
-            {
-              status: 201,
-              body: {
-                messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
-                meta: { api_status: 'stable', version: '2.35.4' },
-              },
-            },
-          )
+          })
 
           expect(message.sended).toEqual(false)
 
           const dialog = new Dialog(licensee)
           await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(2)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
@@ -1628,9 +1574,9 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+          request.post.mockResolvedValueOnce({
             status: 200,
-            body: {
+            data: {
               contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
               meta: { api_status: 'stable', version: '2.35.4' },
             },
@@ -1645,32 +1591,18 @@ describe('Dialog plugin', () => {
             },
           }
 
-          fetchMock.postOnce(
-            (url, { body, headers }) => {
-              return (
-                url === 'https://waba.360dialog.io/v1/messages/' &&
-                body === JSON.stringify(expectedBodySendMessage) &&
-                headers['D360-API-KEY'] === 'token-dialog'
-              )
+          request.post.mockResolvedValueOnce({
+            status: 201,
+            data: {
+              messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+              meta: { api_status: 'stable', version: '2.35.4' },
             },
-            {
-              status: 201,
-              body: {
-                messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
-                meta: { api_status: 'stable', version: '2.35.4' },
-              },
-            },
-          )
+          })
 
           expect(message.sended).toEqual(false)
 
           const dialog = new Dialog(licensee)
           await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(2)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
@@ -1707,9 +1639,9 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+          request.post.mockResolvedValueOnce({
             status: 200,
-            body: {
+            data: {
               contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
               meta: { api_status: 'stable', version: '2.35.4' },
             },
@@ -1724,32 +1656,18 @@ describe('Dialog plugin', () => {
             },
           }
 
-          fetchMock.postOnce(
-            (url, { body, headers }) => {
-              return (
-                url === 'https://waba.360dialog.io/v1/messages/' &&
-                body === JSON.stringify(expectedBodySendMessage) &&
-                headers['D360-API-KEY'] === 'token-dialog'
-              )
+          request.post.mockResolvedValueOnce({
+            status: 201,
+            data: {
+              messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+              meta: { api_status: 'stable', version: '2.35.4' },
             },
-            {
-              status: 201,
-              body: {
-                messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
-                meta: { api_status: 'stable', version: '2.35.4' },
-              },
-            },
-          )
+          })
 
           expect(message.sended).toEqual(false)
 
           const dialog = new Dialog(licensee)
           await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(2)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
@@ -1785,9 +1703,9 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+          request.post.mockResolvedValueOnce({
             status: 200,
-            body: {
+            data: {
               contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
               meta: { api_status: 'stable', version: '2.35.4' },
             },
@@ -1803,32 +1721,18 @@ describe('Dialog plugin', () => {
             },
           }
 
-          fetchMock.postOnce(
-            (url, { body, headers }) => {
-              return (
-                url === 'https://waba.360dialog.io/v1/messages/' &&
-                body === JSON.stringify(expectedBodySendMessage) &&
-                headers['D360-API-KEY'] === 'token-dialog'
-              )
+          request.post.mockResolvedValueOnce({
+            status: 201,
+            data: {
+              messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+              meta: { api_status: 'stable', version: '2.35.4' },
             },
-            {
-              status: 201,
-              body: {
-                messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
-                meta: { api_status: 'stable', version: '2.35.4' },
-              },
-            },
-          )
+          })
 
           expect(message.sended).toEqual(false)
 
           const dialog = new Dialog(licensee)
           await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(2)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
@@ -1907,9 +1811,9 @@ describe('Dialog plugin', () => {
               }),
             )
 
-            fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+            request.post.mockResolvedValueOnce({
               status: 200,
-              body: {
+              data: {
                 contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
                 meta: { api_status: 'stable', version: '2.35.4' },
               },
@@ -1961,32 +1865,18 @@ describe('Dialog plugin', () => {
               },
             }
 
-            fetchMock.postOnce(
-              (url, { body, headers }) => {
-                return (
-                  url === 'https://waba.360dialog.io/v1/messages/' &&
-                  body === JSON.stringify(expectedBodySendMessage) &&
-                  headers['D360-API-KEY'] === 'token-dialog'
-                )
+            request.post.mockResolvedValueOnce({
+              status: 201,
+              data: {
+                messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
               },
-              {
-                status: 201,
-                body: {
-                  messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
-                  meta: { api_status: 'stable', version: '2.35.4' },
-                },
-              },
-            )
+            })
 
             expect(message.sended).toEqual(false)
 
             const dialog = new Dialog(licensee)
             await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-            await fetchMock.flush(true)
-
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(2)
-
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
@@ -2042,9 +1932,9 @@ describe('Dialog plugin', () => {
               }),
             )
 
-            fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+            request.post.mockResolvedValueOnce({
               status: 200,
-              body: {
+              data: {
                 contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
                 meta: { api_status: 'stable', version: '2.35.4' },
               },
@@ -2074,32 +1964,18 @@ describe('Dialog plugin', () => {
               },
             }
 
-            fetchMock.postOnce(
-              (url, { body, headers }) => {
-                return (
-                  url === 'https://waba.360dialog.io/v1/messages/' &&
-                  body === JSON.stringify(expectedBodySendMessage) &&
-                  headers['D360-API-KEY'] === 'token-dialog'
-                )
+            request.post.mockResolvedValueOnce({
+              status: 201,
+              data: {
+                messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
               },
-              {
-                status: 201,
-                body: {
-                  messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
-                  meta: { api_status: 'stable', version: '2.35.4' },
-                },
-              },
-            )
+            })
 
             expect(message.sended).toEqual(false)
 
             const dialog = new Dialog(licensee)
             await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-            await fetchMock.flush(true)
-
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(2)
-
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
@@ -2175,9 +2051,9 @@ describe('Dialog plugin', () => {
               }),
             )
 
-            fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+            request.post.mockResolvedValueOnce({
               status: 200,
-              body: {
+              data: {
                 contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
                 meta: { api_status: 'stable', version: '2.35.4' },
               },
@@ -2227,32 +2103,18 @@ describe('Dialog plugin', () => {
               },
             }
 
-            fetchMock.postOnce(
-              (url, { body, headers }) => {
-                return (
-                  url === 'https://waba.360dialog.io/v1/messages/' &&
-                  body === JSON.stringify(expectedBodySendMessage) &&
-                  headers['D360-API-KEY'] === 'token-dialog'
-                )
+            request.post.mockResolvedValueOnce({
+              status: 201,
+              data: {
+                messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
               },
-              {
-                status: 201,
-                body: {
-                  messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
-                  meta: { api_status: 'stable', version: '2.35.4' },
-                },
-              },
-            )
+            })
 
             expect(message.sended).toEqual(false)
 
             const dialog = new Dialog(licensee)
             await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-            await fetchMock.flush(true)
-
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(2)
-
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
@@ -2333,9 +2195,9 @@ describe('Dialog plugin', () => {
               }),
             )
 
-            fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+            request.post.mockResolvedValueOnce({
               status: 200,
-              body: {
+              data: {
                 contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
                 meta: { api_status: 'stable', version: '2.35.4' },
               },
@@ -2390,32 +2252,18 @@ describe('Dialog plugin', () => {
               },
             }
 
-            fetchMock.postOnce(
-              (url, { body, headers }) => {
-                return (
-                  url === 'https://waba.360dialog.io/v1/messages/' &&
-                  body === JSON.stringify(expectedBodySendMessage) &&
-                  headers['D360-API-KEY'] === 'token-dialog'
-                )
+            request.post.mockResolvedValueOnce({
+              status: 201,
+              data: {
+                messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
               },
-              {
-                status: 201,
-                body: {
-                  messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
-                  meta: { api_status: 'stable', version: '2.35.4' },
-                },
-              },
-            )
+            })
 
             expect(message.sended).toEqual(false)
 
             const dialog = new Dialog(licensee)
             await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-            await fetchMock.flush(true)
-
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(2)
-
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
@@ -2454,9 +2302,9 @@ describe('Dialog plugin', () => {
               }),
             )
 
-            fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+            request.post.mockResolvedValueOnce({
               status: 200,
-              body: {
+              data: {
                 contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
                 meta: { api_status: 'stable', version: '2.35.4' },
               },
@@ -2471,30 +2319,18 @@ describe('Dialog plugin', () => {
               },
             }
 
-            fetchMock.postOnce(
-              (url, { body }) => {
-                return (
-                  url === 'https://waba.360dialog.io/v1/messages/' && body === JSON.stringify(expectedBodySendMessage)
-                )
+            request.post.mockResolvedValueOnce({
+              status: 201,
+              data: {
+                messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
               },
-              {
-                status: 201,
-                body: {
-                  messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
-                  meta: { api_status: 'stable', version: '2.35.4' },
-                },
-              },
-            )
+            })
 
             expect(message.sended).toEqual(false)
 
             const dialog = new Dialog(licensee)
             await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-            await fetchMock.flush(true)
-
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(2)
-
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
@@ -2534,20 +2370,13 @@ describe('Dialog plugin', () => {
               force_check: true,
             }
 
-            fetchMock.postOnce(
-              (url, { body }) => {
-                return (
-                  url === 'https://waba.360dialog.io/v1/contacts/' && body === JSON.stringify(expectedBodyGetContact)
-                )
+            request.post.mockResolvedValueOnce({
+              status: 200,
+              data: {
+                contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
               },
-              {
-                status: 200,
-                body: {
-                  contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
-                  meta: { api_status: 'stable', version: '2.35.4' },
-                },
-              },
-            )
+            })
 
             const expectedBodySendMessage = {
               recipient_type: 'individual',
@@ -2558,30 +2387,18 @@ describe('Dialog plugin', () => {
               },
             }
 
-            fetchMock.postOnce(
-              (url, { body }) => {
-                return (
-                  url === 'https://waba.360dialog.io/v1/messages/' && body === JSON.stringify(expectedBodySendMessage)
-                )
+            request.post.mockResolvedValueOnce({
+              status: 201,
+              data: {
+                messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+                meta: { api_status: 'stable', version: '2.35.4' },
               },
-              {
-                status: 201,
-                body: {
-                  messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
-                  meta: { api_status: 'stable', version: '2.35.4' },
-                },
-              },
-            )
+            })
 
             expect(message.sended).toEqual(false)
 
             const dialog = new Dialog(licensee)
             await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-            await fetchMock.flush(true)
-
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(2)
-
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
@@ -2622,18 +2439,13 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          fetchMock.postOnce(
-            (url) => {
-              return url === 'https://waba.360dialog.io/v1/contacts/'
+          request.post.mockResolvedValueOnce({
+            status: 200,
+            data: {
+              contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
+              meta: { api_status: 'stable', version: '2.35.4' },
             },
-            {
-              status: 200,
-              body: {
-                contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
-                meta: { api_status: 'stable', version: '2.35.4' },
-              },
-            },
-          )
+          })
 
           const expectedBodySendMessage = {
             recipient_type: 'individual',
@@ -2644,30 +2456,18 @@ describe('Dialog plugin', () => {
             },
           }
 
-          fetchMock.postOnce(
-            (url, { body }) => {
-              return (
-                url === 'https://waba.360dialog.io/v1/messages/' && body === JSON.stringify(expectedBodySendMessage)
-              )
+          request.post.mockResolvedValueOnce({
+            status: 201,
+            data: {
+              messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+              meta: { api_status: 'stable', version: '2.35.4' },
             },
-            {
-              status: 201,
-              body: {
-                messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
-                meta: { api_status: 'stable', version: '2.35.4' },
-              },
-            },
-          )
+          })
 
           expect(message.sended).toEqual(false)
 
           const dialog = new Dialog(licensee)
           await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(2)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
@@ -2717,9 +2517,9 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+          request.post.mockResolvedValueOnce({
             status: 200,
-            body: {
+            data: {
               contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
               meta: { api_status: 'stable', version: '2.35.4' },
             },
@@ -2774,32 +2574,18 @@ describe('Dialog plugin', () => {
             },
           }
 
-          fetchMock.postOnce(
-            (url, { body, headers }) => {
-              return (
-                url === 'https://waba.360dialog.io/v1/messages/' &&
-                body === JSON.stringify(expectedBodySendMessage) &&
-                headers['D360-API-KEY'] === 'token-dialog'
-              )
+          request.post.mockResolvedValueOnce({
+            status: 201,
+            data: {
+              messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
+              meta: { api_status: 'stable', version: '2.35.4' },
             },
-            {
-              status: 201,
-              body: {
-                messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }],
-                meta: { api_status: 'stable', version: '2.35.4' },
-              },
-            },
-          )
+          })
 
           expect(message.sended).toEqual(false)
 
           const dialog = new Dialog(licensee)
           await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(2)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
@@ -2832,9 +2618,9 @@ describe('Dialog plugin', () => {
           }),
         )
 
-        fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+        request.post.mockResolvedValueOnce({
           status: 200,
-          body: {
+          data: {
             contacts: [{ input: '+5511990283745', status: 'invalid' }],
             meta: { api_status: 'stable', version: '2.35.4' },
           },
@@ -2844,11 +2630,6 @@ describe('Dialog plugin', () => {
 
         const dialog = new Dialog(licensee)
         await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           'A mensagem não foi enviada para a Dialog pois o contato não é válido {"contacts":[{"input":"+5511990283745","status":"invalid"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
         )
@@ -2877,9 +2658,9 @@ describe('Dialog plugin', () => {
           }),
         )
 
-        fetchMock.postOnce('https://waba.360dialog.io/v1/contacts/', {
+        request.post.mockResolvedValueOnce({
           status: 200,
-          body: {
+          data: {
             contacts: [{ input: '+5511990283745', status: 'valid', wa_id: '553165392832' }],
             meta: { api_status: 'stable', version: '2.35.4' },
           },
@@ -2894,32 +2675,18 @@ describe('Dialog plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://waba.360dialog.io/v1/messages/' &&
-              body === JSON.stringify(expectedBodySendMessage) &&
-              headers['D360-API-KEY'] === 'token-dialog'
-            )
+        request.post.mockResolvedValueOnce({
+          status: 400,
+          data: {
+            meta: { api_status: 'stable', version: '2.35.4' },
+            errors: [{ code: 1021, title: 'Bad user', details: 'cannot send messages to myself' }],
           },
-          {
-            status: 400,
-            body: {
-              meta: { api_status: 'stable', version: '2.35.4' },
-              errors: [{ code: 1021, title: 'Bad user', details: 'cannot send messages to myself' }],
-            },
-          },
-        )
+        })
 
         expect(message.sended).toEqual(false)
 
         const dialog = new Dialog(licensee)
         await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(2)
-
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(false)
         expect(messageUpdated.error).toEqual(
@@ -2939,119 +2706,99 @@ describe('Dialog plugin', () => {
         url: `${licensee.urlWhatsappWebhook}`,
       }
 
-      fetchMock.postOnce(
-        (url, { body, headers }) => {
-          return (
-            url === 'https://waba.360dialog.io/v1/configs/webhook' &&
-            body === JSON.stringify(expectedBody) &&
-            headers['D360-API-KEY'] === 'token-dialog'
-          )
+      request.post.mockResolvedValueOnce({
+        status: 200,
+        data: {
+          url: `${licensee.urlWhatsappWebhook}`,
         },
-        {
-          status: 200,
-          body: {
-            url: `${licensee.urlWhatsappWebhook}`,
-          },
-        },
-      )
+      })
 
       const dialog = new Dialog(licensee)
       const setted = await dialog.setWebhook('https://waba.360dialog.io/', 'token-dialog')
-      await fetchMock.flush(true)
-
-      expect(fetchMock.done()).toBe(true)
-      expect(fetchMock.calls()).toHaveLength(1)
       expect(setted).toEqual(true)
     })
   })
 
   describe('#searchTemplates', () => {
     it('returns the templates to licensee', async () => {
-      fetchMock.getOnce(
-        (url, { headers }) => {
-          return url === 'https://waba.360dialog.io/v1/configs/templates' && headers['D360-API-KEY'] === 'token-dialog'
+      request.get.mockResolvedValueOnce({
+        status: 201,
+        data: {
+          count: 25,
+          filters: {},
+          limit: 1000,
+          offset: 0,
+          sort: ['id'],
+          total: 25,
+          waba_templates: [
+            {
+              category: 'TICKET_UPDATE',
+              components: [
+                {
+                  format: 'IMAGE',
+                  type: 'HEADER',
+                },
+                {
+                  text: 'Tiket Anda untuk *{{1}}*\n*Waktu* - {{2}}\n*Tempat* - {{3}}\n*Kursi* - {{4}}',
+                  type: 'BODY',
+                },
+                {
+                  text: 'Pesan ini berasal dari bisnis yang tidak terverifikasi.',
+                  type: 'FOOTER',
+                },
+              ],
+              language: 'pt_BR',
+              name: 'sample_movie_ticket_confirmation',
+              namespace: '93aa6bf3_3bfc_4840_a76c_0f43073739e2',
+              rejected_reason: 'NONE',
+              status: 'approved',
+            },
+            {
+              category: 'ISSUE_RESOLUTION',
+              components: [
+                {
+                  format: 'DOCUMENT',
+                  type: 'HEADER',
+                },
+                {
+                  text: 'Ini merupakan konfirmasi penerbangan Anda untuk {{1}}-{{2}} di {{3}}.',
+                  type: 'BODY',
+                },
+                {
+                  text: 'This message is from an unverified business.',
+                  type: 'FOOTER',
+                },
+              ],
+              language: 'es',
+              name: 'sample_purchase_feedback',
+              namespace: '93aa6bf3_3bfc_4840_a76c_0f43073739e2',
+              rejected_reason: 'NONE',
+              status: 'approved',
+            },
+            {
+              category: 'TICKET_UPDATE',
+              components: [
+                {
+                  text: 'Ini merupakan konfirmasi penerbangan Anda untuk {{1}}-{{2}}.',
+                  type: 'BODY',
+                },
+                {
+                  text: 'This message is from an unverified business.',
+                  type: 'FOOTER',
+                },
+              ],
+              language: 'pt_BR',
+              name: 'sample_purchase_feedback_2',
+              namespace: '93aa6bf3_3bfc_4840_a76c_0f43073739e2',
+              rejected_reason: 'Not aproval',
+              status: 'rejected',
+            },
+          ],
         },
-        {
-          status: 201,
-          body: {
-            count: 25,
-            filters: {},
-            limit: 1000,
-            offset: 0,
-            sort: ['id'],
-            total: 25,
-            waba_templates: [
-              {
-                category: 'TICKET_UPDATE',
-                components: [
-                  {
-                    format: 'IMAGE',
-                    type: 'HEADER',
-                  },
-                  {
-                    text: 'Tiket Anda untuk *{{1}}*\n*Waktu* - {{2}}\n*Tempat* - {{3}}\n*Kursi* - {{4}}',
-                    type: 'BODY',
-                  },
-                  {
-                    text: 'Pesan ini berasal dari bisnis yang tidak terverifikasi.',
-                    type: 'FOOTER',
-                  },
-                ],
-                language: 'pt_BR',
-                name: 'sample_movie_ticket_confirmation',
-                namespace: '93aa6bf3_3bfc_4840_a76c_0f43073739e2',
-                rejected_reason: 'NONE',
-                status: 'approved',
-              },
-              {
-                category: 'ISSUE_RESOLUTION',
-                components: [
-                  {
-                    format: 'DOCUMENT',
-                    type: 'HEADER',
-                  },
-                  {
-                    text: 'Ini merupakan konfirmasi penerbangan Anda untuk {{1}}-{{2}} di {{3}}.',
-                    type: 'BODY',
-                  },
-                  {
-                    text: 'This message is from an unverified business.',
-                    type: 'FOOTER',
-                  },
-                ],
-                language: 'es',
-                name: 'sample_purchase_feedback',
-                namespace: '93aa6bf3_3bfc_4840_a76c_0f43073739e2',
-                rejected_reason: 'NONE',
-                status: 'approved',
-              },
-              {
-                category: 'TICKET_UPDATE',
-                components: [
-                  {
-                    text: 'Ini merupakan konfirmasi penerbangan Anda untuk {{1}}-{{2}}.',
-                    type: 'BODY',
-                  },
-                  {
-                    text: 'This message is from an unverified business.',
-                    type: 'FOOTER',
-                  },
-                ],
-                language: 'pt_BR',
-                name: 'sample_purchase_feedback_2',
-                namespace: '93aa6bf3_3bfc_4840_a76c_0f43073739e2',
-                rejected_reason: 'Not aproval',
-                status: 'rejected',
-              },
-            ],
-          },
-        },
-      )
+      })
 
       const dialog = new Dialog(licensee)
       const templates = await dialog.searchTemplates('https://waba.360dialog.io/', 'token-dialog')
-      await fetchMock.flush(true)
-
       expect(templates[0].name).toEqual('sample_movie_ticket_confirmation')
       expect(templates[0].namespace).toEqual('93aa6bf3_3bfc_4840_a76c_0f43073739e2')
       expect(templates[0].licensee).toEqual(licensee._id)

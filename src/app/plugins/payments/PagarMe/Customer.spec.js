@@ -1,11 +1,13 @@
 import { Customer } from './Customer.js'
 import Integrationlog from '@models/Integrationlog'
-import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../../.jest/utils'
 import { licenseeIntegrationPagarMe as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
+import request from '../../../services/request.js'
+
+jest.mock('../../../services/request')
 
 describe('PagarMe/Customer plugin', () => {
   let licensee
@@ -15,8 +17,6 @@ describe('PagarMe/Customer plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
-
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
   })
@@ -69,34 +69,20 @@ describe('PagarMe/Customer plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: {
-              id: 23717165,
-              name: 'John Doe',
-              status: '',
-              address: {
-                id: 34224,
-              },
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            id: 23717165,
+            name: 'John Doe',
+            status: '',
+            address: {
+              id: 34224,
             },
           },
-        )
+        })
 
         const customer = new Customer()
         await customer.create(contact, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleInfoSpy).toHaveBeenCalledWith('Contato John Doe criado na pagar.me! id: 23717165 log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
@@ -129,34 +115,20 @@ describe('PagarMe/Customer plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: {
-              id: 23717165,
-              name: 'John Doe',
-              status: '',
-              address: {
-                id: 34224,
-              },
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            id: 23717165,
+            name: 'John Doe',
+            status: '',
+            address: {
+              id: 34224,
             },
           },
-        )
+        })
 
         const customer = new Customer()
         await customer.create(contact, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const contactUpdated = await contactRepository.findFirst({ _id: contact._id })
         expect(contactUpdated.customer_id).toEqual('23717165')
 
@@ -205,34 +177,20 @@ describe('PagarMe/Customer plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: {
-              id: 23717165,
-              name: 'John Doe',
-              status: '',
-              address: {
-                id: 34224,
-              },
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            id: 23717165,
+            name: 'John Doe',
+            status: '',
+            address: {
+              id: 34224,
             },
           },
-        )
+        })
 
         const customer = new Customer()
         await customer.create(contact, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const contactUpdated = await contactRepository.findFirst({ _id: contact._id })
         expect(contactUpdated.address_id).toEqual('34224')
 
@@ -271,27 +229,13 @@ describe('PagarMe/Customer plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: bodyResponse,
-          },
-        )
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: bodyResponse,
+        })
 
         const customer = new Customer()
         await customer.create(contact, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ contact: contact._id })
         expect(integrationlog.licensee._id).toEqual(contact.licensee._id)
         expect(integrationlog.log_payload).toEqual(bodyResponse)
@@ -326,34 +270,20 @@ describe('PagarMe/Customer plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 422,
-            body: {
-              message: 'The request is invalid.',
-              errors: {
-                'customer.automaticanticipationsettings.type': [
-                  "The type field is invalid. Possible values are 'full','1025'",
-                ],
-              },
+        request.post.mockResolvedValueOnce({
+          status: 422,
+          data: {
+            message: 'The request is invalid.',
+            errors: {
+              'customer.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
             },
           },
-        )
+        })
 
         const customer = new Customer()
         await customer.create(contact, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Contato John Doe não criado na pagar.me.
            status: 422
@@ -396,27 +326,13 @@ describe('PagarMe/Customer plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 422,
-            body: bodyResponse,
-          },
-        )
+        request.post.mockResolvedValueOnce({
+          status: 422,
+          data: bodyResponse,
+        })
 
         const customer = new Customer()
         await customer.create(contact, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ contact: contact._id })
         expect(integrationlog.licensee._id).toEqual(contact.licensee._id)
         expect(integrationlog.log_payload).toEqual(bodyResponse)
@@ -453,30 +369,16 @@ describe('PagarMe/Customer plugin', () => {
           email: 'john@doe.com',
         }
 
-        fetchMock.putOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/98765' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
+        request.put.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            id: 23717165,
           },
-          {
-            status: 200,
-            body: {
-              id: 23717165,
-            },
-          },
-        )
+        })
 
         const customer = new Customer()
         contact.customer_id = '98765'
         await customer.update(contact, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleInfoSpy).toHaveBeenCalledWith('Contato John Doe atualizado na pagar.me! id: 98765 log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
@@ -509,28 +411,14 @@ describe('PagarMe/Customer plugin', () => {
           id: 23717165,
         }
 
-        fetchMock.putOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/98765' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: bodyResponse,
-          },
-        )
+        request.put.mockResolvedValueOnce({
+          status: 200,
+          data: bodyResponse,
+        })
 
         const customer = new Customer()
         contact.customer_id = '98765'
         await customer.update(contact, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ contact: contact._id })
         expect(integrationlog.licensee._id).toEqual(contact.licensee._id)
         expect(integrationlog.log_payload).toEqual(bodyResponse)
@@ -565,35 +453,21 @@ describe('PagarMe/Customer plugin', () => {
           email: 'john@doe.com',
         }
 
-        fetchMock.putOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/98765' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 400,
-            body: {
-              message: 'The request is invalid.',
-              errors: {
-                'customer.automaticanticipationsettings.type': [
-                  "The type field is invalid. Possible values are 'full','1025'",
-                ],
-              },
+        request.put.mockResolvedValueOnce({
+          status: 400,
+          data: {
+            message: 'The request is invalid.',
+            errors: {
+              'customer.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
             },
           },
-        )
+        })
 
         const customer = new Customer()
         contact.customer_id = '98765'
         await customer.update(contact, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Contato John Doe não atualizado na pagar.me.
            status: 400
@@ -636,28 +510,14 @@ describe('PagarMe/Customer plugin', () => {
           },
         }
 
-        fetchMock.putOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/customers/98765' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 400,
-            body: bodyResponse,
-          },
-        )
+        request.put.mockResolvedValueOnce({
+          status: 400,
+          data: bodyResponse,
+        })
 
         const customer = new Customer()
         contact.customer_id = '98765'
         await customer.update(contact, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ contact: contact._id })
         expect(integrationlog.licensee._id).toEqual(contact.licensee._id)
         expect(integrationlog.log_payload).toEqual(bodyResponse)

@@ -1,6 +1,5 @@
 import { Landbot } from './Landbot.js'
 import Trigger from '@models/Trigger'
-import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../.jest/utils'
 import Room from '@models/Room'
 import { licensee as licenseeFactory } from '@factories/licensee'
@@ -14,8 +13,10 @@ import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
 import { MessageRepositoryDatabase } from '@repositories/message'
+import request from '../../services/request.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
+jest.mock('../../services/request')
 
 describe('Landbot plugin', () => {
   let licensee
@@ -25,8 +26,6 @@ describe('Landbot plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
-
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
   })
@@ -532,36 +531,33 @@ describe('Landbot plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://url.com.br/5511990283745/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Token token'
-            )
-          },
-          {
-            status: 201,
-            body: {
-              success: true,
-              customer: {
-                id: 42,
-                name: 'John Doe',
-                phone: '5511990283745@c.us',
-                token: 'token',
-              },
+        request.post.mockResolvedValueOnce({
+          status: 201,
+          data: {
+            success: true,
+            customer: {
+              id: 42,
+              name: 'John Doe',
+              phone: '5511990283745@c.us',
+              token: 'token',
             },
           },
-        )
+        })
 
         expect(message.sended).toEqual(false)
 
         const landbot = new Landbot(licensee)
         await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
-        await fetchMock.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(request.post).toHaveBeenCalledWith(
+          'https://url.com.br/5511990283745/',
+          expect.objectContaining({
+            body: expectedBody,
+            headers: expect.objectContaining({
+              Authorization: 'Token token',
+            }),
+          }),
+        )
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
@@ -589,9 +585,9 @@ describe('Landbot plugin', () => {
           }),
         )
 
-        fetchMock.postOnce('https://url.com.br/5511990283745/', {
+        request.post.mockResolvedValueOnce({
           status: 201,
-          body: {
+          data: {
             success: true,
             customer: {
               id: 42,
@@ -605,11 +601,6 @@ describe('Landbot plugin', () => {
 
         const landbot = new Landbot(licensee)
         await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           `Mensagem 60958703f415ed4008748637 enviada para Landbot com sucesso!
            status: 201
@@ -670,32 +661,33 @@ describe('Landbot plugin', () => {
             },
           }
 
-          fetchMock.postOnce(
-            (url, { body }) => {
-              return url === 'https://url.com.br/5511990283745/' && body === JSON.stringify(expectedBody)
-            },
-            {
-              status: 201,
-              body: {
-                success: true,
-                customer: {
-                  id: 42,
-                  name: 'John Doe',
-                  phone: '5511990283745@c.us',
-                  token: 'token',
-                },
+          request.post.mockResolvedValueOnce({
+            status: 201,
+            data: {
+              success: true,
+              customer: {
+                id: 42,
+                name: 'John Doe',
+                phone: '5511990283745@c.us',
+                token: 'token',
               },
             },
-          )
+          })
 
           expect(message.sended).toEqual(false)
 
           const landbot = new Landbot(licensee)
           await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
-          await fetchMock.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(1)
+          expect(request.post).toHaveBeenCalledWith(
+            'https://url.com.br/5511990283745/',
+            expect.objectContaining({
+              body: expectedBody,
+              headers: expect.objectContaining({
+                Authorization: 'Token token',
+              }),
+            }),
+          )
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -741,36 +733,33 @@ describe('Landbot plugin', () => {
             },
           }
 
-          fetchMock.postOnce(
-            (url, { body, headers }) => {
-              return (
-                url === 'https://url.com.br/5511990283745/' &&
-                body === JSON.stringify(expectedBody) &&
-                headers['Authorization'] === 'Token token'
-              )
-            },
-            {
-              status: 201,
-              body: {
-                success: true,
-                customer: {
-                  id: 42,
-                  name: 'John Doe',
-                  phone: '5511990283745@c.us',
-                  token: 'token',
-                },
+          request.post.mockResolvedValueOnce({
+            status: 201,
+            data: {
+              success: true,
+              customer: {
+                id: 42,
+                name: 'John Doe',
+                phone: '5511990283745@c.us',
+                token: 'token',
               },
             },
-          )
+          })
 
           expect(message.sended).toEqual(false)
 
           const landbot = new Landbot(licensee)
           await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
-          await fetchMock.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(1)
+          expect(request.post).toHaveBeenCalledWith(
+            'https://url.com.br/5511990283745/',
+            expect.objectContaining({
+              body: expectedBody,
+              headers: expect.objectContaining({
+                Authorization: 'Token token',
+              }),
+            }),
+          )
 
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -814,37 +803,23 @@ describe('Landbot plugin', () => {
               },
             }
 
-            fetchMock.postOnce(
-              (url, { body, headers }) => {
-                return (
-                  url === 'https://url.com.br/5511990283745/' &&
-                  body === JSON.stringify(expectedBody) &&
-                  headers['Authorization'] === 'Token token'
-                )
-              },
-              {
-                status: 201,
-                body: {
-                  success: true,
-                  customer: {
-                    id: 42,
-                    name: 'John Doe',
-                    phone: '5511990283745@c.us',
-                    token: 'token',
-                  },
+            request.post.mockResolvedValueOnce({
+              status: 201,
+              data: {
+                success: true,
+                customer: {
+                  id: 42,
+                  name: 'John Doe',
+                  phone: '5511990283745@c.us',
+                  token: 'token',
                 },
               },
-            )
+            })
 
             expect(message.sended).toEqual(false)
 
             const landbot = new Landbot(licensee)
             await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
-            await fetchMock.flush(true)
-
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(1)
-
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
           })
@@ -886,36 +861,33 @@ describe('Landbot plugin', () => {
               },
             }
 
-            fetchMock.postOnce(
-              (url, { body, headers }) => {
-                return (
-                  url === 'https://url.com.br/5511990283745/' &&
-                  body === JSON.stringify(expectedBody) &&
-                  headers['Authorization'] === 'Token token'
-                )
-              },
-              {
-                status: 201,
-                body: {
-                  success: true,
-                  customer: {
-                    id: 42,
-                    name: 'John Doe',
-                    phone: '5511990283745@c.us',
-                    token: 'token',
-                  },
+            request.post.mockResolvedValueOnce({
+              status: 201,
+              data: {
+                success: true,
+                customer: {
+                  id: 42,
+                  name: 'John Doe',
+                  phone: '5511990283745@c.us',
+                  token: 'token',
                 },
               },
-            )
+            })
 
             expect(message.sended).toEqual(false)
 
             const landbot = new Landbot(licensee)
             await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
-            await fetchMock.flush(true)
 
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(1)
+            expect(request.post).toHaveBeenCalledWith(
+              'https://url.com.br/5511990283745/',
+              expect.objectContaining({
+                body: expectedBody,
+                headers: expect.objectContaining({
+                  Authorization: 'Token token',
+                }),
+              }),
+            )
 
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -958,36 +930,33 @@ describe('Landbot plugin', () => {
               },
             }
 
-            fetchMock.postOnce(
-              (url, { body, headers }) => {
-                return (
-                  url === 'https://url.com.br/5511990283745/' &&
-                  body === JSON.stringify(expectedBody) &&
-                  headers['Authorization'] === 'Token token'
-                )
-              },
-              {
-                status: 201,
-                body: {
-                  success: true,
-                  customer: {
-                    id: 42,
-                    name: 'John Doe',
-                    phone: '5511990283745@c.us',
-                    token: 'token',
-                  },
+            request.post.mockResolvedValueOnce({
+              status: 201,
+              data: {
+                success: true,
+                customer: {
+                  id: 42,
+                  name: 'John Doe',
+                  phone: '5511990283745@c.us',
+                  token: 'token',
                 },
               },
-            )
+            })
 
             expect(message.sended).toEqual(false)
 
             const landbot = new Landbot(licensee)
             await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
-            await fetchMock.flush(true)
 
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(1)
+            expect(request.post).toHaveBeenCalledWith(
+              'https://url.com.br/5511990283745/',
+              expect.objectContaining({
+                body: expectedBody,
+                headers: expect.objectContaining({
+                  Authorization: 'Token token',
+                }),
+              }),
+            )
 
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -1030,37 +999,23 @@ describe('Landbot plugin', () => {
               },
             }
 
-            fetchMock.postOnce(
-              (url, { body, headers }) => {
-                return (
-                  url === 'https://url.com.br/5511990283745/' &&
-                  body === JSON.stringify(expectedBody) &&
-                  headers['Authorization'] === 'Token token'
-                )
-              },
-              {
-                status: 201,
-                body: {
-                  success: true,
-                  customer: {
-                    id: 42,
-                    name: 'John Doe',
-                    phone: '5511990283745@c.us',
-                    token: 'token',
-                  },
+            request.post.mockResolvedValueOnce({
+              status: 201,
+              data: {
+                success: true,
+                customer: {
+                  id: 42,
+                  name: 'John Doe',
+                  phone: '5511990283745@c.us',
+                  token: 'token',
                 },
               },
-            )
+            })
 
             expect(message.sended).toEqual(false)
 
             const landbot = new Landbot(licensee)
             await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
-            await fetchMock.flush(true)
-
-            expect(fetchMock.done()).toBe(true)
-            expect(fetchMock.calls()).toHaveLength(1)
-
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
           })
@@ -1091,9 +1046,9 @@ describe('Landbot plugin', () => {
           }),
         )
 
-        fetchMock.postOnce('https://url.com.br/5511990283745/', {
+        request.post.mockResolvedValueOnce({
           status: 403,
-          body: {
+          data: {
             detail: 'invalid token',
           },
         })
@@ -1102,11 +1057,6 @@ describe('Landbot plugin', () => {
 
         const landbot = new Landbot(licensee)
         await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(false)
         expect(messageUpdated.error).toEqual('{"detail":"invalid token"}')
@@ -1157,16 +1107,23 @@ describe('Landbot plugin', () => {
         }),
       )
 
-      fetchMock.deleteOnce((url, { headers }) => {
-        return url === 'https://api.landbot.io/v1/customers/20000/' && headers['Authorization'] === 'Token token'
-      }, 204)
+      request.delete.mockResolvedValueOnce({
+        status: 204,
+        data: {},
+      })
 
       const landbot = new Landbot(licensee)
-      await landbot.dropConversation(contact._id, 'token')
-      await fetchMock.flush(true)
+      const result = await landbot.dropConversation(contact._id, 'token')
 
-      expect(fetchMock.done()).toBe(true)
-      expect(fetchMock.calls()).toHaveLength(1)
+      expect(request.delete).toHaveBeenCalledWith(
+        'https://api.landbot.io/v1/customers/20000/',
+        expect.objectContaining({
+          headers: {
+            Authorization: 'Token token',
+          },
+        }),
+      )
+      expect(result).toEqual(true)
     })
   })
 })

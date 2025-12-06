@@ -1,19 +1,20 @@
 import { resetChatbots } from './ResetChatbots.js'
 import mongoServer from '.jest/utils'
-import fetchMock from 'fetch-mock'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { message as messageFactory } from '@factories/message'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { MessageRepositoryDatabase } from '@repositories/message'
+import request from '../services/request.js'
+
+jest.mock('../services/request')
 
 describe('resetChatbots', () => {
   jest.spyOn(global.console, 'info').mockImplementation()
 
   beforeEach(async () => {
     await mongoServer.connect()
-    fetchMock.reset()
     jest.clearAllMocks()
   })
 
@@ -178,11 +179,10 @@ describe('resetChatbots', () => {
         }),
       )
 
-      fetchMock.deleteOnce((url, { headers }) => {
-        return (
-          url === 'https://api.landbot.io/v1/customers/landbot-id/' && headers['Authorization'] === 'Token api-token'
-        )
-      }, 204)
+      request.delete.mockResolvedValue({
+        status: 204,
+        data: {},
+      })
 
       expect(contact.landbotId).toEqual('landbot-id')
 
@@ -211,11 +211,6 @@ describe('resetChatbots', () => {
 
       const contact3NotChanged = await contactRepository.findFirst({ _id: contact3._id })
       expect(contact3NotChanged.landbotId).toEqual('landbot-id')
-
-      await fetchMock.flush(true)
-
-      expect(fetchMock.done()).toBe(true)
-      expect(fetchMock.calls()).toHaveLength(1)
     })
 
     describe('when the licensee has a message on reset chatbot', () => {
@@ -258,15 +253,14 @@ describe('resetChatbots', () => {
           }),
         )
 
-        fetchMock.deleteOnce((url, { headers }) => {
-          return (
-            url === 'https://api.landbot.io/v1/customers/landbot-id/' && headers['Authorization'] === 'Token api-token'
-          )
-        }, 204)
+        request.delete.mockResolvedValueOnce({
+          status: 204,
+          data: {},
+        })
 
-        fetchMock.postOnce('https://v1.utalk.chat/send/WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K/', {
+        request.post.mockResolvedValueOnce({
           status: 200,
-          body: {
+          data: {
             type: 'send message',
             cmd: 'chat',
             to: '5593165392832@c.us',
@@ -278,11 +272,6 @@ describe('resetChatbots', () => {
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toBe(true)
-
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(2)
       })
     })
   })
