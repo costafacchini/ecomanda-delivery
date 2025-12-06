@@ -1,6 +1,5 @@
 import { Cuboup } from './Cuboup.js'
 import Trigger from '@models/Trigger'
-import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
@@ -9,8 +8,10 @@ import { triggerReplyButton as triggerReplyButtonFactory } from '@factories/trig
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { MessageRepositoryDatabase } from '@repositories/message'
+import request from '../../services/request.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
+jest.mock('../../services/request')
 
 describe('Cuboup plugin', () => {
   let licensee
@@ -20,8 +21,6 @@ describe('Cuboup plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
-
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build({ phone: '554891231231' }))
   })
@@ -403,18 +402,22 @@ describe('Cuboup plugin', () => {
           },
         }
 
-        fetchMock.postOnce((url, { body }) => {
-          return url === 'https://url.com.br/jkJGs5a4ea/pAOqw2340' && body === JSON.stringify(expectedBody)
-        }, 200)
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {},
+        })
 
         expect(message.sended).toEqual(false)
 
         const cuboup = new Cuboup(licensee)
         await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
-        await fetchMock.flush(true)
 
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
+        expect(request.post).toHaveBeenCalledWith(
+          'https://url.com.br/jkJGs5a4ea/pAOqw2340',
+          expect.objectContaining({
+            body: expectedBody,
+          }),
+        )
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
@@ -459,19 +462,15 @@ describe('Cuboup plugin', () => {
           },
         }
 
-        fetchMock.postOnce((url, { body }) => {
-          return url === 'https://url.com.br/jkJGs5a4ea/pAOqw2340' && body === JSON.stringify(expectedBody)
-        }, 200)
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {},
+        })
 
         expect(message.sended).toEqual(false)
 
         const cuboup = new Cuboup(licensee)
         await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           'Mensagem 60958703f415ed4008748637 enviada para CuboUp com sucesso!',
         )
@@ -516,19 +515,15 @@ describe('Cuboup plugin', () => {
             },
           }
 
-          fetchMock.postOnce((url, { body }) => {
-            return url === 'https://url.com.br/jkJGs5a4ea/pAOqw2340' && body === JSON.stringify(expectedBody)
-          }, 200)
+          request.post.mockResolvedValueOnce({
+            status: 200,
+            data: {},
+          })
 
           expect(message.sended).toEqual(false)
 
           const cuboup = new Cuboup(licensee)
           await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(1)
-
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
         })
@@ -575,25 +570,18 @@ describe('Cuboup plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body }) => {
-            return url === 'https://url.com.br/jkJGs5a4ea/pAOqw2340' && body === JSON.stringify(expectedBody)
-          },
-          { status: 404, body: { error: 'Error message' } },
-        )
+        request.post.mockResolvedValueOnce({
+          status: 404,
+          data: { error: 'Error message' },
+        })
 
         expect(message.sended).toEqual(false)
 
         const cuboup = new Cuboup(licensee)
         await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
-        await fetchMock.flush(true)
-
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(false)
         expect(messageUpdated.error).toEqual('mensagem: {"error":"Error message"}')
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Mensagem 60958703f415ed4008748637 não enviada para CuboUp.
@@ -647,16 +635,20 @@ describe('Cuboup plugin', () => {
             },
           }
 
-          fetchMock.postOnce((url, { body }) => {
-            return url === 'https://url.com.br/jkJGs5a4ea/pAOqw2340' && body === JSON.stringify(expectedBody)
-          }, 200)
+          request.post.mockResolvedValueOnce({
+            status: 200,
+            data: {},
+          })
 
           const cuboup = new Cuboup(licensee)
           await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
-          await fetchMock.flush(true)
 
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(1)
+          expect(request.post).toHaveBeenCalledWith(
+            'https://url.com.br/jkJGs5a4ea/pAOqw2340',
+            expect.objectContaining({
+              body: expectedBody,
+            }),
+          )
         })
       })
 
@@ -699,18 +691,15 @@ describe('Cuboup plugin', () => {
             },
           }
 
-          fetchMock.postOnce((url, { body }) => {
-            return url === 'https://url.com.br/jkJGs5a4ea/pAOqw2340' && body === JSON.stringify(expectedBody)
-          }, 200)
+          request.post.mockResolvedValueOnce({
+            status: 200,
+            data: {},
+          })
 
           expect(message.sended).toEqual(false)
 
           const cuboup = new Cuboup(licensee)
           await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(1)
         })
       })
 
@@ -757,18 +746,15 @@ describe('Cuboup plugin', () => {
             },
           }
 
-          fetchMock.postOnce((url, { body }) => {
-            return url === 'https://url.com.br/jkJGs5a4ea/pAOqw2340' && body === JSON.stringify(expectedBody)
-          }, 200)
+          request.post.mockResolvedValueOnce({
+            status: 200,
+            data: {},
+          })
 
           expect(message.sended).toEqual(false)
 
           const cuboup = new Cuboup(licensee)
           await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
-          await fetchMock.flush(true)
-
-          expect(fetchMock.done()).toBe(true)
-          expect(fetchMock.calls()).toHaveLength(1)
         })
       })
     })

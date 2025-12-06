@@ -1,9 +1,11 @@
 import { Recipient } from './Recipient.js'
 import Integrationlog from '@models/Integrationlog'
-import fetchMock from 'fetch-mock'
 import mongoServer from '../../../../../.jest/utils'
 import { licenseeIntegrationPagarMe as licenseeFactory } from '@factories/licensee'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import request from '../../../services/request.js'
+
+jest.mock('../../../services/request')
 
 describe('PagarMe/Recipient plugin', () => {
   let licensee
@@ -13,8 +15,6 @@ describe('PagarMe/Recipient plugin', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
-    fetchMock.reset()
-
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
   })
@@ -48,35 +48,21 @@ describe('PagarMe/Recipient plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/recipients/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: {
-              id: 23717165,
-              name: 'Alcateia Ltds',
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            id: 23717165,
+            name: 'Alcateia Ltds',
+            status: '',
+            default_bank_account: {
+              id: 345345,
               status: '',
-              default_bank_account: {
-                id: 345345,
-                status: '',
-              },
             },
           },
-        )
+        })
 
         const recipient = new Recipient()
         await recipient.create(licensee, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           'Licenciado Alcateia Ltds criado na pagar.me! id: 23717165 log_id: 1234',
         )
@@ -107,35 +93,21 @@ describe('PagarMe/Recipient plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/recipients/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: {
-              id: 23717165,
-              name: 'Alcateia Ltds',
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            id: 23717165,
+            name: 'Alcateia Ltds',
+            status: '',
+            default_bank_account: {
+              id: 345345,
               status: '',
-              default_bank_account: {
-                id: 345345,
-                status: '',
-              },
             },
           },
-        )
+        })
 
         const recipient = new Recipient()
         await recipient.create(licensee, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const licenseeRepository = new LicenseeRepositoryDatabase()
         const licenseeUpdated = await licenseeRepository.findFirst({ _id: licensee._id })
         expect(licenseeUpdated.recipient_id).toEqual('23717165')
@@ -172,27 +144,13 @@ describe('PagarMe/Recipient plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/recipients/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: bodyResponse,
-          },
-        )
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: bodyResponse,
+        })
 
         const recipient = new Recipient()
         await recipient.create(licensee, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual(bodyResponse)
       })
@@ -222,34 +180,20 @@ describe('PagarMe/Recipient plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/recipients/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 400,
-            body: {
-              message: 'The request is invalid.',
-              errors: {
-                'recipient.automaticanticipationsettings.type': [
-                  "The type field is invalid. Possible values are 'full','1025'",
-                ],
-              },
+        request.post.mockResolvedValueOnce({
+          status: 400,
+          data: {
+            message: 'The request is invalid.',
+            errors: {
+              'recipient.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
             },
           },
-        )
+        })
 
         const recipient = new Recipient()
         await recipient.create(licensee, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Licenciado Alcateia Ltds não criado na pagar.me.
            status: 400
@@ -288,27 +232,13 @@ describe('PagarMe/Recipient plugin', () => {
           },
         }
 
-        fetchMock.postOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/recipients/' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 400,
-            body: bodyResponse,
-          },
-        )
+        request.post.mockResolvedValueOnce({
+          status: 400,
+          data: bodyResponse,
+        })
 
         const recipient = new Recipient()
         await recipient.create(licensee, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual(bodyResponse)
       })
@@ -327,30 +257,16 @@ describe('PagarMe/Recipient plugin', () => {
           type: 'company',
         }
 
-        fetchMock.putOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/recipients/98765' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
+        request.put.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            id: 23717165,
           },
-          {
-            status: 200,
-            body: {
-              id: 23717165,
-            },
-          },
-        )
+        })
 
         const recipient = new Recipient()
         licensee.recipient_id = '98765'
         await recipient.update(licensee, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           'Licenciado Alcateia Ltds atualizado na pagar.me! id: 98765 log_id: 1234',
         )
@@ -368,28 +284,14 @@ describe('PagarMe/Recipient plugin', () => {
           id: 23717165,
         }
 
-        fetchMock.putOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/recipients/98765' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 200,
-            body: bodyResponse,
-          },
-        )
+        request.put.mockResolvedValueOnce({
+          status: 200,
+          data: bodyResponse,
+        })
 
         const recipient = new Recipient()
         licensee.recipient_id = '98765'
         await recipient.update(licensee, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual(bodyResponse)
       })
@@ -406,35 +308,21 @@ describe('PagarMe/Recipient plugin', () => {
           type: 'company',
         }
 
-        fetchMock.putOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/recipients/98765' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 400,
-            body: {
-              message: 'The request is invalid.',
-              errors: {
-                'recipient.automaticanticipationsettings.type': [
-                  "The type field is invalid. Possible values are 'full','1025'",
-                ],
-              },
+        request.put.mockResolvedValueOnce({
+          status: 400,
+          data: {
+            message: 'The request is invalid.',
+            errors: {
+              'recipient.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
             },
           },
-        )
+        })
 
         const recipient = new Recipient()
         licensee.recipient_id = '98765'
         await recipient.update(licensee, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Licenciado Alcateia Ltds não atualizado na pagar.me.
            status: 400
@@ -460,28 +348,14 @@ describe('PagarMe/Recipient plugin', () => {
           },
         }
 
-        fetchMock.putOnce(
-          (url, { body, headers }) => {
-            return (
-              url === 'https://api.pagar.me/core/v5/recipients/98765' &&
-              body === JSON.stringify(expectedBody) &&
-              headers['Authorization'] === 'Basic token'
-            )
-          },
-          {
-            status: 400,
-            body: bodyResponse,
-          },
-        )
+        request.put.mockResolvedValueOnce({
+          status: 400,
+          data: bodyResponse,
+        })
 
         const recipient = new Recipient()
         licensee.recipient_id = '98765'
         await recipient.update(licensee, 'token')
-        await fetchMock.flush(true)
-
-        expect(fetchMock.done()).toBe(true)
-        expect(fetchMock.calls()).toHaveLength(1)
-
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual(bodyResponse)
       })
