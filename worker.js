@@ -5,11 +5,11 @@ import { redisConnection } from './src/config/redis.js'
 import { queueServer } from './src/config/queue.js'
 import { Worker } from 'bullmq'
 import { connect } from './src/config/database.js'
-import { consumeChannel } from './src/config/rabbitmq.js'
+// import { consumeChannel } from './src/config/rabbitmq.js'
 import { withTrafficlight, resolveTrafficlightKey } from './src/app/helpers/Trafficlight.js'
 
 connect()
-consumeChannel()
+// consumeChannel()
 
 queueServer.queues.forEach((queue) => {
   const worker = new Worker(
