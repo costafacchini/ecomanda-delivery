@@ -49,21 +49,14 @@ const userSchema = new Schema(
   { timestamps: true },
 )
 
-userSchema.pre('save', function (next) {
-  const user = this
-
-  if (!user._id) {
-    user._id = new mongoose.Types.ObjectId()
+userSchema.pre('save', async function () {
+  if (!this._id) {
+    this._id = new mongoose.Types.ObjectId()
   }
 
-  if (!user.isModified('password')) return next()
-
-  bcrypt.genSalt(saltRounds, (err, salt) => {
-    bcrypt.hash(user.password, salt, (err, hash) => {
-      user.password = hash
-      next()
-    })
-  })
+  if (this.isModified('password')) {
+    this.password = await bcrypt.hash(this.password, saltRounds)
+  }
 })
 
 userSchema.methods.validPassword = async function (password) {

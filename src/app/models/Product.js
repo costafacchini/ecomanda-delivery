@@ -17,14 +17,12 @@ const productSchema = new Schema(
   { timestamps: true },
 )
 
-productSchema.pre('save', function (next) {
+productSchema.pre('save', function () {
   const product = this
 
   if (!product._id) {
     product._id = new mongoose.Types.ObjectId()
   }
-
-  next()
 })
 
 productSchema.set('toJSON', {

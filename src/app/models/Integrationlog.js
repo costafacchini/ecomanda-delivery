@@ -25,13 +25,12 @@ const integrationlogSchema = new Schema(
   { timestamps: true },
 )
 
-integrationlogSchema.pre('save', function (next) {
+integrationlogSchema.pre('save', function () {
   const integrationlog = this
 
   if (!integrationlog._id) {
     integrationlog._id = new mongoose.Types.ObjectId()
   }
-  next()
 })
 
 integrationlogSchema.set('toJSON', {

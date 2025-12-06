@@ -18,14 +18,12 @@ const roomSchema = new Schema(
   { timestamps: true },
 )
 
-roomSchema.pre('save', function (next) {
+roomSchema.pre('save', function () {
   const room = this
 
   if (!room._id) {
     room._id = new mongoose.Types.ObjectId()
   }
-
-  next()
 })
 
 roomSchema.set('toJSON', {

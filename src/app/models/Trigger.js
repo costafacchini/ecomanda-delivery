@@ -84,14 +84,12 @@ const triggerSchema = new Schema(
   { timestamps: true },
 )
 
-triggerSchema.pre('save', function (next) {
+triggerSchema.pre('save', function () {
   const trigger = this
 
   if (!trigger._id) {
     trigger._id = new mongoose.Types.ObjectId()
   }
-
-  next()
 })
 
 triggerSchema.set('toJSON', {
