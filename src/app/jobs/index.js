@@ -1,10 +1,10 @@
 import chatMessage from './ChatMessage.js'
-import chatbotMessage from './ChatbotMessage.js'
-import chatbotTransferToChat from './ChatbotTransferToChat.js'
+// import chatbotMessage from './ChatbotMessage.js'
+// import chatbotTransferToChat from './ChatbotTransferToChat.js'
 import closeChat from './CloseChat.js'
 import messengerMessage from './MessengerMessage.js'
 import sendMessageToChat from './SendMessageToChat.js'
-import sendMessageToChatbot from './SendMessageToChatbot.js'
+// import sendMessageToChatbot from './SendMessageToChatbot.js'
 import sendMessageToMessenger from './SendMessageToMessenger.js'
 // import transferToChat from './TransferToChat.js'
 // import backup from './Backup.js'
@@ -27,12 +27,12 @@ import sendMessageToMessenger from './SendMessageToMessenger.js'
 
 const jobs = [
   chatMessage,
-  chatbotMessage,
-  chatbotTransferToChat,
+  // chatbotMessage,
+  // chatbotTransferToChat,
   closeChat,
   messengerMessage,
   sendMessageToChat,
-  sendMessageToChatbot,
+  // sendMessageToChatbot,
   sendMessageToMessenger,
   // transferToChat,
   // resetChatbots,
