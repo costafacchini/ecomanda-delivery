@@ -197,8 +197,7 @@ const postMessage = async (url, headers, contact, message, room) => {
     }
     console.error(
       `Chatwoot - erro: Mensagem ${message._id} não enviada para Chatwoot.
-           status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}`,
+           status: ${response.status}`,
     )
     return true
   }
