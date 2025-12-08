@@ -112,7 +112,7 @@ const postMessage = async (url, headers, contact, message, room) => {
 
   if (message.kind === 'text') {
     const body = {
-      private: false,
+      private: message.departament == 'outgoing' ? true : false,
       message_type: message.departament == 'outgoing' ? 'outgoing' : 'incoming',
       content_type: 'text',
       content: formatMessage(message, contact),
@@ -174,6 +174,7 @@ const postMessage = async (url, headers, contact, message, room) => {
 
   if (response.status === 200) {
     message.sended = true
+    message.payload = JSON.stringify(response.data)
     await message.save()
 
     console.info(`Chatwoot: Mensagem ${message._id} enviada para Chatwoot com sucesso!`)
@@ -196,8 +197,7 @@ const postMessage = async (url, headers, contact, message, room) => {
     }
     console.error(
       `Chatwoot - erro: Mensagem ${message._id} não enviada para Chatwoot.
-           status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}`,
+           status: ${response.status}`,
     )
     return true
   }
