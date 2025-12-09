@@ -30,6 +30,13 @@ jobs:
       DEFAULT_USER: 'user@user.com'
       DEFAULT_PASSWORD: '09876543'
       CI: true
+      INTEGRATE_PEDIDOS10: true
+      INTEGRATE_PAGARME: true
+      ENABLE_BACKUPS: true
+      ENABLE_CHATBOTS: true
+      ENABLE_RESET_JOBS: true
+      ENABLE_CHATS: true
+      ENABLE_MESSENGERS: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
