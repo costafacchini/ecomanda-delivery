@@ -2,6 +2,7 @@ import { processBackgroundjobGetPix } from '../services/ProcessBackgroundjobGetP
 
 export default {
   key: 'process-backgroundjob-get-pix',
+  workerEnabled: true,
   async handle(data) {
     return await processBackgroundjobGetPix(data.body)
   },

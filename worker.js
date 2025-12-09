@@ -11,7 +11,9 @@ import { withTrafficlight, resolveTrafficlightKey } from './src/app/helpers/Traf
 connect()
 // consumeChannel()
 
-queueServer.queues.forEach((queue) => {
+const queuesWithWorkerEnabled = queueServer.queues.filter((queue) => queue.workerEnabled == true)
+
+queuesWithWorkerEnabled.forEach((queue) => {
   const worker = new Worker(
     queue.name,
     async (job) => {
