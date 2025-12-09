@@ -2,6 +2,7 @@ import { processBackgroundjobInviteCreditCard } from '../services/ProcessBackgro
 
 export default {
   key: 'process-backgroundjob-invite-credit-card',
+  workerEnabled: true,
   async handle(data) {
     return await processBackgroundjobInviteCreditCard(data.body)
   },

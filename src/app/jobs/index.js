@@ -80,11 +80,17 @@ if (process.env.ENABLE_MESSENGERS === 'true') {
 }
 
 if (process.env.DONT_SEND_MESSAGE_TO_CHAT == 'true') {
-  jobs.splice(jobs.indexOf(sendMessageToChat), 1)
+  const index = jobs.indexOf(sendMessageToChat)
+  if (index > -1) {
+    jobs[index].workerEnabled = false
+  }
 }
 
 if (process.env.DONT_SEND_MESSAGE_TO_MESSENGER == 'true') {
-  jobs.splice(jobs.indexOf(sendMessageToMessenger), 1)
+  const index = jobs.indexOf(sendMessageToMessenger)
+  if (index > -1) {
+    jobs[index].workerEnabled = false
+  }
 }
 
 export default jobs

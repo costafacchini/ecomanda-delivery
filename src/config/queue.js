@@ -25,6 +25,7 @@ class QueueServer {
     this.queues = Object.values(jobs).map((job) => ({
       bull: createQueue(job.key),
       name: job.key,
+      workerEnabled: job.workerEnabled,
       handle: job.handle,
     }))
   }

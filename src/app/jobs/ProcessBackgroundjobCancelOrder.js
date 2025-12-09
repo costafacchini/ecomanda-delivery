@@ -2,6 +2,7 @@ import { processBackgroundjobCancelOrder } from '../services/ProcessBackgroundjo
 
 export default {
   key: 'process-backgroundjob-cancel-order',
+  workerEnabled: true,
   async handle(data) {
     return await processBackgroundjobCancelOrder(data.body)
   },
