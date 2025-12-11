@@ -305,8 +305,16 @@ class YCloud extends MessengersBase {
       return
     }
 
-    const chatId = responseBody.whatsappInboundMessage.from
-    const contact = responseBody.whatsappInboundMessage.customerProfile
+    let chatId
+    let contact
+    if (responseBody.type === 'whatsapp.smb.message.echoes') {
+      chatId = responseBody.whatsappMessage.to
+      this.messageData = { departament: 'outgoing' }
+    } else {
+      chatId = responseBody.whatsappInboundMessage.from
+      contact = responseBody.whatsappInboundMessage.customerProfile
+    }
+
     const normalizePhone = new NormalizePhone(chatId)
 
     this.contactData = {
