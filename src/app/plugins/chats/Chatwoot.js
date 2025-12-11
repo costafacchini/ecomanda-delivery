@@ -144,11 +144,19 @@ const postMessage = async (url, headers, contact, message, room) => {
 
     multipartBody += `--${boundary}\r\n`
     multipartBody += 'Content-Disposition: form-data; name="private"\r\n\r\n'
-    multipartBody += 'false\r\n'
+    if (message.departament == 'outgoing') {
+      multipartBody += 'true\r\n'
+    } else {
+      multipartBody += 'false\r\n'
+    }
 
     multipartBody += `--${boundary}\r\n`
     multipartBody += 'Content-Disposition: form-data; name="message_type"\r\n\r\n'
-    multipartBody += 'incoming\r\n'
+    if (message.departament == 'outgoing') {
+      multipartBody += 'outgoing\r\n'
+    } else {
+      multipartBody += 'incoming\r\n'
+    }
 
     multipartBody += `--${boundary}\r\n`
     multipartBody += `Content-Disposition: form-data; name="attachments[]"; filename="${fileName}"\r\n`
