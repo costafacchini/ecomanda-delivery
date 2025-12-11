@@ -2579,25 +2579,25 @@
   resolved "https://registry.yarnpkg.com/@rtsao/scc/-/scc-1.1.0.tgz#927dd2fae9bc3361403ac2c7a00c32ddce9ad7e8"
   integrity sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==
 
-"@sentry/core@10.29.0":
-  version "10.29.0"
-  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-10.29.0.tgz#8783db0969224f48ea46e3c3212289d5dbd6ef38"
-  integrity sha512-olQ2DU9dA/Bwsz3PtA9KNXRMqBWRQSkPw+MxwWEoU1K1qtiM9L0j6lbEFb5iSY3d7WYD5MB+1d5COugjSBrHtw==
+"@sentry/core@10.30.0":
+  version "10.30.0"
+  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-10.30.0.tgz#94365d864880fb67c6cfbc859d72991b2ede1e06"
+  integrity sha512-IfNuqIoGVO9pwphwbOptAEJJI1SCAfewS5LBU1iL7hjPBHYAnE8tCVzyZN+pooEkQQ47Q4rGanaG1xY8mjTT1A==
 
-"@sentry/node-core@10.29.0":
-  version "10.29.0"
-  resolved "https://registry.yarnpkg.com/@sentry/node-core/-/node-core-10.29.0.tgz#967cb8f490764e9febf95ef09a654bc4dc7722f2"
-  integrity sha512-f/Y0okHhPPb5HnYNBqCivJ2YuXtSadvcIx16dzU5mHQxZhgGednUCPEX7rsvPcd4HneQz12HKLqxbAmNu+b3FA==
+"@sentry/node-core@10.30.0":
+  version "10.30.0"
+  resolved "https://registry.yarnpkg.com/@sentry/node-core/-/node-core-10.30.0.tgz#3207b10deb2c7266eae2b9584ef3ea2f24ba5134"
+  integrity sha512-IDgCf0sTtHpnMfdM7nnqdkjFPzNrMKQUZCeoW2msAb+fXIfev2nae43fL4ffGL+S3rnkZp3OL8HDG/4C+Q0iZA==
   dependencies:
     "@apm-js-collab/tracing-hooks" "^0.3.1"
-    "@sentry/core" "10.29.0"
-    "@sentry/opentelemetry" "10.29.0"
+    "@sentry/core" "10.30.0"
+    "@sentry/opentelemetry" "10.30.0"
     import-in-the-middle "^2"
 
 "@sentry/node@^10.25.0":
-  version "10.29.0"
-  resolved "https://registry.yarnpkg.com/@sentry/node/-/node-10.29.0.tgz#472355657be13ac2a2aaa5d8f1f517198d044f84"
-  integrity sha512-9j8VzV06VCj+H8tlxpfa7BNN4HzH5exv68WOufdMTXzzWLOXnzrdNDoYplm1G2S3LMvWsc1SVI3a8A0yBY7oWg==
+  version "10.30.0"
+  resolved "https://registry.yarnpkg.com/@sentry/node/-/node-10.30.0.tgz#8fa29fd4ff99235485e84e27a3774807554a3f2b"
+  integrity sha512-Ov++em+Y4H4gNRW9u3d9JDF46BNvnCNW4/jJ/6Dsw0T+Em9dyLXfqyDBEe8VKD0E7ZjuO+Z1W3ldpbhCj5HlSg==
   dependencies:
     "@opentelemetry/api" "^1.9.0"
     "@opentelemetry/context-async-hooks" "^2.2.0"
@@ -2629,18 +2629,18 @@
     "@opentelemetry/sdk-trace-base" "^2.2.0"
     "@opentelemetry/semantic-conventions" "^1.37.0"
     "@prisma/instrumentation" "6.19.0"
-    "@sentry/core" "10.29.0"
-    "@sentry/node-core" "10.29.0"
-    "@sentry/opentelemetry" "10.29.0"
+    "@sentry/core" "10.30.0"
+    "@sentry/node-core" "10.30.0"
+    "@sentry/opentelemetry" "10.30.0"
     import-in-the-middle "^2"
     minimatch "^9.0.0"
 
-"@sentry/opentelemetry@10.29.0":
-  version "10.29.0"
-  resolved "https://registry.yarnpkg.com/@sentry/opentelemetry/-/opentelemetry-10.29.0.tgz#d1c6edf3cbf80f3b386d7fdd20b1b08cbc79fc68"
-  integrity sha512-5QvtAwS73HlI/+OTF1poAFELzsc0se+PHmMsXGGrOeNBvjCr3ZE8qvke09aeMn7uRImf3Nc9J6i2KtSHJnbKPA==
+"@sentry/opentelemetry@10.30.0":
+  version "10.30.0"
+  resolved "https://registry.yarnpkg.com/@sentry/opentelemetry/-/opentelemetry-10.30.0.tgz#06098c1a7cb456275c8b9a93b4ecd09126a49aa2"
+  integrity sha512-b4q868+L2uhqKn4xIlf+VLDthBLnUzG60FceJ2Oq8nD2Lk70F2ZxLfHA2eL1F6Oc776gnGd8Tmc1NM6RGRnp0g==
   dependencies:
-    "@sentry/core" "10.29.0"
+    "@sentry/core" "10.30.0"
 
 "@sinclair/typebox@^0.34.0":
   version "0.34.41"
@@ -3273,7 +3273,14 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@>=10.0.0", "@types/node@>=13.7.0":
+"@types/node@*":
+  version "25.0.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-25.0.0.tgz#c0e0022c3c7b41635c49322e6b3a0279fffa7d62"
+  integrity sha512-rl78HwuZlaDIUSeUKkmogkhebA+8K1Hy7tddZuJ3D0xV8pZSfsYGTsliGUol1JPzu9EKnTxPC4L1fiWouStRew==
+  dependencies:
+    undici-types "~7.16.0"
+
+"@types/node@>=10.0.0", "@types/node@>=13.7.0":
   version "24.10.1"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-24.10.1.tgz#91e92182c93db8bd6224fca031e2370cef9a8f01"
   integrity sha512-GNWcUTRBgIRJD5zj+Tq0fKOJ5XZajIiBroOF0yvj2bSU1WvNdYS/dn9UxwsujGW4JX06dnHyjV2y9rRaybH0iQ==
@@ -3287,7 +3294,16 @@
   dependencies:
     "@types/pg" "*"
 
-"@types/pg@*", "@types/pg@8.15.6":
+"@types/pg@*":
+  version "8.16.0"
+  resolved "https://registry.yarnpkg.com/@types/pg/-/pg-8.16.0.tgz#b7af0d642752340b7c9de1c33afd9bc5c5f0ebeb"
+  integrity sha512-RmhMd/wD+CF8Dfo+cVIy3RR5cl8CyfXQ0tGgW6XBL8L4LM/UTEbNXYRbLwU6w+CgrKBNbrQWt4FUtTfaU5jSYQ==
+  dependencies:
+    "@types/node" "*"
+    pg-protocol "*"
+    pg-types "^2.2.0"
+
+"@types/pg@8.15.6":
   version "8.15.6"
   resolved "https://registry.yarnpkg.com/@types/pg/-/pg-8.15.6.tgz#4df7590b9ac557cbe5479e0074ec1540cbddad9b"
   integrity sha512-NoaMtzhxOrubeL/7UZuNTrejB4MPAJ0RpxZqXQf2qXuVlTPuG6Y8p4u9dKRaue4yjmC7ZhzVO2/Yyyn25znrPQ==
