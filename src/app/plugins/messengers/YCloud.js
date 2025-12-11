@@ -172,16 +172,8 @@ class YCloud extends MessengersBase {
     }
   }
 
-  parseMessageStatus(responseBody) {
-    if (!responseBody.whatsappMessage) {
-      this.messageStatus = null
-      return
-    }
-
-    this.messageStatus = {
-      id: responseBody.whatsappMessage.id,
-      status: responseBody.whatsappMessage.status,
-    }
+  parseMessageStatus(_) {
+    this.messageStatus = null
   }
 
   parseMessage(responseBody) {
@@ -300,7 +292,10 @@ class YCloud extends MessengersBase {
   }
 
   parseContactData(responseBody) {
-    if (!responseBody.whatsappInboundMessage) {
+    if (
+      !responseBody.whatsappInboundMessage &&
+      !(responseBody.whatsappMessage && responseBody.type === 'whatsapp.smb.message.echoes')
+    ) {
       this.contactData = null
       return
     }
@@ -314,6 +309,7 @@ class YCloud extends MessengersBase {
       chatId = responseBody.whatsappInboundMessage.from
       contact = responseBody.whatsappInboundMessage.customerProfile
     }
+    console.log('YCloud - contato recebido:', chatId)
 
     const normalizePhone = new NormalizePhone(chatId)
 
