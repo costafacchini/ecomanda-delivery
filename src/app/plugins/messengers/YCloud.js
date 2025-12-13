@@ -6,6 +6,7 @@ import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files.js'
 import { parseText } from '../../helpers/ParseTriggerText.js'
 import { MessengersBase } from './Base.js'
 import { MessageRepositoryDatabase } from '../../repositories/message.js'
+import { logger } from '../../../setup/logger.js'
 
 // const getWaIdContact = async (number, url, token) => {
 //   const headers = {
@@ -46,7 +47,7 @@ const getTemplates = async (url, token) => {
     const response = await request.get(`${url}/whatsapp/templates?page=1&limit=50&includeTotal=false`, { headers })
     return response.data
   } catch (error) {
-    console.error('YCloud - erro: Erro ao buscar templates:', error)
+    logger.error({ err: error }, 'YCloud - erro: Erro ao buscar templates:')
     return { templates: [] }
   }
 }
@@ -309,7 +310,7 @@ class YCloud extends MessengersBase {
       chatId = responseBody.whatsappInboundMessage.from
       contact = responseBody.whatsappInboundMessage.customerProfile
     }
-    console.log('YCloud - contato recebido:', chatId)
+    logger.info({ chatId }, 'YCloud - contato recebido')
 
     const normalizePhone = new NormalizePhone(chatId)
 
@@ -469,20 +470,20 @@ class YCloud extends MessengersBase {
         messageToSend.messageWaId = messageResponse.data?.id
         messageToSend.sended = true
         await messageToSend.save()
-        console.info(
+        logger.info(
           `YCloud: Mensagem ${messageId} enviada para YCloud com sucesso! ${JSON.stringify(messageResponse.data)}`,
         )
       } else {
         messageToSend.error = JSON.stringify(messageResponse.data)
         await messageToSend.save()
-        console.error(
+        logger.error(
           `YCloud - erro: Mensagem ${messageId} não enviada para YCloud. ${JSON.stringify(messageResponse.data)}`,
         )
       }
     } catch (error) {
       messageToSend.error = JSON.stringify(error.response?.data || error.message)
       await messageToSend.save()
-      console.error(`YCloud - erro: Erro ao enviar mensagem ${messageId} para YCloud:`, error)
+      logger.error({ err: error }, `YCloud - erro: Erro ao enviar mensagem ${messageId} para YCloud:`)
     }
   }
 
@@ -502,7 +503,7 @@ class YCloud extends MessengersBase {
       const response = await request.post(`${url}/webhookEndpoints`, { headers, body })
       return response.status === 200 || response.status === 201
     } catch (error) {
-      console.error('YCloud - erro: Erro ao configurar webhook:', error)
+      logger.error({ err: error }, 'YCloud - erro: Erro ao configurar webhook:')
       return false
     }
   }
@@ -513,7 +514,7 @@ class YCloud extends MessengersBase {
       const templates = parseTemplates(ycloudTemplates, this.licensee._id)
       return templates
     } catch (error) {
-      console.error('YCloud - erro: Erro ao buscar templates:', error)
+      logger.error({ err: error }, 'YCloud - erro: Erro ao buscar templates:')
       return []
     }
   }

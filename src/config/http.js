@@ -4,22 +4,27 @@ import('../app/models/index.js')
 
 import createError from 'http-errors'
 import express from 'express'
-import logger from 'morgan'
+import * as Sentry from '@sentry/node'
 import { connect } from './database.js'
 import { enableCors } from './cors.js'
 import { routes } from './routes.js'
 import http from 'http'
 import { Server } from 'socket.io'
 import Rollbar from 'rollbar'
+import { httpLogger, logger } from '../setup/logger.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const app = express()
+const sentryEnabled = Boolean(process.env.SENTRY_DSN)
 
+app.use(httpLogger)
+if (sentryEnabled) {
+  app.use(Sentry.Handlers.requestHandler())
+}
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ limit: '50mb', extended: false }))
-app.use(logger('dev'))
 connect()
 
 app.use(express.static(path.resolve(__dirname, '../../client/build')))
@@ -31,6 +36,24 @@ app.use(function (req, res, next) {
   next(createError(404))
 })
 
+if (sentryEnabled) {
+  app.use(Sentry.Handlers.errorHandler())
+}
+
+app.use(function (err, req, res, next) {
+  logger.error(
+    {
+      err,
+      requestId: req.id,
+      status: err.status || 500,
+      path: req.originalUrl,
+      method: req.method,
+    },
+    'Unhandled error',
+  )
+  next(err)
+})
+
 // error handler
 if (process.env.ROLLBAR_ACCESS_TOKEN) {
   const rollbar = new Rollbar({
@@ -40,17 +63,19 @@ if (process.env.ROLLBAR_ACCESS_TOKEN) {
   })
 
   app.use(rollbar.errorHandler())
-} else {
-  app.use(function (err, req, res) {
-    // set locals, only providing error in development
-    res.locals.message = err.message
-    res.locals.error = req.app.get('env') === 'development' ? err : {}
-
-    // render the error page
-    res.status(err.status || 500)
-    res.status(err.status || 500).send(err)
-  })
 }
+
+app.use(function (err, req, res, next) {
+  res.locals.message = err.message
+  res.locals.error = req.app.get('env') === 'development' ? err : {}
+
+  if (res.headersSent) {
+    return next(err)
+  }
+
+  res.status(err.status || 500)
+  res.status(err.status || 500).send(err)
+})
 
 const server = http.createServer(app)
 

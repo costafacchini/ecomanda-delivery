@@ -9,6 +9,7 @@ import { MessengersBase } from './Base.js'
 import { MessageRepositoryDatabase } from '../../repositories/message.js'
 import { S3 } from '../storage/S3.js'
 import mime from 'mime-types'
+import { logger } from '../../../setup/logger.js'
 
 const getWaIdContact = async (number, url, token) => {
   const headers = { 'D360-API-KEY': token }
@@ -279,7 +280,7 @@ class Dialog extends MessengersBase {
       if (waContact.valid) {
         waId = waContact.waId
       } else {
-        console.error(
+        logger.error(
           `A mensagem não foi enviada para a Dialog pois o contato não é válido ${JSON.stringify(waContact.data)}`,
         )
         return
@@ -398,11 +399,11 @@ class Dialog extends MessengersBase {
       messageToSend.messageWaId = messageResponse.data.messages[0].id
       messageToSend.sended = true
       await messageToSend.save()
-      console.info(`Mensagem ${messageId} enviada para Dialog360 com sucesso! ${JSON.stringify(messageResponse.data)}`)
+      logger.info(`Mensagem ${messageId} enviada para Dialog360 com sucesso! ${JSON.stringify(messageResponse.data)}`)
     } else {
       messageToSend.error = JSON.stringify(messageResponse.data)
       await messageToSend.save()
-      console.error(`Mensagem ${messageId} não enviada para Dialog360. ${JSON.stringify(messageResponse.data)}`)
+      logger.error(`Mensagem ${messageId} não enviada para Dialog360. ${JSON.stringify(messageResponse.data)}`)
     }
   }
 

@@ -11,6 +11,7 @@ jest.mock('../../services/request')
 jest.mock('@helpers/Files')
 jest.mock('@helpers/NormalizePhone')
 jest.mock('@helpers/ParseTriggerText')
+jest.mock('../../../setup/logger.js')
 
 import request from '../../services/request'
 import { isPhoto, isVideo, isMidia, isVoice } from '@helpers/Files.js'

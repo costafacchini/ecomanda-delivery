@@ -1,6 +1,7 @@
 import Body from '../models/Body.js'
 import { queueServer } from '../../config/queue.js'
 import { publishMessage } from '../../config/rabbitmq.js'
+import { logger } from '../../setup/logger.js'
 
 class ChatsController {
   async message(req, res) {
@@ -8,7 +9,7 @@ class ChatsController {
     // Remove crmData because of Rocketchat send a higher history inside the body
     delete body['crmData']
 
-    console.info(`Mensagem chegando do plugin de chat: ${JSON.stringify(body)}`)
+    logger.info(`Mensagem chegando do plugin de chat: ${JSON.stringify(body)}`)
     const bodySaved = await Body.create({ content: body, licensee: req.licensee._id, kind: 'normal' })
 
     await queueServer.addJob('chat-message', { bodyId: bodySaved._id, licenseeId: req.licensee._id })
@@ -17,7 +18,7 @@ class ChatsController {
   }
 
   reset(_, res) {
-    console.info('Agendando para resetar chats expirando')
+    logger.info('Agendando para resetar chats expirando')
 
     publishMessage({ key: 'reset-chats', body: {} })
 

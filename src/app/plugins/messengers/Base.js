@@ -5,6 +5,7 @@ import { MessageRepositoryDatabase } from '../../repositories/message.js'
 import { getProductBy } from '../../repositories/product.js'
 import { v4 as uuidv4 } from 'uuid'
 import { S3 } from '../storage/S3.js'
+import { logger } from '../../../setup/logger.js'
 
 const uploadFile = (licensee, contact, fileName, fileBase64) => {
   const s3 = new S3(licensee, contact, fileName, fileBase64)
@@ -202,7 +203,7 @@ class MessengersBase {
       try {
         processedMessages.push(await messageRepository.create(messageToSend))
       } catch (error) {
-        console.error('Não consegui criar a mensagem, verifique os erros:', error)
+        logger.error({ err: error }, 'Não consegui criar a mensagem, verifique os erros')
       }
     }
 

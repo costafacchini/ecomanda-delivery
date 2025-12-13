@@ -11,14 +11,22 @@ import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { MessageRepositoryDatabase } from '@repositories/message'
 import request from '../../services/request.js'
+import { logger } from '../../../setup/logger.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 jest.mock('../../services/request')
+jest.mock('../../../setup/logger.js', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    log: jest.fn(),
+  },
+}))
 
 describe('Chatwoot plugin', () => {
   let licensee
-  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
-  const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
+  const loggerInfoSpy = logger.info
+  const loggerErrorSpy = logger.error
 
   beforeEach(async () => {
     await mongoServer.connect()
@@ -963,7 +971,7 @@ describe('Chatwoot plugin', () => {
         expect(messageUpdated.sended).toEqual(false)
         expect(messageUpdated.error).toEqual('mensagem: {"error":true,"message":"Invalid message"}')
 
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(loggerErrorSpy).toHaveBeenCalledWith(
           `Chatwoot - erro: Mensagem 60958703f415ed4008748637 não enviada para Chatwoot.
            status: 400`,
         )
@@ -1011,7 +1019,7 @@ describe('Chatwoot plugin', () => {
 
         expect(request.post).toHaveBeenCalledTimes(1)
 
-        expect(consoleInfoSpy).toHaveBeenCalledWith(
+        expect(loggerInfoSpy).toHaveBeenCalledWith(
           'Chatwoot: Mensagem 60958703f415ed4008748637 enviada para Chatwoot com sucesso!',
         )
       })

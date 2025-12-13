@@ -2,6 +2,7 @@ import Integrationlog from '../../../models/Integrationlog.js'
 import request from '../../../services/request.js'
 import { LicenseeRepositoryDatabase } from '../../../repositories/licensee.js'
 import { ContactRepositoryDatabase } from '../../../repositories/contact.js'
+import { logger } from '../../../../setup/logger.js'
 
 const buildBody = (cart, contact, buildPaymentBuilder) => {
   return {
@@ -122,9 +123,9 @@ class Payment {
 
       await cart.save()
 
-      console.info(`Pedido criado na pagar.me! id: ${cart.order_id} log_id: ${integrationlog._id}`)
+      logger.info(`Pedido criado na pagar.me! id: ${cart.order_id} log_id: ${integrationlog._id}`)
     } else {
-      console.error(
+      logger.error(
         `Pedido ${cart._id} não criado na pagar.me.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}
@@ -164,9 +165,9 @@ class Payment {
 
       await cart.save()
 
-      console.info(`Pedido criado na pagar.me! id: ${cart.order_id} log_id: ${integrationlog._id}`)
+      logger.info(`Pedido criado na pagar.me! id: ${cart.order_id} log_id: ${integrationlog._id}`)
     } else {
-      console.error(
+      logger.error(
         `Pedido ${cart._id} não criado na pagar.me.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}
@@ -193,9 +194,9 @@ class Payment {
       cart.concluded = true
       await cart.save()
 
-      console.info(`Pagamento cancelado na pagar.me! id: ${cart.charge_id} log_id: ${integrationlog._id}`)
+      logger.info(`Pagamento cancelado na pagar.me! id: ${cart.charge_id} log_id: ${integrationlog._id}`)
     } else {
-      console.error(
+      logger.error(
         `Pagamento ${cart._id} não cancelado na pagar.me.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}

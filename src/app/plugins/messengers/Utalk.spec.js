@@ -8,14 +8,22 @@ import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { MessageRepositoryDatabase } from '@repositories/message'
 import request from '../../services/request.js'
+import { logger } from '../../../setup/logger.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 jest.mock('../../services/request')
+jest.mock('../../../setup/logger.js', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    log: jest.fn(),
+  },
+}))
 
 describe('Utalk plugin', () => {
   let licensee
-  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
-  const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
+  const loggerInfoSpy = logger.info
+  const loggerErrorSpy = logger.error
   const uploadFileS3Spy = jest.spyOn(S3.prototype, 'uploadFile').mockImplementation()
   const presignedUrlS3Spy = jest.spyOn(S3.prototype, 'presignedUrl').mockImplementation(() => {
     return 'https://s3.url.com/1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg'
@@ -645,7 +653,7 @@ describe('Utalk plugin', () => {
 
         const utalk = new Utalk(licensee)
         await utalk.sendMessage(message._id, 'https://api.utalk.com.br/send/', 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K')
-        expect(consoleInfoSpy).toHaveBeenCalledWith(
+        expect(loggerInfoSpy).toHaveBeenCalledWith(
           'Mensagem 60958703f415ed4008748637 enviada para Utalk com sucesso! {"type":"send message","cmd":"chat","to":"5511990283745@c.us","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","servidor":"res_utalk"}',
         )
       })
@@ -701,7 +709,7 @@ describe('Utalk plugin', () => {
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
 
-          expect(consoleInfoSpy).toHaveBeenCalledWith(
+          expect(loggerInfoSpy).toHaveBeenCalledWith(
             'Mensagem 60958703f415ed4008748637 enviada para Utalk com sucesso! {"type":"send message","cmd":"chat","to":"5511990283745@c.us","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","servidor":"res_utalk"}',
           )
         })
@@ -756,7 +764,7 @@ describe('Utalk plugin', () => {
           '{"type":"send message","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","status":"whatsapp offline"}',
         )
 
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(loggerErrorSpy).toHaveBeenCalledWith(
           'Mensagem 60958703f415ed4008748637 não enviada para Utalk. {"type":"send message","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","status":"whatsapp offline"}',
         )
       })
