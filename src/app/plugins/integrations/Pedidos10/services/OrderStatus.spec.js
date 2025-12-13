@@ -4,13 +4,21 @@ import Integrationlog from '@models/Integrationlog'
 import mongoServer from '../../../../../../.jest/utils'
 import { licenseePedidos10 as licenseeFactory } from '@factories/licensee'
 import request from '../../../../services/request.js'
+import { logger } from '../../../../../setup/logger.js'
 
 jest.mock('../../../../services/request')
+jest.mock('../../../../../setup/logger.js', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    log: jest.fn(),
+  },
+}))
 
 describe('Pedidos10/OrderStatus plugin', () => {
   let licensee
-  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
-  const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
+  const loggerInfoSpy = logger.info
+  const loggerErrorSpy = logger.error
 
   beforeEach(async () => {
     await mongoServer.connect()
@@ -45,7 +53,7 @@ describe('Pedidos10/OrderStatus plugin', () => {
 
         const orderStatus = new OrderStatus(licensee)
         await orderStatus.change('order-id', 'delivered')
-        expect(consoleInfoSpy).toHaveBeenCalledWith('Status do pedido order-id atualizado para delivered! log_id: 1234')
+        expect(loggerInfoSpy).toHaveBeenCalledWith('Status do pedido order-id atualizado para delivered! log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
       })
@@ -95,7 +103,7 @@ describe('Pedidos10/OrderStatus plugin', () => {
 
         const statusOrder = new OrderStatus(licensee)
         await statusOrder.change('order-id', 'delivered')
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(loggerErrorSpy).toHaveBeenCalledWith(
           `Não foi possível alterar o status do pedido no Pedidos 10
            status: 422
            mensagem: {"message":"The request is invalid.","errors":{"customer.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}

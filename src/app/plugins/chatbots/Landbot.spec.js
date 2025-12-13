@@ -14,14 +14,22 @@ import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
 import { MessageRepositoryDatabase } from '@repositories/message'
 import request from '../../services/request.js'
+import { logger } from '../../../setup/logger.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 jest.mock('../../services/request')
+jest.mock('../../../setup/logger.js', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    log: jest.fn(),
+  },
+}))
 
 describe('Landbot plugin', () => {
   let licensee
-  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
-  const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
+  const loggerInfoSpy = logger.info
+  const loggerErrorSpy = logger.error
 
   beforeEach(async () => {
     await mongoServer.connect()
@@ -171,11 +179,11 @@ describe('Landbot plugin', () => {
       expect(messages[4].longitude).toEqual(undefined)
       expect(messages[4].departament).toEqual(undefined)
 
-      expect(consoleInfoSpy).toHaveBeenCalledTimes(2)
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
+      expect(loggerInfoSpy).toHaveBeenCalledTimes(2)
+      expect(loggerInfoSpy).toHaveBeenCalledWith(
         'Tipo de mensagem retornado pela Landbot não reconhecido: multiple_images',
       )
-      expect(consoleInfoSpy).toHaveBeenCalledWith('Tipo de mensagem retornado pela Landbot não reconhecido: dialog')
+      expect(loggerInfoSpy).toHaveBeenCalledWith('Tipo de mensagem retornado pela Landbot não reconhecido: dialog')
     })
 
     it('changes the landbotId in contact if is different', async () => {
@@ -290,8 +298,8 @@ describe('Landbot plugin', () => {
 
       expect(messages.length).toEqual(0)
 
-      expect(consoleInfoSpy).toHaveBeenCalledTimes(1)
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
+      expect(loggerInfoSpy).toHaveBeenCalledTimes(1)
+      expect(loggerInfoSpy).toHaveBeenCalledWith(
         `Contato com telefone 5511990283745 e licenciado ${licensee._id} não encontrado`,
       )
     })
@@ -411,8 +419,8 @@ describe('Landbot plugin', () => {
 
       expect(message).toEqual(undefined)
 
-      expect(consoleInfoSpy).toHaveBeenCalledTimes(1)
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
+      expect(loggerInfoSpy).toHaveBeenCalledTimes(1)
+      expect(loggerInfoSpy).toHaveBeenCalledWith(
         `Contato com telefone 5511990283745 e licenciado ${licensee._id} não encontrado`,
       )
     })
@@ -601,7 +609,7 @@ describe('Landbot plugin', () => {
 
         const landbot = new Landbot(licensee)
         await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
-        expect(consoleInfoSpy).toHaveBeenCalledWith(
+        expect(loggerInfoSpy).toHaveBeenCalledWith(
           `Mensagem 60958703f415ed4008748637 enviada para Landbot com sucesso!
            status: 201
            body: ${JSON.stringify({
@@ -1061,7 +1069,7 @@ describe('Landbot plugin', () => {
         expect(messageUpdated.sended).toEqual(false)
         expect(messageUpdated.error).toEqual('{"detail":"invalid token"}')
 
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(loggerErrorSpy).toHaveBeenCalledWith(
           `Mensagem 60958703f415ed4008748637 não enviada para Landbot.
            status: 403
            mensagem: ${JSON.stringify({ detail: 'invalid token' })}`,

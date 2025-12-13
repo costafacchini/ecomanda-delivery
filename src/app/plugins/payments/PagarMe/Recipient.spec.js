@@ -4,13 +4,21 @@ import mongoServer from '../../../../../.jest/utils'
 import { licenseeIntegrationPagarMe as licenseeFactory } from '@factories/licensee'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import request from '../../../services/request.js'
+import { logger } from '../../../../setup/logger.js'
 
 jest.mock('../../../services/request')
+jest.mock('../../../../setup/logger.js', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    log: jest.fn(),
+  },
+}))
 
 describe('PagarMe/Recipient plugin', () => {
   let licensee
-  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
-  const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
+  const loggerInfoSpy = logger.info
+  const loggerErrorSpy = logger.error
 
   beforeEach(async () => {
     await mongoServer.connect()
@@ -63,7 +71,7 @@ describe('PagarMe/Recipient plugin', () => {
 
         const recipient = new Recipient()
         await recipient.create(licensee, 'token')
-        expect(consoleInfoSpy).toHaveBeenCalledWith(
+        expect(loggerInfoSpy).toHaveBeenCalledWith(
           'Licenciado Alcateia Ltds criado na pagar.me! id: 23717165 log_id: 1234',
         )
 
@@ -194,7 +202,7 @@ describe('PagarMe/Recipient plugin', () => {
 
         const recipient = new Recipient()
         await recipient.create(licensee, 'token')
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(loggerErrorSpy).toHaveBeenCalledWith(
           `Licenciado Alcateia Ltds não criado na pagar.me.
            status: 400
            mensagem: {"message":"The request is invalid.","errors":{"recipient.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
@@ -267,7 +275,7 @@ describe('PagarMe/Recipient plugin', () => {
         const recipient = new Recipient()
         licensee.recipient_id = '98765'
         await recipient.update(licensee, 'token')
-        expect(consoleInfoSpy).toHaveBeenCalledWith(
+        expect(loggerInfoSpy).toHaveBeenCalledWith(
           'Licenciado Alcateia Ltds atualizado na pagar.me! id: 98765 log_id: 1234',
         )
 
@@ -323,7 +331,7 @@ describe('PagarMe/Recipient plugin', () => {
         const recipient = new Recipient()
         licensee.recipient_id = '98765'
         await recipient.update(licensee, 'token')
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(loggerErrorSpy).toHaveBeenCalledWith(
           `Licenciado Alcateia Ltds não atualizado na pagar.me.
            status: 400
            mensagem: {"message":"The request is invalid.","errors":{"recipient.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}

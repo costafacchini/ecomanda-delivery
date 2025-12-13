@@ -6,11 +6,20 @@ import mongoServer from '../../../.jest/utils'
 import { expressServer } from '../../../.jest/server-express'
 import { queueServer } from '@config/queue'
 import { licensee as licenseeFactory } from '@factories/licensee'
+import { logger } from '../../setup/logger.js'
+
+jest.mock('../../setup/logger.js', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    log: jest.fn(),
+  },
+}))
 
 describe('chats controller', () => {
   let apiToken
   const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
-  jest.spyOn(global.console, 'info').mockImplementation()
+  logger.info.mockImplementation(() => {})
 
   beforeAll(async () => {
     jest.clearAllMocks()
