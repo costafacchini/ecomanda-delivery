@@ -1,10 +1,11 @@
 import Body from '../models/Body.js'
 import { queueServer } from '../../config/queue.js'
 import { publishMessage } from '../../config/rabbitmq.js'
+import { logger } from '../../setup/logger.js'
 
 class ChatbotsController {
   async message(req, res) {
-    console.info(`Mensagem chegando do plugin de chatbot: ${JSON.stringify(req.body)}`)
+    logger.info(`Mensagem chegando do plugin de chatbot: ${JSON.stringify(req.body)}`)
     const body = new Body({ content: req.body, licensee: req.licensee._id, kind: 'normal' })
     await body.save()
 
@@ -14,7 +15,7 @@ class ChatbotsController {
   }
 
   async transfer(req, res) {
-    console.info(`Transferencia solicitada: ${JSON.stringify(req.body)}`)
+    logger.info(`Transferencia solicitada: ${JSON.stringify(req.body)}`)
     const body = new Body({ content: req.body, licensee: req.licensee._id, kind: 'normal' })
     await body.save()
 
@@ -24,7 +25,7 @@ class ChatbotsController {
   }
 
   reset(_, res) {
-    console.info('Agendando para resetar chatbots abandonados')
+    logger.info('Agendando para resetar chatbots abandonados')
 
     publishMessage({ key: 'reset-chatbots', body: {} })
 

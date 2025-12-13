@@ -1,5 +1,6 @@
 import Integrationlog from '../../../models/Integrationlog.js'
 import request from '../../../services/request.js'
+import { logger } from '../../../../setup/logger.js'
 
 class Customer {
   async create(contact, token) {
@@ -43,11 +44,11 @@ class Customer {
       if (contact.address) contact.address_id = response.data.address.id
       await contact.save()
 
-      console.info(
+      logger.info(
         `Contato ${contact.name} criado na pagar.me! id: ${contact.customer_id} log_id: ${integrationlog._id}`,
       )
     } else {
-      console.error(
+      logger.error(
         `Contato ${contact.name} não criado na pagar.me.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}
@@ -78,11 +79,11 @@ class Customer {
     })
 
     if (response.status === 200) {
-      console.info(
+      logger.info(
         `Contato ${contact.name} atualizado na pagar.me! id: ${contact.customer_id} log_id: ${integrationlog._id}`,
       )
     } else {
-      console.error(
+      logger.error(
         `Contato ${contact.name} não atualizado na pagar.me.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}

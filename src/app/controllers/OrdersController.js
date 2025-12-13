@@ -1,6 +1,7 @@
 import Integrationlog from '../models/Integrationlog.js'
 import Body from '../models/Body.js'
 import { queueServer } from '../../config/queue.js'
+import { logger } from '../../setup/logger.js'
 
 class OrdersController {
   async create(req, res) {
@@ -14,7 +15,7 @@ class OrdersController {
 
     const bodySaved = await Body.create({ content: body, licensee: req.licensee._id, kind: 'pedidos10' })
 
-    console.info(`Requisição do Pedidos 10 para processar pedidos recebida: ${integrationlog._id}`)
+    logger.info(`Requisição do Pedidos 10 para processar pedidos recebida: ${integrationlog._id}`)
 
     await queueServer.addJob('pedidos10-webhook', { bodyId: bodySaved._id, licenseeId: req.licensee._id })
 
@@ -32,7 +33,7 @@ class OrdersController {
 
     const bodySaved = await Body.create({ content: body, licensee: req.licensee._id, kind: 'pedidos10' })
 
-    console.info(`Requisição para mudar o status do pedido recebida: ${integrationlog._id}`)
+    logger.info(`Requisição para mudar o status do pedido recebida: ${integrationlog._id}`)
 
     await queueServer.addJob('pedidos10-change-order-status', { bodyId: bodySaved._id, licenseeId: req.licensee._id })
 

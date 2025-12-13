@@ -1,5 +1,6 @@
 import Integrationlog from '../../../models/Integrationlog.js'
 import request from '../../../services/request.js'
+import { logger } from '../../../../setup/logger.js'
 
 class Card {
   async create(contact, creditCard, token) {
@@ -27,7 +28,7 @@ class Card {
       contact.credit_card_id = response.data.id
       await contact.save()
 
-      console.info(
+      logger.info(
         `Cartão ${creditCard.number.substr(0, 6)}******${creditCard.number.substr(-4)} ${
           creditCard.holder_name
         } criado na pagar.me! id: ${contact.credit_card_id} log_id: ${integrationlog._id}`,
@@ -42,7 +43,7 @@ class Card {
            mensagem: ${JSON.stringify(response.data)}
            log_id: ${integrationlog._id}`
 
-      console.error(error)
+      logger.error(error)
 
       return {
         success: false,
@@ -68,7 +69,7 @@ class Card {
         log_payload: response.data,
       })
 
-      console.error(
+      logger.error(
         `Não foi possível buscar os cartões na pagar.me.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}
@@ -97,7 +98,7 @@ class Card {
         log_payload: response.data,
       })
 
-      console.error(
+      logger.error(
         `Não foi possível buscar os cartões na pagar.me.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}

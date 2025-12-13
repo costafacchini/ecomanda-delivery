@@ -1,6 +1,7 @@
 import mime from 'mime-types'
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import { logger } from '../../../setup/logger.js'
 
 const getBucketPath = (number) => {
   const date = new Date()
@@ -62,11 +63,11 @@ class S3 {
 
     try {
       const results = await this.aws.send(new PutObjectCommand(params))
-      console.info(`AWS: Arquivo enviado para S3 com sucesso. ${results}`)
+      logger.info(`AWS: Arquivo enviado para S3 com sucesso. ${results}`)
 
       return results
     } catch (error) {
-      console.error('AWS: Erro ao enviar arquivo para S3', error)
+      logger.error({ err: error }, 'AWS: Erro ao enviar arquivo para S3')
       throw new Error('Erro ao enviar arquivo para S3')
     }
   }

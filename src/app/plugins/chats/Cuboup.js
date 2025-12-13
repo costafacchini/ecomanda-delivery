@@ -6,6 +6,7 @@ import request from '../../services/request.js'
 import { ChatsBase } from './Base.js'
 import { ContactRepositoryDatabase } from '../../repositories/contact.js'
 import { MessageRepositoryDatabase } from '../../repositories/message.js'
+import { logger } from '../../../setup/logger.js'
 
 class Cuboup extends ChatsBase {
   constructor(licensee) {
@@ -48,7 +49,7 @@ class Cuboup extends ChatsBase {
     messageToSend.kind = Cuboup.kindToMessageKind(message.type)
 
     if (!messageToSend.kind) {
-      console.info(`Tipo de mensagem retornado pela CuboUp não reconhecido: ${message.type}`)
+      logger.info(`Tipo de mensagem retornado pela CuboUp não reconhecido: ${message.type}`)
       this.messageParsed = null
       return []
     }
@@ -155,11 +156,11 @@ class Cuboup extends ChatsBase {
     if (response.status === 200) {
       messageToSend.sended = true
       await messageToSend.save()
-      console.info(`Mensagem ${messageToSend._id} enviada para CuboUp com sucesso!`)
+      logger.info(`Mensagem ${messageToSend._id} enviada para CuboUp com sucesso!`)
     } else {
       messageToSend.error = `mensagem: ${JSON.stringify(response.data)}`
       await messageToSend.save()
-      console.error(
+      logger.error(
         `Mensagem ${messageToSend._id} não enviada para CuboUp.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}`,
