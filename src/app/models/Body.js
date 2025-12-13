@@ -25,14 +25,12 @@ const bodySchema = new Schema(
   { timestamps: true },
 )
 
-bodySchema.pre('save', function (next) {
+bodySchema.pre('save', function () {
   const body = this
 
   if (!body._id) {
     body._id = new mongoose.Types.ObjectId()
   }
-
-  next()
 })
 
 bodySchema.set('toJSON', {

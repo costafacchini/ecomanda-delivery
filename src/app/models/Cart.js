@@ -100,7 +100,7 @@ const cartSchema = new Schema(
   { timestamps: true },
 )
 
-cartSchema.pre('save', function (next) {
+cartSchema.pre('save', function () {
   const cart = this
 
   if (!cart._id) {
@@ -108,8 +108,6 @@ cartSchema.pre('save', function (next) {
   }
 
   cart.total = cart.calculateTotal()
-
-  next()
 })
 
 cartSchema.post('save', async function (cart) {

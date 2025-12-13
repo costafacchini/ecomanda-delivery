@@ -230,7 +230,7 @@ const licenseeSchema = new Schema(
   { timestamps: true },
 )
 
-licenseeSchema.pre('save', function (next) {
+licenseeSchema.pre('save', function () {
   const licensee = this
 
   if (licensee.whatsappDefault === 'utalk') {
@@ -248,7 +248,6 @@ licenseeSchema.pre('save', function (next) {
   if (!licensee._id) {
     licensee._id = new mongoose.Types.ObjectId()
   }
-  next()
 })
 
 licenseeSchema.set('toJSON', {

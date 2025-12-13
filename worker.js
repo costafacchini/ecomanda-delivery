@@ -6,14 +6,16 @@ import { redisConnection } from './src/config/redis.js'
 import { queueServer } from './src/config/queue.js'
 import { Worker } from 'bullmq'
 import { connect } from './src/config/database.js'
-import { consumeChannel } from './src/config/rabbitmq.js'
+// import { consumeChannel } from './src/config/rabbitmq.js'
 import { withTrafficlight, resolveTrafficlightKey } from './src/app/helpers/Trafficlight.js'
 import { logger } from './src/setup/logger.js'
 
 connect()
-consumeChannel()
+// consumeChannel()
 
-queueServer.queues.forEach((queue) => {
+const queuesWithWorkerEnabled = queueServer.queues.filter((queue) => queue.workerEnabled == true)
+
+queuesWithWorkerEnabled.forEach((queue) => {
   const worker = new Worker(
     queue.name,
     async (job) => {

@@ -15,14 +15,12 @@ const trafficlightSchema = new Schema(
 
 trafficlightSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 })
 
-trafficlightSchema.pre('save', function (next) {
+trafficlightSchema.pre('save', function () {
   const trafficlight = this
 
   if (!trafficlight._id) {
     trafficlight._id = new mongoose.Types.ObjectId()
   }
-
-  next()
 })
 
 trafficlightSchema.set('toJSON', {

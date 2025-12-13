@@ -146,14 +146,12 @@ const orderSchema = new Schema(
   { timestamps: true },
 )
 
-orderSchema.pre('save', function (next) {
+orderSchema.pre('save', function () {
   const order = this
 
   if (!order._id) {
     order._id = new mongoose.Types.ObjectId()
   }
-
-  next()
 })
 
 orderSchema.set('toJSON', {

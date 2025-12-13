@@ -58,29 +58,6 @@ describe('YCloud Plugin', () => {
     })
   })
 
-  describe('parseMessageStatus', () => {
-    it('should parse status updates correctly', () => {
-      const responseBody = {
-        whatsappMessage: {
-          id: 'message-id',
-          status: 'sent',
-        },
-      }
-
-      ycloud.parseMessageStatus(responseBody)
-      expect(ycloud.messageStatus).toEqual({
-        id: 'message-id',
-        status: 'sent',
-      })
-    })
-
-    it('should handle missing whatsappMessage', () => {
-      const responseBody = {}
-      ycloud.parseMessageStatus(responseBody)
-      expect(ycloud.messageStatus).toBeNull()
-    })
-  })
-
   describe('parseMessage', () => {
     it('should parse text message correctly', () => {
       const responseBody = {

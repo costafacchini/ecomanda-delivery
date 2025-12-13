@@ -53,7 +53,7 @@ const contactSchema = new Schema(
   { timestamps: true },
 )
 
-contactSchema.pre('save', function (next) {
+contactSchema.pre('save', function () {
   const contact = this
 
   if (!contact._id) {
@@ -69,8 +69,6 @@ contactSchema.pre('save', function (next) {
   if (contact.cep) {
     contact.cep = contact.cep.replace(/[^0-9]/g, '')
   }
-
-  next()
 })
 
 contactSchema.set('toJSON', {

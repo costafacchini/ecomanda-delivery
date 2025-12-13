@@ -31,14 +31,12 @@ const templateSchema = new Schema(
   { timestamps: true },
 )
 
-templateSchema.pre('save', function (next) {
+templateSchema.pre('save', function () {
   const template = this
 
   if (!template._id) {
     template._id = new mongoose.Types.ObjectId()
   }
-
-  next()
 })
 
 templateSchema.set('toJSON', {

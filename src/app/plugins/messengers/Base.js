@@ -129,6 +129,7 @@ class MessengersBase {
         contact: contact._id,
         destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
         kind: this.messageData.kind,
+        departament: this.messageData.departament,
       }
 
       if (messageToSend.kind === 'text') {
