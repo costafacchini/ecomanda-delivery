@@ -65,8 +65,6 @@ describe('processPagarmeOrderPaid', () => {
   })
 
   it('logs message when cart is not found', async () => {
-    const loggerInfoSpy = logger.info
-
     const body = {
       data: {
         id: 'pagarme-id',
@@ -82,7 +80,7 @@ describe('processPagarmeOrderPaid', () => {
 
     await processPagarmeOrderPaid(body)
 
-    expect(loggerInfoSpy).toHaveBeenCalledTimes(1)
-    expect(loggerInfoSpy).toHaveBeenCalledWith('Carrinho não encontrado referente ao pagamento pagarme-id da pagar.me!')
+    expect(logger.info).toHaveBeenCalledTimes(1)
+    expect(logger.info).toHaveBeenCalledWith('Carrinho não encontrado referente ao pagamento pagarme-id da pagar.me!')
   })
 })

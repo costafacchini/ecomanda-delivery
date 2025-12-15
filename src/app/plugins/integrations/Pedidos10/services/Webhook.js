@@ -34,8 +34,8 @@ class Webhook {
       logger.error(
         `Não foi possível assinar o webhook de pedidos do Pedidos 10
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}
            log_id: ${integrationlog._id}`,
+        response.data,
       )
     }
   }

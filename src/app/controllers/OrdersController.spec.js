@@ -16,10 +16,9 @@ jest.mock('../../setup/logger.js', () => ({
   },
 }))
 
-describe('chats controller', () => {
+describe('orders controller', () => {
   let apiToken
   const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
-  logger.info.mockImplementation(() => {})
 
   beforeAll(async () => {
     jest.clearAllMocks()
@@ -90,6 +89,10 @@ describe('chats controller', () => {
               bodyId: body._id,
               licenseeId: body.licensee,
             })
+
+            expect(logger.info).toHaveBeenCalledWith(
+              `Requisição do Pedidos 10 para processar pedidos recebida: ${integrationlog._id}`,
+            )
           })
       })
     })
@@ -126,6 +129,10 @@ describe('chats controller', () => {
               bodyId: body._id,
               licenseeId: body.licensee,
             })
+
+            expect(logger.info).toHaveBeenCalledWith(
+              `Requisição para mudar o status do pedido recebida: ${integrationlog._id}`,
+            )
           })
       })
     })

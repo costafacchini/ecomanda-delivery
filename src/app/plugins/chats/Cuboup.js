@@ -162,8 +162,8 @@ class Cuboup extends ChatsBase {
       await messageToSend.save()
       logger.error(
         `Mensagem ${messageToSend._id} não enviada para CuboUp.
-           status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}`,
+           status: ${response.status}`,
+        response.data,
       )
     }
   }

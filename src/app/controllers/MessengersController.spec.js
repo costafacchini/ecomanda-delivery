@@ -18,7 +18,6 @@ jest.mock('../../setup/logger.js', () => ({
 describe('messengers controller', () => {
   let apiToken
   const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
-  logger.info.mockImplementation(() => {})
 
   beforeAll(async () => {
     jest.clearAllMocks()
@@ -78,6 +77,7 @@ describe('messengers controller', () => {
               bodyId: body._id,
               licenseeId: body.licensee,
             })
+            expect(logger.info).toHaveBeenCalledWith('Mensagem chegando do plugin de whatsapp', { field: 'test' })
           })
       })
     })

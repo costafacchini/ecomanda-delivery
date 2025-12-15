@@ -35,8 +35,8 @@ class OrderStatus {
       logger.error(
         `Não foi possível alterar o status do pedido no Pedidos 10
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}
            log_id: ${integrationlog._id}`,
+        response.data,
       )
     }
   }

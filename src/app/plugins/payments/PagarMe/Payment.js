@@ -128,8 +128,8 @@ class Payment {
       logger.error(
         `Pedido ${cart._id} não criado na pagar.me.
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}
            log_id: ${integrationlog._id}`,
+        response.data,
       )
     }
   }
@@ -170,8 +170,8 @@ class Payment {
       logger.error(
         `Pedido ${cart._id} não criado na pagar.me.
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}
            log_id: ${integrationlog._id}`,
+        response.data,
       )
     }
   }
@@ -199,8 +199,8 @@ class Payment {
       logger.error(
         `Pagamento ${cart._id} não cancelado na pagar.me.
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}
            log_id: ${integrationlog._id}`,
+        response.data,
       )
     }
   }

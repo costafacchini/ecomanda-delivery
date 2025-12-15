@@ -37,14 +37,11 @@ queuesWithWorkerEnabled.forEach((queue) => {
   redisConnection.setMaxListeners(redisConnection.getMaxListeners() + 1)
 
   worker.on('failed', (job, failedReason) => {
-    logger.error(
-      {
-        err: failedReason,
-        queue: queue.name,
-        jobId: job?.id,
-        requestId: job?.data?.requestId,
-      },
-      'Failed to process job',
-    )
+    logger.error('Failed to process job', {
+      err: failedReason,
+      queue: queue.name,
+      jobId: job?.id,
+      requestId: job?.data?.requestId,
+    })
   })
 })

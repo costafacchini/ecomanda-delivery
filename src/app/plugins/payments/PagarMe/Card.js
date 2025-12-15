@@ -40,10 +40,9 @@ class Card {
         creditCard.holder_name
       } não criado na pagar.me.
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}
            log_id: ${integrationlog._id}`
 
-      logger.error(error)
+      logger.error(error, response.data)
 
       return {
         success: false,
@@ -72,8 +71,8 @@ class Card {
       logger.error(
         `Não foi possível buscar os cartões na pagar.me.
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}
            log_id: ${integrationlog._id}`,
+        response.data,
       )
     }
   }
@@ -101,8 +100,8 @@ class Card {
       logger.error(
         `Não foi possível buscar os cartões na pagar.me.
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}
            log_id: ${integrationlog._id}`,
+        response.data,
       )
     }
   }

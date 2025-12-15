@@ -11,7 +11,7 @@ const createSession = async (url, headers, contact, segments) => {
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })
 
   if (response.status !== 201) {
-    logger.error(`Não foi possível criar a sessão na Crisp ${JSON.stringify(response.data)}`)
+    logger.error('Não foi possível criar a sessão na Crisp', response.data)
     return
   } else {
     const room = await createRoom({
@@ -95,8 +95,8 @@ const postMessage = async (url, headers, contact, message, room) => {
     await message.save()
     logger.error(
       `Mensagem ${message._id} não enviada para Crisp.
-           status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}`,
+           status: ${response.status}`,
+      response.data,
     )
   }
 

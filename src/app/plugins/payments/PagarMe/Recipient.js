@@ -44,8 +44,8 @@ class Recipient {
       logger.error(
         `Licenciado ${licensee.name} não criado na pagar.me.
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}
            log_id: ${integrationlog._id}`,
+        response.data,
       )
     }
   }
@@ -77,8 +77,8 @@ class Recipient {
       logger.error(
         `Licenciado ${licensee.name} não atualizado na pagar.me.
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}
            log_id: ${integrationlog._id}`,
+        response.data,
       )
     }
   }

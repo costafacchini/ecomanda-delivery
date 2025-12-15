@@ -51,8 +51,8 @@ class Customer {
       logger.error(
         `Contato ${contact.name} não criado na pagar.me.
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}
            log_id: ${integrationlog._id}`,
+        response.data,
       )
     }
   }
@@ -86,8 +86,8 @@ class Customer {
       logger.error(
         `Contato ${contact.name} não atualizado na pagar.me.
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}
            log_id: ${integrationlog._id}`,
+        response.data,
       )
     }
   }

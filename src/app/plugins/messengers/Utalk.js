@@ -171,11 +171,11 @@ class Utalk extends MessengersBase {
     if (!response.data.status) {
       messageToSend.sended = true
       await messageToSend.save()
-      logger.info(`Mensagem ${messageId} enviada para Utalk com sucesso! ${JSON.stringify(response.data)}`)
+      logger.info(`Mensagem ${messageId} enviada para Utalk com sucesso!`, response.data)
     } else {
       messageToSend.error = JSON.stringify(response.data)
       await messageToSend.save()
-      logger.error(`Mensagem ${messageId} não enviada para Utalk. ${JSON.stringify(response.data)}`)
+      logger.error(`Mensagem ${messageId} não enviada para Utalk.`, response.data)
     }
   }
 }

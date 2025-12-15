@@ -4,15 +4,8 @@ import { expressServer } from '../../../.jest/server-express'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { publishMessage } from '@config/rabbitmq'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
-import { logger } from '../../setup/logger.js'
 
-jest.mock('../../setup/logger.js', () => ({
-  logger: {
-    info: jest.fn(),
-    error: jest.fn(),
-    log: jest.fn(),
-  },
-}))
+jest.mock('../../setup/logger.js')
 
 jest.mock('@config/rabbitmq', () => ({
   publishMessage: jest.fn(),
@@ -20,8 +13,6 @@ jest.mock('@config/rabbitmq', () => ({
 
 describe('backups controller', () => {
   let apiToken, licensee
-
-  logger.info.mockImplementation(() => {})
 
   beforeAll(async () => {
     jest.clearAllMocks()

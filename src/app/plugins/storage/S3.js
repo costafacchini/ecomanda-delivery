@@ -63,11 +63,11 @@ class S3 {
 
     try {
       const results = await this.aws.send(new PutObjectCommand(params))
-      logger.info(`AWS: Arquivo enviado para S3 com sucesso. ${results}`)
+      logger.info('AWS: Arquivo enviado para S3 com sucesso.', results)
 
       return results
     } catch (error) {
-      logger.error({ err: error }, 'AWS: Erro ao enviar arquivo para S3')
+      logger.error('AWS: Erro ao enviar arquivo para S3', { err: error })
       throw new Error('Erro ao enviar arquivo para S3')
     }
   }

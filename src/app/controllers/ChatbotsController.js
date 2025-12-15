@@ -5,7 +5,7 @@ import { logger } from '../../setup/logger.js'
 
 class ChatbotsController {
   async message(req, res) {
-    logger.info(`Mensagem chegando do plugin de chatbot: ${JSON.stringify(req.body)}`)
+    logger.info('Mensagem chegando do plugin de chatbot', req.body)
     const body = new Body({ content: req.body, licensee: req.licensee._id, kind: 'normal' })
     await body.save()
 
@@ -15,7 +15,7 @@ class ChatbotsController {
   }
 
   async transfer(req, res) {
-    logger.info(`Transferencia solicitada: ${JSON.stringify(req.body)}`)
+    logger.info('Transferencia solicitada', req.body)
     const body = new Body({ content: req.body, licensee: req.licensee._id, kind: 'normal' })
     await body.save()
 

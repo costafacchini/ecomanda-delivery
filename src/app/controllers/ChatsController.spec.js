@@ -23,7 +23,6 @@ jest.mock('@config/rabbitmq', () => ({
 describe('chats controller', () => {
   let apiToken
   const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
-  logger.info.mockImplementation(() => {})
 
   beforeAll(async () => {
     jest.clearAllMocks()
@@ -85,6 +84,7 @@ describe('chats controller', () => {
               bodyId: body._id,
               licenseeId: body.licensee,
             })
+            expect(logger.info).toHaveBeenCalledWith('Mensagem chegando do plugin de chat', { field: 'test' })
           })
       })
     })
@@ -102,6 +102,7 @@ describe('chats controller', () => {
               body: 'Solicitação para avisar os chats com janela vencendo agendado com sucesso',
             })
             expect(publishMessage).toHaveBeenCalledWith({ key: 'reset-chats', body: {} })
+            expect(logger.info).toHaveBeenCalledWith('Agendando para resetar chats expirando')
           })
       })
     })

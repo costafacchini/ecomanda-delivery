@@ -25,8 +25,6 @@ jest.mock('../../../setup/logger.js', () => ({
 
 describe('Crisp plugin', () => {
   let licensee
-  const loggerInfoSpy = logger.info
-  const loggerErrorSpy = logger.error
 
   beforeEach(async () => {
     await mongoServer.connect()
@@ -724,7 +722,7 @@ describe('Crisp plugin', () => {
 
         const crisp = new Crisp(licensee)
         await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-        expect(loggerInfoSpy).toHaveBeenCalledWith('Mensagem 60958703f415ed4008748637 enviada para Crisp com sucesso!')
+        expect(logger.info).toHaveBeenCalledWith('Mensagem 60958703f415ed4008748637 enviada para Crisp com sucesso!')
       })
 
       describe('when message has a departament', () => {
@@ -1027,9 +1025,11 @@ describe('Crisp plugin', () => {
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
 
-          expect(loggerErrorSpy).toHaveBeenCalledWith(
-            'Não foi possível criar a sessão na Crisp {"error":true,"reason":"invalid_session","data":{}}',
-          )
+          expect(logger.error).toHaveBeenCalledWith('Não foi possível criar a sessão na Crisp', {
+            error: true,
+            reason: 'invalid_session',
+            data: {},
+          })
         })
       })
 
@@ -1098,10 +1098,14 @@ describe('Crisp plugin', () => {
             'mensagem: {"error":true,"reason":"invalid_data","data":{"namespace":"data","message":"data.user.type should be equal to one of the allowed values"}}',
           )
 
-          expect(loggerErrorSpy).toHaveBeenCalledWith(
+          expect(logger.error).toHaveBeenCalledWith(
             `Mensagem 60958703f415ed4008748637 não enviada para Crisp.
-           status: 404
-           mensagem: {"error":true,"reason":"invalid_data","data":{"namespace":"data","message":"data.user.type should be equal to one of the allowed values"}}`,
+           status: 404`,
+            {
+              error: true,
+              reason: 'invalid_data',
+              data: { namespace: 'data', message: 'data.user.type should be equal to one of the allowed values' },
+            },
           )
         })
       })

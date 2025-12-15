@@ -25,8 +25,6 @@ jest.mock('../../../setup/logger.js', () => ({
 
 describe('Rocketchat plugin', () => {
   let licensee
-  const loggerInfoSpy = logger.info
-  const loggerErrorSpy = logger.error
 
   beforeEach(async () => {
     await mongoServer.connect()
@@ -424,7 +422,7 @@ describe('Rocketchat plugin', () => {
 
         const rocketchat = new Rocketchat(licensee)
         await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-        expect(loggerInfoSpy).toHaveBeenCalledWith(
+        expect(logger.info).toHaveBeenCalledWith(
           'Mensagem 60958703f415ed4008748637 enviada para Rocketchat com sucesso!',
         )
       })
@@ -775,9 +773,9 @@ describe('Rocketchat plugin', () => {
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
 
-          expect(loggerErrorSpy).toHaveBeenCalledWith(
-            'Não foi possível criar o visitante na Rocketchat {"success":false}',
-          )
+          expect(logger.error).toHaveBeenCalledWith('Não foi possível criar o visitante na Rocketchat', {
+            success: false,
+          })
         })
       })
 
@@ -832,7 +830,7 @@ describe('Rocketchat plugin', () => {
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
 
-          expect(loggerErrorSpy).toHaveBeenCalledWith('Não foi possível criar a sala na Rocketchat {"success":false}')
+          expect(logger.error).toHaveBeenCalledWith('Não foi possível criar a sala na Rocketchat', { success: false })
         })
       })
 
@@ -918,9 +916,9 @@ describe('Rocketchat plugin', () => {
           expect(messageUpdated.sended).toEqual(false)
           expect(messageUpdated.error).toEqual('{"success":false}')
 
-          expect(loggerErrorSpy).toHaveBeenCalledWith(
-            'Mensagem 60958703f415ed4008748637 não enviada para a Rocketchat {"success":false}',
-          )
+          expect(logger.error).toHaveBeenCalledWith('Mensagem 60958703f415ed4008748637 não enviada para a Rocketchat', {
+            success: false,
+          })
         })
 
         it('close room and retry send message if error includes room-closed', async () => {
@@ -1030,7 +1028,7 @@ describe('Rocketchat plugin', () => {
           const roomClosed = await Room.findById(room._id)
           expect(roomClosed.closed).toEqual(true)
 
-          expect(loggerInfoSpy).toHaveBeenCalledWith(
+          expect(logger.info).toHaveBeenCalledWith(
             'Mensagem 60958703f415ed4008748637 enviada para Rocketchat com sucesso!',
           )
         })

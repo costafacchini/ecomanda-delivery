@@ -42,8 +42,8 @@ class Auth {
       logger.error(
         `Não foi possível fazer a autenticação na API do Pedidos 10
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}
            log_id: ${integrationlog._id}`,
+        response.data,
       )
     }
 

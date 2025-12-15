@@ -4,7 +4,7 @@ import { logger } from '../../setup/logger.js'
 
 class MessengersController {
   async message(req, res) {
-    logger.info(`Mensagem chegando do plugin de whatsapp: ${JSON.stringify(req.body)}`)
+    logger.info('Mensagem chegando do plugin de whatsapp', req.body)
     const body = new Body({ content: req.body, licensee: req.licensee._id, kind: 'normal' })
     await body.save()
 

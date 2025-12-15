@@ -24,11 +24,11 @@ function onError(error) {
 
   switch (error.code) {
     case 'EACCES':
-      logger.fatal({ err: error, bind }, 'Requires elevated privileges')
+      logger.fatal('Requires elevated privileges', { err: error, bind })
       process.exit(1)
       break
     case 'EADDRINUSE':
-      logger.fatal({ err: error, bind }, 'Port is already in use')
+      logger.fatal('Port is already in use', { err: error, bind })
       process.exit(1)
       break
     default:
@@ -39,5 +39,5 @@ function onError(error) {
 function onListening() {
   const addr = server.address()
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'PORT ' + addr.port
-  logger.info({ bind }, 'Server listening')
+  logger.info('Server listening', { bind })
 }

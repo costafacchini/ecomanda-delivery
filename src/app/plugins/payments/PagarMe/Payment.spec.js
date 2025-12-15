@@ -21,8 +21,6 @@ jest.mock('../../../../setup/logger.js', () => ({
 
 describe('PagarMe/Customer plugin', () => {
   let licensee
-  const loggerInfoSpy = logger.info
-  const loggerErrorSpy = logger.error
 
   beforeEach(async () => {
     await mongoServer.connect()
@@ -144,7 +142,7 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.createPIX(cart, 'token')
-        expect(loggerInfoSpy).toHaveBeenCalledWith('Pedido criado na pagar.me! id: or_56GXnk6T0eU88qMm log_id: 1234')
+        expect(logger.info).toHaveBeenCalledWith('Pedido criado na pagar.me! id: or_56GXnk6T0eU88qMm log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
       })
@@ -535,11 +533,18 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.createPIX(cart, 'token')
-        expect(loggerErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Pedido ${cart._id} não criado na pagar.me.
            status: 422
-           mensagem: {"message":"The request is invalid.","errors":{"order.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
            log_id: 1234`,
+          {
+            message: 'The request is invalid.',
+            errors: {
+              'order.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
+            },
+          },
         )
 
         integrationlogCreateSpy.mockRestore()
@@ -778,7 +783,7 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.createCreditCard(cart, 'token')
-        expect(loggerInfoSpy).toHaveBeenCalledWith('Pedido criado na pagar.me! id: or_56GXnk6T0eU88qMm log_id: 1234')
+        expect(logger.info).toHaveBeenCalledWith('Pedido criado na pagar.me! id: or_56GXnk6T0eU88qMm log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
       })
@@ -1186,11 +1191,18 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.createCreditCard(cart, 'token')
-        expect(loggerErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Pedido ${cart._id} não criado na pagar.me.
            status: 422
-           mensagem: {"message":"The request is invalid.","errors":{"order.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
            log_id: 1234`,
+          {
+            message: 'The request is invalid.',
+            errors: {
+              'order.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
+            },
+          },
         )
 
         integrationlogCreateSpy.mockRestore()
@@ -1351,7 +1363,7 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.delete(cart, 'token')
-        expect(loggerInfoSpy).toHaveBeenCalledWith('Pagamento cancelado na pagar.me! id: charge-id log_id: 1234')
+        expect(logger.info).toHaveBeenCalledWith('Pagamento cancelado na pagar.me! id: charge-id log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
       })
@@ -1531,11 +1543,18 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = new Payment()
         await payment.delete(cart, 'token')
-        expect(loggerErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Pagamento ${cart._id} não cancelado na pagar.me.
            status: 422
-           mensagem: {"message":"The request is invalid.","errors":{"charge.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
            log_id: 1234`,
+          {
+            message: 'The request is invalid.',
+            errors: {
+              'charge.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
+            },
+          },
         )
 
         integrationlogCreateSpy.mockRestore()

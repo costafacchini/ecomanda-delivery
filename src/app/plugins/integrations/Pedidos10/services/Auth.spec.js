@@ -17,8 +17,6 @@ jest.mock('../../../../../setup/logger.js', () => ({
 
 describe('Pedidos10/Auth plugin', () => {
   let licensee
-  const loggerInfoSpy = logger.info
-  const loggerErrorSpy = logger.error
 
   beforeEach(async () => {
     await mongoServer.connect()
@@ -60,7 +58,7 @@ describe('Pedidos10/Auth plugin', () => {
         const auth = new Auth(licensee)
         const isLogged = await auth.login()
         expect(isLogged).toBe(true)
-        expect(loggerInfoSpy).toHaveBeenCalledWith('Login efetuado na API do Pedidos 10! log_id: 1234')
+        expect(logger.info).toHaveBeenCalledWith('Login efetuado na API do Pedidos 10! log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
       })
@@ -141,11 +139,11 @@ describe('Pedidos10/Auth plugin', () => {
         const auth = new Auth(licensee)
         const isLogged = await auth.login()
         expect(isLogged).toBe(false)
-        expect(loggerErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Não foi possível fazer a autenticação na API do Pedidos 10
            status: 422
-           mensagem: {"error":"Credenciais para login inválidas"}
            log_id: 1234`,
+          { error: 'Credenciais para login inválidas' },
         )
 
         integrationlogCreateSpy.mockRestore()

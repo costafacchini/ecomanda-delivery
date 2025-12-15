@@ -280,9 +280,7 @@ class Dialog extends MessengersBase {
       if (waContact.valid) {
         waId = waContact.waId
       } else {
-        logger.error(
-          `A mensagem não foi enviada para a Dialog pois o contato não é válido ${JSON.stringify(waContact.data)}`,
-        )
+        logger.error('A mensagem não foi enviada para a Dialog pois o contato não é válido', waContact.data)
         return
       }
     }
@@ -399,11 +397,11 @@ class Dialog extends MessengersBase {
       messageToSend.messageWaId = messageResponse.data.messages[0].id
       messageToSend.sended = true
       await messageToSend.save()
-      logger.info(`Mensagem ${messageId} enviada para Dialog360 com sucesso! ${JSON.stringify(messageResponse.data)}`)
+      logger.info(`Mensagem ${messageId} enviada para Dialog360 com sucesso!`, messageResponse.data)
     } else {
       messageToSend.error = JSON.stringify(messageResponse.data)
       await messageToSend.save()
-      logger.error(`Mensagem ${messageId} não enviada para Dialog360. ${JSON.stringify(messageResponse.data)}`)
+      logger.error(`Mensagem ${messageId} não enviada para Dialog360.`, messageResponse.data)
     }
   }
 

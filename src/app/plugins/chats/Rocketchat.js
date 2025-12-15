@@ -18,7 +18,7 @@ const createVisitor = async (contact, token, url) => {
   const response = await request.post(`${url}/api/v1/livechat/visitor`, { body })
 
   if (response.data.success !== true) {
-    logger.error(`Não foi possível criar o visitante na Rocketchat ${JSON.stringify(response.data)}`)
+    logger.error('Não foi possível criar o visitante na Rocketchat', response.data)
   }
 
   return response.data.success === true
@@ -28,7 +28,7 @@ const createRoom = async (contact, token, url) => {
   const response = await request.get(`${url}/api/v1/livechat/room?token=${token}`)
 
   if (response.data.success !== true) {
-    logger.error(`Não foi possível criar a sala na Rocketchat ${JSON.stringify(response.data)}`)
+    logger.error('Não foi possível criar a sala na Rocketchat', response.data)
     return
   }
 
@@ -180,7 +180,7 @@ class Rocketchat extends ChatsBase {
       if (messageToSend.error.includes('room-closed')) {
         await this.sendMessage(messageToSend._id, url)
       } else {
-        logger.error(`Mensagem ${messageToSend._id} não enviada para a Rocketchat ${JSON.stringify(response.data)}`)
+        logger.error(`Mensagem ${messageToSend._id} não enviada para a Rocketchat`, response.data)
       }
     }
 

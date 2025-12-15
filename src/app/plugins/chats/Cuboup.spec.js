@@ -23,8 +23,6 @@ jest.mock('../../../setup/logger.js', () => ({
 
 describe('Cuboup plugin', () => {
   let licensee
-  const loggerInfoSpy = logger.info
-  const loggerErrorSpy = logger.error
 
   beforeEach(async () => {
     await mongoServer.connect()
@@ -273,7 +271,7 @@ describe('Cuboup plugin', () => {
         const cuboup = new Cuboup(licensee)
         const message = await cuboup.responseToMessages(responseBody)
 
-        expect(loggerInfoSpy).toHaveBeenCalledWith('Tipo de mensagem retornado pela CuboUp não reconhecido: any')
+        expect(logger.info).toHaveBeenCalledWith('Tipo de mensagem retornado pela CuboUp não reconhecido: any')
 
         expect(message).toEqual([])
       })
@@ -479,9 +477,7 @@ describe('Cuboup plugin', () => {
 
         const cuboup = new Cuboup(licensee)
         await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
-        expect(loggerInfoSpy).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 enviada para CuboUp com sucesso!',
-        )
+        expect(logger.info).toHaveBeenCalledWith('Mensagem 60958703f415ed4008748637 enviada para CuboUp com sucesso!')
       })
 
       describe('when message is for group', () => {
@@ -591,10 +587,10 @@ describe('Cuboup plugin', () => {
         expect(messageUpdated.sended).toEqual(false)
         expect(messageUpdated.error).toEqual('mensagem: {"error":"Error message"}')
 
-        expect(loggerErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Mensagem 60958703f415ed4008748637 não enviada para CuboUp.
-           status: 404
-           mensagem: {"error":"Error message"}`,
+           status: 404`,
+          { error: 'Error message' },
         )
       })
     })

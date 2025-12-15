@@ -32,7 +32,7 @@ async function backup() {
 
     logger.info('Backup efetuado com sucesso!')
   } catch (err) {
-    logger.error({ err }, 'Erro ao tentar efetuar o backup')
+    logger.error('Erro ao tentar efetuar o backup', { err })
   }
 }
 

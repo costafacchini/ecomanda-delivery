@@ -61,9 +61,7 @@ const createContact = async (url, headers, contact, licensee, contactRepository)
       chatwootSourceId: null,
     })
 
-    logger.error(
-      `Chatwoot - erro: Não foi possível criar o contato na Chatwoot. Essa é a resposta do servidor ${JSON.stringify(response.data)}`,
-    )
+    logger.error('Chatwoot - erro: Não foi possível criar o contato na Chatwoot', response.data)
     return
   } else if (response.data?.payload?.contact_inbox) {
     await contactRepository.update(contact._id, {
@@ -92,9 +90,7 @@ const createConversation = async (url, headers, contact, inboxId) => {
   const response = await request.post(`${url}conversations`, { headers, body })
 
   if (response.status !== 200) {
-    logger.error(
-      `Chatwoot - erro: Não foi possível criar a conversa na Chatwoot. A resposta do servidor é essa ${JSON.stringify(response.data)}`,
-    )
+    logger.error('Chatwoot - erro: Não foi possível criar a conversa na Chatwoot', response.data)
     return
   } else {
     const room = await createRoom({

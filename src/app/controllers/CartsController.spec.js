@@ -26,7 +26,6 @@ jest.mock('@config/rabbitmq', () => ({
 describe('carts controller', () => {
   let licensee, contact
   let anotherLicensee, anotherContact
-  const loggerInfoSpy = logger.info
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -899,8 +898,8 @@ describe('carts controller', () => {
             })
             expect(publishMessage).toHaveBeenCalledWith({ key: 'reset-carts', body: {} })
 
-            expect(loggerInfoSpy).toHaveBeenCalledTimes(1)
-            expect(loggerInfoSpy).toHaveBeenCalledWith('Agendando para resetar carts expirando')
+            expect(logger.info).toHaveBeenCalledTimes(1)
+            expect(logger.info).toHaveBeenCalledWith('Agendando para resetar carts expirando')
           })
       })
     })

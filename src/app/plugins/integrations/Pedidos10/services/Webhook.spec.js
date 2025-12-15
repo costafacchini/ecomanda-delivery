@@ -17,8 +17,6 @@ jest.mock('../../../../../setup/logger.js', () => ({
 
 describe('Pedidos10/Webhook plugin', () => {
   let licensee
-  const loggerInfoSpy = logger.info
-  const loggerErrorSpy = logger.error
 
   beforeEach(async () => {
     await mongoServer.connect()
@@ -52,7 +50,7 @@ describe('Pedidos10/Webhook plugin', () => {
 
         const webhook = new Webhook(licensee)
         await webhook.sign()
-        expect(loggerInfoSpy).toHaveBeenCalledWith('Webhook do Pedidos 10 assinado com sucesso! log_id: 1234')
+        expect(logger.info).toHaveBeenCalledWith('Webhook do Pedidos 10 assinado com sucesso! log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
       })
@@ -100,11 +98,18 @@ describe('Pedidos10/Webhook plugin', () => {
 
         const webhook = new Webhook(licensee)
         await webhook.sign()
-        expect(loggerErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Não foi possível assinar o webhook de pedidos do Pedidos 10
            status: 422
-           mensagem: {"message":"The request is invalid.","errors":{"customer.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
            log_id: 1234`,
+          {
+            message: 'The request is invalid.',
+            errors: {
+              'customer.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
+            },
+          },
         )
 
         integrationlogCreateSpy.mockRestore()

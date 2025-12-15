@@ -25,8 +25,6 @@ jest.mock('../../../setup/logger.js', () => ({
 
 describe('Chatwoot plugin', () => {
   let licensee
-  const loggerInfoSpy = logger.info
-  const loggerErrorSpy = logger.error
 
   beforeEach(async () => {
     await mongoServer.connect()
@@ -971,7 +969,7 @@ describe('Chatwoot plugin', () => {
         expect(messageUpdated.sended).toEqual(false)
         expect(messageUpdated.error).toEqual('mensagem: {"error":true,"message":"Invalid message"}')
 
-        expect(loggerErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Chatwoot - erro: Mensagem 60958703f415ed4008748637 não enviada para Chatwoot.
            status: 400`,
         )
@@ -1019,7 +1017,7 @@ describe('Chatwoot plugin', () => {
 
         expect(request.post).toHaveBeenCalledTimes(1)
 
-        expect(loggerInfoSpy).toHaveBeenCalledWith(
+        expect(logger.info).toHaveBeenCalledWith(
           'Chatwoot: Mensagem 60958703f415ed4008748637 enviada para Chatwoot com sucesso!',
         )
       })

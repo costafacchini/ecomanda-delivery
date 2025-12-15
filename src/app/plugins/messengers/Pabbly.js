@@ -411,7 +411,7 @@ class Pabbly extends MessengersBase {
     } catch (error) {
       messageToSend.error = JSON.stringify(error.response?.data || error.message)
       await messageToSend.save()
-      logger.error({ err: error }, `Pabbly - erro: Erro ao enviar mensagem ${messageId} para Pabbly:`)
+      logger.error(`Pabbly - erro: Erro ao enviar mensagem ${messageId} para Pabbly:`, { err: error })
     }
   }
 
@@ -421,7 +421,7 @@ class Pabbly extends MessengersBase {
       const templates = parseTemplates(pabblyTemplates, this.licensee._id)
       return templates
     } catch (error) {
-      logger.error({ err: error }, 'Pabbly - erro: Erro ao buscar templates Pabbly')
+      logger.error('Pabbly - erro: Erro ao buscar templates Pabbly', { err: error })
       return []
     }
   }
@@ -436,7 +436,7 @@ class Pabbly extends MessengersBase {
       const response = await request.get(`${url}/media?id=${mediaId}`, { headers })
       if (response.status === 200 && response.data.status === 'success') return response.data.data.mediaUrl
     } catch (error) {
-      logger.error({ err: error }, 'Pabbly - erro: Erro ao buscar midia na Pabbly')
+      logger.error('Pabbly - erro: Erro ao buscar midia na Pabbly', { err: error })
     }
   }
 }

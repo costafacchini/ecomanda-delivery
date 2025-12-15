@@ -232,16 +232,16 @@ class Landbot {
       await messageToSend.save()
       logger.info(
         `Mensagem ${messageToSend._id} enviada para Landbot com sucesso!
-           status: ${response.status}
-           body: ${JSON.stringify(response.data)}`,
+           status: ${response.status}`,
+        response.data,
       )
     } else {
       messageToSend.error = JSON.stringify(response.data)
       await messageToSend.save()
       logger.error(
         `Mensagem ${messageToSend._id} não enviada para Landbot.
-           status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}`,
+           status: ${response.status}`,
+        response.data,
       )
     }
   }

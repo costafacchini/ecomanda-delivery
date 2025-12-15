@@ -17,8 +17,6 @@ jest.mock('../../../../../setup/logger.js', () => ({
 
 describe('Pedidos10/OrderStatus plugin', () => {
   let licensee
-  const loggerInfoSpy = logger.info
-  const loggerErrorSpy = logger.error
 
   beforeEach(async () => {
     await mongoServer.connect()
@@ -40,12 +38,6 @@ describe('Pedidos10/OrderStatus plugin', () => {
           return { _id: '1234' }
         })
 
-        const expectedBody = {
-          orderId: 'order-id',
-          status: 'delivered',
-          observation: '',
-        }
-
         request.post.mockResolvedValueOnce({
           status: 200,
           data: '',
@@ -53,18 +45,12 @@ describe('Pedidos10/OrderStatus plugin', () => {
 
         const orderStatus = new OrderStatus(licensee)
         await orderStatus.change('order-id', 'delivered')
-        expect(loggerInfoSpy).toHaveBeenCalledWith('Status do pedido order-id atualizado para delivered! log_id: 1234')
+        expect(logger.info).toHaveBeenCalledWith('Status do pedido order-id atualizado para delivered! log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
       })
 
       it('creates a record on integrationlog', async () => {
-        const expectedBody = {
-          orderId: 'order-id',
-          status: 'delivered',
-          observation: '',
-        }
-
         request.post.mockResolvedValueOnce({
           status: 200,
           data: '',
@@ -103,11 +89,18 @@ describe('Pedidos10/OrderStatus plugin', () => {
 
         const statusOrder = new OrderStatus(licensee)
         await statusOrder.change('order-id', 'delivered')
-        expect(loggerErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Não foi possível alterar o status do pedido no Pedidos 10
            status: 422
-           mensagem: {"message":"The request is invalid.","errors":{"customer.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
            log_id: 1234`,
+          {
+            message: 'The request is invalid.',
+            errors: {
+              'customer.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
+            },
+          },
         )
 
         integrationlogCreateSpy.mockRestore()
