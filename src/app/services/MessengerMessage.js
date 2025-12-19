@@ -4,6 +4,9 @@ import { createMessengerPlugin } from '../plugins/messengers/factory.js'
 async function transformMessengerBody(data) {
   const { bodyId } = data
   const body = await Body.findById(bodyId).populate('licensee')
+  if (!body) {
+    return []
+  }
   const licensee = body.licensee
 
   const messengerPlugin = createMessengerPlugin(licensee)
