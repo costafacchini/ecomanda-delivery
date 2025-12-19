@@ -23,7 +23,9 @@ const callMessage = (level, message, meta) => {
 const logger = {
   log: (message, meta) => callMessage({ level: 'info', message, meta }),
   info: (message, meta) => callMessage({ level: 'info', message, meta }),
+  warn: (message, meta) => callMessage({ level: 'info', message, meta }),
   error: (message, meta) => callMessage({ level: 'error', message, meta }),
+  fatal: (message, meta) => callMessage({ level: 'info', message, meta }),
 }
 
 const httpLogger =

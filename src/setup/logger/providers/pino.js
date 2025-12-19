@@ -43,9 +43,6 @@ function createLogger() {
 function createHttpLogger(logger) {
   return pinoHttp({
     logger,
-    customProps: (req) => ({
-      requestId: req.id,
-    }),
     genReqId(req, res) {
       const existing = req.headers['x-request-id']
       if (existing) return existing
