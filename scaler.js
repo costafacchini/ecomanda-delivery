@@ -44,7 +44,7 @@ const BACKLOG_STEP = Number(process.env.BACKLOG_STEP ?? 100)
 const UP_COOLDOWN_MS = Number(process.env.UP_COOLDOWN_MS ?? 60_000)
 const DOWN_COOLDOWN_MS = Number(process.env.DOWN_COOLDOWN_MS ?? 900_000)
 
-const TRANSFORM_WEIGHT = Number(process.env.TRANSFORM_WEIGHT ?? 0.25)
+const TRANSFORM_WEIGHT = Number(process.env.TRANSFORM_WEIGHT ?? 0.8)
 const EXTERNAL_WEIGHT = Number(process.env.EXTERNAL_WEIGHT ?? 1.0)
 
 const TRANSFORM_QUEUES = ['chat-message', 'close-chat', 'messenger-message']
