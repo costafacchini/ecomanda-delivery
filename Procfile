@@ -1,6 +1,12 @@
 web: node server.js
+scaler: node scaler.js
 worker: node worker.js
 worker2: node worker.js
 worker3: node worker.js
 worker4: node worker.js
 worker5: node worker.js
+worker6: node worker.js
+worker7: node worker.js
+worker8: node worker.js
+worker9: node worker.js
+worker10: node worker.js
