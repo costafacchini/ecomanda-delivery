@@ -10,13 +10,13 @@ import { queueServer } from './src/config/queue.js'
  *
  * Env vars optionals:
  * - SCALER_INTERVAL_MS (default 60000)
- * - WORKER_MIN (default 1)
  * - WORKER_MAX (default = WORKER_TYPES.length)
  * - BACKLOG_STEP (default 100)
  * - UP_COOLDOWN_MS (default 60000)         // subir: 1 min
  * - DOWN_COOLDOWN_MS (default 900000)      // descer: 15 min
  * - TRANSFORM_WEIGHT (default 0.25)
  * - EXTERNAL_WEIGHT (default 1.0)
+ * - TZ (default America/Sao_Paulo) timezone usado para o mínimo dinâmico
  */
 
 const { REDIS_URL, HEROKU_APP_NAME, HEROKU_TOKEN, WORKER_TYPES } = process.env
@@ -37,7 +37,7 @@ if (WORKER_TYPES_LIST.length === 0) {
 
 const INTERVAL_MS = Number(process.env.SCALER_INTERVAL_MS ?? 60_000)
 
-const WORKER_MIN = Number(process.env.WORKER_MIN ?? 1)
+const TIMEZONE = process.env.TZ ?? 'America/Sao_Paulo'
 const WORKER_MAX = Number(process.env.WORKER_MAX ?? WORKER_TYPES_LIST.length)
 const BACKLOG_STEP = Number(process.env.BACKLOG_STEP ?? 100)
 
@@ -77,11 +77,24 @@ function computeScore(backlogs) {
   return { transform, external, score }
 }
 
-// 1 + floor(score / BACKLOG_STEP), limitado entre [WORKER_MIN .. WORKER_MAX]
-function desiredWorkers(score) {
+function getCurrentWorkerMin() {
+  // Usa o timezone configurado para decidir o mínimo dinâmico
+  const now = new Date()
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    hour: '2-digit',
+    hour12: false,
+    timeZone: TIMEZONE,
+  })
+  const hour = Number(formatter.format(now))
+  const isNight = hour >= 21 || hour < 5
+  return isNight ? 0 : 1
+}
+
+// 1 + floor(score / BACKLOG_STEP), limitado entre [workerMin .. WORKER_MAX]
+function desiredWorkers(score, workerMin) {
   const extra = Math.floor(score / BACKLOG_STEP)
-  const desired = WORKER_MIN + extra
-  return Math.max(WORKER_MIN, Math.min(WORKER_MAX, desired))
+  const desired = workerMin + extra
+  return Math.max(workerMin, Math.min(WORKER_MAX, desired))
 }
 
 // ---------- Heroku API (Formation) ----------
@@ -201,7 +214,8 @@ async function tick() {
   const backlogs = await getAllBacklogs()
   const { transform, external, score } = computeScore(backlogs)
 
-  const desired = desiredWorkers(score)
+  const workerMin = getCurrentWorkerMin()
+  const desired = desiredWorkers(score, workerMin)
   // const current = await getCurrentWorkers()
   const { byType, total: currentTotal } = await getCurrentWorkersDistribution()
 
@@ -241,6 +255,7 @@ async function tick() {
     currentTotal,
     desiredTotal: targetRaw,
     targetTotal,
+    workerMin,
     score,
     external,
     transform,
@@ -267,7 +282,7 @@ async function tick() {
 
 async function main() {
   console.log(
-    `[scaler] started interval=${INTERVAL_MS}ms min=${WORKER_MIN} max=${WORKER_MAX} step=${BACKLOG_STEP} workerTypes=${WORKER_TYPES_LIST.join(
+    `[scaler] started interval=${INTERVAL_MS}ms min=0@21-05/1@05-21 timezone=${TIMEZONE} max=${WORKER_MAX} step=${BACKLOG_STEP} workerTypes=${WORKER_TYPES_LIST.join(
       ',',
     )}`,
   )
