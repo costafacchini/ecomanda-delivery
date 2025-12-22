@@ -1,5 +1,6 @@
 import Integrationlog from '../../../../models/Integrationlog.js'
 import request from '../../../../services/request.js'
+import { logger } from '../../../../../setup/logger.js'
 
 class OrderStatus {
   constructor(licensee) {
@@ -29,13 +30,13 @@ class OrderStatus {
     })
 
     if (response.status === 200) {
-      console.info(`Status do pedido ${orderId} atualizado para ${status}! log_id: ${integrationlog._id}`)
+      logger.info(`Status do pedido ${orderId} atualizado para ${status}! log_id: ${integrationlog._id}`)
     } else {
-      console.error(
+      logger.error(
         `Não foi possível alterar o status do pedido no Pedidos 10
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}
            log_id: ${integrationlog._id}`,
+        response.data,
       )
     }
   }

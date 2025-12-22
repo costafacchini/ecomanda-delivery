@@ -6,13 +6,19 @@ import { contact as contactFactory } from '@factories/contact'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import request from '../../../services/request.js'
+import { logger } from '../../../../setup/logger.js'
 
 jest.mock('../../../services/request')
+jest.mock('../../../../setup/logger.js', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    log: jest.fn(),
+  },
+}))
 
 describe('PagarMe/Customer plugin', () => {
   let licensee
-  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
-  const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
 
   beforeEach(async () => {
     await mongoServer.connect()
@@ -83,7 +89,7 @@ describe('PagarMe/Customer plugin', () => {
 
         const customer = new Customer()
         await customer.create(contact, 'token')
-        expect(consoleInfoSpy).toHaveBeenCalledWith('Contato John Doe criado na pagar.me! id: 23717165 log_id: 1234')
+        expect(logger.info).toHaveBeenCalledWith('Contato John Doe criado na pagar.me! id: 23717165 log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
       })
@@ -284,11 +290,18 @@ describe('PagarMe/Customer plugin', () => {
 
         const customer = new Customer()
         await customer.create(contact, 'token')
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Contato John Doe não criado na pagar.me.
            status: 422
-           mensagem: {"message":"The request is invalid.","errors":{"customer.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
            log_id: 1234`,
+          {
+            message: 'The request is invalid.',
+            errors: {
+              'customer.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
+            },
+          },
         )
 
         integrationlogCreateSpy.mockRestore()
@@ -379,7 +392,7 @@ describe('PagarMe/Customer plugin', () => {
         const customer = new Customer()
         contact.customer_id = '98765'
         await customer.update(contact, 'token')
-        expect(consoleInfoSpy).toHaveBeenCalledWith('Contato John Doe atualizado na pagar.me! id: 98765 log_id: 1234')
+        expect(logger.info).toHaveBeenCalledWith('Contato John Doe atualizado na pagar.me! id: 98765 log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
       })
@@ -468,11 +481,18 @@ describe('PagarMe/Customer plugin', () => {
         const customer = new Customer()
         contact.customer_id = '98765'
         await customer.update(contact, 'token')
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Contato John Doe não atualizado na pagar.me.
            status: 400
-           mensagem: {"message":"The request is invalid.","errors":{"customer.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
            log_id: 1234`,
+          {
+            message: 'The request is invalid.',
+            errors: {
+              'customer.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
+            },
+          },
         )
 
         integrationlogCreateSpy.mockRestore()

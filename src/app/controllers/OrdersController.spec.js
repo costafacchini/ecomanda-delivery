@@ -6,11 +6,19 @@ import mongoServer from '../../../.jest/utils'
 import { expressServer } from '../../../.jest/server-express'
 import { queueServer } from '@config/queue'
 import { licensee as licenseeFactory } from '@factories/licensee'
+import { logger } from '../../setup/logger.js'
 
-describe('chats controller', () => {
+jest.mock('../../setup/logger.js', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    log: jest.fn(),
+  },
+}))
+
+describe('orders controller', () => {
   let apiToken
   const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
-  jest.spyOn(global.console, 'info').mockImplementation()
 
   beforeAll(async () => {
     jest.clearAllMocks()
@@ -81,6 +89,10 @@ describe('chats controller', () => {
               bodyId: body._id,
               licenseeId: body.licensee,
             })
+
+            expect(logger.info).toHaveBeenCalledWith(
+              `Requisição do Pedidos 10 para processar pedidos recebida: ${integrationlog._id}`,
+            )
           })
       })
     })
@@ -117,6 +129,10 @@ describe('chats controller', () => {
               bodyId: body._id,
               licenseeId: body.licensee,
             })
+
+            expect(logger.info).toHaveBeenCalledWith(
+              `Requisição para mudar o status do pedido recebida: ${integrationlog._id}`,
+            )
           })
       })
     })

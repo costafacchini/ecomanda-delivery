@@ -23,14 +23,20 @@ import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
 import { MessageRepositoryDatabase } from '@repositories/message'
 import request from '../../services/request.js'
+import { logger } from '../../../setup/logger.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 jest.mock('../../services/request')
+jest.mock('../../../setup/logger.js', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    log: jest.fn(),
+  },
+}))
 
 describe('Dialog plugin', () => {
   let licensee
-  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
-  const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
   const uploadFileS3Spy = jest.spyOn(S3.prototype, 'uploadFile').mockImplementation()
   const presignedUrlS3Spy = jest.spyOn(S3.prototype, 'presignedUrl').mockImplementation(() => {
     return 'https://s3.url.com/1c18498a-f953-41c2-9c56-8a22b89510d3.jpeg'
@@ -1479,8 +1485,9 @@ describe('Dialog plugin', () => {
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
         expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
-        expect(consoleInfoSpy).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
+        expect(logger.info).toHaveBeenCalledWith(
+          'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso!',
+          { messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }], meta: { api_status: 'stable', version: '2.35.4' } },
         )
       })
 
@@ -1542,8 +1549,9 @@ describe('Dialog plugin', () => {
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
-          expect(consoleInfoSpy).toHaveBeenCalledWith(
-            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
+          expect(logger.info).toHaveBeenCalledWith(
+            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso!',
+            { messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }], meta: { api_status: 'stable', version: '2.35.4' } },
           )
         })
       })
@@ -1606,8 +1614,9 @@ describe('Dialog plugin', () => {
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
-          expect(consoleInfoSpy).toHaveBeenCalledWith(
-            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
+          expect(logger.info).toHaveBeenCalledWith(
+            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso!',
+            { messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }], meta: { api_status: 'stable', version: '2.35.4' } },
           )
         })
       })
@@ -1671,8 +1680,9 @@ describe('Dialog plugin', () => {
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
-          expect(consoleInfoSpy).toHaveBeenCalledWith(
-            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
+          expect(logger.info).toHaveBeenCalledWith(
+            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso!',
+            { messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }], meta: { api_status: 'stable', version: '2.35.4' } },
           )
         })
       })
@@ -1736,8 +1746,9 @@ describe('Dialog plugin', () => {
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
-          expect(consoleInfoSpy).toHaveBeenCalledWith(
-            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
+          expect(logger.info).toHaveBeenCalledWith(
+            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso!',
+            { messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }], meta: { api_status: 'stable', version: '2.35.4' } },
           )
         })
       })
@@ -1880,8 +1891,9 @@ describe('Dialog plugin', () => {
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
-            expect(consoleInfoSpy).toHaveBeenCalledWith(
-              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
+            expect(logger.info).toHaveBeenCalledWith(
+              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso!',
+              { messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }], meta: { api_status: 'stable', version: '2.35.4' } },
             )
           })
         })
@@ -1979,8 +1991,9 @@ describe('Dialog plugin', () => {
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
-            expect(consoleInfoSpy).toHaveBeenCalledWith(
-              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
+            expect(logger.info).toHaveBeenCalledWith(
+              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso!',
+              { messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }], meta: { api_status: 'stable', version: '2.35.4' } },
             )
           })
         })
@@ -2118,8 +2131,9 @@ describe('Dialog plugin', () => {
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
-            expect(consoleInfoSpy).toHaveBeenCalledWith(
-              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
+            expect(logger.info).toHaveBeenCalledWith(
+              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso!',
+              { messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }], meta: { api_status: 'stable', version: '2.35.4' } },
             )
           })
         })
@@ -2267,8 +2281,9 @@ describe('Dialog plugin', () => {
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
-            expect(consoleInfoSpy).toHaveBeenCalledWith(
-              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
+            expect(logger.info).toHaveBeenCalledWith(
+              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso!',
+              { messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }], meta: { api_status: 'stable', version: '2.35.4' } },
             )
           })
         })
@@ -2334,8 +2349,9 @@ describe('Dialog plugin', () => {
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
-            expect(consoleInfoSpy).toHaveBeenCalledWith(
-              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
+            expect(logger.info).toHaveBeenCalledWith(
+              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso!',
+              { messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }], meta: { api_status: 'stable', version: '2.35.4' } },
             )
           })
         })
@@ -2402,8 +2418,9 @@ describe('Dialog plugin', () => {
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
             expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
-            expect(consoleInfoSpy).toHaveBeenCalledWith(
-              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
+            expect(logger.info).toHaveBeenCalledWith(
+              'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso!',
+              { messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }], meta: { api_status: 'stable', version: '2.35.4' } },
             )
           })
         })
@@ -2471,8 +2488,9 @@ describe('Dialog plugin', () => {
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
-          expect(consoleInfoSpy).toHaveBeenCalledWith(
-            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
+          expect(logger.info).toHaveBeenCalledWith(
+            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso!',
+            { messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }], meta: { api_status: 'stable', version: '2.35.4' } },
           )
 
           clear()
@@ -2589,8 +2607,9 @@ describe('Dialog plugin', () => {
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
           expect(messageUpdated.messageWaId).toEqual('gBEGVUiZKQggAgkTPoDDlOljYHY')
-          expect(consoleInfoSpy).toHaveBeenCalledWith(
-            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso! {"messages":[{"id":"gBEGVUiZKQggAgkTPoDDlOljYHY"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
+          expect(logger.info).toHaveBeenCalledWith(
+            'Mensagem 60958703f415ed4008748637 enviada para Dialog360 com sucesso!',
+            { messages: [{ id: 'gBEGVUiZKQggAgkTPoDDlOljYHY' }], meta: { api_status: 'stable', version: '2.35.4' } },
           )
         })
       })
@@ -2630,8 +2649,12 @@ describe('Dialog plugin', () => {
 
         const dialog = new Dialog(licensee)
         await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'A mensagem não foi enviada para a Dialog pois o contato não é válido {"contacts":[{"input":"+5511990283745","status":"invalid"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
+        expect(logger.error).toHaveBeenCalledWith(
+          'A mensagem não foi enviada para a Dialog pois o contato não é válido',
+          {
+            contacts: [{ input: '+5511990283745', status: 'invalid' }],
+            meta: { api_status: 'stable', version: '2.35.4' },
+          },
         )
       })
     })
@@ -2693,9 +2716,10 @@ describe('Dialog plugin', () => {
           '{"meta":{"api_status":"stable","version":"2.35.4"},"errors":[{"code":1021,"title":"Bad user","details":"cannot send messages to myself"}]}',
         )
 
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 não enviada para Dialog360. {"meta":{"api_status":"stable","version":"2.35.4"},"errors":[{"code":1021,"title":"Bad user","details":"cannot send messages to myself"}]}',
-        )
+        expect(logger.error).toHaveBeenCalledWith('Mensagem 60958703f415ed4008748637 não enviada para Dialog360.', {
+          meta: { api_status: 'stable', version: '2.35.4' },
+          errors: [{ code: 1021, title: 'Bad user', details: 'cannot send messages to myself' }],
+        })
       })
     })
   })

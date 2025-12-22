@@ -6,13 +6,19 @@ import { contact as contactFactory } from '@factories/contact'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import request from '../../../services/request.js'
+import { logger } from '../../../../setup/logger.js'
 
 jest.mock('../../../services/request')
+jest.mock('../../../../setup/logger.js', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    log: jest.fn(),
+  },
+}))
 
 describe('PagarMe/Card plugin', () => {
   let licensee
-  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
-  const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
 
   beforeEach(async () => {
     await mongoServer.connect()
@@ -86,7 +92,7 @@ describe('PagarMe/Card plugin', () => {
         const response = await card.create(contact, creditCard, 'token')
 
         expect(response.success).toEqual(true)
-        expect(consoleInfoSpy).toHaveBeenCalledWith(
+        expect(logger.info).toHaveBeenCalledWith(
           'Cartão 123412******1234 John Doe criado na pagar.me! id: card_3dlyaY6SPSb log_id: 1234',
         )
 
@@ -269,14 +275,20 @@ describe('PagarMe/Card plugin', () => {
         expect(response.error).toEqual(
           `Cartão 123412******1234 John Doe não criado na pagar.me.
            status: 422
-           mensagem: {"message":"The request is invalid.","errors":{"card.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
            log_id: 1234`,
         )
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Cartão 123412******1234 John Doe não criado na pagar.me.
            status: 422
-           mensagem: {"message":"The request is invalid.","errors":{"card.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
            log_id: 1234`,
+          {
+            message: 'The request is invalid.',
+            errors: {
+              'card.automaticanticipationsettings.type': [
+                "The type field is invalid. Possible values are 'full','1025'",
+              ],
+            },
+          },
         )
 
         integrationlogCreateSpy.mockRestore()
@@ -403,11 +415,11 @@ describe('PagarMe/Card plugin', () => {
 
         const card = new Card()
         await card.list(contact, 'token')
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Não foi possível buscar os cartões na pagar.me.
            status: 401
-           mensagem: {"message":"Authorization has been denied for this request."}
            log_id: 1234`,
+          { message: 'Authorization has been denied for this request.' },
         )
 
         integrationlogCreateSpy.mockRestore()
@@ -510,11 +522,11 @@ describe('PagarMe/Card plugin', () => {
 
         const card = new Card()
         await card.getById(contact, 'token')
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Não foi possível buscar os cartões na pagar.me.
            status: 401
-           mensagem: {"message":"Authorization has been denied for this request."}
            log_id: 1234`,
+          { message: 'Authorization has been denied for this request.' },
         )
 
         integrationlogCreateSpy.mockRestore()

@@ -5,12 +5,13 @@ import { ChatsBase } from './Base.js'
 import { createRoom, getRoomBy } from '../../repositories/room.js'
 import { ContactRepositoryDatabase } from '../../repositories/contact.js'
 import { MessageRepositoryDatabase } from '../../repositories/message.js'
+import { logger } from '../../../setup/logger.js'
 
 const createSession = async (url, headers, contact, segments) => {
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })
 
   if (response.status !== 201) {
-    console.error(`Não foi possível criar a sessão na Crisp ${JSON.stringify(response.data)}`)
+    logger.error('Não foi possível criar a sessão na Crisp', response.data)
     return
   } else {
     const room = await createRoom({
@@ -88,14 +89,14 @@ const postMessage = async (url, headers, contact, message, room) => {
     message.sended = true
     await message.save()
 
-    console.info(`Mensagem ${message._id} enviada para Crisp com sucesso!`)
+    logger.info(`Mensagem ${message._id} enviada para Crisp com sucesso!`)
   } else {
     message.error = `mensagem: ${JSON.stringify(response.data)}`
     await message.save()
-    console.error(
+    logger.error(
       `Mensagem ${message._id} não enviada para Crisp.
-           status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}`,
+           status: ${response.status}`,
+      response.data,
     )
   }
 

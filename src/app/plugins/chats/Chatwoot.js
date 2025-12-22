@@ -4,6 +4,7 @@ import { createRoom, getRoomBy } from '../../repositories/room.js'
 import { ContactRepositoryDatabase } from '../../repositories/contact.js'
 import path from 'path'
 import mime from 'mime-types'
+import { logger } from '../../../setup/logger.js'
 
 const searchContact = async (url, headers, contact, licensee, contactRepository) => {
   const response = await request.get(`${url}contacts/search?q=+${contact.number}`, { headers })
@@ -60,9 +61,7 @@ const createContact = async (url, headers, contact, licensee, contactRepository)
       chatwootSourceId: null,
     })
 
-    console.error(
-      `Chatwoot - erro: Não foi possível criar o contato na Chatwoot. Essa é a resposta do servidor ${JSON.stringify(response.data)}`,
-    )
+    logger.error('Chatwoot - erro: Não foi possível criar o contato na Chatwoot', response.data)
     return
   } else if (response.data?.payload?.contact_inbox) {
     await contactRepository.update(contact._id, {
@@ -91,9 +90,7 @@ const createConversation = async (url, headers, contact, inboxId) => {
   const response = await request.post(`${url}conversations`, { headers, body })
 
   if (response.status !== 200) {
-    console.error(
-      `Chatwoot - erro: Não foi possível criar a conversa na Chatwoot. A resposta do servidor é essa ${JSON.stringify(response.data)}`,
-    )
+    logger.error('Chatwoot - erro: Não foi possível criar a conversa na Chatwoot', response.data)
     return
   } else {
     const room = await createRoom({
@@ -123,7 +120,7 @@ const postMessage = async (url, headers, contact, message, room) => {
     const fileResponse = await request.download(message.url)
 
     if (!fileResponse || !fileResponse.data) {
-      console.error('Chatwoot - erro: Erro: fileResponse ou fileResponse.data é null/undefined', fileResponse)
+      logger.error({ fileResponse }, 'Chatwoot - erro: Erro: fileResponse ou fileResponse.data é null/undefined')
       message.error = 'Chatwoot - erro: Erro ao baixar arquivo: resposta inválida'
       await message.save()
       return false
@@ -185,7 +182,7 @@ const postMessage = async (url, headers, contact, message, room) => {
     message.payload = JSON.stringify(response.data)
     await message.save()
 
-    console.info(`Chatwoot: Mensagem ${message._id} enviada para Chatwoot com sucesso!`)
+    logger.info(`Chatwoot: Mensagem ${message._id} enviada para Chatwoot com sucesso!`)
     return true
   } else {
     message.error = `mensagem: ${JSON.stringify(response.data)}`
@@ -203,7 +200,7 @@ const postMessage = async (url, headers, contact, message, room) => {
 
       return false
     }
-    console.error(
+    logger.error(
       `Chatwoot - erro: Mensagem ${message._id} não enviada para Chatwoot.
            status: ${response.status}`,
     )

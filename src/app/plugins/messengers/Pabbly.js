@@ -6,6 +6,7 @@ import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files.js'
 import { parseText } from '../../helpers/ParseTriggerText.js'
 import { MessengersBase } from './Base.js'
 import { MessageRepositoryDatabase } from '../../repositories/message.js'
+import { logger } from '../../../setup/logger.js'
 
 const getTemplates = async (url, token) => {
   const headers = {
@@ -17,7 +18,7 @@ const getTemplates = async (url, token) => {
     const response = await request.get(`${url}/templates?limit=20&page=1`, { headers })
     return response.data.templates
   } catch (error) {
-    console.error('Pabbly - erro: Erro ao buscar templates Pabbly:', error)
+    logger.error({ err: error }, 'Pabbly - erro: Erro ao buscar templates Pabbly')
     return { templates: [] }
   }
 }
@@ -405,12 +406,12 @@ class Pabbly extends MessengersBase {
       } else {
         messageToSend.error = JSON.stringify(messageResponse.data)
         await messageToSend.save()
-        console.error(`Pabbly - erro: Mensagem ${messageId} não enviada para Pabbly.`)
+        logger.error(`Pabbly - erro: Mensagem ${messageId} não enviada para Pabbly.`)
       }
     } catch (error) {
       messageToSend.error = JSON.stringify(error.response?.data || error.message)
       await messageToSend.save()
-      console.error(`Pabbly - erro: Erro ao enviar mensagem ${messageId} para Pabbly:`, error)
+      logger.error(`Pabbly - erro: Erro ao enviar mensagem ${messageId} para Pabbly:`, { err: error })
     }
   }
 
@@ -420,7 +421,7 @@ class Pabbly extends MessengersBase {
       const templates = parseTemplates(pabblyTemplates, this.licensee._id)
       return templates
     } catch (error) {
-      console.error('Pabbly - erro: Erro ao buscar templates Pabbly:', error)
+      logger.error('Pabbly - erro: Erro ao buscar templates Pabbly', { err: error })
       return []
     }
   }
@@ -435,7 +436,7 @@ class Pabbly extends MessengersBase {
       const response = await request.get(`${url}/media?id=${mediaId}`, { headers })
       if (response.status === 200 && response.data.status === 'success') return response.data.data.mediaUrl
     } catch (error) {
-      console.error('Pabbly - erro: Erro ao buscar midia na Pabbly:', error)
+      logger.error('Pabbly - erro: Erro ao buscar midia na Pabbly', { err: error })
     }
   }
 }

@@ -1,14 +1,12 @@
 import 'dotenv/config'
-import './instrument.js'
-import debug from 'debug'
+import './instrument.mjs'
 import { server } from './src/config/http.js'
+import { logger } from './src/setup/logger.js'
 import('./src/app/websockets/index.js')
 
 if (process.env.NODE_ENV === 'production') {
   import('newrelic')
 }
-
-const errorDebug = debug('ecomanda-delivery:server')
 
 const PORT = process.env.PORT || '5000'
 
@@ -26,11 +24,11 @@ function onError(error) {
 
   switch (error.code) {
     case 'EACCES':
-      console.error(bind + ' requires elevated privileges')
+      logger.fatal('Requires elevated privileges', { err: error, bind })
       process.exit(1)
       break
     case 'EADDRINUSE':
-      console.error(bind + ' is already in use')
+      logger.fatal('Port is already in use', { err: error, bind })
       process.exit(1)
       break
     default:
@@ -40,6 +38,6 @@ function onError(error) {
 
 function onListening() {
   const addr = server.address()
-  const bind = typeof addr === 'string' ? 'pipe ' + addr : 'PORT ' + addr.PORT
-  errorDebug('Listening on ' + bind)
+  const bind = typeof addr === 'string' ? 'pipe ' + addr : 'PORT ' + addr.port
+  logger.info('Server listening', { bind })
 }

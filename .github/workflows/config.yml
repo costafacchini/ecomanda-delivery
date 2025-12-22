@@ -37,6 +37,7 @@ jobs:
       ENABLE_RESET_JOBS: true
       ENABLE_CHATS: true
       ENABLE_MESSENGERS: true
+      LOG_LEVEL: debug
     steps:
       - name: Checkout code
         uses: actions/checkout@v6

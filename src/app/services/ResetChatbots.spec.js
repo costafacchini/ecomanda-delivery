@@ -9,10 +9,9 @@ import { MessageRepositoryDatabase } from '@repositories/message'
 import request from '../services/request.js'
 
 jest.mock('../services/request')
+jest.mock('../../setup/logger.js')
 
 describe('resetChatbots', () => {
-  jest.spyOn(global.console, 'info').mockImplementation()
-
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()

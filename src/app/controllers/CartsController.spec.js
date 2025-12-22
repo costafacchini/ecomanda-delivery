@@ -9,6 +9,15 @@ import { publishMessage } from '@config/rabbitmq'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { CartRepositoryDatabase } from '@repositories/cart'
 import { MessageRepositoryDatabase } from '@repositories/message'
+import { logger } from '../../setup/logger.js'
+
+jest.mock('../../setup/logger.js', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    log: jest.fn(),
+  },
+}))
 
 jest.mock('@config/rabbitmq', () => ({
   publishMessage: jest.fn(),
@@ -17,7 +26,6 @@ jest.mock('@config/rabbitmq', () => ({
 describe('carts controller', () => {
   let licensee, contact
   let anotherLicensee, anotherContact
-  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -890,8 +898,8 @@ describe('carts controller', () => {
             })
             expect(publishMessage).toHaveBeenCalledWith({ key: 'reset-carts', body: {} })
 
-            expect(consoleInfoSpy).toHaveBeenCalledTimes(1)
-            expect(consoleInfoSpy).toHaveBeenCalledWith('Agendando para resetar carts expirando')
+            expect(logger.info).toHaveBeenCalledTimes(1)
+            expect(logger.info).toHaveBeenCalledWith('Agendando para resetar carts expirando')
           })
       })
     })
