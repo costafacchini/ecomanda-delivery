@@ -6,6 +6,9 @@ import { MessageRepositoryDatabase } from '../repositories/message.js'
 async function transformChatBody(data) {
   const { bodyId } = data
   const body = await Body.findById(bodyId).populate('licensee')
+  if (!body) {
+    return []
+  }
   const licensee = body.licensee
 
   const chatPlugin = createChatPlugin(licensee)
