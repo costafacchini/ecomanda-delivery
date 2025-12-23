@@ -15,6 +15,10 @@ class MongoServerTest {
 
   async disconnect() {
     try {
+      await mongoose.close()
+      // eslint-disable-next-line no-empty
+    } catch {}
+    try {
       const instance = global.__MONGOINSTANCE
       if (instance) {
         await instance.stop()
