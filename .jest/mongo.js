@@ -14,14 +14,13 @@ class MongoServerTest {
   }
 
   async disconnect() {
-    const { connection } = mongoose
-
-    if (connection.readyState !== 0 && connection.readyState !== 3) {
+    if (mongoose.connection.readyState !== 0) {
       try {
-        await connection.close(true)
+        await mongoose.disconnect()
         // eslint-disable-next-line no-empty
       } catch (error) {
-        if (error.name !== 'MongoClientClosedError') throw error
+        const ignorableErrors = ['MongoClientClosedError', 'Connection was force closed']
+        if (!ignorableErrors.includes(error?.message) && !ignorableErrors.includes(error?.name)) throw error
       }
     }
     try {
