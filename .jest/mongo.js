@@ -14,12 +14,19 @@ class MongoServerTest {
   }
 
   async disconnect() {
-    await mongoose.disconnect()
-    const instance = global.__MONGOINSTANCE
-    if (instance) {
-      await instance.stop()
-      global.__MONGOINSTANCE = null
-    }
+    try {
+      if (mongoose.connection.readyState == 1 || mongoose.connection.readyState == 2) await mongoose.disconnect()
+
+      // eslint-disable-next-line no-empty
+    } catch {}
+    try {
+      const instance = global.__MONGOINSTANCE
+      if (instance) {
+        await instance.stop()
+        global.__MONGOINSTANCE = null
+      }
+      // eslint-disable-next-line no-empty
+    } catch {}
   }
 }
 
