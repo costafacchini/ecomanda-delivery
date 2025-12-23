@@ -14,10 +14,16 @@ class MongoServerTest {
   }
 
   async disconnect() {
-    try {
-      await mongoose.disconnect()
-      // eslint-disable-next-line no-empty
-    } catch {}
+    const { connection } = mongoose
+
+    if (connection.readyState !== 0 && connection.readyState !== 3) {
+      try {
+        await connection.close(true)
+        // eslint-disable-next-line no-empty
+      } catch (error) {
+        if (error.name !== 'MongoClientClosedError') throw error
+      }
+    }
     try {
       const instance = global.__MONGOINSTANCE
       if (instance) {
