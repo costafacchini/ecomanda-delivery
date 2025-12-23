@@ -574,6 +574,7 @@ describe('Chatwoot plugin', () => {
         request.post.mockResolvedValue({
           status: 200,
           data: {
+            id: 'conversation_id',
             error: false,
             success: true,
           },
@@ -594,6 +595,15 @@ describe('Chatwoot plugin', () => {
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
+        expect(messageUpdated.error).toBeUndefined()
+        expect(messageUpdated.payload).toBe(
+          JSON.stringify({
+            id: 'conversation_id',
+            error: false,
+            success: true,
+          }),
+        )
+        expect(messageUpdated.messageChatId).toEqual('conversation_id')
       })
 
       it('creates new conversation if no open room exists', async () => {
