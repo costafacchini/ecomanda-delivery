@@ -183,6 +183,7 @@ const postMessage = async (url, headers, contact, message, room) => {
   if (response.status === 200) {
     message.sended = true
     message.payload = JSON.stringify(response.data)
+    message.messageChatId = response.data?.id
     await message.save()
 
     console.info(`Chatwoot: Mensagem ${message._id} enviada para Chatwoot com sucesso!`)
