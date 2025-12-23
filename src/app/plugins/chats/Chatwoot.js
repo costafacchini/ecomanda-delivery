@@ -105,113 +105,6 @@ const createConversation = async (url, headers, contact, inboxId) => {
   }
 }
 
-const postMessage = async (url, headers, contact, message, room) => {
-  let requestOptions = {
-    headers: { ...headers },
-  }
-
-  if (message.kind === 'text') {
-    const body = {
-      private: message.departament == 'outgoing' ? true : false,
-      message_type: message.departament == 'outgoing' ? 'outgoing' : 'incoming',
-      content_type: 'text',
-      content: formatMessage(message, contact),
-    }
-
-    requestOptions.body = body
-  } else if (message.kind === 'file') {
-    const fileResponse = await request.download(message.url)
-
-    if (!fileResponse || !fileResponse.data) {
-      console.error('Chatwoot - erro: Erro: fileResponse ou fileResponse.data é null/undefined', fileResponse)
-      message.error = 'Chatwoot - erro: Erro ao baixar arquivo: resposta inválida'
-      await message.save()
-      return false
-    }
-
-    const fileName = path.basename(message.url.split('?')[0]) || 'file'
-    const contentType =
-      (fileResponse.headers && fileResponse.headers.get && fileResponse.headers.get('content-type')) ||
-      mime.lookup(fileName) ||
-      'application/octet-stream'
-
-    const fileBuffer = Buffer.from(fileResponse.data)
-
-    const boundary = '----WebKitFormBoundary' + Math.random().toString(16).substr(2)
-    requestOptions.headers['Content-Type'] = `multipart/form-data; boundary=${boundary}`
-
-    let multipartBody = ''
-
-    multipartBody += `--${boundary}\r\n`
-    multipartBody += 'Content-Disposition: form-data; name="private"\r\n\r\n'
-    if (message.departament == 'outgoing') {
-      multipartBody += 'true\r\n'
-    } else {
-      multipartBody += 'false\r\n'
-    }
-
-    multipartBody += `--${boundary}\r\n`
-    multipartBody += 'Content-Disposition: form-data; name="message_type"\r\n\r\n'
-    if (message.departament == 'outgoing') {
-      multipartBody += 'outgoing\r\n'
-    } else {
-      multipartBody += 'incoming\r\n'
-    }
-
-    multipartBody += `--${boundary}\r\n`
-    multipartBody += `Content-Disposition: form-data; name="attachments[]"; filename="${fileName}"\r\n`
-    multipartBody += `Content-Type: ${contentType}\r\n\r\n`
-
-    const headerBuffer = Buffer.from(multipartBody, 'utf8')
-    const footerBuffer = Buffer.from(`\r\n--${boundary}--\r\n`, 'utf8')
-
-    multipartBody = Buffer.concat([headerBuffer, fileBuffer, footerBuffer])
-
-    requestOptions.body = multipartBody
-  } else {
-    const body = {
-      private: false,
-      message_type: 'incoming',
-      content_type: 'form',
-    }
-
-    requestOptions.body = body
-  }
-
-  const response = await request.post(`${url}conversations/${room.roomId}/messages`, requestOptions)
-
-  if (response.status === 200) {
-    message.sended = true
-    message.payload = JSON.stringify(response.data)
-    message.messageChatId = response.data?.id
-    await message.save()
-
-    console.info(`Chatwoot: Mensagem ${message._id} enviada para Chatwoot com sucesso!`)
-    return true
-  } else {
-    message.error = `mensagem: ${JSON.stringify(response.data)}`
-    await message.save()
-    if (response.data.error === 'Resource could not be found') {
-      const roomSaved = await getRoomBy({ roomId: room.roomId })
-      roomSaved.closed = true
-      await roomSaved.save()
-
-      const contactRepository = new ContactRepositoryDatabase()
-      await contactRepository.update(contact._id, {
-        chatwootSourceId: null,
-        chatwootId: null,
-      })
-
-      return false
-    }
-    console.error(
-      `Chatwoot - erro: Mensagem ${message._id} não enviada para Chatwoot.
-           status: ${response.status}`,
-    )
-    return true
-  }
-}
-
 const formatMessage = (message, contact) => {
   const text = message.text
 
@@ -392,7 +285,7 @@ class Chatwoot extends ChatsBase {
       }
     }
 
-    const sent = await postMessage(url, headers, messageToSend.contact, messageToSend, room)
+    const sent = await this.postMessage(url, headers, messageToSend.contact, messageToSend, room)
     if (!sent) {
       const contact = await this.contactRepository.findFirst({ _id: messageToSend.contact._id })
       const { sourceId, id: chatwootId } = await searchContact(
@@ -418,7 +311,7 @@ class Chatwoot extends ChatsBase {
         return
       }
 
-      await postMessage(url, headers, contact, messageToSend, room)
+      await this.postMessage(url, headers, contact, messageToSend, room)
     }
   }
 
@@ -451,6 +344,135 @@ class Chatwoot extends ChatsBase {
     }
 
     return messages
+  }
+
+  async postMessage(url, headers, contact, message, room) {
+    let requestOptions = {
+      headers: { ...headers },
+    }
+
+    if (message.kind === 'text') {
+      const body = {
+        private: message.departament == 'outgoing' ? true : false,
+        message_type: message.departament == 'outgoing' ? 'outgoing' : 'incoming',
+        content_type: 'text',
+        content: formatMessage(message, contact),
+      }
+
+      if (message.replyMessageId) {
+        const replyMessage = await this.messageRepository.findFirst({ messageWaId: message.replyMessageId })
+
+        if (replyMessage && replyMessage.messageChatId) {
+          body.content_attributes = { in_reply_to: replyMessage.messageChatId }
+        }
+      }
+
+      requestOptions.body = body
+    } else if (message.kind === 'file') {
+      const fileResponse = await request.download(message.url)
+
+      if (!fileResponse || !fileResponse.data) {
+        console.error('Chatwoot - erro: Erro: fileResponse ou fileResponse.data é null/undefined', fileResponse)
+        message.error = 'Chatwoot - erro: Erro ao baixar arquivo: resposta inválida'
+        await message.save()
+        return false
+      }
+
+      const fileName = path.basename(message.url.split('?')[0]) || 'file'
+      const contentType =
+        (fileResponse.headers && fileResponse.headers.get && fileResponse.headers.get('content-type')) ||
+        mime.lookup(fileName) ||
+        'application/octet-stream'
+
+      const fileBuffer = Buffer.from(fileResponse.data)
+
+      const boundary = '----WebKitFormBoundary' + Math.random().toString(16).substr(2)
+      requestOptions.headers['Content-Type'] = `multipart/form-data; boundary=${boundary}`
+
+      let multipartBody = ''
+
+      multipartBody += `--${boundary}\r\n`
+      multipartBody += 'Content-Disposition: form-data; name="private"\r\n\r\n'
+      if (message.departament == 'outgoing') {
+        multipartBody += 'true\r\n'
+      } else {
+        multipartBody += 'false\r\n'
+      }
+
+      multipartBody += `--${boundary}\r\n`
+      multipartBody += 'Content-Disposition: form-data; name="message_type"\r\n\r\n'
+      if (message.departament == 'outgoing') {
+        multipartBody += 'outgoing\r\n'
+      } else {
+        multipartBody += 'incoming\r\n'
+      }
+
+      multipartBody += `--${boundary}\r\n`
+      multipartBody += `Content-Disposition: form-data; name="attachments[]"; filename="${fileName}"\r\n`
+      multipartBody += `Content-Type: ${contentType}\r\n\r\n`
+
+      if (message.replyMessageId) {
+        const replyMessage = await this.messageRepository.findFirst({ messageWaId: message.replyMessageId })
+
+        if (replyMessage && replyMessage.messageChatId) {
+          multipartBody += `--${boundary}\r\n`
+          multipartBody += 'Content-Disposition: form-data; name="content_attributes"\r\n\r\n'
+          multipartBody += `${JSON.stringify({ in_reply_to: replyMessage.messageChatId })}\r\n`
+        }
+      }
+
+      const headerBuffer = Buffer.from(multipartBody, 'utf8')
+      const footerBuffer = Buffer.from(`\r\n--${boundary}--\r\n`, 'utf8')
+
+      multipartBody = Buffer.concat([headerBuffer, fileBuffer, footerBuffer])
+
+      requestOptions.body = multipartBody
+    } else {
+      const body = {
+        private: false,
+        message_type: 'incoming',
+        content_type: 'form',
+      }
+
+      if (message.replyMessageId) {
+        body.content_attributes = { in_reply_to: message.replyMessageId }
+      }
+
+      requestOptions.body = body
+    }
+
+    const response = await request.post(`${url}conversations/${room.roomId}/messages`, requestOptions)
+
+    if (response.status === 200) {
+      message.sended = true
+      message.payload = JSON.stringify(response.data)
+      message.messageChatId = response.data?.id
+      await message.save()
+
+      console.info(`Chatwoot: Mensagem ${message._id} enviada para Chatwoot com sucesso!`)
+      return true
+    } else {
+      message.error = `mensagem: ${JSON.stringify(response.data)}`
+      await message.save()
+      if (response.data.error === 'Resource could not be found') {
+        const roomSaved = await getRoomBy({ roomId: room.roomId })
+        roomSaved.closed = true
+        await roomSaved.save()
+
+        const contactRepository = new ContactRepositoryDatabase()
+        await contactRepository.update(contact._id, {
+          chatwootSourceId: null,
+          chatwootId: null,
+        })
+
+        return false
+      }
+      console.error(
+        `Chatwoot - erro: Mensagem ${message._id} não enviada para Chatwoot.
+           status: ${response.status}`,
+      )
+      return true
+    }
   }
 }
 

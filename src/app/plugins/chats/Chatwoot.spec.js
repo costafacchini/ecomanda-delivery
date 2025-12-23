@@ -606,6 +606,136 @@ describe('Chatwoot plugin', () => {
         expect(messageUpdated.messageChatId).toEqual('conversation_id')
       })
 
+      it('adds in_reply_to when sending file replies', async () => {
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
+          contactFactory.build({
+            name: 'John Doe',
+            chatwootSourceId: 'source_123',
+            licensee,
+          }),
+        )
+
+        await Room.create(
+          roomFactory.build({
+            roomId: 'conversation_456',
+            contact,
+            closed: false,
+          }),
+        )
+
+        const messageRepository = new MessageRepositoryDatabase()
+        await messageRepository.create(
+          messageFactory.build({
+            messageWaId: 'wamid-replied',
+            messageChatId: 'chat-message-123',
+            contact,
+            licensee,
+          }),
+        )
+
+        const message = await messageRepository.create(
+          messageFactory.build({
+            kind: 'file',
+            url: 'http://example.com/file.pdf',
+            fileName: 'file.pdf',
+            contact,
+            licensee,
+            sended: false,
+            replyMessageId: 'wamid-replied',
+          }),
+        )
+
+        request.download.mockResolvedValue({
+          data: Buffer.from('file-content'),
+          headers: { get: () => 'application/pdf' },
+        })
+
+        request.post.mockResolvedValue({
+          status: 200,
+          data: {
+            error: false,
+            success: true,
+          },
+        })
+
+        const chatwoot = new Chatwoot(licensee)
+        await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
+
+        expect(request.post).toHaveBeenCalledTimes(1)
+
+        const multipartBody = request.post.mock.calls[0][1].body
+        expect(Buffer.isBuffer(multipartBody)).toBe(true)
+
+        const multipartString = multipartBody.toString()
+        expect(multipartString).toContain('content_attributes')
+        expect(multipartString).toContain('"in_reply_to":"chat-message-123"')
+
+        const messageUpdated = await messageRepository.findFirst({ _id: message._id })
+        expect(messageUpdated.sended).toEqual(true)
+      })
+
+      it('adds in_reply_to when sending text replies', async () => {
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
+          contactFactory.build({
+            name: 'John Doe',
+            chatwootSourceId: 'source_123',
+            licensee,
+          }),
+        )
+
+        await Room.create(
+          roomFactory.build({
+            roomId: 'conversation_456',
+            contact,
+            closed: false,
+          }),
+        )
+
+        const messageRepository = new MessageRepositoryDatabase()
+        await messageRepository.create(
+          messageFactory.build({
+            messageWaId: 'wamid-replied',
+            messageChatId: 'chat-message-123',
+            contact,
+            licensee,
+          }),
+        )
+
+        const message = await messageRepository.create(
+          messageFactory.build({
+            kind: 'text',
+            text: 'message',
+            contact,
+            licensee,
+            sended: false,
+            replyMessageId: 'wamid-replied',
+          }),
+        )
+
+        request.post.mockResolvedValue({
+          status: 200,
+          data: {
+            error: false,
+            success: true,
+          },
+        })
+
+        const chatwoot = new Chatwoot(licensee)
+        await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
+
+        expect(request.post).toHaveBeenCalledTimes(1)
+
+        const requestBody = request.post.mock.calls[0][1].body
+        expect(requestBody).toMatchObject({
+          content_attributes: { in_reply_to: 'chat-message-123' },
+        })
+
+        const messageUpdated = await messageRepository.findFirst({ _id: message._id })
+        expect(messageUpdated.sended).toEqual(true)
+      })
+
       it('creates new conversation if no open room exists', async () => {
         const contactRepository = new ContactRepositoryDatabase()
         const contact = await contactRepository.create(

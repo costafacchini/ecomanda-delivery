@@ -198,6 +198,7 @@ class MessengersBase {
       }
 
       if (this.messageData.sender) messageToSend.senderName = this.messageData.sender
+      if (this.messageData.replyMessageId) messageToSend.replyMessageId = this.messageData.replyMessageId
 
       try {
         processedMessages.push(await messageRepository.create(messageToSend))
