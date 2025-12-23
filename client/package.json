@@ -21,7 +21,7 @@
     "react-scripts": "5.0.1",
     "react-select": "5.10.2",
     "react-toastify": "11.0.5",
-    "socket.io-client": "4.8.2",
+    "socket.io-client": "4.8.3",
     "web-vitals": "5.1.0",
     "yup": "1.7.1"
   },
