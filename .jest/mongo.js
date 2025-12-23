@@ -15,7 +15,8 @@ class MongoServerTest {
 
   async disconnect() {
     try {
-      await mongoose.close()
+      if (mongoose.connection.readyState == 1 || mongoose.connection.readyState == 2) await mongoose.disconnect()
+
       // eslint-disable-next-line no-empty
     } catch {}
     try {
