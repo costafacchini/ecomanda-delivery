@@ -50,7 +50,7 @@
     "@bull-board/ui": "^6.12.0",
     "@bull-board/express": "^6.12.0",
     "@sentry/node": "^10.25.0",
-    "@sinonjs/fake-timers": "15.0.0",
+    "@sinonjs/fake-timers": "15.1.0",
     "amqplib": "0.10.9",
     "archiver": "7.0.1",
     "bcrypt": "6.0.0",
