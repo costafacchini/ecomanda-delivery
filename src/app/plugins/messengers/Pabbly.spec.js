@@ -74,6 +74,9 @@ describe('Pabbly Plugin', () => {
             id: 'message-id',
             type: 'text',
             text: { body: 'Hello World' },
+            context: {
+              id: 'reply-message-id',
+            },
           },
         },
       }
@@ -83,6 +86,7 @@ describe('Pabbly Plugin', () => {
         kind: 'text',
         waId: 'message-id',
         text: { body: 'Hello World' },
+        replyMessageId: 'reply-message-id',
       })
     })
 

@@ -180,6 +180,10 @@ class Pabbly extends MessengersBase {
       }
     }
 
+    if (message.context && message.context.id) {
+      this.messageData.replyMessageId = message.context.id
+    }
+
     switch (message.type) {
       case 'text':
         this.messageData.text = { body: message.text?.body || '' }
