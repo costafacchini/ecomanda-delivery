@@ -6922,10 +6922,10 @@ new-find-package-json@^2.0.0:
   dependencies:
     debug "^4.3.4"
 
-newrelic@13.7.0:
-  version "13.7.0"
-  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-13.7.0.tgz#84ad701c787fc8b2c59f20a3783d829d37028eaa"
-  integrity sha512-0Iy1t68YnJSleqoGKZIrjahBGSwtfiWfYDZbrFrUjH+MAsfo5PJ7imhtVP7YsXr+bLt00mDKKaCu1wV+mBuVhw==
+newrelic@13.8.1:
+  version "13.8.1"
+  resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-13.8.1.tgz#c82a427a2af26c8aea3b36b4afdacf843dc53ef6"
+  integrity sha512-7z0T0B5W/ry89rV2IzTIJKWJxBIlxlXtI8WrEpp+H0aD3j2eyvsNDgqiu/VkYEUUWBWUjJmxsj3/SsiYmAUl4A==
   dependencies:
     "@apm-js-collab/tracing-hooks" "^0.3.1"
     "@grpc/grpc-js" "^1.13.2"
