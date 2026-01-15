@@ -39,7 +39,7 @@
     "mongodb-memory-server": "11.0.1",
     "mongodb-memory-server-global": "11.0.1",
     "npm-run-all2": "8.0.4",
-    "prettier": "3.7.4",
+    "prettier": "3.8.0",
     "supertest": "7.2.2"
   },
   "dependencies": {
