@@ -10,3 +10,8 @@ worker7: node worker.js
 worker8: node worker.js
 worker9: node worker.js
 worker10: node worker.js
+worker11: node worker.js
+worker12: node worker.js
+worker13: node worker.js
+worker14: node worker.js
+worker15: node worker.js
