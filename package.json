@@ -93,5 +93,8 @@
     "@helpers": "./src/app/helpers",
     "@plugins": "./src/app/plugins",
     "@repositories": "./src/app/repositories"
+  },
+  "resolutions": {
+    "lodash": "^4.17.23"
   }
 }
