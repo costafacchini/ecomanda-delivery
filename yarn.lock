@@ -1618,13 +1618,6 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@bull-board/api@6.16.4", "@bull-board/api@^6.12.0":
-  version "6.16.4"
-  resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-6.16.4.tgz#6e7b07e2867c18930f24970589a7cc4a196b1eca"
-  integrity sha512-fn4O+QbA3mRj0rEE41mvwbvtiiv0UYgnxQ9ErWb9n74EwIC/yZbiyxQ+Gh/ehU9u7B0PuaNyR0IOG/h3DGo1Mg==
-  dependencies:
-    redis-info "^3.1.0"
-
 "@bull-board/api@6.17.0":
   version "6.17.0"
   resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-6.17.0.tgz#cb33b9491e4adf88069e34c2bf31b00e6b1bd6f8"
@@ -1632,24 +1625,24 @@
   dependencies:
     redis-info "^3.1.0"
 
-"@bull-board/express@^6.12.0":
+"@bull-board/api@^6.12.0":
   version "6.16.4"
-  resolved "https://registry.yarnpkg.com/@bull-board/express/-/express-6.16.4.tgz#eecad88a62a67d9dbdb55817c13dafa5bf153c5c"
-  integrity sha512-znKZGrqBtHh3iU73TvJherEY1OforQ10hcLMGer1ktRTD+5BxyLedIlhdZIxJsn+ComQQcmEySbqJSF2b78UOA==
+  resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-6.16.4.tgz#6e7b07e2867c18930f24970589a7cc4a196b1eca"
+  integrity sha512-fn4O+QbA3mRj0rEE41mvwbvtiiv0UYgnxQ9ErWb9n74EwIC/yZbiyxQ+Gh/ehU9u7B0PuaNyR0IOG/h3DGo1Mg==
   dependencies:
-    "@bull-board/api" "6.16.4"
-    "@bull-board/ui" "6.16.4"
+    redis-info "^3.1.0"
+
+"@bull-board/express@^6.12.0":
+  version "6.17.0"
+  resolved "https://registry.yarnpkg.com/@bull-board/express/-/express-6.17.0.tgz#2f3f0fddd2333e4d65321cf7ee3e2024c9da9d58"
+  integrity sha512-x6WxX4i+mrJYLNDcHr/2nqnpPo+c8vcLpJWQTtzmqvx+p+x8gQB+vJeLcV9Gm7aE9qr3Q1jmc3Gdq87NFa8sDw==
+  dependencies:
+    "@bull-board/api" "6.17.0"
+    "@bull-board/ui" "6.17.0"
     ejs "^3.1.10"
     express "^5.2.0"
 
-"@bull-board/ui@6.16.4":
-  version "6.16.4"
-  resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-6.16.4.tgz#5e9e9c4cf01f6f3498718714365368602e7b7043"
-  integrity sha512-5Yv+4g0rDvBBq2RxaUewSEwD8ywvqCX6lKlzPM5Aaf0+4cxGoENQRZNcBaAIKX4+fAzAbdVB4VGP4NUgtx5LVg==
-  dependencies:
-    "@bull-board/api" "6.16.4"
-
-"@bull-board/ui@^6.12.0":
+"@bull-board/ui@6.17.0", "@bull-board/ui@^6.12.0":
   version "6.17.0"
   resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-6.17.0.tgz#d081083d78ab0b82b1f0db91aaf17ef14bc3d1bc"
   integrity sha512-jhfzgQiIapWWTUWxbsEoiLXqG0+j52AVg4fdsHOt2jrn0oAPi9oP2zUI4SFYvvpYEWjsYxxzkBmJAl3Qup9aEA==
