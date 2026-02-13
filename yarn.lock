@@ -1625,7 +1625,7 @@
   dependencies:
     redis-info "^3.1.0"
 
-"@bull-board/api@^6.12.0":
+"@bull-board/api@6.18.0", "@bull-board/api@^6.12.0":
   version "6.18.0"
   resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-6.18.0.tgz#3514ba7a0b8e8076ba676ab0409992a3adf819f9"
   integrity sha512-JgyTP+4sR9qwX9x+bEZwwdpnt+Zz+cUsJ7ahJP8NTalucVhdgN/5meHpi884xXtOVxWiu/ovlk+JZsuN0ADoyw==
@@ -1642,12 +1642,19 @@
     ejs "^3.1.10"
     express "^5.2.0"
 
-"@bull-board/ui@6.17.0", "@bull-board/ui@^6.12.0":
+"@bull-board/ui@6.17.0":
   version "6.17.0"
   resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-6.17.0.tgz#d081083d78ab0b82b1f0db91aaf17ef14bc3d1bc"
   integrity sha512-jhfzgQiIapWWTUWxbsEoiLXqG0+j52AVg4fdsHOt2jrn0oAPi9oP2zUI4SFYvvpYEWjsYxxzkBmJAl3Qup9aEA==
   dependencies:
     "@bull-board/api" "6.17.0"
+
+"@bull-board/ui@^6.12.0":
+  version "6.18.0"
+  resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-6.18.0.tgz#e609aa665126307274d65b3db77f687b01e9a573"
+  integrity sha512-OO2bPB1Eqzwn6LZZ+kk1Vlnktc07lQ2zc4/zS4opf91XbzA7riqJzpa95eq8b+qTqE97FU/dZE/49vg7JmXqqQ==
+  dependencies:
+    "@bull-board/api" "6.18.0"
 
 "@colors/colors@1.6.0":
   version "1.6.0"
