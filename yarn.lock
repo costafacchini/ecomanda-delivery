@@ -1618,13 +1618,6 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@bull-board/api@6.17.0":
-  version "6.17.0"
-  resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-6.17.0.tgz#cb33b9491e4adf88069e34c2bf31b00e6b1bd6f8"
-  integrity sha512-nnYzOu74KRimG+WmZ8j4r3+i3FpwbXrSekrMyNsne9I7bj5XqpkacFg7HA8+IwG9ysPqrWdy/KEl2XG1vCR4Fw==
-  dependencies:
-    redis-info "^3.1.0"
-
 "@bull-board/api@6.18.0", "@bull-board/api@^6.12.0":
   version "6.18.0"
   resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-6.18.0.tgz#3514ba7a0b8e8076ba676ab0409992a3adf819f9"
@@ -1633,23 +1626,16 @@
     redis-info "^3.1.0"
 
 "@bull-board/express@^6.12.0":
-  version "6.17.0"
-  resolved "https://registry.yarnpkg.com/@bull-board/express/-/express-6.17.0.tgz#2f3f0fddd2333e4d65321cf7ee3e2024c9da9d58"
-  integrity sha512-x6WxX4i+mrJYLNDcHr/2nqnpPo+c8vcLpJWQTtzmqvx+p+x8gQB+vJeLcV9Gm7aE9qr3Q1jmc3Gdq87NFa8sDw==
+  version "6.18.0"
+  resolved "https://registry.yarnpkg.com/@bull-board/express/-/express-6.18.0.tgz#5a9ee0ff9252158f4d747ee391d6d54df290e6dd"
+  integrity sha512-K+drPf7onxzXPrk3Jtm4TZ4kz0jiCbCFgvokpw9HZz9hLRTKURm1PSqc2zPeYZkbW6hx7dwUa0WMlSmcK7pAlw==
   dependencies:
-    "@bull-board/api" "6.17.0"
-    "@bull-board/ui" "6.17.0"
+    "@bull-board/api" "6.18.0"
+    "@bull-board/ui" "6.18.0"
     ejs "^3.1.10"
-    express "^5.2.0"
+    express "^5.2.1"
 
-"@bull-board/ui@6.17.0":
-  version "6.17.0"
-  resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-6.17.0.tgz#d081083d78ab0b82b1f0db91aaf17ef14bc3d1bc"
-  integrity sha512-jhfzgQiIapWWTUWxbsEoiLXqG0+j52AVg4fdsHOt2jrn0oAPi9oP2zUI4SFYvvpYEWjsYxxzkBmJAl3Qup9aEA==
-  dependencies:
-    "@bull-board/api" "6.17.0"
-
-"@bull-board/ui@^6.12.0":
+"@bull-board/ui@6.18.0", "@bull-board/ui@^6.12.0":
   version "6.18.0"
   resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-6.18.0.tgz#e609aa665126307274d65b3db77f687b01e9a573"
   integrity sha512-OO2bPB1Eqzwn6LZZ+kk1Vlnktc07lQ2zc4/zS4opf91XbzA7riqJzpa95eq8b+qTqE97FU/dZE/49vg7JmXqqQ==
@@ -5144,7 +5130,7 @@ express-validator@7.3.1:
     lodash "^4.17.21"
     validator "~13.15.23"
 
-express@5.2.1, express@^5.2.0:
+express@5.2.1, express@^5.2.1:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/express/-/express-5.2.1.tgz#8f21d15b6d327f92b4794ecf8cb08a72f956ac04"
   integrity sha512-hIS4idWWai69NezIdRt2xFVofaF4j+6INOpJlVOLDO8zXGpUVEVzIYk12UUi2JzjEzWL3IOAxcTubgz9Po0yXw==
@@ -7628,9 +7614,9 @@ pure-rand@^7.0.0:
   integrity sha512-oTUZM/NAZS8p7ANR3SHh30kXB+zK2r2BPcEn/awJIbOvq82WoMN4p62AWWp3Hhw50G0xMsw1mhIBLqHw64EcNQ==
 
 qs@^6.14.0, qs@^6.14.1:
-  version "6.14.1"
-  resolved "https://registry.yarnpkg.com/qs/-/qs-6.14.1.tgz#a41d85b9d3902f31d27861790506294881871159"
-  integrity sha512-4EK3+xJl8Ts67nLYNwqw/dsFVnCf+qR7RgXSK9jEEm9unao3njwMDdmsdvoKBKHzxd7tCYz5e5M+SnMjdtXGQQ==
+  version "6.14.2"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.14.2.tgz#b5634cf9d9ad9898e31fba3504e866e8efb6798c"
+  integrity sha512-V/yCWTTF7VJ9hIh18Ugr2zhJMP01MY7c5kh4J870L7imm6/DIzBsNLTXzMwUA3yZ5b/KBqLx8Kp3uRvd7xSe3Q==
   dependencies:
     side-channel "^1.1.0"
 
