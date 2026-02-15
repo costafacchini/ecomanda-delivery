@@ -1625,7 +1625,7 @@
   dependencies:
     redis-info "^3.1.0"
 
-"@bull-board/api@^6.12.0":
+"@bull-board/api@6.18.2", "@bull-board/api@^6.12.0":
   version "6.18.2"
   resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-6.18.2.tgz#9b59a53e9348fce68ceb9a67b022740c29b5e93d"
   integrity sha512-WXqn6avFehO6y1qIt8jjcaUxz9JWjmtxCM2v3MjBlJbUTtzoZyFeokrZWrVIbH7wvMLTZJTOh2Ya1Epoo3t9Ig==
@@ -1633,16 +1633,23 @@
     redis-info "^3.1.0"
 
 "@bull-board/express@^6.12.0":
-  version "6.18.1"
-  resolved "https://registry.yarnpkg.com/@bull-board/express/-/express-6.18.1.tgz#94f74167f32ef9c23d19f7c5b6c243ddaa80d1fa"
-  integrity sha512-t3zBDx39HgSWcqeEHUhU5m51BvvDQjM1TerSkyFqLMnJ3QclpBuXwFU4IAC52rnefX+/+uQU0NAS/Lu6cbcAoA==
+  version "6.18.2"
+  resolved "https://registry.yarnpkg.com/@bull-board/express/-/express-6.18.2.tgz#18cf899b27f47506fc512413e15e09394903774d"
+  integrity sha512-nik5pMkhVoluX6JtFD1zRaladc+yGJ9AYsLP2lMHqBaq8UlBxulwDIY4eMIDoL2ZJnKRoh6zGmo14U+f9dkF0A==
   dependencies:
-    "@bull-board/api" "6.18.1"
-    "@bull-board/ui" "6.18.1"
+    "@bull-board/api" "6.18.2"
+    "@bull-board/ui" "6.18.2"
     ejs "^3.1.10"
     express "^5.2.1"
 
-"@bull-board/ui@6.18.1", "@bull-board/ui@^6.12.0":
+"@bull-board/ui@6.18.2":
+  version "6.18.2"
+  resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-6.18.2.tgz#a89bcefe9cdbe11600536ff6eb86f7729c2dff8e"
+  integrity sha512-vSd5YiYceypWDeMN/eju61EzU384QNTz2lVfgxX7WH4Dn4S/o7r03frsrHJfDMv7VM95aeyfOGaFJTLruTPw7Q==
+  dependencies:
+    "@bull-board/api" "6.18.2"
+
+"@bull-board/ui@^6.12.0":
   version "6.18.1"
   resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-6.18.1.tgz#f1aa6eb4a937a07153b63fb2657183ce2dc55ef7"
   integrity sha512-zQMDFJXblhxeQ0g0QgudFCpuM4kN7m+BeNTgJdcP/2hAX+JnwbHbOS7OVamaQDWppCSoVzppUSuSLXIAmwSTcA==
