@@ -418,26 +418,77 @@ class YCloud extends MessengersBase {
         break
       }
       case 'file':
-        if (isPhoto(messageToSend.url)) {
-          messageBody.type = 'image'
-          messageBody.image = {
-            link: messageToSend.url,
-          }
-        } else if (isVideo(messageToSend.url)) {
-          messageBody.type = 'video'
-          messageBody.video = {
-            link: messageToSend.url,
-          }
-        } else if (isMidia(messageToSend.url) || isVoice(messageToSend.url)) {
-          messageBody.type = 'audio'
-          messageBody.audio = {
-            link: messageToSend.url,
+        if (this.licensee.useFileIDYcloud === 'true') {
+          const uploadedFile = await this.uploadFileToYCloud(messageToSend.url, url, token)
+
+          if (uploadedFile) {
+            if (isPhoto(messageToSend.url)) {
+              messageBody.type = 'image'
+              messageBody.image = {
+                id: uploadedFile.id,
+              }
+            } else if (isVideo(messageToSend.url)) {
+              messageBody.type = 'video'
+              messageBody.video = {
+                id: uploadedFile.id,
+              }
+            } else if (isMidia(messageToSend.url) || isVoice(messageToSend.url)) {
+              messageBody.type = 'audio'
+              messageBody.audio = {
+                id: uploadedFile.id,
+              }
+            } else {
+              messageBody.type = 'document'
+              messageBody.document = {
+                id: uploadedFile.id,
+              }
+            }
+          } else {
+            if (isPhoto(messageToSend.url)) {
+              messageBody.type = 'image'
+              messageBody.image = {
+                link: messageToSend.url,
+              }
+            } else if (isVideo(messageToSend.url)) {
+              messageBody.type = 'video'
+              messageBody.video = {
+                link: messageToSend.url,
+              }
+            } else if (isMidia(messageToSend.url) || isVoice(messageToSend.url)) {
+              messageBody.type = 'audio'
+              messageBody.audio = {
+                link: messageToSend.url,
+              }
+            } else {
+              messageBody.type = 'document'
+              messageBody.document = {
+                link: messageToSend.url,
+                filename: messageToSend.fileName,
+              }
+            }
           }
         } else {
-          messageBody.type = 'document'
-          messageBody.document = {
-            link: messageToSend.url,
-            filename: messageToSend.fileName,
+          if (isPhoto(messageToSend.url)) {
+            messageBody.type = 'image'
+            messageBody.image = {
+              link: messageToSend.url,
+            }
+          } else if (isVideo(messageToSend.url)) {
+            messageBody.type = 'video'
+            messageBody.video = {
+              link: messageToSend.url,
+            }
+          } else if (isMidia(messageToSend.url) || isVoice(messageToSend.url)) {
+            messageBody.type = 'audio'
+            messageBody.audio = {
+              link: messageToSend.url,
+            }
+          } else {
+            messageBody.type = 'document'
+            messageBody.document = {
+              link: messageToSend.url,
+              filename: messageToSend.fileName,
+            }
           }
         }
         break
@@ -483,6 +534,34 @@ class YCloud extends MessengersBase {
       messageToSend.error = JSON.stringify(error.response?.data || error.message)
       await messageToSend.save()
       console.error(`YCloud - erro: Erro ao enviar mensagem ${messageId} para YCloud:`, error)
+    }
+  }
+
+  async uploadFileToYCloud(fileUrl, url, token) {
+    const fileResponse = await request.get(fileUrl, { responseType: 'arraybuffer' })
+    const fileData = fileResponse.data
+    const fileName = fileUrl.split('/').pop()
+
+    const formData = new FormData()
+    formData.append('file', new Blob([fileData]), fileName)
+
+    const headers = {
+      accept: 'application/json',
+      'X-Api-Key': `${token}`,
+    }
+
+    try {
+      const phoneNumber = encodeURIComponent(`+${this.licensee.phone}`)
+      const response = await request.post(`${url}/whatsapp/media/${phoneNumber}/upload`, { headers, body: formData })
+      if (response.status === 200 || response.status === 201) {
+        return response.data
+      } else {
+        console.error(`YCloud - erro: Falha ao enviar arquivo para YCloud. ${JSON.stringify(response.data)}`)
+        return null
+      }
+    } catch (error) {
+      console.error('YCloud - erro: Erro ao enviar arquivo para YCloud:', error)
+      return null
     }
   }
 

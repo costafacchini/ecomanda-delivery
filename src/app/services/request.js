@@ -9,7 +9,10 @@ async function request(url, method, { headers, body, isDownload }) {
     },
   }
 
-  if (headers && headers['Content-Type'] && headers['Content-Type'].includes('multipart/form-data')) {
+  if (body instanceof FormData) {
+    requestOptions.body = body
+    delete requestOptions.headers['Content-Type']
+  } else if (headers && headers['Content-Type'] && headers['Content-Type'].includes('multipart/form-data')) {
     requestOptions.body = body
   } else {
     requestOptions.body = JSON.stringify(body)
