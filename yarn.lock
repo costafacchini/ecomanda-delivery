@@ -1574,29 +1574,29 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@bull-board/api@6.19.0", "@bull-board/api@^6.12.0":
-  version "6.19.0"
-  resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-6.19.0.tgz#756ff99817140f022200d264791697418654f1f5"
-  integrity sha512-qOE9ho99W+MaYKTx8Od7nOIR/y6ySwD2QxR4Cx81EhZHSUifPhjTzHop3paQjxPnrAm/y8kcqebmmhKWEgjZGA==
+"@bull-board/api@6.20.3", "@bull-board/api@^6.12.0":
+  version "6.20.3"
+  resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-6.20.3.tgz#78d04e017bdb636a9db8ec71942b58e8a8661169"
+  integrity sha512-cDrsJJsmF4DbbY8/5oHxO4qFtyFjxexsWQKHowsud/8H4mtZN7MZg4fCmNzfaxc9Ov7V6r9Y9F5G2Mq6t7ZEJg==
   dependencies:
     redis-info "^3.1.0"
 
 "@bull-board/express@^6.12.0":
-  version "6.19.0"
-  resolved "https://registry.yarnpkg.com/@bull-board/express/-/express-6.19.0.tgz#e5b4307667181e311a531579f9130f87cd95f208"
-  integrity sha512-YxSKMKlOsT+q4dJi9uKWNms85O8ksFzEiY60ejGaeuTyL4wqbIJDg9He8IApLoFS4tGFzUEyAnjaNoxjY4dh5w==
+  version "6.20.3"
+  resolved "https://registry.yarnpkg.com/@bull-board/express/-/express-6.20.3.tgz#eecfd32e54f4761471f765abead1f878470dacea"
+  integrity sha512-S6BGeSf/PLwjx5W1IrKxoV8G6iiMmLqT/pldZ6BiC1IDldedisTtAdL1z117swXPv1H7/3hy0vr03dUr8bUCPg==
   dependencies:
-    "@bull-board/api" "6.19.0"
-    "@bull-board/ui" "6.19.0"
+    "@bull-board/api" "6.20.3"
+    "@bull-board/ui" "6.20.3"
     ejs "^3.1.10"
     express "^5.2.1"
 
-"@bull-board/ui@6.19.0", "@bull-board/ui@^6.12.0":
-  version "6.19.0"
-  resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-6.19.0.tgz#7d242ec7b2774a4f3e44cebf46e44b7e51549817"
-  integrity sha512-9sD0FzubAH2Kv7TGtQqulPzceOaOkTzVhOvktSEvZSWIWaf7kRSAP8+NQU7QfR07qgTeLlWBX7RstitmZJkf4Q==
+"@bull-board/ui@6.20.3", "@bull-board/ui@^6.12.0":
+  version "6.20.3"
+  resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-6.20.3.tgz#0dea8ea34fd80542e9ffb59368b2ebd4aeb004c6"
+  integrity sha512-oANyYoW0X+xd0j/09DRyh3u7Q3wqBtXiLEWyZUJIi/Bjp/hINwiw20RwWuRcaFkqkFylEJL9l+pjmeSA9X5L2A==
   dependencies:
-    "@bull-board/api" "6.19.0"
+    "@bull-board/api" "6.20.3"
 
 "@colors/colors@1.6.0":
   version "1.6.0"
@@ -5208,9 +5208,9 @@ file-entry-cache@^8.0.0:
     flat-cache "^4.0.0"
 
 filelist@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/filelist/-/filelist-1.0.4.tgz#f78978a1e944775ff9e62e744424f215e58352b5"
-  integrity sha512-w1cEuf3S+DrLCQL7ET6kz+gmlJdbq9J7yXCSjK/OZCPA+qEN1WyF4ZAf0YYJa4/shHJra2t/d/r8SV4Ji+x+8Q==
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/filelist/-/filelist-1.0.6.tgz#1e8870942a7c636c862f7c49b9394937b6a995a3"
+  integrity sha512-5giy2PkLYY1cP39p17Ech+2xlpTRL9HLspOfEgm0L6CwBXBTgsK5ou0JtzYuepxkaQ/tvhCFIJ5uXo0OrM2DxA==
   dependencies:
     minimatch "^5.0.1"
 
@@ -6818,7 +6818,14 @@ minimatch@^3.0.4, minimatch@^3.1.1, minimatch@^3.1.2:
   dependencies:
     brace-expansion "^1.1.7"
 
-minimatch@^5.0.1, minimatch@^5.1.0:
+minimatch@^5.0.1:
+  version "5.1.9"
+  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-5.1.9.tgz#1293ef15db0098b394540e8f9f744f9fda8dee4b"
+  integrity sha512-7o1wEA2RyMP7Iu7GNba9vc0RWWGACJOCZBJX2GJWip0ikV+wcOsgVuY9uE8CPiyQhkGFSlhuSkZPavN7u1c2Fw==
+  dependencies:
+    brace-expansion "^2.0.1"
+
+minimatch@^5.1.0:
   version "5.1.6"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-5.1.6.tgz#1cfcb8cf5522ea69952cd2af95ae09477f122a96"
   integrity sha512-lKwV/1brpG6mBUFHtb7NUmtABCb2WZZmm2wNiOA5hAb8VdCS4B3dtMWyvcoViccwAW/COERjXLt0zP1zXUN26g==
