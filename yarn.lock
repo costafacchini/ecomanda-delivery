@@ -7910,10 +7910,10 @@ ringbufferjs@^2.0.0:
   resolved "https://registry.yarnpkg.com/ringbufferjs/-/ringbufferjs-2.0.0.tgz#09f40e2675a99cfef430b7ec5815ac1bc2e24120"
   integrity sha512-GCOqTzUsTHF7nrqcgtNGAFotXztLgiePpIDpyWZ7R5I02tmfJWV+/yuJc//Hlsd8G+WzI1t/dc2y/w2imDZdog==
 
-rollbar@3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/rollbar/-/rollbar-3.0.0.tgz#70de21293bdcdd24b9a3b239f2c4d595aafa5324"
-  integrity sha512-FN3dO3SQzR1u5k7fVVyC97qXtOyzM8k79cpk2crklp/NcHVPpmF0QPMypNFRN9ujoycdl77+YwGU7PAfjP/wYA==
+rollbar@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/rollbar/-/rollbar-3.1.0.tgz#4eece3ca49359f4bcb7f69df01071623f4b97191"
+  integrity sha512-YELG0MDRzOLnV5sa2vL/IiGEgNoK5JAivKlpjcJewEIqgmiVlEAPFQUNNB3fsK1PZy6VdHpsUd+Xp4qEuAylfQ==
   dependencies:
     "@rrweb/record" "^2.0.0-alpha.18"
     async "~3.2.3"
