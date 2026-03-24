@@ -70,7 +70,7 @@
     "module-alias": "2.3.4",
     "moment": "2.30.1",
     "moment-timezone": "0.6.1",
-    "mongodb": "7.1.0",
+    "mongodb": "7.1.1",
     "mongoose": "9.3.2",
     "morgan": "1.10.1",
     "newrelic": "13.17.0",
