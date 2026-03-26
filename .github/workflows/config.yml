@@ -82,7 +82,7 @@ jobs:
         timeout-minutes: 5
 
       - name: Upload NodeJS coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           directory: nodejs-coverage
           flags: jestspecs
@@ -91,7 +91,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload React coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           directory: react-coverage
           flags: reactspecs
