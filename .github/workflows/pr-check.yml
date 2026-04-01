@@ -151,3 +151,4 @@ jobs:
           [ -n "$DEPS" ] && echo "::warning::Dependency changes detected — verify no vulnerabilities"
           [ -n "$DOCKER" ] && echo "::warning::Docker changes detected — verify build still works"
           [ -n "$CI" ] && echo "::warning::CI/CD changes detected — verify pipeline integrity"
+          exit 0
