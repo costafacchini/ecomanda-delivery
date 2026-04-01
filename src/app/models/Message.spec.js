@@ -158,7 +158,7 @@ describe('Message', () => {
         expect(validation.errors['kind']).not.toBeDefined()
 
         message.licenseKind = 'cart'
-        validation = message.validateSync()
+        message.validateSync()
 
         message.licenseKind = 'template'
         validation = message.validateSync()

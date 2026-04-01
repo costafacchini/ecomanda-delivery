@@ -14,7 +14,7 @@ const compat = new FlatCompat({
 })
 
 export default [
-  ...compat.extends('eslint:recommended', 'plugin:eslint-comments/recommended', 'plugin:prettier/recommended'),
+  ...compat.extends('eslint:recommended', 'plugin:@eslint-community/eslint-comments/recommended', 'plugin:prettier/recommended'),
   {
     plugins: {
       jest,

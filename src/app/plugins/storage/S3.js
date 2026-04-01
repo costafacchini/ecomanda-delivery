@@ -67,7 +67,7 @@ class S3 {
       return results
     } catch (error) {
       console.error('AWS: Erro ao enviar arquivo para S3', error)
-      throw new Error('Erro ao enviar arquivo para S3')
+      throw new Error('Erro ao enviar arquivo para S3', { cause: error })
     }
   }
 }

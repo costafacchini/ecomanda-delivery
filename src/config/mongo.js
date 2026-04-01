@@ -20,7 +20,7 @@ class MongoServer {
 
       await mongoose.connect(this.mongoUri, mongoConnectionOpts)
     } catch (err) {
-      throw new Error(err)
+      throw new Error(err.message, { cause: err })
     }
   }
 }
