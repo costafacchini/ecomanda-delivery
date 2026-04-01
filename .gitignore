@@ -9,3 +9,6 @@ yarn-error.log
 newrelic_agent.log
 /client/coverage
 /client/build
+docs/kb/sessions/*.md
+!docs/kb/sessions/.gitkeep
+.claude/settings.local.json

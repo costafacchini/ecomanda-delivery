@@ -1,24 +1,130 @@
-# Repository Guidelines
+# AGENTS.md
 
-## Project Structure & Module Organization
-Backend code lives in `src/`: `app/` hosts controllers, services, repositories, and models wired through `_moduleAliases`; `config/` centralizes DB, queue, and auth settings; `setup/` keeps shared bootstrap helpers. Entry points are `server.js` (HTTP), `worker.js` (BullMQ), and the `schedule-*.js` maintenance scripts. The React app resides in `client/` with its own `package.json`. Store new Jest suites alongside their targets as `*.spec.js`.
+---
 
-## Build, Test, and Development Commands
-- `yarn start`: production-style server boot.
-- `yarn dev`, `yarn dev:server`, `yarn dev:worker`: start Docker plus nodemon-watched API and worker; `Ctrl+C` stops compose.
-- `yarn build`: install and build the React bundle in `client/`.
-- `cd client && yarn start`: run the React dev server against the local API.
-- `docker compose up --build`: seed Mongo, Redis, and supporting services used by the scripts.
-- `yarn linter`: apply ESLint/Prettier to `src/app`, `src/config`, and `src/setup`.
+## Quick Triggers
 
-## Coding Style & Naming Conventions
-Target Node 24.x with native ES modules. ESLint 9 (Standard + Prettier) enforces 2-space indents, single quotes, no semicolons, camelCase for functions/variables, PascalCase for classes, and kebab-case for scripts. Prefer async/await, push heavy logic into services or repositories, and import via aliases such as `@models/ChatMessage.js`. Run `yarn linter` before publishing work.
+**Session Start**: Check `docs/kb/ai-patterns/mistake-log.md` for patterns to avoid.
 
-## Testing Guidelines
-Jest powers backend suites. `yarn test` is the local loop, `yarn test:ci` matches the pipeline, and `yarn test:coverage` refreshes the HTML report in `coverage/`. Name files with the `.spec.js` suffix (e.g., `ResetChats.spec.js`) beside the code under `src/app/...`. Use helpers in `src/setup/` to launch `mongodb-memory-server`, seed fixtures, and await queue flushes or fake timers before asserting asynchronous flows.
+**During Session**:
+- User says "commit/stage" -> run `pre-commit-check`
+- You get corrected -> run `log-mistake`
+- KB lookup fails -> after solving, run `document-solution`
+- You modify KB files -> run `check-kb-index`
 
-## Commit & Pull Request Guidelines
-Use the established imperative format with optional PR references, e.g., `Fix location message render (#2386)` or `Update dependency mongodb-memory-server to v10.4.0 (#2383)`. Keep commits scoped, update tests, and confirm `yarn linter` plus `yarn test` succeed. Pull requests must summarize the change, note impacted surfaces (`server`, `worker`, `client`), link to tickets, and attach screenshots or payload samples when altering chat flows.
+**Session End** (user says "done/thanks/bye"): Run `session-end-checklist`
 
-## Environment & Security Tips
-Copy `.env.example` to `.env`, fill only what you need, and avoid committing credentials. Run `docker compose up -d` before dev or test work so Mongo, Redis, and queues are reachable. Cron scripts (`schedule-*.js`) depend on those services and on consistent timezone variables, so document any additions inside `.env.example`.
+---
+
+## Project Context
+
+**Project**: ,
+
+| Aspect | Value |
+|--------|-------|
+| Language/Framework | Express |
+| Architecture | Frontend SPA |
+| Main branch | `main` |
+| Deployment | Heroku |
+| Database | — |
+| Package manager | yarn |
+
+**Key commands**:
+```bash
+npx jest       # Run tests
+npx eslint .       # Lint
+yarn run dev        # Dev server
+```
+
+---
+
+## Knowledge Base
+
+Index: `docs/kb/README.md`
+
+Load ONLY relevant docs. Do not load entire KB.
+
+### KB-First Rule
+
+Before exploring code: check `docs/kb/README.md` for a matching doc. If found,
+read it before any grep/read. If not found, explore code, then run
+`document-solution` if non-trivial.
+
+---
+
+## Memory
+
+At session start, read `.agents/memory/project-profile.md` for cached context.
+Check `.agents/memory/decisions.md` when making architectural choices.
+Update `.agents/memory/preferences.md` when you learn how the user works.
+
+---
+
+## Critical Constraints
+
+1. **No magic strings** - Use constants, enums, or config values
+2. **No N+1 queries** - Use eager loading where applicable
+3. **Sanitize inputs** - Validate at system boundaries
+4. **Parameterized queries** - Never interpolate user input into queries
+
+---
+
+## Things to Avoid
+
+1. Over-engineering - only make directly requested changes
+2. Breaking existing tests - run tests before committing
+3. Adding dependencies without evaluating alternatives
+4. Large PRs - prefer small, focused changesets
+
+---
+
+## Auto-Triggers
+
+| Trigger | Action |
+|---------|--------|
+| User says "commit", "stage", "push" | `pre-commit-check` |
+| KB lookup fails -> solved via code | `document-solution` |
+| User corrects you | `log-mistake` |
+| Modified KB files | `check-kb-index` |
+| User ending session | `session-end-checklist` |
+
+---
+
+## Skills
+
+| Skill | When |
+|-------|------|
+| `pre-commit-check` | Before commit/staging |
+| `code-review` | Self-review before PR |
+| `dependency-audit` | Check for vulnerable/outdated deps |
+| `document-solution` | Complex problem solved or KB miss |
+| `log-mistake` | User corrects you |
+| `check-kb-index` | After KB file changes |
+| `save-session` | Long session or pausing work |
+| `session-end-checklist` | Session ending |
+| `create-plan` | Starting a multi-step feature |
+| `execute-task` | Working on a plan task |
+| `execute-plan` | Running remaining plan tasks |
+| `scaffold-feature` | Bootstrapping a new feature |
+| `investigate-bug` | Bug — investigate, root cause, fix, document |
+| `dev-environment` | Start/stop/reset/doctor local dev (AI-configured during init) |
+| `changelog-update` | Updating CHANGELOG.md from commits |
+| `evolve-framework` | Self-improve: audit, research, suggest |
+| `list-skills` | Show all available skills |
+
+---
+
+## Agents
+
+`.agents/agents/`: Claude/tool-agnostic role specs.
+`.codex/agents/`: Codex-native custom agents with the same roles.
+
+---
+
+## REMEMBER
+
+Before responding, check:
+1. **Am I being corrected?** -> `log-mistake`
+2. **Is user committing?** -> `pre-commit-check`
+3. **Is user ending session?** -> `session-end-checklist`
+4. **Did I solve something complex without KB?** -> `document-solution`

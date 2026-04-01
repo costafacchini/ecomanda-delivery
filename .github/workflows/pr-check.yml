@@ -1,0 +1,153 @@
+# AI Dev Framework — PR Validation
+# Runs on every pull request to validate framework integrity and code quality.
+# Add "pr-check" to your branch protection required status checks.
+
+name: PR Check
+
+on:
+  pull_request:
+    branches: [main, master, develop]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  framework-integrity:
+    name: Framework Integrity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: AGENTS.md exists and is not empty
+        run: |
+          if [ ! -s "AGENTS.md" ]; then
+            echo "::error::AGENTS.md is missing or empty"
+            exit 1
+          fi
+          echo "AGENTS.md: $(wc -l < AGENTS.md) lines"
+
+      - name: AGENTS.md under 200 lines
+        run: |
+          LINES=$(wc -l < AGENTS.md)
+          if [ "$LINES" -gt 200 ]; then
+            echo "::warning::AGENTS.md is $LINES lines (recommended: under 200 for LLM compliance)"
+          fi
+
+      - name: CLAUDE.md in sync with AGENTS.md
+        run: |
+          if [ -f "CLAUDE.md" ]; then
+            if ! diff -q AGENTS.md CLAUDE.md > /dev/null 2>&1; then
+              echo "::error::CLAUDE.md is out of sync with AGENTS.md — run scripts/sync-shims.sh"
+              exit 1
+            fi
+          fi
+
+      - name: Installed skills have SKILL.md
+        run: |
+          ERRORS=0
+          if [ -d ".agents/skills" ]; then
+            for dir in .agents/skills/*/; do
+              [ -d "$dir" ] || continue
+              if [ ! -f "${dir}SKILL.md" ]; then
+                echo "::error::Missing SKILL.md in $dir"
+                ERRORS=$((ERRORS + 1))
+              fi
+            done
+          fi
+          [ $ERRORS -eq 0 ] && echo "All skills have SKILL.md"
+          exit $ERRORS
+
+      - name: KB index exists (if KB is installed)
+        run: |
+          if [ -d "docs/kb" ] && [ ! -f "docs/kb/README.md" ]; then
+            echo "::error::docs/kb/ exists but README.md index is missing — run check-kb-index"
+            exit 1
+          fi
+
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: No secrets in committed files
+        run: |
+          PATTERNS=(
+            'AKIA[0-9A-Z]{16}'           # AWS Access Key
+            'sk-[a-zA-Z0-9]{48}'         # OpenAI API Key
+            'ghp_[a-zA-Z0-9]{36}'        # GitHub Personal Access Token
+            'xoxb-[0-9]+-[a-zA-Z0-9]+'   # Slack Bot Token
+            'sk_live_[a-zA-Z0-9]+'        # Stripe Secret Key
+          )
+
+          FOUND=0
+          for pattern in "${PATTERNS[@]}"; do
+            MATCHES=$(grep -rnE "$pattern" --include="*.md" --include="*.yml" --include="*.yaml" --include="*.json" --include="*.rb" --include="*.py" --include="*.js" --include="*.ts" --include="*.go" --include="*.rs" --include="*.php" --include="*.ex" --include="*.sh" --include="*.env.example" . 2>/dev/null | grep -v node_modules | grep -v vendor | grep -v '.git/' || true)
+            if [ -n "$MATCHES" ]; then
+              echo "::error::Potential secret found matching pattern: $pattern"
+              echo "$MATCHES"
+              FOUND=$((FOUND + 1))
+            fi
+          done
+          [ $FOUND -eq 0 ] && echo "No secrets detected"
+          exit $FOUND
+
+      - name: No debug statements
+        run: |
+          # Check for common debug statements in source files
+          PATTERNS="console\.log\(|binding\.pry|byebug|debugger;|import pdb|pdb\.set_trace|puts \"|print(\"|dd\(|dump\("
+          MATCHES=$(grep -rnE "$PATTERNS" \
+            --include="*.rb" --include="*.py" --include="*.js" --include="*.ts" \
+            --include="*.tsx" --include="*.jsx" --include="*.go" --include="*.rs" \
+            --include="*.php" --include="*.ex" \
+            . 2>/dev/null \
+            | grep -v node_modules \
+            | grep -v vendor \
+            | grep -v '.git/' \
+            | grep -v '_test\.' \
+            | grep -v '_spec\.' \
+            | grep -v 'test_' \
+            | grep -v '.test.' \
+            | grep -v '.spec.' \
+            || true)
+
+          if [ -n "$MATCHES" ]; then
+            echo "::warning::Debug statements found (review before merging):"
+            echo "$MATCHES"
+          else
+            echo "No debug statements found"
+          fi
+
+      - name: No .env files committed
+        run: |
+          ENV_FILES=$(git diff --name-only --diff-filter=A HEAD~1..HEAD 2>/dev/null | grep -E '^\.env$|^\.env\.' | grep -v '.example' || true)
+          if [ -n "$ENV_FILES" ]; then
+            echo "::error::Environment files being committed: $ENV_FILES"
+            exit 1
+          fi
+
+  changed-files-check:
+    name: Changed Files Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Analyze PR scope
+        run: |
+          FILES_CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | wc -l)
+          echo "Files changed: $FILES_CHANGED"
+
+          if [ "$FILES_CHANGED" -gt 30 ]; then
+            echo "::warning::Large PR ($FILES_CHANGED files changed). Consider splitting into smaller PRs."
+          fi
+
+          # Flag high-risk changes
+          SCHEMA=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E 'migration|schema|\.sql' || true)
+          DEPS=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E 'Gemfile|package\.json|requirements\.txt|go\.mod|Cargo\.toml|composer\.json|mix\.exs|pyproject\.toml' | grep -v '\.lock' || true)
+          DOCKER=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E 'Dockerfile|docker-compose|\.dockerignore' || true)
+          CI=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.github/workflows|\.gitlab-ci|Jenkinsfile' || true)
+
+          [ -n "$SCHEMA" ] && echo "::warning::Schema/migration changes detected — verify rollback plan"
+          [ -n "$DEPS" ] && echo "::warning::Dependency changes detected — verify no vulnerabilities"
+          [ -n "$DOCKER" ] && echo "::warning::Docker changes detected — verify build still works"
+          [ -n "$CI" ] && echo "::warning::CI/CD changes detected — verify pipeline integrity"
