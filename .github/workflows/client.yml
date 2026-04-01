@@ -1,0 +1,58 @@
+name: Client CI
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'client/**'
+  pull_request:
+    paths:
+      - 'client/**'
+
+jobs:
+  client-test-and-build:
+    if: ${{ !contains(toJSON(github.event.commits.*.message), '[skip-ci]') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'yarn'
+          cache-dependency-path: client/yarn.lock
+
+      - name: Install dependencies
+        run: |
+          cd client
+          yarn install --frozen-lockfile
+        timeout-minutes: 5
+
+      - name: Run React unit tests
+        run: |
+          cd client
+          yarn test --coverageDirectory '../react-coverage' --coverage --maxWorkers 4 --testTimeout 10000 --watchAll=false
+        env:
+          SKIP_PREFLIGHT_CHECK: true
+          CI: true
+        timeout-minutes: 10
+
+      - name: Build client
+        run: |
+          cd client
+          yarn build
+        timeout-minutes: 5
+
+      - name: Upload React coverage to Codecov
+        uses: codecov/codecov-action@v6
+        with:
+          directory: react-coverage
+          flags: reactspecs
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+        continue-on-error: true

@@ -1,0 +1,69 @@
+name: AI KB Health Check
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Monday 9am UTC
+  workflow_dispatch:
+
+jobs:
+  kb-health-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check KB Index Consistency
+        id: kb-index
+        run: |
+          KB_COUNT=$(find docs/kb -name "*.md" ! -name "README.md" | grep -c "\.md$" || echo "0")
+          echo "Found $KB_COUNT KB documents"
+          echo "kb_count=$KB_COUNT" >> $GITHUB_OUTPUT
+
+      - name: Check for Stale Documents
+        id: stale-check
+        run: |
+          STALE_DOCS=$(find docs/kb -name "*.md" -mtime +90 ! -name "README.md" || true)
+          if [ -n "$STALE_DOCS" ]; then
+            echo "Potentially stale (90+ days):"
+            echo "$STALE_DOCS"
+            echo "stale_found=true" >> $GITHUB_OUTPUT
+          else
+            echo "stale_found=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check Mistake Log
+        id: mistake-log
+        run: |
+          LOG="docs/kb/ai-patterns/mistake-log.md"
+          if [ -f "$LOG" ]; then
+            COUNT=$(grep -c "^## \[" "$LOG" || echo "0")
+            echo "mistake_entries=$COUNT" >> $GITHUB_OUTPUT
+          else
+            echo "mistake_entries=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Summary
+        run: |
+          echo "## AI KB Health Report" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| KB Documents | ${{ steps.kb-index.outputs.kb_count }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Stale Docs | ${{ steps.stale-check.outputs.stale_found }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Mistake Entries | ${{ steps.mistake-log.outputs.mistake_entries }} |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Create Issue if Stale
+        if: steps.stale-check.outputs.stale_found == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'ai-kb-maintenance'
+            });
+            if (!issues.data.find(i => i.title.includes('Stale documents'))) {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title: 'AI KB Health: Stale documents found',
+                body: 'Weekly check found docs not updated in 90+ days. Review or touch them.',
+                labels: ['ai-kb-maintenance']
+              });
+            }
