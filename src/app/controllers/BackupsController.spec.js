@@ -5,14 +5,14 @@ import { licensee as licenseeFactory } from '@factories/licensee'
 import { publishMessage } from '@config/rabbitmq'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
+jest.mock('../../setup/logger.js')
+
 jest.mock('@config/rabbitmq', () => ({
   publishMessage: jest.fn(),
 }))
 
 describe('backups controller', () => {
   let apiToken, licensee
-
-  jest.spyOn(global.console, 'info').mockImplementation()
 
   beforeAll(async () => {
     jest.clearAllMocks()

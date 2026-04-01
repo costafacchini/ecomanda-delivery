@@ -6,6 +6,15 @@ import { queueServer } from '@config/queue'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { publishMessage } from '@config/rabbitmq'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { logger } from '../../setup/logger.js'
+
+jest.mock('../../setup/logger.js', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    log: jest.fn(),
+  },
+}))
 
 jest.mock('@config/rabbitmq', () => ({
   publishMessage: jest.fn(),
@@ -14,7 +23,6 @@ jest.mock('@config/rabbitmq', () => ({
 describe('chatbots controller', () => {
   let apiToken
   const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
-  jest.spyOn(global.console, 'info').mockImplementation()
 
   beforeAll(async () => {
     jest.clearAllMocks()
@@ -72,6 +80,7 @@ describe('chatbots controller', () => {
               bodyId: body._id,
               licenseeId: body.licensee,
             })
+            expect(logger.info).toHaveBeenCalledWith('Mensagem chegando do plugin de chatbot', { field: 'test' })
           })
       })
     })
@@ -122,6 +131,7 @@ describe('chatbots controller', () => {
               bodyId: body._id,
               licenseeId: body.licensee,
             })
+            expect(logger.info).toHaveBeenCalledWith('Transferencia solicitada', { field: 'alter' })
           })
       })
     })
@@ -155,6 +165,7 @@ describe('chatbots controller', () => {
               body: 'Solicitação para resetar os chatbots abandonados agendado',
             })
             expect(publishMessage).toHaveBeenCalledWith({ key: 'reset-chatbots', body: {} })
+            expect(logger.info).toHaveBeenCalledWith('Agendando para resetar chatbots abandonados')
           })
       })
     })

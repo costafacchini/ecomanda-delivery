@@ -4,13 +4,19 @@ import Integrationlog from '@models/Integrationlog'
 import mongoServer from '../../../../../../.jest/utils'
 import { licenseePedidos10 as licenseeFactory } from '@factories/licensee'
 import request from '../../../../services/request.js'
+import { logger } from '../../../../../setup/logger.js'
 
 jest.mock('../../../../services/request')
+jest.mock('../../../../../setup/logger.js', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    log: jest.fn(),
+  },
+}))
 
 describe('Pedidos10/Auth plugin', () => {
   let licensee
-  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
-  const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
 
   beforeEach(async () => {
     await mongoServer.connect()
@@ -52,7 +58,7 @@ describe('Pedidos10/Auth plugin', () => {
         const auth = new Auth(licensee)
         const isLogged = await auth.login()
         expect(isLogged).toBe(true)
-        expect(consoleInfoSpy).toHaveBeenCalledWith('Login efetuado na API do Pedidos 10! log_id: 1234')
+        expect(logger.info).toHaveBeenCalledWith('Login efetuado na API do Pedidos 10! log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
       })
@@ -133,11 +139,11 @@ describe('Pedidos10/Auth plugin', () => {
         const auth = new Auth(licensee)
         const isLogged = await auth.login()
         expect(isLogged).toBe(false)
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Não foi possível fazer a autenticação na API do Pedidos 10
            status: 422
-           mensagem: {"error":"Credenciais para login inválidas"}
            log_id: 1234`,
+          { error: 'Credenciais para login inválidas' },
         )
 
         integrationlogCreateSpy.mockRestore()

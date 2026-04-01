@@ -1,5 +1,6 @@
 import Integrationlog from '../../../../models/Integrationlog.js'
 import request from '../../../../services/request.js'
+import { logger } from '../../../../../setup/logger.js'
 
 class Auth {
   constructor(licensee) {
@@ -33,16 +34,16 @@ class Auth {
 
       await this.licensee.save()
 
-      console.info(`Login efetuado na API do Pedidos 10! log_id: ${integrationlog._id}`)
+      logger.info(`Login efetuado na API do Pedidos 10! log_id: ${integrationlog._id}`)
     } else {
       this.licensee.pedidos10_integration.authenticated = false
       await this.licensee.save()
 
-      console.error(
+      logger.error(
         `Não foi possível fazer a autenticação na API do Pedidos 10
            status: ${response.status}
-           mensagem: ${JSON.stringify(response.data)}
            log_id: ${integrationlog._id}`,
+        response.data,
       )
     }
 

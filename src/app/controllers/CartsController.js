@@ -8,6 +8,7 @@ import { createCartPlugin } from '../plugins/carts/factory.js'
 import { publishMessage } from '../../config/rabbitmq.js'
 import { CartRepositoryDatabase } from '../repositories/cart.js'
 import { MessageRepositoryDatabase } from '../repositories/message.js'
+import { logger } from '../../setup/logger.js'
 
 function permit(fields) {
   const permitedFields = [
@@ -402,7 +403,7 @@ class CartsController {
   }
 
   reset(_, res) {
-    console.info('Agendando para resetar carts expirando')
+    logger.info('Agendando para resetar carts expirando')
 
     publishMessage({ key: 'reset-carts', body: {} })
 

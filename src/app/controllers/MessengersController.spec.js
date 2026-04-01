@@ -5,11 +5,19 @@ import { expressServer } from '../../../.jest/server-express'
 import { queueServer } from '@config/queue'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { logger } from '../../setup/logger.js'
+
+jest.mock('../../setup/logger.js', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    log: jest.fn(),
+  },
+}))
 
 describe('messengers controller', () => {
   let apiToken
   const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
-  jest.spyOn(global.console, 'info').mockImplementation()
 
   beforeAll(async () => {
     jest.clearAllMocks()
@@ -69,6 +77,7 @@ describe('messengers controller', () => {
               bodyId: body._id,
               licenseeId: body.licensee,
             })
+            expect(logger.info).toHaveBeenCalledWith('Mensagem chegando do plugin de whatsapp', { field: 'test' })
           })
       })
     })

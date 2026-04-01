@@ -1,5 +1,6 @@
 import { PagarMe } from '../plugins/payments/PagarMe.js'
 import { CartRepositoryDatabase } from '../repositories/cart.js'
+import { logger } from '../../setup/logger.js'
 
 async function processPagarmeOrderPaid(body) {
   const pagarMe = new PagarMe()
@@ -13,7 +14,7 @@ async function processPagarmeOrderPaid(body) {
 
     await cart.save()
   } else {
-    console.info(`Carrinho não encontrado referente ao pagamento ${event.id} da pagar.me!`)
+    logger.info(`Carrinho não encontrado referente ao pagamento ${event.id} da pagar.me!`)
   }
 }
 

@@ -1,8 +1,9 @@
 import { publishMessage } from '../../config/rabbitmq.js'
+import { logger } from '../../setup/logger.js'
 
 class BackupsController {
   schedule(_, res) {
-    console.info('Agendando backup')
+    logger.info('Agendando backup')
 
     publishMessage({ key: 'backup', body: {} })
 
@@ -10,7 +11,7 @@ class BackupsController {
   }
 
   clear(_, res) {
-    console.info('Agendar limpeza de backups antigos')
+    logger.info('Agendar limpeza de backups antigos')
 
     publishMessage({ key: 'clear-backups', body: {} })
 
