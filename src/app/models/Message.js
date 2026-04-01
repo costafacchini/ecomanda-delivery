@@ -83,8 +83,10 @@ const messageSchema = new Schema(
     sendedAt: Date,
     readAt: Date,
     deliveredAt: Date,
+    messageChatId: String,
     error: String,
     payload: String,
+    replyMessageId: String,
   },
   { timestamps: true },
 )

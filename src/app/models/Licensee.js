@@ -226,6 +226,7 @@ const licenseeSchema = new Schema(
       enum: [''],
     },
     useSenderName: { type: Boolean, default: false },
+    useFileIDYcloud: { type: Boolean, default: false },
   },
   { timestamps: true },
 )

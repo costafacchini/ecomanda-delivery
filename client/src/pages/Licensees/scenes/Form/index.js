@@ -63,6 +63,7 @@ const licenseeInitialValues = {
   holder_document: '',
   account_type: '',
   useSenderName: false,
+  useFileIDYcloud: false,
 }
 
 function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
@@ -439,6 +440,26 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
                   />
                 </div>
               </div>
+
+              {props.values.whatsappDefault === 'ycloud' && (
+                <div className='row pb-2'>
+                  <div className='col-3'>
+                    <div className='form-check'>
+                      <input
+                        type='checkbox'
+                        className='form-check-input'
+                        id='useFileIDYcloud'
+                        onChange={props.handleChange}
+                        onBlur={props.handleBlur}
+                        checked={props.values.useFileIDYcloud}
+                      />
+                      <label className='form-check-label' htmlFor='useFileIDYcloud'>
+                        Usar ID no YCloud ao invés de URL?
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {(props.values.whatsappDefault === 'dialog' || props.values.whatsappDefault === 'ycloud') &&
                 props.values.apiToken && (
