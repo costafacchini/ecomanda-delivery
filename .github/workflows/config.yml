@@ -6,7 +6,23 @@ name: Test CI
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'server.js'
+      - 'worker.js'
+      - 'schedule-*.js'
+      - 'package.json'
+      - 'yarn.lock'
+      - 'jest.config.mjs'
   pull_request:
+    paths:
+      - 'src/**'
+      - 'server.js'
+      - 'worker.js'
+      - 'schedule-*.js'
+      - 'package.json'
+      - 'yarn.lock'
+      - 'jest.config.mjs'
 
 jobs:
   linter-and-unit:
@@ -60,41 +76,11 @@ jobs:
         run: yarn test:ci --coverageDirectory nodejs-coverage --maxWorkers 4 --testTimeout 10000
         timeout-minutes: 10
 
-      - name: Setup client dependencies
-        run: |
-          cd client
-          yarn install --frozen-lockfile
-        timeout-minutes: 5
-
-      - name: Run React unit tests
-        run: |
-          cd client
-          yarn test --coverageDirectory '../react-coverage' --coverage --maxWorkers 4 --testTimeout 10000 --watchAll=false
-        env:
-          SKIP_PREFLIGHT_CHECK: true
-          CI: true
-        timeout-minutes: 10
-
-      - name: Build client
-        run: |
-          cd client
-          yarn build
-        timeout-minutes: 5
-
       - name: Upload NodeJS coverage to Codecov
         uses: codecov/codecov-action@v6
         with:
           directory: nodejs-coverage
           flags: jestspecs
-          fail_ci_if_error: false
-          token: ${{ secrets.CODECOV_TOKEN }}
-        continue-on-error: true
-
-      - name: Upload React coverage to Codecov
-        uses: codecov/codecov-action@v6
-        with:
-          directory: react-coverage
-          flags: reactspecs
           fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
         continue-on-error: true
