@@ -172,7 +172,7 @@ class Chatwoot extends ChatsBase {
 
     let room = await getRoomBy({ roomId: responseBody.conversation.id })
     if (!room) {
-      room = await createRoom({ roomId: responseBody.conversation.id, contact: contact })
+      await createRoom({ roomId: responseBody.conversation.id, contact: contact })
       this.messageParsed = null
       return
     }

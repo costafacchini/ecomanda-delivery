@@ -16,7 +16,7 @@ async function createDefaultUser() {
       })
     }
   } catch (err) {
-    throw new Error(`Não foi possível criar o usuário padrão. Erro: ${err}`)
+    throw new Error(`Não foi possível criar o usuário padrão. Erro: ${err}`, { cause: err })
   }
 }
 
