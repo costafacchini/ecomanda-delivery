@@ -14,7 +14,11 @@ class MongoServerTest {
   }
 
   async disconnect() {
-    await mongoose.disconnect()
+    try {
+      await mongoose.disconnect()
+    } catch (err) {
+      if (err.name !== 'MongoClientClosedError') throw err
+    }
     const instance = global.__MONGOINSTANCE
     if (instance) {
       await instance.stop()
