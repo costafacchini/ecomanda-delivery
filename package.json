@@ -83,7 +83,7 @@
     "redis": "5.11.0",
     "rollbar": "3.1.0",
     "socket.io": "4.8.3",
-    "uuid": "11.1.0",
+    "uuid": "13.0.0",
     "yarn": "1.22.22"
   },
   "_moduleAliases": {
