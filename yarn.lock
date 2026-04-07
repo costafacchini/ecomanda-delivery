@@ -1535,29 +1535,29 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@bull-board/api@6.20.6", "@bull-board/api@^6.12.0":
-  version "6.20.6"
-  resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-6.20.6.tgz#b1a504695b9e2b2ba1aa611318ecf68f5aed7cc4"
-  integrity sha512-B/9OlKWJ/He421Lyuc7htMpKN4R8hcNu5uoIRiyh9y9J0kMOfxfs82GKXdfR9R0595LvAcCOSvjn8EtWHXesTA==
+"@bull-board/api@6.20.7", "@bull-board/api@^6.12.0":
+  version "6.20.7"
+  resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-6.20.7.tgz#169e63be947c78d2ee6c62802cff374f8e454a0d"
+  integrity sha512-Iwu82QkYTZn1SJQuBBUTdKRMd804GtjqsBWZn79YgTi5RPKsp3eYnM5pUVOF6bUmDUEsxtJaG/3pLK8rlZ8yvg==
   dependencies:
     redis-info "^3.1.0"
 
 "@bull-board/express@^6.12.0":
-  version "6.20.6"
-  resolved "https://registry.yarnpkg.com/@bull-board/express/-/express-6.20.6.tgz#66e120352aeb61284cc31f8d093ad9bd4e1c28fd"
-  integrity sha512-QBOjhi3jR4qIJvLCo++DdL0CyG4umiFXBCPJYr74DmRN41m27rDS3NSf7ceHdbQr9Ol8mw3xbVqGLn50x3QdWQ==
+  version "6.20.7"
+  resolved "https://registry.yarnpkg.com/@bull-board/express/-/express-6.20.7.tgz#b9b1d60b096632f5a952557ca983716858b4db71"
+  integrity sha512-7k/5kKjW27VAJll1VnGS3nYf/fBvVOUwbkbbv3OpHPDjCmL6A6TNahxZhHdrxNVH3tPiFKsD6TjQmHdWzgsDLA==
   dependencies:
-    "@bull-board/api" "6.20.6"
-    "@bull-board/ui" "6.20.6"
+    "@bull-board/api" "6.20.7"
+    "@bull-board/ui" "6.20.7"
     ejs "^3.1.10"
     express "^5.2.1"
 
-"@bull-board/ui@6.20.6", "@bull-board/ui@^6.12.0":
-  version "6.20.6"
-  resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-6.20.6.tgz#4b84e38c18ac0f9c066f5efa7592bf32f4daa4fe"
-  integrity sha512-nEXRgMHHd48ssINgvDqT7b4p/+57XRf3CUcTGQ7UIJb4F7n/kRRj8+ZQvQmMFsYGdNmbNU2eNheQ05vXSYiqdQ==
+"@bull-board/ui@6.20.7", "@bull-board/ui@^6.12.0":
+  version "6.20.7"
+  resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-6.20.7.tgz#4a0cf2315a0031f58f8fb13d191fb9dd08189727"
+  integrity sha512-3XHjbWzJRv3N9lziGuqTwNEHfQtbL6rC3RP6GNOcjcZoebtkxgLeRwDFdHb3VVQ4D1bOaqlRRGHSCVaa/Csw0Q==
   dependencies:
-    "@bull-board/api" "6.20.6"
+    "@bull-board/api" "6.20.7"
 
 "@colors/colors@1.6.0":
   version "1.6.0"
@@ -4052,9 +4052,9 @@ brace-expansion@^1.1.7:
     concat-map "0.0.1"
 
 brace-expansion@^2.0.1:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.0.2.tgz#54fc53237a613d854c7bd37463aad17df87214e7"
-  integrity sha512-Jt0vHyM+jmUBqojB7E1NIYadt0vI0Qxjxd2TErW94wDz+E2LAm5vKMXXwg6ZZBTHPuUlDgQHKXvjGBdfcF1ZDQ==
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.0.3.tgz#0493338bdd58e319b1039c67cf7ee439892c01d9"
+  integrity sha512-MCV/fYJEbqx68aE58kv2cA/kiky1G8vux3OR6/jbS+jIMe/6fJWa0DTzJU7dqijOWYwHi1t29FlfYI9uytqlpA==
   dependencies:
     balanced-match "^1.0.0"
 
@@ -7420,9 +7420,9 @@ path-scurry@^1.11.1:
     minipass "^5.0.0 || ^6.0.2 || ^7.0.0"
 
 path-to-regexp@^8.0.0:
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-8.3.0.tgz#aa818a6981f99321003a08987d3cec9c3474cd1f"
-  integrity sha512-7jdwVIRtsP8MYpdXSwOS0YdD0Du+qOoF/AEPIt88PcCFrZCzx41oxku1jD88hZBwbNUIEfpqvuhjFaMAqMTWnA==
+  version "8.4.2"
+  resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-8.4.2.tgz#795c420c4f7ca45c5b887366f622ee0c9852cccd"
+  integrity sha512-qRcuIdP69NPm4qbACK+aDogI5CBDMi1jKe0ry5rSQJz8JVLsC7jV8XpiJjGRLLol3N+R5ihGYcrPLTno6pAdBA==
 
 pend@~1.2.0:
   version "1.2.0"
