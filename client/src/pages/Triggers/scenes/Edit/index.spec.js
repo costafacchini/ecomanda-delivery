@@ -3,7 +3,7 @@ import { fireEvent, screen, waitFor, render } from '@testing-library/react'
 import { getTrigger, updateTrigger } from '../../../../services/trigger'
 import { createRoutesStub } from 'react-router'
 
-jest.mock('../../../../services/trigger')
+vi.mock('../../../../services/trigger')
 
 describe('<TriggerEdit />', () => {
   function mount() {

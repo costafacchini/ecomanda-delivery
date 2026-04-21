@@ -8,7 +8,7 @@ describe('<AppContextProvider />', () => {
     it('updates the current user', () => {
       const user = userFactory.build()
       const user2 = userFactory.build()
-      const callback = jest.fn()
+      const callback = vi.fn()
 
       function Sandbox() {
         const { currentUser, setCurrentUser } = useContext(AppContext)

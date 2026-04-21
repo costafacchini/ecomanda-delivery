@@ -3,7 +3,7 @@ import { fireEvent, screen, waitFor, render } from '@testing-library/react'
 import { getLicensee, updateLicensee } from '../../../../services/licensee'
 import { createRoutesStub } from 'react-router';
 
-jest.mock('../../../../services/licensee')
+vi.mock('../../../../services/licensee')
 
 describe('<LicenseeEdit />', () => {
   function mount() {

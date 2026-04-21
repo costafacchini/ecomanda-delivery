@@ -6,8 +6,8 @@ import { createRoutesStub } from 'react-router'
 import { userFactory } from '../../../../factories/user'
 import { SimpleCrudContextProvider } from '../../../../contexts/SimpleCrud'
 
-jest.mock('../../../../services/user')
-jest.mock('../../../../services/licensee')
+vi.mock('../../../../services/user')
+vi.mock('../../../../services/licensee')
 
 describe('<UsersIndex />', () => {
   const currentUser = { isSuper: true }

@@ -3,7 +3,7 @@ import { createRoutesStub } from 'react-router'
 import TriggerForm from './'
 
 describe('<TriggerForm />', () => {
-  const onSubmit = jest.fn()
+  const onSubmit = vi.fn()
 
   function mount(props = {}) {
     const Stub = createRoutesStub([

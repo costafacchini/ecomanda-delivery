@@ -246,7 +246,7 @@ describe('<SimpleCrudContextProvider />', () => {
 
   describe('filters', () => {
     it('updates the context filters', () => {
-      const callback = jest.fn()
+      const callback = vi.fn()
 
       function Sandbox() {
         const { filters, setFilters } = useContext(SimpleCrudContext)
@@ -272,7 +272,7 @@ describe('<SimpleCrudContextProvider />', () => {
 
   describe('lastPage', () => {
     it('is false by default', () => {
-      const callback = jest.fn()
+      const callback = vi.fn()
 
       function Sandbox() {
         const { cache } = useContext(SimpleCrudContext)
@@ -292,7 +292,7 @@ describe('<SimpleCrudContextProvider />', () => {
     })
 
     it('is true when the addPage is called with an empty array', () => {
-      const callback = jest.fn()
+      const callback = vi.fn()
 
       function Sandbox() {
         const { cache } = useContext(SimpleCrudContext)

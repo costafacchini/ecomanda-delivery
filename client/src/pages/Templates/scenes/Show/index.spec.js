@@ -3,7 +3,7 @@ import { screen, render } from '@testing-library/react'
 import { getTemplate } from '../../../../services/template'
 import { createRoutesStub } from 'react-router'
 
-jest.mock('../../../../services/template')
+vi.mock('../../../../services/template')
 
 describe('<TemplateShow />', () => {
   function mount() {
