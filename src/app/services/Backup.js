@@ -2,9 +2,9 @@ import fs from 'fs'
 import os from 'os'
 import path from 'path'
 import spawn from 'child_process'
+import { Writable } from 'stream'
 import archiver from 'archiver'
 import mime from 'mime-types'
-import bl from 'bl'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 
 async function backup() {
@@ -15,17 +15,8 @@ async function backup() {
   const filename = `${folderDate}/${date.toISOString()}.zip`
 
   try {
-    let buf
-
-    const archive = archiver.create('zip', {})
     const file = await doBackup(mongoURI)
-    archive.append(fs.createReadStream(file.path), { name: file.name })
-    archive.pipe(
-      bl((_, data) => {
-        buf = data
-      }),
-    )
-    archive.finalize()
+    const buf = await zipBackup(file)
 
     await upload(buf, filename)
 
@@ -33,6 +24,29 @@ async function backup() {
   } catch (err) {
     console.info(`Erro ao tentar efetuar o backup ${err.toString()}`)
   }
+}
+
+function zipBackup(file) {
+  return new Promise((resolve, reject) => {
+    const archive = archiver.create('zip', {})
+    const chunks = []
+    const output = new Writable({
+      write(chunk, _encoding, callback) {
+        chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk))
+        callback()
+      },
+    })
+    const input = fs.createReadStream(file.path)
+
+    archive.on('error', reject)
+    output.on('error', reject)
+    output.on('finish', () => resolve(Buffer.concat(chunks)))
+    input.on('error', reject)
+
+    archive.pipe(output)
+    archive.append(input, { name: file.name })
+    archive.finalize().catch(reject)
+  })
 }
 
 function doBackup(mongoURI) {

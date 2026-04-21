@@ -31,7 +31,7 @@ Load ONLY documents relevant to your current task.
 
 | Document | When to Read |
 |----------|--------------|
-| | |
+| [bl-v7-bufferliststream-upgrade](integrations/bl-v7-bufferliststream-upgrade.md) | Upgrading `bl` to v7 in this repo or fixing backup/archive code that Jest loads |
 
 ### API
 

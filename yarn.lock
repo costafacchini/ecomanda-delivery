@@ -3968,11 +3968,6 @@ bl@^4.0.3:
     inherits "^2.0.4"
     readable-stream "^3.4.0"
 
-bl@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/bl/-/bl-7.0.0.tgz#2f68cbce041cec13d33321c2924d2b848ca0d220"
-  integrity sha512-0XZDh+fmIrcO5dpoAG3Jfuvi6czx7Uf51lHjRd4jG04wrkm4jb1Jr3cqpbORQFTSX8bLjc3dr+wq16A9Syvjeg==
-
 body-parser@^2.2.1:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-2.2.2.tgz#1a32cdb966beaf68de50a9dfbe5b58f83cb8890c"
