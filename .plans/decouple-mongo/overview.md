@@ -1,7 +1,7 @@
 # Plan: Decouple MongoDB from the Application
 
 **Created**: 2026-04-02
-**Status**: Draft
+**Status**: Active
 **Branch**: feature/decouple-mongo
 
 ## Objective
@@ -36,9 +36,9 @@ Complete the in-progress repository pattern so that:
 
 | # | Task | Status | Files | Depends On |
 |---|------|--------|-------|------------|
-| 1.1 | Add `save(document)` method to `Repository` base class and all existing `*RepositoryDatabase` implementations. This wraps `document.save()` so callers never touch Mongoose directly | Pending | `repository.js`, all `*RepositoryDatabase` files | — |
-| 1.2 | Convert `room.js` from plain functions to `RoomRepositoryDatabase` class extending `Repository`; update all callers (`Chatwoot.js`, `Crisp.js`) | Pending | `repositories/room.js`, `plugins/chats/Chatwoot.js`, `plugins/chats/Crisp.js` | — |
-| 1.3 | Create `BodyRepositoryDatabase`, `BackgroundjobRepositoryDatabase`, `UserRepositoryDatabase`, `IntegrationlogRepositoryDatabase` | Pending | `repositories/body.js` *(new)*, `repositories/backgroundjob.js` *(new)*, `repositories/user.js` *(new)*, `repositories/integrationlog.js` *(new)* | — |
+| 1.1 | Add `save(document)` method to `Repository` base class and all existing `*RepositoryDatabase` implementations. This wraps `document.save()` so callers never touch Mongoose directly | Complete | `repository.js`, all `*RepositoryDatabase` files | — |
+| 1.2 | Convert `room.js` from plain functions to `RoomRepositoryDatabase` class extending `Repository`; update all callers (`Chatwoot.js`, `Crisp.js`) | Complete | `repositories/room.js`, `plugins/chats/Chatwoot.js`, `plugins/chats/Crisp.js` | — |
+| 1.3 | Create `BodyRepositoryDatabase`, `BackgroundjobRepositoryDatabase`, `UserRepositoryDatabase`, `IntegrationlogRepositoryDatabase` | Complete | `repositories/body.js` *(new)*, `repositories/backgroundjob.js` *(new)*, `repositories/user.js` *(new)*, `repositories/integrationlog.js` *(new)* | — |
 
 ---
 

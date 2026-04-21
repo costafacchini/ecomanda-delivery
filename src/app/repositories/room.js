@@ -1,15 +1,14 @@
+import Repository from './repository.js'
 import Room from '../models/Room.js'
 
-async function createRoom(fields) {
-  const room = new Room({
-    ...fields,
-  })
+class RoomRepositoryDatabase extends Repository {
+  model() {
+    return Room
+  }
 
-  return await room.save()
+  async findFirst(params = {}, relations = ['contact']) {
+    return await super.findFirst(params, relations)
+  }
 }
 
-async function getRoomBy(filter) {
-  return await Room.findOne(filter).populate('contact')
-}
-
-export { createRoom, getRoomBy }
+export { RoomRepositoryDatabase }

@@ -1,6 +1,6 @@
 # Mistake Log
 
-**Last Updated**: initialized
+**Last Updated**: 2026-04-21
 **Context**: Read at session start to avoid repeating known error patterns.
 
 When the AI is corrected, `log-mistake` appends an entry here.
@@ -14,4 +14,12 @@ Entries reaching count 3+ get escalated to AGENTS.md "Things to Avoid".
 **Correct**: Confirm package format compatibility with the project's runtime and test pipeline first; in this repo, avoid top-level `bl` imports in app code or replace the usage with native streams.
 **Area**: Dependency upgrades, Jest module resolution
 **Prevention**: Before applying a library migration, run or inspect a representative test path that loads the changed module and check whether the repo mixes ESM app code with CommonJS test transforms.
+**Count**: 1
+
+## [2026-04-21] Create and switch to the plan branch before executing plan work
+
+**Wrong**: Started executing `.plans/decouple-mongo` on `main` instead of creating and switching to the plan branch first.
+**Correct**: When a plan overview declares a branch, create or switch to that branch before making plan changes so the work stays isolated from `main`.
+**Area**: Plan execution workflow, git branching
+**Prevention**: During plan startup, treat `**Branch**` in `.plans/<slug>/overview.md` as a required preflight check alongside status and dependencies.
 **Count**: 1

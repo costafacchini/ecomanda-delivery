@@ -1,6 +1,6 @@
 import request from '../../services/request.js'
 import { ChatsBase } from './Base.js'
-import { createRoom, getRoomBy } from '../../repositories/room.js'
+import { RoomRepositoryDatabase } from '../../repositories/room.js'
 import { ContactRepositoryDatabase } from '../../repositories/contact.js'
 import path from 'path'
 import mime from 'mime-types'
@@ -76,7 +76,7 @@ const createContact = async (url, headers, contact, licensee, contactRepository)
   }
 }
 
-const createConversation = async (url, headers, contact, inboxId) => {
+const createConversation = async (url, headers, contact, inboxId, roomRepository) => {
   const body = {
     contact_id: contact.chatwootId,
     status: 'open',
@@ -96,7 +96,7 @@ const createConversation = async (url, headers, contact, inboxId) => {
     )
     return
   } else {
-    const room = await createRoom({
+    const room = await roomRepository.create({
       roomId: response.data.id,
       contact: contact._id,
     })
@@ -112,8 +112,9 @@ const formatMessage = (message, contact) => {
 }
 
 class Chatwoot extends ChatsBase {
-  constructor(licensee) {
+  constructor(licensee, { roomRepository = new RoomRepositoryDatabase() } = {}) {
     super(licensee)
+    this.roomRepository = roomRepository
   }
 
   action(responseBody) {
@@ -137,7 +138,7 @@ class Chatwoot extends ChatsBase {
         return
       }
 
-      let room = await getRoomBy({ roomId: responseBody.id })
+      let room = await this.roomRepository.findFirst({ roomId: responseBody.id })
       if (!room) {
         this.messageParsed = null
         return
@@ -170,9 +171,9 @@ class Chatwoot extends ChatsBase {
       return
     }
 
-    let room = await getRoomBy({ roomId: responseBody.conversation.id })
+    let room = await this.roomRepository.findFirst({ roomId: responseBody.conversation.id })
     if (!room) {
-      await createRoom({ roomId: responseBody.conversation.id, contact: contact })
+      await this.roomRepository.create({ roomId: responseBody.conversation.id, contact: contact })
       this.messageParsed = null
       return
     }
@@ -271,11 +272,17 @@ class Chatwoot extends ChatsBase {
       return
     }
 
-    const openRoom = await getRoomBy({ contact: messageToSend.contact, closed: false })
+    const openRoom = await this.roomRepository.findFirst({ contact: messageToSend.contact, closed: false })
     let room = openRoom
 
     if (!room) {
-      room = await createConversation(url, headers, messageToSend.contact, this.licensee.chatIdentifier)
+      room = await createConversation(
+        url,
+        headers,
+        messageToSend.contact,
+        this.licensee.chatIdentifier,
+        this.roomRepository,
+      )
       if (!room) {
         messageToSend.error =
           'Chatwoot - erro: Não foi possível criar a conversa na Chatwoot! Você vai encontrar mais detalhes nos logs do servidor.'
@@ -302,7 +309,7 @@ class Chatwoot extends ChatsBase {
         contact.chatwootId = chatwootId
       }
 
-      room = await createConversation(url, headers, contact, this.licensee.chatIdentifier)
+      room = await createConversation(url, headers, contact, this.licensee.chatIdentifier, this.roomRepository)
       if (!room) {
         messageToSend.error =
           'Chatwoot - erro 2: Não foi possível criar a conversa na Chatwoot! Você vai encontrar mais detalhes nos logs do servidor.'
@@ -322,9 +329,9 @@ class Chatwoot extends ChatsBase {
     const contact = await this.contactRepository.findFirst({ _id: message.contact._id })
     const messages = []
 
-    const room = await getRoomBy({ roomId: message.room.roomId })
+    const room = await this.roomRepository.findFirst({ roomId: message.room.roomId })
     room.closed = true
-    await room.save()
+    await this.roomRepository.save(room)
 
     if (licensee.messageOnCloseChat) {
       const messagesCloseChat = await this.messageRepository.createInteractiveMessages({
@@ -455,9 +462,9 @@ class Chatwoot extends ChatsBase {
       message.error = `mensagem: ${JSON.stringify(response.data)}`
       await message.save()
       if (response.data.error === 'Resource could not be found') {
-        const roomSaved = await getRoomBy({ roomId: room.roomId })
+        const roomSaved = await this.roomRepository.findFirst({ roomId: room.roomId })
         roomSaved.closed = true
-        await roomSaved.save()
+        await this.roomRepository.save(roomSaved)
 
         const contactRepository = new ContactRepositoryDatabase()
         await contactRepository.update(contact._id, {
