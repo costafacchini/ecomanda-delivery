@@ -32,6 +32,7 @@ export default defineConfig({
     clearMocks: true,
     coverage: {
       provider: 'v8',
+      reportsDirectory: '../react-coverage',
     },
   },
 })

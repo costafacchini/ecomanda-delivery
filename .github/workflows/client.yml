@@ -36,9 +36,8 @@ jobs:
       - name: Run React unit tests
         run: |
           cd client
-          yarn test --coverageDirectory '../react-coverage' --coverage --maxWorkers 4 --testTimeout 10000 --watchAll=false
+          yarn test --coverage --testTimeout=10000
         env:
-          SKIP_PREFLIGHT_CHECK: true
           CI: true
         timeout-minutes: 10
 
