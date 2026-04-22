@@ -23,7 +23,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version-file: '.tool-versions'
+          node-version: '24.5.0'
           cache: 'yarn'
           cache-dependency-path: client/yarn.lock
 
