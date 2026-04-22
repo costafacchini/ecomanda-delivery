@@ -17,7 +17,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': 'http://localhost:5001',
+      '/resources': 'http://localhost:5001',
     },
   },
   css: {
