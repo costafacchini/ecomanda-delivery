@@ -1,11 +1,18 @@
-import Body from '../models/Body.js'
 import { createChatPlugin } from '../plugins/chats/factory.js'
+import { BodyRepositoryDatabase } from '../repositories/body.js'
 import { ContactRepositoryDatabase } from '../repositories/contact.js'
 import { MessageRepositoryDatabase } from '../repositories/message.js'
 
-async function transformChatBody(data) {
+async function transformChatBody(
+  data,
+  {
+    bodyRepository = new BodyRepositoryDatabase(),
+    contactRepository = new ContactRepositoryDatabase(),
+    messageRepository = new MessageRepositoryDatabase(),
+  } = {},
+) {
   const { bodyId } = data
-  const body = await Body.findById(bodyId).populate('licensee')
+  const body = await bodyRepository.findFirst({ _id: bodyId }, ['licensee'])
   if (!body) {
     return []
   }
@@ -18,10 +25,8 @@ async function transformChatBody(data) {
 
   for (const message of messages) {
     if (licensee.useWhatsappWindow) {
-      const contactRepository = new ContactRepositoryDatabase()
       const messageDoesNotHaveSended = await contactRepository.contactWithWhatsappWindowClosed(message.contact._id)
       if (messageDoesNotHaveSended && message.kind !== 'template') {
-        const messageRepository = new MessageRepositoryDatabase()
         const messageToSend = await messageRepository.createMessageToWarnAboutWindowOfWhatsassHasExpired(
           message.contact,
           licensee,
@@ -58,7 +63,7 @@ async function transformChatBody(data) {
     })
   }
 
-  await Body.deleteOne({ _id: bodyId })
+  await bodyRepository.delete({ _id: bodyId })
 
   return actions
 }

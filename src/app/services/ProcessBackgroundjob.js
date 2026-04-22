@@ -1,10 +1,17 @@
-import Backgroundjob from '../models/Backgroundjob.js'
+import { BackgroundjobRepositoryDatabase } from '../repositories/backgroundjob.js'
 import { ContactRepositoryDatabase } from '../repositories/contact.js'
 import { CartRepositoryDatabase } from '../repositories/cart.js'
 
-async function processBackgroundjob(data) {
+async function processBackgroundjob(
+  data,
+  {
+    backgroundjobRepository = new BackgroundjobRepositoryDatabase(),
+    contactRepository = new ContactRepositoryDatabase(),
+    cartRepository = new CartRepositoryDatabase(),
+  } = {},
+) {
   const { jobId } = data
-  const backgroundjob = await Backgroundjob.findById(jobId).populate('licensee')
+  const backgroundjob = await backgroundjobRepository.findFirst({ _id: jobId }, ['licensee'])
 
   const body = { ...backgroundjob.body, jobId }
 
@@ -12,7 +19,7 @@ async function processBackgroundjob(data) {
     backgroundjob.status = 'error'
     backgroundjob.error = 'O job precisa ter ou um contato ou um carrinho válido!'
 
-    await backgroundjob.save()
+    await backgroundjobRepository.save(backgroundjob)
 
     return
   }
@@ -20,17 +27,15 @@ async function processBackgroundjob(data) {
   if (!backgroundjob.body.cart_id && backgroundjob.body.contact) {
     const licensee = backgroundjob.licensee
 
-    const contactRepository = new ContactRepositoryDatabase()
     const contact = await contactRepository.getContactByNumber(backgroundjob.body.contact, licensee._id)
 
-    const cartRepository = new CartRepositoryDatabase()
     const cart = await cartRepository.findFirst({ contact, licensee, concluded: false })
 
     if (!cart) {
       backgroundjob.status = 'error'
       backgroundjob.error = 'O job precisa ter ou um contato ou um carrinho válido!'
 
-      await backgroundjob.save()
+      await backgroundjobRepository.save(backgroundjob)
 
       return
     }

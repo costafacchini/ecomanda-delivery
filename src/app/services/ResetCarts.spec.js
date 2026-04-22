@@ -20,6 +20,22 @@ describe('resetCarts', () => {
     await mongoServer.disconnect()
   })
 
+  it('updates expired open carts through the cart repository', async () => {
+    const cartRepository = {
+      updateMany: jest.fn().mockResolvedValue({ acknowledged: true }),
+    }
+
+    await resetCarts({ cartRepository })
+
+    expect(cartRepository.updateMany).toHaveBeenCalledTimes(1)
+
+    const [filters, fields] = cartRepository.updateMany.mock.calls[0]
+
+    expect(filters.concluded).toEqual(false)
+    expect(moment.isMoment(filters.createdAt.$lte)).toEqual(true)
+    expect(fields).toEqual({ concluded: true })
+  })
+
   describe('when the cart is open an hour ago', () => {
     it('closes the cart', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()

@@ -105,6 +105,23 @@ describe('repository base class', () => {
     expect(records).toEqual(found)
   })
 
+  it('updates many records with explicit filters and fields', async () => {
+    const updated = { acknowledged: true }
+    const model = {
+      updateMany: jest.fn().mockResolvedValue(updated),
+    }
+
+    const repository = new FakeRepository(model)
+    const status = await repository.updateMany({ active: true }, { active: false })
+
+    expect(model.updateMany).toHaveBeenCalledWith(
+      { active: true },
+      { $set: { active: false } },
+      { runValidators: true },
+    )
+    expect(status).toEqual(updated)
+  })
+
   it('finds records with empty filters when null is provided', async () => {
     const found = [{ id: 'record-4-null' }]
     const model = {
@@ -116,6 +133,19 @@ describe('repository base class', () => {
 
     expect(model.find).toHaveBeenCalledWith({})
     expect(records).toEqual(found)
+  })
+
+  it('deletes records with explicit filters', async () => {
+    const deleted = { acknowledged: true }
+    const model = {
+      deleteOne: jest.fn().mockResolvedValue(deleted),
+    }
+
+    const repository = new FakeRepository(model)
+    const status = await repository.delete({ active: false })
+
+    expect(model.deleteOne).toHaveBeenCalledWith({ active: false })
+    expect(status).toEqual(deleted)
   })
 
   it('saves a document through its save method', async () => {

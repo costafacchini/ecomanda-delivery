@@ -15,6 +15,35 @@ describe('processWebhookRequest', () => {
     await mongoServer.disconnect()
   })
 
+  it('loads and deletes the webhook body through the repository contract', async () => {
+    const bodyRepository = {
+      findFirst: jest.fn().mockResolvedValue({
+        kind: 'webhook',
+        content: {
+          message: 'text',
+          provider: 'pagarme',
+          type: 'order.paid',
+        },
+      }),
+      delete: jest.fn().mockResolvedValue({ acknowledged: true }),
+    }
+
+    const actions = await processWebhookRequest({ bodyId: 'body-1' }, { bodyRepository })
+
+    expect(bodyRepository.findFirst).toHaveBeenCalledWith({ _id: 'body-1' })
+    expect(bodyRepository.delete).toHaveBeenCalledWith({ _id: 'body-1' })
+    expect(actions).toEqual([
+      {
+        action: 'process-pagarme-order-paid',
+        body: {
+          message: 'text',
+          provider: 'pagarme',
+          type: 'order.paid',
+        },
+      },
+    ])
+  })
+
   describe('when content has provider pagarme', () => {
     it('responds with action with body type', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
