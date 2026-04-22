@@ -18,19 +18,26 @@ function permit(fields) {
 }
 
 class AdressesController {
+  constructor({ contactRepository = new ContactRepositoryDatabase(), normalizePhone } = {}) {
+    this.contactRepository = contactRepository
+    this.normalizePhone = normalizePhone ?? ((number) => new NormalizePhone(number))
+
+    this.update = this.update.bind(this)
+    this.show = this.show.bind(this)
+  }
+
   async update(req, res) {
     const fields = permit(req.body)
     delete fields.licensee
     let contact
 
     try {
-      const normalizedPhone = new NormalizePhone(req.params.number)
+      const normalizedPhone = this.normalizePhone(req.params.number)
       const licensee = req.licensee._id
 
-      const contactRepository = new ContactRepositoryDatabase()
-      contact = await contactRepository.findFirst({
+      contact = await this.contactRepository.findFirst({
         number: normalizedPhone.number,
-        licensee: licensee._id,
+        licensee,
         type: normalizedPhone.type,
       })
     } catch (err) {
@@ -41,22 +48,20 @@ class AdressesController {
       return res.status(404).send({ errors: { message: `Contato ${req.params.number} não encontrado` } })
     }
 
-    const contactRepository = new ContactRepositoryDatabase()
-    await contactRepository.update(contact._id, { ...fields })
+    await this.contactRepository.update(contact._id, { ...fields })
 
-    res.status(200).send(await contactRepository.findFirst({ _id: contact._id }))
+    res.status(200).send(await this.contactRepository.findFirst({ _id: contact._id }))
   }
 
   async show(req, res) {
     try {
-      const normalizedPhone = new NormalizePhone(req.params.number)
+      const normalizedPhone = this.normalizePhone(req.params.number)
       const licensee = req.licensee._id
 
-      const contactRepository = new ContactRepositoryDatabase()
-      const contact = await contactRepository.findFirst(
+      const contact = await this.contactRepository.findFirst(
         {
           number: normalizedPhone.number,
-          licensee: licensee._id,
+          licensee,
           type: normalizedPhone.type,
         },
         ['licensee'],

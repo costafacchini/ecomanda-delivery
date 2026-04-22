@@ -1,20 +1,37 @@
-import Trigger from '../models/Trigger.js'
+import Repository from './repository.js'
 import _ from 'lodash'
+import Trigger from '../models/Trigger.js'
 
-async function createTrigger(fields) {
-  const trigger = new Trigger({
-    ...fields,
-  })
+class TriggerRepositoryDatabase extends Repository {
+  model() {
+    return Trigger
+  }
 
-  return await trigger.save()
-}
+  async create(fields = {}) {
+    const trigger = new Trigger({ ...(fields ?? {}) })
 
-async function getAllTriggerBy(filters, order = {}) {
-  if (_.isEmpty(order)) {
-    return await Trigger.find(filters)
-  } else {
-    return await Trigger.find(filters).sort(order)
+    return await trigger.save()
+  }
+
+  async find(params = {}, order = {}) {
+    const query = Trigger.find(params ?? {})
+
+    if (!_.isEmpty(order)) {
+      query.sort(order)
+    }
+
+    return await query
   }
 }
 
-export { createTrigger, getAllTriggerBy }
+const triggerRepository = new TriggerRepositoryDatabase()
+
+async function createTrigger(fields) {
+  return await triggerRepository.create(fields)
+}
+
+async function getAllTriggerBy(filters, order = {}) {
+  return await triggerRepository.find(filters, order)
+}
+
+export { TriggerRepositoryDatabase, createTrigger, getAllTriggerBy }

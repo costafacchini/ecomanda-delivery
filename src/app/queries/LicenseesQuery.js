@@ -2,7 +2,9 @@ import { QueryBuilder } from './QueryBuilder.js'
 import { LicenseeRepositoryDatabase } from '../repositories/licensee.js'
 
 class LicenseesQuery {
-  constructor() {}
+  constructor({ licenseeRepository = new LicenseeRepositoryDatabase() } = {}) {
+    this.licenseeRepository = licenseeRepository
+  }
 
   page(value) {
     this.pageClause = value
@@ -41,8 +43,7 @@ class LicenseesQuery {
   }
 
   async all() {
-    const licenseeRepository = new LicenseeRepositoryDatabase()
-    const query = new QueryBuilder(licenseeRepository.model())
+    const query = new QueryBuilder(this.licenseeRepository.model())
     query.sortBy('createdAt', 1)
 
     if (this.pageClause) query.page(this.pageClause, this.limitClause)

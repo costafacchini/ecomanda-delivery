@@ -1,8 +1,10 @@
-import Trigger from '../models/Trigger.js'
 import { QueryBuilder } from './QueryBuilder.js'
+import { TriggerRepositoryDatabase } from '../repositories/trigger.js'
 
 class TriggersQuery {
-  constructor() {}
+  constructor({ triggerRepository = new TriggerRepositoryDatabase() } = {}) {
+    this.triggerRepository = triggerRepository
+  }
 
   page(value) {
     this.pageClause = value
@@ -25,7 +27,7 @@ class TriggersQuery {
   }
 
   async all() {
-    const query = new QueryBuilder(Trigger)
+    const query = new QueryBuilder(this.triggerRepository.model())
     query.sortBy('createdAt', 1)
 
     if (this.pageClause) query.page(this.pageClause, this.limitClause)

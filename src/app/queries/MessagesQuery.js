@@ -2,7 +2,9 @@ import { MessageRepositoryDatabase } from '../repositories/message.js'
 import { QueryBuilder } from './QueryBuilder.js'
 
 class MessagesQuery {
-  constructor() {}
+  constructor({ messageRepository = new MessageRepositoryDatabase() } = {}) {
+    this.messageRepository = messageRepository
+  }
 
   page(value) {
     this.pageClause = value
@@ -65,8 +67,7 @@ class MessagesQuery {
   }
 
   async all() {
-    const messageRepository = new MessageRepositoryDatabase()
-    const query = new QueryBuilder(messageRepository.model())
+    const query = new QueryBuilder(this.messageRepository.model())
     if (this.sortByClause) {
       query.sortBy(this.sortByClause.field, this.sortByClause.order)
     } else {
@@ -78,8 +79,7 @@ class MessagesQuery {
   }
 
   async count() {
-    const messageRepository = new MessageRepositoryDatabase()
-    const query = new QueryBuilder(messageRepository.model())
+    const query = new QueryBuilder(this.messageRepository.model())
     this.applyFilters(query)
 
     return await query.getQuery().countDocuments()

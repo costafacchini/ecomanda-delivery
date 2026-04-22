@@ -2,7 +2,9 @@ import { QueryBuilder } from './QueryBuilder.js'
 import { ContactRepositoryDatabase } from '../repositories/contact.js'
 
 class ContactsQuery {
-  constructor() {}
+  constructor({ contactRepository = new ContactRepositoryDatabase() } = {}) {
+    this.contactRepository = contactRepository
+  }
 
   page(value) {
     this.pageClause = value
@@ -38,8 +40,7 @@ class ContactsQuery {
   }
 
   async all() {
-    const contactRepository = new ContactRepositoryDatabase()
-    const query = new QueryBuilder(contactRepository.model())
+    const query = new QueryBuilder(this.contactRepository.model())
     query.sortBy('createdAt', 1)
 
     if (this.pageClause) query.page(this.pageClause, this.limitClause)

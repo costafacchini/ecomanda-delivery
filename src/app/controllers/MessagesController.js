@@ -1,11 +1,17 @@
 import { MessagesQuery } from '../queries/MessagesQuery.js'
 
 class MessagesController {
+  constructor({ createMessagesQuery } = {}) {
+    this.createMessagesQuery = createMessagesQuery ?? (() => new MessagesQuery())
+
+    this.index = this.index.bind(this)
+  }
+
   async index(req, res) {
     const page = req.query.page || 1
     const limit = req.query.limit || 30
 
-    const messagesQuery = new MessagesQuery()
+    const messagesQuery = this.createMessagesQuery()
 
     messagesQuery.page(page)
     messagesQuery.limit(limit)

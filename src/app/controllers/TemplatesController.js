@@ -1,4 +1,4 @@
-import Template from '../models/Template.js'
+import { TemplateRepositoryDatabase } from '../repositories/template.js'
 import { sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
 import _ from 'lodash'
 import { TemplatesQuery } from '../queries/TemplatesQuery.js'
@@ -11,26 +11,34 @@ function permit(fields) {
 }
 
 class TemplatesController {
+  constructor({
+    templateRepository = new TemplateRepositoryDatabase(),
+    createTemplatesQuery,
+    createTemplatesImporter,
+  } = {}) {
+    this.templateRepository = templateRepository
+    this.createTemplatesQuery =
+      createTemplatesQuery ?? (() => new TemplatesQuery({ templateRepository: this.templateRepository }))
+    this.createTemplatesImporter = createTemplatesImporter ?? ((id) => new TemplatesImporter(id))
+
+    this.create = this.create.bind(this)
+    this.update = this.update.bind(this)
+    this.show = this.show.bind(this)
+    this.index = this.index.bind(this)
+    this.importation = this.importation.bind(this)
+  }
+
   async create(req, res) {
     const { name, namespace, licensee } = req.body
 
-    const template = new Template({
-      name,
-      namespace,
-      licensee,
-    })
-
-    const validation = template.validateSync()
-
     try {
-      if (validation) {
-        return res.status(422).json({ errors: sanitizeModelErrors(validation.errors) })
-      } else {
-        await template.save()
-      }
+      const template = await this.templateRepository.create({ name, namespace, licensee })
 
       res.status(201).send(template)
     } catch (err) {
+      if ('errors' in err) {
+        return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
+      }
       res.status(500).send({ errors: { message: err.toString() } })
     }
   }
@@ -40,13 +48,13 @@ class TemplatesController {
     delete fields.licensee
 
     try {
-      await Template.updateOne({ _id: req.params.id }, { $set: fields }, { runValidators: true })
+      await this.templateRepository.update(req.params.id, { ...fields })
     } catch (err) {
       return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
     }
 
     try {
-      const template = await Template.findOne({ _id: req.params.id })
+      const template = await this.templateRepository.findFirst({ _id: req.params.id })
 
       res.status(200).send(template)
     } catch (err) {
@@ -56,7 +64,7 @@ class TemplatesController {
 
   async show(req, res) {
     try {
-      const template = await Template.findOne({ _id: req.params.id }).populate('licensee')
+      const template = await this.templateRepository.findFirst({ _id: req.params.id }, ['licensee'])
 
       res.status(200).send(template)
     } catch (err) {
@@ -73,7 +81,7 @@ class TemplatesController {
       const page = req.query.page || 1
       const limit = req.query.limit || 30
 
-      const templatesQuery = new TemplatesQuery()
+      const templatesQuery = this.createTemplatesQuery()
 
       templatesQuery.page(page)
       templatesQuery.limit(limit)
@@ -96,7 +104,7 @@ class TemplatesController {
 
   async importation(req, res) {
     try {
-      const templateImporter = new TemplatesImporter(req.params.id)
+      const templateImporter = this.createTemplatesImporter(req.params.id)
       await templateImporter.import()
 
       res.status(201).send({ body: 'OK' })
