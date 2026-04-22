@@ -1,7 +1,7 @@
 # Plan: Dependency Injection
 
 **Created**: 2026-04-02
-**Status**: Draft
+**Status**: Active
 **Branch**: feature/dependency-injection
 **Prerequisite**: `.plans/decouple-mongo` Phase 1–2 must be complete (injectable repositories must exist)
 
@@ -89,27 +89,28 @@ No DI framework is needed. Manual wiring in route files is explicit and easy to 
 
 | # | Task | Status | Files | Depends On |
 |---|------|--------|-------|------------|
-| 1.1 | Refactor `LicenseesController`: add constructor receiving `{ licenseeRepository, licenseesQuery }`, remove all `new *()` inside methods | Pending | `controllers/LicenseesController.js` | decouple-mongo 1.x |
-| 1.2 | Refactor `ContactsController`: constructor receives `{ contactRepository, contactsQuery, queueServer }` | Pending | `controllers/ContactsController.js` | decouple-mongo 1.x |
-| 1.3 | Refactor `UsersController`: constructor receives `{ userRepository }` | Pending | `controllers/UsersController.js` | decouple-mongo 1.3 |
-| 1.4 | Refactor `TriggersController`: constructor receives `{ triggerRepository, triggersQuery }` | Pending | `controllers/TriggersController.js` | decouple-mongo 1.3 |
-| 1.5 | Refactor `TemplatesController`: constructor receives `{ templateRepository, templatesQuery }` | Pending | `controllers/TemplatesController.js` | decouple-mongo 1.x |
-| 1.6 | Refactor `MessagesController`: constructor receives `{ messagesQuery }` | Pending | `controllers/MessagesController.js` | — |
-| 1.7 | Refactor `BackgroundjobsController`: constructor receives `{ backgroundjobRepository, queueServer }` | Pending | `controllers/BackgroundjobsController.js` | decouple-mongo 1.3 |
-| 1.8 | Refactor `ChatsController`: constructor receives `{ bodyRepository, queueServer, publishMessage }` | Pending | `controllers/ChatsController.js` | decouple-mongo 1.3 |
-| 1.9 | Refactor `MessengersController`: constructor receives `{ bodyRepository, queueServer }` | Pending | `controllers/MessengersController.js` | decouple-mongo 1.3 |
-| 1.10 | Refactor `OrdersController`: constructor receives `{ integrationlogRepository, bodyRepository, queueServer }` | Pending | `controllers/OrdersController.js` | decouple-mongo 1.3 |
-| 1.11 | Refactor `IntegrationsController`, `ChatbotsController`, `CartsController`, `BackupsController`: apply same pattern | Pending | remaining controllers | decouple-mongo 1.x |
-| 1.12 | Refactor `LoginController` (function): accept `{ userRepository }` as options bag | Pending | `controllers/LoginController.js` | decouple-mongo 1.3 |
+| 1.1 | Refactor `LicenseesController`: add constructor receiving `{ licenseeRepository, licenseesQuery }`, remove all `new *()` inside methods | Complete | `controllers/LicenseesController.js` | decouple-mongo 1.x |
+| 1.2 | Refactor `ContactsController`: constructor receives `{ contactRepository, contactsQuery, queueServer }` | Complete | `controllers/ContactsController.js` | decouple-mongo 1.x |
+| 1.3 | Refactor `UsersController`: constructor receives `{ userRepository }` | Complete | `controllers/UsersController.js` | decouple-mongo 1.3 |
+| 1.4 | Refactor `TriggersController`: constructor receives `{ triggerRepository, triggersQuery }` | Complete | `controllers/TriggersController.js` | decouple-mongo 1.3 |
+| 1.5 | Refactor `TemplatesController`: constructor receives `{ templateRepository, templatesQuery }` | Complete | `controllers/TemplatesController.js` | decouple-mongo 1.x |
+| 1.6 | Refactor `MessagesController`: constructor receives `{ messagesQuery }` | Complete | `controllers/MessagesController.js` | — |
+| 1.7 | Refactor `BackgroundjobsController`: constructor receives `{ backgroundjobRepository, queueServer }` | Complete | `controllers/BackgroundjobsController.js` | decouple-mongo 1.3 |
+| 1.8 | Refactor `ChatsController`: constructor receives `{ bodyRepository, queueServer, publishMessage }` | Complete | `controllers/ChatsController.js` | decouple-mongo 1.3 |
+| 1.9 | Refactor `MessengersController`: constructor receives `{ bodyRepository, queueServer }` | Complete | `controllers/MessengersController.js` | decouple-mongo 1.3 |
+| 1.10 | Refactor `OrdersController`: constructor receives `{ integrationlogRepository, bodyRepository, queueServer }` | Complete | `controllers/OrdersController.js` | decouple-mongo 1.3 |
+| 1.11 | Refactor `IntegrationsController`, `ChatbotsController`, `CartsController`, `BackupsController`: apply same pattern | Complete | remaining controllers | decouple-mongo 1.x |
+| 1.12 | Refactor `LoginController` (function): accept `{ userRepository }` as options bag | Complete | `controllers/LoginController.js` | decouple-mongo 1.3 |
 
 ### Phase 2 — Refactor the Composition Root (Routes)
 
 | # | Task | Status | Files | Depends On |
 |---|------|--------|-------|------------|
-| 2.1 | Update `resources-routes.js`: instantiate all repositories and inject into controllers at module load time | Pending | `routes/resources-routes.js` | Phase 1 |
-| 2.2 | Update `v1/v1-routes.js`: same wiring for v1 routes | Pending | `routes/v1/v1-routes.js` | Phase 1 |
-| 2.3 | Extract `api-routes.js` auth middleware to a named function receiving `{ licenseeRepository }` | Pending | `routes/api-routes.js` | decouple-mongo 1.x |
-| 2.4 | Update `login-route.js` to pass dependencies to `login` function | Pending | `routes/login-route.js` | 1.12 |
+| 2.1 | Update `resources-routes.js`: instantiate all repositories and inject into controllers at module load time | Complete | `routes/resources-routes.js` | Phase 1 |
+| 2.2 | Update `v1/v1-routes.js`: same wiring for v1 routes | Complete | `routes/v1/v1-routes.js` | Phase 1 |
+| 2.3 | Extract `api-routes.js` auth middleware to a named function receiving `{ licenseeRepository }` | Complete | `routes/api-routes.js` | decouple-mongo 1.x |
+| 2.4 | Update `login-route.js` to pass dependencies to `login` function | Complete | `routes/login-route.js` | 1.12 |
+| 2.5 | Remove concrete fallback instantiation from controller/query helper defaults so route files remain the only composition roots for production wiring | Complete | `controllers/*.js`, `queries/*.js`, `services/Reset*.js`, `queries/BillingQuery.js`, `repositories/contact.js`, `repositories/template.js`, `repositories/trigger.js` | 2.1-2.4 |
 
 ### Phase 3 — Apply to Services (overlaps with decouple-mongo Phase 3)
 
@@ -125,10 +126,42 @@ No DI framework is needed. Manual wiring in route files is explicit and easy to 
 
 ---
 
+## Current Checkpoint
+
+Phase 1 and Phase 2 are now complete, including the controller/query fallback cleanup from
+task `2.5`, but the plan is still **not done**.
+
+Remaining gaps tied directly to the done criteria:
+
+- Controllers, login wiring, and the query classes no longer allocate fallback concrete
+  dependencies; route files now supply those collaborators explicitly.
+- Route files are still not the single place where concrete implementations are instantiated.
+  Remaining examples live in report/query helper code such as `BillingQuery.js`,
+  `LicenseeMessagesByDayQuery.js`, and `MessagesSended.js`, and in other service/plugin paths
+  that overlap with `.plans/decouple-mongo` Phase 3 and 4.
+- Controller specs still import and use `mongoServer`.
+- The full `All 2611 tests still pass` criterion has not been re-verified to completion in
+  this plan execution log.
+- Latest targeted verification for this wave passed:
+  `src/app/controllers`,
+  `ContactsQuery.spec.js`,
+  `LicenseesQuery.spec.js`,
+  `MessagesQuery.spec.js`,
+  `TemplatesQuery.spec.js`,
+  `TriggersQuery.spec.js`,
+  `BillingQuery.spec.js`,
+  `ResetChats.spec.js`,
+  `ResetChatbots.spec.js`,
+  `contact.spec.js`,
+  `template.spec.js`,
+  and `trigger.spec.js` (27 suites / 241 tests).
+
+---
+
 ## Done When
 
-- [ ] No controller method contains `new *Repository()` or `new *Model()`
-- [ ] All controller constructors declare their dependencies explicitly
+- [x] No controller method contains `new *Repository()` or `new *Model()`
+- [x] All controller constructors declare their dependencies explicitly
 - [ ] Route files are the single place where concrete implementations are instantiated
 - [ ] 15 controller specs no longer import `mongoServer`
 - [ ] All 2611 tests still pass

@@ -7,6 +7,8 @@ import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { MessageRepositoryDatabase } from '@repositories/message'
 
+const buildMessagesQuery = () => new MessagesQuery({ messageRepository: new MessageRepositoryDatabase() })
+
 describe('MessagesQuery', () => {
   let licensee
   let contact
@@ -43,7 +45,7 @@ describe('MessagesQuery', () => {
         }),
       )
 
-      const messagesQuery = new MessagesQuery()
+      const messagesQuery = buildMessagesQuery()
       const records = await messagesQuery.all()
 
       expect(records.length).toEqual(2)
@@ -76,7 +78,7 @@ describe('MessagesQuery', () => {
           }),
         )
 
-        const messagesQuery = new MessagesQuery()
+        const messagesQuery = buildMessagesQuery()
         messagesQuery.page(1)
         messagesQuery.limit(2)
 
@@ -134,7 +136,7 @@ describe('MessagesQuery', () => {
           }),
         )
 
-        const messagesQuery = new MessagesQuery()
+        const messagesQuery = buildMessagesQuery()
         messagesQuery.filterByCreatedAt(new Date(2021, 6, 3, 0, 0, 0), new Date(2021, 6, 3, 23, 59, 59))
 
         const records = await messagesQuery.all()
@@ -168,7 +170,7 @@ describe('MessagesQuery', () => {
           }),
         )
 
-        const messagesQuery = new MessagesQuery()
+        const messagesQuery = buildMessagesQuery()
         messagesQuery.filterByLicensee(licensee._id)
 
         const records = await messagesQuery.all()
@@ -200,7 +202,7 @@ describe('MessagesQuery', () => {
           }),
         )
 
-        const messagesQuery = new MessagesQuery()
+        const messagesQuery = buildMessagesQuery()
         messagesQuery.filterByContact(contact._id)
 
         const records = await messagesQuery.all()
@@ -234,7 +236,7 @@ describe('MessagesQuery', () => {
           }),
         )
 
-        const messagesQuery = new MessagesQuery()
+        const messagesQuery = buildMessagesQuery()
         messagesQuery.filterByKind('file')
         const records = await messagesQuery.all()
 
@@ -263,7 +265,7 @@ describe('MessagesQuery', () => {
           }),
         )
 
-        const messagesQuery = new MessagesQuery()
+        const messagesQuery = buildMessagesQuery()
         messagesQuery.filterByDestination('to-chatbot')
         const records = await messagesQuery.all()
 
@@ -293,7 +295,7 @@ describe('MessagesQuery', () => {
           }),
         )
 
-        const messagesQuery = new MessagesQuery()
+        const messagesQuery = buildMessagesQuery()
         messagesQuery.filterBySended(true)
         const records = await messagesQuery.all()
 
@@ -321,7 +323,7 @@ describe('MessagesQuery', () => {
           }),
         )
 
-        const messagesQuery = new MessagesQuery()
+        const messagesQuery = buildMessagesQuery()
         messagesQuery.sortBy('createdAt', 'asc')
         const records = await messagesQuery.all()
 
@@ -350,7 +352,7 @@ describe('MessagesQuery', () => {
         }),
       )
 
-      const messagesQuery = new MessagesQuery()
+      const messagesQuery = buildMessagesQuery()
       const records = await messagesQuery.count()
 
       expect(records).toEqual(2)
@@ -388,7 +390,7 @@ describe('MessagesQuery', () => {
           }),
         )
 
-        const messagesQuery = new MessagesQuery()
+        const messagesQuery = buildMessagesQuery()
         messagesQuery.filterByCreatedAt(new Date(2021, 6, 3, 0, 0, 0), new Date(2021, 6, 3, 23, 59, 59))
 
         const records = await messagesQuery.count()
@@ -418,7 +420,7 @@ describe('MessagesQuery', () => {
           }),
         )
 
-        const messagesQuery = new MessagesQuery()
+        const messagesQuery = buildMessagesQuery()
         messagesQuery.filterByLicensee(licensee._id)
 
         const records = await messagesQuery.count()
@@ -448,7 +450,7 @@ describe('MessagesQuery', () => {
           }),
         )
 
-        const messagesQuery = new MessagesQuery()
+        const messagesQuery = buildMessagesQuery()
         messagesQuery.filterByContact(contact._id)
 
         const records = await messagesQuery.count()
@@ -480,7 +482,7 @@ describe('MessagesQuery', () => {
           }),
         )
 
-        const messagesQuery = new MessagesQuery()
+        const messagesQuery = buildMessagesQuery()
         messagesQuery.filterByKind('file')
         const records = await messagesQuery.count()
 
@@ -507,7 +509,7 @@ describe('MessagesQuery', () => {
           }),
         )
 
-        const messagesQuery = new MessagesQuery()
+        const messagesQuery = buildMessagesQuery()
         messagesQuery.filterByDestination('to-chatbot')
         const records = await messagesQuery.count()
 
@@ -535,7 +537,7 @@ describe('MessagesQuery', () => {
           }),
         )
 
-        const messagesQuery = new MessagesQuery()
+        const messagesQuery = buildMessagesQuery()
         messagesQuery.filterBySended(true)
         const records = await messagesQuery.count()
 

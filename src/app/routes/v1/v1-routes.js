@@ -9,19 +9,52 @@ import { DelayController } from '../../controllers/DelayController.js'
 import { BackgroundjobsController } from '../../controllers/BackgroundjobsController.js'
 import { IntegrationsController } from '../../controllers/IntegrationsController.js'
 import { OrdersController } from '../../controllers/OrdersController.js'
+import { queueServer } from '../../../config/queue.js'
+import { publishMessage } from '../../../config/rabbitmq.js'
+import { BodyRepositoryDatabase } from '../../repositories/body.js'
+import { ContactRepositoryDatabase } from '../../repositories/contact.js'
+import { CartRepositoryDatabase } from '../../repositories/cart.js'
+import { MessageRepositoryDatabase } from '../../repositories/message.js'
+import { BackgroundjobRepositoryDatabase } from '../../repositories/backgroundjob.js'
+import { IntegrationlogRepositoryDatabase } from '../../repositories/integrationlog.js'
+import { NormalizePhone } from '../../helpers/NormalizePhone.js'
+import { parseCart } from '../../helpers/ParseTriggerText.js'
+import { createCartAdapter } from '../../plugins/carts/adapters/factory.js'
+import { createCartPlugin } from '../../plugins/carts/factory.js'
+import { scheduleSendMessageToMessenger } from '../../repositories/messenger.js'
 
 const router = express.Router()
 
-const chatsController = new ChatsController()
-const chatbotsController = new ChatbotsController()
-const messengersController = new MessengersController()
-const backupsController = new BackupsController()
-const adressesController = new AdressesController()
-const cartsController = new CartsController()
+const bodyRepository = new BodyRepositoryDatabase()
+const contactRepository = new ContactRepositoryDatabase()
+const cartRepository = new CartRepositoryDatabase()
+const messageRepository = new MessageRepositoryDatabase()
+const backgroundjobRepository = new BackgroundjobRepositoryDatabase()
+const integrationlogRepository = new IntegrationlogRepositoryDatabase()
+
+const chatsController = new ChatsController({ bodyRepository, queueServer, publishMessage })
+const chatbotsController = new ChatbotsController({ bodyRepository, queueServer, publishMessage })
+const messengersController = new MessengersController({ bodyRepository, queueServer })
+const backupsController = new BackupsController({ publishMessage })
+const adressesController = new AdressesController({
+  contactRepository,
+  normalizePhone: (number) => new NormalizePhone(number),
+})
+const cartsController = new CartsController({
+  contactRepository,
+  cartRepository,
+  messageRepository,
+  createNormalizePhone: (number) => new NormalizePhone(number),
+  parseCart,
+  createCartAdapter,
+  createCartPlugin,
+  scheduleSendMessageToMessenger,
+  publishMessage,
+})
 const delayController = new DelayController()
-const backgroundjobsController = new BackgroundjobsController()
-const integrationsController = new IntegrationsController()
-const ordersController = new OrdersController()
+const backgroundjobsController = new BackgroundjobsController({ backgroundjobRepository, queueServer })
+const integrationsController = new IntegrationsController({ bodyRepository, publishMessage })
+const ordersController = new OrdersController({ integrationlogRepository, bodyRepository, queueServer })
 
 router.post('/chat/message', chatsController.message)
 router.post('/chat/reset', chatsController.reset)

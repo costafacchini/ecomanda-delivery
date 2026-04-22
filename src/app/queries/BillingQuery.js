@@ -1,9 +1,11 @@
 import { MessagesQuery } from './MessagesQuery.js'
 import { LicenseeRepositoryDatabase } from '../repositories/licensee.js'
+import { MessageRepositoryDatabase } from '../repositories/message.js'
 import moment from 'moment-timezone'
 
 async function getLicenseeFirstMessage(licensee) {
-  const messagesQuery = new MessagesQuery()
+  const messageRepository = new MessageRepositoryDatabase()
+  const messagesQuery = new MessagesQuery({ messageRepository })
   messagesQuery.filterByLicensee(licensee._id)
   messagesQuery.filterBySended(true)
   messagesQuery.page(1)
@@ -15,7 +17,8 @@ async function getLicenseeFirstMessage(licensee) {
 }
 
 async function getLicenseeLastMessage(licensee) {
-  const messagesQuery = new MessagesQuery()
+  const messageRepository = new MessageRepositoryDatabase()
+  const messagesQuery = new MessagesQuery({ messageRepository })
   messagesQuery.filterByLicensee(licensee._id)
   messagesQuery.filterBySended(true)
   messagesQuery.page(1)
@@ -52,7 +55,8 @@ async function getMessagesSummary(licensee, reportDate) {
 }
 
 async function getMessagesCountedByMonth(licensee, startDate, endDate) {
-  const messagesQuery = new MessagesQuery()
+  const messageRepository = new MessageRepositoryDatabase()
+  const messagesQuery = new MessagesQuery({ messageRepository })
   messagesQuery.filterByLicensee(licensee._id)
   messagesQuery.filterByCreatedAt(startDate, endDate)
 

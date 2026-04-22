@@ -1,8 +1,9 @@
-import Template from '../models/Template.js'
 import { QueryBuilder } from './QueryBuilder.js'
 
 class TemplatesQuery {
-  constructor() {}
+  constructor({ templateRepository } = {}) {
+    this.templateRepository = templateRepository
+  }
 
   page(value) {
     this.pageClause = value
@@ -21,7 +22,7 @@ class TemplatesQuery {
   }
 
   async all() {
-    const query = new QueryBuilder(Template)
+    const query = new QueryBuilder(this.templateRepository.model())
     query.sortBy('createdAt', 1)
 
     if (this.pageClause) query.page(this.pageClause, this.limitClause)

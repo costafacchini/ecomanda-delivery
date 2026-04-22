@@ -1,15 +1,30 @@
+import Repository from './repository.js'
 import Template from '../models/Template.js'
 
+class TemplateRepositoryDatabase extends Repository {
+  model() {
+    return Template
+  }
+
+  async create(fields = {}) {
+    const template = new Template({ ...(fields ?? {}) })
+
+    return await template.save()
+  }
+
+  async delete(params = {}) {
+    return await Template.deleteMany(params ?? {})
+  }
+}
+
 async function destroyAllTemplates() {
-  await Template.deleteMany()
+  const templateRepository = new TemplateRepositoryDatabase()
+  await templateRepository.delete({})
 }
 
 async function createTemplate(fields) {
-  const template = new Template({ ...fields })
-
-  const templateSaved = await template.save()
-
-  return templateSaved
+  const templateRepository = new TemplateRepositoryDatabase()
+  return await templateRepository.create(fields)
 }
 
-export { createTemplate, destroyAllTemplates }
+export { TemplateRepositoryDatabase, createTemplate, destroyAllTemplates }

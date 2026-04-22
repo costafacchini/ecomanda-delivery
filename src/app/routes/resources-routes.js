@@ -6,16 +6,60 @@ import { ContactsController } from '../controllers/ContactsController.js'
 import { TriggersController } from '../controllers/TriggersController.js'
 import { MessagesController } from '../controllers/MessagesController.js'
 import { TemplatesController } from '../controllers/TemplatesController.js'
+import { queueServer } from '../../config/queue.js'
+import { UserRepositoryDatabase } from '../repositories/user.js'
+import { LicenseeRepositoryDatabase } from '../repositories/licensee.js'
+import { ContactRepositoryDatabase } from '../repositories/contact.js'
+import { TriggerRepositoryDatabase } from '../repositories/trigger.js'
+import { TemplateRepositoryDatabase } from '../repositories/template.js'
+import { MessageRepositoryDatabase } from '../repositories/message.js'
+import { LicenseesQuery } from '../queries/LicenseesQuery.js'
+import { ContactsQuery } from '../queries/ContactsQuery.js'
+import { TriggersQuery } from '../queries/TriggersQuery.js'
+import { TemplatesQuery } from '../queries/TemplatesQuery.js'
+import { MessagesQuery } from '../queries/MessagesQuery.js'
+import { createMessengerPlugin } from '../plugins/messengers/factory.js'
+import { PagarMe } from '../plugins/payments/PagarMe.js'
+import { Pedidos10 } from '../plugins/integrations/Pedidos10.js'
+import { FacebookCatalogImporter } from '../plugins/importers/facebook_catalog/index.js'
+import { TemplatesImporter } from '../plugins/importers/template/index.js'
 
 const router = express.Router()
 const SECRET = process.env.SECRET
 
-const usersController = new UsersController()
-const licenseesController = new LicenseesController()
-const contactsController = new ContactsController()
-const triggersController = new TriggersController()
-const messagesController = new MessagesController()
-const templatesController = new TemplatesController()
+const userRepository = new UserRepositoryDatabase()
+const licenseeRepository = new LicenseeRepositoryDatabase()
+const contactRepository = new ContactRepositoryDatabase()
+const triggerRepository = new TriggerRepositoryDatabase()
+const templateRepository = new TemplateRepositoryDatabase()
+const messageRepository = new MessageRepositoryDatabase()
+
+const usersController = new UsersController({ userRepository })
+const licenseesController = new LicenseesController({
+  licenseeRepository,
+  createLicenseesQuery: () => new LicenseesQuery({ licenseeRepository }),
+  createMessengerPlugin,
+  createPagarMe: () => new PagarMe(),
+  createPedidos10: (licensee) => new Pedidos10(licensee),
+})
+const contactsController = new ContactsController({
+  contactRepository,
+  createContactsQuery: () => new ContactsQuery({ contactRepository }),
+  queueServer,
+})
+const triggersController = new TriggersController({
+  triggerRepository,
+  createTriggersQuery: () => new TriggersQuery({ triggerRepository }),
+  createFacebookCatalogImporter: (id) => new FacebookCatalogImporter(id),
+})
+const messagesController = new MessagesController({
+  createMessagesQuery: () => new MessagesQuery({ messageRepository }),
+})
+const templatesController = new TemplatesController({
+  templateRepository,
+  createTemplatesQuery: () => new TemplatesQuery({ templateRepository }),
+  createTemplatesImporter: (id) => new TemplatesImporter(id),
+})
 
 function authenticate(req, res, next) {
   const token = req.headers['x-access-token']

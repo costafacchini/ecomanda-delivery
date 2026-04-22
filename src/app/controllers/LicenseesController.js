@@ -1,11 +1,6 @@
-import { LicenseeRepositoryDatabase } from '../repositories/licensee.js'
-import { createMessengerPlugin } from '../plugins/messengers/factory.js'
 import { check, validationResult } from 'express-validator'
 import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
 import _ from 'lodash'
-import { LicenseesQuery } from '../queries/LicenseesQuery.js'
-import { PagarMe } from '../plugins/payments/PagarMe.js'
-import { Pedidos10 } from '../plugins/integrations/Pedidos10.js'
 
 function permit(fields) {
   const permitedFields = [
@@ -67,6 +62,28 @@ function permit(fields) {
 }
 
 class LicenseesController {
+  constructor({
+    licenseeRepository,
+    createLicenseesQuery,
+    createMessengerPlugin: createMessengerPluginDependency,
+    createPagarMe,
+    createPedidos10,
+  } = {}) {
+    this.licenseeRepository = licenseeRepository
+    this.createLicenseesQuery = createLicenseesQuery
+    this.createMessengerPlugin = createMessengerPluginDependency
+    this.createPagarMe = createPagarMe
+    this.createPedidos10 = createPedidos10
+
+    this.create = this.create.bind(this)
+    this.update = this.update.bind(this)
+    this.show = this.show.bind(this)
+    this.index = this.index.bind(this)
+    this.setDialogWebhook = this.setDialogWebhook.bind(this)
+    this.sendToPagarMe = this.sendToPagarMe.bind(this)
+    this.signOrderWebhook = this.signOrderWebhook.bind(this)
+  }
+
   validations() {
     return [
       check('email', 'Email deve ser preenchido com um valor válido')
@@ -138,8 +155,7 @@ class LicenseesController {
     } = req.body
 
     try {
-      const licenseeRepository = new LicenseeRepositoryDatabase()
-      const licensee = await licenseeRepository.create({
+      const licensee = await this.licenseeRepository.create({
         name,
         email,
         phone,
@@ -211,16 +227,15 @@ class LicenseesController {
 
     const fields = permit(req.body)
 
-    const licenseeRepository = new LicenseeRepositoryDatabase()
     try {
       fields.pedidos10_integration = JSON.parse(fields.pedidos10_integration || '{}')
-      await licenseeRepository.update(req.params.id, { ...fields })
+      await this.licenseeRepository.update(req.params.id, { ...fields })
     } catch (err) {
       return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
     }
 
     try {
-      const licensee = await licenseeRepository.findFirst({ _id: req.params.id })
+      const licensee = await this.licenseeRepository.findFirst({ _id: req.params.id })
       licensee.pedidos10_integration = JSON.stringify(licensee.pedidos10_integration)
 
       res.status(200).send(licensee)
@@ -231,8 +246,7 @@ class LicenseesController {
 
   async show(req, res) {
     try {
-      const licenseeRepository = new LicenseeRepositoryDatabase()
-      const licensee = await licenseeRepository.findFirst({ _id: req.params.id })
+      const licensee = await this.licenseeRepository.findFirst({ _id: req.params.id })
       licensee.pedidos10_integration = JSON.stringify(licensee.pedidos10_integration)
 
       res.status(200).send(licensee)
@@ -250,7 +264,7 @@ class LicenseesController {
       const page = req.query.page || 1
       const limit = req.query.limit || 30
 
-      const licenseesQuery = new LicenseesQuery()
+      const licenseesQuery = this.createLicenseesQuery()
 
       licenseesQuery.page(page)
       licenseesQuery.limit(limit)
@@ -279,9 +293,9 @@ class LicenseesController {
         licenseesQuery.filterByPedidos10Active(req.query.pedidos10_active)
       }
 
-      const messages = await licenseesQuery.all()
+      const licensees = await licenseesQuery.all()
 
-      res.status(200).send(messages)
+      res.status(200).send(licensees)
     } catch (err) {
       res.status(500).send({ errors: { message: err.toString() } })
     }
@@ -289,11 +303,10 @@ class LicenseesController {
 
   async setDialogWebhook(req, res) {
     try {
-      const licenseeRepository = new LicenseeRepositoryDatabase()
-      const licensee = await licenseeRepository.findFirst({ _id: req.params.id })
+      const licensee = await this.licenseeRepository.findFirst({ _id: req.params.id })
 
       if (licensee.whatsappDefault === 'dialog') {
-        const pluginWhatsapp = createMessengerPlugin(licensee)
+        const pluginWhatsapp = this.createMessengerPlugin(licensee)
         await pluginWhatsapp.setWebhook(licensee.whatsappUrl, licensee.whatsappToken)
       }
 
@@ -305,9 +318,8 @@ class LicenseesController {
 
   async sendToPagarMe(req, res) {
     try {
-      const licenseeRepository = new LicenseeRepositoryDatabase()
-      const licensee = await licenseeRepository.findFirst({ _id: req.params.id })
-      const pagarMe = new PagarMe()
+      const licensee = await this.licenseeRepository.findFirst({ _id: req.params.id })
+      const pagarMe = this.createPagarMe()
 
       if (licensee.recipient_id) {
         pagarMe.recipient.update(licensee, process.env.PAGARME_TOKEN)
@@ -323,14 +335,13 @@ class LicenseesController {
 
   async signOrderWebhook(req, res) {
     try {
-      const licenseeRepository = new LicenseeRepositoryDatabase()
-      const licensee = await licenseeRepository.findFirst({ _id: req.params.id })
+      const licensee = await this.licenseeRepository.findFirst({ _id: req.params.id })
 
       if (!licensee.pedidos10_integration) {
         return res.status(200).send({ message: 'Webhook não assinado pois não tem os dados para o login!' })
       }
 
-      const pedidos10 = new Pedidos10(licensee)
+      const pedidos10 = this.createPedidos10(licensee)
       await pedidos10.signOrderWebhook()
 
       res.status(200).send({ message: 'Webhook assinado!' })

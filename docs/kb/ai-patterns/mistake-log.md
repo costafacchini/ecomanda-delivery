@@ -8,6 +8,18 @@ Entries reaching count 3+ get escalated to AGENTS.md "Things to Avoid".
 
 ---
 
+## [2026-04-22] Reconcile plan done criteria before updating plan status or index rows
+
+**Wrong**: Updated the dependency-injection plan progress and the plans index without first
+rechecking the plan's `Done When` criteria.
+**Correct**: Before marking plan waves complete or syncing `.plans/README.md`, audit the
+plan's `Done When` checklist and keep any unmet criteria explicit in the plan document.
+**Area**: Plan maintenance, status reporting
+**Prevention**: When touching a plan status or index row, cross-check the overview's task
+table and `Done When` checklist in the same pass, and add a pending task if a criterion is
+not yet represented by the task list.
+**Count**: 1
+
 ## [2026-04-21] Verify test/runtime compatibility before adopting an ESM-only package API
 
 **Wrong**: Updated `src/app/services/Backup.js` to use `bl` v7 directly without checking that the repo's Jest setup transpiles app code to CommonJS.

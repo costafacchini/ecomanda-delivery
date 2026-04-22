@@ -1,27 +1,28 @@
-import Backgroundjob from '../models/Backgroundjob.js'
-import { queueServer } from '../../config/queue.js'
 import { sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
 
 class BackgroundjobsController {
+  constructor({ backgroundjobRepository, queueServer } = {}) {
+    this.backgroundjobRepository = backgroundjobRepository
+    this.queueServer = queueServer
+
+    this.create = this.create.bind(this)
+    this.show = this.show.bind(this)
+  }
+
   async create(req, res) {
     const { kind, payload } = req.body
 
-    const backgroundjob = new Backgroundjob({
-      kind,
-      body: payload,
-      licensee: req.licensee._id,
-    })
-
-    const validation = backgroundjob.validateSync()
-
     try {
-      if (validation) {
-        return res.status(422).send({ errors: sanitizeModelErrors(validation.errors) })
-      } else {
-        await backgroundjob.save()
-      }
+      const backgroundjob = await this.backgroundjobRepository.create({
+        kind,
+        body: payload,
+        licensee: req.licensee._id,
+      })
 
-      await queueServer.addJob('background-job', { jobId: backgroundjob._id.toString(), licenseeId: req.licensee._id })
+      await this.queueServer.addJob('background-job', {
+        jobId: backgroundjob._id.toString(),
+        licenseeId: req.licensee._id,
+      })
 
       res.status(200).send({
         body: {
@@ -30,13 +31,19 @@ class BackgroundjobsController {
         },
       })
     } catch (err) {
+      if ('errors' in err) {
+        return res.status(422).send({ errors: sanitizeModelErrors(err.errors) })
+      }
       res.status(500).send({ body: { message: err.toString() } })
     }
   }
 
   async show(req, res) {
     try {
-      const backgroundjob = await Backgroundjob.findOne({ _id: req.params.id, licensee: req.licensee._id })
+      const backgroundjob = await this.backgroundjobRepository.findFirst({
+        _id: req.params.id,
+        licensee: req.licensee._id,
+      })
 
       if (!backgroundjob)
         return res.status(404).send({ errors: { message: `Backgroundjob ${req.params.id} não encontrado` } })

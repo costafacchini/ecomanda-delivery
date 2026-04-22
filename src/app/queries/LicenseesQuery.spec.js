@@ -3,6 +3,8 @@ import mongoServer from '../../../.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
+const buildLicenseesQuery = () => new LicenseesQuery({ licenseeRepository: new LicenseeRepositoryDatabase() })
+
 describe('LicenseesQuery', () => {
   beforeEach(async () => {
     await mongoServer.connect()
@@ -25,7 +27,7 @@ describe('LicenseesQuery', () => {
       }),
     )
 
-    const licenseesQuery = new LicenseesQuery()
+    const licenseesQuery = buildLicenseesQuery()
     const records = await licenseesQuery.all()
 
     expect(records.length).toEqual(2)
@@ -52,7 +54,7 @@ describe('LicenseesQuery', () => {
         }),
       )
 
-      const licenseesQuery = new LicenseesQuery()
+      const licenseesQuery = buildLicenseesQuery()
       licenseesQuery.page(1)
       licenseesQuery.limit(2)
 
@@ -97,7 +99,7 @@ describe('LicenseesQuery', () => {
         }),
       )
 
-      const licenseesQuery = new LicenseesQuery()
+      const licenseesQuery = buildLicenseesQuery()
       licenseesQuery.filterByChatDefault('crisp')
       const records = await licenseesQuery.all()
 
@@ -124,7 +126,7 @@ describe('LicenseesQuery', () => {
         }),
       )
 
-      const licenseesQuery = new LicenseesQuery()
+      const licenseesQuery = buildLicenseesQuery()
       licenseesQuery.filterByChatbotDefault('landbot')
       const records = await licenseesQuery.all()
 
@@ -155,7 +157,7 @@ describe('LicenseesQuery', () => {
         }),
       )
 
-      const licenseesQuery = new LicenseesQuery()
+      const licenseesQuery = buildLicenseesQuery()
       licenseesQuery.filterByWhatsappDefault('utalk')
       const records = await licenseesQuery.all()
 
@@ -189,7 +191,7 @@ describe('LicenseesQuery', () => {
         }),
       )
 
-      const licenseesQuery = new LicenseesQuery()
+      const licenseesQuery = buildLicenseesQuery()
       licenseesQuery.filterByExpression('Alcateia 56')
       let records = await licenseesQuery.all()
 
@@ -214,7 +216,7 @@ describe('LicenseesQuery', () => {
       const licensee1 = await licenseeRepository.create(licenseeFactory.build())
       const licenseeInactive = await licenseeRepository.create(licenseeFactory.build({ active: false }))
 
-      const licenseesQuery = new LicenseesQuery()
+      const licenseesQuery = buildLicenseesQuery()
       licenseesQuery.filterByActive()
       const records = await licenseesQuery.all()
 
@@ -230,7 +232,7 @@ describe('LicenseesQuery', () => {
       const licensee1 = await licenseeRepository.create(licenseeFactory.build({ pedidos10_active: true }))
       const licenseeInactive = await licenseeRepository.create(licenseeFactory.build({ pedidos10_active: false }))
 
-      const licenseesQuery = new LicenseesQuery()
+      const licenseesQuery = buildLicenseesQuery()
       licenseesQuery.filterByPedidos10Active('true')
       let records = await licenseesQuery.all()
 

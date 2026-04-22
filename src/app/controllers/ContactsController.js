@@ -1,9 +1,6 @@
-import { ContactRepositoryDatabase } from '../repositories/contact.js'
 import { check, validationResult } from 'express-validator'
 import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
 import _ from 'lodash'
-import { ContactsQuery } from '../queries/ContactsQuery.js'
-import { queueServer } from '../../config/queue.js'
 
 function permit(fields) {
   const permitedFields = [
@@ -30,6 +27,17 @@ function permit(fields) {
 }
 
 class ContactsController {
+  constructor({ contactRepository, createContactsQuery, queueServer } = {}) {
+    this.contactRepository = contactRepository
+    this.createContactsQuery = createContactsQuery
+    this.queueServer = queueServer
+
+    this.create = this.create.bind(this)
+    this.update = this.update.bind(this)
+    this.show = this.show.bind(this)
+    this.index = this.index.bind(this)
+  }
+
   validations() {
     return [
       check('email', 'Email deve ser preenchido com um valor válido')
@@ -66,8 +74,7 @@ class ContactsController {
     } = req.body
 
     try {
-      const contactRepository = new ContactRepositoryDatabase()
-      const contact = await contactRepository.create({
+      const contact = await this.contactRepository.create({
         name,
         number,
         type,
@@ -87,7 +94,7 @@ class ContactsController {
         plugin_cart_id,
       })
 
-      await queueServer.addJob('send-contact-to-pagarme', { contactId: contact._id.toString() })
+      await this.queueServer.addJob('send-contact-to-pagarme', { contactId: contact._id.toString() })
 
       res.status(201).send(contact)
     } catch (err) {
@@ -102,17 +109,16 @@ class ContactsController {
     const fields = permit(req.body)
     delete fields.licensee
 
-    const contactRepository = new ContactRepositoryDatabase()
     try {
-      await contactRepository.update(req.params.id, { ...fields })
+      await this.contactRepository.update(req.params.id, { ...fields })
     } catch (err) {
       return res.status(422).send({ errors: sanitizeModelErrors(err.errors) })
     }
 
     try {
-      const contact = await contactRepository.findFirst({ _id: req.params.id })
+      const contact = await this.contactRepository.findFirst({ _id: req.params.id })
 
-      await queueServer.addJob('send-contact-to-pagarme', { contactId: contact._id.toString() })
+      await this.queueServer.addJob('send-contact-to-pagarme', { contactId: contact._id.toString() })
 
       res.status(200).send(contact)
     } catch (err) {
@@ -122,8 +128,7 @@ class ContactsController {
 
   async show(req, res) {
     try {
-      const contactRepository = new ContactRepositoryDatabase()
-      const contact = await contactRepository.findFirst({ _id: req.params.id }, ['licensee'])
+      const contact = await this.contactRepository.findFirst({ _id: req.params.id }, ['licensee'])
 
       res.status(200).send(contact)
     } catch (err) {
@@ -140,7 +145,7 @@ class ContactsController {
       const page = req.query.page || 1
       const limit = req.query.limit || 30
 
-      const contactsQuery = new ContactsQuery()
+      const contactsQuery = this.createContactsQuery()
 
       contactsQuery.page(page)
       contactsQuery.limit(limit)

@@ -1,8 +1,5 @@
-import Trigger from '../models/Trigger.js'
 import { sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
 import _ from 'lodash'
-import { TriggersQuery } from '../queries/TriggersQuery.js'
-import { FacebookCatalogImporter } from '../plugins/importers/facebook_catalog/index.js'
 
 function permit(fields) {
   const permitedFields = [
@@ -23,6 +20,18 @@ function permit(fields) {
 }
 
 class TriggersController {
+  constructor({ triggerRepository, createTriggersQuery, createFacebookCatalogImporter } = {}) {
+    this.triggerRepository = triggerRepository
+    this.createTriggersQuery = createTriggersQuery
+    this.createFacebookCatalogImporter = createFacebookCatalogImporter
+
+    this.create = this.create.bind(this)
+    this.update = this.update.bind(this)
+    this.show = this.show.bind(this)
+    this.index = this.index.bind(this)
+    this.importation = this.importation.bind(this)
+  }
+
   async create(req, res) {
     const {
       name,
@@ -38,31 +47,26 @@ class TriggersController {
       catalogId,
     } = req.body
 
-    const trigger = new Trigger({
-      name,
-      triggerKind,
-      expression,
-      catalogMulti,
-      catalogSingle,
-      textReplyButton,
-      messagesList,
-      licensee,
-      order,
-      text,
-      catalogId,
-    })
-
-    const validation = trigger.validateSync()
-
     try {
-      if (validation) {
-        return res.status(422).json({ errors: sanitizeModelErrors(validation.errors) })
-      } else {
-        await trigger.save()
-      }
+      const trigger = await this.triggerRepository.create({
+        name,
+        triggerKind,
+        expression,
+        catalogMulti,
+        catalogSingle,
+        textReplyButton,
+        messagesList,
+        licensee,
+        order,
+        text,
+        catalogId,
+      })
 
       res.status(201).send(trigger)
     } catch (err) {
+      if ('errors' in err) {
+        return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
+      }
       res.status(500).send({ errors: { message: err.toString() } })
     }
   }
@@ -72,13 +76,13 @@ class TriggersController {
     delete fields.licensee
 
     try {
-      await Trigger.updateOne({ _id: req.params.id }, { $set: fields }, { runValidators: true })
+      await this.triggerRepository.update(req.params.id, { ...fields })
     } catch (err) {
       return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
     }
 
     try {
-      const trigger = await Trigger.findOne({ _id: req.params.id })
+      const trigger = await this.triggerRepository.findFirst({ _id: req.params.id })
 
       res.status(200).send(trigger)
     } catch (err) {
@@ -88,7 +92,7 @@ class TriggersController {
 
   async show(req, res) {
     try {
-      const trigger = await Trigger.findOne({ _id: req.params.id }).populate('licensee')
+      const trigger = await this.triggerRepository.findFirst({ _id: req.params.id }, ['licensee'])
 
       res.status(200).send(trigger)
     } catch (err) {
@@ -105,7 +109,7 @@ class TriggersController {
       const page = req.query.page || 1
       const limit = req.query.limit || 30
 
-      const triggersQuery = new TriggersQuery()
+      const triggersQuery = this.createTriggersQuery()
 
       triggersQuery.page(page)
       triggersQuery.limit(limit)
@@ -133,7 +137,7 @@ class TriggersController {
   async importation(req, res) {
     const data = req.body.text
     try {
-      const facebookCatalogImporter = new FacebookCatalogImporter(req.params.id)
+      const facebookCatalogImporter = this.createFacebookCatalogImporter(req.params.id)
       await facebookCatalogImporter.importCatalog(data)
 
       res.status(201).send({ body: 'OK' })
