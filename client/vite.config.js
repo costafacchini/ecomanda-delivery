@@ -17,7 +17,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': 'http://localhost:5001',
+      '/resources': 'http://localhost:5001',
+      '/login': 'http://localhost:5001',
     },
   },
   css: {
@@ -32,6 +33,7 @@ export default defineConfig({
     clearMocks: true,
     coverage: {
       provider: 'v8',
+      reportsDirectory: '../react-coverage',
     },
   },
 })
