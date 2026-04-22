@@ -8,7 +8,8 @@ import { ContactRepositoryDatabase } from '../repositories/contact.js'
 import { MessageRepositoryDatabase } from '../repositories/message.js'
 
 async function getLastMessageOfContact(contactId) {
-  const messagesQuery = new MessagesQuery()
+  const messageRepository = new MessageRepositoryDatabase()
+  const messagesQuery = new MessagesQuery({ messageRepository })
   messagesQuery.page(1)
   messagesQuery.limit(1)
   messagesQuery.filterByContact(contactId)

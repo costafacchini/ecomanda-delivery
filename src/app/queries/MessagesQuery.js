@@ -1,8 +1,7 @@
-import { MessageRepositoryDatabase } from '../repositories/message.js'
 import { QueryBuilder } from './QueryBuilder.js'
 
 class MessagesQuery {
-  constructor({ messageRepository = new MessageRepositoryDatabase() } = {}) {
+  constructor({ messageRepository } = {}) {
     this.messageRepository = messageRepository
   }
 

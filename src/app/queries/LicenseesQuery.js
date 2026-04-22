@@ -1,8 +1,7 @@
 import { QueryBuilder } from './QueryBuilder.js'
-import { LicenseeRepositoryDatabase } from '../repositories/licensee.js'
 
 class LicenseesQuery {
-  constructor({ licenseeRepository = new LicenseeRepositoryDatabase() } = {}) {
+  constructor({ licenseeRepository } = {}) {
     this.licenseeRepository = licenseeRepository
   }
 

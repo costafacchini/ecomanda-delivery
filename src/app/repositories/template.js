@@ -17,13 +17,13 @@ class TemplateRepositoryDatabase extends Repository {
   }
 }
 
-const templateRepository = new TemplateRepositoryDatabase()
-
 async function destroyAllTemplates() {
+  const templateRepository = new TemplateRepositoryDatabase()
   await templateRepository.delete({})
 }
 
 async function createTemplate(fields) {
+  const templateRepository = new TemplateRepositoryDatabase()
   return await templateRepository.create(fields)
 }
 

@@ -1,12 +1,5 @@
-import { IntegrationlogRepositoryDatabase } from '../repositories/integrationlog.js'
-import { BodyRepositoryDatabase } from '../repositories/body.js'
-
 class OrdersController {
-  constructor({
-    integrationlogRepository = new IntegrationlogRepositoryDatabase(),
-    bodyRepository = new BodyRepositoryDatabase(),
-    queueServer,
-  } = {}) {
+  constructor({ integrationlogRepository, bodyRepository, queueServer } = {}) {
     this.integrationlogRepository = integrationlogRepository
     this.bodyRepository = bodyRepository
     this.queueServer = queueServer

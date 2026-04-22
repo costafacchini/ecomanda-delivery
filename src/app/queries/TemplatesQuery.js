@@ -1,8 +1,7 @@
 import { QueryBuilder } from './QueryBuilder.js'
-import { TemplateRepositoryDatabase } from '../repositories/template.js'
 
 class TemplatesQuery {
-  constructor({ templateRepository = new TemplateRepositoryDatabase() } = {}) {
+  constructor({ templateRepository } = {}) {
     this.templateRepository = templateRepository
   }
 

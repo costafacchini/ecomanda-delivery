@@ -1,6 +1,7 @@
 import Repository from './repository.js'
 import Contact from '../models/Contact.js'
 import { MessagesQuery } from '../queries/MessagesQuery.js'
+import { MessageRepositoryDatabase } from './message.js'
 import moment from 'moment-timezone'
 import { NormalizePhone } from '../helpers/NormalizePhone.js'
 
@@ -33,7 +34,8 @@ class ContactRepositoryDatabase extends Repository {
   }
 
   async contactWithWhatsappWindowClosed(contactId) {
-    const messagesQuery = new MessagesQuery()
+    const messageRepository = new MessageRepositoryDatabase()
+    const messagesQuery = new MessagesQuery({ messageRepository })
 
     messagesQuery.page(1)
     messagesQuery.limit(1)

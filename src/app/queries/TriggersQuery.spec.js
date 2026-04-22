@@ -10,6 +10,9 @@ import {
   triggerText as triggerTextFactory,
 } from '@factories/trigger'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { TriggerRepositoryDatabase } from '@repositories/trigger'
+
+const buildTriggersQuery = () => new TriggersQuery({ triggerRepository: new TriggerRepositoryDatabase() })
 
 describe('TriggersQuery', () => {
   let licensee
@@ -33,7 +36,7 @@ describe('TriggersQuery', () => {
       triggerMultiProductFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 1) }),
     )
 
-    const triggersQuery = new TriggersQuery()
+    const triggersQuery = buildTriggersQuery()
     const records = await triggersQuery.all()
 
     expect(records.length).toEqual(2)
@@ -62,7 +65,7 @@ describe('TriggersQuery', () => {
         }),
       )
 
-      const triggersQuery = new TriggersQuery()
+      const triggersQuery = buildTriggersQuery()
       triggersQuery.page(1)
       triggersQuery.limit(2)
 
@@ -106,7 +109,7 @@ describe('TriggersQuery', () => {
         triggerTextFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 1) }),
       )
 
-      const triggersQuery = new TriggersQuery()
+      const triggersQuery = buildTriggersQuery()
       triggersQuery.filterByKind('multi_product')
       let records = await triggersQuery.all()
 
@@ -171,7 +174,7 @@ describe('TriggersQuery', () => {
         triggerMultiProductFactory.build({ licensee: anotherLicensee._id, createdAt: new Date(2021, 6, 3, 0, 0, 1) }),
       )
 
-      const triggersQuery = new TriggersQuery()
+      const triggersQuery = buildTriggersQuery()
       triggersQuery.filterByLicensee(licensee._id)
 
       const records = await triggersQuery.all()
@@ -193,7 +196,7 @@ describe('TriggersQuery', () => {
       const trigger7 = await Trigger.create(triggerListMessageFactory.build({ messagesList: 'trigger7', licensee }))
       const trigger8 = await Trigger.create(triggerTextFactory.build({ text: 'trigger8', licensee }))
 
-      const triggersQuery = new TriggersQuery()
+      const triggersQuery = buildTriggersQuery()
       triggersQuery.filterByExpression('trigger')
       let records = await triggersQuery.all()
 

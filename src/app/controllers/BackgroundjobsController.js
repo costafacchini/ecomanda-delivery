@@ -1,8 +1,7 @@
-import { BackgroundjobRepositoryDatabase } from '../repositories/backgroundjob.js'
 import { sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
 
 class BackgroundjobsController {
-  constructor({ backgroundjobRepository = new BackgroundjobRepositoryDatabase(), queueServer } = {}) {
+  constructor({ backgroundjobRepository, queueServer } = {}) {
     this.backgroundjobRepository = backgroundjobRepository
     this.queueServer = queueServer
 

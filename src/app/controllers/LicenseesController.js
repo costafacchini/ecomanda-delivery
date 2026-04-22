@@ -1,11 +1,6 @@
-import { LicenseeRepositoryDatabase } from '../repositories/licensee.js'
-import { createMessengerPlugin } from '../plugins/messengers/factory.js'
 import { check, validationResult } from 'express-validator'
 import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
 import _ from 'lodash'
-import { LicenseesQuery } from '../queries/LicenseesQuery.js'
-import { PagarMe } from '../plugins/payments/PagarMe.js'
-import { Pedidos10 } from '../plugins/integrations/Pedidos10.js'
 
 function permit(fields) {
   const permitedFields = [
@@ -68,18 +63,17 @@ function permit(fields) {
 
 class LicenseesController {
   constructor({
-    licenseeRepository = new LicenseeRepositoryDatabase(),
+    licenseeRepository,
     createLicenseesQuery,
-    createMessengerPlugin: createMessengerPluginDependency = createMessengerPlugin,
+    createMessengerPlugin: createMessengerPluginDependency,
     createPagarMe,
     createPedidos10,
   } = {}) {
     this.licenseeRepository = licenseeRepository
-    this.createLicenseesQuery =
-      createLicenseesQuery ?? (() => new LicenseesQuery({ licenseeRepository: this.licenseeRepository }))
+    this.createLicenseesQuery = createLicenseesQuery
     this.createMessengerPlugin = createMessengerPluginDependency
-    this.createPagarMe = createPagarMe ?? (() => new PagarMe())
-    this.createPedidos10 = createPedidos10 ?? ((licensee) => new Pedidos10(licensee))
+    this.createPagarMe = createPagarMe
+    this.createPedidos10 = createPedidos10
 
     this.create = this.create.bind(this)
     this.update = this.update.bind(this)

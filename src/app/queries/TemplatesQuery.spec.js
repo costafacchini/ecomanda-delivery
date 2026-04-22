@@ -4,6 +4,9 @@ import Template from '@models/Template'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { template as templateFactory } from '@factories/template'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { TemplateRepositoryDatabase } from '@repositories/template'
+
+const buildTemplatesQuery = () => new TemplatesQuery({ templateRepository: new TemplateRepositoryDatabase() })
 
 describe('TemplatesQuery', () => {
   let licensee
@@ -27,7 +30,7 @@ describe('TemplatesQuery', () => {
       templateFactory.build({ licensee, createdAt: new Date(2021, 6, 3, 0, 0, 1) }),
     )
 
-    const templatesQuery = new TemplatesQuery()
+    const templatesQuery = buildTemplatesQuery()
     const records = await templatesQuery.all()
 
     expect(records.length).toEqual(2)
@@ -56,7 +59,7 @@ describe('TemplatesQuery', () => {
         }),
       )
 
-      const templatesQuery = new TemplatesQuery()
+      const templatesQuery = buildTemplatesQuery()
       templatesQuery.page(1)
       templatesQuery.limit(2)
 
@@ -94,7 +97,7 @@ describe('TemplatesQuery', () => {
         templateFactory.build({ licensee: anotherLicensee._id, createdAt: new Date(2021, 6, 3, 0, 0, 1) }),
       )
 
-      const templatesQuery = new TemplatesQuery()
+      const templatesQuery = buildTemplatesQuery()
       templatesQuery.filterByLicensee(licensee._id)
 
       const records = await templatesQuery.all()
@@ -110,7 +113,7 @@ describe('TemplatesQuery', () => {
       const template1 = await Template.create(templateFactory.build({ name: 'template1', licensee }))
       const template2 = await Template.create(templateFactory.build({ namespace: 'template2', licensee }))
 
-      const templatesQuery = new TemplatesQuery()
+      const templatesQuery = buildTemplatesQuery()
       templatesQuery.filterByExpression('template')
       let records = await templatesQuery.all()
 

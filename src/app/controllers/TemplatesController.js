@@ -1,8 +1,5 @@
-import { TemplateRepositoryDatabase } from '../repositories/template.js'
 import { sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
 import _ from 'lodash'
-import { TemplatesQuery } from '../queries/TemplatesQuery.js'
-import { TemplatesImporter } from '../plugins/importers/template/index.js'
 
 function permit(fields) {
   const permitedFields = ['name', 'namespace', 'licensee']
@@ -11,15 +8,10 @@ function permit(fields) {
 }
 
 class TemplatesController {
-  constructor({
-    templateRepository = new TemplateRepositoryDatabase(),
-    createTemplatesQuery,
-    createTemplatesImporter,
-  } = {}) {
+  constructor({ templateRepository, createTemplatesQuery, createTemplatesImporter } = {}) {
     this.templateRepository = templateRepository
-    this.createTemplatesQuery =
-      createTemplatesQuery ?? (() => new TemplatesQuery({ templateRepository: this.templateRepository }))
-    this.createTemplatesImporter = createTemplatesImporter ?? ((id) => new TemplatesImporter(id))
+    this.createTemplatesQuery = createTemplatesQuery
+    this.createTemplatesImporter = createTemplatesImporter
 
     this.create = this.create.bind(this)
     this.update = this.update.bind(this)

@@ -1,5 +1,3 @@
-import { NormalizePhone } from '../../helpers/NormalizePhone.js'
-import { ContactRepositoryDatabase } from '../../repositories/contact.js'
 import _ from 'lodash'
 
 function permit(fields) {
@@ -18,9 +16,9 @@ function permit(fields) {
 }
 
 class AdressesController {
-  constructor({ contactRepository = new ContactRepositoryDatabase(), normalizePhone } = {}) {
+  constructor({ contactRepository, normalizePhone } = {}) {
     this.contactRepository = contactRepository
-    this.normalizePhone = normalizePhone ?? ((number) => new NormalizePhone(number))
+    this.normalizePhone = normalizePhone
 
     this.update = this.update.bind(this)
     this.show = this.show.bind(this)

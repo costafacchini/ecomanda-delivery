@@ -1,7 +1,5 @@
-import { BodyRepositoryDatabase } from '../repositories/body.js'
-
 class MessengersController {
-  constructor({ bodyRepository = new BodyRepositoryDatabase(), queueServer } = {}) {
+  constructor({ bodyRepository, queueServer } = {}) {
     this.bodyRepository = bodyRepository
     this.queueServer = queueServer
 

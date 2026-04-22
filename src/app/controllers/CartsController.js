@@ -1,13 +1,4 @@
 import _ from 'lodash'
-import { NormalizePhone } from '../helpers/NormalizePhone.js'
-import { ContactRepositoryDatabase } from '../repositories/contact.js'
-import { scheduleSendMessageToMessenger } from '../repositories/messenger.js'
-import { parseCart } from '../helpers/ParseTriggerText.js'
-import { createCartAdapter } from '../plugins/carts/adapters/factory.js'
-import { createCartPlugin } from '../plugins/carts/factory.js'
-import { publishMessage } from '../../config/rabbitmq.js'
-import { CartRepositoryDatabase } from '../repositories/cart.js'
-import { MessageRepositoryDatabase } from '../repositories/message.js'
 
 function permit(fields) {
   const permitedFields = [
@@ -40,20 +31,20 @@ function permit(fields) {
 
 class CartsController {
   constructor({
-    contactRepository = new ContactRepositoryDatabase(),
-    cartRepository = new CartRepositoryDatabase(),
-    messageRepository = new MessageRepositoryDatabase(),
+    contactRepository,
+    cartRepository,
+    messageRepository,
     createNormalizePhone,
-    parseCart: parseCartDependency = parseCart,
-    createCartAdapter: createCartAdapterDependency = createCartAdapter,
-    createCartPlugin: createCartPluginDependency = createCartPlugin,
-    scheduleSendMessageToMessenger: scheduleSendMessageToMessengerDependency = scheduleSendMessageToMessenger,
-    publishMessage: publishMessageDependency = publishMessage,
+    parseCart: parseCartDependency,
+    createCartAdapter: createCartAdapterDependency,
+    createCartPlugin: createCartPluginDependency,
+    scheduleSendMessageToMessenger: scheduleSendMessageToMessengerDependency,
+    publishMessage: publishMessageDependency,
   } = {}) {
     this.contactRepository = contactRepository
     this.cartRepository = cartRepository
     this.messageRepository = messageRepository
-    this.createNormalizePhone = createNormalizePhone ?? ((number) => new NormalizePhone(number))
+    this.createNormalizePhone = createNormalizePhone
     this.parseCart = parseCartDependency
     this.createCartAdapter = createCartAdapterDependency
     this.createCartPlugin = createCartPluginDependency

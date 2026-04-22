@@ -110,6 +110,7 @@ No DI framework is needed. Manual wiring in route files is explicit and easy to 
 | 2.2 | Update `v1/v1-routes.js`: same wiring for v1 routes | Complete | `routes/v1/v1-routes.js` | Phase 1 |
 | 2.3 | Extract `api-routes.js` auth middleware to a named function receiving `{ licenseeRepository }` | Complete | `routes/api-routes.js` | decouple-mongo 1.x |
 | 2.4 | Update `login-route.js` to pass dependencies to `login` function | Complete | `routes/login-route.js` | 1.12 |
+| 2.5 | Remove concrete fallback instantiation from controller/query helper defaults so route files remain the only composition roots for production wiring | Complete | `controllers/*.js`, `queries/*.js`, `services/Reset*.js`, `queries/BillingQuery.js`, `repositories/contact.js`, `repositories/template.js`, `repositories/trigger.js` | 2.1-2.4 |
 
 ### Phase 3 — Apply to Services (overlaps with decouple-mongo Phase 3)
 
@@ -122,6 +123,38 @@ No DI framework is needed. Manual wiring in route files is explicit and easy to 
 | # | Task | Status | Files | Depends On |
 |---|------|--------|-------|------------|
 | 4.1 | Update controller specs: instantiate controllers with `*RepositoryMemory` and mock `queueServer`; remove `mongoServer` from the 15 controller test files | Pending | `controllers/*.spec.js` (15 files) | decouple-mongo Phase 2, Phase 2 above |
+
+---
+
+## Current Checkpoint
+
+Phase 1 and Phase 2 are now complete, including the controller/query fallback cleanup from
+task `2.5`, but the plan is still **not done**.
+
+Remaining gaps tied directly to the done criteria:
+
+- Controllers, login wiring, and the query classes no longer allocate fallback concrete
+  dependencies; route files now supply those collaborators explicitly.
+- Route files are still not the single place where concrete implementations are instantiated.
+  Remaining examples live in report/query helper code such as `BillingQuery.js`,
+  `LicenseeMessagesByDayQuery.js`, and `MessagesSended.js`, and in other service/plugin paths
+  that overlap with `.plans/decouple-mongo` Phase 3 and 4.
+- Controller specs still import and use `mongoServer`.
+- The full `All 2611 tests still pass` criterion has not been re-verified to completion in
+  this plan execution log.
+- Latest targeted verification for this wave passed:
+  `src/app/controllers`,
+  `ContactsQuery.spec.js`,
+  `LicenseesQuery.spec.js`,
+  `MessagesQuery.spec.js`,
+  `TemplatesQuery.spec.js`,
+  `TriggersQuery.spec.js`,
+  `BillingQuery.spec.js`,
+  `ResetChats.spec.js`,
+  `ResetChatbots.spec.js`,
+  `contact.spec.js`,
+  `template.spec.js`,
+  and `trigger.spec.js` (27 suites / 241 tests).
 
 ---
 

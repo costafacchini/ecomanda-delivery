@@ -24,13 +24,13 @@ class TriggerRepositoryDatabase extends Repository {
   }
 }
 
-const triggerRepository = new TriggerRepositoryDatabase()
-
 async function createTrigger(fields) {
+  const triggerRepository = new TriggerRepositoryDatabase()
   return await triggerRepository.create(fields)
 }
 
 async function getAllTriggerBy(filters, order = {}) {
+  const triggerRepository = new TriggerRepositoryDatabase()
   return await triggerRepository.find(filters, order)
 }
 

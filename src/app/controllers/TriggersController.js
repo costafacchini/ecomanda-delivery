@@ -1,8 +1,5 @@
-import { TriggerRepositoryDatabase } from '../repositories/trigger.js'
 import { sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
 import _ from 'lodash'
-import { TriggersQuery } from '../queries/TriggersQuery.js'
-import { FacebookCatalogImporter } from '../plugins/importers/facebook_catalog/index.js'
 
 function permit(fields) {
   const permitedFields = [
@@ -23,15 +20,10 @@ function permit(fields) {
 }
 
 class TriggersController {
-  constructor({
-    triggerRepository = new TriggerRepositoryDatabase(),
-    createTriggersQuery,
-    createFacebookCatalogImporter,
-  } = {}) {
+  constructor({ triggerRepository, createTriggersQuery, createFacebookCatalogImporter } = {}) {
     this.triggerRepository = triggerRepository
-    this.createTriggersQuery =
-      createTriggersQuery ?? (() => new TriggersQuery({ triggerRepository: this.triggerRepository }))
-    this.createFacebookCatalogImporter = createFacebookCatalogImporter ?? ((id) => new FacebookCatalogImporter(id))
+    this.createTriggersQuery = createTriggersQuery
+    this.createFacebookCatalogImporter = createFacebookCatalogImporter
 
     this.create = this.create.bind(this)
     this.update = this.update.bind(this)

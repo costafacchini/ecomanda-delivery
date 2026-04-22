@@ -20,7 +20,8 @@ async function clearWaStartChatOnContact(contact) {
 
 async function warningAboutChatsEnding(licensee) {
   if (!licensee.useWhatsappWindow === true) return
-  const contactsQuery = new ContactsQuery()
+  const contactRepository = new ContactRepositoryDatabase()
+  const contactsQuery = new ContactsQuery({ contactRepository })
   contactsQuery.filterByLicensee(licensee)
   contactsQuery.filterIntervalWaStartChat(
     moment().subtract(24, 'hours').toDate(),
@@ -38,7 +39,8 @@ async function warningAboutChatsEnding(licensee) {
 }
 
 async function warningAboutChatsExpired(licensee) {
-  const contactsQuery = new ContactsQuery()
+  const contactRepository = new ContactRepositoryDatabase()
+  const contactsQuery = new ContactsQuery({ contactRepository })
   contactsQuery.filterByLicensee(licensee)
   contactsQuery.filterWaStartChatLessThan(moment().subtract(24, 'hours').toDate())
 

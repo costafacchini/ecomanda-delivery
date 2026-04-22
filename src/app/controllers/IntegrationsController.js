@@ -1,7 +1,5 @@
-import { BodyRepositoryDatabase } from '../repositories/body.js'
-
 class IntegrationsController {
-  constructor({ bodyRepository = new BodyRepositoryDatabase(), publishMessage } = {}) {
+  constructor({ bodyRepository, publishMessage } = {}) {
     this.bodyRepository = bodyRepository
     this.publishMessage = publishMessage
 

@@ -5,6 +5,8 @@ import { contact as contactFactory } from '@factories/contact'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 
+const buildContactsQuery = () => new ContactsQuery({ contactRepository: new ContactRepositoryDatabase() })
+
 describe('ContactsQuery', () => {
   let licensee
 
@@ -32,7 +34,7 @@ describe('ContactsQuery', () => {
       }),
     )
 
-    const contactsQuery = new ContactsQuery()
+    const contactsQuery = buildContactsQuery()
     const records = await contactsQuery.all()
 
     expect(records.length).toEqual(2)
@@ -64,7 +66,7 @@ describe('ContactsQuery', () => {
         }),
       )
 
-      const contactsQuery = new ContactsQuery()
+      const contactsQuery = buildContactsQuery()
       contactsQuery.page(1)
       contactsQuery.limit(2)
 
@@ -108,7 +110,7 @@ describe('ContactsQuery', () => {
         }),
       )
 
-      const contactsQuery = new ContactsQuery()
+      const contactsQuery = buildContactsQuery()
       contactsQuery.filterByType('@c.us')
       const records = await contactsQuery.all()
 
@@ -137,7 +139,7 @@ describe('ContactsQuery', () => {
         }),
       )
 
-      const contactsQuery = new ContactsQuery()
+      const contactsQuery = buildContactsQuery()
       contactsQuery.filterByTalkingWithChatbot(true)
       const records = await contactsQuery.all()
 
@@ -166,7 +168,7 @@ describe('ContactsQuery', () => {
         }),
       )
 
-      const contactsQuery = new ContactsQuery()
+      const contactsQuery = buildContactsQuery()
       contactsQuery.filterByLicensee(licensee._id)
 
       const records = await contactsQuery.all()
@@ -215,7 +217,7 @@ describe('ContactsQuery', () => {
         }),
       )
 
-      const contactsQuery = new ContactsQuery()
+      const contactsQuery = buildContactsQuery()
       contactsQuery.filterByExpression('Doe 12')
       let records = await contactsQuery.all()
 
@@ -275,7 +277,7 @@ describe('ContactsQuery', () => {
         }),
       )
 
-      const contactsQuery = new ContactsQuery()
+      const contactsQuery = buildContactsQuery()
       contactsQuery.filterIntervalWaStartChat(new Date(2021, 6, 5, 0, 0, 0), new Date(2021, 6, 5, 23, 59, 59))
       let records = await contactsQuery.all()
 
@@ -304,7 +306,7 @@ describe('ContactsQuery', () => {
         }),
       )
 
-      const contactsQuery = new ContactsQuery()
+      const contactsQuery = buildContactsQuery()
       contactsQuery.filterWaStartChatLessThan(new Date(2021, 6, 5, 0, 0, 1))
       let records = await contactsQuery.all()
 

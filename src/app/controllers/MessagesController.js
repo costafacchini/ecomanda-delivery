@@ -1,8 +1,6 @@
-import { MessagesQuery } from '../queries/MessagesQuery.js'
-
 class MessagesController {
   constructor({ createMessagesQuery } = {}) {
-    this.createMessagesQuery = createMessagesQuery ?? (() => new MessagesQuery())
+    this.createMessagesQuery = createMessagesQuery
 
     this.index = this.index.bind(this)
   }

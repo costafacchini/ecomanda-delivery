@@ -1,8 +1,7 @@
 import { QueryBuilder } from './QueryBuilder.js'
-import { ContactRepositoryDatabase } from '../repositories/contact.js'
 
 class ContactsQuery {
-  constructor({ contactRepository = new ContactRepositoryDatabase() } = {}) {
+  constructor({ contactRepository } = {}) {
     this.contactRepository = contactRepository
   }
 

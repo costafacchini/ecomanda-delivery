@@ -1,7 +1,5 @@
-import { BodyRepositoryDatabase } from '../repositories/body.js'
-
 class ChatsController {
-  constructor({ bodyRepository = new BodyRepositoryDatabase(), queueServer, publishMessage } = {}) {
+  constructor({ bodyRepository, queueServer, publishMessage } = {}) {
     this.bodyRepository = bodyRepository
     this.queueServer = queueServer
     this.publishMessage = publishMessage

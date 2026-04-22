@@ -1,8 +1,6 @@
-import { ContactRepositoryDatabase } from '../repositories/contact.js'
 import { check, validationResult } from 'express-validator'
 import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
 import _ from 'lodash'
-import { ContactsQuery } from '../queries/ContactsQuery.js'
 
 function permit(fields) {
   const permitedFields = [
@@ -29,10 +27,9 @@ function permit(fields) {
 }
 
 class ContactsController {
-  constructor({ contactRepository = new ContactRepositoryDatabase(), createContactsQuery, queueServer } = {}) {
+  constructor({ contactRepository, createContactsQuery, queueServer } = {}) {
     this.contactRepository = contactRepository
-    this.createContactsQuery =
-      createContactsQuery ?? (() => new ContactsQuery({ contactRepository: this.contactRepository }))
+    this.createContactsQuery = createContactsQuery
     this.queueServer = queueServer
 
     this.create = this.create.bind(this)

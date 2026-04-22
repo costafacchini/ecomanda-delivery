@@ -1,12 +1,4 @@
-import { UserRepositoryDatabase } from '../repositories/user.js'
-import jwt from 'jsonwebtoken'
-const SECRET = process.env.SECRET
-
-async function login(
-  req,
-  res,
-  { userRepository = new UserRepositoryDatabase(), signToken = jwt.sign, secret = SECRET } = {},
-) {
+async function login(req, res, { userRepository, signToken, secret } = {}) {
   const { email, password } = req.body
 
   if (email && password) {

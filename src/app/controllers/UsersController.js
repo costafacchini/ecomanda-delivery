@@ -1,4 +1,3 @@
-import { UserRepositoryDatabase } from '../repositories/user.js'
 import { check, validationResult } from 'express-validator'
 import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
 import _ from 'lodash'
@@ -10,7 +9,7 @@ function permit(fields) {
 }
 
 class UsersController {
-  constructor({ userRepository = new UserRepositoryDatabase() } = {}) {
+  constructor({ userRepository } = {}) {
     this.userRepository = userRepository
 
     this.create = this.create.bind(this)

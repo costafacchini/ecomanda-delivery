@@ -1,8 +1,7 @@
 import { QueryBuilder } from './QueryBuilder.js'
-import { TriggerRepositoryDatabase } from '../repositories/trigger.js'
 
 class TriggersQuery {
-  constructor({ triggerRepository = new TriggerRepositoryDatabase() } = {}) {
+  constructor({ triggerRepository } = {}) {
     this.triggerRepository = triggerRepository
   }
 
