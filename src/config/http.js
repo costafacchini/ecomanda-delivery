@@ -1,5 +1,3 @@
-import path from 'path'
-import { fileURLToPath } from 'url'
 import('../app/models/index.js')
 
 import createError from 'http-errors'
@@ -11,9 +9,7 @@ import { routes } from './routes.js'
 import http from 'http'
 import { Server } from 'socket.io'
 import Rollbar from 'rollbar'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+import { frontendDistDir } from './frontend-paths.js'
 
 const app = express()
 
@@ -22,7 +18,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: false }))
 app.use(logger('dev'))
 connect()
 
-app.use(express.static(path.resolve(__dirname, '../../client/build')))
+app.use(express.static(frontendDistDir))
 enableCors(app)
 routes(app)
 

@@ -44,7 +44,8 @@ Load ONLY documents relevant to your current task.
 
 | Document | When to Read |
 |----------|--------------|
-| | |
+| [heroku-vite-build-tool-missing](bugfixes/heroku-vite-build-tool-missing.md) | Heroku deploy fails with `vite: not found` after the frontend migration to Vite or when a production-mode nested install prunes build tooling |
+| [vite-esm-spa-paths-in-express](bugfixes/vite-esm-spa-paths-in-express.md) | Production throws `__dirname is not defined` in Express routes or the server still points at CRA's `client/build` output after the Vite migration |
 
 ### AI Patterns
 
