@@ -14,13 +14,13 @@ Git-native Markdown plans for multi-step work.
 
 ---
 
-## Active Plans
+## Plans
 
 | # | Plan | Folder | Status | Description |
 |---|------|--------|--------|-------------|
-| 1 | [Decouple MongoDB](./decouple-mongo/overview.md) | `decouple-mongo/` | Draft | Complete the repository pattern: missing repos, `*RepositoryMemory` implementations, eliminate direct `.save()` calls and model imports from services/plugins/controllers |
-| 2 | [CRA → Vite](./cra-to-vite/overview.md) | `cra-to-vite/` | Draft | Replace `react-scripts` with Vite + Vitest for React 19 compatibility and clean peer-dep tree |
-| 3 | [Dependency Injection](./dependency-injection/overview.md) | `dependency-injection/` | Draft | Establish constructor injection throughout: controllers receive repos via constructor, routes become the composition root, controller specs drop `mongoServer` |
+| 1 | [Decouple MongoDB](./decouple-mongo/overview.md) | `decouple-mongo/` | Active | Complete the repository pattern: missing repos, `*RepositoryMemory` implementations, eliminate direct `.save()` calls and model imports from services/plugins/controllers |
+| 2 | [CRA → Vite](./cra-to-vite/overview.md) | `cra-to-vite/` | Complete | Replace `react-scripts` with Vite + Vitest for React 19 compatibility and clean peer-dep tree |
+| 3 | [Dependency Injection](./dependency-injection/overview.md) | `dependency-injection/` | Active | Establish constructor injection throughout: controllers receive repos via constructor, routes become the composition root, controller specs drop `mongoServer` |
 | 4 | [Use Cases](./use-cases/overview.md) | `use-cases/` | Draft | Extract business logic from controllers into dedicated use case classes; controllers become thin (validate → execute → respond) |
 | 5 | [JS → TypeScript](./js-to-ts/overview.md) | `js-to-ts/` | Draft | Incremental migration of all 249 source files (backend + client) to TypeScript using `allowJs: true` throughout |
 | 6 | [Remove PDV](./remove-pdv/overview.md) | `remove-pdv/` | Draft | Delete cart, payment (PagarMe), and order integration (Pedidos10) domain — ~80 source files, strip PDV fields from Licensee and Contact |
