@@ -5,7 +5,7 @@ import { createRoutesStub } from 'react-router'
 import { licenseeFactory } from '../../../../factories/licensee'
 import { SimpleCrudContextProvider } from '../../../../contexts/SimpleCrud'
 
-jest.mock('../../../../services/licensee')
+vi.mock('../../../../services/licensee')
 
 describe('<LicenseeIndex />', () => {
   const currentUser = {

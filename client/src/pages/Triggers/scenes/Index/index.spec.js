@@ -6,8 +6,8 @@ import { createRoutesStub } from 'react-router'
 import { triggerFactory, triggerSingleProduct, triggerReplyButton, triggerListMessage, triggerText } from '../../../../factories/trigger'
 import { SimpleCrudContextProvider } from '../../../../contexts/SimpleCrud'
 
-jest.mock('../../../../services/trigger')
-jest.mock('../../../../services/licensee')
+vi.mock('../../../../services/trigger')
+vi.mock('../../../../services/licensee')
 
 describe('<TriggersIndex />', () => {
   const currentUser = { isSuper: true }

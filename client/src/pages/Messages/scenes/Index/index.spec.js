@@ -6,9 +6,9 @@ import { getLicensees } from '../../../../services/licensee'
 import { getContacts } from '../../../../services/contact'
 import { messageFactory } from '../../../../factories/message'
 
-jest.mock('../../../../services/message')
-jest.mock('../../../../services/licensee')
-jest.mock('../../../../services/contact')
+vi.mock('../../../../services/message')
+vi.mock('../../../../services/licensee')
+vi.mock('../../../../services/contact')
 
 describe('<MessageIndex />', () => {
   const currentUser = { isSuper: true }

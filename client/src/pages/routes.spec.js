@@ -4,12 +4,12 @@ import * as auth from '../services/auth'
 import { AppContextProvider } from '../contexts/App'
 
 describe('<RootRoutes>', () => {
-  beforeEach(() => { jest.clearAllMocks() })
+  beforeEach(() => { vi.clearAllMocks() })
 
   afterEach(() => { window.location.hash = '' })
 
   it('renders the login page if user is not logged in', () => {
-    const isAuthenticatedSpy = jest.spyOn(auth, 'isAuthenticated').mockImplementation(() => false)
+    const isAuthenticatedSpy = vi.spyOn(auth, 'isAuthenticated').mockImplementation(() => false)
 
     render(
       <AppContextProvider>
@@ -30,7 +30,7 @@ describe('<RootRoutes>', () => {
   })
 
   it('renders the dashboard if user is logged in', async () => {
-    const isAuthenticatedSpy = jest.spyOn(auth, 'isAuthenticated').mockImplementation(() => true)
+    const isAuthenticatedSpy = vi.spyOn(auth, 'isAuthenticated').mockImplementation(() => true)
 
     render(
       <AppContextProvider>

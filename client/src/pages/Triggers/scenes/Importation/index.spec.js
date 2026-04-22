@@ -3,7 +3,7 @@ import { createRoutesStub } from 'react-router'
 import { importTriggerMultiProduct } from '../../../../services/trigger'
 import TriggerImportation from './'
 
-jest.mock('../../../../services/trigger')
+vi.mock('../../../../services/trigger')
 
 describe('<TriggerImportation />', () => {
   function mount() {

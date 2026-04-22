@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { createRoutesStub } from 'react-router'
 import { createContact } from '../../../../services/contact'
 
-jest.mock('../../../../services/contact')
+vi.mock('../../../../services/contact')
 
 describe('<ContactNew />', () => {
   let currentUser = {

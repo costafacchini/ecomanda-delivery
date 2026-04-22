@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { createRoutesStub } from 'react-router'
 import { createUser } from '../../../../services/user'
 
-jest.mock('../../../../services/user')
+vi.mock('../../../../services/user')
 
 describe('<UserNew />', () => {
   let currentUser = {

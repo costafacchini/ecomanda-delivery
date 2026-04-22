@@ -3,7 +3,7 @@ import { createRoutesStub } from 'react-router'
 import UserForm from './'
 
 describe('<UserForm />', () => {
-  const onSubmit = jest.fn()
+  const onSubmit = vi.fn()
 
   function mount(props = {}) {
     const Stub = createRoutesStub([

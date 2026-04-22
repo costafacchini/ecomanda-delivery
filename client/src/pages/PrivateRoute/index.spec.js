@@ -5,10 +5,10 @@ import * as auth from '../../services/auth'
 import { AppContextProvider } from '../../contexts/App'
 
 describe('<PrivateRoute>', () => {
-  beforeEach(() => { jest.clearAllMocks() })
+  beforeEach(() => { vi.clearAllMocks() })
 
   it('renders the component if user is logged in', () => {
-    const isAuthenticatedSpy = jest.spyOn(auth, 'isAuthenticated').mockImplementation(() => true)
+    const isAuthenticatedSpy = vi.spyOn(auth, 'isAuthenticated').mockImplementation(() => true)
 
     render(
       <AppContextProvider>
@@ -35,7 +35,7 @@ describe('<PrivateRoute>', () => {
   })
 
   it('renders the path to redirect if user is not logged in', () => {
-    const isAuthenticatedSpy = jest.spyOn(auth, 'isAuthenticated').mockImplementation(() => false)
+    const isAuthenticatedSpy = vi.spyOn(auth, 'isAuthenticated').mockImplementation(() => false)
 
     render(
       <AppContextProvider>

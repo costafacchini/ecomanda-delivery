@@ -3,7 +3,7 @@ import { fireEvent, screen, waitFor, render } from '@testing-library/react'
 import { getUser, updateUser } from '../../../../services/user'
 import { createRoutesStub } from 'react-router';
 
-jest.mock('../../../../services/user')
+vi.mock('../../../../services/user')
 
 describe('<UserEdit />', () => {
   function mount() {

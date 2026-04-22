@@ -3,10 +3,10 @@ import { createRoutesStub } from 'react-router'
 import LicenseeForm from './'
 import { setLicenseeWebhook, signOrderWebhook } from '../../../../services/licensee'
 
-jest.mock('../../../../services/licensee')
+vi.mock('../../../../services/licensee')
 
 describe('<LicenseeForm />', () => {
-  const onSubmit = jest.fn()
+  const onSubmit = vi.fn()
 
   function mount(props = {}) {
     const Stub = createRoutesStub([

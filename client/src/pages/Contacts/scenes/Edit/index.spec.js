@@ -3,7 +3,7 @@ import { fireEvent, screen, waitFor, render } from '@testing-library/react'
 import { getContact, updateContact } from '../../../../services/contact'
 import { createRoutesStub } from 'react-router';
 
-jest.mock('../../../../services/contact')
+vi.mock('../../../../services/contact')
 
 describe('<ContactEdit />', () => {
   function mount() {

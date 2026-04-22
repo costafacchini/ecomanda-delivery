@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { createRoutesStub } from 'react-router'
 import { createTrigger } from '../../../../services/trigger'
 
-jest.mock('../../../../services/trigger')
+vi.mock('../../../../services/trigger')
 
 describe('<TriggerNew />', () => {
   let currentUser = {
