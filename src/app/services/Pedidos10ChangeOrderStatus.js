@@ -1,10 +1,10 @@
-import Body from '../models/Body.js'
 import { Pedidos10 } from '../plugins/integrations/Pedidos10.js'
 import { createIntegrator } from '../plugins/integrations/factory.js'
+import { BodyRepositoryDatabase } from '../repositories/body.js'
 
-async function changeOrderStatus(data) {
+async function changeOrderStatus(data, { bodyRepository = new BodyRepositoryDatabase() } = {}) {
   const { bodyId } = data
-  const body = await Body.findById(bodyId).populate('licensee')
+  const body = await bodyRepository.findFirst({ _id: bodyId }, ['licensee'])
   const { order, status } = body.content
 
   const integrator = createIntegrator(body.licensee.pedidos10_integrator)

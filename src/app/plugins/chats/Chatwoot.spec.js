@@ -543,6 +543,65 @@ describe('Chatwoot plugin', () => {
 
   describe('#sendMessage', () => {
     describe('when contact has chatwootSourceId', () => {
+      it('uses the injected room repository to create a conversation when no open room exists', async () => {
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
+          contactFactory.build({
+            name: 'John Doe',
+            chatwootSourceId: 'source_123',
+            chatwootId: 'contact_123',
+            licensee,
+          }),
+        )
+
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
+          messageFactory.build({
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          }),
+        )
+
+        const room = { roomId: 'new_conversation_789' }
+        const roomRepository = {
+          findFirst: jest.fn().mockResolvedValue(null),
+          create: jest.fn().mockResolvedValue(room),
+        }
+
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            id: 'new_conversation_789',
+          },
+        })
+
+        const chatwoot = new Chatwoot(licensee, { roomRepository })
+        const postMessageSpy = jest.spyOn(chatwoot, 'postMessage').mockResolvedValue(true)
+
+        await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
+
+        expect(roomRepository.findFirst).toHaveBeenCalledWith({
+          contact: expect.objectContaining({ _id: contact._id }),
+          closed: false,
+        })
+        expect(roomRepository.create).toHaveBeenCalledWith({
+          roomId: 'new_conversation_789',
+          contact: contact._id,
+        })
+        expect(postMessageSpy).toHaveBeenCalledWith(
+          'https://api.chatwoot.com/api/v1/',
+          expect.objectContaining({
+            api_access_token: 'api_token_123',
+            'Content-Type': 'application/json',
+          }),
+          expect.objectContaining({ _id: contact._id }),
+          expect.objectContaining({ _id: message._id }),
+          room,
+        )
+      })
+
       it('sends message to existing conversation', async () => {
         const contactRepository = new ContactRepositoryDatabase()
         const contact = await contactRepository.create(
@@ -869,6 +928,48 @@ describe('Chatwoot plugin', () => {
         expect(messageUpdated.sended).toEqual(true)
       })
 
+      it('stores an error when it cannot find or create the contact in Chatwoot', async () => {
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
+          contactFactory.build({
+            name: 'John Doe',
+            number: '5511999999999',
+            licensee,
+          }),
+        )
+
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
+          messageFactory.build({
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          }),
+        )
+
+        request.get.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            payload: [],
+          },
+        })
+
+        request.post.mockResolvedValueOnce({
+          status: 500,
+          data: {},
+        })
+
+        const chatwoot = new Chatwoot(licensee)
+        await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
+
+        const messageUpdated = await messageRepository.findFirst({ _id: message._id })
+        expect(messageUpdated.error).toEqual(
+          'Chatwoot - erro: Não foi possível encontrar ou criar o contato na Chatwoot!',
+        )
+        expect(messageUpdated.sended).toEqual(false)
+      })
+
       it('creates new contact if search returns no results', async () => {
         const contactRepository = new ContactRepositoryDatabase()
         const contact = await contactRepository.create(
@@ -1057,6 +1158,193 @@ describe('Chatwoot plugin', () => {
     })
 
     describe('error handling', () => {
+      it('stores an error when conversation creation fails through the injected room repository path', async () => {
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
+          contactFactory.build({
+            name: 'John Doe',
+            chatwootSourceId: 'source_123',
+            chatwootId: 'contact_123',
+            licensee,
+          }),
+        )
+
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
+          messageFactory.build({
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          }),
+        )
+
+        const roomRepository = {
+          findFirst: jest.fn().mockResolvedValue(null),
+          create: jest.fn(),
+        }
+
+        request.post.mockResolvedValueOnce({
+          status: 500,
+          data: {
+            error: true,
+          },
+        })
+
+        const chatwoot = new Chatwoot(licensee, { roomRepository })
+        const postMessageSpy = jest.spyOn(chatwoot, 'postMessage')
+
+        await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
+
+        expect(postMessageSpy).not.toHaveBeenCalled()
+
+        const messageUpdated = await messageRepository.findFirst({ _id: message._id })
+        expect(messageUpdated.error).toEqual(
+          'Chatwoot - erro: Não foi possível criar a conversa na Chatwoot! Você vai encontrar mais detalhes nos logs do servidor.',
+        )
+        expect(messageUpdated.sended).toEqual(false)
+      })
+
+      it('closes the room through the injected repository when Chatwoot reports a missing resource', async () => {
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
+          contactFactory.build({
+            name: 'John Doe',
+            chatwootSourceId: 'source_123',
+            chatwootId: 'contact_123',
+            licensee,
+          }),
+        )
+
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
+          messageFactory.build({
+            _id: '60958703f415ed4008748637',
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          }),
+        )
+
+        const room = await Room.create(
+          roomFactory.build({
+            roomId: 'conversation_456',
+            contact,
+            closed: false,
+          }),
+        )
+
+        const roomRepository = {
+          findFirst: jest.fn().mockResolvedValue(room),
+          save: jest.fn().mockResolvedValue(room),
+        }
+
+        request.post.mockResolvedValue({
+          status: 404,
+          data: {
+            error: 'Resource could not be found',
+          },
+        })
+
+        const chatwoot = new Chatwoot(licensee, { roomRepository })
+        const sent = await chatwoot.postMessage(
+          'https://api.chatwoot.com/api/v1/',
+          { api_access_token: 'api_token_123', 'Content-Type': 'application/json' },
+          contact,
+          message,
+          { roomId: room.roomId },
+        )
+
+        expect(sent).toEqual(false)
+        expect(roomRepository.findFirst).toHaveBeenCalledWith({ roomId: room.roomId })
+        expect(roomRepository.save).toHaveBeenCalledWith(expect.objectContaining({ _id: room._id, closed: true }))
+
+        const contactUpdated = await contactRepository.findFirst({ _id: contact._id })
+        expect(contactUpdated.chatwootSourceId).toEqual(null)
+        expect(contactUpdated.chatwootId).toEqual(null)
+      })
+
+      it('retries with a recreated conversation when postMessage returns false', async () => {
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
+          contactFactory.build({
+            name: 'John Doe',
+            chatwootSourceId: 'source_123',
+            chatwootId: 'contact_123',
+            number: '5511999999999',
+            licensee,
+          }),
+        )
+
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
+          messageFactory.build({
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          }),
+        )
+
+        const staleRoom = { roomId: 'stale_conversation_456' }
+        const recreatedRoom = { roomId: 'recreated_conversation_789' }
+        const roomRepository = {
+          findFirst: jest.fn().mockResolvedValue(staleRoom),
+          create: jest.fn().mockResolvedValue(recreatedRoom),
+        }
+
+        request.get.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            payload: [
+              {
+                id: 'contact_123',
+                contact_inboxes: [
+                  {
+                    inbox: {
+                      id: 'inbox_123',
+                    },
+                    source_id: 'source_456',
+                  },
+                ],
+              },
+            ],
+          },
+        })
+
+        request.post.mockResolvedValueOnce({
+          status: 200,
+          data: {
+            id: 'recreated_conversation_789',
+          },
+        })
+
+        const chatwoot = new Chatwoot(licensee, { roomRepository })
+        const postMessageSpy = jest
+          .spyOn(chatwoot, 'postMessage')
+          .mockResolvedValueOnce(false)
+          .mockResolvedValueOnce(true)
+
+        await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
+
+        expect(postMessageSpy).toHaveBeenCalledTimes(2)
+        expect(roomRepository.create).toHaveBeenCalledWith({
+          roomId: 'recreated_conversation_789',
+          contact: contact._id,
+        })
+        expect(postMessageSpy).toHaveBeenLastCalledWith(
+          'https://api.chatwoot.com/api/v1/',
+          expect.objectContaining({
+            api_access_token: 'api_token_123',
+            'Content-Type': 'application/json',
+          }),
+          expect.objectContaining({ _id: contact._id }),
+          expect.objectContaining({ _id: message._id }),
+          recreatedRoom,
+        )
+      })
+
       it('logs error when message sending fails', async () => {
         const contactRepository = new ContactRepositoryDatabase()
         const contact = await contactRepository.create(

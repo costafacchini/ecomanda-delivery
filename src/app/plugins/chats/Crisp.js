@@ -2,18 +2,18 @@ import { isMidia } from '../../helpers/Files.js'
 import request from '../../services/request.js'
 import mime from 'mime-types'
 import { ChatsBase } from './Base.js'
-import { createRoom, getRoomBy } from '../../repositories/room.js'
+import { RoomRepositoryDatabase } from '../../repositories/room.js'
 import { ContactRepositoryDatabase } from '../../repositories/contact.js'
 import { MessageRepositoryDatabase } from '../../repositories/message.js'
 
-const createSession = async (url, headers, contact, segments) => {
+const createSession = async (url, headers, contact, segments, roomRepository) => {
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })
 
   if (response.status !== 201) {
     console.error(`Não foi possível criar a sessão na Crisp ${JSON.stringify(response.data)}`)
     return
   } else {
-    const room = await createRoom({
+    const room = await roomRepository.create({
       roomId: response.data.data.session_id,
       contact: contact._id,
     })
@@ -109,8 +109,9 @@ const formatMessage = (message, contact) => {
 }
 
 class Crisp extends ChatsBase {
-  constructor(licensee) {
+  constructor(licensee, { roomRepository = new RoomRepositoryDatabase() } = {}) {
     super(licensee)
+    this.roomRepository = roomRepository
   }
 
   action(responseBody) {
@@ -130,9 +131,9 @@ class Crisp extends ChatsBase {
       return
     }
 
-    const room = await getRoomBy({ roomId: responseBody.data.session_id })
+    const room = await this.roomRepository.findFirst({ roomId: responseBody.data.session_id })
     if (!room) {
-      // room = await createRoom({ roomId: responseBody.data.session_id, contact })
+      // room = await this.roomRepository.create({ roomId: responseBody.data.session_id, contact })
       this.messageParsed = null
       return
     }
@@ -180,11 +181,11 @@ class Crisp extends ChatsBase {
     const messageToSend = await messageRepository.findFirst({ _id: messageId }, ['contact'])
     const basicToken = Buffer.from(`${this.licensee.chatIdentifier}:${this.licensee.chatKey}`).toString('base64')
     const headers = { Authorization: `Basic ${basicToken}`, 'X-Crisp-Tier': 'plugin' }
-    const openRoom = await getRoomBy({ contact: messageToSend.contact, closed: false })
+    const openRoom = await this.roomRepository.findFirst({ contact: messageToSend.contact, closed: false })
     let room = openRoom
 
     if (!room) {
-      room = await createSession(url, headers, messageToSend.contact, messageToSend.departament)
+      room = await createSession(url, headers, messageToSend.contact, messageToSend.departament, this.roomRepository)
       if (!room) {
         return
       }

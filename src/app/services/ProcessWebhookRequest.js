@@ -1,9 +1,9 @@
-import Body from '../models/Body.js'
+import { BodyRepositoryDatabase } from '../repositories/body.js'
 
-async function processWebhookRequest(data) {
+async function processWebhookRequest(data, { bodyRepository = new BodyRepositoryDatabase() } = {}) {
   const { bodyId } = data
 
-  const body = await Body.findById(bodyId)
+  const body = await bodyRepository.findFirst({ _id: bodyId })
 
   const actions = []
 
@@ -14,7 +14,7 @@ async function processWebhookRequest(data) {
     })
   }
 
-  await Body.deleteOne({ _id: bodyId })
+  await bodyRepository.delete({ _id: bodyId })
 
   return actions
 }

@@ -1,17 +1,22 @@
-import Backgroundjob from '../models/Backgroundjob.js'
 import { PagarMe } from '../plugins/payments/PagarMe.js'
+import { BackgroundjobRepositoryDatabase } from '../repositories/backgroundjob.js'
 import { CartRepositoryDatabase } from '../repositories/cart.js'
 
-async function processBackgroundjobCancelOrder(data) {
+async function processBackgroundjobCancelOrder(
+  data,
+  {
+    backgroundjobRepository = new BackgroundjobRepositoryDatabase(),
+    cartRepository = new CartRepositoryDatabase(),
+    pagarMe = new PagarMe(),
+  } = {},
+) {
   const { jobId, cart_id: cartId } = data
 
-  const backgroundjob = await Backgroundjob.findById(jobId)
+  const backgroundjob = await backgroundjobRepository.findFirst({ _id: jobId })
 
   try {
-    const cartRepository = new CartRepositoryDatabase()
     const cart = await cartRepository.findFirst({ _id: cartId })
 
-    const pagarMe = new PagarMe()
     await pagarMe.payment.delete(cart, process.env.PAGARME_TOKEN)
 
     const cartUpdated = await cartRepository.findFirst({ _id: cartId })
@@ -25,7 +30,7 @@ async function processBackgroundjobCancelOrder(data) {
     backgroundjob.error = error.toString()
   }
 
-  await backgroundjob.save()
+  await backgroundjobRepository.save(backgroundjob)
 }
 
 export { processBackgroundjobCancelOrder }

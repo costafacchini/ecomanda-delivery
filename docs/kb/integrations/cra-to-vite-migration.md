@@ -103,7 +103,10 @@ export default defineConfig({
     },
   },
   server: {
-    proxy: { '/resources': 'http://localhost:5001' },
+    proxy: {
+      '/resources': 'http://localhost:5001',
+      '/login': 'http://localhost:5001',
+    },
   },
   css: {
     modules: { localsConvention: 'camelCase' },

@@ -1,21 +1,25 @@
-import Backgroundjob from '../models/Backgroundjob.js'
 import { PagarMe } from '../plugins/payments/PagarMe.js'
+import { BackgroundjobRepositoryDatabase } from '../repositories/backgroundjob.js'
 import { ContactRepositoryDatabase } from '../repositories/contact.js'
 import { CartRepositoryDatabase } from '../repositories/cart.js'
 
-async function processBackgroundjobGetCreditCard(data) {
+async function processBackgroundjobGetCreditCard(
+  data,
+  {
+    backgroundjobRepository = new BackgroundjobRepositoryDatabase(),
+    contactRepository = new ContactRepositoryDatabase(),
+    cartRepository = new CartRepositoryDatabase(),
+    pagarMe = new PagarMe(),
+  } = {},
+) {
   const { jobId, cart_id: cartId } = data
 
-  const backgroundjob = await Backgroundjob.findById(jobId)
+  const backgroundjob = await backgroundjobRepository.findFirst({ _id: jobId })
 
   try {
-    const cartRepository = new CartRepositoryDatabase()
     const cart = await cartRepository.findFirst({ _id: cartId }, ['contact'])
 
-    const contactRepository = new ContactRepositoryDatabase()
     const contact = await contactRepository.findFirst({ _id: cart.contact })
-
-    const pagarMe = new PagarMe()
 
     const cardList = await pagarMe.card.list(contact, process.env.PAGARME_TOKEN)
     cardList.forEach((card) => {
@@ -26,7 +30,7 @@ async function processBackgroundjobGetCreditCard(data) {
         brand: card.brand,
       })
     })
-    await contact.save()
+    await contactRepository.save(contact)
 
     const cardData = cardList.map((card) => {
       const last_card_used = contact.credit_card_id && contact.credit_card_id == card.id
@@ -51,7 +55,7 @@ async function processBackgroundjobGetCreditCard(data) {
     backgroundjob.error = error.toString()
   }
 
-  await backgroundjob.save()
+  await backgroundjobRepository.save(backgroundjob)
 }
 
 export { processBackgroundjobGetCreditCard }

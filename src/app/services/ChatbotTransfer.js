@@ -1,9 +1,9 @@
-import Body from '../models/Body.js'
 import { createChatbotPlugin } from '../plugins/chatbots/factory.js'
+import { BodyRepositoryDatabase } from '../repositories/body.js'
 
-async function transformChatbotTransferBody(data) {
+async function transformChatbotTransferBody(data, { bodyRepository = new BodyRepositoryDatabase() } = {}) {
   const { bodyId } = data
-  const body = await Body.findById(bodyId).populate('licensee')
+  const body = await bodyRepository.findFirst({ _id: bodyId }, ['licensee'])
   const licensee = body.licensee
 
   const chatbotPlugin = createChatbotPlugin(licensee)
@@ -25,7 +25,7 @@ async function transformChatbotTransferBody(data) {
     })
   }
 
-  await Body.deleteOne({ _id: bodyId })
+  await bodyRepository.delete({ _id: bodyId })
 
   return actions
 }

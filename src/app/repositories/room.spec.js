@@ -1,5 +1,6 @@
 import mongoServer from '../../../.jest/utils'
-import { createRoom, getRoomBy } from '@repositories/room'
+import Room from '@models/Room'
+import { RoomRepositoryDatabase } from '@repositories/room'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
@@ -15,15 +16,24 @@ describe('room repository', () => {
     await mongoServer.disconnect()
   })
 
-  describe('#createRoom', () => {
+  describe('#model', () => {
+    it('returns a model', () => {
+      const roomRepository = new RoomRepositoryDatabase()
+
+      expect(roomRepository.model()).toEqual(Room)
+    })
+  })
+
+  describe('#create', () => {
     it('creates a room', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
 
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(contactFactory.build({ licensee }))
+      const roomRepository = new RoomRepositoryDatabase()
 
-      const room = await createRoom({
+      const room = await roomRepository.create({
         contact,
       })
 
@@ -35,26 +45,27 @@ describe('room repository', () => {
     })
   })
 
-  describe('#getRoomBy', () => {
+  describe('#findFirst', () => {
     it('returns one record by filter', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
 
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(contactFactory.build({ licensee }))
+      const roomRepository = new RoomRepositoryDatabase()
 
-      await createRoom({
+      await roomRepository.create({
         roomId: '1234',
         contact,
       })
 
       const anotherContact = await contactRepository.create(contactFactory.build({ licensee }))
-      await createRoom({
+      await roomRepository.create({
         roomId: '1234',
         contact: anotherContact,
       })
 
-      const room = await getRoomBy({ roomId: '1234', contact: contact._id })
+      const room = await roomRepository.findFirst({ roomId: '1234', contact: contact._id })
 
       expect(room).toEqual(
         expect.objectContaining({
@@ -72,6 +83,28 @@ describe('room repository', () => {
           }),
         }),
       )
+    })
+  })
+
+  describe('#save', () => {
+    it('saves a room document', async () => {
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
+
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee }))
+
+      const roomRepository = new RoomRepositoryDatabase()
+      const room = await roomRepository.create({
+        roomId: '1234',
+        contact,
+      })
+
+      room.closed = true
+      await roomRepository.save(room)
+
+      const roomSaved = await roomRepository.findFirst({ _id: room._id })
+      expect(roomSaved.closed).toEqual(true)
     })
   })
 })
