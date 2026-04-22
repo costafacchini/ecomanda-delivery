@@ -44,7 +44,7 @@ Load ONLY documents relevant to your current task.
 
 | Document | When to Read |
 |----------|--------------|
-| | |
+| [heroku-vite-build-tool-missing](bugfixes/heroku-vite-build-tool-missing.md) | Heroku deploy fails with `vite: not found` after the frontend migration to Vite or when a production-mode nested install prunes build tooling |
 
 ### AI Patterns
 

@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "build": "cd client && yarn && yarn run build",
+    "build": "cd client && yarn install --production=false && yarn run build",
     "dev": "npm-run-all -p dev:*",
     "dev:server": "bash -c 'docker compose up -d && trap \"docker compose stop\" SIGINT && nodemon server.js'",
     "dev:worker": "nodemon worker.js",
