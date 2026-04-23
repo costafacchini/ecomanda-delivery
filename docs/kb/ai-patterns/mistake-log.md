@@ -59,3 +59,11 @@ not yet represented by the task list.
 **Area**: Plan execution workflow, git branching
 **Prevention**: During plan preflight, check both the plan branch field and the user’s current branch state, and treat merged historical branches as stale execution metadata that must be replaced before coding.
 **Count**: 1
+
+## [2026-04-23] Re-run controller error-path specs after repository create refactors
+
+**Wrong**: Changed repository `create()` implementations to use `Model.create(...)` and reported the decouple-mongo wave as validated without rerunning the controller specs that mock `Model.prototype.save` to force create failures.
+**Correct**: Preserve compatibility with existing error-path tests when refactoring repository persistence, or rerun and update those specs immediately before claiming the wave is green.
+**Area**: Repository refactors, controller regression coverage
+**Prevention**: After changing create/save semantics in repositories, explicitly rerun any specs that mock `Model.prototype.save` or `repository.save()` and treat those paths as required validation, not optional follow-up.
+**Count**: 1

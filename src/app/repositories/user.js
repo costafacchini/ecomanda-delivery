@@ -10,7 +10,9 @@ class UserRepositoryDatabase extends Repository {
   }
 
   async create(fields = {}) {
-    return await User.create({ ...(fields ?? {}) })
+    const user = new User({ ...(fields ?? {}) })
+
+    return await this.save(user)
   }
 
   async find(params = {}, projection = {}) {

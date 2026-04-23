@@ -7,7 +7,9 @@ class TemplateRepositoryDatabase extends Repository {
   }
 
   async create(fields = {}) {
-    return await Template.create({ ...(fields ?? {}) })
+    const template = new Template({ ...(fields ?? {}) })
+
+    return await this.save(template)
   }
 
   async delete(params = {}) {

@@ -18,7 +18,9 @@ class TriggerRepositoryDatabase extends Repository {
   }
 
   async create(fields = {}) {
-    return await Trigger.create({ ...(fields ?? {}) })
+    const trigger = new Trigger({ ...(fields ?? {}) })
+
+    return await this.save(trigger)
   }
 
   async find(params = {}, order = {}) {
