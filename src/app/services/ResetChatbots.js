@@ -1,30 +1,37 @@
 import { createChatbotPlugin } from '../plugins/chatbots/factory.js'
 import moment from 'moment-timezone'
-import { MessagesQuery } from '../queries/MessagesQuery.js'
 import { v4 as uuidv4 } from 'uuid'
 import { createMessengerPlugin } from '../plugins/messengers/factory.js'
 import { LicenseeRepositoryDatabase } from '../repositories/licensee.js'
 import { ContactRepositoryDatabase } from '../repositories/contact.js'
 import { MessageRepositoryDatabase } from '../repositories/message.js'
+import { sortRecords } from '../repositories/repository.js'
 
-async function getLastMessageOfContact(contactId) {
-  const messageRepository = new MessageRepositoryDatabase()
-  const messagesQuery = new MessagesQuery({ messageRepository })
-  messagesQuery.page(1)
-  messagesQuery.limit(1)
-  messagesQuery.filterByContact(contactId)
+const ONE_HOUR = 1
+const TO_MESSENGER = 'to-messenger'
 
-  const messages = await messagesQuery.all()
+async function getLastMessageOfContact(contactId, { messageRepository = new MessageRepositoryDatabase() } = {}) {
+  const messages = sortRecords(
+    await messageRepository.find({
+      contact: contactId,
+      destination: TO_MESSENGER,
+    }),
+    { createdAt: 'desc' },
+  )
 
   return messages[0]
 }
 
 function getTimeLimit() {
-  return moment().tz('UTC').subtract(1, 'hour')
+  return moment().tz('UTC').subtract(ONE_HOUR, 'hour')
 }
 
-async function sendMessageToMessegner(licensee, contactId, text) {
-  const messageRepository = new MessageRepositoryDatabase()
+async function sendMessageToMessegner(
+  licensee,
+  contactId,
+  text,
+  { messageRepository = new MessageRepositoryDatabase() } = {},
+) {
   const messageToSend = await messageRepository.create({
     number: uuidv4(),
     text: text,
@@ -39,31 +46,37 @@ async function sendMessageToMessegner(licensee, contactId, text) {
   await messegnerPlugin.sendMessage(messageToSend._id.toString(), licensee.whatsappUrl, licensee.whatsappToken)
 }
 
-async function resetChatbots() {
-  const licenseeRepository = new LicenseeRepositoryDatabase()
+async function resetChatbots({
+  licenseeRepository = new LicenseeRepositoryDatabase(),
+  contactRepository = new ContactRepositoryDatabase(),
+  messageRepository = new MessageRepositoryDatabase(),
+} = {}) {
   const licensees = await licenseeRepository.find({ useChatbot: true, chatbotApiToken: { $ne: null } })
   for (const licensee of licensees) {
-    const contactRepository = new ContactRepositoryDatabase()
-    const contacts = await contactRepository.find({
-      licensee: licensee._id,
-      talkingWithChatBot: true,
-      landbotId: { $ne: null },
-    })
+    const contacts = (
+      await contactRepository.find({
+        licensee: licensee._id,
+        talkingWithChatBot: true,
+      })
+    ).filter((contact) => contact.landbotId != null)
+
     for (const contact of contacts) {
-      const message = await getLastMessageOfContact(contact._id)
+      const message = await getLastMessageOfContact(contact._id, { messageRepository })
 
       if (!message) continue
 
-      if (message.destination === 'to-messenger' && message.createdAt < getTimeLimit() && message.sended === true) {
+      if (message.destination === TO_MESSENGER && message.createdAt < getTimeLimit() && message.sended === true) {
         const chatPlugin = createChatbotPlugin(licensee)
 
-        await chatPlugin.dropConversation(message.contact._id.toString())
+        await chatPlugin.dropConversation(contact._id.toString())
 
         contact.landbotId = null
-        await contact.save()
+        await contactRepository.save(contact)
 
         if (licensee.messageOnResetChatbot && licensee.messageOnResetChatbot !== '') {
-          await sendMessageToMessegner(licensee, contact._id, licensee.messageOnResetChatbot)
+          await sendMessageToMessegner(licensee, contact._id, licensee.messageOnResetChatbot, {
+            messageRepository,
+          })
         }
       }
     }

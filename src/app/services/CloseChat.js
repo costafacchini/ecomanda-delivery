@@ -1,9 +1,8 @@
 import { createChatPlugin } from '../plugins/chats/factory.js'
 import { MessageRepositoryDatabase } from '../repositories/message.js'
 
-async function closeChat(data) {
+async function closeChat(data, { messageRepository = new MessageRepositoryDatabase() } = {}) {
   const { messageId } = data
-  const messageRepository = new MessageRepositoryDatabase()
   const message = await messageRepository.findFirst({ _id: messageId }, ['licensee'])
   const licensee = message.licensee
   const actions = []
@@ -14,9 +13,11 @@ async function closeChat(data) {
 
   if (messagesOnCloseChat.length > 0) {
     for (const messageCloseChat of messagesOnCloseChat) {
+      const contactId = message.contact?._id ?? message.contact
+
       const bodyToSend = {
         messageId: messageCloseChat._id,
-        contactId: message.contact._id,
+        contactId,
         licenseeId: licensee._id,
         url: licensee.whatsappUrl,
         token: licensee.whatsappToken,

@@ -74,10 +74,10 @@ async function closeChat(data, { messageRepository = new MessageRepositoryDataba
 
 | # | Task | Status | Files | Depends On |
 |---|------|--------|-------|------------|
-| 3.1 | Refactor simple services to accept injectable repos: `CloseChat`, `ChatMessage`, `ChatbotMessage`, `ChatbotTransfer`, `MessengerMessage`, `SendMessageToChat`, `SendMessageToChatbot`, `SendMessageToMessenger`, `TransferToChat` | Pending | `services/CloseChat.js`, `services/ChatMessage.js`, `services/ChatbotMessage.js`, `services/ChatbotTransfer.js`, `services/MessengerMessage.js`, `services/SendMessage*.js`, `services/TransferToChat.js` | 2.1 |
-| 3.2 | Refactor reset/batch services: `ResetChatbots`, `ResetChats`, `ResetCarts`; replace direct `.save()` calls with `repository.save()` | Pending | `services/ResetChatbots.js`, `services/ResetChats.js`, `services/ResetCarts.js` | 2.1, 2.2 |
-| 3.3 | Refactor background job services: `ProcessBackgroundjob*` (6 files), `IntegrationSendOrder`, `ProcessPagarmeOrderPaid`, `ProcessWebhookRequest`; replace direct model imports and `.save()` with injected repositories | Pending | `services/ProcessBackgroundjob*.js`, `services/IntegrationSendOrder.js`, `services/ProcessPagarmeOrderPaid.js`, `services/ProcessWebhookRequest.js` | 2.2, 2.3 |
-| 3.4 | Refactor integration services: `Pedidos10ChangeOrderStatus`, `Pedidos10Webhook`, `IntegrationSendOrder`, `SendContactToPagarMe` | Pending | `services/Pedidos10*.js`, `services/SendContactToPagarMe.js` | 2.3 |
+| 3.1 | Refactor simple services to accept injectable repos: `CloseChat`, `ChatMessage`, `ChatbotMessage`, `ChatbotTransfer`, `MessengerMessage`, `SendMessageToChat`, `SendMessageToChatbot`, `SendMessageToMessenger`, `TransferToChat` | Complete | `services/CloseChat.js`, `services/ChatMessage.js`, `services/ChatbotMessage.js`, `services/ChatbotTransfer.js`, `services/MessengerMessage.js`, `services/SendMessage*.js`, `services/TransferToChat.js` | 2.1 |
+| 3.2 | Refactor reset/batch services: `ResetChatbots`, `ResetChats`, `ResetCarts`; replace direct `.save()` calls with `repository.save()` | Complete | `services/ResetChatbots.js`, `services/ResetChats.js`, `services/ResetCarts.js` | 2.1, 2.2 |
+| 3.3 | Refactor background job services: `ProcessBackgroundjob*` (6 files), `IntegrationSendOrder`, `ProcessPagarmeOrderPaid`, `ProcessWebhookRequest`; replace direct model imports and `.save()` with injected repositories | Complete | `services/ProcessBackgroundjob*.js`, `services/IntegrationSendOrder.js`, `services/ProcessPagarmeOrderPaid.js`, `services/ProcessWebhookRequest.js` | 2.2, 2.3 |
+| 3.4 | Refactor integration services: `Pedidos10ChangeOrderStatus`, `Pedidos10Webhook`, `IntegrationSendOrder`, `SendContactToPagarMe` | Complete | `services/Pedidos10*.js`, `services/SendContactToPagarMe.js` | 2.3 |
 
 ---
 
@@ -139,10 +139,11 @@ With in-memory repos and injectable dependencies in place, replace `mongoServer`
 
 ## Current Checkpoint
 
-- Phases 1 and 2 are complete: every repository file now exposes a `*RepositoryMemory` implementation, and the Phase 2 memory specs plus the existing repository specs pass.
-- Phase 3 is the next unblocked wave: service functions still need injected repositories and `.save()` removal.
+- Phases 1, 2, and 3 are complete: every repository file now exposes a `*RepositoryMemory` implementation, service functions accept injectable repositories, and service-layer writes now go through `repository.save()`.
+- The reset services no longer depend on `MessagesQuery` / `ContactsQuery`, so they can run against repository implementations without the Mongo-only `QueryBuilder` path.
+- Phase 4 and Phase 5 are the next unblocked waves: plugin and controller code still need the same repository-only cleanup.
 - The plan-level done criteria still pending are:
-  - model imports still exist outside `repositories/` and `models/`, especially in services and plugins
-  - direct `.save()` calls still exist outside repository implementations
-  - service and plugin specs still use `mongoServer`
+  - model imports still exist outside `repositories/` and `models/` in `helpers/Trafficlight.js` and `queries/IntegrationlogsQuery.js`
+  - direct `.save()` calls still exist outside repository implementations, mainly in plugins
+  - 24 service specs + 21 plugin specs still use `mongoServer`
   - the full `2611`-test suite has not been re-run after this wave
