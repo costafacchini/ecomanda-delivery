@@ -3,8 +3,6 @@ import request from '../../services/request.js'
 import mime from 'mime-types'
 import { ChatsBase } from './Base.js'
 import { RoomRepositoryDatabase } from '../../repositories/room.js'
-import { ContactRepositoryDatabase } from '../../repositories/contact.js'
-import { MessageRepositoryDatabase } from '../../repositories/message.js'
 
 const createSession = async (url, headers, contact, segments, roomRepository) => {
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })
@@ -84,14 +82,18 @@ const postMessage = async (url, headers, contact, message, room) => {
     body,
   })
 
+  return response
+}
+
+const persistPostedMessage = async (messageRepository, message, response) => {
   if (response.data.error === false) {
     message.sended = true
-    await message.save()
+    await messageRepository.save(message)
 
     console.info(`Mensagem ${message._id} enviada para Crisp com sucesso!`)
   } else {
     message.error = `mensagem: ${JSON.stringify(response.data)}`
-    await message.save()
+    await messageRepository.save(message)
     console.error(
       `Mensagem ${message._id} não enviada para Crisp.
            status: ${response.status}
@@ -109,9 +111,14 @@ const formatMessage = (message, contact) => {
 }
 
 class Crisp extends ChatsBase {
-  constructor(licensee, { roomRepository = new RoomRepositoryDatabase() } = {}) {
-    super(licensee)
-    this.roomRepository = roomRepository
+  constructor(licensee, { roomRepository, contactRepository, messageRepository, ...dependencies } = {}) {
+    super(licensee, { contactRepository, messageRepository, ...dependencies })
+    this._roomRepository = roomRepository
+  }
+
+  get roomRepository() {
+    this._roomRepository ??= new RoomRepositoryDatabase()
+    return this._roomRepository
   }
 
   action(responseBody) {
@@ -164,21 +171,17 @@ class Crisp extends ChatsBase {
   }
 
   async transfer(messageId, url) {
-    const messageRepository = new MessageRepositoryDatabase()
-    const messageToSend = await messageRepository.findFirst({ _id: messageId }, ['contact'])
-
-    const contactRepository = new ContactRepositoryDatabase()
-    const contact = await contactRepository.findFirst({ _id: messageToSend.contact._id })
+    const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
+    const contact = await this.contactRepository.findFirst({ _id: messageToSend.contact._id })
 
     contact.talkingWithChatBot = false
-    await contact.save()
+    await this.contactRepository.save(contact)
 
     await this.sendMessage(messageId, url)
   }
 
   async sendMessage(messageId, url) {
-    const messageRepository = new MessageRepositoryDatabase()
-    const messageToSend = await messageRepository.findFirst({ _id: messageId }, ['contact'])
+    const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
     const basicToken = Buffer.from(`${this.licensee.chatIdentifier}:${this.licensee.chatKey}`).toString('base64')
     const headers = { Authorization: `Basic ${basicToken}`, 'X-Crisp-Tier': 'plugin' }
     const openRoom = await this.roomRepository.findFirst({ contact: messageToSend.contact, closed: false })
@@ -195,7 +198,8 @@ class Crisp extends ChatsBase {
       }
     }
 
-    await postMessage(url, headers, messageToSend.contact, messageToSend, room)
+    const response = await postMessage(url, headers, messageToSend.contact, messageToSend, room)
+    await persistPostedMessage(this.messageRepository, messageToSend, response)
   }
 
   static messageType(fileUrl) {
@@ -208,17 +212,14 @@ class Crisp extends ChatsBase {
   }
 
   async closeChat(messageId) {
-    const messageRepository = new MessageRepositoryDatabase()
-    const message = await messageRepository.findFirst({ _id: messageId }, ['contact', 'licensee', 'room'])
+    const message = await this.messageRepository.findFirst({ _id: messageId }, ['contact', 'licensee', 'room'])
     const licensee = message.licensee
 
-    const contactRepository = new ContactRepositoryDatabase()
-    const contact = await contactRepository.findFirst({ _id: message.contact._id })
+    const contact = await this.contactRepository.findFirst({ _id: message.contact._id })
     const messages = []
 
     if (licensee.messageOnCloseChat) {
-      const messageRepository = new MessageRepositoryDatabase()
-      const messagesCloseChat = await messageRepository.createInteractiveMessages({
+      const messagesCloseChat = await this.messageRepository.createInteractiveMessages({
         kind: 'text',
         text: licensee.messageOnCloseChat,
         licensee,
@@ -231,7 +232,7 @@ class Crisp extends ChatsBase {
 
     if (licensee.useChatbot) {
       contact.talkingWithChatBot = true
-      await contact.save()
+      await this.contactRepository.save(contact)
     }
 
     return messages

@@ -87,24 +87,25 @@ Plugins currently import Mongoose models directly and call `.save()` on them. Th
 
 | # | Task | Status | Files | Depends On |
 |---|------|--------|-------|------------|
-| 4.1 | Refactor `plugins/chatbots/Landbot.js`: replace `Room`, `Trigger` model imports and `.save()` calls with `roomRepository` and `triggerRepository` injected in constructor | Pending | `plugins/chatbots/Landbot.js` | 2.2 |
-| 4.2 | Refactor `plugins/chats/Base.js`, `Rocketchat.js`, `Chatwoot.js`, `Crisp.js`, `Cuboup.js`, `Dialog.js`: replace `Room`, `Trigger` model usage with repositories | Pending | `plugins/chats/Base.js`, `Rocketchat.js`, `Chatwoot.js`, `Crisp.js`, `Cuboup.js`, `Dialog.js` (only those with direct model usage) | 2.2, 1.2 |
-| 4.3 | Refactor `plugins/messengers/Dialog.js`, `Pabbly.js`, `YCloud.js`: replace `Trigger`, `Template` model imports with injected repositories | Pending | `plugins/messengers/Dialog.js`, `Pabbly.js`, `YCloud.js` | 2.3 |
-| 4.4 | Refactor `plugins/payments/PagarMe/*` (Card, Customer, Payment, Recipient): replace `Integrationlog` model imports and `.save()` calls with `integrationlogRepository` | Pending | `plugins/payments/PagarMe/Card.js`, `Customer.js`, `Payment.js`, `Recipient.js` | 2.3 |
-| 4.5 | Refactor `plugins/integrations/Pedidos10/Order.js`, `services/Auth.js`, `OrderStatus.js`, `Webhook.js`: replace `Licensee`, `Integrationlog` model imports with repositories | Pending | `plugins/integrations/Pedidos10/**/*.js` | 2.3 |
-| 4.6 | Refactor `plugins/importers/facebook_catalog/index.js`: replace `Trigger`, `Product` model imports with repositories | Pending | `plugins/importers/facebook_catalog/index.js` | 2.3 |
+| 4.1 | Refactor `plugins/chatbots/Landbot.js`: replace `Room`, `Trigger` model imports and `.save()` calls with `roomRepository` and `triggerRepository` injected in constructor | Complete | `plugins/chatbots/Landbot.js` | 2.2 |
+| 4.2 | Refactor `plugins/chats/Base.js`, `Rocketchat.js`, `Chatwoot.js`, `Crisp.js`, `Cuboup.js`, `Dialog.js`: replace `Room`, `Trigger` model usage with repositories | Complete | `plugins/chats/Base.js`, `Rocketchat.js`, `Chatwoot.js`, `Crisp.js`, `Cuboup.js`, `Dialog.js` (only those with direct model usage) | 2.2, 1.2 |
+| 4.3 | Refactor `plugins/messengers/Dialog.js`, `Pabbly.js`, `YCloud.js`: replace `Trigger`, `Template` model imports with injected repositories | Complete | `plugins/messengers/Dialog.js`, `Pabbly.js`, `YCloud.js` | 2.3 |
+| 4.4 | Refactor `plugins/payments/PagarMe/*` (Card, Customer, Payment, Recipient): replace `Integrationlog` model imports and `.save()` calls with `integrationlogRepository` | Complete | `plugins/payments/PagarMe/Card.js`, `Customer.js`, `Payment.js`, `Recipient.js` | 2.3 |
+| 4.5 | Refactor `plugins/integrations/Pedidos10/Order.js`, `services/Auth.js`, `OrderStatus.js`, `Webhook.js`: replace `Licensee`, `Integrationlog` model imports with repositories | Complete | `plugins/integrations/Pedidos10/**/*.js` | 2.3 |
+| 4.6 | Refactor `plugins/importers/facebook_catalog/index.js`: replace `Trigger`, `Product` model imports with repositories | Complete | `plugins/importers/facebook_catalog/index.js` | 2.3 |
 
 ---
 
-## Phase 5 — Eliminate Direct Model Imports in Controllers
+## Phase 5 — Eliminate Direct Model Imports in Controllers and Support Code
 
 | # | Task | Status | Files | Depends On |
 |---|------|--------|-------|------------|
-| 5.1 | Refactor controllers using `Body`: `ChatbotsController`, `ChatsController`, `IntegrationsController`, `MessengersController`, `OrdersController` — inject `BodyRepositoryDatabase` | Pending | `controllers/ChatbotsController.js`, `ChatsController.js`, `IntegrationsController.js`, `MessengersController.js`, `OrdersController.js` | 1.3 |
-| 5.2 | Refactor `BackgroundjobsController`: replace `Backgroundjob` model import with `BackgroundjobRepositoryDatabase` | Pending | `controllers/BackgroundjobsController.js` | 1.3 |
-| 5.3 | Refactor `LoginController`, `UsersController`: replace `User` model import with `UserRepositoryDatabase` | Pending | `controllers/LoginController.js`, `controllers/UsersController.js` | 1.3 |
-| 5.4 | Refactor `TemplatesController`, `TriggersController`: these already have repositories but may use the model directly for some operations | Pending | `controllers/TemplatesController.js`, `controllers/TriggersController.js` | — |
-| 5.5 | Refactor `OrdersController`: replace `Integrationlog` model import with `IntegrationlogRepositoryDatabase` | Pending | `controllers/OrdersController.js` | 1.3 |
+| 5.1 | Refactor controllers using `Body`: `ChatbotsController`, `ChatsController`, `IntegrationsController`, `MessengersController`, `OrdersController` — inject `BodyRepositoryDatabase` | Complete | `controllers/ChatbotsController.js`, `ChatsController.js`, `IntegrationsController.js`, `MessengersController.js`, `OrdersController.js` | 1.3 |
+| 5.2 | Refactor `BackgroundjobsController`: replace `Backgroundjob` model import with `BackgroundjobRepositoryDatabase` | Complete | `controllers/BackgroundjobsController.js` | 1.3 |
+| 5.3 | Refactor `LoginController`, `UsersController`: replace `User` model import with `UserRepositoryDatabase` | Complete | `controllers/LoginController.js`, `controllers/UsersController.js` | 1.3 |
+| 5.4 | Refactor `TemplatesController`, `TriggersController`: these already have repositories but may use the model directly for some operations | Complete | `controllers/TemplatesController.js`, `TriggersController.js` | — |
+| 5.5 | Refactor `OrdersController`: replace `Integrationlog` model import with `IntegrationlogRepositoryDatabase` | Complete | `controllers/OrdersController.js` | 1.3 |
+| 5.6 | Remove the remaining non-repository model imports and raw document-save paths in support code (`Trafficlight`, query classes, startup/bootstrap, smoke scripts, repository-backed model bootstrap) | Complete | `helpers/Trafficlight.js`, `queries/IntegrationlogsQuery.js`, `queries/MessagesFailed.js`, `setup/database.js`, `config/http.js`, `scripts/smoke/**/*`, `repositories/index.js`, `models/Cart.js` | 2.3, 4.6 |
 
 ---
 
@@ -131,19 +132,17 @@ With in-memory repos and injectable dependencies in place, replace `mongoServer`
 
 ## Done When
 
-- [ ] No Mongoose model is imported outside of `repositories/` and `models/`
-- [ ] No `.save()` call exists outside `*RepositoryDatabase.save()` implementations
-- [ ] Every entity has a `*RepositoryMemory` class
+- [x] No Mongoose model is imported outside of `repositories/` and `models/`
+- [x] No `.save()` call exists outside `*RepositoryDatabase.save()` implementations
+- [x] Every entity has a `*RepositoryMemory` class
 - [ ] 24 service specs + 21 plugin specs no longer import or call `mongoServer`
 - [ ] All 2611 tests still pass
 
 ## Current Checkpoint
 
-- Phases 1, 2, and 3 are complete: every repository file now exposes a `*RepositoryMemory` implementation, service functions accept injectable repositories, and service-layer writes now go through `repository.save()`.
-- The reset services no longer depend on `MessagesQuery` / `ContactsQuery`, so they can run against repository implementations without the Mongo-only `QueryBuilder` path.
-- Phase 4 and Phase 5 are the next unblocked waves: plugin and controller code still need the same repository-only cleanup.
+- Phases 1 through 5 are complete: repositories now cover every entity used by the app runtime, plugin/controller/support code no longer imports models directly, and runtime writes now go through repository APIs instead of raw document saves.
+- The chat/chatbot/messenger plugin families are repository-only, and this wave finished the remaining plugin cleanup in `PagarMe`, `Pedidos10`, and the Facebook catalog importer.
+- Controller cleanup was already effectively complete before this wave; the missing work behind the import criterion was in support code (`Trafficlight`, reporting queries, startup/bootstrap, and smoke scripts), which is now repository-backed as well.
 - The plan-level done criteria still pending are:
-  - model imports still exist outside `repositories/` and `models/` in `helpers/Trafficlight.js` and `queries/IntegrationlogsQuery.js`
-  - direct `.save()` calls still exist outside repository implementations, mainly in plugins
   - 24 service specs + 21 plugin specs still use `mongoServer`
   - the full `2611`-test suite has not been re-run after this wave

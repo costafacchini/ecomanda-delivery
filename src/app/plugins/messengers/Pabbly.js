@@ -1,11 +1,9 @@
-import Trigger from '../../models/Trigger.js'
-import Template from '../../models/Template.js'
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
 import request from '../../services/request.js'
 import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files.js'
 import { parseText } from '../../helpers/ParseTriggerText.js'
 import { MessengersBase } from './Base.js'
-import { MessageRepositoryDatabase } from '../../repositories/message.js'
+import { TemplateRepositoryDatabase } from '../../repositories/template.js'
 
 const getTemplates = async (url, token) => {
   const headers = {
@@ -129,8 +127,14 @@ const parseComponentParam = (param, value) => {
 }
 
 class Pabbly extends MessengersBase {
-  constructor(licensee) {
-    super(licensee)
+  constructor(licensee, { templateRepository, messageRepository, ...dependencies } = {}) {
+    super(licensee, { messageRepository, ...dependencies })
+    this._templateRepository = templateRepository
+  }
+
+  get templateRepository() {
+    this._templateRepository ??= new TemplateRepositoryDatabase()
+    return this._templateRepository
   }
 
   action(messageDestination) {
@@ -286,8 +290,7 @@ class Pabbly extends MessengersBase {
   }
 
   async sendMessage(messageId, url, token) {
-    const messageRepository = new MessageRepositoryDatabase()
-    const messageToSend = await messageRepository.findFirst({ _id: messageId }, ['contact'])
+    const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
 
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -311,7 +314,7 @@ class Pabbly extends MessengersBase {
         const parameters = messageToSend.text.match(/\{\{[^}]+\}\}/g) || []
         const templateName = parameters[0]?.replace('{{', '').replace('}}', '') || ''
 
-        const template = await Template.findOne({ name: templateName })
+        const template = await this.templateRepository.findFirst({ name: templateName })
 
         messageBody.type = 'template'
         messageBody.template = {
@@ -329,7 +332,7 @@ class Pabbly extends MessengersBase {
         break
       }
       case 'interactive': {
-        const trigger = await Trigger.findById(messageToSend.trigger)
+        const trigger = await this.triggerRepository.findFirst({ _id: messageToSend.trigger })
         if (trigger) {
           messageBody.type = 'interactive'
 
@@ -405,15 +408,15 @@ class Pabbly extends MessengersBase {
         messageToSend.messageWaId = messageResponse.data?.data?.metaResponse?.messages[0]?.id
         messageToSend.sended = true
         messageToSend.payload = JSON.stringify(messageResponse.data)
-        await messageToSend.save()
+        await this.messageRepository.save(messageToSend)
       } else {
         messageToSend.error = JSON.stringify(messageResponse.data)
-        await messageToSend.save()
+        await this.messageRepository.save(messageToSend)
         console.error(`Pabbly - erro: Mensagem ${messageId} não enviada para Pabbly.`)
       }
     } catch (error) {
       messageToSend.error = JSON.stringify(error.response?.data || error.message)
-      await messageToSend.save()
+      await this.messageRepository.save(messageToSend)
       console.error(`Pabbly - erro: Erro ao enviar mensagem ${messageId} para Pabbly:`, error)
     }
   }

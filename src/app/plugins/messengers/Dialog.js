@@ -1,12 +1,10 @@
-import Trigger from '../../models/Trigger.js'
-import Template from '../../models/Template.js'
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
 import request from '../../services/request.js'
 import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files.js'
 import { createCartPlugin } from '../../plugins/carts/factory.js'
 import { parseText } from '../../helpers/ParseTriggerText.js'
 import { MessengersBase } from './Base.js'
-import { MessageRepositoryDatabase } from '../../repositories/message.js'
+import { TemplateRepositoryDatabase } from '../../repositories/template.js'
 import { S3 } from '../storage/S3.js'
 import mime from 'mime-types'
 
@@ -149,8 +147,14 @@ const uploadFile = (licensee, contact, fileName, fileBase64) => {
 }
 
 class Dialog extends MessengersBase {
-  constructor(licensee) {
-    super(licensee)
+  constructor(licensee, { templateRepository, messageRepository, ...dependencies } = {}) {
+    super(licensee, { messageRepository, ...dependencies })
+    this._templateRepository = templateRepository
+  }
+
+  get templateRepository() {
+    this._templateRepository ??= new TemplateRepositoryDatabase()
+    return this._templateRepository
   }
 
   action(messageDestination) {
@@ -270,8 +274,7 @@ class Dialog extends MessengersBase {
   }
 
   async sendMessage(messageId, url, token) {
-    const messageRepository = new MessageRepositoryDatabase()
-    const messageToSend = await messageRepository.findFirst({ _id: messageId }, ['contact'])
+    const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
 
     let waId = messageToSend.contact.waId
     if (!waId) {
@@ -304,7 +307,7 @@ class Dialog extends MessengersBase {
       const parameters = messageToSend.text.match(/\{\{[^}]+\}\}/g)
       const templateName = parameters[0].replace('{{', '').replace('}}', '')
 
-      const template = await Template.findOne({ name: templateName })
+      const template = await this.templateRepository.findFirst({ name: templateName })
 
       messageBody.type = 'template'
       messageBody.template = {
@@ -321,7 +324,7 @@ class Dialog extends MessengersBase {
     }
 
     if (messageToSend.kind === 'interactive') {
-      const trigger = await Trigger.findById(messageToSend.trigger)
+      const trigger = await this.triggerRepository.findFirst({ _id: messageToSend.trigger })
       if (trigger) {
         messageBody.type = 'interactive'
         if (trigger.triggerKind === 'multi_product') {
@@ -397,11 +400,11 @@ class Dialog extends MessengersBase {
     if (messageResponse.status === 201) {
       messageToSend.messageWaId = messageResponse.data.messages[0].id
       messageToSend.sended = true
-      await messageToSend.save()
+      await this.messageRepository.save(messageToSend)
       console.info(`Mensagem ${messageId} enviada para Dialog360 com sucesso! ${JSON.stringify(messageResponse.data)}`)
     } else {
       messageToSend.error = JSON.stringify(messageResponse.data)
-      await messageToSend.save()
+      await this.messageRepository.save(messageToSend)
       console.error(`Mensagem ${messageId} não enviada para Dialog360. ${JSON.stringify(messageResponse.data)}`)
     }
   }

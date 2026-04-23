@@ -1,7 +1,16 @@
-import Integrationlog from '../../../models/Integrationlog.js'
 import request from '../../../services/request.js'
+import { IntegrationlogRepositoryDatabase } from '../../../repositories/integrationlog.js'
+import { LicenseeRepositoryDatabase } from '../../../repositories/licensee.js'
 
 class Recipient {
+  constructor({
+    integrationlogRepository = new IntegrationlogRepositoryDatabase(),
+    licenseeRepository = new LicenseeRepositoryDatabase(),
+  } = {}) {
+    this.integrationlogRepository = integrationlogRepository
+    this.licenseeRepository = licenseeRepository
+  }
+
   async create(licensee, token) {
     const body = {
       name: licensee.name,
@@ -27,14 +36,14 @@ class Recipient {
 
     const response = await request.post('https://api.pagar.me/core/v5/recipients/', { headers, body })
 
-    const integrationlog = await Integrationlog.create({
+    const integrationlog = await this.integrationlogRepository.create({
       licensee: licensee,
       log_payload: response.data,
     })
 
     if (response.status === 200) {
       licensee.recipient_id = response.data.id
-      await licensee.save()
+      await this.licenseeRepository.save(licensee)
 
       console.info(
         `Licenciado ${licensee.name} criado na pagar.me! id: ${licensee.recipient_id} log_id: ${integrationlog._id}`,
@@ -63,7 +72,7 @@ class Recipient {
       body,
     })
 
-    const integrationlog = await Integrationlog.create({
+    const integrationlog = await this.integrationlogRepository.create({
       licensee: licensee,
       log_payload: response.data,
     })

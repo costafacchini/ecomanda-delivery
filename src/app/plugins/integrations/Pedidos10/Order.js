@@ -1,22 +1,39 @@
-import Licensee from '../../../models/Licensee.js'
 import { Parser } from './Parser.js'
 import { Webhook } from './services/Webhook.js'
 import { OrderStatus } from './services/OrderStatus.js'
 import { Auth } from './services/Auth.js'
 import { OrderRepositoryDatabase } from '../../../repositories/order.js'
+import { LicenseeRepositoryDatabase } from '../../../repositories/licensee.js'
 
 class Order {
-  constructor(licensee) {
+  constructor(
+    licensee,
+    {
+      orderRepository = new OrderRepositoryDatabase(),
+      licenseeRepository = new LicenseeRepositoryDatabase(),
+      authService,
+      webhookService,
+      orderStatusService,
+    } = {},
+  ) {
     this.licensee = licensee
     this.orderBodyParser = new Parser()
-    this.webhookService = new Webhook(licensee)
-    this.orderSatatusService = new OrderStatus(licensee)
-    this.authService = new Auth(licensee)
+    this.orderRepository = orderRepository
+    this.licenseeRepository = licenseeRepository
+    this.webhookService = webhookService ?? new Webhook(licensee)
+    this.orderStatusService = orderStatusService ?? new OrderStatus(licensee)
+    this.authService = authService ?? new Auth(licensee, { licenseeRepository })
+  }
+
+  syncLicensee(licensee) {
+    this.licensee = licensee
+    this.webhookService.licensee = licensee
+    this.orderStatusService.licensee = licensee
+    this.authService.licensee = licensee
   }
 
   async loadOrderFromDatabase(order) {
-    const orderRepository = new OrderRepositoryDatabase()
-    return await orderRepository.findFirst({
+    return await this.orderRepository.findFirst({
       licensee: this.licensee,
       merchant_external_code: order.merchant_external_code,
       order_external_id: order.order_external_id,
@@ -32,8 +49,7 @@ class Order {
     const orderPersisted = await this.loadOrderFromDatabase(order)
 
     if (!this.alreadyExists(orderPersisted)) {
-      const orderRepository = new OrderRepositoryDatabase()
-      return await orderRepository.create({ ...order, licensee: this.licensee })
+      return await this.orderRepository.create({ ...order, licensee: this.licensee })
     }
 
     if (orderPersisted.status != order.status) {
@@ -49,7 +65,7 @@ class Order {
     orderPersisted.total_addition = order.total_addition
     orderPersisted.total = order.total
 
-    return await orderPersisted.save()
+    return await this.orderRepository.save(orderPersisted)
   }
 
   async doAuthentication() {
@@ -57,7 +73,13 @@ class Order {
     const isLogged = await this.authService.login()
 
     // TODO - Precisa testar esse recarregamento do Licenciado
-    if (isLogged) this.licensee = await Licensee.findOne({ _id: this.licensee.id })
+    if (isLogged) {
+      const licenseeReloaded = await this.licenseeRepository.findFirst({ _id: this.licensee.id ?? this.licensee._id })
+
+      if (licenseeReloaded) {
+        this.syncLicensee(licenseeReloaded)
+      }
+    }
 
     return isLogged
   }
@@ -77,7 +99,7 @@ class Order {
 
   async changeOrderStatus(orderId, status) {
     const isAutenticated = await this.checkAuth()
-    if (isAutenticated) await this.orderSatatusService.change(orderId, status)
+    if (isAutenticated) await this.orderStatusService.change(orderId, status)
   }
 }
 

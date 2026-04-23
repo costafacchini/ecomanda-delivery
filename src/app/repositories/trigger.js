@@ -7,10 +7,18 @@ class TriggerRepositoryDatabase extends Repository {
     return Trigger
   }
 
-  async create(fields = {}) {
-    const trigger = new Trigger({ ...(fields ?? {}) })
+  async findFirst(params = {}, relations = []) {
+    const onlyIdFilter = Object.keys(params ?? {}).length === 1 && '_id' in (params ?? {})
 
-    return await trigger.save()
+    if (onlyIdFilter && relations.length === 0) {
+      return await Trigger.findById(params._id)
+    }
+
+    return await super.findFirst(params, relations)
+  }
+
+  async create(fields = {}) {
+    return await Trigger.create({ ...(fields ?? {}) })
   }
 
   async find(params = {}, order = {}) {

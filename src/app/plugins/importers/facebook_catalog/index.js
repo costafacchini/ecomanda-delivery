@@ -1,13 +1,13 @@
-import Trigger from '../../../models/Trigger.js'
-import Product from '../../../models/Product.js'
 import _ from 'lodash'
+import { TriggerRepositoryDatabase } from '../../../repositories/trigger.js'
+import { ProductRepositoryDatabase } from '../../../repositories/product.js'
 
-async function importProducts(products, licensee) {
+async function importProducts(products, licensee, productRepository) {
   const importedProductsPromises = await products.map(async (product) => {
-    const productExists = await Product.findOne({ product_retailer_id: product.id, licensee })
+    const productExists = await productRepository.findFirst({ product_retailer_id: product.id, licensee })
     if (productExists) return productExists
 
-    return await Product.create({ product_retailer_id: product.id, name: product.title, licensee })
+    return await productRepository.create({ product_retailer_id: product.id, name: product.title, licensee })
   })
 
   return await Promise.all(importedProductsPromises)
@@ -59,12 +59,17 @@ function generateProductItem(productId) {
 }
 
 class FacebookCatalogImporter {
-  constructor(triggerId) {
+  constructor(
+    triggerId,
+    { triggerRepository = new TriggerRepositoryDatabase(), productRepository = new ProductRepositoryDatabase() } = {},
+  ) {
     this.triggerId = triggerId
+    this.triggerRepository = triggerRepository
+    this.productRepository = productRepository
   }
 
   async importCatalog(data) {
-    const trigger = await Trigger.findById(this.triggerId)
+    const trigger = await this.triggerRepository.findFirst({ _id: this.triggerId })
     const products = []
 
     const lines = data.split('\n')
@@ -84,12 +89,12 @@ class FacebookCatalogImporter {
       })
     })
 
-    await importProducts(products, trigger.licensee)
+    await importProducts(products, trigger.licensee, this.productRepository)
 
     const sections = _.uniqBy(products, 'section').map((product) => product.section)
 
     trigger.catalogMulti = generateCatalog(trigger.catalogId, sections, products)
-    await trigger.save()
+    await this.triggerRepository.save(trigger)
   }
 }
 

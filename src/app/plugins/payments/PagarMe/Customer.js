@@ -1,7 +1,16 @@
-import Integrationlog from '../../../models/Integrationlog.js'
 import request from '../../../services/request.js'
+import { IntegrationlogRepositoryDatabase } from '../../../repositories/integrationlog.js'
+import { ContactRepositoryDatabase } from '../../../repositories/contact.js'
 
 class Customer {
+  constructor({
+    integrationlogRepository = new IntegrationlogRepositoryDatabase(),
+    contactRepository = new ContactRepositoryDatabase(),
+  } = {}) {
+    this.integrationlogRepository = integrationlogRepository
+    this.contactRepository = contactRepository
+  }
+
   async create(contact, token) {
     const body = {
       name: contact.name,
@@ -32,7 +41,7 @@ class Customer {
 
     const response = await request.post('https://api.pagar.me/core/v5/customers/', { headers, body })
 
-    const integrationlog = await Integrationlog.create({
+    const integrationlog = await this.integrationlogRepository.create({
       licensee: contact.licensee,
       contact: contact._id,
       log_payload: response.data,
@@ -41,7 +50,7 @@ class Customer {
     if (response.status === 200) {
       contact.customer_id = response.data.id
       if (contact.address) contact.address_id = response.data.address.id
-      await contact.save()
+      await this.contactRepository.save(contact)
 
       console.info(
         `Contato ${contact.name} criado na pagar.me! id: ${contact.customer_id} log_id: ${integrationlog._id}`,
@@ -71,7 +80,7 @@ class Customer {
       body,
     })
 
-    const integrationlog = await Integrationlog.create({
+    const integrationlog = await this.integrationlogRepository.create({
       licensee: contact.licensee,
       contact: contact._id,
       log_payload: response.data,

@@ -1,9 +1,10 @@
-import Integrationlog from '../../../../models/Integrationlog.js'
 import request from '../../../../services/request.js'
+import { IntegrationlogRepositoryDatabase } from '../../../../repositories/integrationlog.js'
 
 class OrderStatus {
-  constructor(licensee) {
+  constructor(licensee, { integrationlogRepository = new IntegrationlogRepositoryDatabase() } = {}) {
     this.licensee = licensee
+    this.integrationlogRepository = integrationlogRepository
   }
 
   async change(orderId, status) {
@@ -23,7 +24,7 @@ class OrderStatus {
       body,
     })
 
-    const integrationlog = await Integrationlog.create({
+    const integrationlog = await this.integrationlogRepository.create({
       licensee: this.licensee,
       log_payload: response.data,
     })

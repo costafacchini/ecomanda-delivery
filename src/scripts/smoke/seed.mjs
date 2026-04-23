@@ -1,6 +1,5 @@
 import 'dotenv/config'
 import mongoose from 'mongoose'
-import '../../app/models/index.js'
 import { connect } from '../../config/database.js'
 import { smokeEnv } from './env.mjs'
 import { buildSmokeSeedData, seedSmokeData } from './data/seed-data.mjs'

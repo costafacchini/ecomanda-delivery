@@ -4,12 +4,10 @@ import { NormalizePhone } from '../../helpers/NormalizePhone.js'
 import { v4 as uuidv4 } from 'uuid'
 import request from '../../services/request.js'
 import { ChatsBase } from './Base.js'
-import { ContactRepositoryDatabase } from '../../repositories/contact.js'
-import { MessageRepositoryDatabase } from '../../repositories/message.js'
 
 class Cuboup extends ChatsBase {
-  constructor(licensee) {
-    super(licensee)
+  constructor(licensee, { contactRepository, messageRepository, ...dependencies } = {}) {
+    super(licensee, { contactRepository, messageRepository, ...dependencies })
   }
 
   action(responseBody) {
@@ -92,21 +90,17 @@ class Cuboup extends ChatsBase {
   }
 
   async transfer(messageId, url) {
-    const messageRepository = new MessageRepositoryDatabase()
-    const messageToSend = await messageRepository.findFirst({ _id: messageId }, ['contact'])
-
-    const contactRepository = new ContactRepositoryDatabase()
-    const contact = await contactRepository.findFirst({ _id: messageToSend.contact._id })
+    const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
+    const contact = await this.contactRepository.findFirst({ _id: messageToSend.contact._id })
 
     contact.talkingWithChatBot = false
-    await contact.save()
+    await this.contactRepository.save(contact)
 
     await this.sendMessage(messageId, url)
   }
 
   async sendMessage(messageId, url) {
-    const messageRepository = new MessageRepositoryDatabase()
-    const messageToSend = await messageRepository.findFirst({ _id: messageId }, ['contact', 'licensee'])
+    const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact', 'licensee'])
 
     const sender = {
       id: messageToSend.contact.number + messageToSend.contact.type,
@@ -154,11 +148,11 @@ class Cuboup extends ChatsBase {
 
     if (response.status === 200) {
       messageToSend.sended = true
-      await messageToSend.save()
+      await this.messageRepository.save(messageToSend)
       console.info(`Mensagem ${messageToSend._id} enviada para CuboUp com sucesso!`)
     } else {
       messageToSend.error = `mensagem: ${JSON.stringify(response.data)}`
-      await messageToSend.save()
+      await this.messageRepository.save(messageToSend)
       console.error(
         `Mensagem ${messageToSend._id} não enviada para CuboUp.
            status: ${response.status}
@@ -189,17 +183,14 @@ class Cuboup extends ChatsBase {
   }
 
   async closeChat(messageId) {
-    const messageRepository = new MessageRepositoryDatabase()
-    const message = await messageRepository.findFirst({ _id: messageId }, ['contact', 'licensee'])
+    const message = await this.messageRepository.findFirst({ _id: messageId }, ['contact', 'licensee'])
     const licensee = message.licensee
 
-    const contactRepository = new ContactRepositoryDatabase()
-    const contact = await contactRepository.findFirst({ _id: message.contact._id })
+    const contact = await this.contactRepository.findFirst({ _id: message.contact._id })
     const messages = []
 
     if (licensee.messageOnCloseChat) {
-      const messageRepository = new MessageRepositoryDatabase()
-      const messagesCloseChat = await messageRepository.createInteractiveMessages({
+      const messagesCloseChat = await this.messageRepository.createInteractiveMessages({
         kind: 'text',
         text: licensee.messageOnCloseChat,
         licensee,
@@ -212,7 +203,7 @@ class Cuboup extends ChatsBase {
 
     if (licensee.useChatbot) {
       contact.talkingWithChatBot = true
-      await contact.save()
+      await this.contactRepository.save(contact)
     }
 
     return messages

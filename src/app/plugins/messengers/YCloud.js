@@ -1,11 +1,9 @@
-import Trigger from '../../models/Trigger.js'
-import Template from '../../models/Template.js'
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
 import request from '../../services/request.js'
 import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files.js'
 import { parseText } from '../../helpers/ParseTriggerText.js'
 import { MessengersBase } from './Base.js'
-import { MessageRepositoryDatabase } from '../../repositories/message.js'
+import { TemplateRepositoryDatabase } from '../../repositories/template.js'
 
 // const getWaIdContact = async (number, url, token) => {
 //   const headers = {
@@ -158,8 +156,14 @@ const parseComponentParam = (param, value) => {
 }
 
 class YCloud extends MessengersBase {
-  constructor(licensee) {
-    super(licensee)
+  constructor(licensee, { templateRepository, messageRepository, ...dependencies } = {}) {
+    super(licensee, { messageRepository, ...dependencies })
+    this._templateRepository = templateRepository
+  }
+
+  get templateRepository() {
+    this._templateRepository ??= new TemplateRepositoryDatabase()
+    return this._templateRepository
   }
 
   action(messageDestination) {
@@ -309,8 +313,6 @@ class YCloud extends MessengersBase {
       chatId = responseBody.whatsappInboundMessage.from
       contact = responseBody.whatsappInboundMessage.customerProfile
     }
-    console.log('YCloud - contato recebido:', chatId)
-
     const normalizePhone = new NormalizePhone(chatId)
 
     this.contactData = {
@@ -333,8 +335,7 @@ class YCloud extends MessengersBase {
   }
 
   async sendMessage(messageId, url, token) {
-    const messageRepository = new MessageRepositoryDatabase()
-    const messageToSend = await messageRepository.findFirst({ _id: messageId }, ['contact'])
+    const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
 
     const headers = {
       'X-Api-Key': `${token}`,
@@ -360,7 +361,7 @@ class YCloud extends MessengersBase {
         const parameters = messageToSend.text.match(/\{\{[^}]+\}\}/g) || []
         const templateName = parameters[0]?.replace('{{', '').replace('}}', '') || ''
 
-        const template = await Template.findOne({ name: templateName })
+        const template = await this.templateRepository.findFirst({ name: templateName })
 
         messageBody.type = 'template'
         messageBody.template = {
@@ -378,7 +379,7 @@ class YCloud extends MessengersBase {
         break
       }
       case 'interactive': {
-        const trigger = await Trigger.findById(messageToSend.trigger)
+        const trigger = await this.triggerRepository.findFirst({ _id: messageToSend.trigger })
         if (trigger) {
           messageBody.type = 'interactive'
 
@@ -519,20 +520,20 @@ class YCloud extends MessengersBase {
       if (messageResponse.status === 200 || messageResponse.status === 201) {
         messageToSend.messageWaId = messageResponse.data?.id
         messageToSend.sended = true
-        await messageToSend.save()
+        await this.messageRepository.save(messageToSend)
         console.info(
           `YCloud: Mensagem ${messageId} enviada para YCloud com sucesso! ${JSON.stringify(messageResponse.data)}`,
         )
       } else {
         messageToSend.error = JSON.stringify(messageResponse.data)
-        await messageToSend.save()
+        await this.messageRepository.save(messageToSend)
         console.error(
           `YCloud - erro: Mensagem ${messageId} não enviada para YCloud. ${JSON.stringify(messageResponse.data)}`,
         )
       }
     } catch (error) {
       messageToSend.error = JSON.stringify(error.response?.data || error.message)
-      await messageToSend.save()
+      await this.messageRepository.save(messageToSend)
       console.error(`YCloud - erro: Erro ao enviar mensagem ${messageId} para YCloud:`, error)
     }
   }

@@ -1,7 +1,8 @@
-import Integrationlog from '../../../models/Integrationlog.js'
 import request from '../../../services/request.js'
 import { LicenseeRepositoryDatabase } from '../../../repositories/licensee.js'
 import { ContactRepositoryDatabase } from '../../../repositories/contact.js'
+import { CartRepositoryDatabase } from '../../../repositories/cart.js'
+import { IntegrationlogRepositoryDatabase } from '../../../repositories/integrationlog.js'
 
 const buildBody = (cart, contact, buildPaymentBuilder) => {
   return {
@@ -91,12 +92,24 @@ const fillCreditCardFields = (cart, last_transaction) => {
 }
 
 class Payment {
-  async createPIX(cart, token) {
-    const licenseeRepository = new LicenseeRepositoryDatabase()
-    const licensee = await licenseeRepository.findFirst({ _id: cart.licensee._id })
+  constructor({
+    integrationlogRepository = new IntegrationlogRepositoryDatabase(),
+    licenseeRepository = new LicenseeRepositoryDatabase(),
+    contactRepository = new ContactRepositoryDatabase(),
+    cartRepository = new CartRepositoryDatabase(),
+  } = {}) {
+    this.integrationlogRepository = integrationlogRepository
+    this.licenseeRepository = licenseeRepository
+    this.contactRepository = contactRepository
+    this.cartRepository = cartRepository
+  }
 
-    const contactRepository = new ContactRepositoryDatabase()
-    const contact = await contactRepository.findFirst(cart.contact._id)
+  async createPIX(cart, token) {
+    const licenseeId = cart.licensee?._id ?? cart.licensee
+    const contactId = cart.contact?._id ?? cart.contact
+    const licensee = await this.licenseeRepository.findFirst({ _id: licenseeId })
+
+    const contact = await this.contactRepository.findFirst({ _id: contactId })
 
     const paymentBuilder = {
       build() {
@@ -107,7 +120,7 @@ class Payment {
 
     const response = await doRequest(token, body)
 
-    const integrationlog = await Integrationlog.create({
+    const integrationlog = await this.integrationlogRepository.create({
       licensee: cart.licensee,
       cart: cart._id,
       log_payload: response.data,
@@ -120,7 +133,7 @@ class Payment {
       cart.integration_status = response.data.status
       fillPixFields(cart, response.data.charges[0].last_transaction)
 
-      await cart.save()
+      await this.cartRepository.save(cart)
 
       console.info(`Pedido criado na pagar.me! id: ${cart.order_id} log_id: ${integrationlog._id}`)
     } else {
@@ -134,11 +147,11 @@ class Payment {
   }
 
   async createCreditCard(cart, token) {
-    const licenseeRepository = new LicenseeRepositoryDatabase()
-    const licensee = await licenseeRepository.findFirst({ _id: cart.licensee._id })
+    const licenseeId = cart.licensee?._id ?? cart.licensee
+    const contactId = cart.contact?._id ?? cart.contact
+    const licensee = await this.licenseeRepository.findFirst({ _id: licenseeId })
 
-    const contactRepository = new ContactRepositoryDatabase()
-    const contact = await contactRepository.findFirst(cart.contact._id)
+    const contact = await this.contactRepository.findFirst({ _id: contactId })
 
     const paymentBuilder = {
       build() {
@@ -149,7 +162,7 @@ class Payment {
 
     const response = await doRequest(token, body)
 
-    const integrationlog = await Integrationlog.create({
+    const integrationlog = await this.integrationlogRepository.create({
       licensee: cart.licensee,
       cart: cart._id,
       log_payload: response.data,
@@ -162,7 +175,7 @@ class Payment {
       cart.integration_status = response.data.status
       fillCreditCardFields(cart, response.data.charges[0].last_transaction)
 
-      await cart.save()
+      await this.cartRepository.save(cart)
 
       console.info(`Pedido criado na pagar.me! id: ${cart.order_id} log_id: ${integrationlog._id}`)
     } else {
@@ -182,7 +195,7 @@ class Payment {
 
     const response = await request.delete(`https://api.pagar.me/core/v5/charges/${cart.charge_id}`, { headers })
 
-    const integrationlog = await Integrationlog.create({
+    const integrationlog = await this.integrationlogRepository.create({
       licensee: cart.licensee,
       cart: cart._id,
       log_payload: response.data,
@@ -191,7 +204,7 @@ class Payment {
     if (response.status === 200) {
       cart.payment_status = 'voided'
       cart.concluded = true
-      await cart.save()
+      await this.cartRepository.save(cart)
 
       console.info(`Pagamento cancelado na pagar.me! id: ${cart.charge_id} log_id: ${integrationlog._id}`)
     } else {

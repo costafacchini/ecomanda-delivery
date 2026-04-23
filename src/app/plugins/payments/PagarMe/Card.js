@@ -1,7 +1,16 @@
-import Integrationlog from '../../../models/Integrationlog.js'
 import request from '../../../services/request.js'
+import { IntegrationlogRepositoryDatabase } from '../../../repositories/integrationlog.js'
+import { ContactRepositoryDatabase } from '../../../repositories/contact.js'
 
 class Card {
+  constructor({
+    integrationlogRepository = new IntegrationlogRepositoryDatabase(),
+    contactRepository = new ContactRepositoryDatabase(),
+  } = {}) {
+    this.integrationlogRepository = integrationlogRepository
+    this.contactRepository = contactRepository
+  }
+
   async create(contact, creditCard, token) {
     const body = {
       number: creditCard.number,
@@ -18,14 +27,14 @@ class Card {
       headers,
       body,
     })
-    const integrationlog = await Integrationlog.create({
+    const integrationlog = await this.integrationlogRepository.create({
       licensee: contact.licensee,
       contact: contact._id,
       log_payload: response.data,
     })
     if (response.status === 200) {
       contact.credit_card_id = response.data.id
-      await contact.save()
+      await this.contactRepository.save(contact)
 
       console.info(
         `Cartão ${creditCard.number.substr(0, 6)}******${creditCard.number.substr(-4)} ${
@@ -62,7 +71,7 @@ class Card {
     if (response.status === 200) {
       return response.data.data
     } else {
-      const integrationlog = await Integrationlog.create({
+      const integrationlog = await this.integrationlogRepository.create({
         licensee: contact.licensee,
         contact: contact._id,
         log_payload: response.data,
@@ -91,7 +100,7 @@ class Card {
     if (response.status === 200) {
       return response.data
     } else {
-      const integrationlog = await Integrationlog.create({
+      const integrationlog = await this.integrationlogRepository.create({
         licensee: contact.licensee,
         contact: contact._id,
         log_payload: response.data,

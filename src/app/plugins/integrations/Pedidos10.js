@@ -1,9 +1,9 @@
 import { Order } from './Pedidos10/Order.js'
 
 class Pedidos10 {
-  constructor(licensee) {
+  constructor(licensee, { orderModule = new Order(licensee) } = {}) {
     this.licensee = licensee
-    this.orderModule = new Order(this.licensee)
+    this.orderModule = orderModule
   }
 
   async processOrder(body) {
