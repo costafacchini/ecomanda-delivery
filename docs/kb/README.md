@@ -25,7 +25,7 @@ Load ONLY documents relevant to your current task.
 
 | Document | When to Read |
 |----------|--------------|
-| | |
+| [local-smoke-workflow](features/local-smoke-workflow.md) | Running the hybrid local smoke stack, seeded demo data, or the scripted pre-deploy smoke verification flow |
 
 ### Integrations
 

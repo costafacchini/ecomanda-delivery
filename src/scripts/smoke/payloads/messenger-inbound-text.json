@@ -1,0 +1,16 @@
+{
+  "id": "smoke-messenger-webhook-001",
+  "type": "whatsapp.inbound_message.received",
+  "whatsappInboundMessage": {
+    "id": "smoke-wa-inbound-001",
+    "from": "5511990283745",
+    "to": "5511999999999",
+    "type": "text",
+    "text": {
+      "body": "Smoke hello from messenger"
+    },
+    "customerProfile": {
+      "name": "Smoke Contact"
+    }
+  }
+}

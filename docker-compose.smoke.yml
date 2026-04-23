@@ -1,0 +1,116 @@
+services:
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: pwk372ew
+      MONGO_INITDB_DATABASE: ecomanda-delivery
+    volumes:
+      - smoke_mongo_data:/var/lib/mongodb/data
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
+  redis:
+    image: redis:6
+    volumes:
+      - smoke_redis_data:/var/lib/redis/data
+
+  rabbitmq:
+    restart: always
+    image: rabbitmq:3-management
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.smoke
+    working_dir: /app
+    command: node server.js
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      DEFAULT_USER: ${DEFAULT_USER}
+      DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
+      SECRET: ${SECRET}
+      ENABLE_CHATS: ${ENABLE_CHATS:-true}
+      ENABLE_MESSENGERS: ${ENABLE_MESSENGERS:-true}
+      DONT_SEND_MESSAGE_TO_CHAT: ${DONT_SEND_MESSAGE_TO_CHAT:-false}
+      DONT_SEND_MESSAGE_TO_MESSENGER: ${DONT_SEND_MESSAGE_TO_MESSENGER:-false}
+      MONGODB_URI: ${MONGODB_URI}
+      REDIS_URL: ${REDIS_URL}
+      CLOUDAMQP_URL: ${CLOUDAMQP_URL}
+      API_PROXY_TARGET: ${API_PROXY_TARGET}
+      SMOKE_LICENSEE_NAME: ${SMOKE_LICENSEE_NAME}
+      SMOKE_LICENSEE_API_TOKEN: ${SMOKE_LICENSEE_API_TOKEN}
+      SMOKE_CHAT_PROVIDER: ${SMOKE_CHAT_PROVIDER}
+      SMOKE_CHAT_URL: ${SMOKE_CHAT_URL}
+      SMOKE_CHAT_IDENTIFIER: ${SMOKE_CHAT_IDENTIFIER}
+      SMOKE_CHAT_KEY: ${SMOKE_CHAT_KEY}
+      SMOKE_MESSENGER_PROVIDER: ${SMOKE_MESSENGER_PROVIDER}
+      SMOKE_MESSENGER_URL: ${SMOKE_MESSENGER_URL}
+      SMOKE_MESSENGER_TOKEN: ${SMOKE_MESSENGER_TOKEN}
+      SMOKE_MESSENGER_PHONE: ${SMOKE_MESSENGER_PHONE}
+      SMOKE_CHATBOT_URL: ${SMOKE_CHATBOT_URL}
+      SMOKE_CHATBOT_TOKEN: ${SMOKE_CHATBOT_TOKEN}
+    depends_on:
+      - mongo
+      - redis
+      - rabbitmq
+      - smoke-mocks
+    ports:
+      - '${PORT:-5001}:5000'
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.smoke
+    working_dir: /app
+    command: node worker.js
+    environment:
+      NODE_ENV: development
+      DEFAULT_USER: ${DEFAULT_USER}
+      DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
+      SECRET: ${SECRET}
+      ENABLE_CHATS: ${ENABLE_CHATS:-true}
+      ENABLE_MESSENGERS: ${ENABLE_MESSENGERS:-true}
+      DONT_SEND_MESSAGE_TO_CHAT: ${DONT_SEND_MESSAGE_TO_CHAT:-false}
+      DONT_SEND_MESSAGE_TO_MESSENGER: ${DONT_SEND_MESSAGE_TO_MESSENGER:-false}
+      MONGODB_URI: ${MONGODB_URI}
+      REDIS_URL: ${REDIS_URL}
+      CLOUDAMQP_URL: ${CLOUDAMQP_URL}
+      SMOKE_LICENSEE_NAME: ${SMOKE_LICENSEE_NAME}
+      SMOKE_LICENSEE_API_TOKEN: ${SMOKE_LICENSEE_API_TOKEN}
+      SMOKE_CHAT_PROVIDER: ${SMOKE_CHAT_PROVIDER}
+      SMOKE_CHAT_URL: ${SMOKE_CHAT_URL}
+      SMOKE_CHAT_IDENTIFIER: ${SMOKE_CHAT_IDENTIFIER}
+      SMOKE_CHAT_KEY: ${SMOKE_CHAT_KEY}
+      SMOKE_MESSENGER_PROVIDER: ${SMOKE_MESSENGER_PROVIDER}
+      SMOKE_MESSENGER_URL: ${SMOKE_MESSENGER_URL}
+      SMOKE_MESSENGER_TOKEN: ${SMOKE_MESSENGER_TOKEN}
+      SMOKE_MESSENGER_PHONE: ${SMOKE_MESSENGER_PHONE}
+      SMOKE_CHATBOT_URL: ${SMOKE_CHATBOT_URL}
+      SMOKE_CHATBOT_TOKEN: ${SMOKE_CHATBOT_TOKEN}
+    depends_on:
+      - mongo
+      - redis
+      - rabbitmq
+      - smoke-mocks
+
+  smoke-mocks:
+    build:
+      context: .
+      dockerfile: Dockerfile.smoke
+    working_dir: /app
+    command: node src/scripts/smoke/mock-integrations.mjs
+    environment:
+      NODE_ENV: development
+      SMOKE_CHATWOOT_PORT: 3101
+      SMOKE_YCLOUD_PORT: 3102
+      SMOKE_CHATBOT_PORT: 3103
+    ports:
+      - '3101:3101'
+      - '3102:3102'
+      - '3103:3103'
+
+volumes:
+  smoke_mongo_data:
+  smoke_redis_data:
