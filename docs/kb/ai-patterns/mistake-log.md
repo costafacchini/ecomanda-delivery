@@ -1,6 +1,6 @@
 # Mistake Log
 
-**Last Updated**: 2026-04-22
+**Last Updated**: 2026-04-23
 **Context**: Read at session start to avoid repeating known error patterns.
 
 When the AI is corrected, `log-mistake` appends an entry here.
@@ -42,4 +42,12 @@ not yet represented by the task list.
 **Correct**: When the user asks to make sure changes are correct first, write characterization tests for the affected code paths before editing the implementation.
 **Area**: Refactor workflow, test strategy
 **Prevention**: Treat a user request for upfront correctness checks as a test-first requirement and update the implementation plan before preparing code patches.
+**Count**: 1
+
+## [2026-04-23] Confirm existing env-driven defaults before treating them as mismatches
+
+**Wrong**: Treated the frontend proxy target as a hardcoded local-port mismatch and changed the default to `5000` without first confirming that `5001` was an intentional default chosen by the user.
+**Correct**: Before “fixing” local runtime defaults, confirm whether the current value is already an intentional env-driven convention and preserve that default unless the user asks to change it.
+**Area**: Local dev runtime, Vite proxy config, plan assumptions
+**Prevention**: When reviewing local ports or env wiring, inspect both the code and the user’s stated convention before classifying a value as inconsistent or updating the default.
 **Count**: 1

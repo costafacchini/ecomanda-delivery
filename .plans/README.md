@@ -24,6 +24,7 @@ Git-native Markdown plans for multi-step work.
 | 4 | [Use Cases](./use-cases/overview.md) | `use-cases/` | Draft | Extract business logic from controllers into dedicated use case classes; controllers become thin (validate → execute → respond) |
 | 5 | [JS → TypeScript](./js-to-ts/overview.md) | `js-to-ts/` | Draft | Incremental migration of all 249 source files (backend + client) to TypeScript using `allowJs: true` throughout |
 | 6 | [Remove PDV](./remove-pdv/overview.md) | `remove-pdv/` | Draft | Delete cart, payment (PagarMe), and order integration (Pedidos10) domain — ~80 source files, strip PDV fields from Licensee and Contact |
+| 7 | [Local Smoke Workflow](./local-smoke-workflow/overview.md) | `local-smoke-workflow/` | Complete | Hybrid Docker + host-Vite smoke workflow with deterministic demo data and provider-shaped local doubles for pre-deploy validation |
 
 ---
 

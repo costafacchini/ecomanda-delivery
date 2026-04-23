@@ -1,0 +1,18 @@
+{
+  "event": "message_created",
+  "message_type": "outgoing",
+  "content": "Smoke hello from chat",
+  "content_type": "text",
+  "conversation": {
+    "id": "smoke-conversation-123",
+    "contact_inbox": {
+      "contact_id": "smoke-contact-123"
+    },
+    "messages": [
+      {
+        "content": "Smoke hello from chat",
+        "attachments": []
+      }
+    ]
+  }
+}
