@@ -1,9 +1,10 @@
 import { v4 as uuidv4 } from 'uuid'
-import Repository from './repository.js'
+import Repository, { RepositoryMemory } from './repository.js'
 import Message from '../models/Message.js'
 import Trigger from '../models/Trigger.js'
 import { parseText } from '../helpers/ParseTriggerText.js'
 import { replace } from '../helpers/Emoji.js'
+import { TriggerRepositoryMemory } from './trigger.js'
 
 class MessageRepositoryDatabase extends Repository {
   model() {
@@ -97,4 +98,81 @@ class MessageRepositoryDatabase extends Repository {
   }
 }
 
-export { MessageRepositoryDatabase }
+class MessageRepositoryMemory extends RepositoryMemory {
+  constructor({ items = [], triggerRepository = new TriggerRepositoryMemory() } = {}) {
+    super(items)
+    this.triggerRepository = triggerRepository
+  }
+
+  async create(fields = {}) {
+    return await super.create({ number: uuidv4(), ...(fields ?? {}) })
+  }
+
+  async createInteractiveMessages(fields) {
+    const messages = []
+
+    const text = replace(fields.text)
+    const triggers = await this.triggerRepository.find(
+      { expression: text, licensee: fields.licensee },
+      { order: 'asc' },
+    )
+
+    if (triggers.length > 0) {
+      for (const trigger of triggers) {
+        messages.push(
+          await this.create({
+            ...fields,
+            kind: 'interactive',
+            text,
+            trigger: trigger._id,
+          }),
+        )
+      }
+    } else {
+      messages.push(
+        await this.create({
+          ...fields,
+          kind: 'text',
+          text,
+        }),
+      )
+    }
+
+    return messages
+  }
+
+  async createTextMessageInsteadInteractive(fields) {
+    let { kind, text, contact } = fields
+
+    if (kind === 'interactive') {
+      kind = 'text'
+      text = await parseText(text, contact)
+    }
+
+    return await this.create({ ...fields, kind, text, contact })
+  }
+
+  async createMessageToWarnAboutWindowOfWhatsassHasExpired(contact, licensee) {
+    return await this.create({
+      number: uuidv4(),
+      kind: 'text',
+      contact,
+      licensee,
+      destination: 'to-chat',
+      text: '🚨 ATENÇÃO\nO período de 24h para manter conversas expirou. Envie um Template para voltar a interagir com esse contato.',
+    })
+  }
+
+  async createMessageToWarnAboutWindowOfWhatsassIsEnding(contact, licensee) {
+    return await this.create({
+      number: uuidv4(),
+      kind: 'text',
+      contact,
+      licensee,
+      destination: 'to-chat',
+      text: '🚨 ATENÇÃO\nO período de 24h para manter conversas está quase expirando. Faltam apenas 10 minutos para encerrar.',
+    })
+  }
+}
+
+export { MessageRepositoryDatabase, MessageRepositoryMemory }

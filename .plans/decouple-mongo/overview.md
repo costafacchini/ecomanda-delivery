@@ -2,7 +2,7 @@
 
 **Created**: 2026-04-02
 **Status**: Active
-**Branch**: feature/decouple-mongo
+**Branch**: feature/decouple-mongo-phase-2
 
 ## Objective
 
@@ -48,9 +48,9 @@ Create `*RepositoryMemory` for every entity. Each stores records in a plain JS a
 
 | # | Task | Status | Files | Depends On |
 |---|------|--------|-------|------------|
-| 2.1 | Create in-memory repos for core entities: `LicenseeRepositoryMemory`, `ContactRepositoryMemory`, `MessageRepositoryMemory` | Pending | `repositories/licensee.js`, `repositories/contact.js`, `repositories/message.js` | 1.1 |
-| 2.2 | Create in-memory repos for secondary entities: `RoomRepositoryMemory`, `CartRepositoryMemory`, `OrderRepositoryMemory`, `ProductRepositoryMemory` | Pending | `repositories/room.js`, `repositories/cart.js`, `repositories/order.js`, `repositories/product.js` | 1.2 |
-| 2.3 | Create in-memory repos for lookup entities: `TemplateRepositoryMemory`, `TriggerRepositoryMemory`, `BodyRepositoryMemory`, `BackgroundjobRepositoryMemory`, `UserRepositoryMemory`, `IntegrationlogRepositoryMemory` | Pending | `repositories/template.js`, `repositories/trigger.js`, `repositories/body.js`, `repositories/backgroundjob.js`, `repositories/user.js`, `repositories/integrationlog.js` | 1.3 |
+| 2.1 | Create in-memory repos for core entities: `LicenseeRepositoryMemory`, `ContactRepositoryMemory`, `MessageRepositoryMemory` | Complete | `repositories/licensee.js`, `repositories/contact.js`, `repositories/message.js`, `repositories/memory-core.spec.js` | 1.1 |
+| 2.2 | Create in-memory repos for secondary entities: `RoomRepositoryMemory`, `CartRepositoryMemory`, `OrderRepositoryMemory`, `ProductRepositoryMemory` | Complete | `repositories/room.js`, `repositories/cart.js`, `repositories/order.js`, `repositories/product.js`, `repositories/memory-secondary.spec.js` | 1.2 |
+| 2.3 | Create in-memory repos for lookup entities: `TemplateRepositoryMemory`, `TriggerRepositoryMemory`, `BodyRepositoryMemory`, `BackgroundjobRepositoryMemory`, `UserRepositoryMemory`, `IntegrationlogRepositoryMemory` | Complete | `repositories/template.js`, `repositories/trigger.js`, `repositories/body.js`, `repositories/backgroundjob.js`, `repositories/user.js`, `repositories/integrationlog.js`, `repositories/memory-lookup.spec.js` | 1.3 |
 
 ---
 
@@ -136,3 +136,13 @@ With in-memory repos and injectable dependencies in place, replace `mongoServer`
 - [ ] Every entity has a `*RepositoryMemory` class
 - [ ] 24 service specs + 21 plugin specs no longer import or call `mongoServer`
 - [ ] All 2611 tests still pass
+
+## Current Checkpoint
+
+- Phases 1 and 2 are complete: every repository file now exposes a `*RepositoryMemory` implementation, and the Phase 2 memory specs plus the existing repository specs pass.
+- Phase 3 is the next unblocked wave: service functions still need injected repositories and `.save()` removal.
+- The plan-level done criteria still pending are:
+  - model imports still exist outside `repositories/` and `models/`, especially in services and plugins
+  - direct `.save()` calls still exist outside repository implementations
+  - service and plugin specs still use `mongoServer`
+  - the full `2611`-test suite has not been re-run after this wave

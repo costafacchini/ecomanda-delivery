@@ -1,4 +1,4 @@
-import Repository from './repository.js'
+import Repository, { RepositoryMemory } from './repository.js'
 import Integrationlog from '../models/Integrationlog.js'
 
 class IntegrationlogRepositoryDatabase extends Repository {
@@ -7,4 +7,6 @@ class IntegrationlogRepositoryDatabase extends Repository {
   }
 }
 
-export { IntegrationlogRepositoryDatabase }
+class IntegrationlogRepositoryMemory extends RepositoryMemory {}
+
+export { IntegrationlogRepositoryDatabase, IntegrationlogRepositoryMemory }

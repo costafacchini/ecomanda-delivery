@@ -1,4 +1,4 @@
-import Repository from './repository.js'
+import Repository, { RepositoryMemory, matchesFilter } from './repository.js'
 import Cart from '../models/Cart.js'
 
 class CartRepositoryDatabase extends Repository {
@@ -30,4 +30,13 @@ class CartRepositoryDatabase extends Repository {
   }
 }
 
-export { CartRepositoryDatabase }
+class CartRepositoryMemory extends RepositoryMemory {
+  async delete(params = {}) {
+    const recordsToKeep = this.items.filter((item) => !matchesFilter(item, params ?? {}))
+    this.items.splice(0, this.items.length, ...recordsToKeep)
+
+    return await Promise.resolve({ acknowledged: true })
+  }
+}
+
+export { CartRepositoryDatabase, CartRepositoryMemory }

@@ -1,4 +1,4 @@
-import Repository from './repository.js'
+import Repository, { RepositoryMemory, matchesFilter } from './repository.js'
 import Template from '../models/Template.js'
 
 class TemplateRepositoryDatabase extends Repository {
@@ -17,6 +17,15 @@ class TemplateRepositoryDatabase extends Repository {
   }
 }
 
+class TemplateRepositoryMemory extends RepositoryMemory {
+  async delete(params = {}) {
+    const recordsToKeep = this.items.filter((item) => !matchesFilter(item, params ?? {}))
+    this.items.splice(0, this.items.length, ...recordsToKeep)
+
+    return await Promise.resolve({ acknowledged: true })
+  }
+}
+
 async function destroyAllTemplates() {
   const templateRepository = new TemplateRepositoryDatabase()
   await templateRepository.delete({})
@@ -27,4 +36,4 @@ async function createTemplate(fields) {
   return await templateRepository.create(fields)
 }
 
-export { TemplateRepositoryDatabase, createTemplate, destroyAllTemplates }
+export { TemplateRepositoryDatabase, TemplateRepositoryMemory, createTemplate, destroyAllTemplates }

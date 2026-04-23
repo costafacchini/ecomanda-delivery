@@ -51,3 +51,11 @@ not yet represented by the task list.
 **Area**: Local dev runtime, Vite proxy config, plan assumptions
 **Prevention**: When reviewing local ports or env wiring, inspect both the code and the user’s stated convention before classifying a value as inconsistent or updating the default.
 **Count**: 1
+
+## [2026-04-23] When a plan branch has already been merged, create a fresh branch for the next execution wave
+
+**Wrong**: Treated the original `feature/decouple-mongo` branch in the plan as the branch to continue working from even after the user had already merged that work.
+**Correct**: Before executing the next plan wave, confirm whether the recorded branch is still active; if it was already merged, create a new branch from `main` for the next phase and update the plan reference.
+**Area**: Plan execution workflow, git branching
+**Prevention**: During plan preflight, check both the plan branch field and the user’s current branch state, and treat merged historical branches as stale execution metadata that must be replaced before coding.
+**Count**: 1

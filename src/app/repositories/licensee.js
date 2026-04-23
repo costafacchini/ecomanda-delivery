@@ -1,4 +1,4 @@
-import Repository from './repository.js'
+import Repository, { RepositoryMemory } from './repository.js'
 import Licensee from '../models/Licensee.js'
 
 class LicenseeRepositoryDatabase extends Repository {
@@ -23,4 +23,6 @@ class LicenseeRepositoryDatabase extends Repository {
   }
 }
 
-export { LicenseeRepositoryDatabase }
+class LicenseeRepositoryMemory extends RepositoryMemory {}
+
+export { LicenseeRepositoryDatabase, LicenseeRepositoryMemory }
