@@ -51,3 +51,27 @@ not yet represented by the task list.
 **Area**: Local dev runtime, Vite proxy config, plan assumptions
 **Prevention**: When reviewing local ports or env wiring, inspect both the code and the user’s stated convention before classifying a value as inconsistent or updating the default.
 **Count**: 1
+
+## [2026-04-23] When a plan branch has already been merged, create a fresh branch for the next execution wave
+
+**Wrong**: Treated the original `feature/decouple-mongo` branch in the plan as the branch to continue working from even after the user had already merged that work.
+**Correct**: Before executing the next plan wave, confirm whether the recorded branch is still active; if it was already merged, create a new branch from `main` for the next phase and update the plan reference.
+**Area**: Plan execution workflow, git branching
+**Prevention**: During plan preflight, check both the plan branch field and the user’s current branch state, and treat merged historical branches as stale execution metadata that must be replaced before coding.
+**Count**: 1
+
+## [2026-04-23] Re-run controller error-path specs after repository create refactors
+
+**Wrong**: Changed repository `create()` implementations to use `Model.create(...)` and reported the decouple-mongo wave as validated without rerunning the controller specs that mock `Model.prototype.save` to force create failures.
+**Correct**: Preserve compatibility with existing error-path tests when refactoring repository persistence, or rerun and update those specs immediately before claiming the wave is green.
+**Area**: Repository refactors, controller regression coverage
+**Prevention**: After changing create/save semantics in repositories, explicitly rerun any specs that mock `Model.prototype.save` or `repository.save()` and treat those paths as required validation, not optional follow-up.
+**Count**: 1
+
+## [2026-04-24] Reproduce the real lint command before declaring a lint-clean commit
+
+**Wrong**: Reported the decouple-mongo wave as lint-clean based on a commit-time diff-scoped check path that did not reproduce the repo's actual lint command and missed `require-await` errors introduced in migrated spec hooks.
+**Correct**: Before reporting lint as clean, run the same ESLint command the branch/CI actually uses for the touched area and verify that the exit status is free of errors, not just that a helper command produced no output.
+**Area**: Validation workflow, ESLint, test-spec migrations
+**Prevention**: When a wave changes many files or rewrites test setup, always rerun the canonical lint command for the affected directories after the final edit pass, even if a narrower pre-commit scan looked clean earlier.
+**Count**: 1

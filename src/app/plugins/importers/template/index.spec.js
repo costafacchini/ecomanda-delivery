@@ -3,16 +3,16 @@ import { Dialog } from '@plugins/messengers/Dialog.js'
 import { TemplatesImporter } from '@plugins/importers/template/index.js'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { template as templateFactory } from '@factories/template'
-import mongoServer from '../../../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('TemplatesImporter', () => {
-  beforeAll(async () => {
-    await mongoServer.connect()
+  beforeAll(() => {
+    installMemoryRepositories()
   })
 
-  afterAll(async () => {
-    await mongoServer.disconnect()
+  afterAll(() => {
+    resetMemoryRepositories()
   })
 
   it('imports the templates of whatsapp', async () => {

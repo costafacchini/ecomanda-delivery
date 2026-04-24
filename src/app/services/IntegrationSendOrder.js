@@ -1,10 +1,9 @@
 import { createIntegrator } from '../plugins/integrations/factory.js'
 import { OrderRepositoryDatabase } from '../repositories/order.js'
 
-async function sendOrder(data) {
+async function sendOrder(data, { orderRepository = new OrderRepositoryDatabase() } = {}) {
   const { orderId } = data
 
-  const orderRepository = new OrderRepositoryDatabase()
   const order = await orderRepository.findFirst({ _id: orderId }, ['licensee'])
 
   const integrator = createIntegrator(order.licensee.pedidos10_integrator)
@@ -16,7 +15,7 @@ async function sendOrder(data) {
     order.integration_error = err.toString()
   }
 
-  await order.save()
+  await orderRepository.save(order)
 }
 
 export { sendOrder }

@@ -1,7 +1,7 @@
 import { Chatwoot } from './Chatwoot.js'
 import Room from '@models/Room'
 import Trigger from '@models/Trigger'
-import mongoServer from '../../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { room as roomFactory } from '@factories/room'
@@ -21,7 +21,7 @@ describe('Chatwoot plugin', () => {
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
 
   beforeEach(async () => {
-    await mongoServer.connect()
+    installMemoryRepositories()
     jest.clearAllMocks()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
@@ -33,8 +33,8 @@ describe('Chatwoot plugin', () => {
     )
   })
 
-  afterEach(async () => {
-    await mongoServer.disconnect()
+  afterEach(() => {
+    resetMemoryRepositories()
   })
 
   describe('#responseToMessages', () => {

@@ -1,15 +1,22 @@
+import Repository, { RepositoryMemory } from './repository.js'
 import Product from '../models/Product.js'
 
-async function createProduct(fields) {
-  const product = new Product({
-    ...fields,
-  })
+class ProductRepositoryDatabase extends Repository {
+  model() {
+    return Product
+  }
+}
 
-  return await product.save()
+class ProductRepositoryMemory extends RepositoryMemory {}
+
+async function createProduct(fields) {
+  const productRepository = new ProductRepositoryDatabase()
+  return await productRepository.create(fields)
 }
 
 async function getProductBy(filter) {
-  return await Product.findOne(filter)
+  const productRepository = new ProductRepositoryDatabase()
+  return await productRepository.findFirst(filter)
 }
 
-export { createProduct, getProductBy }
+export { ProductRepositoryDatabase, ProductRepositoryMemory, createProduct, getProductBy }

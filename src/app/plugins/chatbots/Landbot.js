@@ -2,24 +2,58 @@ import { replace } from '../../helpers/Emoji.js'
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
 import { v4 as uuidv4 } from 'uuid'
 import request from '../../services/request.js'
-import Room from '../../models/Room.js'
-import Trigger from '../../models/Trigger.js'
 import { createCartPlugin } from '../../plugins/carts/factory.js'
 import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files.js'
 import { ContactRepositoryDatabase } from '../../repositories/contact.js'
 import { MessageRepositoryDatabase } from '../../repositories/message.js'
+import { RoomRepositoryDatabase } from '../../repositories/room.js'
+import { TriggerRepositoryDatabase } from '../../repositories/trigger.js'
+import Repository from '../../repositories/repository.js'
 
-const closeRoom = async (contact) => {
-  const room = await Room.findOne({ contact: contact._id, closed: false })
+const closeRoom = async (contact, roomRepository) => {
+  const room = await roomRepository.findFirst({ contact: contact._id, closed: false })
   if (room) {
     room.closed = true
-    await room.save()
+    await roomRepository.save(room)
   }
 }
 
 class Landbot {
-  constructor(licensee) {
+  constructor(licensee, { contactRepository, messageRepository, roomRepository, triggerRepository } = {}) {
     this.licensee = licensee
+    this._contactRepository = contactRepository
+    this._messageRepository = messageRepository
+    this._roomRepository = roomRepository
+    this._triggerRepository = triggerRepository
+  }
+
+  get contactRepository() {
+    this._contactRepository ??= new ContactRepositoryDatabase()
+    if (typeof this._contactRepository.save !== 'function') {
+      this._contactRepository.save = Repository.prototype.save.bind(this._contactRepository)
+    }
+    return this._contactRepository
+  }
+
+  get messageRepository() {
+    this._messageRepository ??= new MessageRepositoryDatabase()
+    if (typeof this._messageRepository.save !== 'function') {
+      this._messageRepository.save = Repository.prototype.save.bind(this._messageRepository)
+    }
+    return this._messageRepository
+  }
+
+  get roomRepository() {
+    this._roomRepository ??= new RoomRepositoryDatabase()
+    if (typeof this._roomRepository.save !== 'function') {
+      this._roomRepository.save = Repository.prototype.save.bind(this._roomRepository)
+    }
+    return this._roomRepository
+  }
+
+  get triggerRepository() {
+    this._triggerRepository ??= new TriggerRepositoryDatabase()
+    return this._triggerRepository
   }
 
   async responseToMessages(responseBody) {
@@ -29,8 +63,7 @@ class Landbot {
 
     const normalizePhone = new NormalizePhone(customer.number)
 
-    const contactRepository = new ContactRepositoryDatabase()
-    const contact = await contactRepository.findFirst({
+    const contact = await this.contactRepository.findFirst({
       number: normalizePhone.number,
       type: normalizePhone.type,
       licensee: this.licensee._id,
@@ -43,7 +76,7 @@ class Landbot {
 
     if (contact.landbotId !== customer.id) {
       contact.landbotId = customer.id
-      await contact.save()
+      await this.contactRepository.save(contact)
     }
 
     const processedMessages = []
@@ -61,13 +94,15 @@ class Landbot {
 
       const text = replace(message.message)
 
-      const messageRepository = new MessageRepositoryDatabase()
       if (kind === 'text') {
-        const triggers = await Trigger.find({ expression: text, licensee: this.licensee._id }).sort({ order: 'asc' })
+        const triggers = await this.triggerRepository.find(
+          { expression: text, licensee: this.licensee._id },
+          { order: 'asc' },
+        )
         if (triggers.length > 0) {
           for (const trigger of triggers) {
             processedMessages.push(
-              await messageRepository.create({
+              await this.messageRepository.create({
                 number: uuidv4(),
                 text,
                 kind: 'interactive',
@@ -80,7 +115,7 @@ class Landbot {
           }
         } else {
           processedMessages.push(
-            await messageRepository.create({
+            await this.messageRepository.create({
               number: uuidv4(),
               text,
               kind,
@@ -110,7 +145,7 @@ class Landbot {
           messageToSend.longitude = message.longitude
         }
 
-        processedMessages.push(await messageRepository.create(messageToSend))
+        processedMessages.push(await this.messageRepository.create(messageToSend))
       }
     }
 
@@ -139,8 +174,7 @@ class Landbot {
 
     const normalizePhone = new NormalizePhone(number)
 
-    const contactRepository = new ContactRepositoryDatabase()
-    const contact = await contactRepository.findFirst({
+    const contact = await this.contactRepository.findFirst({
       number: normalizePhone.number,
       type: normalizePhone.type,
       licensee: this.licensee._id,
@@ -160,15 +194,14 @@ class Landbot {
         contact.email = email
       }
 
-      await contact.save()
+      await this.contactRepository.save(contact)
     }
 
     if (iniciar_nova_conversa && iniciar_nova_conversa === 'true') {
-      await closeRoom(contact)
+      await closeRoom(contact, this.roomRepository)
     }
 
-    const messageRepository = new MessageRepositoryDatabase()
-    return await messageRepository.create({
+    return await this.messageRepository.create({
       number: uuidv4(),
       text: observacao,
       kind: 'text',
@@ -180,8 +213,7 @@ class Landbot {
   }
 
   async sendMessage(messageId, url, token) {
-    const messageRepository = new MessageRepositoryDatabase()
-    const messageToSend = await messageRepository.findFirst({ _id: messageId }, ['contact'])
+    const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
 
     const customer = {
       name: messageToSend.contact.name,
@@ -228,7 +260,7 @@ class Landbot {
 
     if (response.status === 201) {
       messageToSend.sended = true
-      await messageToSend.save()
+      await this.messageRepository.save(messageToSend)
       console.info(
         `Mensagem ${messageToSend._id} enviada para Landbot com sucesso!
            status: ${response.status}
@@ -236,7 +268,7 @@ class Landbot {
       )
     } else {
       messageToSend.error = JSON.stringify(response.data)
-      await messageToSend.save()
+      await this.messageRepository.save(messageToSend)
       console.error(
         `Mensagem ${messageToSend._id} não enviada para Landbot.
            status: ${response.status}
@@ -246,8 +278,7 @@ class Landbot {
   }
 
   async dropConversation(contactId) {
-    const contactRepository = new ContactRepositoryDatabase()
-    const contact = await contactRepository.findFirst({ _id: contactId })
+    const contact = await this.contactRepository.findFirst({ _id: contactId })
 
     const headers = {
       Authorization: `Token ${this.licensee.chatbotApiToken}`,

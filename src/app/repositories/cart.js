@@ -1,4 +1,4 @@
-import Repository from './repository.js'
+import Repository, { RepositoryMemory, matchesFilter } from './repository.js'
 import Cart from '../models/Cart.js'
 
 class CartRepositoryDatabase extends Repository {
@@ -30,4 +30,68 @@ class CartRepositoryDatabase extends Repository {
   }
 }
 
-export { CartRepositoryDatabase }
+class CartRepositoryMemory extends RepositoryMemory {
+  hydrate(record) {
+    const hydratedRecord = super.hydrate(record)
+
+    if (!hydratedRecord) {
+      return hydratedRecord
+    }
+
+    if (typeof hydratedRecord.calculateTotal !== 'function') {
+      Object.defineProperty(hydratedRecord, 'calculateTotal', {
+        configurable: true,
+        enumerable: false,
+        writable: true,
+        value: Cart.prototype.calculateTotal,
+      })
+    }
+
+    if (typeof hydratedRecord.calculateTotalItem !== 'function') {
+      Object.defineProperty(hydratedRecord, 'calculateTotalItem', {
+        configurable: true,
+        enumerable: false,
+        writable: true,
+        value: Cart.prototype.calculateTotalItem,
+      })
+    }
+
+    return hydratedRecord
+  }
+
+  async create(fields = {}) {
+    return await super.create(this.normalizeCartFields(fields))
+  }
+
+  async save(document) {
+    Object.assign(document, this.normalizeCartFields(document))
+    return await super.save(document)
+  }
+
+  async delete(params = {}) {
+    const recordsToKeep = this.items.filter((item) => !matchesFilter(item, params ?? {}))
+    this.items.splice(0, this.items.length, ...recordsToKeep)
+
+    return await Promise.resolve({ acknowledged: true })
+  }
+
+  normalizeCartFields(fields = {}) {
+    const normalizedFields = {
+      products: [],
+      concluded: false,
+      ...(fields ?? {}),
+    }
+
+    normalizedFields.products = (normalizedFields.products ?? []).map((product) => ({
+      additionals: [],
+      ...(product ?? {}),
+    }))
+
+    const cart = this.hydrate(normalizedFields)
+    cart.total = cart.calculateTotal()
+
+    return cart
+  }
+}
+
+export { CartRepositoryDatabase, CartRepositoryMemory }

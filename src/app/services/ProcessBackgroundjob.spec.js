@@ -1,6 +1,6 @@
 import { processBackgroundjob } from './ProcessBackgroundjob.js'
 import Backgroundjob from '@models/Backgroundjob'
-import mongoServer from '.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { cart as cartFactory } from '@factories/cart'
 import { contact as contactFactory } from '@factories/contact'
@@ -10,13 +10,13 @@ import { CartRepositoryDatabase } from '@repositories/cart'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 
 describe('processBackgroundjob', () => {
-  beforeEach(async () => {
-    await mongoServer.connect()
+  beforeEach(() => {
+    installMemoryRepositories()
     jest.clearAllMocks()
   })
 
-  afterEach(async () => {
-    await mongoServer.disconnect()
+  afterEach(() => {
+    resetMemoryRepositories()
   })
 
   describe('when backgroundjob has cart_id', () => {

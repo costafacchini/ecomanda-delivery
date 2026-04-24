@@ -113,33 +113,39 @@ cartSchema.pre('save', function () {
 cartSchema.post('save', async function (cart) {
   // TODO: essa lógica deveria estar em um serviço sendo chamada antes de salvar e não aqui
   const contact = await Contact.findById(cart.contact)
+  const fieldsToUpdate = {}
+
   if (cart.address && cart.address !== '' && contact.address !== cart.address) {
-    contact.address = cart.address
+    fieldsToUpdate.address = cart.address
   }
   if (cart.address_number && cart.address_number !== '' && contact.address_number !== cart.address_number) {
-    contact.address_number = cart.address_number
+    fieldsToUpdate.address_number = cart.address_number
   }
   if (
     cart.address_complement &&
     cart.address_complement !== '' &&
     contact.address_complement !== cart.address_complement
   ) {
-    contact.address_complement = cart.address_complement
+    fieldsToUpdate.address_complement = cart.address_complement
   }
   if (cart.neighborhood && cart.neighborhood !== '' && contact.neighborhood !== cart.neighborhood) {
-    contact.neighborhood = cart.neighborhood
+    fieldsToUpdate.neighborhood = cart.neighborhood
   }
   if (cart.city && cart.city !== '' && contact.city !== cart.city) {
-    contact.city = cart.city
+    fieldsToUpdate.city = cart.city
   }
   if (cart.cep && cart.cep !== '' && contact.cep !== cart.cep) {
-    contact.cep = cart.cep
+    fieldsToUpdate.cep = cart.cep
   }
   if (cart.uf && cart.uf !== '' && contact.uf !== cart.uf) {
-    contact.uf = cart.uf
+    fieldsToUpdate.uf = cart.uf
   }
 
-  await contact.save()
+  if (Object.keys(fieldsToUpdate).length === 0) {
+    return
+  }
+
+  await Contact.updateOne({ _id: contact._id }, { $set: fieldsToUpdate }, { runValidators: true })
 })
 
 cartSchema.set('toJSON', {

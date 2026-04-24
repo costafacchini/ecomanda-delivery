@@ -1,6 +1,6 @@
 import { sendMessageToChatbot } from './SendMessageToChatbot.js'
 import { Landbot } from '../plugins/chatbots/Landbot.js'
-import mongoServer from '.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { message as messageFactory } from '@factories/message'
@@ -11,13 +11,13 @@ import { MessageRepositoryDatabase } from '@repositories/message'
 describe('sendMessageToChatbot', () => {
   const landbotSendMessageSpy = jest.spyOn(Landbot.prototype, 'sendMessage').mockImplementation(() => {})
 
-  beforeEach(async () => {
+  beforeEach(() => {
     jest.clearAllMocks()
-    await mongoServer.connect()
+    installMemoryRepositories()
   })
 
-  afterEach(async () => {
-    await mongoServer.disconnect()
+  afterEach(() => {
+    resetMemoryRepositories()
   })
 
   it('asks the plugin to send message to chatbot', async () => {

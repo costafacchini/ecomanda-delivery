@@ -1,7 +1,7 @@
 import { transformChatBody } from './ChatMessage.js'
 import Body from '@models/Body'
 import { Rocketchat } from '../plugins/chats/Rocketchat.js'
-import mongoServer from '.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { body as bodyFactory } from '@factories/body'
 import { contact as contactFactory } from '@factories/contact'
@@ -12,7 +12,7 @@ describe('transformChatBody', () => {
   let licensee
 
   beforeEach(async () => {
-    await mongoServer.connect()
+    installMemoryRepositories()
     jest.clearAllMocks()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
@@ -27,8 +27,8 @@ describe('transformChatBody', () => {
     )
   })
 
-  afterEach(async () => {
-    await mongoServer.disconnect()
+  afterEach(() => {
+    resetMemoryRepositories()
   })
 
   it('responds with action to dispatcher action of plugin and delete body', async () => {

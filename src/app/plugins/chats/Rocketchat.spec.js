@@ -1,7 +1,7 @@
 import { Rocketchat } from './Rocketchat.js'
 import Room from '@models/Room'
 import Trigger from '@models/Trigger'
-import mongoServer from '../../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { room as roomFactory } from '@factories/room'
@@ -21,14 +21,14 @@ describe('Rocketchat plugin', () => {
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
 
   beforeEach(async () => {
-    await mongoServer.connect()
+    installMemoryRepositories()
     jest.clearAllMocks()
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
-  afterEach(async () => {
-    await mongoServer.disconnect()
+  afterEach(() => {
+    resetMemoryRepositories()
   })
 
   describe('#responseToMessage', () => {

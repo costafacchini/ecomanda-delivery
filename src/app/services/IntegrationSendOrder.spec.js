@@ -1,6 +1,6 @@
 import { sendOrder } from './IntegrationSendOrder.js'
 import Licensee from '@models/Licensee'
-import mongoServer from '.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { OrderRepositoryDatabase } from '@repositories/order'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { order as orderFactory } from '@factories/order'
@@ -9,13 +9,13 @@ import { IntegratorBase } from '../plugins/integrations/IntegratorBase.js'
 describe('sendOrder', () => {
   const integratorSendOrderFnSpy = jest.spyOn(IntegratorBase.prototype, 'sendOrder')
 
-  beforeEach(async () => {
-    await mongoServer.connect()
+  beforeEach(() => {
+    installMemoryRepositories()
     jest.clearAllMocks()
   })
 
-  afterEach(async () => {
-    await mongoServer.disconnect()
+  afterEach(() => {
+    resetMemoryRepositories()
   })
 
   it('sends order to integrator', async () => {

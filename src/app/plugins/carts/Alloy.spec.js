@@ -1,5 +1,5 @@
 import { Alloy } from './Alloy.js'
-import mongoServer from '../../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { advanceTo, clear } from 'jest-date-mock'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
@@ -9,14 +9,14 @@ import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
 
 describe('Alloy plugin', () => {
-  beforeEach(async () => {
-    await mongoServer.connect()
+  beforeEach(() => {
+    installMemoryRepositories()
     jest.clearAllMocks()
     advanceTo(new Date('2021-01-05T10:25:47.000Z'))
   })
 
-  afterEach(async () => {
-    await mongoServer.disconnect()
+  afterEach(() => {
+    resetMemoryRepositories()
     clear()
   })
 

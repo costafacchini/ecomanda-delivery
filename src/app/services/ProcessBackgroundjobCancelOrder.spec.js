@@ -1,6 +1,6 @@
 import { processBackgroundjobCancelOrder } from './ProcessBackgroundjobCancelOrder.js'
 import Backgroundjob from '@models/Backgroundjob'
-import mongoServer from '.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { backgroundjob as backgroundjobFactory } from '@factories/backgroundjob'
 import { cart as cartFactory } from '@factories/cart'
@@ -11,13 +11,13 @@ import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
 
 describe('processBackgroundjobCancelOrder', () => {
-  beforeEach(async () => {
-    await mongoServer.connect()
+  beforeEach(() => {
+    installMemoryRepositories()
     jest.clearAllMocks()
   })
 
-  afterEach(async () => {
-    await mongoServer.disconnect()
+  afterEach(() => {
+    resetMemoryRepositories()
   })
 
   it('calls to pagar.me API to cancel charge payment', async () => {

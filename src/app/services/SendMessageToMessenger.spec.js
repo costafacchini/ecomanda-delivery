@@ -1,6 +1,6 @@
 import { sendMessageToMessenger } from './SendMessageToMessenger.js'
 import { Dialog } from '../plugins/messengers/Dialog.js'
-import mongoServer from '.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { message as messageFactory } from '@factories/message'
@@ -11,13 +11,13 @@ import { MessageRepositoryDatabase } from '@repositories/message'
 describe('sendMessageToMessenger', () => {
   const dialogSendMessageSpy = jest.spyOn(Dialog.prototype, 'sendMessage').mockImplementation(() => {})
 
-  beforeEach(async () => {
-    await mongoServer.connect()
+  beforeEach(() => {
+    installMemoryRepositories()
     jest.clearAllMocks()
   })
 
-  afterEach(async () => {
-    await mongoServer.disconnect()
+  afterEach(() => {
+    resetMemoryRepositories()
   })
 
   it('asks the plugin to send message to messenger', async () => {

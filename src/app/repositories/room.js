@@ -1,4 +1,4 @@
-import Repository from './repository.js'
+import Repository, { RepositoryMemory } from './repository.js'
 import Room from '../models/Room.js'
 
 class RoomRepositoryDatabase extends Repository {
@@ -11,4 +11,13 @@ class RoomRepositoryDatabase extends Repository {
   }
 }
 
-export { RoomRepositoryDatabase }
+class RoomRepositoryMemory extends RepositoryMemory {
+  async create(fields = {}) {
+    return await super.create({
+      closed: false,
+      ...(fields ?? {}),
+    })
+  }
+}
+
+export { RoomRepositoryDatabase, RoomRepositoryMemory }

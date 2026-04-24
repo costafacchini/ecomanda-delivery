@@ -5,13 +5,22 @@ import { Parser } from './PagarMe/Parser.js'
 import { Card } from './PagarMe/Card.js'
 
 class PagarMe {
-  constructor(licensee) {
+  constructor(
+    licensee,
+    {
+      recipient = new Recipient(),
+      customer = new Customer(),
+      payment = new Payment(),
+      parser = new Parser(),
+      card = new Card(),
+    } = {},
+  ) {
     this.licensee = licensee
-    this.recipient = new Recipient()
-    this.customer = new Customer()
-    this.payment = new Payment()
-    this.parser = new Parser()
-    this.card = new Card()
+    this.recipient = recipient
+    this.customer = customer
+    this.payment = payment
+    this.parser = parser
+    this.card = card
   }
 }
 

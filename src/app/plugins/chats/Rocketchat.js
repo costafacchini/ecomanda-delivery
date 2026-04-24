@@ -1,9 +1,7 @@
 import { replace } from '../../helpers/Emoji.js'
-import Room from '../../models/Room.js'
 import request from '../../services/request.js'
 import { ChatsBase } from './Base.js'
-import { ContactRepositoryDatabase } from '../../repositories/contact.js'
-import { MessageRepositoryDatabase } from '../../repositories/message.js'
+import { RoomRepositoryDatabase } from '../../repositories/room.js'
 
 const createVisitor = async (contact, token, url) => {
   const body = {
@@ -23,7 +21,7 @@ const createVisitor = async (contact, token, url) => {
   return response.data.success === true
 }
 
-const createRoom = async (contact, token, url) => {
+const createRoom = async (contact, token, url, roomRepository) => {
   const response = await request.get(`${url}/api/v1/livechat/room?token=${token}`)
 
   if (response.data.success !== true) {
@@ -31,7 +29,7 @@ const createRoom = async (contact, token, url) => {
     return
   }
 
-  const room = await Room.create({
+  const room = await roomRepository.create({
     roomId: response.data.room._id,
     contact: contact._id,
     token: token,
@@ -70,8 +68,14 @@ const formatMessage = (message, contact) => {
 }
 
 class Rocketchat extends ChatsBase {
-  constructor(licensee) {
-    super(licensee)
+  constructor(licensee, { roomRepository, contactRepository, messageRepository, ...dependencies } = {}) {
+    super(licensee, { contactRepository, messageRepository, ...dependencies })
+    this._roomRepository = roomRepository
+  }
+
+  get roomRepository() {
+    this._roomRepository ??= new RoomRepositoryDatabase()
+    return this._roomRepository
   }
 
   action(responseBody) {
@@ -92,7 +96,7 @@ class Rocketchat extends ChatsBase {
       return []
     }
 
-    const room = await Room.findOne({ roomId: responseBody._id }).populate('contact')
+    const room = await this.roomRepository.findFirst({ roomId: responseBody._id })
     if (!room) {
       this.messageParsed = null
       return
@@ -122,28 +126,24 @@ class Rocketchat extends ChatsBase {
   }
 
   async transfer(messageId, url) {
-    const messageRepository = new MessageRepositoryDatabase()
-    const messageToSend = await messageRepository.findFirst({ _id: messageId }, ['contact'])
-
-    const contactRepository = new ContactRepositoryDatabase()
-    const contact = await contactRepository.findFirst({ _id: messageToSend.contact._id })
+    const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
+    const contact = await this.contactRepository.findFirst({ _id: messageToSend.contact._id })
 
     contact.talkingWithChatBot = false
-    await contact.save()
+    await this.contactRepository.save(contact)
 
     await this.sendMessage(messageId, url)
   }
 
   async sendMessage(messageId, url) {
-    const messageRepository = new MessageRepositoryDatabase()
-    const messageToSend = await messageRepository.findFirst({ _id: messageId }, ['contact'])
-    const openRoom = await Room.findOne({ contact: messageToSend.contact, closed: false })
+    const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
+    const openRoom = await this.roomRepository.findFirst({ contact: messageToSend.contact, closed: false })
     let room = openRoom
 
     if (!room) {
       const token = messageToSend.contact._id.toString()
       if ((await createVisitor(messageToSend.contact, token, url)) === true) {
-        room = await createRoom(messageToSend.contact, token, url)
+        room = await createRoom(messageToSend.contact, token, url, this.roomRepository)
         if (!room) {
           return
         }
@@ -162,7 +162,7 @@ class Rocketchat extends ChatsBase {
 
     if (response.data.success === true) {
       messageToSend.sended = true
-      await messageToSend.save()
+      await this.messageRepository.save(messageToSend)
 
       console.info(`Mensagem ${messageToSend._id} enviada para Rocketchat com sucesso!`)
     } else {
@@ -171,10 +171,10 @@ class Rocketchat extends ChatsBase {
         : JSON.stringify(response.data)
       if (messageToSend.error.includes('room-closed')) {
         room.closed = true
-        await room.save()
+        await this.roomRepository.save(room)
         messageToSend.room = null
       }
-      await messageToSend.save()
+      await this.messageRepository.save(messageToSend)
 
       if (messageToSend.error.includes('room-closed')) {
         await this.sendMessage(messageToSend._id, url)
@@ -187,22 +187,19 @@ class Rocketchat extends ChatsBase {
   }
 
   async closeChat(messageId) {
-    const messageRepository = new MessageRepositoryDatabase()
-    const message = await messageRepository.findFirst({ _id: messageId }, ['contact', 'licensee', 'room'])
+    const message = await this.messageRepository.findFirst({ _id: messageId }, ['contact', 'licensee', 'room'])
     const licensee = message.licensee
 
-    const contactRepository = new ContactRepositoryDatabase()
-    const contact = await contactRepository.findFirst({ _id: message.contact._id })
+    const contact = await this.contactRepository.findFirst({ _id: message.contact._id })
 
-    const room = await Room.findById(message.room._id)
+    const room = await this.roomRepository.findFirst({ _id: message.room._id })
     const messages = []
 
     room.closed = true
-    await room.save()
+    await this.roomRepository.save(room)
 
     if (licensee.messageOnCloseChat) {
-      const messageRepository = new MessageRepositoryDatabase()
-      const messagesCloseChat = await messageRepository.createInteractiveMessages({
+      const messagesCloseChat = await this.messageRepository.createInteractiveMessages({
         kind: 'text',
         text: licensee.messageOnCloseChat,
         licensee,
@@ -215,7 +212,7 @@ class Rocketchat extends ChatsBase {
 
     if (licensee.useChatbot) {
       contact.talkingWithChatBot = true
-      await contact.save()
+      await this.contactRepository.save(contact)
     }
 
     return messages

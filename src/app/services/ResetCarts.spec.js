@@ -1,5 +1,5 @@
 import { resetCarts } from './ResetCarts.js'
-import mongoServer from '.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licenseeComplete as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { cart as cartFactory } from '@factories/cart'
@@ -11,13 +11,13 @@ import moment from 'moment-timezone'
 describe('resetCarts', () => {
   jest.spyOn(global.console, 'info').mockImplementation()
 
-  beforeEach(async () => {
-    await mongoServer.connect()
+  beforeEach(() => {
+    installMemoryRepositories()
     jest.clearAllMocks()
   })
 
-  afterEach(async () => {
-    await mongoServer.disconnect()
+  afterEach(() => {
+    resetMemoryRepositories()
   })
 
   it('updates expired open carts through the cart repository', async () => {

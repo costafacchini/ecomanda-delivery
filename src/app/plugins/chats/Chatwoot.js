@@ -1,7 +1,6 @@
 import request from '../../services/request.js'
 import { ChatsBase } from './Base.js'
 import { RoomRepositoryDatabase } from '../../repositories/room.js'
-import { ContactRepositoryDatabase } from '../../repositories/contact.js'
 import path from 'path'
 import mime from 'mime-types'
 
@@ -112,9 +111,14 @@ const formatMessage = (message, contact) => {
 }
 
 class Chatwoot extends ChatsBase {
-  constructor(licensee, { roomRepository = new RoomRepositoryDatabase() } = {}) {
-    super(licensee)
-    this.roomRepository = roomRepository
+  constructor(licensee, { roomRepository, contactRepository, messageRepository, ...dependencies } = {}) {
+    super(licensee, { contactRepository, messageRepository, ...dependencies })
+    this._roomRepository = roomRepository
+  }
+
+  get roomRepository() {
+    this._roomRepository ??= new RoomRepositoryDatabase()
+    return this._roomRepository
   }
 
   action(responseBody) {
@@ -234,7 +238,7 @@ class Chatwoot extends ChatsBase {
     const contact = await this.contactRepository.findFirst({ _id: messageToSend.contact._id })
 
     contact.talkingWithChatBot = false
-    await contact.save()
+    await this.contactRepository.save(contact)
 
     await this.sendMessage(messageId, url)
   }
@@ -267,7 +271,7 @@ class Chatwoot extends ChatsBase {
 
     if (!messageToSend.contact.chatwootSourceId && !messageToSend.contact.chatwootId) {
       messageToSend.error = 'Chatwoot - erro: Não foi possível encontrar ou criar o contato na Chatwoot!'
-      await messageToSend.save()
+      await this.messageRepository.save(messageToSend)
 
       return
     }
@@ -286,7 +290,7 @@ class Chatwoot extends ChatsBase {
       if (!room) {
         messageToSend.error =
           'Chatwoot - erro: Não foi possível criar a conversa na Chatwoot! Você vai encontrar mais detalhes nos logs do servidor.'
-        await messageToSend.save()
+        await this.messageRepository.save(messageToSend)
 
         return
       }
@@ -313,7 +317,7 @@ class Chatwoot extends ChatsBase {
       if (!room) {
         messageToSend.error =
           'Chatwoot - erro 2: Não foi possível criar a conversa na Chatwoot! Você vai encontrar mais detalhes nos logs do servidor.'
-        await messageToSend.save()
+        await this.messageRepository.save(messageToSend)
 
         return
       }
@@ -347,7 +351,7 @@ class Chatwoot extends ChatsBase {
 
     if (licensee.useChatbot) {
       contact.talkingWithChatBot = true
-      await contact.save()
+      await this.contactRepository.save(contact)
     }
 
     return messages
@@ -381,7 +385,7 @@ class Chatwoot extends ChatsBase {
       if (!fileResponse || !fileResponse.data) {
         console.error('Chatwoot - erro: Erro: fileResponse ou fileResponse.data é null/undefined', fileResponse)
         message.error = 'Chatwoot - erro: Erro ao baixar arquivo: resposta inválida'
-        await message.save()
+        await this.messageRepository.save(message)
         return false
       }
 
@@ -454,20 +458,19 @@ class Chatwoot extends ChatsBase {
       message.sended = true
       message.payload = JSON.stringify(response.data)
       message.messageChatId = response.data?.id
-      await message.save()
+      await this.messageRepository.save(message)
 
       console.info(`Chatwoot: Mensagem ${message._id} enviada para Chatwoot com sucesso!`)
       return true
     } else {
       message.error = `mensagem: ${JSON.stringify(response.data)}`
-      await message.save()
+      await this.messageRepository.save(message)
       if (response.data.error === 'Resource could not be found') {
         const roomSaved = await this.roomRepository.findFirst({ roomId: room.roomId })
         roomSaved.closed = true
         await this.roomRepository.save(roomSaved)
 
-        const contactRepository = new ContactRepositoryDatabase()
-        await contactRepository.update(contact._id, {
+        await this.contactRepository.update(contact._id, {
           chatwootSourceId: null,
           chatwootId: null,
         })

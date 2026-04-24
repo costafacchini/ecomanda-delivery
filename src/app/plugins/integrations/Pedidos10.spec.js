@@ -1,4 +1,4 @@
-import mongoServer from '../../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { Pedidos10 } from './Pedidos10.js'
 import { Order } from './Pedidos10/Order.js'
 import { licensee as licenseeFactory } from '@factories/licensee'
@@ -6,13 +6,13 @@ import { licensee as licenseeFactory } from '@factories/licensee'
 describe('Pedidos10 plugin', () => {
   const orderSaveFnSpy = jest.spyOn(Order.prototype, 'save').mockImplementation(() => {})
 
-  beforeAll(async () => {
+  beforeAll(() => {
     jest.clearAllMocks()
-    await mongoServer.connect()
+    installMemoryRepositories()
   })
 
-  afterAll(async () => {
-    await mongoServer.disconnect()
+  afterAll(() => {
+    resetMemoryRepositories()
   })
 
   describe('#processOrder', () => {

@@ -1,14 +1,37 @@
-import Trigger from '../../models/Trigger.js'
 import { ContactRepositoryDatabase } from '../../repositories/contact.js'
 import { MessageRepositoryDatabase } from '../../repositories/message.js'
+import { TriggerRepositoryDatabase } from '../../repositories/trigger.js'
+import Repository from '../../repositories/repository.js'
 import { replace } from '../../helpers/Emoji.js'
 import { v4 as uuidv4 } from 'uuid'
 
 class ChatsBase {
-  constructor(licensee) {
+  constructor(licensee, { contactRepository, messageRepository, triggerRepository } = {}) {
     this.licensee = licensee
-    this.contactRepository = new ContactRepositoryDatabase()
-    this.messageRepository = new MessageRepositoryDatabase()
+    this._contactRepository = contactRepository
+    this._messageRepository = messageRepository
+    this._triggerRepository = triggerRepository
+  }
+
+  get contactRepository() {
+    this._contactRepository ??= new ContactRepositoryDatabase()
+    if (typeof this._contactRepository.save !== 'function') {
+      this._contactRepository.save = Repository.prototype.save.bind(this._contactRepository)
+    }
+    return this._contactRepository
+  }
+
+  get messageRepository() {
+    this._messageRepository ??= new MessageRepositoryDatabase()
+    if (typeof this._messageRepository.save !== 'function') {
+      this._messageRepository.save = Repository.prototype.save.bind(this._messageRepository)
+    }
+    return this._messageRepository
+  }
+
+  get triggerRepository() {
+    this._triggerRepository ??= new TriggerRepositoryDatabase()
+    return this._triggerRepository
   }
 
   async findContact(filters) {
@@ -38,7 +61,10 @@ class ChatsBase {
         if (message.kind === 'text') {
           const text = message.text.body ? replace(message.text.body) : ''
 
-          const triggers = await Trigger.find({ expression: text, licensee: this.licensee._id }).sort({ order: 'asc' })
+          const triggers = await this.triggerRepository.find(
+            { expression: text, licensee: this.licensee._id },
+            { order: 'asc' },
+          )
           if (triggers.length > 0) {
             for (const trigger of triggers) {
               processedMessages.push(

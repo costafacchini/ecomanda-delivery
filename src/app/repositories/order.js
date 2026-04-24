@@ -1,4 +1,4 @@
-import Repository from './repository.js'
+import Repository, { RepositoryMemory } from './repository.js'
 import Order from '../models/Order.js'
 
 class OrderRepositoryDatabase extends Repository {
@@ -7,4 +7,6 @@ class OrderRepositoryDatabase extends Repository {
   }
 }
 
-export { OrderRepositoryDatabase }
+class OrderRepositoryMemory extends RepositoryMemory {}
+
+export { OrderRepositoryDatabase, OrderRepositoryMemory }

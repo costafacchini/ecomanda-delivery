@@ -4,16 +4,16 @@ import { FacebookCatalogImporter } from '@plugins/importers/facebook_catalog/ind
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { triggerMultiProduct as triggerFactory } from '@factories/trigger'
 import { product as productFactory } from '@factories/product'
-import mongoServer from '../../../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('FacebookCatalogImporter', () => {
-  beforeAll(async () => {
-    await mongoServer.connect()
+  beforeAll(() => {
+    installMemoryRepositories()
   })
 
-  afterAll(async () => {
-    await mongoServer.disconnect()
+  afterAll(() => {
+    resetMemoryRepositories()
   })
 
   it('imports csv catalog on whatsapp catalog', async () => {

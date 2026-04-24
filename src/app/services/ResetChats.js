@@ -3,7 +3,9 @@ import moment from 'moment-timezone'
 import { ContactRepositoryDatabase } from '../repositories/contact.js'
 import { LicenseeRepositoryDatabase } from '../repositories/licensee.js'
 import { MessageRepositoryDatabase } from '../repositories/message.js'
-import { ContactsQuery } from '../queries/ContactsQuery.js'
+
+const WINDOW_HOURS = 24
+const WARNING_MINUTES = 10
 
 async function sendMessageToChat(licensee, messageToSend) {
   const chatPlugin = createChatPlugin(licensee)
@@ -11,26 +13,30 @@ async function sendMessageToChat(licensee, messageToSend) {
   await chatPlugin.sendMessage(messageToSend._id, licensee.chatUrl)
 }
 
-async function clearWaStartChatOnContact(contact) {
-  const contactRepository = new ContactRepositoryDatabase()
+async function clearWaStartChatOnContact(contact, { contactRepository = new ContactRepositoryDatabase() } = {}) {
   await contactRepository.update(contact._id, { wa_start_chat: null })
 
   return
 }
 
-async function warningAboutChatsEnding(licensee) {
-  if (!licensee.useWhatsappWindow === true) return
-  const contactRepository = new ContactRepositoryDatabase()
-  const contactsQuery = new ContactsQuery({ contactRepository })
-  contactsQuery.filterByLicensee(licensee)
-  contactsQuery.filterIntervalWaStartChat(
-    moment().subtract(24, 'hours').toDate(),
-    moment().subtract(23, 'hours').subtract(50, 'minutes').toDate(),
-  )
+async function warningAboutChatsEnding(
+  licensee,
+  { contactRepository = new ContactRepositoryDatabase(), messageRepository = new MessageRepositoryDatabase() } = {},
+) {
+  if (licensee.useWhatsappWindow !== true) return
 
-  const contacts = await contactsQuery.all()
+  const warningWindowStart = moment().subtract(WINDOW_HOURS, 'hours')
+  const warningWindowEnd = moment(warningWindowStart).add(WARNING_MINUTES, 'minutes')
 
-  const messageRepository = new MessageRepositoryDatabase()
+  const contacts = await contactRepository.find({
+    licensee: licensee._id,
+    wa_start_chat: {
+      $ne: null,
+      $gt: warningWindowStart.toDate(),
+      $lte: warningWindowEnd.toDate(),
+    },
+  })
+
   for (const contact of contacts) {
     const messageToSend = await messageRepository.createMessageToWarnAboutWindowOfWhatsassIsEnding(contact, licensee)
 
@@ -38,17 +44,21 @@ async function warningAboutChatsEnding(licensee) {
   }
 }
 
-async function warningAboutChatsExpired(licensee) {
-  const contactRepository = new ContactRepositoryDatabase()
-  const contactsQuery = new ContactsQuery({ contactRepository })
-  contactsQuery.filterByLicensee(licensee)
-  contactsQuery.filterWaStartChatLessThan(moment().subtract(24, 'hours').toDate())
+async function warningAboutChatsExpired(
+  licensee,
+  { contactRepository = new ContactRepositoryDatabase(), messageRepository = new MessageRepositoryDatabase() } = {},
+) {
+  const contacts = await contactRepository.find({
+    licensee: licensee._id,
+    wa_start_chat: {
+      $ne: null,
+      $lte: moment().subtract(WINDOW_HOURS, 'hours').toDate(),
+    },
+  })
 
-  const contacts = await contactsQuery.all()
   for (const contact of contacts) {
-    await clearWaStartChatOnContact(contact)
+    await clearWaStartChatOnContact(contact, { contactRepository })
 
-    const messageRepository = new MessageRepositoryDatabase()
     if (licensee.useWhatsappWindow === true) {
       const messageToSend = await messageRepository.createMessageToWarnAboutWindowOfWhatsassHasExpired(
         contact,
@@ -60,12 +70,15 @@ async function warningAboutChatsExpired(licensee) {
   }
 }
 
-async function resetChats() {
-  const licenseeRepository = new LicenseeRepositoryDatabase()
+async function resetChats({
+  licenseeRepository = new LicenseeRepositoryDatabase(),
+  contactRepository = new ContactRepositoryDatabase(),
+  messageRepository = new MessageRepositoryDatabase(),
+} = {}) {
   const licensees = await licenseeRepository.find({ active: true, whatsappDefault: 'dialog', useWhatsappWindow: true })
   for (const licensee of licensees) {
-    await warningAboutChatsEnding(licensee)
-    await warningAboutChatsExpired(licensee)
+    await warningAboutChatsEnding(licensee, { contactRepository, messageRepository })
+    await warningAboutChatsExpired(licensee, { contactRepository, messageRepository })
   }
 }
 

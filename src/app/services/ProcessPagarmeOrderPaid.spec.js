@@ -1,5 +1,5 @@
 import { processPagarmeOrderPaid } from './ProcessPagarmeOrderPaid.js'
-import mongoServer from '.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { cart as cartFactory } from '@factories/cart'
 import { contact as contactFactory } from '@factories/contact'
@@ -8,13 +8,13 @@ import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
 
 describe('processPagarmeOrderPaid', () => {
-  beforeEach(async () => {
-    await mongoServer.connect()
+  beforeEach(() => {
+    installMemoryRepositories()
     jest.clearAllMocks()
   })
 
-  afterEach(async () => {
-    await mongoServer.disconnect()
+  afterEach(() => {
+    resetMemoryRepositories()
   })
 
   it('updates the cart payment status and integration status information', async () => {

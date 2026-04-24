@@ -1,7 +1,7 @@
 import { Auth } from './Auth.js'
 import Licensee from '@models/Licensee'
 import Integrationlog from '@models/Integrationlog'
-import mongoServer from '../../../../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licenseePedidos10 as licenseeFactory } from '@factories/licensee'
 import request from '../../../../services/request.js'
 
@@ -13,7 +13,7 @@ describe('Pedidos10/Auth plugin', () => {
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
 
   beforeEach(async () => {
-    await mongoServer.connect()
+    installMemoryRepositories()
     jest.clearAllMocks()
     licensee = await Licensee.create(licenseeFactory.build())
     licensee.pedidos10_integration = {
@@ -23,8 +23,8 @@ describe('Pedidos10/Auth plugin', () => {
     }
   })
 
-  afterEach(async () => {
-    await mongoServer.disconnect()
+  afterEach(() => {
+    resetMemoryRepositories()
   })
 
   describe('#login', () => {

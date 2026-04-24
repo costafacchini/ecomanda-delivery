@@ -1,17 +1,18 @@
-import User from '../app/models/User.js'
+import { UserRepositoryDatabase } from '../app/repositories/user.js'
 
 const DEFAULT_USER = process.env.DEFAULT_USER
 const DEFAULT_PASSWORD = process.env.DEFAULT_PASSWORD
+const userRepository = new UserRepositoryDatabase()
 
 async function createDefaultUser() {
   try {
-    const existingUser = await User.findOne({ email: DEFAULT_USER })
+    const existingUser = await userRepository.findFirst({ email: DEFAULT_USER })
     if (existingUser) {
       return existingUser
     }
 
     try {
-      return await User.create({
+      return await userRepository.create({
         name: 'Default user',
         email: DEFAULT_USER,
         password: DEFAULT_PASSWORD,
@@ -20,7 +21,7 @@ async function createDefaultUser() {
       })
     } catch (err) {
       if (err?.code === 11000) {
-        return await User.findOne({ email: DEFAULT_USER })
+        return await userRepository.findFirst({ email: DEFAULT_USER })
       }
 
       throw err

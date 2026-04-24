@@ -1,8 +1,10 @@
-import Integrationlog from '../models/Integrationlog.js'
+import { IntegrationlogRepositoryDatabase } from '../repositories/integrationlog.js'
 import { QueryBuilder } from './QueryBuilder.js'
 
 class IntegrationlogsQuery {
-  constructor() {}
+  constructor({ integrationlogRepository = new IntegrationlogRepositoryDatabase() } = {}) {
+    this.integrationlogRepository = integrationlogRepository
+  }
 
   filterByCreatedAt(startDate, endDate) {
     this.startDateClause = startDate
@@ -28,7 +30,7 @@ class IntegrationlogsQuery {
   }
 
   async all() {
-    const query = new QueryBuilder(Integrationlog)
+    const query = new QueryBuilder(this.integrationlogRepository.model())
     if (this.sortByClause) {
       query.sortBy(this.sortByClause.field, this.sortByClause.order)
     } else {

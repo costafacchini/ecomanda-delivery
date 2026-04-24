@@ -1,11 +1,10 @@
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
 import request from '../../services/request.js'
 import { MessengersBase } from './Base.js'
-import { MessageRepositoryDatabase } from '../../repositories/message.js'
 
 class Utalk extends MessengersBase {
-  constructor(licensee) {
-    super(licensee)
+  constructor(licensee, { messageRepository, ...dependencies } = {}) {
+    super(licensee, { messageRepository, ...dependencies })
   }
 
   action(messageDestination) {
@@ -150,8 +149,7 @@ class Utalk extends MessengersBase {
   }
 
   async sendMessage(messageId, url, token) {
-    const messageRepository = new MessageRepositoryDatabase()
-    const messageToSend = await messageRepository.findFirst({ _id: messageId }, ['contact'])
+    const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
 
     let body = {
       cmd: 'chat',
@@ -169,11 +167,11 @@ class Utalk extends MessengersBase {
 
     if (!response.data.status) {
       messageToSend.sended = true
-      await messageToSend.save()
+      await this.messageRepository.save(messageToSend)
       console.info(`Mensagem ${messageId} enviada para Utalk com sucesso! ${JSON.stringify(response.data)}`)
     } else {
       messageToSend.error = JSON.stringify(response.data)
-      await messageToSend.save()
+      await this.messageRepository.save(messageToSend)
       console.error(`Mensagem ${messageId} não enviada para Utalk. ${JSON.stringify(response.data)}`)
     }
   }

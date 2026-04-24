@@ -1,6 +1,6 @@
 import Licensee from '@models/Licensee'
 import { OrderRepositoryDatabase } from '@repositories/order'
-import mongoServer from '../../../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { Order } from './Order.js'
 import { Webhook } from './services/Webhook.js'
 import { OrderStatus } from './services/OrderStatus.js'
@@ -9,13 +9,13 @@ import { licensee as licenseeFactory } from '@factories/licensee'
 import { order as orderFactory } from '@factories/order'
 
 describe('Pedidos10/Order', () => {
-  beforeAll(async () => {
+  beforeAll(() => {
     jest.clearAllMocks()
-    await mongoServer.connect()
+    installMemoryRepositories()
   })
 
-  afterAll(async () => {
-    await mongoServer.disconnect()
+  afterAll(() => {
+    resetMemoryRepositories()
   })
 
   describe('#save', () => {
