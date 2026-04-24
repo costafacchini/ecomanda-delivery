@@ -18,7 +18,7 @@ All async work flows through BullMQ queues (`src/config/queue.js`). Jobs are fea
 **Implementation**:
 - MongoDB unique index on `{key, token}` with TTL
 - Lock keys: `contact:{id}` or `licensee:{id}`
-- See `src/app/helpers/Trafficlight.js`
+- See `src/app/services/Trafficlight.js`
 
 **Behavior**:
 - Worker acquires lock before processing a job

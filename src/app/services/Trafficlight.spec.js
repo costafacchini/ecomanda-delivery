@@ -1,4 +1,4 @@
-describe('Trafficlight helper', () => {
+describe('Trafficlight service', () => {
   let mockRepository
   let randomUUID
   let resolveTrafficlightKey
