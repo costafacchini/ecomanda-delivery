@@ -1,147 +1,219 @@
-# README
+# Ecomanda Delivery
+
+Ecomanda Delivery is an integration hub for WhatsApp, chat platforms, and chatbots.
+It receives inbound webhooks, persists the raw payloads, processes them through BullMQ
+workers, and routes outbound messages to the configured provider plugins.
+
+## Current Status
+
+This is an active refactoring codebase. The backend and frontend still run locally, and
+the repo now also includes a scripted smoke workflow for pre-deploy verification.
+
+Main runtime pieces:
+
+- Express API in [server.js](server.js)
+- BullMQ worker in [worker.js](worker.js)
+- React + Vite frontend in [client](client)
+- MongoDB, Redis, and RabbitMQ for local/dev infrastructure
+
+## Stack
+
+- Node.js `24.x` (`.tool-versions` currently pins `24.5.0`)
+- Yarn `1.22.x`
+- Express `5`
+- Mongoose + MongoDB
+- BullMQ + Redis
+- React `19` + Vite
+- Jest for backend tests
+- Vitest for frontend tests
 
 ## Requirements
 
-```shell
-  node 20.x
-```
+- `node` `24.x`
+- `yarn`
+- `docker` with `docker compose`
+- `asdf` is optional, but the repo already includes `.tool-versions`
 
-## Purpose
+## Setup
 
-This project was developed at the request of a friend and I used it as a challenge to improve my Javascript skills using Node and React.
-
-## Domain
-
-The project domain is the integration between Chat platforms, Chatbots and WhatsApp.
-
-He set out to help support some companies by speeding up the exchange of messages between a WhatsApp number and a chat platform where various agents used to help users.
-
-The Chatbot was an opportunity that appeared later and helped users self-service before calling an attendant to resolve their query.
-
-## Decisions
-
-The project was developed without me having much experience developing with Javascript.
-The project does not follow a specific architecture. This caused a lot of problems like cohesion, coupling, dependency injection, bloated controllers.
-The project no longer has any client running, so it is only serving as a guinea pig to train refactorings and apply good practices
-
-## Improvements
- - Decouple mongo from the application, facilitating a possible migration to another database. This improvement will help us improve tests that are currently highly coupled with the database
- - Extract use cases from controllers. Controllers are full of logic and tightly coupled with the database layer
- - Resolve pull requests with libs that changed their interface
- - Migrate to TS
- - Study improvements to use the app's architecture using Ports and Adapters. (probably many tasks will be necessary)
- - Create API documentation
- - Extract the PDV part to another project as it is not part of the project's main domain
- - Remove no longer used plugins
- - ...
-
-## Setup Node (only if you have not installed)
-
-This project uses [asdf](https://asdf-vm.com/guide/getting-started.html). \
-Follow the installation [instructions](https://asdf-vm.com/guide/getting-started.html#_3-install-asdf)
-
-After installation you need to follow these steps:
+1. Install dependencies:
 
 ```bash
-# Add nodejs plugin on asdf
-$ asdf plugin add nodejs
-
-# Install nodejs plugin
-$ asdf install nodejs 20.13.1
-
-# Set the default nodejs for the project
-$ asdf local nodejs 20.13.1
-
-# install Yarn
-$ npm install --global yarn
+yarn install
+cd client && yarn install
 ```
 
-## Setup Project
-
-The first step is configure environment variables
-
-The project has a file called `.env.example` that contains all the necessary environment variables
+2. Create the backend env file:
 
 ```bash
-# create a .env file
-$ cp .env.example .env
+cp .env.example .env
 ```
 
-In the project directory:
+3. Fill the required values in `.env`, especially:
+
+- `SECRET`
+- `DEFAULT_USER`
+- `DEFAULT_PASSWORD`
+- AWS variables if you need backup/storage flows
+
+## Local Development
+
+### Backend + Worker
 
 ```bash
-# build the containers used on development environment
-$ docker-compose up --build
+yarn dev
 ```
 
-## Local development
+What this does:
 
-In the project directory:
+- starts Docker infra through `docker compose up -d`
+- runs the Express server with `nodemon`
+- runs the worker with `nodemon`
+
+If you only want one side:
 
 ```bash
-# start the backend in nodejs
-$ yarn start
-
-# to start the frontend part, you need to access the client folder
-$ cd client
-$ yarn start
+yarn dev:server
+yarn dev:worker
 ```
 
-### Scripts available (backend)
+The production-style server entrypoint is:
 
 ```bash
-# build the frontent from the root folder
-$ yarn build
-
-# to run only the server in local development with docker and nodemon
-$ yarn dev:server
-
-# to run only the worker in local development (to process the jobs)
-$ yarn dev:worker
-
-# to run all dev scripts (server and worker)
-$ yarn dev
-
-# to run the backend tests
-$ yarn test
-
-# to run the backend tests using the CI script
-$ yarn test:ci
-
-# to run the backend tests with the coverage report
-$ yarn test:coverage
-
-# to run the backend tests in watch mode
-$ yarn watch
-
-# to run the linter
-$ yarn linter
+yarn start
 ```
 
-### Scripts available (frontend)
+### Frontend
 
 ```bash
-# you need to access the client folder
-$ cd client
+cd client
+yarn start
+```
 
-# to build the frontent
-$ yarn build
+Notes:
 
-# to run the frontend tests
-$ yarn test
+- the frontend uses Vite, not CRA
+- Vite defaults to `http://127.0.0.1:5173`
+- `/login` and `/resources` are proxied to `API_PROXY_TARGET`
+- if `API_PROXY_TARGET` is unset, Vite falls back to `http://127.0.0.1:5001`
 
-# to run the backend tests in watch mode
-$ yarn jest:watch
+### Infra Only
+
+If you want the supporting services without starting the app process through `yarn dev`:
+
+```bash
+docker compose up -d
+```
+
+This starts:
+
+- `mongo`
+- `mongo-express`
+- `redis`
+- `rabbitmq`
+
+## Pre-Deploy Local Smoke Workflow
+
+The repo includes a hybrid smoke workflow that runs the backend stack in Docker and the
+frontend on the host, then verifies the core app flows without hitting real providers.
+
+```bash
+cp .env.smoke.example .env.smoke
+yarn smoke:start
+yarn smoke:check
+yarn smoke:stop
+```
+
+What it verifies:
+
+- frontend responds
+- `POST /login` works
+- authenticated `/resources` access works
+- `messenger -> worker -> chat` flow works against local provider doubles
+- `chat -> worker -> messenger` flow works against local provider doubles
+
+See [docs/kb/features/local-smoke-workflow.md](docs/kb/features/local-smoke-workflow.md)
+for the full topology and troubleshooting notes.
+
+## Scripts
+
+### Root Scripts
+
+| Command | Purpose |
+|---------|---------|
+| `yarn start` | Start only the Express server |
+| `yarn build` | Install frontend deps and build the Vite app |
+| `yarn dev` | Run backend server and worker in parallel |
+| `yarn dev:server` | Run only the backend server with Docker infra |
+| `yarn dev:worker` | Run only the worker |
+| `yarn test` | Run backend Jest tests without coverage |
+| `yarn test:ci` | Run backend Jest tests with coverage collection |
+| `yarn test:coverage` | Run backend Jest coverage locally |
+| `yarn watch` | Run backend Jest in watch mode |
+| `yarn linter` | Lint backend files under `src/app`, `src/config`, and `src/setup` |
+| `yarn smoke:start` | Start the smoke topology and seed demo data |
+| `yarn smoke:check` | Verify the smoke flows end to end |
+| `yarn smoke:stop` | Stop the smoke topology |
+
+### Frontend Scripts
+
+| Command | Purpose |
+|---------|---------|
+| `cd client && yarn start` | Start the Vite dev server |
+| `cd client && yarn build` | Build the frontend |
+| `cd client && yarn test` | Run frontend Vitest tests once |
+| `cd client && yarn test:watch` | Run frontend Vitest in watch mode |
+
+## Architecture Notes
+
+- Incoming provider webhooks hit `/api/v1/*`
+- Controllers enqueue or persist the inbound payloads
+- BullMQ workers process the domain flow asynchronously
+- Plugins in `src/app/plugins` adapt each provider
+- The admin/resource API lives under `/resources/*`
+
+Related docs:
+
+- [API_DOCUMENTATION.md](API_DOCUMENTATION.md)
+- [docs/kb/architecture/project-overview.md](docs/kb/architecture/project-overview.md)
+- [docs/kb/architecture/job-queue-system.md](docs/kb/architecture/job-queue-system.md)
+
+## Repository Layout
+
+```text
+src/
+  app/
+    controllers/
+    helpers/
+    jobs/
+    plugins/
+    queries/
+    repositories/
+    routes/
+    services/
+  config/
+  setup/
+client/
 ```
 
 ## Backups
 
-### gzip
+### Gzip
 
 ```bash
 # Backup
-$ mongodump --uri {uri} --gzip --out=={path}
+mongodump --uri="{uri}" --gzip --out="{path}"
 
 # Restore
-$ mongorestore --uri {uri} --gzip --drop {path do backup}
+mongorestore --uri="{uri}" --gzip --drop "{path}"
 ```
+
+## Refactoring Themes
+
+The main ongoing improvement areas in this repo are:
+
+- reducing MongoDB coupling
+- extracting use-case logic from controllers
+- tightening testability around queues and integrations
+- cleaning up legacy plugins and unused code paths
+- improving architecture boundaries before any larger migration to TypeScript
