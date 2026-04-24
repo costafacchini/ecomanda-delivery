@@ -5,7 +5,7 @@ import { redisConnection } from './src/config/redis.js'
 import { queueServer } from './src/config/queue.js'
 import { Worker } from 'bullmq'
 import { connect } from './src/config/database.js'
-import { withTrafficlight, resolveTrafficlightKey } from './src/app/helpers/Trafficlight.js'
+import { withTrafficlight, resolveTrafficlightKey } from './src/app/services/Trafficlight.js'
 
 connect()
 
