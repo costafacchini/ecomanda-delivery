@@ -1,5 +1,5 @@
 import { resetChatbots } from './ResetChatbots.js'
-import mongoServer from '.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { message as messageFactory } from '@factories/message'
@@ -14,12 +14,12 @@ describe('resetChatbots', () => {
   jest.spyOn(global.console, 'info').mockImplementation()
 
   beforeEach(async () => {
-    await mongoServer.connect()
+    installMemoryRepositories()
     jest.clearAllMocks()
   })
 
   afterEach(async () => {
-    await mongoServer.disconnect()
+    resetMemoryRepositories()
   })
 
   describe('if licensees uses chatbot and contacts that talking with chatbot and the last message has destination to messenger and the sended a hour ago', () => {

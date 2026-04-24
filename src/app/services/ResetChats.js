@@ -32,7 +32,7 @@ async function warningAboutChatsEnding(
     licensee: licensee._id,
     wa_start_chat: {
       $ne: null,
-      $gte: warningWindowStart.toDate(),
+      $gt: warningWindowStart.toDate(),
       $lte: warningWindowEnd.toDate(),
     },
   })

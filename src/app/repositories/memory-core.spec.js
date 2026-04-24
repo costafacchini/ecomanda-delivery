@@ -23,6 +23,7 @@ describe('memory repositories - core entities', () => {
 
     expect(await licenseeRepository.findFirst({ _id: first._id })).toEqual(expect.objectContaining({ active: false }))
     expect(await licenseeRepository.find({ useChatbot: true, chatbotApiToken: { $ne: null } })).toHaveLength(1)
+    expect(await licenseeRepository.find({ chatbotApiToken: { $ne: null } })).toHaveLength(1)
   })
 
   it('finds contacts by normalized number and checks the whatsapp window against shared messages', async () => {

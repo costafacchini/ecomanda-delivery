@@ -50,6 +50,7 @@ describe('memory repositories - secondary entities', () => {
     await cartRepository.updateMany({ concluded: false, createdAt: { $lte: new Date() } }, { concluded: true })
 
     expect(await cartRepository.find({ concluded: true })).toHaveLength(1)
+    expect(await cartRepository.find({ createdAt: { $gt: new Date() } })).toHaveLength(1)
 
     await cartRepository.delete({ concluded: false })
     expect(await cartRepository.find()).toHaveLength(1)

@@ -1,7 +1,7 @@
 import { changeOrderStatus } from './Pedidos10ChangeOrderStatus.js'
 import Licensee from '@models/Licensee'
 import Body from '@models/Body'
-import mongoServer from '.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { OrderRepositoryDatabase } from '@repositories/order'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { order as orderFactory } from '@factories/order'
@@ -19,12 +19,12 @@ describe('changeOrderStatus', () => {
   })
 
   beforeEach(async () => {
-    await mongoServer.connect()
+    installMemoryRepositories()
     jest.clearAllMocks()
   })
 
   afterEach(async () => {
-    await mongoServer.disconnect()
+    resetMemoryRepositories()
   })
 
   it('responds send order to integrator', async () => {

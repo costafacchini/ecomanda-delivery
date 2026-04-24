@@ -2,7 +2,7 @@ import { Dialog } from './Dialog.js'
 import Trigger from '@models/Trigger.js'
 import Template from '@models/Template.js'
 import Product from '@models/Product.js'
-import mongoServer from '../../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { S3 } from '../storage/S3.js'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
@@ -37,14 +37,14 @@ describe('Dialog plugin', () => {
   })
 
   beforeEach(async () => {
-    await mongoServer.connect()
+    installMemoryRepositories()
     jest.clearAllMocks()
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build({ whatsappToken: 'whats-token' }))
   })
 
   afterEach(async () => {
-    await mongoServer.disconnect()
+    resetMemoryRepositories()
   })
 
   describe('#responseToMessages', () => {

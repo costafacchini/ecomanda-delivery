@@ -69,9 +69,17 @@ function matchOperator(actual, operator, expected) {
 
   switch (operator) {
     case '$ne':
+      if (expected === null) {
+        return actual !== null && actual !== undefined
+      }
+
       return comparableActual !== comparableValue(expected)
+    case '$gt':
+      return comparableActual > comparableValue(expected)
     case '$gte':
       return comparableActual >= comparableValue(expected)
+    case '$lt':
+      return comparableActual < comparableValue(expected)
     case '$lte':
       return comparableActual <= comparableValue(expected)
     case '$in':
@@ -161,6 +169,21 @@ class RepositoryMemory extends Repository {
     this.items = items
   }
 
+  hydrate(record) {
+    if (!record || typeof record !== 'object') {
+      return record
+    }
+
+    Object.defineProperty(record, 'save', {
+      configurable: true,
+      enumerable: false,
+      writable: true,
+      value: async () => await this.save(record),
+    })
+
+    return record
+  }
+
   async findFirst(params = {}, _relations = []) {
     return (await this.find(params))[0] ?? null
   }
@@ -169,7 +192,7 @@ class RepositoryMemory extends Repository {
     const record = buildMemoryRecord(fields)
     this.items.push(record)
 
-    return await Promise.resolve(record)
+    return await Promise.resolve(this.hydrate(record))
   }
 
   async update(id, fields = {}) {
@@ -191,7 +214,9 @@ class RepositoryMemory extends Repository {
   }
 
   async find(params = {}) {
-    return await Promise.resolve(this.items.filter((item) => matchesFilter(item, params ?? {})))
+    return await Promise.resolve(
+      this.items.filter((item) => matchesFilter(item, params ?? {})).map((item) => this.hydrate(item)),
+    )
   }
 
   async delete(params = {}) {
@@ -218,7 +243,7 @@ class RepositoryMemory extends Repository {
       this.items.push(document)
     }
 
-    return await Promise.resolve(document)
+    return await Promise.resolve(this.hydrate(document))
   }
 }
 

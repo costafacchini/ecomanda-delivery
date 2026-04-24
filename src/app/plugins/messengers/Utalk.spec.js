@@ -1,5 +1,5 @@
 import { Utalk } from './Utalk.js'
-import mongoServer from '../../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { S3 } from '../storage/S3.js'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
@@ -22,14 +22,14 @@ describe('Utalk plugin', () => {
   })
 
   beforeEach(async () => {
-    await mongoServer.connect()
+    installMemoryRepositories()
     jest.clearAllMocks()
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
   afterEach(async () => {
-    await mongoServer.disconnect()
+    resetMemoryRepositories()
   })
 
   describe('#responseToMessages', () => {

@@ -1,7 +1,7 @@
 import { transformMessengerBody } from './MessengerMessage.js'
 import Body from '@models/Body'
 import { Dialog } from '../plugins/messengers/Dialog.js'
-import mongoServer from '.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { body as bodyFactory } from '@factories/body'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
@@ -10,7 +10,7 @@ describe('transformMessengerBody', () => {
   let licensee
 
   beforeEach(async () => {
-    await mongoServer.connect()
+    installMemoryRepositories()
     jest.clearAllMocks()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
@@ -27,7 +27,7 @@ describe('transformMessengerBody', () => {
   })
 
   afterEach(async () => {
-    await mongoServer.disconnect()
+    resetMemoryRepositories()
   })
 
   it('responds with action to send message to chat and chatbot and delete body', async () => {

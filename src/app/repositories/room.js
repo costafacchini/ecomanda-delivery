@@ -11,6 +11,13 @@ class RoomRepositoryDatabase extends Repository {
   }
 }
 
-class RoomRepositoryMemory extends RepositoryMemory {}
+class RoomRepositoryMemory extends RepositoryMemory {
+  async create(fields = {}) {
+    return await super.create({
+      closed: false,
+      ...(fields ?? {}),
+    })
+  }
+}
 
 export { RoomRepositoryDatabase, RoomRepositoryMemory }

@@ -104,6 +104,25 @@ class ContactRepositoryMemory extends RepositoryMemory {
 
   normalizeContactFields(fields = {}) {
     const normalizedFields = { ...(fields ?? {}) }
+    const stringFields = [
+      'landbotId',
+      'chatwootId',
+      'chatwootSourceId',
+      'plugin_cart_id',
+      'customer_id',
+      'address_id',
+      'credit_card_id',
+    ]
+
+    if (!Array.isArray(normalizedFields.credit_cards)) {
+      normalizedFields.credit_cards = []
+    }
+
+    stringFields.forEach((field) => {
+      if (normalizedFields[field] != null) {
+        normalizedFields[field] = `${normalizedFields[field]}`
+      }
+    })
 
     if (normalizedFields.number?.includes('@') || !normalizedFields.type) {
       const normalizedPhone = new NormalizePhone(normalizedFields.number)

@@ -1,7 +1,7 @@
 import { transformChatbotTransferBody } from './ChatbotTransfer.js'
 import Body from '@models/Body'
 import { Landbot } from '../plugins/chatbots/Landbot.js'
-import mongoServer from '.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { body as bodyFactory } from '@factories/body'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
@@ -10,7 +10,7 @@ describe('transformChatbotTransferBody', () => {
   let licensee
 
   beforeEach(async () => {
-    await mongoServer.connect()
+    installMemoryRepositories()
     jest.clearAllMocks()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
@@ -23,7 +23,7 @@ describe('transformChatbotTransferBody', () => {
   })
 
   afterEach(async () => {
-    await mongoServer.disconnect()
+    resetMemoryRepositories()
   })
 
   it('responds with action to transfer message to chat and delete body', async () => {

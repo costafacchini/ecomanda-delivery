@@ -1,7 +1,7 @@
 import { processWebhook } from './Pedidos10Webhook.js'
 import Licensee from '@models/Licensee'
 import Body from '@models/Body'
-import mongoServer from '.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { body as bodyFactory } from '@factories/body'
 import { Pedidos10 } from '../plugins/integrations/Pedidos10.js'
@@ -10,12 +10,12 @@ describe('processWebhook', () => {
   const pedidos10ProcessOrderFnSpy = jest.spyOn(Pedidos10.prototype, 'processOrder')
 
   beforeEach(async () => {
-    await mongoServer.connect()
+    installMemoryRepositories()
     jest.clearAllMocks()
   })
 
   afterEach(async () => {
-    await mongoServer.disconnect()
+    resetMemoryRepositories()
   })
 
   it('responds a job to send order', async () => {

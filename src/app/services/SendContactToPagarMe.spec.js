@@ -1,6 +1,6 @@
 import { sendContactToPagarMe } from './SendContactToPagarMe.js'
 import { Customer } from '@plugins/payments/PagarMe/Customer.js'
-import mongoServer from '.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
@@ -12,11 +12,11 @@ describe('sendContactToPagarMe', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks()
-    await mongoServer.connect()
+    installMemoryRepositories()
   })
 
   afterEach(async () => {
-    await mongoServer.disconnect()
+    resetMemoryRepositories()
   })
 
   it('does nothing if licensee has no recipient_id', async () => {

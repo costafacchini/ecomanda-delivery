@@ -1,5 +1,5 @@
 import { resetChats } from './ResetChats.js'
-import mongoServer from '.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licenseeComplete as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import moment from 'moment'
@@ -14,12 +14,12 @@ describe('resetChats', () => {
   jest.spyOn(global.console, 'info').mockImplementation()
 
   beforeEach(async () => {
-    await mongoServer.connect()
+    installMemoryRepositories()
     jest.clearAllMocks()
   })
 
   afterEach(async () => {
-    await mongoServer.disconnect()
+    resetMemoryRepositories()
   })
 
   describe('when the licensee uses messenger plugin dialog and use whatsapp window', () => {

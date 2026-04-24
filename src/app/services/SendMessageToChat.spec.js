@@ -1,6 +1,6 @@
 import { sendMessageToChat } from './SendMessageToChat.js'
 import { Rocketchat } from '../plugins/chats/Rocketchat.js'
-import mongoServer from '.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { message as messageFactory } from '@factories/message'
@@ -13,11 +13,11 @@ describe('sendMessageToChat', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks()
-    await mongoServer.connect()
+    installMemoryRepositories()
   })
 
   afterEach(async () => {
-    await mongoServer.disconnect()
+    resetMemoryRepositories()
   })
 
   it('asks the plugin to send message to chat', async () => {
