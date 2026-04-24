@@ -13,12 +13,12 @@ jest.mock('../services/request')
 describe('resetChatbots', () => {
   jest.spyOn(global.console, 'info').mockImplementation()
 
-  beforeEach(async () => {
+  beforeEach(() => {
     installMemoryRepositories()
     jest.clearAllMocks()
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

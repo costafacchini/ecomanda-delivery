@@ -43,7 +43,7 @@ describe('Dialog plugin', () => {
     licensee = await licenseeRepository.create(licenseeFactory.build({ whatsappToken: 'whats-token' }))
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

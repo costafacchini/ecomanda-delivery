@@ -25,7 +25,7 @@ describe('Cuboup plugin', () => {
     licensee = await licenseeRepository.create(licenseeFactory.build({ phone: '554891231231' }))
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

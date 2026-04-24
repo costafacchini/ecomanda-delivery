@@ -9,12 +9,12 @@ import { Pedidos10 } from '../plugins/integrations/Pedidos10.js'
 describe('processWebhook', () => {
   const pedidos10ProcessOrderFnSpy = jest.spyOn(Pedidos10.prototype, 'processOrder')
 
-  beforeEach(async () => {
+  beforeEach(() => {
     installMemoryRepositories()
     jest.clearAllMocks()
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

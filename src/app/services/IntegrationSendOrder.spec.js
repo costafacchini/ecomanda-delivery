@@ -9,12 +9,12 @@ import { IntegratorBase } from '../plugins/integrations/IntegratorBase.js'
 describe('sendOrder', () => {
   const integratorSendOrderFnSpy = jest.spyOn(IntegratorBase.prototype, 'sendOrder')
 
-  beforeEach(async () => {
+  beforeEach(() => {
     installMemoryRepositories()
     jest.clearAllMocks()
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

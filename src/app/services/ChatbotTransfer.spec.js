@@ -22,7 +22,7 @@ describe('transformChatbotTransferBody', () => {
     )
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

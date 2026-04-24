@@ -11,12 +11,12 @@ import { MessageRepositoryDatabase } from '@repositories/message'
 describe('sendMessageToMessenger', () => {
   const dialogSendMessageSpy = jest.spyOn(Dialog.prototype, 'sendMessage').mockImplementation(() => {})
 
-  beforeEach(async () => {
+  beforeEach(() => {
     installMemoryRepositories()
     jest.clearAllMocks()
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

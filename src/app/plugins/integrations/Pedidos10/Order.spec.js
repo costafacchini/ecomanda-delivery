@@ -9,12 +9,12 @@ import { licensee as licenseeFactory } from '@factories/licensee'
 import { order as orderFactory } from '@factories/order'
 
 describe('Pedidos10/Order', () => {
-  beforeAll(async () => {
+  beforeAll(() => {
     jest.clearAllMocks()
     installMemoryRepositories()
   })
 
-  afterAll(async () => {
+  afterAll(() => {
     resetMemoryRepositories()
   })
 

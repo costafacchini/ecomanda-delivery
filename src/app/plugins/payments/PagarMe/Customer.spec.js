@@ -21,7 +21,7 @@ describe('PagarMe/Customer plugin', () => {
     licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

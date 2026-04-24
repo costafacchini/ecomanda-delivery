@@ -67,3 +67,11 @@ not yet represented by the task list.
 **Area**: Repository refactors, controller regression coverage
 **Prevention**: After changing create/save semantics in repositories, explicitly rerun any specs that mock `Model.prototype.save` or `repository.save()` and treat those paths as required validation, not optional follow-up.
 **Count**: 1
+
+## [2026-04-24] Reproduce the real lint command before declaring a lint-clean commit
+
+**Wrong**: Reported the decouple-mongo wave as lint-clean based on a commit-time diff-scoped check path that did not reproduce the repo's actual lint command and missed `require-await` errors introduced in migrated spec hooks.
+**Correct**: Before reporting lint as clean, run the same ESLint command the branch/CI actually uses for the touched area and verify that the exit status is free of errors, not just that a helper command produced no output.
+**Area**: Validation workflow, ESLint, test-spec migrations
+**Prevention**: When a wave changes many files or rewrites test setup, always rerun the canonical lint command for the affected directories after the final edit pass, even if a narrower pre-commit scan looked clean earlier.
+**Count**: 1

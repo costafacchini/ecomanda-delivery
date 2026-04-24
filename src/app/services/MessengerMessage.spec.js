@@ -26,7 +26,7 @@ describe('transformMessengerBody', () => {
     )
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

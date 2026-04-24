@@ -8,12 +8,12 @@ import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
 
 describe('processPagarmeOrderPaid', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     installMemoryRepositories()
     jest.clearAllMocks()
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

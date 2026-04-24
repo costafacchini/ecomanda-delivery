@@ -10,12 +10,12 @@ describe('sendContactToPagarMe', () => {
   const customerCreateFnSpy = jest.spyOn(Customer.prototype, 'create').mockImplementation(() => {})
   const customerUpdateFnSpy = jest.spyOn(Customer.prototype, 'update').mockImplementation(() => {})
 
-  beforeEach(async () => {
+  beforeEach(() => {
     jest.clearAllMocks()
     installMemoryRepositories()
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

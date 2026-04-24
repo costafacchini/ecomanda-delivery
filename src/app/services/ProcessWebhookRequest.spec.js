@@ -6,12 +6,12 @@ import { body as bodyFactory } from '@factories/body'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('processWebhookRequest', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     installMemoryRepositories()
     jest.clearAllMocks()
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

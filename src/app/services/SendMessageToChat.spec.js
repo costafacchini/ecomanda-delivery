@@ -11,12 +11,12 @@ import { MessageRepositoryDatabase } from '@repositories/message'
 describe('sendMessageToChat', () => {
   const rocketchatSendMessageSpy = jest.spyOn(Rocketchat.prototype, 'sendMessage').mockImplementation(() => {})
 
-  beforeEach(async () => {
+  beforeEach(() => {
     jest.clearAllMocks()
     installMemoryRepositories()
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

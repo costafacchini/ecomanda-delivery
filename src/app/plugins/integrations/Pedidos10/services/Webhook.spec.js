@@ -21,7 +21,7 @@ describe('Pedidos10/Webhook plugin', () => {
     }
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

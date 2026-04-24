@@ -6,12 +6,12 @@ import { licensee as licenseeFactory } from '@factories/licensee'
 describe('Pedidos10 plugin', () => {
   const orderSaveFnSpy = jest.spyOn(Order.prototype, 'save').mockImplementation(() => {})
 
-  beforeAll(async () => {
+  beforeAll(() => {
     jest.clearAllMocks()
     installMemoryRepositories()
   })
 
-  afterAll(async () => {
+  afterAll(() => {
     resetMemoryRepositories()
   })
 

@@ -21,7 +21,7 @@ describe('Pedidos10/OrderStatus plugin', () => {
     }
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

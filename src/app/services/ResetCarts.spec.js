@@ -11,12 +11,12 @@ import moment from 'moment-timezone'
 describe('resetCarts', () => {
   jest.spyOn(global.console, 'info').mockImplementation()
 
-  beforeEach(async () => {
+  beforeEach(() => {
     installMemoryRepositories()
     jest.clearAllMocks()
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

@@ -10,12 +10,12 @@ import { CartRepositoryDatabase } from '@repositories/cart'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 
 describe('processBackgroundjob', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     installMemoryRepositories()
     jest.clearAllMocks()
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

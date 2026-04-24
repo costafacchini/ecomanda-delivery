@@ -27,7 +27,7 @@ describe('Crisp plugin', () => {
     licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

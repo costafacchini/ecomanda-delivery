@@ -11,12 +11,12 @@ import { MessageRepositoryDatabase } from '@repositories/message'
 describe('sendMessageToChatbot', () => {
   const landbotSendMessageSpy = jest.spyOn(Landbot.prototype, 'sendMessage').mockImplementation(() => {})
 
-  beforeEach(async () => {
+  beforeEach(() => {
     jest.clearAllMocks()
     installMemoryRepositories()
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

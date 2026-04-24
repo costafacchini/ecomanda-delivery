@@ -23,7 +23,7 @@ describe('Pedidos10/Auth plugin', () => {
     }
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

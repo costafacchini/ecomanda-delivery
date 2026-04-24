@@ -11,12 +11,12 @@ import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
 
 describe('processBackgroundjobInviteCreditCard', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     installMemoryRepositories()
     jest.clearAllMocks()
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

@@ -9,12 +9,12 @@ import { ContactRepositoryDatabase } from '@repositories/contact'
 import { MessageRepositoryDatabase } from '@repositories/message'
 
 describe('closeChat', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     jest.clearAllMocks()
     installMemoryRepositories()
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

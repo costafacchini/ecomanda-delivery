@@ -13,12 +13,12 @@ const spySendMessage = jest.spyOn(Rocketchat.prototype, 'sendMessage').mockImple
 describe('resetChats', () => {
   jest.spyOn(global.console, 'info').mockImplementation()
 
-  beforeEach(async () => {
+  beforeEach(() => {
     installMemoryRepositories()
     jest.clearAllMocks()
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

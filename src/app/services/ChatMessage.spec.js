@@ -27,7 +27,7 @@ describe('transformChatBody', () => {
     )
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 

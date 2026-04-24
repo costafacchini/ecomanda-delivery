@@ -9,13 +9,13 @@ import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
 
 describe('Go2go plugin', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     installMemoryRepositories()
     jest.clearAllMocks()
     advanceTo(new Date('2021-01-05T10:25:47.000Z'))
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
     clear()
   })

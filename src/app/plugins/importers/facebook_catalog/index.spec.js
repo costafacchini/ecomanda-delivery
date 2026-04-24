@@ -8,11 +8,11 @@ import { installMemoryRepositories, resetMemoryRepositories } from '@repositorie
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 
 describe('FacebookCatalogImporter', () => {
-  beforeAll(async () => {
+  beforeAll(() => {
     installMemoryRepositories()
   })
 
-  afterAll(async () => {
+  afterAll(() => {
     resetMemoryRepositories()
   })
 

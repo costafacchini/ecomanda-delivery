@@ -33,7 +33,7 @@ describe('Chatwoot plugin', () => {
     )
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     resetMemoryRepositories()
   })
 
