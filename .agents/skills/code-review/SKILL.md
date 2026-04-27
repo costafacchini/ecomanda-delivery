@@ -1,11 +1,12 @@
 ---
 name: code-review
 description: Structured self-review of changes before creating a PR
-trigger: User asks to review code, prepare a PR, or says "review my changes"
-auto: false
 ---
 
 # Code Review
+
+## Context Required
+HIGH-CONTEXT: Plan overview, task definition, dependency status files, AGENTS.md, recent commits, and relevant KB articles on coding standards and architecture
 
 ## Triggers
 

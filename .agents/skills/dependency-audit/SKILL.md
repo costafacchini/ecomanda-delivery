@@ -1,11 +1,12 @@
 ---
 name: dependency-audit
 description: Checks for security vulnerabilities and outdated dependencies
-trigger: User asks to audit deps, check security, or before a release
-auto: false
 ---
 
 # Dependency Audit
+
+## Context Required
+HIGH-CONTEXT: AGENTS.md, KB index, relevant codebase files, and project conventions
 
 ## Triggers
 

@@ -1,11 +1,12 @@
 ---
 name: session-end-checklist
 description: End-of-session safety net
-trigger: User says "done", "thanks", "bye", "that's all"
-auto: true
 ---
 
 # Session End Checklist
+
+## Context Required
+LOW-CONTEXT: AGENTS.md only
 
 ## Triggers
 

@@ -1,11 +1,12 @@
 ---
 name: save-session
 description: Creates a session handoff document for resuming work later
-trigger: Long session (20+ turns), user pausing, or explicit request
-auto: false
 ---
 
 # Save Session
+
+## Context Required
+MEDIUM-CONTEXT: Current task state, files changed, decisions made, remaining work
 
 ## Triggers
 

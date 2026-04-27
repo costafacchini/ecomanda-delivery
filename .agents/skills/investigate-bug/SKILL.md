@@ -1,8 +1,6 @@
 ---
 name: investigate-bug
 description: Full bug lifecycle — investigate, root cause, plan fix, document. For when something is broken and you need structured debugging, not ad-hoc poking.
-trigger: User reports a bug, error, or unexpected behavior ("this is broken", "getting an error", "this doesn't work", "bug in...")
-auto: false
 argument-hint: "<description of the bug or error>"
 ---
 

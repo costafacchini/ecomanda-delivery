@@ -1,12 +1,13 @@
 ---
 name: scaffold-feature
 description: Generates boilerplate files for a new feature following project conventions
-trigger: User starts a new feature, says "scaffold", "bootstrap", or "create feature"
-auto: false
 argument-hint: "<feature-name> [description]"
 ---
 
 # Scaffold Feature
+
+## Context Required
+HIGH-CONTEXT: AGENTS.md, KB index, relevant codebase files, and project conventions
 
 ## Triggers
 

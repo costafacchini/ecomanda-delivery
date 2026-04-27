@@ -1,11 +1,12 @@
 ---
 name: pre-commit-check
 description: Validates code quality and conventions before committing
-trigger: User says "commit", "stage", "git add", or "push"
-auto: true
 ---
 
 # Pre-Commit Check
+
+## Context Required
+LOW-CONTEXT: Staged files and AGENTS.md test/lint commands
 
 ## Triggers
 

@@ -1,11 +1,12 @@
 ---
 name: check-kb-index
 description: Updates docs/kb/README.md index after KB file changes
-trigger: Any file in docs/kb/ is created, modified, or deleted
-auto: true
 ---
 
 # Check KB Index
+
+## Context Required
+LOW-CONTEXT: AGENTS.md only
 
 ## Triggers
 

@@ -1,11 +1,12 @@
 ---
 name: log-mistake
 description: Records AI corrections to build error pattern awareness
-trigger: User corrects the AI ("that's wrong", "actually...", "you forgot to...")
-auto: true
 ---
 
 # Log Mistake
+
+## Context Required
+LOW-CONTEXT: AGENTS.md only
 
 ## Triggers
 

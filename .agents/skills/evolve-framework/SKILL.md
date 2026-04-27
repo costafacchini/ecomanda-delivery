@@ -4,12 +4,13 @@ description: >-
   Self-evolution skill. Audits the framework's health, detects improvement
   opportunities from usage patterns, researches community updates, and
   proposes concrete changes. Run periodically or when the framework feels stale.
-trigger: User says "evolve", "improve framework", "update framework", "health check", or periodically after 50+ sessions
-auto: false
 argument-hint: "[audit | research | suggest | apply]"
 ---
 
 # Evolve Framework
+
+## Context Required
+HIGH-CONTEXT: AGENTS.md, KB index, relevant codebase files, and project conventions
 
 ## Triggers
 
