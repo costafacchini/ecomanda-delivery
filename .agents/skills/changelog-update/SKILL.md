@@ -1,11 +1,12 @@
 ---
 name: changelog-update
 description: Updates CHANGELOG.md from git history following Keep a Changelog format
-trigger: User asks to update changelog, before a release, or after a batch of work
-auto: false
 ---
 
 # Changelog Update
+
+## Context Required
+FULL-CONTEXT: AGENTS.md + relevant KB
 
 ## Triggers
 

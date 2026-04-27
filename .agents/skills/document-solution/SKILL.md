@@ -1,15 +1,16 @@
 ---
 name: document-solution
-description: Creates a KB doc from a complex solution discovered during development
-trigger: KB miss solved via code exploration, or complex solution (3+ files, 5+ exchanges)
-auto: true
+description: Creates a KB doc from a complex solution discovered during development. Use when KB lookup missed then solved via code search, bug fix required 3+ files, solution used non-obvious pattern, or 5+ exchanges to resolve. Captures patterns, gotchas, and key files for future reference.
 ---
 
 # Document Solution
 
+## Context Required
+FULL-CONTEXT: AGENTS.md + relevant KB
+
 ## Triggers
 
-### Automatic
+### Automatic (CRITICAL - KB Fallback-Update Rule)
 
 Trigger when ALL of these are true:
 1. You checked KB for a relevant doc
@@ -21,47 +22,116 @@ Also trigger when:
 - Bug fix required reading 3+ files
 - Solution used a non-obvious pattern
 - 5+ back-and-forth exchanges to resolve
+- Integration with external system
 
 ### Manual
 - `/document-solution`
+- "run document-solution"
 - "document this"
 - "save this solution"
 - "add this to the KB"
-- "user says document this"
+- "this should be documented"
 
----
+## Instructions
 
-## When
-- KB lookup failed but solved via code search
-- Complex solution (3+ files or 5+ exchanges)
-- User explicitly asks
+### Step 1: Analyze the solution
+- What was the root problem?
+- What files/models were involved?
+- What was the non-obvious part?
+- What gotchas did we encounter?
 
-## Steps
+### Step 2: Determine category
+- `architecture/` - System design, data flow, model relationships
+- `features/` - User-facing functionality, UI behavior
+- `integrations/` - External systems
+- `api/` - API endpoints, serialization, authentication
+- `bugfixes/` - Specific bug patterns and fixes
 
-1. **Identify the gap** — What area? Which KB category?
-2. **Create doc** at `docs/kb/{category}/{kebab-case-name}.md`:
+### Step 3: Generate filename
+- Format: `kebab-case-topic.md`
+- Example: `servicetrade-appointment-aggregation.md`
+
+### Step 4: Create document
+
+Use the template in `.agents/skills/document-solution/references/kb-template.md` or follow this structure:
 
 ```markdown
-# [Title]
+# [Topic Title]
 
-**Last Updated**: YYYY-MM-DD
-**Context**: [When to read — keyword triggers]
+**Last Updated**: [Month Year]
+**Context**: Read when [trigger conditions].
+
+---
 
 ## Overview
 [Brief summary]
 
-## Key Concepts
-[Core patterns, models, services]
+---
 
-## How It Works
-[Step-by-step with file:line references]
+## The Problem
 
-## Common Pitfalls
-[Things that trip people up]
+### Symptoms
+- [How this manifests]
+
+### Root Cause
+[Why it happens]
+
+---
+
+## The Solution
+
+### Key Files
+
+| File | Role |
+|------|------|
+| `path/to/file` | [What it does] |
+
+### Code Pattern
+
+[The correct approach with code example]
+
+---
+
+## Gotchas
+
+### [Gotcha 1]
+[What to watch out for]
+
+---
 
 ## Related
-[Links to related docs]
+
+- [Link to related KB doc]
 ```
 
-3. **Run `check-kb-index`** to update docs/kb/README.md
-4. **Update AGENTS.md** KB section if it's a frequently needed pattern
+### Step 5: Save document
+Save to `docs/kb/[category]/[filename].md`
+
+### Step 6: Run check-kb-index
+Update the knowledge base index.
+
+### Step 7: Confirm to user
+```text
+Solution documented: docs/kb/[category]/[filename].md
+
+Knowledge base index updated.
+
+Future agents will find this when working on: [trigger keywords]
+```
+
+## Output
+
+- New file: `docs/kb/[category]/[filename].md`
+- Updated: `docs/kb/README.md` (via check-kb-index)
+- Confirmation with document location
+
+## Examples
+
+After fixing a complex sync bug, agent creates the KB doc and reports:
+```text
+Solution documented: docs/kb/integrations/servicetrade-job-aggregation.md
+
+Knowledge base index updated.
+
+Future agents will find this when working on: ServiceTrade, job sync, appointment aggregation
+```

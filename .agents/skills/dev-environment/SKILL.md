@@ -6,12 +6,13 @@ description: >-
   On subsequent runs, executes the concrete commands. Works with any language,
   any framework, any dependency — because the AI reads the actual project files,
   not a template.
-trigger: "start dev", "spin up", "dev setup", "init environment", "reset environment", "dockerize", "containerize"
-auto: false
 argument-hint: "[init | start | stop | reset | status | doctor | regenerate]"
 ---
 
 # Dev Environment
+
+## Context Required
+HIGH-CONTEXT: AGENTS.md, KB index, relevant codebase files, and project conventions
 
 ## Triggers
 

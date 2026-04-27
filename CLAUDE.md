@@ -111,6 +111,17 @@ Update `.agents/memory/preferences.md` when you learn how the user works.
 | `changelog-update` | Updating CHANGELOG.md from commits |
 | `evolve-framework` | Self-improve: audit, research, suggest |
 | `list-skills` | Show all available skills |
+| `upgrade-framework` | Update installed skills from latest framework source |
+| `add-defect` | Log a defect/bug as a tracked task with severity and reproduction steps |
+| `check-agent-drift` | Audit AI agent behaviour for drift from AGENTS.md conventions |
+| `cleanup-sessions` | Archive or purge stale session handoff docs |
+| `promptcraft` | Craft, save, and reuse high-quality prompts for recurring tasks |
+| `security-review` | OWASP checklist: auth, input validation, secrets, SQL injection, XSS |
+| `setup-tests` | Bootstrap a test runner for repos with no testing configured |
+| `eval-harness` | Eval-driven development: define pass/fail criteria before coding |
+| `tdd-workflow` | Red-green-refactor TDD cycle — write tests first, implement, verify coverage |
+| `verification-loop` | Full pre-PR check: build, types, lint, tests, security scan, diff review |
+| `strategic-compact` | Compact context at logical task boundaries, not mid-task |
 
 ---
 
