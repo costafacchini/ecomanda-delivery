@@ -12,6 +12,11 @@ import { ContactsQuery } from '../queries/ContactsQuery.js'
 import { TriggersQuery } from '../queries/TriggersQuery.js'
 import { TemplatesQuery } from '../queries/TemplatesQuery.js'
 import { MessagesQuery } from '../queries/MessagesQuery.js'
+import { CreateLicensee } from '../usecases/licensees/CreateLicensee.js'
+import { UpdateLicensee } from '../usecases/licensees/UpdateLicensee.js'
+import { SetDialogWebhook } from '../usecases/licensees/SetDialogWebhook.js'
+import { SendLicenseeToPagarMe } from '../usecases/licensees/SendLicenseeToPagarMe.js'
+import { SignPedidos10OrderWebhook } from '../usecases/licensees/SignPedidos10OrderWebhook.js'
 import { createRuntimeDependencies } from '../runtime/dependencies.js'
 
 const router = express.Router()
@@ -37,9 +42,15 @@ const usersController = new UsersController({ userRepository })
 const licenseesController = new LicenseesController({
   licenseeRepository,
   createLicenseesQuery: () => new LicenseesQuery({ licenseeRepository }),
-  createMessengerPlugin,
-  createPagarMe,
-  createPedidos10,
+  createLicensee: new CreateLicensee({ licenseeRepository }),
+  updateLicensee: new UpdateLicensee({ licenseeRepository }),
+  setDialogWebhook: new SetDialogWebhook({ licenseeRepository, createMessengerPlugin }),
+  sendLicenseeToPagarMe: new SendLicenseeToPagarMe({
+    licenseeRepository,
+    createPagarMe,
+    pagarMeToken: process.env.PAGARME_TOKEN,
+  }),
+  signPedidos10OrderWebhook: new SignPedidos10OrderWebhook({ licenseeRepository, createPedidos10 }),
 })
 const contactsController = new ContactsController({
   contactRepository,
