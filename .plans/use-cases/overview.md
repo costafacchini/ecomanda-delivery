@@ -1,8 +1,8 @@
 # Plan: Use Cases
 
-**Status**: not-started
+**Status**: in-progress
 **Created**: 2026-04-02
-**Last Updated**: 2026-04-28
+**Last Updated**: 2026-04-28T22:38Z
 **Assigned Dev**: Alan
 **Master Plan**: None
 
@@ -46,7 +46,7 @@ Extract business logic from controllers into dedicated use case classes, each wi
 
 | Task Path | Title | Phase | Status | Depends On |
 |-----------|-------|-------|--------|------------|
-| phase-1/task-01-scaffold-usecases-dir | Scaffold usecases directory structure | 1 | not-started | — |
+| phase-1/task-01-scaffold-usecases-dir | Scaffold usecases directory structure | 1 | complete | — |
 | phase-2/task-02-authenticate-user-usecase | Extract AuthenticateUser use case | 2 | not-started | phase-1/task-01-scaffold-usecases-dir |
 | phase-2/task-03-slim-login-controller | Slim LoginController | 2 | not-started | phase-2/task-02-authenticate-user-usecase |
 | phase-3/task-04-licensee-create-update-usecases | Extract CreateLicensee and UpdateLicensee use cases | 3 | not-started | phase-1/task-01-scaffold-usecases-dir |
