@@ -45,6 +45,12 @@ Update `LoginController.spec.js` to mock `authenticateUser.execute` rather than 
 - [ ] Existing tests still pass
 - [ ] `pre-commit-check` passes
 
+## Documentation / KB Updates
+
+- [ ] No product or API documentation changes expected for this controller extraction alone
+- [ ] If the controller-to-usecase error mapping becomes a reusable pattern, capture it with `document-solution`
+- [ ] If any KB files change, run `check-kb-index`
+
 ## Completion Criteria
 
 - [ ] `LoginController.login` contains no business logic

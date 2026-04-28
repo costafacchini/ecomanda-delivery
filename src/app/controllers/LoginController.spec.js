@@ -1,100 +1,84 @@
-import User from '@models/User'
-import jwt from 'jsonwebtoken'
-import request from 'supertest'
-import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
-import { expressServer } from '../../../.jest/server-express'
-import { userSuper as userSuperFactory } from '@factories/user'
+import {
+  AuthenticateUserInvalidCredentialsError,
+  AuthenticateUserValidationError,
+  INVALID_CREDENTIALS_MESSAGE,
+  INVALID_LOGIN_MESSAGE,
+} from '../usecases/auth/AuthenticateUser.js'
+import { LoginController } from './LoginController.js'
 
-describe('login controller', () => {
-  beforeAll(async () => {
-    installMemoryRepositories()
-    await User.create(userSuperFactory.build())
+function buildResponse() {
+  return {
+    json: jest.fn(),
+    status: jest.fn().mockReturnThis(),
+  }
+}
+
+describe('LoginController', () => {
+  let authenticateUser
+  let controller
+
+  beforeEach(() => {
+    authenticateUser = {
+      execute: jest.fn(),
+    }
+
+    controller = new LoginController({ authenticateUser })
   })
 
-  afterAll(() => {
-    resetMemoryRepositories()
+  it('returns status 200 and the token when authentication succeeds', async () => {
+    const req = {
+      body: { email: 'john@doe.com', password: '12345678' },
+    }
+    const res = buildResponse()
+
+    authenticateUser.execute.mockResolvedValue('signed-token')
+
+    await controller.login(req, res)
+
+    expect(authenticateUser.execute).toHaveBeenCalledWith(req.body)
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.json).toHaveBeenCalledWith({ token: 'signed-token' })
   })
 
-  describe('login', () => {
-    describe('response', () => {
-      it('returns status 200 and the token if the login is successful', async () => {
-        await request(expressServer)
-          .post('/login')
-          .send({ email: 'john@doe.com', password: '12345678' })
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then((response) => {
-            expect(response.body.token).toBeDefined()
-            expect(response.body.token).not.toBe('')
-            expect(response.body.token).not.toBe(null)
-          })
-      })
+  it('returns status 401 when the credentials are invalid', async () => {
+    const req = {
+      body: { email: 'john@doe.com', password: 'wrong-password' },
+    }
+    const res = buildResponse()
 
-      it('returns status 401 and message if the user not exists', async () => {
-        await request(expressServer)
-          .post('/login')
-          .send({ email: 'mary@doe.com', password: '12345678' })
-          .expect('Content-Type', /json/)
-          .expect(401, {
-            message: 'Email ou senha inválidos!',
-          })
-      })
+    authenticateUser.execute.mockRejectedValue(new AuthenticateUserInvalidCredentialsError())
 
-      it('returns status 401 and message if the password is invalid', async () => {
-        await request(expressServer)
-          .post('/login')
-          .send({ email: 'john@doe.com', password: '987534378' })
-          .expect('Content-Type', /json/)
-          .expect(401, {
-            message: 'Email ou senha inválidos!',
-          })
-      })
+    await controller.login(req, res)
 
-      it('returns status 401 and message if email not informed', async () => {
-        await request(expressServer)
-          .post('/login')
-          .send({ password: '123456' })
-          .expect('Content-Type', /json/)
-          .expect(401, {
-            message: 'Login inválido!',
-          })
-      })
+    expect(res.status).toHaveBeenCalledWith(401)
+    expect(res.json).toHaveBeenCalledWith({ message: INVALID_CREDENTIALS_MESSAGE })
+  })
 
-      it('returns status 401 and message if password not informed', async () => {
-        await request(expressServer)
-          .post('/login')
-          .send({ email: 'john@doe.com' })
-          .expect('Content-Type', /json/)
-          .expect(401, {
-            message: 'Login inválido!',
-          })
-      })
+  it('returns status 422 when the login payload is invalid', async () => {
+    const req = {
+      body: { email: 'john@doe.com' },
+    }
+    const res = buildResponse()
 
-      it('returns status 401 and message if is not active', async () => {
-        await User.create(userSuperFactory.build({ email: 'mary@doe.com', active: false }))
+    authenticateUser.execute.mockRejectedValue(new AuthenticateUserValidationError())
 
-        await request(expressServer)
-          .post('/login')
-          .send({ email: 'mary@doe.com', password: '12345678' })
-          .expect('Content-Type', /json/)
-          .expect(401, {
-            message: 'Email ou senha inválidos!',
-          })
-      })
+    await controller.login(req, res)
 
-      it('returns status 500 and message if exception occurs', async () => {
-        jest.spyOn(jwt, 'sign').mockImplementation(() => {
-          throw new Error('Erro')
-        })
+    expect(res.status).toHaveBeenCalledWith(422)
+    expect(res.json).toHaveBeenCalledWith({ message: INVALID_LOGIN_MESSAGE })
+  })
 
-        await request(expressServer)
-          .post('/login')
-          .send({ email: 'john@doe.com', password: '12345678' })
-          .expect('Content-Type', /json/)
-          .expect(500, {
-            message: 'Erro ao tentar fazer login. Error: Erro',
-          })
-      })
-    })
+  it('returns status 500 when an unexpected exception occurs', async () => {
+    const req = {
+      body: { email: 'john@doe.com', password: '12345678' },
+    }
+    const res = buildResponse()
+
+    authenticateUser.execute.mockRejectedValue(new Error('Erro'))
+
+    await controller.login(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.json).toHaveBeenCalledWith({ message: 'Erro ao tentar fazer login. Error: Erro' })
   })
 })
