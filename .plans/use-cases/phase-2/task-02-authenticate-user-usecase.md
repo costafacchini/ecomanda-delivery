@@ -45,6 +45,12 @@ Use `UserRepositoryMemory` to pre-seed a user. Assert that valid credentials ret
 - [ ] Existing tests still pass
 - [ ] `pre-commit-check` passes
 
+## Documentation / KB Updates
+
+- [ ] No product or API documentation changes expected for this extraction alone
+- [ ] If the use case wiring reveals a reusable constructor/injection pattern for later controller extractions, capture it with `document-solution`
+- [ ] If any KB files change, run `check-kb-index`
+
 ## Completion Criteria
 
 - [ ] `src/app/usecases/auth/AuthenticateUser.js` exists
