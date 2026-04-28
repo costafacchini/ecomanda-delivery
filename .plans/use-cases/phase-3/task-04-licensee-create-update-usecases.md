@@ -50,6 +50,12 @@ Pre-seed `LicenseeRepositoryMemory` where needed. Assert that the created/update
 - [ ] Existing tests still pass
 - [ ] `pre-commit-check` passes
 
+## Documentation / KB Updates
+
+- [ ] No product or API documentation changes expected for this extraction alone
+- [ ] If the field-mapping or serialization pattern becomes reusable for later use-case extractions, capture it with `document-solution`
+- [ ] If any KB files change, run `check-kb-index`
+
 ## Completion Criteria
 
 - [ ] `CreateLicensee.js` and `UpdateLicensee.js` exist with passing specs

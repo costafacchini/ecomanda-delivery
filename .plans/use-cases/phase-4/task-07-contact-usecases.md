@@ -50,6 +50,12 @@ Use `ContactRepositoryMemory`. Mock job queue. Assert record state and that the 
 - [ ] Existing tests still pass
 - [ ] `pre-commit-check` passes
 
+## Documentation / KB Updates
+
+- [ ] No product or API documentation changes expected for this extraction alone
+- [ ] If the queue-enqueue abstraction becomes reusable for later use-case extractions, capture it with `document-solution`
+- [ ] If any KB files change, run `check-kb-index`
+
 ## Completion Criteria
 
 - [ ] Both use case files and specs created and passing

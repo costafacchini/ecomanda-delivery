@@ -45,6 +45,12 @@ Mock queue. Use `BackgroundjobRepositoryMemory`. Assert record created and queue
 - [ ] Existing tests still pass
 - [ ] `pre-commit-check` passes
 
+## Documentation / KB Updates
+
+- [ ] No product or API documentation changes expected for this extraction alone
+- [ ] If the job-scheduling abstraction becomes reusable for later use-case extractions, capture it with `document-solution`
+- [ ] If any KB files change, run `check-kb-index`
+
 ## Completion Criteria
 
 - [ ] Use case file and spec created and passing

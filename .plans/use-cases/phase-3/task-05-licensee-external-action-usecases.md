@@ -53,6 +53,12 @@ Use `LicenseeRepositoryMemory` for the repository. Mock the plugin dependency wi
 - [ ] Existing tests still pass
 - [ ] `pre-commit-check` passes
 
+## Documentation / KB Updates
+
+- [ ] No product or API documentation changes expected for this extraction alone
+- [ ] If the plugin-invocation or webhook-signing pattern becomes reusable for later use-case extractions, capture it with `document-solution`
+- [ ] If any KB files change, run `check-kb-index`
+
 ## Completion Criteria
 
 - [ ] Three use case files and three spec files created and passing

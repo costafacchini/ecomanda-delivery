@@ -2,7 +2,7 @@
 
 **Status**: in-progress
 **Created**: 2026-04-02
-**Last Updated**: 2026-04-28T22:45Z
+**Last Updated**: 2026-04-28T22:55Z
 **Assigned Dev**: Alan
 **Master Plan**: None
 
@@ -49,7 +49,7 @@ Extract business logic from controllers into dedicated use case classes, each wi
 | phase-1/task-01-scaffold-usecases-dir | Scaffold usecases directory structure | 1 | complete | — |
 | phase-2/task-02-authenticate-user-usecase | Extract AuthenticateUser use case | 2 | complete | phase-1/task-01-scaffold-usecases-dir |
 | phase-2/task-03-slim-login-controller | Slim LoginController | 2 | complete | phase-2/task-02-authenticate-user-usecase |
-| phase-3/task-04-licensee-create-update-usecases | Extract CreateLicensee and UpdateLicensee use cases | 3 | not-started | phase-1/task-01-scaffold-usecases-dir |
+| phase-3/task-04-licensee-create-update-usecases | Extract CreateLicensee and UpdateLicensee use cases | 3 | complete | phase-1/task-01-scaffold-usecases-dir |
 | phase-3/task-05-licensee-external-action-usecases | Extract SetDialogWebhook, SendLicenseeToPagarMe, SignPedidos10OrderWebhook | 3 | not-started | phase-1/task-01-scaffold-usecases-dir |
 | phase-3/task-06-slim-licensees-controller | Slim LicenseesController | 3 | not-started | phase-3/task-04-licensee-create-update-usecases, phase-3/task-05-licensee-external-action-usecases |
 | phase-4/task-07-contact-usecases | Extract CreateContact and UpdateContact use cases | 4 | not-started | phase-1/task-01-scaffold-usecases-dir |
