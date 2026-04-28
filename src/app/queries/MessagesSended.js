@@ -1,15 +1,13 @@
-import { MessageRepositoryDatabase } from '@repositories/message'
-
 class MessagesSendedQuery {
-  constructor(startDate, endDate, licenseeId) {
+  constructor(startDate, endDate, licenseeId, { messageRepository } = {}) {
     this.startDate = startDate
     this.endDate = endDate
     this.licenseeId = licenseeId
+    this.messageRepository = messageRepository
   }
 
   async all() {
-    const messageRepository = new MessageRepositoryDatabase()
-    return await messageRepository.find({
+    return await this.messageRepository.find({
       sended: true,
       createdAt: {
         $gte: this.startDate,

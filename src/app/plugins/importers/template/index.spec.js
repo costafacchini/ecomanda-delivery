@@ -5,10 +5,14 @@ import { licensee as licenseeFactory } from '@factories/licensee'
 import { template as templateFactory } from '@factories/template'
 import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { createRuntimeDependencies } from '../../../runtime/dependencies.js'
+
+let dependencies
 
 describe('TemplatesImporter', () => {
   beforeAll(() => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
   })
 
   afterAll(() => {
@@ -43,7 +47,7 @@ describe('TemplatesImporter', () => {
       ]
     })
 
-    const templatesImporter = new TemplatesImporter(licensee._id)
+    const templatesImporter = new TemplatesImporter(licensee._id, dependencies)
     await templatesImporter.import()
 
     const oldTemplate = await Template.findById(template._id)

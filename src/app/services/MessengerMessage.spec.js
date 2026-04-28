@@ -5,12 +5,16 @@ import { installMemoryRepositories, resetMemoryRepositories } from '@repositorie
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { body as bodyFactory } from '@factories/body'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+let dependencies
 
 describe('transformMessengerBody', () => {
   let licensee
 
   beforeEach(async () => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
@@ -72,7 +76,7 @@ describe('transformMessengerBody', () => {
       bodyId: body._id,
     }
 
-    const actions = await transformMessengerBody(data)
+    const actions = await transformMessengerBody(data, dependencies)
 
     expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
@@ -131,7 +135,7 @@ describe('transformMessengerBody', () => {
       bodyId: body._id,
     }
 
-    const actions = await transformMessengerBody(data)
+    const actions = await transformMessengerBody(data, dependencies)
 
     expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 

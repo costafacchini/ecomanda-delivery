@@ -6,10 +6,14 @@ import { contact as contactFactory } from '@factories/contact'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+let dependencies
 
 describe('processPagarmeOrderPaid', () => {
   beforeEach(() => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
   })
 
@@ -48,7 +52,7 @@ describe('processPagarmeOrderPaid', () => {
       },
     }
 
-    await processPagarmeOrderPaid(body)
+    await processPagarmeOrderPaid(body, dependencies)
 
     const cartUpdated = await cartRepository.findFirst({ _id: cart._id })
     expect(cartUpdated.payment_status).toEqual('paid-2')
@@ -71,7 +75,7 @@ describe('processPagarmeOrderPaid', () => {
       },
     }
 
-    await processPagarmeOrderPaid(body)
+    await processPagarmeOrderPaid(body, dependencies)
 
     expect(consoleInfoSpy).toHaveBeenCalledTimes(1)
     expect(consoleInfoSpy).toHaveBeenCalledWith(

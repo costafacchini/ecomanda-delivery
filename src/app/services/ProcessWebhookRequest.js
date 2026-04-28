@@ -1,6 +1,4 @@
-import { BodyRepositoryDatabase } from '../repositories/body.js'
-
-async function processWebhookRequest(data, { bodyRepository = new BodyRepositoryDatabase() } = {}) {
+async function processWebhookRequest(data, { bodyRepository } = {}) {
   const { bodyId } = data
 
   const body = await bodyRepository.findFirst({ _id: bodyId })

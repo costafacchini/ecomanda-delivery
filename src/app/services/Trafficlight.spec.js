@@ -15,17 +15,12 @@ describe('Trafficlight service', () => {
     jest.doMock('crypto', () => ({
       randomUUID: jest.fn(() => 'trafficlight-token'),
     }))
-
-    jest.doMock('../repositories/trafficlight.js', () => ({
-      TrafficlightRepositoryDatabase: jest.fn().mockImplementation(() => mockRepository),
-    }))
     ;({ randomUUID } = require('crypto'))
     ;({ resolveTrafficlightKey, withTrafficlight } = require('./Trafficlight.js'))
   })
 
   afterEach(() => {
     jest.dontMock('crypto')
-    jest.dontMock('../repositories/trafficlight.js')
   })
 
   describe('#resolveTrafficlightKey', () => {
@@ -57,7 +52,9 @@ describe('Trafficlight service', () => {
     it('creates and releases a lock around the handler', async () => {
       const handler = jest.fn().mockResolvedValue('handled')
 
-      await expect(withTrafficlight('contact:contact-123', handler)).resolves.toEqual('handled')
+      await expect(
+        withTrafficlight('contact:contact-123', handler, { trafficlightRepository: mockRepository }),
+      ).resolves.toEqual('handled')
 
       expect(randomUUID).toHaveBeenCalledTimes(1)
       expect(mockRepository.create).toHaveBeenCalledWith({
@@ -75,7 +72,9 @@ describe('Trafficlight service', () => {
     it('releases the lock even when the handler throws', async () => {
       const handler = jest.fn().mockRejectedValue(new Error('boom'))
 
-      await expect(withTrafficlight('licensee:licensee-123', handler)).rejects.toThrow('boom')
+      await expect(
+        withTrafficlight('licensee:licensee-123', handler, { trafficlightRepository: mockRepository }),
+      ).rejects.toThrow('boom')
 
       expect(mockRepository.create).toHaveBeenCalledTimes(1)
       expect(mockRepository.delete).toHaveBeenCalledWith({
@@ -89,7 +88,9 @@ describe('Trafficlight service', () => {
 
       mockRepository.create.mockRejectedValueOnce({ code: 11000 }).mockResolvedValueOnce(undefined)
 
-      await expect(withTrafficlight('contact:contact-123', handler)).resolves.toEqual('handled')
+      await expect(
+        withTrafficlight('contact:contact-123', handler, { trafficlightRepository: mockRepository }),
+      ).resolves.toEqual('handled')
 
       expect(mockRepository.create).toHaveBeenCalledTimes(2)
       expect(handler).toHaveBeenCalledTimes(1)

@@ -1,7 +1,4 @@
-import { createChatPlugin } from '../plugins/chats/factory.js'
-import { MessageRepositoryDatabase } from '../repositories/message.js'
-
-async function closeChat(data, { messageRepository = new MessageRepositoryDatabase() } = {}) {
+async function closeChat(data, { messageRepository, createChatPlugin } = {}) {
   const { messageId } = data
   const message = await messageRepository.findFirst({ _id: messageId }, ['licensee'])
   const licensee = message.licensee

@@ -2,13 +2,9 @@ import { replace } from '../../helpers/Emoji.js'
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
 import { v4 as uuidv4 } from 'uuid'
 import request from '../../services/request.js'
-import { createCartPlugin } from '../../plugins/carts/factory.js'
 import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files.js'
-import { ContactRepositoryDatabase } from '../../repositories/contact.js'
-import { MessageRepositoryDatabase } from '../../repositories/message.js'
-import { RoomRepositoryDatabase } from '../../repositories/room.js'
-import { TriggerRepositoryDatabase } from '../../repositories/trigger.js'
 import Repository from '../../repositories/repository.js'
+import { requireDependency } from '../../helpers/RequireDependency.js'
 
 const closeRoom = async (contact, roomRepository) => {
   const room = await roomRepository.findFirst({ contact: contact._id, closed: false })
@@ -19,41 +15,48 @@ const closeRoom = async (contact, roomRepository) => {
 }
 
 class Landbot {
-  constructor(licensee, { contactRepository, messageRepository, roomRepository, triggerRepository } = {}) {
+  constructor(
+    licensee,
+    { contactRepository, messageRepository, roomRepository, triggerRepository, createCartPlugin } = {},
+  ) {
     this.licensee = licensee
     this._contactRepository = contactRepository
     this._messageRepository = messageRepository
     this._roomRepository = roomRepository
     this._triggerRepository = triggerRepository
+    this._createCartPlugin = createCartPlugin
   }
 
   get contactRepository() {
-    this._contactRepository ??= new ContactRepositoryDatabase()
-    if (typeof this._contactRepository.save !== 'function') {
-      this._contactRepository.save = Repository.prototype.save.bind(this._contactRepository)
+    const repository = requireDependency(this._contactRepository, 'contactRepository', this.constructor.name)
+    if (typeof repository.save !== 'function') {
+      repository.save = Repository.prototype.save.bind(repository)
     }
-    return this._contactRepository
+    return repository
   }
 
   get messageRepository() {
-    this._messageRepository ??= new MessageRepositoryDatabase()
-    if (typeof this._messageRepository.save !== 'function') {
-      this._messageRepository.save = Repository.prototype.save.bind(this._messageRepository)
+    const repository = requireDependency(this._messageRepository, 'messageRepository', this.constructor.name)
+    if (typeof repository.save !== 'function') {
+      repository.save = Repository.prototype.save.bind(repository)
     }
-    return this._messageRepository
+    return repository
   }
 
   get roomRepository() {
-    this._roomRepository ??= new RoomRepositoryDatabase()
-    if (typeof this._roomRepository.save !== 'function') {
-      this._roomRepository.save = Repository.prototype.save.bind(this._roomRepository)
+    const repository = requireDependency(this._roomRepository, 'roomRepository', this.constructor.name)
+    if (typeof repository.save !== 'function') {
+      repository.save = Repository.prototype.save.bind(repository)
     }
-    return this._roomRepository
+    return repository
   }
 
   get triggerRepository() {
-    this._triggerRepository ??= new TriggerRepositoryDatabase()
-    return this._triggerRepository
+    return requireDependency(this._triggerRepository, 'triggerRepository', this.constructor.name)
+  }
+
+  get createCartPlugin() {
+    return requireDependency(this._createCartPlugin, 'createCartPlugin', this.constructor.name)
   }
 
   async responseToMessages(responseBody) {
@@ -245,7 +248,7 @@ class Landbot {
       body.message.payload = '$1'
 
       if (messageToSend.kind === 'cart') {
-        const cartPlugin = createCartPlugin(this.licensee)
+        const cartPlugin = this.createCartPlugin(this.licensee)
         const cartTransformed = await cartPlugin.transformCart(this.licensee, messageToSend.cart)
 
         body.message.message = JSON.stringify(cartTransformed)

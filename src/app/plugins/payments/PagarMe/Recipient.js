@@ -1,12 +1,7 @@
 import request from '../../../services/request.js'
-import { IntegrationlogRepositoryDatabase } from '../../../repositories/integrationlog.js'
-import { LicenseeRepositoryDatabase } from '../../../repositories/licensee.js'
 
 class Recipient {
-  constructor({
-    integrationlogRepository = new IntegrationlogRepositoryDatabase(),
-    licenseeRepository = new LicenseeRepositoryDatabase(),
-  } = {}) {
+  constructor({ integrationlogRepository, licenseeRepository } = {}) {
     this.integrationlogRepository = integrationlogRepository
     this.licenseeRepository = licenseeRepository
   }

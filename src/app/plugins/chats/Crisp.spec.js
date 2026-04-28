@@ -14,6 +14,9 @@ import request from '../../services/request.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 jest.mock('../../services/request')
+import { createRuntimeDependencies } from '../../runtime/dependencies.js'
+
+let dependencies
 
 describe('Crisp plugin', () => {
   let licensee
@@ -22,6 +25,7 @@ describe('Crisp plugin', () => {
 
   beforeEach(async () => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
@@ -71,7 +75,7 @@ describe('Crisp plugin', () => {
         timestamp: 1632396233588,
       }
 
-      const crisp = new Crisp(licensee)
+      const crisp = new Crisp(licensee, dependencies)
       const messages = await crisp.responseToMessages(responseBody)
 
       expect(messages[0].licensee).toEqual(licensee._id)
@@ -93,7 +97,7 @@ describe('Crisp plugin', () => {
     it('return the empty data if body is blank', async () => {
       const responseBody = {}
 
-      const crisp = new Crisp(licensee)
+      const crisp = new Crisp(licensee, dependencies)
       const message = await crisp.responseToMessages(responseBody)
 
       expect(message).toEqual([])
@@ -104,7 +108,7 @@ describe('Crisp plugin', () => {
         event: 'message:another',
       }
 
-      const crisp = new Crisp(licensee)
+      const crisp = new Crisp(licensee, dependencies)
       const message = await crisp.responseToMessages(responseBody)
 
       expect(message).toEqual([])
@@ -133,7 +137,7 @@ describe('Crisp plugin', () => {
         timestamp: 1632396233588,
       }
 
-      const crisp = new Crisp(licensee)
+      const crisp = new Crisp(licensee, dependencies)
       const messages = await crisp.responseToMessages(responseBody)
 
       expect(messages.length).toEqual(0)
@@ -165,7 +169,7 @@ describe('Crisp plugin', () => {
         },
       }
 
-      const crisp = new Crisp(licensee)
+      const crisp = new Crisp(licensee, dependencies)
       const messages = await crisp.responseToMessages(responseBody)
 
       expect(messages[0].licensee).toEqual(licensee._id)
@@ -212,7 +216,7 @@ describe('Crisp plugin', () => {
         },
       }
 
-      const crisp = new Crisp(licensee)
+      const crisp = new Crisp(licensee, dependencies)
       const messages = await crisp.responseToMessages(responseBody)
 
       expect(messages[0].licensee).toEqual(licensee._id)
@@ -274,7 +278,7 @@ describe('Crisp plugin', () => {
           timestamp: 1632396233588,
         }
 
-        const crisp = new Crisp(licensee)
+        const crisp = new Crisp(licensee, dependencies)
         const messages = await crisp.responseToMessages(responseBody)
 
         expect(messages[0].kind).toEqual('file')
@@ -325,7 +329,7 @@ describe('Crisp plugin', () => {
           timestamp: 1632396233588,
         }
 
-        const crisp = new Crisp(licensee)
+        const crisp = new Crisp(licensee, dependencies)
         const messages = await crisp.responseToMessages(responseBody)
 
         expect(messages[0].kind).toEqual('file')
@@ -375,7 +379,7 @@ describe('Crisp plugin', () => {
           timestamp: 1632396233588,
         }
 
-        const crisp = new Crisp(licensee)
+        const crisp = new Crisp(licensee, dependencies)
         const messages = await crisp.responseToMessages(responseBody)
 
         expect(messages[0].kind).toEqual('file')
@@ -426,7 +430,7 @@ describe('Crisp plugin', () => {
           timestamp: 1632396233588,
         }
 
-        const crisp = new Crisp(licensee)
+        const crisp = new Crisp(licensee, dependencies)
         const message = await crisp.responseToMessages(responseBody)
 
         expect(message).toEqual([])
@@ -474,7 +478,7 @@ describe('Crisp plugin', () => {
           timestamp: 1632396233588,
         }
 
-        const crisp = new Crisp(licensee)
+        const crisp = new Crisp(licensee, dependencies)
         const messages = await crisp.responseToMessages(responseBody)
 
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -545,7 +549,7 @@ describe('Crisp plugin', () => {
           timestamp: 1632396233588,
         }
 
-        const crisp = new Crisp(licensee)
+        const crisp = new Crisp(licensee, dependencies)
         const messages = await crisp.responseToMessages(responseBody)
 
         expect(messages[0].kind).toEqual('template')
@@ -631,7 +635,7 @@ describe('Crisp plugin', () => {
 
         expect(message.sended).toEqual(false)
 
-        const crisp = new Crisp(licensee)
+        const crisp = new Crisp(licensee, dependencies)
         await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
 
         expect(request.patch).toHaveBeenCalledWith(
@@ -714,7 +718,7 @@ describe('Crisp plugin', () => {
 
         expect(message.sended).toEqual(false)
 
-        const crisp = new Crisp(licensee)
+        const crisp = new Crisp(licensee, dependencies)
         await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
         expect(consoleInfoSpy).toHaveBeenCalledWith('Mensagem 60958703f415ed4008748637 enviada para Crisp com sucesso!')
       })
@@ -797,7 +801,7 @@ describe('Crisp plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const crisp = new Crisp(licensee)
+          const crisp = new Crisp(licensee, dependencies)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
 
           expect(request.patch).toHaveBeenCalledWith(
@@ -888,7 +892,7 @@ describe('Crisp plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const crisp = new Crisp(licensee)
+          const crisp = new Crisp(licensee, dependencies)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
 
           expect(request.patch).toHaveBeenCalledWith(
@@ -965,7 +969,7 @@ describe('Crisp plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const crisp = new Crisp(licensee)
+          const crisp = new Crisp(licensee, dependencies)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
 
           expect(request.patch).toHaveBeenCalledWith(
@@ -1014,7 +1018,7 @@ describe('Crisp plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const crisp = new Crisp(licensee)
+          const crisp = new Crisp(licensee, dependencies)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
@@ -1082,7 +1086,7 @@ describe('Crisp plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const crisp = new Crisp(licensee)
+          const crisp = new Crisp(licensee, dependencies)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
@@ -1155,7 +1159,7 @@ describe('Crisp plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const crisp = new Crisp(licensee)
+          const crisp = new Crisp(licensee, dependencies)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
         })
       })
@@ -1229,7 +1233,7 @@ describe('Crisp plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const crisp = new Crisp(licensee)
+          const crisp = new Crisp(licensee, dependencies)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
 
           expect(request.post).toHaveBeenLastCalledWith(
@@ -1311,7 +1315,7 @@ describe('Crisp plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const crisp = new Crisp(licensee)
+          const crisp = new Crisp(licensee, dependencies)
           await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
 
           expect(request.post).toHaveBeenLastCalledWith(
@@ -1351,7 +1355,7 @@ describe('Crisp plugin', () => {
 
       expect(contact.talkingWithChatBot).toEqual(true)
 
-      const crisp = new Crisp(licensee)
+      const crisp = new Crisp(licensee, dependencies)
       await crisp.transfer(message._id, 'url')
 
       const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
@@ -1382,7 +1386,7 @@ describe('Crisp plugin', () => {
         }),
       )
 
-      const crisp = new Crisp(licensee)
+      const crisp = new Crisp(licensee, dependencies)
       await crisp.transfer(message._id.toString(), 'url')
 
       expect(sendMessageSpy).toHaveBeenCalledTimes(1)
@@ -1434,7 +1438,7 @@ describe('Crisp plugin', () => {
 
         expect(contact.talkingWithChatBot).toEqual(false)
 
-        const crisp = new Crisp(licensee)
+        const crisp = new Crisp(licensee, dependencies)
         const messages = await crisp.closeChat(message._id)
 
         const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
@@ -1488,7 +1492,7 @@ describe('Crisp plugin', () => {
 
         expect(contact.talkingWithChatBot).toEqual(false)
 
-        const crisp = new Crisp(licensee)
+        const crisp = new Crisp(licensee, dependencies)
         const messages = await crisp.closeChat(message._id)
 
         const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
@@ -1509,7 +1513,7 @@ describe('Crisp plugin', () => {
         },
       }
 
-      const crisp = new Crisp(licensee)
+      const crisp = new Crisp(licensee, dependencies)
       expect(crisp.action(responseBody)).toEqual('send-message-to-messenger')
     })
     it('returns "close-chat" if event is "session:removed"', () => {
@@ -1517,7 +1521,7 @@ describe('Crisp plugin', () => {
         event: 'session:removed',
       }
 
-      const crisp = new Crisp(licensee)
+      const crisp = new Crisp(licensee, dependencies)
       expect(crisp.action(responseBody)).toEqual('close-chat')
     })
 
@@ -1531,7 +1535,7 @@ describe('Crisp plugin', () => {
         },
       }
 
-      const crisp = new Crisp(licensee)
+      const crisp = new Crisp(licensee, dependencies)
       expect(crisp.action(responseBody)).toEqual('close-chat')
     })
   })

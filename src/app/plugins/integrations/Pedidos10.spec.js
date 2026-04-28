@@ -2,6 +2,9 @@ import { installMemoryRepositories, resetMemoryRepositories } from '@repositorie
 import { Pedidos10 } from './Pedidos10.js'
 import { Order } from './Pedidos10/Order.js'
 import { licensee as licenseeFactory } from '@factories/licensee'
+import { createRuntimeDependencies } from '../../runtime/dependencies.js'
+
+let dependencies
 
 describe('Pedidos10 plugin', () => {
   const orderSaveFnSpy = jest.spyOn(Order.prototype, 'save').mockImplementation(() => {})
@@ -9,6 +12,7 @@ describe('Pedidos10 plugin', () => {
   beforeAll(() => {
     jest.clearAllMocks()
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
   })
 
   afterAll(() => {
@@ -60,7 +64,7 @@ describe('Pedidos10 plugin', () => {
 
       const licensee = licenseeFactory.build()
 
-      const pedidos10 = new Pedidos10(licensee)
+      const pedidos10 = dependencies.createPedidos10(licensee)
       await pedidos10.processOrder(body)
 
       expect(orderSaveFnSpy).toHaveBeenCalledWith(body)
@@ -76,7 +80,7 @@ describe('Pedidos10 plugin', () => {
         access_token: 'access-token',
       }
 
-      const pedidos10 = new Pedidos10(licensee)
+      const pedidos10 = dependencies.createPedidos10(licensee)
       await pedidos10.signOrderWebhook()
 
       expect(signOrderWebhookFnSpy).toHaveBeenCalled()
@@ -94,7 +98,7 @@ describe('Pedidos10 plugin', () => {
         access_token: 'access-token',
       }
 
-      const pedidos10 = new Pedidos10(licensee)
+      const pedidos10 = dependencies.createPedidos10(licensee)
       await pedidos10.changeOrderStatus()
 
       expect(changeOrderStatusFnSpy).toHaveBeenCalled()

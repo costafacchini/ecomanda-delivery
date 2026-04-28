@@ -1,11 +1,11 @@
 import moment from 'moment-timezone'
-import { LicenseeRepositoryDatabase } from '../repositories/licensee.js'
-import { MessageRepositoryDatabase } from '../repositories/message.js'
 
 class LicenseeMessagesByDayQuery {
-  constructor(startDate, endDate) {
+  constructor(startDate, endDate, { messageRepository, licenseeRepository } = {}) {
     this.startDate = startDate
     this.endDate = endDate
+    this.messageRepository = messageRepository
+    this.licenseeRepository = licenseeRepository
   }
 
   filterByLicensee(value) {
@@ -89,11 +89,8 @@ class LicenseeMessagesByDayQuery {
   async all() {
     this.validateDates()
 
-    const messageRepository = new MessageRepositoryDatabase()
-    const licenseeRepository = new LicenseeRepositoryDatabase()
-
     const aggregation = this.buildAggregation()
-    const rawCounts = await messageRepository.model().aggregate(aggregation)
+    const rawCounts = await this.messageRepository.model().aggregate(aggregation)
 
     const mapDays = rawCounts.reduce((acc, current) => {
       acc[current._id.toString()] = current.days
@@ -101,7 +98,7 @@ class LicenseeMessagesByDayQuery {
     }, {})
 
     const licenseeFilter = this.licenseeClause ? { _id: this.licenseeClause } : {}
-    const licensees = await licenseeRepository.find(licenseeFilter)
+    const licensees = await this.licenseeRepository.find(licenseeFilter)
     licensees.sort((left, right) => left.name.localeCompare(right.name))
 
     const range = this.buildRange()

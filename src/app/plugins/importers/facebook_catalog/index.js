@@ -1,6 +1,4 @@
 import _ from 'lodash'
-import { TriggerRepositoryDatabase } from '../../../repositories/trigger.js'
-import { ProductRepositoryDatabase } from '../../../repositories/product.js'
 
 async function importProducts(products, licensee, productRepository) {
   const importedProductsPromises = await products.map(async (product) => {
@@ -59,10 +57,7 @@ function generateProductItem(productId) {
 }
 
 class FacebookCatalogImporter {
-  constructor(
-    triggerId,
-    { triggerRepository = new TriggerRepositoryDatabase(), productRepository = new ProductRepositoryDatabase() } = {},
-  ) {
+  constructor(triggerId, { triggerRepository, productRepository } = {}) {
     this.triggerId = triggerId
     this.triggerRepository = triggerRepository
     this.productRepository = productRepository

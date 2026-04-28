@@ -5,12 +5,16 @@ import { OrderRepositoryDatabase } from '@repositories/order'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { order as orderFactory } from '@factories/order'
 import { IntegratorBase } from '../plugins/integrations/IntegratorBase.js'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+let dependencies
 
 describe('sendOrder', () => {
   const integratorSendOrderFnSpy = jest.spyOn(IntegratorBase.prototype, 'sendOrder')
 
   beforeEach(() => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
   })
 
@@ -28,7 +32,7 @@ describe('sendOrder', () => {
       orderId: order._id,
     }
 
-    await sendOrder(data)
+    await sendOrder(data, dependencies)
 
     expect(integratorSendOrderFnSpy).toHaveBeenCalled()
   })
@@ -44,7 +48,7 @@ describe('sendOrder', () => {
         orderId: order._id,
       }
 
-      await sendOrder(data)
+      await sendOrder(data, dependencies)
 
       const orderUpdated = await orderRepository.findFirst({ _id: order._id })
       expect(orderUpdated.integration_status).toEqual('done')
@@ -66,7 +70,7 @@ describe('sendOrder', () => {
         orderId: order._id,
       }
 
-      await sendOrder(data)
+      await sendOrder(data, dependencies)
 
       const orderUpdated = await orderRepository.findFirst({ _id: order._id })
       expect(orderUpdated.integration_status).toEqual('error')

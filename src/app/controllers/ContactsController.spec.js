@@ -1,6 +1,6 @@
 import User from '@models/User'
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { queueServer } from '@config/queue'
 import { expressServer } from '../../../.jest/server-express'
 import { userSuper as userSuperFactory } from '@factories/user'
@@ -17,7 +17,7 @@ describe('contact controller', () => {
   const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
 
   beforeAll(async () => {
-    await mongoServer.connect()
+    installMemoryRepositories()
 
     await User.create(userSuperFactory.build())
 
@@ -32,8 +32,8 @@ describe('contact controller', () => {
     licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
-  afterAll(async () => {
-    await mongoServer.disconnect()
+  afterAll(() => {
+    resetMemoryRepositories()
   })
 
   describe('about auth', () => {

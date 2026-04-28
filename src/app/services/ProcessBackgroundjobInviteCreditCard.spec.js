@@ -9,10 +9,14 @@ import { Card } from '@plugins/payments/PagarMe/Card.js'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+let dependencies
 
 describe('processBackgroundjobInviteCreditCard', () => {
   beforeEach(() => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
   })
 
@@ -60,7 +64,7 @@ describe('processBackgroundjobInviteCreditCard', () => {
       jobId: backgroundjob._id,
     }
 
-    await processBackgroundjobInviteCreditCard(data)
+    await processBackgroundjobInviteCreditCard(data, dependencies)
 
     expect(createCreditCardFnSpy).toHaveBeenCalled()
   })
@@ -108,7 +112,7 @@ describe('processBackgroundjobInviteCreditCard', () => {
         jobId: backgroundjob._id,
       }
 
-      await processBackgroundjobInviteCreditCard(data)
+      await processBackgroundjobInviteCreditCard(data, dependencies)
 
       const backgroundjobUpdated = await Backgroundjob.findById(backgroundjob)
       expect(backgroundjobUpdated.status).toEqual('done')
@@ -166,7 +170,7 @@ describe('processBackgroundjobInviteCreditCard', () => {
         jobId: backgroundjob._id,
       }
 
-      await processBackgroundjobInviteCreditCard(data)
+      await processBackgroundjobInviteCreditCard(data, dependencies)
 
       const backgroundjobUpdated = await Backgroundjob.findById(backgroundjob)
       expect(backgroundjobUpdated.status).toEqual('error')

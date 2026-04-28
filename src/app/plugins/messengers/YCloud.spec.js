@@ -1,12 +1,6 @@
 import { YCloud } from './YCloud.js'
-import Trigger from '@models/Trigger.js'
-import Template from '@models/Template'
-import { MessageRepositoryDatabase } from '@repositories/message'
 import { NormalizePhone } from '@helpers/NormalizePhone'
 
-jest.mock('@models/Trigger')
-jest.mock('@models/Template')
-jest.mock('@repositories/message')
 jest.mock('../../services/request')
 jest.mock('@helpers/Files')
 jest.mock('@helpers/NormalizePhone')
@@ -14,6 +8,9 @@ jest.mock('@helpers/ParseTriggerText')
 
 import request from '../../services/request'
 import { isPhoto, isVideo, isMidia, isVoice } from '@helpers/Files.js'
+import { createRuntimeDependencies } from '../../runtime/dependencies.js'
+
+const dependencies = createRuntimeDependencies()
 
 describe('YCloud Plugin', () => {
   let ycloud
@@ -31,7 +28,7 @@ describe('YCloud Plugin', () => {
       useChatbot: false,
     }
 
-    ycloud = new YCloud(mockLicensee)
+    ycloud = new YCloud(mockLicensee, dependencies)
   })
 
   afterEach(() => {
@@ -487,6 +484,8 @@ describe('YCloud Plugin', () => {
 
   describe('sendMessage', () => {
     let mockMessageRepository
+    let mockTemplateRepository
+    let mockTriggerRepository
     let mockMessage
 
     beforeEach(() => {
@@ -499,14 +498,30 @@ describe('YCloud Plugin', () => {
           number: '5511999999999',
           waId: 'wa-id-123',
         },
-        save: jest.fn(),
       }
 
       mockMessageRepository = {
         findFirst: jest.fn().mockResolvedValue(mockMessage),
+        save: jest.fn().mockResolvedValue(mockMessage),
       }
 
-      MessageRepositoryDatabase.mockImplementation(() => mockMessageRepository)
+      mockTemplateRepository = {
+        findFirst: jest.fn(),
+      }
+
+      mockTriggerRepository = {
+        findFirst: jest.fn(),
+      }
+
+      ycloud = new YCloud(
+        mockLicensee,
+        createRuntimeDependencies({
+          messageRepository: mockMessageRepository,
+          templateRepository: mockTemplateRepository,
+          triggerRepository: mockTriggerRepository,
+          parseText: jest.fn((text) => text),
+        }),
+      )
     })
 
     it('should send text message successfully', async () => {
@@ -535,7 +550,7 @@ describe('YCloud Plugin', () => {
 
       expect(mockMessage.sended).toBe(true)
       expect(mockMessage.messageWaId).toBe('sent-message-id')
-      expect(mockMessage.save).toHaveBeenCalled()
+      expect(mockMessageRepository.save).toHaveBeenCalledWith(mockMessage)
     })
 
     it('should send template message successfully', async () => {
@@ -548,7 +563,7 @@ describe('YCloud Plugin', () => {
         footerParams: [],
       }
 
-      Template.findOne.mockResolvedValue(mockTemplate)
+      mockTemplateRepository.findFirst.mockResolvedValue(mockTemplate)
 
       mockMessage.kind = 'template'
       mockMessage.text = '{{welcome_template}} {{John}}'
@@ -606,7 +621,7 @@ describe('YCloud Plugin', () => {
         }),
       }
 
-      Trigger.findById.mockResolvedValue(mockTrigger)
+      mockTriggerRepository.findFirst.mockResolvedValue(mockTrigger)
 
       mockMessage.kind = 'interactive'
       mockMessage.trigger = 'trigger-id'
@@ -712,7 +727,7 @@ describe('YCloud Plugin', () => {
       await ycloud.sendMessage('message-id', 'https://api.ycloud.com/v1', 'test-token')
 
       expect(mockMessage.error).toBe('{"error":"Bad Request"}')
-      expect(mockMessage.save).toHaveBeenCalled()
+      expect(mockMessageRepository.save).toHaveBeenCalledWith(mockMessage)
     })
 
     it('should handle network error', async () => {
@@ -723,7 +738,7 @@ describe('YCloud Plugin', () => {
       await ycloud.sendMessage('message-id', 'https://api.ycloud.com/v1', 'test-token')
 
       expect(mockMessage.error).toBe('{"error":"Network Error"}')
-      expect(mockMessage.save).toHaveBeenCalled()
+      expect(mockMessageRepository.save).toHaveBeenCalledWith(mockMessage)
     })
   })
 

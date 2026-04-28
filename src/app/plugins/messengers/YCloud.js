@@ -1,9 +1,8 @@
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
 import request from '../../services/request.js'
 import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files.js'
-import { parseText } from '../../helpers/ParseTriggerText.js'
 import { MessengersBase } from './Base.js'
-import { TemplateRepositoryDatabase } from '../../repositories/template.js'
+import { requireDependency } from '../../helpers/RequireDependency.js'
 
 // const getWaIdContact = async (number, url, token) => {
 //   const headers = {
@@ -156,14 +155,18 @@ const parseComponentParam = (param, value) => {
 }
 
 class YCloud extends MessengersBase {
-  constructor(licensee, { templateRepository, messageRepository, ...dependencies } = {}) {
+  constructor(licensee, { templateRepository, messageRepository, parseText, ...dependencies } = {}) {
     super(licensee, { messageRepository, ...dependencies })
     this._templateRepository = templateRepository
+    this._parseText = parseText
   }
 
   get templateRepository() {
-    this._templateRepository ??= new TemplateRepositoryDatabase()
-    return this._templateRepository
+    return requireDependency(this._templateRepository, 'templateRepository', this.constructor.name)
+  }
+
+  get parseText() {
+    return requireDependency(this._parseText, 'parseText', this.constructor.name)
   }
 
   action(messageDestination) {
@@ -399,7 +402,7 @@ class YCloud extends MessengersBase {
             case 'text':
               messageBody.type = 'text'
               messageBody.text = {
-                body: await parseText(trigger.text, messageToSend.contact),
+                body: await this.parseText(trigger.text, messageToSend.contact),
               }
               break
             default:

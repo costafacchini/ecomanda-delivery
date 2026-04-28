@@ -1,6 +1,6 @@
 import Body from '@models/Body'
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { expressServer } from '../../../.jest/server-express'
 import { queueServer } from '@config/queue'
 import { licensee as licenseeFactory } from '@factories/licensee'
@@ -18,15 +18,15 @@ describe('chats controller', () => {
 
   beforeAll(async () => {
     jest.clearAllMocks()
-    await mongoServer.connect()
+    installMemoryRepositories()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     const licensee = await licenseeRepository.create(licenseeFactory.build())
     apiToken = licensee.apiToken
   })
 
-  afterAll(async () => {
-    await mongoServer.disconnect()
+  afterAll(() => {
+    resetMemoryRepositories()
   })
 
   describe('about auth', () => {

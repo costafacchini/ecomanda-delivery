@@ -1,9 +1,10 @@
 import { processBackgroundjobGetCreditCard } from '../services/ProcessBackgroundjobGetCreditCard.js'
+import { jobDependencies } from './dependencies.js'
 
 export default {
   key: 'process-backgroundjob-get-credit-card',
   workerEnabled: true,
   async handle(data) {
-    return await processBackgroundjobGetCreditCard(data.body)
+    return await processBackgroundjobGetCreditCard(data.body, jobDependencies)
   },
 }

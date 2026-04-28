@@ -14,6 +14,9 @@ import request from '../../services/request.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 jest.mock('../../services/request')
+import { createRuntimeDependencies } from '../../runtime/dependencies.js'
+
+let dependencies
 
 describe('Chatwoot plugin', () => {
   let licensee
@@ -22,6 +25,7 @@ describe('Chatwoot plugin', () => {
 
   beforeEach(async () => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
@@ -72,7 +76,7 @@ describe('Chatwoot plugin', () => {
         },
       }
 
-      const chatwoot = new Chatwoot(licensee)
+      const chatwoot = new Chatwoot(licensee, dependencies)
       const messages = await chatwoot.responseToMessages(responseBody)
 
       expect(messages[0].licensee).toEqual(licensee._id)
@@ -96,7 +100,7 @@ describe('Chatwoot plugin', () => {
         },
       }
 
-      const chatwoot = new Chatwoot(licensee)
+      const chatwoot = new Chatwoot(licensee, dependencies)
       const messages = await chatwoot.responseToMessages(responseBody)
 
       expect(messages).toEqual([])
@@ -112,7 +116,7 @@ describe('Chatwoot plugin', () => {
         },
       }
 
-      const chatwoot = new Chatwoot(licensee)
+      const chatwoot = new Chatwoot(licensee, dependencies)
       const messages = await chatwoot.responseToMessages(responseBody)
 
       expect(messages).toEqual([])
@@ -136,7 +140,7 @@ describe('Chatwoot plugin', () => {
         },
       }
 
-      const chatwoot = new Chatwoot(licensee)
+      const chatwoot = new Chatwoot(licensee, dependencies)
       const messages = await chatwoot.responseToMessages(responseBody)
 
       expect(messages).toEqual([])
@@ -169,7 +173,7 @@ describe('Chatwoot plugin', () => {
         },
       }
 
-      const chatwoot = new Chatwoot(licensee)
+      const chatwoot = new Chatwoot(licensee, dependencies)
       const messages = await chatwoot.responseToMessages(responseBody)
 
       expect(messages).toEqual([])
@@ -205,7 +209,7 @@ describe('Chatwoot plugin', () => {
         },
       }
 
-      const chatwoot = new Chatwoot(licensee)
+      const chatwoot = new Chatwoot(licensee, dependencies)
       const messages = await chatwoot.responseToMessages(responseBody)
 
       expect(messages.length).toEqual(1)
@@ -255,7 +259,7 @@ describe('Chatwoot plugin', () => {
           },
         }
 
-        const chatwoot = new Chatwoot(licensee)
+        const chatwoot = new Chatwoot(licensee, dependencies)
         const messages = await chatwoot.responseToMessages(responseBody)
 
         expect(messages.length).toEqual(1)
@@ -309,7 +313,7 @@ describe('Chatwoot plugin', () => {
           },
         }
 
-        const chatwoot = new Chatwoot(licenseeWithSenderName)
+        const chatwoot = new Chatwoot(licenseeWithSenderName, dependencies)
         const messages = await chatwoot.responseToMessages(responseBody)
 
         expect(messages.length).toEqual(1)
@@ -354,7 +358,7 @@ describe('Chatwoot plugin', () => {
           },
         }
 
-        const chatwoot = new Chatwoot(licensee)
+        const chatwoot = new Chatwoot(licensee, dependencies)
         const messages = await chatwoot.responseToMessages(responseBody)
 
         expect(messages.length).toEqual(1)
@@ -402,7 +406,7 @@ describe('Chatwoot plugin', () => {
           },
         }
 
-        const chatwoot = new Chatwoot(licensee)
+        const chatwoot = new Chatwoot(licensee, dependencies)
         const messages = await chatwoot.responseToMessages(responseBody)
 
         expect(messages[0].kind).toEqual('file')
@@ -449,7 +453,7 @@ describe('Chatwoot plugin', () => {
           },
         }
 
-        const chatwoot = new Chatwoot(licensee)
+        const chatwoot = new Chatwoot(licensee, dependencies)
         const messages = await chatwoot.responseToMessages(responseBody)
 
         expect(messages[0].kind).toEqual('interactive')
@@ -491,7 +495,7 @@ describe('Chatwoot plugin', () => {
           },
         }
 
-        const chatwoot = new Chatwoot(licensee)
+        const chatwoot = new Chatwoot(licensee, dependencies)
         const messages = await chatwoot.responseToMessages(responseBody)
 
         expect(messages[0].kind).toEqual('template')
@@ -533,7 +537,7 @@ describe('Chatwoot plugin', () => {
           },
         }
 
-        const chatwoot = new Chatwoot(licensee)
+        const chatwoot = new Chatwoot(licensee, dependencies)
         const messages = await chatwoot.responseToMessages(responseBody)
 
         expect(messages[0].text).toEqual('Hello group')
@@ -577,7 +581,7 @@ describe('Chatwoot plugin', () => {
           },
         })
 
-        const chatwoot = new Chatwoot(licensee, { roomRepository })
+        const chatwoot = new Chatwoot(licensee, { ...dependencies, roomRepository })
         const postMessageSpy = jest.spyOn(chatwoot, 'postMessage').mockResolvedValue(true)
 
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
@@ -639,7 +643,7 @@ describe('Chatwoot plugin', () => {
           },
         })
 
-        const chatwoot = new Chatwoot(licensee)
+        const chatwoot = new Chatwoot(licensee, dependencies)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
 
         expect(request.post).toHaveBeenCalledWith(
@@ -718,7 +722,7 @@ describe('Chatwoot plugin', () => {
           },
         })
 
-        const chatwoot = new Chatwoot(licensee)
+        const chatwoot = new Chatwoot(licensee, dependencies)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
 
         expect(request.post).toHaveBeenCalledTimes(1)
@@ -781,7 +785,7 @@ describe('Chatwoot plugin', () => {
           },
         })
 
-        const chatwoot = new Chatwoot(licensee)
+        const chatwoot = new Chatwoot(licensee, dependencies)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
 
         expect(request.post).toHaveBeenCalledTimes(1)
@@ -831,7 +835,7 @@ describe('Chatwoot plugin', () => {
             },
           })
 
-        const chatwoot = new Chatwoot(licensee)
+        const chatwoot = new Chatwoot(licensee, dependencies)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
 
         expect(request.post).toHaveBeenCalledTimes(2)
@@ -914,7 +918,7 @@ describe('Chatwoot plugin', () => {
             },
           })
 
-        const chatwoot = new Chatwoot(licensee)
+        const chatwoot = new Chatwoot(licensee, dependencies)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
 
         expect(request.get).toHaveBeenCalledTimes(1)
@@ -960,7 +964,7 @@ describe('Chatwoot plugin', () => {
           data: {},
         })
 
-        const chatwoot = new Chatwoot(licensee)
+        const chatwoot = new Chatwoot(licensee, dependencies)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
@@ -1038,7 +1042,7 @@ describe('Chatwoot plugin', () => {
           },
         })
 
-        const chatwoot = new Chatwoot(licensee)
+        const chatwoot = new Chatwoot(licensee, dependencies)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
 
         expect(request.get).toHaveBeenCalledTimes(1)
@@ -1101,7 +1105,7 @@ describe('Chatwoot plugin', () => {
           },
         })
 
-        const chatwoot = new Chatwoot(licensee)
+        const chatwoot = new Chatwoot(licensee, dependencies)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
 
         expect(request.download).toHaveBeenCalledTimes(1)
@@ -1147,7 +1151,7 @@ describe('Chatwoot plugin', () => {
           },
         })
 
-        const chatwoot = new Chatwoot(licensee)
+        const chatwoot = new Chatwoot(licensee, dependencies)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
 
         expect(request.post).toHaveBeenCalledTimes(1)
@@ -1191,7 +1195,7 @@ describe('Chatwoot plugin', () => {
           },
         })
 
-        const chatwoot = new Chatwoot(licensee, { roomRepository })
+        const chatwoot = new Chatwoot(licensee, { ...dependencies, roomRepository })
         const postMessageSpy = jest.spyOn(chatwoot, 'postMessage')
 
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
@@ -1247,7 +1251,7 @@ describe('Chatwoot plugin', () => {
           },
         })
 
-        const chatwoot = new Chatwoot(licensee, { roomRepository })
+        const chatwoot = new Chatwoot(licensee, { ...dependencies, roomRepository })
         const sent = await chatwoot.postMessage(
           'https://api.chatwoot.com/api/v1/',
           { api_access_token: 'api_token_123', 'Content-Type': 'application/json' },
@@ -1320,7 +1324,7 @@ describe('Chatwoot plugin', () => {
           },
         })
 
-        const chatwoot = new Chatwoot(licensee, { roomRepository })
+        const chatwoot = new Chatwoot(licensee, { ...dependencies, roomRepository })
         const postMessageSpy = jest
           .spyOn(chatwoot, 'postMessage')
           .mockResolvedValueOnce(false)
@@ -1382,7 +1386,7 @@ describe('Chatwoot plugin', () => {
           },
         })
 
-        const chatwoot = new Chatwoot(licensee)
+        const chatwoot = new Chatwoot(licensee, dependencies)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
 
         expect(request.post).toHaveBeenCalledTimes(1)
@@ -1434,7 +1438,7 @@ describe('Chatwoot plugin', () => {
           },
         })
 
-        const chatwoot = new Chatwoot(licensee)
+        const chatwoot = new Chatwoot(licensee, dependencies)
         await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
 
         expect(request.post).toHaveBeenCalledTimes(1)
@@ -1472,7 +1476,7 @@ describe('Chatwoot plugin', () => {
 
       expect(contact.talkingWithChatBot).toEqual(true)
 
-      const chatwoot = new Chatwoot(licensee)
+      const chatwoot = new Chatwoot(licensee, dependencies)
       await chatwoot.transfer(message._id, 'https://api.chatwoot.com/api/v1/')
 
       const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
@@ -1525,7 +1529,7 @@ describe('Chatwoot plugin', () => {
 
         expect(contact.talkingWithChatBot).toEqual(false)
 
-        const chatwoot = new Chatwoot(licensee)
+        const chatwoot = new Chatwoot(licensee, dependencies)
         const messages = await chatwoot.closeChat(message._id)
 
         const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
@@ -1578,7 +1582,7 @@ describe('Chatwoot plugin', () => {
 
         expect(contact.talkingWithChatBot).toEqual(false)
 
-        const chatwoot = new Chatwoot(licensee)
+        const chatwoot = new Chatwoot(licensee, dependencies)
         const messages = await chatwoot.closeChat(message._id)
 
         const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
@@ -1599,7 +1603,7 @@ describe('Chatwoot plugin', () => {
         status: 'resolved',
       }
 
-      const chatwoot = new Chatwoot(licensee)
+      const chatwoot = new Chatwoot(licensee, dependencies)
       expect(chatwoot.action(responseBody)).toEqual('close-chat')
     })
 
@@ -1609,7 +1613,7 @@ describe('Chatwoot plugin', () => {
         message_type: 'outgoing',
       }
 
-      const chatwoot = new Chatwoot(licensee)
+      const chatwoot = new Chatwoot(licensee, dependencies)
       expect(chatwoot.action(responseBody)).toEqual('send-message-to-messenger')
     })
   })

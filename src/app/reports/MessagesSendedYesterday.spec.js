@@ -110,7 +110,7 @@ describe('MessagesSendedYesterday', () => {
       }),
     )
 
-    const messagesSendedYesterday = new MessagesSendedYesterday()
+    const messagesSendedYesterday = new MessagesSendedYesterday({ licenseeRepository, messageRepository })
     const records = await messagesSendedYesterday.report()
 
     expect(records.length).toEqual(2)

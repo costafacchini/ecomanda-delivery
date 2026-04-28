@@ -1,11 +1,7 @@
-import { ContactRepositoryDatabase } from '../../repositories/contact.js'
-import { CartRepositoryDatabase } from '../../repositories/cart.js'
-import { MessageRepositoryDatabase } from '../../repositories/message.js'
-import { TriggerRepositoryDatabase } from '../../repositories/trigger.js'
-import { ProductRepositoryDatabase } from '../../repositories/product.js'
 import Repository from '../../repositories/repository.js'
 import { v4 as uuidv4 } from 'uuid'
 import { S3 } from '../storage/S3.js'
+import { requireDependency } from '../../helpers/RequireDependency.js'
 
 const uploadFile = (licensee, contact, fileName, fileBase64) => {
   const s3 = new S3(licensee, contact, fileName, fileBase64)
@@ -28,37 +24,35 @@ class MessengersBase {
   }
 
   get contactRepository() {
-    this._contactRepository ??= new ContactRepositoryDatabase()
-    if (typeof this._contactRepository.save !== 'function') {
-      this._contactRepository.save = Repository.prototype.save.bind(this._contactRepository)
+    const repository = requireDependency(this._contactRepository, 'contactRepository', this.constructor.name)
+    if (typeof repository.save !== 'function') {
+      repository.save = Repository.prototype.save.bind(repository)
     }
-    return this._contactRepository
+    return repository
   }
 
   get cartRepository() {
-    this._cartRepository ??= new CartRepositoryDatabase()
-    if (typeof this._cartRepository.save !== 'function') {
-      this._cartRepository.save = Repository.prototype.save.bind(this._cartRepository)
+    const repository = requireDependency(this._cartRepository, 'cartRepository', this.constructor.name)
+    if (typeof repository.save !== 'function') {
+      repository.save = Repository.prototype.save.bind(repository)
     }
-    return this._cartRepository
+    return repository
   }
 
   get messageRepository() {
-    this._messageRepository ??= new MessageRepositoryDatabase()
-    if (typeof this._messageRepository.save !== 'function') {
-      this._messageRepository.save = Repository.prototype.save.bind(this._messageRepository)
+    const repository = requireDependency(this._messageRepository, 'messageRepository', this.constructor.name)
+    if (typeof repository.save !== 'function') {
+      repository.save = Repository.prototype.save.bind(repository)
     }
-    return this._messageRepository
+    return repository
   }
 
   get triggerRepository() {
-    this._triggerRepository ??= new TriggerRepositoryDatabase()
-    return this._triggerRepository
+    return requireDependency(this._triggerRepository, 'triggerRepository', this.constructor.name)
   }
 
   get productRepository() {
-    this._productRepository ??= new ProductRepositoryDatabase()
-    return this._productRepository
+    return requireDependency(this._productRepository, 'productRepository', this.constructor.name)
   }
 
   // eslint-disable-next-line require-await

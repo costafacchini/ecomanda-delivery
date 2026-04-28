@@ -12,6 +12,9 @@ import request from '../../services/request.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 jest.mock('../../services/request')
+import { createRuntimeDependencies } from '../../runtime/dependencies.js'
+
+let dependencies
 
 describe('Cuboup plugin', () => {
   let licensee
@@ -20,6 +23,7 @@ describe('Cuboup plugin', () => {
 
   beforeEach(async () => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build({ phone: '554891231231' }))
@@ -54,7 +58,7 @@ describe('Cuboup plugin', () => {
         },
       }
 
-      const cuboup = new Cuboup(licensee)
+      const cuboup = new Cuboup(licensee, dependencies)
       const messages = await cuboup.responseToMessages(responseBody)
 
       expect(messages[0].licensee).toEqual(licensee._id)
@@ -75,7 +79,7 @@ describe('Cuboup plugin', () => {
     it('return the empty data if body is blank', async () => {
       const responseBody = {}
 
-      const cuboup = new Cuboup(licensee)
+      const cuboup = new Cuboup(licensee, dependencies)
       const message = await cuboup.responseToMessages(responseBody)
 
       expect(message).toEqual([])
@@ -91,7 +95,7 @@ describe('Cuboup plugin', () => {
         },
       }
 
-      const cuboup = new Cuboup(licensee)
+      const cuboup = new Cuboup(licensee, dependencies)
       const message = await cuboup.responseToMessages(responseBody)
 
       expect(message).toEqual([])
@@ -109,7 +113,7 @@ describe('Cuboup plugin', () => {
         },
       }
 
-      const cuboup = new Cuboup(licensee)
+      const cuboup = new Cuboup(licensee, dependencies)
       const message = await cuboup.responseToMessages(responseBody)
 
       expect(message).toEqual([])
@@ -130,7 +134,7 @@ describe('Cuboup plugin', () => {
         },
       }
 
-      const cuboup = new Cuboup(licensee)
+      const cuboup = new Cuboup(licensee, dependencies)
       const message = await cuboup.responseToMessages(responseBody)
 
       expect(message).toEqual([])
@@ -151,7 +155,7 @@ describe('Cuboup plugin', () => {
         },
       }
 
-      const cuboup = new Cuboup(licensee)
+      const cuboup = new Cuboup(licensee, dependencies)
       const message = await cuboup.responseToMessages(responseBody)
 
       expect(message).toEqual([])
@@ -172,7 +176,7 @@ describe('Cuboup plugin', () => {
         },
       }
 
-      const cuboup = new Cuboup(licensee)
+      const cuboup = new Cuboup(licensee, dependencies)
       const message = await cuboup.responseToMessages(responseBody)
 
       expect(message).toEqual([])
@@ -204,7 +208,7 @@ describe('Cuboup plugin', () => {
           },
         }
 
-        const cuboup = new Cuboup(licensee)
+        const cuboup = new Cuboup(licensee, dependencies)
         const messages = await cuboup.responseToMessages(responseBody)
 
         expect(messages[0].kind).toEqual('file')
@@ -238,7 +242,7 @@ describe('Cuboup plugin', () => {
           },
         }
 
-        const cuboup = new Cuboup(licensee)
+        const cuboup = new Cuboup(licensee, dependencies)
         const messages = await cuboup.responseToMessages(responseBody)
 
         expect(messages[0].kind).toEqual('location')
@@ -262,7 +266,7 @@ describe('Cuboup plugin', () => {
           },
         }
 
-        const cuboup = new Cuboup(licensee)
+        const cuboup = new Cuboup(licensee, dependencies)
         const message = await cuboup.responseToMessages(responseBody)
 
         expect(consoleInfoSpy).toHaveBeenCalledWith('Tipo de mensagem retornado pela CuboUp não reconhecido: any')
@@ -297,7 +301,7 @@ describe('Cuboup plugin', () => {
           },
         }
 
-        const cuboup = new Cuboup(licensee)
+        const cuboup = new Cuboup(licensee, dependencies)
         const messages = await cuboup.responseToMessages(responseBody)
 
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -353,7 +357,7 @@ describe('Cuboup plugin', () => {
           },
         }
 
-        const cuboup = new Cuboup(licensee)
+        const cuboup = new Cuboup(licensee, dependencies)
         const messages = await cuboup.responseToMessages(responseBody)
 
         expect(messages[0].kind).toEqual('template')
@@ -409,7 +413,7 @@ describe('Cuboup plugin', () => {
 
         expect(message.sended).toEqual(false)
 
-        const cuboup = new Cuboup(licensee)
+        const cuboup = new Cuboup(licensee, dependencies)
         await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
 
         expect(request.post).toHaveBeenCalledWith(
@@ -469,7 +473,7 @@ describe('Cuboup plugin', () => {
 
         expect(message.sended).toEqual(false)
 
-        const cuboup = new Cuboup(licensee)
+        const cuboup = new Cuboup(licensee, dependencies)
         await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           'Mensagem 60958703f415ed4008748637 enviada para CuboUp com sucesso!',
@@ -522,7 +526,7 @@ describe('Cuboup plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const cuboup = new Cuboup(licensee)
+          const cuboup = new Cuboup(licensee, dependencies)
           await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -577,7 +581,7 @@ describe('Cuboup plugin', () => {
 
         expect(message.sended).toEqual(false)
 
-        const cuboup = new Cuboup(licensee)
+        const cuboup = new Cuboup(licensee, dependencies)
         await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(false)
@@ -640,7 +644,7 @@ describe('Cuboup plugin', () => {
             data: {},
           })
 
-          const cuboup = new Cuboup(licensee)
+          const cuboup = new Cuboup(licensee, dependencies)
           await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
 
           expect(request.post).toHaveBeenCalledWith(
@@ -698,7 +702,7 @@ describe('Cuboup plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const cuboup = new Cuboup(licensee)
+          const cuboup = new Cuboup(licensee, dependencies)
           await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
         })
       })
@@ -753,7 +757,7 @@ describe('Cuboup plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const cuboup = new Cuboup(licensee)
+          const cuboup = new Cuboup(licensee, dependencies)
           await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
         })
       })
@@ -785,7 +789,7 @@ describe('Cuboup plugin', () => {
 
       expect(contact.talkingWithChatBot).toEqual(true)
 
-      const cuboup = new Cuboup(licensee)
+      const cuboup = new Cuboup(licensee, dependencies)
       await cuboup.transfer(message._id, 'url')
 
       const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
@@ -814,7 +818,7 @@ describe('Cuboup plugin', () => {
         }),
       )
 
-      const cuboup = new Cuboup(licensee)
+      const cuboup = new Cuboup(licensee, dependencies)
       await cuboup.transfer(message._id.toString(), 'url')
 
       expect(sendMessageSpy).toHaveBeenCalledTimes(1)
@@ -859,7 +863,7 @@ describe('Cuboup plugin', () => {
 
         expect(contact.talkingWithChatBot).toEqual(false)
 
-        const cuboup = new Cuboup(licensee)
+        const cuboup = new Cuboup(licensee, dependencies)
         await cuboup.closeChat(message._id)
 
         const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
@@ -904,7 +908,7 @@ describe('Cuboup plugin', () => {
 
         expect(contact.talkingWithChatBot).toEqual(false)
 
-        const cuboup = new Cuboup(licensee)
+        const cuboup = new Cuboup(licensee, dependencies)
         const messages = await cuboup.closeChat(message._id)
 
         const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
@@ -924,7 +928,7 @@ describe('Cuboup plugin', () => {
         },
       }
 
-      const cuboup = new Cuboup(licensee)
+      const cuboup = new Cuboup(licensee, dependencies)
       expect(cuboup.action(responseBody)).toEqual('close-chat')
     })
 
@@ -935,7 +939,7 @@ describe('Cuboup plugin', () => {
         },
       }
 
-      const cuboup = new Cuboup(licensee)
+      const cuboup = new Cuboup(licensee, dependencies)
       expect(cuboup.action(responseBody)).toEqual('close-chat')
     })
 
@@ -946,7 +950,7 @@ describe('Cuboup plugin', () => {
         },
       }
 
-      const cuboup = new Cuboup(licensee)
+      const cuboup = new Cuboup(licensee, dependencies)
       expect(cuboup.action(responseBody)).toEqual('send-message-to-messenger')
     })
   })

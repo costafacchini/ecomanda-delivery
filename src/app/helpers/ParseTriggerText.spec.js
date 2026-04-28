@@ -8,6 +8,11 @@ import { product as productFactory } from '@factories/product'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+const dependencies = createRuntimeDependencies()
+const renderText = (text, contact) => parseText(text, contact, dependencies)
+const renderCart = (cartId) => parseCart(cartId, dependencies)
 
 describe('ParseTriggerText', () => {
   beforeEach(async () => {
@@ -67,7 +72,7 @@ describe('ParseTriggerText', () => {
           }),
         )
 
-        expect(await parseText('This is your cart \n $last_cart_resume', contact)).toEqual(
+        expect(await renderText('This is your cart \n $last_cart_resume', contact)).toEqual(
           'This is your cart ' +
             '\n' +
             ' *ALCATEIA LTDS - PEDIDO 9164*' +
@@ -167,7 +172,7 @@ describe('ParseTriggerText', () => {
             }),
           )
 
-          expect(await parseText('This is your cart \n $last_cart_resume', contact)).not.toContain('*Entrega:*')
+          expect(await renderText('This is your cart \n $last_cart_resume', contact)).not.toContain('*Entrega:*')
         })
       })
 
@@ -213,7 +218,7 @@ describe('ParseTriggerText', () => {
             }),
           )
 
-          const text = await parseText('This is your cart \n $last_cart_resume', contact)
+          const text = await renderText('This is your cart \n $last_cart_resume', contact)
           expect(text).toContain('Rua do Contato, 123')
           expect(text).not.toContain('null')
         })
@@ -255,7 +260,7 @@ describe('ParseTriggerText', () => {
             }),
           )
 
-          expect(await parseText('This is your cart \n $last_cart_resume', contact)).not.toContain(
+          expect(await renderText('This is your cart \n $last_cart_resume', contact)).not.toContain(
             '*FORMA DE PAGAMENTO*',
           )
         })
@@ -297,7 +302,7 @@ describe('ParseTriggerText', () => {
             }),
           )
 
-          expect(await parseText('This is your cart \n $last_cart_resume', contact)).not.toContain('PEDIDO 9164')
+          expect(await renderText('This is your cart \n $last_cart_resume', contact)).not.toContain('PEDIDO 9164')
         })
       })
 
@@ -337,7 +342,7 @@ describe('ParseTriggerText', () => {
             }),
           )
 
-          expect(await parseText('This is your cart \n $last_cart_resume', contact)).not.toContain('*OBSERVACOES*')
+          expect(await renderText('This is your cart \n $last_cart_resume', contact)).not.toContain('*OBSERVACOES*')
         })
       })
 
@@ -377,7 +382,7 @@ describe('ParseTriggerText', () => {
             }),
           )
 
-          expect(await parseText('This is your cart \n $last_cart_resume', contact)).not.toContain(
+          expect(await renderText('This is your cart \n $last_cart_resume', contact)).not.toContain(
             'Pontos Ganhos Fidelidade:',
           )
         })
@@ -419,7 +424,7 @@ describe('ParseTriggerText', () => {
             }),
           )
 
-          expect(await parseText('This is your cart \n $last_cart_resume', contact)).not.toContain('*TROCO PARA:*')
+          expect(await renderText('This is your cart \n $last_cart_resume', contact)).not.toContain('*TROCO PARA:*')
         })
       })
     })
@@ -428,7 +433,7 @@ describe('ParseTriggerText', () => {
       it('replaces by the contact name', async () => {
         const contact = contactFactory.build({ name: 'John Doe' })
 
-        const text = await parseText('Text that contains $contact_name that should be changed', contact)
+        const text = await renderText('Text that contains $contact_name that should be changed', contact)
         expect(text).toEqual('Text that contains John Doe that should be changed')
       })
     })
@@ -437,7 +442,7 @@ describe('ParseTriggerText', () => {
       it('replaces the contact phone', async () => {
         const contact = contactFactory.build({ name: 'John Doe', number: '5511990283745' })
 
-        expect(await parseText('Text that contains $contact_number that should be changed', contact)).toEqual(
+        expect(await renderText('Text that contains $contact_number that should be changed', contact)).toEqual(
           'Text that contains 5511990283745 that should be changed',
         )
       })
@@ -455,7 +460,7 @@ describe('ParseTriggerText', () => {
           cep: '01234567',
         })
 
-        expect(await parseText('Text with $contact_address_complete', contact)).toEqual(
+        expect(await renderText('Text with $contact_address_complete', contact)).toEqual(
           'Text with Rua do Contato, 123, 123' +
             '\n' +
             'Apto. 123' +
@@ -516,7 +521,7 @@ describe('ParseTriggerText', () => {
         }),
       )
 
-      expect(await parseCart(cart._id)).toEqual(
+      expect(await renderCart(cart._id)).toEqual(
         '*ALCATEIA LTDS - PEDIDO 9164*' +
           '\n' +
           'Data: 03/07/2021 00:00' +

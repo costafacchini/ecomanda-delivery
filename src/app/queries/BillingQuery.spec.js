@@ -125,7 +125,10 @@ describe('BillingQuery', () => {
       }),
     )
 
-    const billingQuery = new BillingQuery(moment('2022-02-10T00:00:00Z').toDate())
+    const billingQuery = new BillingQuery(moment('2022-02-10T00:00:00Z').toDate(), {
+      licenseeRepository,
+      messageRepository,
+    })
     const records = await billingQuery.all()
 
     expect(records.length).toEqual(4)

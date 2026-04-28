@@ -1,12 +1,11 @@
 import moment from 'moment-timezone'
-import { CartRepositoryDatabase } from '../repositories/cart.js'
 
-async function parseText(text, contact) {
+async function parseText(text, contact, { cartRepository } = {}) {
   return text
     .replace(/\$contact_name/g, contact.name)
     .replace(/\$contact_number/g, contact.number)
     .replace(/\$contact_address_complete/g, parseAddressComplete(contact))
-    .replace(/\$last_cart_resume/g, await parseLastCart(contact))
+    .replace(/\$last_cart_resume/g, await parseLastCart(contact, { cartRepository }))
 }
 
 function parseAddressComplete(contact) {
@@ -20,8 +19,7 @@ function parseAddressComplete(contact) {
   return address_complete.join('\n')
 }
 
-async function parseLastCart(contact) {
-  const cartRepository = new CartRepositoryDatabase()
+async function parseLastCart(contact, { cartRepository } = {}) {
   const last_cart = await cartRepository.findFirst({ contact: contact._id, concluded: false }, [
     'contact',
     'licensee',
@@ -109,9 +107,9 @@ function phoneWithoutCountryCode(phone) {
   return phone.length === 13 ? phone.substr(2, 11) : phone
 }
 
-async function parseCart(cartId) {
-  const cartRepository = new CartRepositoryDatabase()
-  const cart = await cartRepository.findFirst({ _id: cartId }, ['contact', 'licensee', 'products.product'])
+async function parseCart(cartId, { cartRepository } = {}) {
+  const resolvedCartId = cartId?._id ?? cartId
+  const cart = await cartRepository.findFirst({ _id: resolvedCartId }, ['contact', 'licensee', 'products.product'])
   return cart ? cartDescription(cart) : ''
 }
 

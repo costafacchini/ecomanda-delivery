@@ -7,6 +7,9 @@ import { message as messageFactory } from '@factories/message'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { MessageRepositoryDatabase } from '@repositories/message'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+let dependencies
 
 describe('transferToChat', () => {
   const rocketchatTransferSpy = jest.spyOn(Rocketchat.prototype, 'transfer').mockImplementation(() => {})
@@ -14,6 +17,7 @@ describe('transferToChat', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
   })
 
   afterEach(() => {
@@ -51,7 +55,7 @@ describe('transferToChat', () => {
       token: 'token',
     }
 
-    await transferToChat(data)
+    await transferToChat(data, dependencies)
 
     expect(rocketchatTransferSpy).toHaveBeenCalledWith('609dcb059f560046cde64748', 'https://messenger.url')
   })

@@ -9,10 +9,14 @@ import { Payment } from '@plugins/payments/PagarMe/Payment.js'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+let dependencies
 
 describe('processBackgroundjobChargeCreditCard', () => {
   beforeEach(() => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
   })
 
@@ -70,7 +74,7 @@ describe('processBackgroundjobChargeCreditCard', () => {
       jobId: backgroundjob._id,
     }
 
-    await processBackgroundjobChargeCreditCard(data)
+    await processBackgroundjobChargeCreditCard(data, dependencies)
 
     expect(createCreditCardFnSpy).toHaveBeenCalled()
   })
@@ -127,7 +131,7 @@ describe('processBackgroundjobChargeCreditCard', () => {
         jobId: backgroundjob._id,
       }
 
-      await processBackgroundjobChargeCreditCard(data)
+      await processBackgroundjobChargeCreditCard(data, dependencies)
 
       const backgroundjobUpdated = await Backgroundjob.findById(backgroundjob)
       expect(backgroundjobUpdated.status).toEqual('done')
@@ -187,7 +191,7 @@ describe('processBackgroundjobChargeCreditCard', () => {
           jobId: backgroundjob._id,
         }
 
-        await processBackgroundjobChargeCreditCard(data)
+        await processBackgroundjobChargeCreditCard(data, dependencies)
 
         const backgroundjobUpdated = await Backgroundjob.findById(backgroundjob)
         expect(backgroundjobUpdated.status).toEqual('error')
@@ -249,7 +253,7 @@ describe('processBackgroundjobChargeCreditCard', () => {
           jobId: backgroundjob._id,
         }
 
-        await processBackgroundjobChargeCreditCard(data)
+        await processBackgroundjobChargeCreditCard(data, dependencies)
 
         const backgroundjobUpdated = await Backgroundjob.findById(backgroundjob)
         expect(backgroundjobUpdated.status).toEqual('error')
@@ -313,7 +317,7 @@ describe('processBackgroundjobChargeCreditCard', () => {
           jobId: backgroundjob._id,
         }
 
-        await processBackgroundjobChargeCreditCard(data)
+        await processBackgroundjobChargeCreditCard(data, dependencies)
 
         const backgroundjobUpdated = await Backgroundjob.findById(backgroundjob)
         expect(backgroundjobUpdated.status).toEqual('error')
@@ -375,7 +379,7 @@ describe('processBackgroundjobChargeCreditCard', () => {
           jobId: backgroundjob._id,
         }
 
-        await processBackgroundjobChargeCreditCard(data)
+        await processBackgroundjobChargeCreditCard(data, dependencies)
 
         const backgroundjobUpdated = await Backgroundjob.findById(backgroundjob)
         expect(backgroundjobUpdated.status).toEqual('error')
@@ -437,7 +441,7 @@ describe('processBackgroundjobChargeCreditCard', () => {
           jobId: backgroundjob._id,
         }
 
-        await processBackgroundjobChargeCreditCard(data)
+        await processBackgroundjobChargeCreditCard(data, dependencies)
 
         const backgroundjobUpdated = await Backgroundjob.findById(backgroundjob)
         expect(backgroundjobUpdated.status).toEqual('error')

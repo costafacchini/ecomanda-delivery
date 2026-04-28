@@ -1,9 +1,7 @@
-import { ContactRepositoryDatabase } from '../../repositories/contact.js'
-import { MessageRepositoryDatabase } from '../../repositories/message.js'
-import { TriggerRepositoryDatabase } from '../../repositories/trigger.js'
 import Repository from '../../repositories/repository.js'
 import { replace } from '../../helpers/Emoji.js'
 import { v4 as uuidv4 } from 'uuid'
+import { requireDependency } from '../../helpers/RequireDependency.js'
 
 class ChatsBase {
   constructor(licensee, { contactRepository, messageRepository, triggerRepository } = {}) {
@@ -14,24 +12,23 @@ class ChatsBase {
   }
 
   get contactRepository() {
-    this._contactRepository ??= new ContactRepositoryDatabase()
-    if (typeof this._contactRepository.save !== 'function') {
-      this._contactRepository.save = Repository.prototype.save.bind(this._contactRepository)
+    const repository = requireDependency(this._contactRepository, 'contactRepository', this.constructor.name)
+    if (typeof repository.save !== 'function') {
+      repository.save = Repository.prototype.save.bind(repository)
     }
-    return this._contactRepository
+    return repository
   }
 
   get messageRepository() {
-    this._messageRepository ??= new MessageRepositoryDatabase()
-    if (typeof this._messageRepository.save !== 'function') {
-      this._messageRepository.save = Repository.prototype.save.bind(this._messageRepository)
+    const repository = requireDependency(this._messageRepository, 'messageRepository', this.constructor.name)
+    if (typeof repository.save !== 'function') {
+      repository.save = Repository.prototype.save.bind(repository)
     }
-    return this._messageRepository
+    return repository
   }
 
   get triggerRepository() {
-    this._triggerRepository ??= new TriggerRepositoryDatabase()
-    return this._triggerRepository
+    return requireDependency(this._triggerRepository, 'triggerRepository', this.constructor.name)
   }
 
   async findContact(filters) {

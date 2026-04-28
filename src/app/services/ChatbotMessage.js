@@ -1,7 +1,4 @@
-import { createChatbotPlugin } from '../plugins/chatbots/factory.js'
-import { BodyRepositoryDatabase } from '../repositories/body.js'
-
-async function transformChatbotBody(data, { bodyRepository = new BodyRepositoryDatabase() } = {}) {
+async function transformChatbotBody(data, { bodyRepository, createChatbotPlugin } = {}) {
   const { bodyId } = data
   const body = await bodyRepository.findFirst({ _id: bodyId }, ['licensee'])
   const licensee = body.licensee

@@ -1,12 +1,6 @@
 import { Pabbly } from './Pabbly.js'
-import Trigger from '../../models/Trigger.js'
-import Template from '../../models/Template.js'
-import { MessageRepositoryDatabase } from '../../repositories/message.js'
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
 
-jest.mock('../../models/Trigger')
-jest.mock('../../models/Template')
-jest.mock('../../repositories/message')
 jest.mock('../../services/request')
 jest.mock('../../helpers/Files')
 jest.mock('../../helpers/NormalizePhone')
@@ -14,6 +8,9 @@ jest.mock('../../helpers/ParseTriggerText')
 
 import request from '../../services/request.js'
 import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files.js'
+import { createRuntimeDependencies } from '../../runtime/dependencies.js'
+
+const dependencies = createRuntimeDependencies()
 
 describe('Pabbly Plugin', () => {
   let pabbly
@@ -31,7 +28,7 @@ describe('Pabbly Plugin', () => {
       useChatbot: false,
     }
 
-    pabbly = new Pabbly(mockLicensee)
+    pabbly = new Pabbly(mockLicensee, dependencies)
   })
 
   afterEach(() => {
@@ -403,6 +400,8 @@ describe('Pabbly Plugin', () => {
 
   describe('sendMessage', () => {
     let mockMessageRepository
+    let mockTemplateRepository
+    let mockTriggerRepository
     let mockMessage
 
     beforeEach(() => {
@@ -415,14 +414,30 @@ describe('Pabbly Plugin', () => {
           number: '5511999999999',
           waId: 'wa-id-123',
         },
-        save: jest.fn(),
       }
 
       mockMessageRepository = {
         findFirst: jest.fn().mockResolvedValue(mockMessage),
+        save: jest.fn().mockResolvedValue(mockMessage),
       }
 
-      MessageRepositoryDatabase.mockImplementation(() => mockMessageRepository)
+      mockTemplateRepository = {
+        findFirst: jest.fn(),
+      }
+
+      mockTriggerRepository = {
+        findFirst: jest.fn(),
+      }
+
+      pabbly = new Pabbly(
+        mockLicensee,
+        createRuntimeDependencies({
+          messageRepository: mockMessageRepository,
+          templateRepository: mockTemplateRepository,
+          triggerRepository: mockTriggerRepository,
+          parseText: jest.fn((text) => text),
+        }),
+      )
     })
 
     it('should send text message successfully', async () => {
@@ -447,7 +462,7 @@ describe('Pabbly Plugin', () => {
 
       expect(mockMessage.sended).toBe(true)
       expect(mockMessage.messageWaId).toBe('sent-message-id')
-      expect(mockMessage.save).toHaveBeenCalled()
+      expect(mockMessageRepository.save).toHaveBeenCalledWith(mockMessage)
     })
 
     it('should send text message with sender name', async () => {
@@ -482,7 +497,7 @@ describe('Pabbly Plugin', () => {
         footerParams: [],
       }
 
-      Template.findOne.mockResolvedValue(mockTemplate)
+      mockTemplateRepository.findFirst.mockResolvedValue(mockTemplate)
 
       mockMessage.kind = 'template'
       mockMessage.text = '{{welcome_template}} {{John}}'
@@ -538,7 +553,7 @@ describe('Pabbly Plugin', () => {
         }),
       }
 
-      Trigger.findById.mockResolvedValue(mockTrigger)
+      mockTriggerRepository.findFirst.mockResolvedValue(mockTrigger)
 
       mockMessage.kind = 'interactive'
       mockMessage.trigger = 'trigger-id'
@@ -639,7 +654,7 @@ describe('Pabbly Plugin', () => {
       await pabbly.sendMessage('message-id', 'https://api.pabbly.com/v1', 'test-token')
 
       expect(mockMessage.error).toBe('{"error":"Bad Request"}')
-      expect(mockMessage.save).toHaveBeenCalled()
+      expect(mockMessageRepository.save).toHaveBeenCalledWith(mockMessage)
     })
 
     it('should handle network error', async () => {
@@ -650,7 +665,7 @@ describe('Pabbly Plugin', () => {
       await pabbly.sendMessage('message-id', 'https://api.pabbly.com/v1', 'test-token')
 
       expect(mockMessage.error).toBe('{"error":"Network Error"}')
-      expect(mockMessage.save).toHaveBeenCalled()
+      expect(mockMessageRepository.save).toHaveBeenCalledWith(mockMessage)
     })
   })
 

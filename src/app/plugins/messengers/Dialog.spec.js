@@ -26,6 +26,9 @@ import request from '../../services/request.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 jest.mock('../../services/request')
+import { createRuntimeDependencies } from '../../runtime/dependencies.js'
+
+let dependencies
 
 describe('Dialog plugin', () => {
   let licensee
@@ -38,6 +41,7 @@ describe('Dialog plugin', () => {
 
   beforeEach(async () => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build({ whatsappToken: 'whats-token' }))
@@ -50,7 +54,7 @@ describe('Dialog plugin', () => {
   describe('#responseToMessages', () => {
     describe('text', () => {
       it('returns the response body transformed in messages', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -81,7 +85,7 @@ describe('Dialog plugin', () => {
           ],
         }
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         const messages = await dialog.responseToMessages(responseBody)
 
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -103,7 +107,7 @@ describe('Dialog plugin', () => {
 
     describe('button', () => {
       it('returns the response body transformed in messages', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -138,7 +142,7 @@ describe('Dialog plugin', () => {
           ],
         }
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         const messages = await dialog.responseToMessages(responseBody)
 
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -160,7 +164,7 @@ describe('Dialog plugin', () => {
 
     describe('image', () => {
       it('returns the response body transformed in messages', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -200,7 +204,7 @@ describe('Dialog plugin', () => {
           data: Buffer.from('test'),
         })
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         const messages = await dialog.responseToMessages(responseBody)
 
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -226,7 +230,7 @@ describe('Dialog plugin', () => {
 
     describe('video', () => {
       it('returns the response body transformed in messages', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -266,7 +270,7 @@ describe('Dialog plugin', () => {
           data: Buffer.from('test'),
         })
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         const messages = await dialog.responseToMessages(responseBody)
 
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -292,7 +296,7 @@ describe('Dialog plugin', () => {
 
     describe('voice', () => {
       it('returns the response body transformed in messages', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -332,7 +336,7 @@ describe('Dialog plugin', () => {
           data: Buffer.from('test'),
         })
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         const messages = await dialog.responseToMessages(responseBody)
 
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -358,7 +362,7 @@ describe('Dialog plugin', () => {
 
     describe('audio', () => {
       it('returns the response body transformed in messages', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -398,7 +402,7 @@ describe('Dialog plugin', () => {
           data: Buffer.from('test'),
         })
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         const messages = await dialog.responseToMessages(responseBody)
 
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -424,7 +428,7 @@ describe('Dialog plugin', () => {
 
     describe('document', () => {
       it('returns the response body transformed in messages', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -464,7 +468,7 @@ describe('Dialog plugin', () => {
           data: Buffer.from('test'),
         })
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         const messages = await dialog.responseToMessages(responseBody)
 
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -490,7 +494,7 @@ describe('Dialog plugin', () => {
 
     describe('interactive list_reply', () => {
       it('returns the response body transformed in messages', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -529,7 +533,7 @@ describe('Dialog plugin', () => {
           ],
         }
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         const messages = await dialog.responseToMessages(responseBody)
 
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -564,7 +568,7 @@ describe('Dialog plugin', () => {
       })
 
       it('returns message with text if does not have trigger', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -600,7 +604,7 @@ describe('Dialog plugin', () => {
           ],
         }
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         const messages = await dialog.responseToMessages(responseBody)
 
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -623,7 +627,7 @@ describe('Dialog plugin', () => {
 
     describe('interactive button_reply', () => {
       it('returns the response body transformed in messages', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -661,7 +665,7 @@ describe('Dialog plugin', () => {
           ],
         }
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         const messages = await dialog.responseToMessages(responseBody)
 
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -696,7 +700,7 @@ describe('Dialog plugin', () => {
       })
 
       it('returns message with text if does not have trigger', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -731,7 +735,7 @@ describe('Dialog plugin', () => {
           ],
         }
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         const messages = await dialog.responseToMessages(responseBody)
 
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -754,7 +758,7 @@ describe('Dialog plugin', () => {
 
     describe('cart', () => {
       it('returns the response body transformed in messages and create new cart if contact has no cart opened', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -765,7 +769,7 @@ describe('Dialog plugin', () => {
 
         const product = await Product.create(productFactory.build({ product_retailer_id: '1011', licensee }))
 
-        const cartRepository = new CartRepositoryDatabase()
+        const cartRepository = dependencies.cartRepository
         const cartConcluded = await cartRepository.create(cartFactory.build({ contact, licensee, concluded: true }))
 
         const responseBody = {
@@ -788,7 +792,7 @@ describe('Dialog plugin', () => {
           ],
         }
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         const messages = await dialog.responseToMessages(responseBody)
 
         const cart = await cartRepository.findFirst({ contact: contact._id, concluded: false })
@@ -825,7 +829,7 @@ describe('Dialog plugin', () => {
       })
 
       it('returns the response body transformed in messages and updates the cart if contact has cart opened', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -834,7 +838,7 @@ describe('Dialog plugin', () => {
           }),
         )
 
-        const cartRepository = new CartRepositoryDatabase()
+        const cartRepository = dependencies.cartRepository
         const cart = await cartRepository.create(cartFactory.build({ contact, licensee, concluded: false }))
 
         const responseBody = {
@@ -857,7 +861,7 @@ describe('Dialog plugin', () => {
           ],
         }
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         const messages = await dialog.responseToMessages(responseBody)
 
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -893,7 +897,7 @@ describe('Dialog plugin', () => {
     })
 
     it('updates the contact if contact exists and name is different', async () => {
-      const contactRepository = new ContactRepositoryDatabase()
+      const contactRepository = dependencies.contactRepository
       await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
@@ -924,7 +928,7 @@ describe('Dialog plugin', () => {
         ],
       }
 
-      const dialog = new Dialog(licensee)
+      const dialog = new Dialog(licensee, dependencies)
       await dialog.responseToMessages(responseBody)
 
       const contactUpdated = await contactRepository.findFirst({
@@ -937,7 +941,7 @@ describe('Dialog plugin', () => {
     })
 
     it('updates the contact if contact exists and waId is different', async () => {
-      const contactRepository = new ContactRepositoryDatabase()
+      const contactRepository = dependencies.contactRepository
       await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
@@ -968,7 +972,7 @@ describe('Dialog plugin', () => {
         ],
       }
 
-      const dialog = new Dialog(licensee)
+      const dialog = new Dialog(licensee, dependencies)
       await dialog.responseToMessages(responseBody)
 
       const contactUpdated = await contactRepository.findFirst({
@@ -981,7 +985,7 @@ describe('Dialog plugin', () => {
     })
 
     it('does not update the contact if name is undefined', async () => {
-      const contactRepository = new ContactRepositoryDatabase()
+      const contactRepository = dependencies.contactRepository
       await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
@@ -1011,7 +1015,7 @@ describe('Dialog plugin', () => {
         ],
       }
 
-      const dialog = new Dialog(licensee)
+      const dialog = new Dialog(licensee, dependencies)
       await dialog.responseToMessages(responseBody)
 
       const contactUpdated = await contactRepository.findFirst({
@@ -1024,7 +1028,7 @@ describe('Dialog plugin', () => {
     })
 
     it('does not update the contact if wa_id is undefined', async () => {
-      const contactRepository = new ContactRepositoryDatabase()
+      const contactRepository = dependencies.contactRepository
       await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
@@ -1055,7 +1059,7 @@ describe('Dialog plugin', () => {
         ],
       }
 
-      const dialog = new Dialog(licensee)
+      const dialog = new Dialog(licensee, dependencies)
       await dialog.responseToMessages(responseBody)
 
       const contactUpdated = await contactRepository.findFirst({
@@ -1068,7 +1072,7 @@ describe('Dialog plugin', () => {
     })
 
     it('updates the contact whatsapp start chat if field not filled', async () => {
-      const contactRepository = new ContactRepositoryDatabase()
+      const contactRepository = dependencies.contactRepository
       await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
@@ -1099,7 +1103,7 @@ describe('Dialog plugin', () => {
         ],
       }
 
-      const dialog = new Dialog(licensee)
+      const dialog = new Dialog(licensee, dependencies)
       await dialog.responseToMessages(responseBody)
 
       const contactUpdated = await contactRepository.findFirst({
@@ -1112,7 +1116,7 @@ describe('Dialog plugin', () => {
     })
 
     it('does not update the contact whatsapp start chat if field already filled', async () => {
-      const contactRepository = new ContactRepositoryDatabase()
+      const contactRepository = dependencies.contactRepository
       await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
@@ -1144,7 +1148,7 @@ describe('Dialog plugin', () => {
         ],
       }
 
-      const dialog = new Dialog(licensee)
+      const dialog = new Dialog(licensee, dependencies)
       await dialog.responseToMessages(responseBody)
 
       const contactUpdated = await contactRepository.findFirst({
@@ -1180,10 +1184,10 @@ describe('Dialog plugin', () => {
           ],
         }
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         const messages = await dialog.responseToMessages(responseBody)
 
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.findFirst({
           number: '5593165392999',
           type: '@c.us',
@@ -1204,7 +1208,7 @@ describe('Dialog plugin', () => {
 
     describe('when the contact talking with chatbot', () => {
       it('returns the response body transformed in message with destination "to_chatbot"', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -1236,7 +1240,7 @@ describe('Dialog plugin', () => {
           ],
         }
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         const messages = await dialog.responseToMessages(responseBody)
 
         expect(messages[0].destination).toEqual('to-chatbot')
@@ -1248,7 +1252,7 @@ describe('Dialog plugin', () => {
     it('return the empty data if body is blank', async () => {
       const responseBody = {}
 
-      const dialog = new Dialog(licensee)
+      const dialog = new Dialog(licensee, dependencies)
       const messages = await dialog.responseToMessages(responseBody)
 
       expect(messages.length).toEqual(0)
@@ -1259,7 +1263,7 @@ describe('Dialog plugin', () => {
         instanceId: '244959',
       }
 
-      const dialog = new Dialog(licensee)
+      const dialog = new Dialog(licensee, dependencies)
       const messages = await dialog.responseToMessages(responseBody)
 
       expect(messages.length).toEqual(0)
@@ -1290,7 +1294,7 @@ describe('Dialog plugin', () => {
         ],
       }
 
-      const dialog = new Dialog(licensee)
+      const dialog = new Dialog(licensee, dependencies)
       const messages = await dialog.responseToMessages(responseBody)
 
       expect(messages.length).toEqual(0)
@@ -1298,7 +1302,7 @@ describe('Dialog plugin', () => {
 
     describe('when the body has statuses', () => {
       it('fills the message sendedAt if status is sent', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -1308,7 +1312,7 @@ describe('Dialog plugin', () => {
           }),
         )
 
-        const messageRepository = new MessageRepositoryDatabase()
+        const messageRepository = dependencies.messageRepository
         await messageRepository.create(
           messageFactory.build({
             text: 'Message to send',
@@ -1328,7 +1332,7 @@ describe('Dialog plugin', () => {
           ],
         }
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         const messages = await dialog.responseToMessages(responseBody)
 
         expect(messages).toEqual([])
@@ -1342,7 +1346,7 @@ describe('Dialog plugin', () => {
       })
 
       it('fills the message deliveredAt if status is delivered', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -1352,7 +1356,7 @@ describe('Dialog plugin', () => {
           }),
         )
 
-        const messageRepository = new MessageRepositoryDatabase()
+        const messageRepository = dependencies.messageRepository
         await messageRepository.create(
           messageFactory.build({
             text: 'Message to send',
@@ -1372,7 +1376,7 @@ describe('Dialog plugin', () => {
           ],
         }
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         const messages = await dialog.responseToMessages(responseBody)
 
         expect(messages).toEqual([])
@@ -1386,7 +1390,7 @@ describe('Dialog plugin', () => {
       })
 
       it('fills the message readAt if status is read', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -1396,7 +1400,7 @@ describe('Dialog plugin', () => {
           }),
         )
 
-        const messageRepository = new MessageRepositoryDatabase()
+        const messageRepository = dependencies.messageRepository
         await messageRepository.create(
           messageFactory.build({
             text: 'Message to send',
@@ -1416,7 +1420,7 @@ describe('Dialog plugin', () => {
           ],
         }
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         const messages = await dialog.responseToMessages(responseBody)
 
         expect(messages).toEqual([])
@@ -1434,7 +1438,7 @@ describe('Dialog plugin', () => {
   describe('#sendMessage', () => {
     describe('when the message was sent', () => {
       it('marks the message with was sent and logs the success message', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -1444,7 +1448,7 @@ describe('Dialog plugin', () => {
           }),
         )
 
-        const messageRepository = new MessageRepositoryDatabase()
+        const messageRepository = dependencies.messageRepository
         const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
@@ -1474,7 +1478,7 @@ describe('Dialog plugin', () => {
 
         expect(message.sended).toEqual(false)
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
@@ -1486,7 +1490,7 @@ describe('Dialog plugin', () => {
 
       describe('when the message is image', () => {
         it('marks the message with sended and log the success message', async () => {
-          const contactRepository = new ContactRepositoryDatabase()
+          const contactRepository = dependencies.contactRepository
           const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
@@ -1495,7 +1499,7 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          const messageRepository = new MessageRepositoryDatabase()
+          const messageRepository = dependencies.messageRepository
           const message = await messageRepository.create(
             messageFactory.build({
               _id: '60958703f415ed4008748637',
@@ -1537,7 +1541,7 @@ describe('Dialog plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const dialog = new Dialog(licensee)
+          const dialog = new Dialog(licensee, dependencies)
           await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -1550,7 +1554,7 @@ describe('Dialog plugin', () => {
 
       describe('when the message is video', () => {
         it('marks the message with sended and log the success message', async () => {
-          const contactRepository = new ContactRepositoryDatabase()
+          const contactRepository = dependencies.contactRepository
           const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
@@ -1559,7 +1563,7 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          const messageRepository = new MessageRepositoryDatabase()
+          const messageRepository = dependencies.messageRepository
           const message = await messageRepository.create(
             messageFactory.build({
               _id: '60958703f415ed4008748637',
@@ -1601,7 +1605,7 @@ describe('Dialog plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const dialog = new Dialog(licensee)
+          const dialog = new Dialog(licensee, dependencies)
           await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -1614,7 +1618,7 @@ describe('Dialog plugin', () => {
 
       describe('when the message is audio', () => {
         it('marks the message with sended and log the success message', async () => {
-          const contactRepository = new ContactRepositoryDatabase()
+          const contactRepository = dependencies.contactRepository
           const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
@@ -1624,7 +1628,7 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          const messageRepository = new MessageRepositoryDatabase()
+          const messageRepository = dependencies.messageRepository
           const message = await messageRepository.create(
             messageFactory.build({
               _id: '60958703f415ed4008748637',
@@ -1666,7 +1670,7 @@ describe('Dialog plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const dialog = new Dialog(licensee)
+          const dialog = new Dialog(licensee, dependencies)
           await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -1679,7 +1683,7 @@ describe('Dialog plugin', () => {
 
       describe('when the message is document', () => {
         it('marks the message with sended and log the success message', async () => {
-          const contactRepository = new ContactRepositoryDatabase()
+          const contactRepository = dependencies.contactRepository
           const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
@@ -1689,7 +1693,7 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          const messageRepository = new MessageRepositoryDatabase()
+          const messageRepository = dependencies.messageRepository
           const message = await messageRepository.create(
             messageFactory.build({
               _id: '60958703f415ed4008748637',
@@ -1731,7 +1735,7 @@ describe('Dialog plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const dialog = new Dialog(licensee)
+          const dialog = new Dialog(licensee, dependencies)
           await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -1745,7 +1749,7 @@ describe('Dialog plugin', () => {
       describe('when the message is interactive', () => {
         describe('if triggerKind is multi_product', () => {
           it('marks the message with sended and log the success message', async () => {
-            const contactRepository = new ContactRepositoryDatabase()
+            const contactRepository = dependencies.contactRepository
             const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
@@ -1799,7 +1803,7 @@ describe('Dialog plugin', () => {
               }),
             })
 
-            const messageRepository = new MessageRepositoryDatabase()
+            const messageRepository = dependencies.messageRepository
             const message = await messageRepository.create(
               messageFactory.build({
                 _id: '60958703f415ed4008748637',
@@ -1875,7 +1879,7 @@ describe('Dialog plugin', () => {
 
             expect(message.sended).toEqual(false)
 
-            const dialog = new Dialog(licensee)
+            const dialog = new Dialog(licensee, dependencies)
             await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -1888,7 +1892,7 @@ describe('Dialog plugin', () => {
 
         describe('if triggerKind is single_product', () => {
           it('marks the message with sended and log the success message', async () => {
-            const contactRepository = new ContactRepositoryDatabase()
+            const contactRepository = dependencies.contactRepository
             const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
@@ -1920,7 +1924,7 @@ describe('Dialog plugin', () => {
               }),
             })
 
-            const messageRepository = new MessageRepositoryDatabase()
+            const messageRepository = dependencies.messageRepository
             const message = await messageRepository.create(
               messageFactory.build({
                 _id: '60958703f415ed4008748637',
@@ -1974,7 +1978,7 @@ describe('Dialog plugin', () => {
 
             expect(message.sended).toEqual(false)
 
-            const dialog = new Dialog(licensee)
+            const dialog = new Dialog(licensee, dependencies)
             await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -1987,7 +1991,7 @@ describe('Dialog plugin', () => {
 
         describe('if triggerKind is reply_button', () => {
           it('marks the message with sended and log the success message', async () => {
-            const contactRepository = new ContactRepositoryDatabase()
+            const contactRepository = dependencies.contactRepository
             const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
@@ -2039,7 +2043,7 @@ describe('Dialog plugin', () => {
               }),
             })
 
-            const messageRepository = new MessageRepositoryDatabase()
+            const messageRepository = dependencies.messageRepository
             const message = await messageRepository.create(
               messageFactory.build({
                 _id: '60958703f415ed4008748637',
@@ -2113,7 +2117,7 @@ describe('Dialog plugin', () => {
 
             expect(message.sended).toEqual(false)
 
-            const dialog = new Dialog(licensee)
+            const dialog = new Dialog(licensee, dependencies)
             await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -2126,7 +2130,7 @@ describe('Dialog plugin', () => {
 
         describe('if triggerKind is list_message', () => {
           it('marks the message with sended and log the success message', async () => {
-            const contactRepository = new ContactRepositoryDatabase()
+            const contactRepository = dependencies.contactRepository
             const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
@@ -2183,7 +2187,7 @@ describe('Dialog plugin', () => {
               }),
             })
 
-            const messageRepository = new MessageRepositoryDatabase()
+            const messageRepository = dependencies.messageRepository
             const message = await messageRepository.create(
               messageFactory.build({
                 _id: '60958703f415ed4008748637',
@@ -2262,7 +2266,7 @@ describe('Dialog plugin', () => {
 
             expect(message.sended).toEqual(false)
 
-            const dialog = new Dialog(licensee)
+            const dialog = new Dialog(licensee, dependencies)
             await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -2275,7 +2279,7 @@ describe('Dialog plugin', () => {
 
         describe('if triggerKind is text', () => {
           it('marks the message with sended and log the success message', async () => {
-            const contactRepository = new ContactRepositoryDatabase()
+            const contactRepository = dependencies.contactRepository
             const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
@@ -2290,7 +2294,7 @@ describe('Dialog plugin', () => {
               text: 'Message normal with $contact_name',
             })
 
-            const messageRepository = new MessageRepositoryDatabase()
+            const messageRepository = dependencies.messageRepository
             const message = await messageRepository.create(
               messageFactory.build({
                 _id: '60958703f415ed4008748637',
@@ -2329,7 +2333,7 @@ describe('Dialog plugin', () => {
 
             expect(message.sended).toEqual(false)
 
-            const dialog = new Dialog(licensee)
+            const dialog = new Dialog(licensee, dependencies)
             await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -2342,7 +2346,7 @@ describe('Dialog plugin', () => {
 
         describe('if does not has a trigger', () => {
           it('send the message as text', async () => {
-            const contactRepository = new ContactRepositoryDatabase()
+            const contactRepository = dependencies.contactRepository
             const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
@@ -2352,7 +2356,7 @@ describe('Dialog plugin', () => {
               }),
             )
 
-            const messageRepository = new MessageRepositoryDatabase()
+            const messageRepository = dependencies.messageRepository
             const message = await messageRepository.create(
               messageFactory.build({
                 _id: '60958703f415ed4008748637',
@@ -2397,7 +2401,7 @@ describe('Dialog plugin', () => {
 
             expect(message.sended).toEqual(false)
 
-            const dialog = new Dialog(licensee)
+            const dialog = new Dialog(licensee, dependencies)
             await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -2415,7 +2419,7 @@ describe('Dialog plugin', () => {
 
           licensee.cartDefault = 'go2go'
 
-          const contactRepository = new ContactRepositoryDatabase()
+          const contactRepository = dependencies.contactRepository
           const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
@@ -2424,10 +2428,10 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          const cartRepository = new CartRepositoryDatabase()
+          const cartRepository = dependencies.cartRepository
           const cart = await cartRepository.create(cartFactory.build({ contact, licensee }))
 
-          const messageRepository = new MessageRepositoryDatabase()
+          const messageRepository = dependencies.messageRepository
           const message = await messageRepository.create(
             messageFactory.build({
               _id: '60958703f415ed4008748637',
@@ -2466,7 +2470,7 @@ describe('Dialog plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const dialog = new Dialog(licensee)
+          const dialog = new Dialog(licensee, dependencies)
           await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -2496,7 +2500,7 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          const contactRepository = new ContactRepositoryDatabase()
+          const contactRepository = dependencies.contactRepository
           const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
@@ -2505,7 +2509,7 @@ describe('Dialog plugin', () => {
             }),
           )
 
-          const messageRepository = new MessageRepositoryDatabase()
+          const messageRepository = dependencies.messageRepository
           const message = await messageRepository.create(
             messageFactory.build({
               _id: '60958703f415ed4008748637',
@@ -2584,7 +2588,7 @@ describe('Dialog plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const dialog = new Dialog(licensee)
+          const dialog = new Dialog(licensee, dependencies)
           await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -2598,7 +2602,7 @@ describe('Dialog plugin', () => {
 
     describe('when contact is invalid', () => {
       it('logs the error message', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -2607,7 +2611,7 @@ describe('Dialog plugin', () => {
           }),
         )
 
-        const messageRepository = new MessageRepositoryDatabase()
+        const messageRepository = dependencies.messageRepository
         const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
@@ -2628,7 +2632,7 @@ describe('Dialog plugin', () => {
 
         expect(message.sended).toEqual(false)
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           'A mensagem não foi enviada para a Dialog pois o contato não é válido {"contacts":[{"input":"+5511990283745","status":"invalid"}],"meta":{"api_status":"stable","version":"2.35.4"}}',
@@ -2638,7 +2642,7 @@ describe('Dialog plugin', () => {
 
     describe('when can not send the message', () => {
       it('logs the error message', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -2647,7 +2651,7 @@ describe('Dialog plugin', () => {
           }),
         )
 
-        const messageRepository = new MessageRepositoryDatabase()
+        const messageRepository = dependencies.messageRepository
         const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
@@ -2685,7 +2689,7 @@ describe('Dialog plugin', () => {
 
         expect(message.sended).toEqual(false)
 
-        const dialog = new Dialog(licensee)
+        const dialog = new Dialog(licensee, dependencies)
         await dialog.sendMessage(message._id, 'https://waba.360dialog.io/', 'token-dialog')
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(false)
@@ -2713,7 +2717,7 @@ describe('Dialog plugin', () => {
         },
       })
 
-      const dialog = new Dialog(licensee)
+      const dialog = new Dialog(licensee, dependencies)
       const setted = await dialog.setWebhook('https://waba.360dialog.io/', 'token-dialog')
       expect(setted).toEqual(true)
     })
@@ -2797,7 +2801,7 @@ describe('Dialog plugin', () => {
         },
       })
 
-      const dialog = new Dialog(licensee)
+      const dialog = new Dialog(licensee, dependencies)
       const templates = await dialog.searchTemplates('https://waba.360dialog.io/', 'token-dialog')
       expect(templates[0].name).toEqual('sample_movie_ticket_confirmation')
       expect(templates[0].namespace).toEqual('93aa6bf3_3bfc_4840_a76c_0f43073739e2')
@@ -2850,19 +2854,19 @@ describe('Dialog plugin', () => {
 
   describe('.action', () => {
     it('returns send-message-to-chat if message destination is to chat', () => {
-      const dialog = new Dialog(licensee)
+      const dialog = new Dialog(licensee, dependencies)
 
       expect(dialog.action('to-chat')).toEqual('send-message-to-chat')
     })
 
     it('returns send-message-to-chatbot if message destination is to chatbot', () => {
-      const dialog = new Dialog(licensee)
+      const dialog = new Dialog(licensee, dependencies)
 
       expect(dialog.action('to-chatbot')).toEqual('send-message-to-chatbot')
     })
 
     it('returns send-message-to-messenger if message destination is to messenger', () => {
-      const dialog = new Dialog(licensee)
+      const dialog = new Dialog(licensee, dependencies)
 
       expect(dialog.action('to-messenger')).toEqual('send-message-to-messenger')
     })

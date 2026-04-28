@@ -8,10 +8,14 @@ import { backgroundjob as backgroundjobFactory } from '@factories/backgroundjob'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { CartRepositoryDatabase } from '@repositories/cart'
 import { ContactRepositoryDatabase } from '@repositories/contact'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+let dependencies
 
 describe('processBackgroundjob', () => {
   beforeEach(() => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
   })
 
@@ -37,7 +41,7 @@ describe('processBackgroundjob', () => {
         jobId: backgroundjob._id,
       }
 
-      const actions = await processBackgroundjob(data)
+      const actions = await processBackgroundjob(data, dependencies)
 
       expect(actions[0].action).toEqual('process-backgroundjob-get-pix')
       expect(actions[0].body).toEqual({
@@ -74,7 +78,7 @@ describe('processBackgroundjob', () => {
           jobId: backgroundjob._id,
         }
 
-        const actions = await processBackgroundjob(data)
+        const actions = await processBackgroundjob(data, dependencies)
 
         expect(actions[0].action).toEqual('process-backgroundjob-get-pix')
         expect(actions[0].body).toEqual({
@@ -111,7 +115,7 @@ describe('processBackgroundjob', () => {
           jobId: backgroundjob._id,
         }
 
-        await processBackgroundjob(data)
+        await processBackgroundjob(data, dependencies)
 
         const backgroundjobUpdated = await Backgroundjob.findById(backgroundjob)
         expect(backgroundjobUpdated.status).toEqual('error')
@@ -138,7 +142,7 @@ describe('processBackgroundjob', () => {
           jobId: backgroundjob._id,
         }
 
-        await processBackgroundjob(data)
+        await processBackgroundjob(data, dependencies)
 
         const backgroundjobUpdated = await Backgroundjob.findById(backgroundjob)
         expect(backgroundjobUpdated.status).toEqual('error')

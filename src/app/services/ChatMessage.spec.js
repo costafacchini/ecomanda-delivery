@@ -7,12 +7,16 @@ import { body as bodyFactory } from '@factories/body'
 import { contact as contactFactory } from '@factories/contact'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+let dependencies
 
 describe('transformChatBody', () => {
   let licensee
 
   beforeEach(async () => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
@@ -53,7 +57,7 @@ describe('transformChatBody', () => {
       bodyId: body._id,
     }
 
-    const actions = await transformChatBody(data)
+    const actions = await transformChatBody(data, dependencies)
 
     expect(chatPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
@@ -118,7 +122,7 @@ describe('transformChatBody', () => {
       bodyId: body._id,
     }
 
-    const actions = await transformChatBody(data)
+    const actions = await transformChatBody(data, dependencies)
 
     expect(chatPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
@@ -150,7 +154,7 @@ describe('transformChatBody', () => {
       bodyId: body._id,
     }
 
-    const actions = await transformChatBody(data)
+    const actions = await transformChatBody(data, dependencies)
 
     expect(chatPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
@@ -191,7 +195,7 @@ describe('transformChatBody', () => {
       bodyId: body._id,
     }
 
-    const actions = await transformChatBody(data)
+    const actions = await transformChatBody(data, dependencies)
 
     expect(chatPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 

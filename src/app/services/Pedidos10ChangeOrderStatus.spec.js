@@ -8,6 +8,9 @@ import { order as orderFactory } from '@factories/order'
 import { body as bodyFactory } from '@factories/body'
 import { Pedidos10 } from '../plugins/integrations/Pedidos10.js'
 import { IntegratorBase } from '../plugins/integrations/IntegratorBase.js'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+let dependencies
 
 describe('changeOrderStatus', () => {
   const pedidos10ChangeOrderStatusFnSpy = jest
@@ -20,6 +23,7 @@ describe('changeOrderStatus', () => {
 
   beforeEach(() => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
   })
 
@@ -48,7 +52,7 @@ describe('changeOrderStatus', () => {
       bodyId: body._id,
     }
 
-    await changeOrderStatus(data)
+    await changeOrderStatus(data, dependencies)
 
     expect(pedidos10ChangeOrderStatusFnSpy).toHaveBeenCalledWith(order.id, 'delivered')
   })

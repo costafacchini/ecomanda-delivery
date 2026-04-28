@@ -10,6 +10,9 @@ import { ContactRepositoryDatabase } from '@repositories/contact'
 import { MessageRepositoryDatabase } from '@repositories/message'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+const dependencies = createRuntimeDependencies()
 
 describe('message repository', () => {
   beforeEach(async () => {
@@ -23,7 +26,7 @@ describe('message repository', () => {
 
   describe('#model', () => {
     it('returns a model', () => {
-      const messageRepository = new MessageRepositoryDatabase()
+      const messageRepository = new MessageRepositoryDatabase({ parseText: dependencies.parseText })
 
       expect(messageRepository.model()).toEqual(Message)
     })
@@ -37,7 +40,7 @@ describe('message repository', () => {
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
 
-      const messageRepository = new MessageRepositoryDatabase()
+      const messageRepository = new MessageRepositoryDatabase({ parseText: dependencies.parseText })
       const message = await messageRepository.create({
         destination: 'to-chatbot',
         kind: 'text',
@@ -60,7 +63,7 @@ describe('message repository', () => {
 
     describe('when is invalid message', () => {
       it('generate exception with error', async () => {
-        const messageRepository = new MessageRepositoryDatabase()
+        const messageRepository = new MessageRepositoryDatabase({ parseText: dependencies.parseText })
 
         await expect(async () => {
           await messageRepository.create()
@@ -79,7 +82,7 @@ describe('message repository', () => {
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
 
-      const messageRepository = new MessageRepositoryDatabase()
+      const messageRepository = new MessageRepositoryDatabase({ parseText: dependencies.parseText })
       await messageRepository.create(messageFactory.build({ licensee, contact, text: 'Hello world' }))
       await messageRepository.create(messageFactory.build({ licensee, contact, text: 'Hello world' }))
       await messageRepository.create(messageFactory.build({ licensee, contact, text: 'Hello world again' }))
@@ -100,7 +103,7 @@ describe('message repository', () => {
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
 
-      const messageRepository = new MessageRepositoryDatabase()
+      const messageRepository = new MessageRepositoryDatabase({ parseText: dependencies.parseText })
       await messageRepository.create(messageFactory.build({ licensee, contact, text: 'Hello world' }))
       await messageRepository.create(messageFactory.build({ licensee, contact, text: 'Hello world' }))
       await messageRepository.create(messageFactory.build({ licensee, contact, text: 'Hello world again' }))
@@ -125,7 +128,7 @@ describe('message repository', () => {
           triggerText.build({ licensee, expression: 'hello_world', text: 'Hello world 2' }),
         )
 
-        const messageRepository = new MessageRepositoryDatabase()
+        const messageRepository = new MessageRepositoryDatabase({ parseText: dependencies.parseText })
         const messages = await messageRepository.createInteractiveMessages({
           destination: 'to-chatbot',
           kind: 'text',
@@ -168,7 +171,7 @@ describe('message repository', () => {
         const contactRepository = new ContactRepositoryDatabase()
         const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
 
-        const messageRepository = new MessageRepositoryDatabase()
+        const messageRepository = new MessageRepositoryDatabase({ parseText: dependencies.parseText })
         const messages = await messageRepository.createInteractiveMessages({
           destination: 'to-chatbot',
           kind: 'text',
@@ -200,7 +203,7 @@ describe('message repository', () => {
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
 
-      const messageRepository = new MessageRepositoryDatabase()
+      const messageRepository = new MessageRepositoryDatabase({ parseText: dependencies.parseText })
       const message = await messageRepository.createTextMessageInsteadInteractive({
         destination: 'to-chatbot',
         kind: 'text',
@@ -228,7 +231,7 @@ describe('message repository', () => {
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id, name: 'John Doe' }))
 
-      const messageRepository = new MessageRepositoryDatabase()
+      const messageRepository = new MessageRepositoryDatabase({ parseText: dependencies.parseText })
       const message = await messageRepository.createTextMessageInsteadInteractive({
         destination: 'to-chatbot',
         kind: 'interactive',
@@ -255,7 +258,7 @@ describe('message repository', () => {
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
 
-      const messageRepository = new MessageRepositoryDatabase()
+      const messageRepository = new MessageRepositoryDatabase({ parseText: dependencies.parseText })
       const message = await messageRepository.createMessageToWarnAboutWindowOfWhatsassHasExpired(contact, licensee)
 
       expect(message).toEqual(
@@ -279,7 +282,7 @@ describe('message repository', () => {
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
 
-      const messageRepository = new MessageRepositoryDatabase()
+      const messageRepository = new MessageRepositoryDatabase({ parseText: dependencies.parseText })
       const message = await messageRepository.createMessageToWarnAboutWindowOfWhatsassIsEnding(contact, licensee)
 
       expect(message).toEqual(

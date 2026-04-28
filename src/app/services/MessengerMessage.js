@@ -1,7 +1,4 @@
-import { createMessengerPlugin } from '../plugins/messengers/factory.js'
-import { BodyRepositoryDatabase } from '../repositories/body.js'
-
-async function transformMessengerBody(data, { bodyRepository = new BodyRepositoryDatabase() } = {}) {
+async function transformMessengerBody(data, { bodyRepository, createMessengerPlugin } = {}) {
   const { bodyId } = data
   const body = await bodyRepository.findFirst({ _id: bodyId }, ['licensee'])
   if (!body) {

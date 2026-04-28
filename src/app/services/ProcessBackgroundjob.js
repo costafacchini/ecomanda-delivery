@@ -1,15 +1,4 @@
-import { BackgroundjobRepositoryDatabase } from '../repositories/backgroundjob.js'
-import { ContactRepositoryDatabase } from '../repositories/contact.js'
-import { CartRepositoryDatabase } from '../repositories/cart.js'
-
-async function processBackgroundjob(
-  data,
-  {
-    backgroundjobRepository = new BackgroundjobRepositoryDatabase(),
-    contactRepository = new ContactRepositoryDatabase(),
-    cartRepository = new CartRepositoryDatabase(),
-  } = {},
-) {
+async function processBackgroundjob(data, { backgroundjobRepository, contactRepository, cartRepository } = {}) {
   const { jobId } = data
   const backgroundjob = await backgroundjobRepository.findFirst({ _id: jobId }, ['licensee'])
 

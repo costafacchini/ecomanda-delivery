@@ -22,6 +22,8 @@ class UserRepositoryDatabase extends Repository {
 
 class UserRepositoryMemory extends RepositoryMemory {
   async create(fields = {}) {
+    this.validateUserFields(fields)
+
     const record = await super.create({
       ...(fields ?? {}),
       password: await bcrypt.hash(fields?.password ?? '', saltRounds),
@@ -68,11 +70,14 @@ class UserRepositoryMemory extends RepositoryMemory {
   }
 
   async save(document) {
-    if (document.password && !document.password.startsWith('$2')) {
-      document.password = await bcrypt.hash(document.password, saltRounds)
+    const payload = document?.toObject ? document.toObject() : { ...(document ?? {}) }
+
+    if (payload.password && !payload.password.startsWith('$2')) {
+      this.validateUserFields(payload)
+      payload.password = await bcrypt.hash(payload.password, saltRounds)
     }
 
-    const saved = await super.save(document)
+    const saved = await super.save(payload)
     return this.attachValidPassword(saved)
   }
 
@@ -86,6 +91,14 @@ class UserRepositoryMemory extends RepositoryMemory {
     }
 
     return record
+  }
+
+  validateUserFields(fields = {}) {
+    const error = new User({ ...(fields ?? {}) }).validateSync()
+
+    if (error) {
+      throw error
+    }
   }
 }
 

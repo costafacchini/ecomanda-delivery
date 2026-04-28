@@ -4,17 +4,25 @@ import Integrationlog from '@models/Integrationlog'
 import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licenseePedidos10 as licenseeFactory } from '@factories/licensee'
 import request from '../../../../services/request.js'
+import { createRuntimeDependencies } from '../../../../runtime/dependencies.js'
 
 jest.mock('../../../../services/request')
 
 describe('Pedidos10/Auth plugin', () => {
   let licensee
+  let dependencies
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
+  const buildAuth = (licensee) =>
+    new Auth(licensee, {
+      integrationlogRepository: dependencies.integrationlogRepository,
+      licenseeRepository: dependencies.licenseeRepository,
+    })
 
   beforeEach(async () => {
     installMemoryRepositories()
     jest.clearAllMocks()
+    dependencies = createRuntimeDependencies()
     licensee = await Licensee.create(licenseeFactory.build())
     licensee.pedidos10_integration = {
       integration_token: 'integration-token',
@@ -49,7 +57,7 @@ describe('Pedidos10/Auth plugin', () => {
           },
         })
 
-        const auth = new Auth(licensee)
+        const auth = buildAuth(licensee)
         const isLogged = await auth.login()
         expect(isLogged).toBe(true)
         expect(consoleInfoSpy).toHaveBeenCalledWith('Login efetuado na API do Pedidos 10! log_id: 1234')
@@ -77,7 +85,7 @@ describe('Pedidos10/Auth plugin', () => {
           },
         })
 
-        const auth = new Auth(licensee)
+        const auth = buildAuth(licensee)
         await auth.login()
         const licenseeUpdated = await Licensee.findById(licensee._id)
         expect(licenseeUpdated.pedidos10_integration.access_token).toEqual('access-token')
@@ -104,7 +112,7 @@ describe('Pedidos10/Auth plugin', () => {
           data: bodyResponse,
         })
 
-        const auth = new Auth(licensee)
+        const auth = buildAuth(licensee)
         await auth.login()
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual(bodyResponse)
@@ -130,7 +138,7 @@ describe('Pedidos10/Auth plugin', () => {
           },
         })
 
-        const auth = new Auth(licensee)
+        const auth = buildAuth(licensee)
         const isLogged = await auth.login()
         expect(isLogged).toBe(false)
         expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -159,7 +167,7 @@ describe('Pedidos10/Auth plugin', () => {
           data: bodyResponse,
         })
 
-        const auth = new Auth(licensee)
+        const auth = buildAuth(licensee)
         await auth.login()
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual(bodyResponse)

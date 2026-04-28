@@ -9,21 +9,23 @@ class MongoServerTest {
     }
 
     const mongoUri = global.__MONGOINSTANCE.getUri()
-    await mongoose.connect(mongoUri, {})
+
+    if (mongoose.connection.readyState === 0) {
+      await mongoose.connect(mongoUri, {})
+    } else if (mongoose.connection.readyState !== 1) {
+      await mongoose.disconnect()
+      await mongoose.connect(mongoUri, {})
+    }
+
     await mongoose.connection.db.dropDatabase()
   }
 
   async disconnect() {
-    try {
-      await mongoose.disconnect()
-    } catch (err) {
-      if (err.name !== 'MongoClientClosedError') throw err
+    if (mongoose.connection.readyState !== 1) {
+      return
     }
-    const instance = global.__MONGOINSTANCE
-    if (instance) {
-      await instance.stop()
-      global.__MONGOINSTANCE = null
-    }
+
+    await mongoose.connection.db.dropDatabase()
   }
 }
 

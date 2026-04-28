@@ -1,20 +1,23 @@
-import { Recipient } from './Recipient.js'
 import Integrationlog from '@models/Integrationlog'
 import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licenseeIntegrationPagarMe as licenseeFactory } from '@factories/licensee'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import request from '../../../services/request.js'
+import { createRuntimeDependencies } from '../../../runtime/dependencies.js'
 
 jest.mock('../../../services/request')
 
 describe('PagarMe/Recipient plugin', () => {
   let licensee
+  let dependencies
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
+  const buildRecipient = () => dependencies.createPagarMe(licensee).recipient
 
   beforeEach(async () => {
     installMemoryRepositories()
     jest.clearAllMocks()
+    dependencies = createRuntimeDependencies()
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
   })
@@ -61,7 +64,7 @@ describe('PagarMe/Recipient plugin', () => {
           },
         })
 
-        const recipient = new Recipient()
+        const recipient = buildRecipient()
         await recipient.create(licensee, 'token')
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           'Licenciado Alcateia Ltds criado na pagar.me! id: 23717165 log_id: 1234',
@@ -106,7 +109,7 @@ describe('PagarMe/Recipient plugin', () => {
           },
         })
 
-        const recipient = new Recipient()
+        const recipient = buildRecipient()
         await recipient.create(licensee, 'token')
         const licenseeRepository = new LicenseeRepositoryDatabase()
         const licenseeUpdated = await licenseeRepository.findFirst({ _id: licensee._id })
@@ -149,7 +152,7 @@ describe('PagarMe/Recipient plugin', () => {
           data: bodyResponse,
         })
 
-        const recipient = new Recipient()
+        const recipient = buildRecipient()
         await recipient.create(licensee, 'token')
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual(bodyResponse)
@@ -192,7 +195,7 @@ describe('PagarMe/Recipient plugin', () => {
           },
         })
 
-        const recipient = new Recipient()
+        const recipient = buildRecipient()
         await recipient.create(licensee, 'token')
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Licenciado Alcateia Ltds não criado na pagar.me.
@@ -237,7 +240,7 @@ describe('PagarMe/Recipient plugin', () => {
           data: bodyResponse,
         })
 
-        const recipient = new Recipient()
+        const recipient = buildRecipient()
         await recipient.create(licensee, 'token')
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual(bodyResponse)
@@ -264,7 +267,7 @@ describe('PagarMe/Recipient plugin', () => {
           },
         })
 
-        const recipient = new Recipient()
+        const recipient = buildRecipient()
         licensee.recipient_id = '98765'
         await recipient.update(licensee, 'token')
         expect(consoleInfoSpy).toHaveBeenCalledWith(
@@ -289,7 +292,7 @@ describe('PagarMe/Recipient plugin', () => {
           data: bodyResponse,
         })
 
-        const recipient = new Recipient()
+        const recipient = buildRecipient()
         licensee.recipient_id = '98765'
         await recipient.update(licensee, 'token')
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
@@ -320,7 +323,7 @@ describe('PagarMe/Recipient plugin', () => {
           },
         })
 
-        const recipient = new Recipient()
+        const recipient = buildRecipient()
         licensee.recipient_id = '98765'
         await recipient.update(licensee, 'token')
         expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -353,7 +356,7 @@ describe('PagarMe/Recipient plugin', () => {
           data: bodyResponse,
         })
 
-        const recipient = new Recipient()
+        const recipient = buildRecipient()
         licensee.recipient_id = '98765'
         await recipient.update(licensee, 'token')
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })

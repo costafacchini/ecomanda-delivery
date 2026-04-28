@@ -4,17 +4,22 @@ import Integrationlog from '@models/Integrationlog'
 import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licenseePedidos10 as licenseeFactory } from '@factories/licensee'
 import request from '../../../../services/request.js'
+import { createRuntimeDependencies } from '../../../../runtime/dependencies.js'
 
 jest.mock('../../../../services/request')
 
 describe('Pedidos10/Webhook plugin', () => {
   let licensee
+  let dependencies
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
+  const buildWebhook = (licensee) =>
+    new Webhook(licensee, { integrationlogRepository: dependencies.integrationlogRepository })
 
   beforeEach(async () => {
     installMemoryRepositories()
     jest.clearAllMocks()
+    dependencies = createRuntimeDependencies()
     licensee = await Licensee.create(licenseeFactory.build())
     licensee.pedidos10_integration = {
       access_token: 'access-token',
@@ -42,7 +47,7 @@ describe('Pedidos10/Webhook plugin', () => {
           data: '',
         })
 
-        const webhook = new Webhook(licensee)
+        const webhook = buildWebhook(licensee)
         await webhook.sign()
         expect(consoleInfoSpy).toHaveBeenCalledWith('Webhook do Pedidos 10 assinado com sucesso! log_id: 1234')
 
@@ -60,7 +65,7 @@ describe('Pedidos10/Webhook plugin', () => {
           data: '',
         })
 
-        const webhook = new Webhook(licensee)
+        const webhook = buildWebhook(licensee)
         await webhook.sign()
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual('')
@@ -90,7 +95,7 @@ describe('Pedidos10/Webhook plugin', () => {
           },
         })
 
-        const webhook = new Webhook(licensee)
+        const webhook = buildWebhook(licensee)
         await webhook.sign()
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Não foi possível assinar o webhook de pedidos do Pedidos 10
@@ -122,7 +127,7 @@ describe('Pedidos10/Webhook plugin', () => {
           data: bodyResponse,
         })
 
-        const webhook = new Webhook(licensee)
+        const webhook = buildWebhook(licensee)
         await webhook.sign()
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual(bodyResponse)

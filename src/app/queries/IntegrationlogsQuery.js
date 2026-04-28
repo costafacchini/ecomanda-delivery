@@ -1,8 +1,7 @@
-import { IntegrationlogRepositoryDatabase } from '../repositories/integrationlog.js'
 import { QueryBuilder } from './QueryBuilder.js'
 
 class IntegrationlogsQuery {
-  constructor({ integrationlogRepository = new IntegrationlogRepositoryDatabase() } = {}) {
+  constructor({ integrationlogRepository } = {}) {
     this.integrationlogRepository = integrationlogRepository
   }
 

@@ -1,6 +1,7 @@
 import Repository, { RepositoryMemory, sortRecords } from './repository.js'
 import _ from 'lodash'
 import Trigger from '../models/Trigger.js'
+import { requireDependency } from '../helpers/RequireDependency.js'
 
 class TriggerRepositoryDatabase extends Repository {
   model() {
@@ -35,25 +36,27 @@ class TriggerRepositoryDatabase extends Repository {
 }
 
 class TriggerRepositoryMemory extends RepositoryMemory {
-  async find(params = {}, order = {}) {
+  async find(params = {}, orderOrRelations = {}) {
+    if (Array.isArray(orderOrRelations)) {
+      return await super.find(params, orderOrRelations)
+    }
+
     const records = await super.find(params)
 
-    if (_.isEmpty(order)) {
+    if (_.isEmpty(orderOrRelations)) {
       return records
     }
 
-    return sortRecords(records, order)
+    return sortRecords(records, orderOrRelations)
   }
 }
 
-async function createTrigger(fields) {
-  const triggerRepository = new TriggerRepositoryDatabase()
-  return await triggerRepository.create(fields)
+async function createTrigger(fields, { triggerRepository } = {}) {
+  return await requireDependency(triggerRepository, 'triggerRepository', 'createTrigger').create(fields)
 }
 
-async function getAllTriggerBy(filters, order = {}) {
-  const triggerRepository = new TriggerRepositoryDatabase()
-  return await triggerRepository.find(filters, order)
+async function getAllTriggerBy(filters, order = {}, { triggerRepository } = {}) {
+  return await requireDependency(triggerRepository, 'triggerRepository', 'getAllTriggerBy').find(filters, order)
 }
 
 export { TriggerRepositoryDatabase, TriggerRepositoryMemory, createTrigger, getAllTriggerBy }

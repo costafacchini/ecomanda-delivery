@@ -1,4 +1,3 @@
-import { Customer } from './Customer.js'
 import Integrationlog from '@models/Integrationlog'
 import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licenseeIntegrationPagarMe as licenseeFactory } from '@factories/licensee'
@@ -6,17 +5,21 @@ import { contact as contactFactory } from '@factories/contact'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import request from '../../../services/request.js'
+import { createRuntimeDependencies } from '../../../runtime/dependencies.js'
 
 jest.mock('../../../services/request')
 
 describe('PagarMe/Customer plugin', () => {
   let licensee
+  let dependencies
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
+  const buildCustomer = () => dependencies.createPagarMe(licensee).customer
 
   beforeEach(async () => {
     installMemoryRepositories()
     jest.clearAllMocks()
+    dependencies = createRuntimeDependencies()
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
   })
@@ -81,7 +84,7 @@ describe('PagarMe/Customer plugin', () => {
           },
         })
 
-        const customer = new Customer()
+        const customer = buildCustomer()
         await customer.create(contact, 'token')
         expect(consoleInfoSpy).toHaveBeenCalledWith('Contato John Doe criado na pagar.me! id: 23717165 log_id: 1234')
 
@@ -127,7 +130,7 @@ describe('PagarMe/Customer plugin', () => {
           },
         })
 
-        const customer = new Customer()
+        const customer = buildCustomer()
         await customer.create(contact, 'token')
         const contactUpdated = await contactRepository.findFirst({ _id: contact._id })
         expect(contactUpdated.customer_id).toEqual('23717165')
@@ -189,7 +192,7 @@ describe('PagarMe/Customer plugin', () => {
           },
         })
 
-        const customer = new Customer()
+        const customer = buildCustomer()
         await customer.create(contact, 'token')
         const contactUpdated = await contactRepository.findFirst({ _id: contact._id })
         expect(contactUpdated.address_id).toEqual('34224')
@@ -234,7 +237,7 @@ describe('PagarMe/Customer plugin', () => {
           data: bodyResponse,
         })
 
-        const customer = new Customer()
+        const customer = buildCustomer()
         await customer.create(contact, 'token')
         const integrationlog = await Integrationlog.findOne({ contact: contact._id })
         expect(integrationlog.licensee._id).toEqual(contact.licensee._id)
@@ -282,7 +285,7 @@ describe('PagarMe/Customer plugin', () => {
           },
         })
 
-        const customer = new Customer()
+        const customer = buildCustomer()
         await customer.create(contact, 'token')
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Contato John Doe não criado na pagar.me.
@@ -331,7 +334,7 @@ describe('PagarMe/Customer plugin', () => {
           data: bodyResponse,
         })
 
-        const customer = new Customer()
+        const customer = buildCustomer()
         await customer.create(contact, 'token')
         const integrationlog = await Integrationlog.findOne({ contact: contact._id })
         expect(integrationlog.licensee._id).toEqual(contact.licensee._id)
@@ -376,7 +379,7 @@ describe('PagarMe/Customer plugin', () => {
           },
         })
 
-        const customer = new Customer()
+        const customer = buildCustomer()
         contact.customer_id = '98765'
         await customer.update(contact, 'token')
         expect(consoleInfoSpy).toHaveBeenCalledWith('Contato John Doe atualizado na pagar.me! id: 98765 log_id: 1234')
@@ -416,7 +419,7 @@ describe('PagarMe/Customer plugin', () => {
           data: bodyResponse,
         })
 
-        const customer = new Customer()
+        const customer = buildCustomer()
         contact.customer_id = '98765'
         await customer.update(contact, 'token')
         const integrationlog = await Integrationlog.findOne({ contact: contact._id })
@@ -465,7 +468,7 @@ describe('PagarMe/Customer plugin', () => {
           },
         })
 
-        const customer = new Customer()
+        const customer = buildCustomer()
         contact.customer_id = '98765'
         await customer.update(contact, 'token')
         expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -515,7 +518,7 @@ describe('PagarMe/Customer plugin', () => {
           data: bodyResponse,
         })
 
-        const customer = new Customer()
+        const customer = buildCustomer()
         contact.customer_id = '98765'
         await customer.update(contact, 'token')
         const integrationlog = await Integrationlog.findOne({ contact: contact._id })

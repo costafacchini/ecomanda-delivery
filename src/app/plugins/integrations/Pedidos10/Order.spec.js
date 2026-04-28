@@ -1,17 +1,21 @@
 import Licensee from '@models/Licensee'
 import { OrderRepositoryDatabase } from '@repositories/order'
 import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
-import { Order } from './Order.js'
 import { Webhook } from './services/Webhook.js'
 import { OrderStatus } from './services/OrderStatus.js'
 import { Auth } from './services/Auth.js'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { order as orderFactory } from '@factories/order'
+import { createRuntimeDependencies } from '../../../runtime/dependencies.js'
 
 describe('Pedidos10/Order', () => {
+  let dependencies
+  const buildOrder = (licensee) => dependencies.createPedidos10(licensee).orderModule
+
   beforeAll(() => {
     jest.clearAllMocks()
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
   })
 
   afterAll(() => {
@@ -116,7 +120,7 @@ describe('Pedidos10/Order', () => {
         }
 
         const licensee = await Licensee.create(licenseeFactory.build())
-        const order = new Order(licensee)
+        const order = buildOrder(licensee)
         await order.save(body)
 
         const orderRepository = new OrderRepositoryDatabase()
@@ -215,7 +219,7 @@ describe('Pedidos10/Order', () => {
             },
           }
 
-          const order = new Order(licensee)
+          const order = buildOrder(licensee)
           await order.save(body)
 
           const orderUpdated = await orderRepository.findFirst({ licensee, order_external_id: '9967816' })
@@ -272,7 +276,7 @@ describe('Pedidos10/Order', () => {
             },
           }
 
-          const order = new Order(licensee)
+          const order = buildOrder(licensee)
           await order.save(body)
 
           const orderUpdated = await orderRepository.findFirst({ licensee, order_external_id: '9967816' })
@@ -341,7 +345,7 @@ describe('Pedidos10/Order', () => {
             },
           }
 
-          const order = new Order(licensee)
+          const order = buildOrder(licensee)
           await order.save(body)
 
           const orderUpdated = await orderRepository.findFirst({ licensee, order_external_id: '9967816' })
@@ -403,7 +407,7 @@ describe('Pedidos10/Order', () => {
             },
           }
 
-          const order = new Order(licensee)
+          const order = buildOrder(licensee)
           await order.save(body)
 
           const orderUpdated = await orderRepository.findFirst({ licensee, order_external_id: '9967816' })
@@ -424,7 +428,7 @@ describe('Pedidos10/Order', () => {
         authenticated: true,
       }
 
-      const order = new Order(licensee)
+      const order = buildOrder(licensee)
       await order.signOrderWebhook()
 
       expect(authLoginFnSpy).not.toHaveBeenCalled()
@@ -444,7 +448,7 @@ describe('Pedidos10/Order', () => {
         const licensee = await Licensee.create(licenseeFactory.build())
         licensee.pedidos10_integration = {}
 
-        const order = new Order(licensee)
+        const order = buildOrder(licensee)
         await order.signOrderWebhook()
 
         expect(authLoginFnSpy).toHaveBeenCalled()
@@ -466,7 +470,7 @@ describe('Pedidos10/Order', () => {
         authenticated: true,
       }
 
-      const order = new Order(licensee)
+      const order = buildOrder(licensee)
       await order.changeOrderStatus('order-id', 'status')
 
       expect(authLoginFnSpy).not.toHaveBeenCalled()
@@ -486,7 +490,7 @@ describe('Pedidos10/Order', () => {
         const licensee = await Licensee.create(licenseeFactory.build())
         licensee.pedidos10_integration = {}
 
-        const order = new Order(licensee)
+        const order = buildOrder(licensee)
         await order.changeOrderStatus('order-id', 'status')
 
         expect(authLoginFnSpy).toHaveBeenCalled()

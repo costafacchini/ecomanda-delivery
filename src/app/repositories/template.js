@@ -1,5 +1,6 @@
 import Repository, { RepositoryMemory, matchesFilter } from './repository.js'
 import Template from '../models/Template.js'
+import { requireDependency } from '../helpers/RequireDependency.js'
 
 class TemplateRepositoryDatabase extends Repository {
   model() {
@@ -26,14 +27,12 @@ class TemplateRepositoryMemory extends RepositoryMemory {
   }
 }
 
-async function destroyAllTemplates() {
-  const templateRepository = new TemplateRepositoryDatabase()
-  await templateRepository.delete({})
+async function destroyAllTemplates({ templateRepository } = {}) {
+  await requireDependency(templateRepository, 'templateRepository', 'destroyAllTemplates').delete({})
 }
 
-async function createTemplate(fields) {
-  const templateRepository = new TemplateRepositoryDatabase()
-  return await templateRepository.create(fields)
+async function createTemplate(fields, { templateRepository } = {}) {
+  return await requireDependency(templateRepository, 'templateRepository', 'createTemplate').create(fields)
 }
 
 export { TemplateRepositoryDatabase, TemplateRepositoryMemory, createTemplate, destroyAllTemplates }

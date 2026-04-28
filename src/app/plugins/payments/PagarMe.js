@@ -1,26 +1,13 @@
-import { Recipient } from './PagarMe/Recipient.js'
-import { Customer } from './PagarMe/Customer.js'
-import { Payment } from './PagarMe/Payment.js'
-import { Parser } from './PagarMe/Parser.js'
-import { Card } from './PagarMe/Card.js'
+import { requireDependency } from '../../helpers/RequireDependency.js'
 
 class PagarMe {
-  constructor(
-    licensee,
-    {
-      recipient = new Recipient(),
-      customer = new Customer(),
-      payment = new Payment(),
-      parser = new Parser(),
-      card = new Card(),
-    } = {},
-  ) {
+  constructor(licensee, { recipient, customer, payment, parser, card } = {}) {
     this.licensee = licensee
-    this.recipient = recipient
-    this.customer = customer
-    this.payment = payment
-    this.parser = parser
-    this.card = card
+    this.recipient = requireDependency(recipient, 'recipient', this.constructor.name)
+    this.customer = requireDependency(customer, 'customer', this.constructor.name)
+    this.payment = requireDependency(payment, 'payment', this.constructor.name)
+    this.parser = requireDependency(parser, 'parser', this.constructor.name)
+    this.card = requireDependency(card, 'card', this.constructor.name)
   }
 }
 

@@ -6,6 +6,9 @@ import { Card } from './PagarMe/Card.js'
 import { licenseeIntegrationPagarMe as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { cart as cartFactory } from '@factories/cart'
+import { createRuntimeDependencies } from '../../runtime/dependencies.js'
+
+const dependencies = createRuntimeDependencies()
 
 describe('PagarMe plugin', () => {
   const recipientCreateFnSpy = jest.spyOn(Recipient.prototype, 'create').mockImplementation(() => {})
@@ -30,7 +33,7 @@ describe('PagarMe plugin', () => {
     it('create', async () => {
       const licensee = licenseeFactory.build()
 
-      const pagarMe = new PagarMe()
+      const pagarMe = dependencies.createPagarMe()
       await pagarMe.recipient.create(licensee, 'token')
 
       expect(recipientCreateFnSpy).toHaveBeenCalledWith(licensee, 'token')
@@ -39,7 +42,7 @@ describe('PagarMe plugin', () => {
     it('update', async () => {
       const licensee = licenseeFactory.build()
 
-      const pagarMe = new PagarMe()
+      const pagarMe = dependencies.createPagarMe()
       await pagarMe.recipient.update(licensee, 'token')
 
       expect(recipientUpdateFnSpy).toHaveBeenCalledWith(licensee, 'token')
@@ -50,7 +53,7 @@ describe('PagarMe plugin', () => {
     it('create', async () => {
       const contact = contactFactory.build()
 
-      const pagarMe = new PagarMe()
+      const pagarMe = dependencies.createPagarMe()
       await pagarMe.customer.create(contact, 'token')
 
       expect(customerCreateFnSpy).toHaveBeenCalledWith(contact, 'token')
@@ -59,7 +62,7 @@ describe('PagarMe plugin', () => {
     it('update', async () => {
       const contact = contactFactory.build()
 
-      const pagarMe = new PagarMe()
+      const pagarMe = dependencies.createPagarMe()
       await pagarMe.customer.update(contact, 'token')
 
       expect(customerUpdateFnSpy).toHaveBeenCalledWith(contact, 'token')
@@ -70,7 +73,7 @@ describe('PagarMe plugin', () => {
     it('createPIX', async () => {
       const cart = cartFactory.build()
 
-      const pagarMe = new PagarMe()
+      const pagarMe = dependencies.createPagarMe()
       await pagarMe.payment.createPIX(cart, 'token')
 
       expect(paymentPixCreateFnSpy).toHaveBeenCalledWith(cart, 'token')
@@ -79,7 +82,7 @@ describe('PagarMe plugin', () => {
     it('createCreditCard', async () => {
       const cart = cartFactory.build()
 
-      const pagarMe = new PagarMe()
+      const pagarMe = dependencies.createPagarMe()
       await pagarMe.payment.createCreditCard(cart, 'token')
 
       expect(paymentCreditCardCreateFnSpy).toHaveBeenCalledWith(cart, 'token')
@@ -88,7 +91,7 @@ describe('PagarMe plugin', () => {
     it('delete', async () => {
       const cart = cartFactory.build()
 
-      const pagarMe = new PagarMe()
+      const pagarMe = dependencies.createPagarMe()
       await pagarMe.payment.delete(cart, 'token')
 
       expect(paymentDeleteFnSpy).toHaveBeenCalledWith(cart, 'token')
@@ -97,7 +100,7 @@ describe('PagarMe plugin', () => {
 
   describe('parser', () => {
     it('parseOrderPaidEvent', () => {
-      const pagarMe = new PagarMe()
+      const pagarMe = dependencies.createPagarMe()
       const event = pagarMe.parser.parseOrderPaidEvent({})
 
       expect(event).toEqual(expect.objectContaining({ id: '' }))
@@ -112,7 +115,7 @@ describe('PagarMe plugin', () => {
         cvv: '123',
       }
 
-      const pagarMe = new PagarMe()
+      const pagarMe = dependencies.createPagarMe()
       await pagarMe.card.create(contact, cardData, 'token')
 
       expect(cardCreateFnSpy).toHaveBeenCalledWith(contact, cardData, 'token')
@@ -121,7 +124,7 @@ describe('PagarMe plugin', () => {
     it('list', async () => {
       const contact = contactFactory.build()
 
-      const pagarMe = new PagarMe()
+      const pagarMe = dependencies.createPagarMe()
       await pagarMe.card.list(contact, 'token')
 
       expect(cardListFnSpy).toHaveBeenCalledWith(contact, 'token')
@@ -130,7 +133,7 @@ describe('PagarMe plugin', () => {
     it('getById', async () => {
       const contact = contactFactory.build()
 
-      const pagarMe = new PagarMe()
+      const pagarMe = dependencies.createPagarMe()
       await pagarMe.card.getById(contact, 'token')
 
       expect(cardGetByIdFnSpy).toHaveBeenCalledWith(contact, 'token')

@@ -1,12 +1,16 @@
 import Body from '../models/Body.js'
 import Backgroundjob from '../models/Backgroundjob.js'
 import Cart from '../models/Cart.js'
+import Contact from '../models/Contact.js'
 import Integrationlog from '../models/Integrationlog.js'
 import Licensee from '../models/Licensee.js'
+import Message from '../models/Message.js'
+import Order from '../models/Order.js'
 import Product from '../models/Product.js'
 import Room from '../models/Room.js'
 import Template from '../models/Template.js'
 import Trigger from '../models/Trigger.js'
+import User from '../models/User.js'
 import { BackgroundjobRepositoryDatabase, BackgroundjobRepositoryMemory } from './backgroundjob.js'
 import { BodyRepositoryDatabase, BodyRepositoryMemory } from './body.js'
 import { CartRepositoryDatabase, CartRepositoryMemory } from './cart.js'
@@ -21,6 +25,8 @@ import { TemplateRepositoryDatabase, TemplateRepositoryMemory } from './template
 import { TrafficlightRepositoryMemory } from './trafficlight.js'
 import { TriggerRepositoryDatabase, TriggerRepositoryMemory } from './trigger.js'
 import { UserRepositoryDatabase, UserRepositoryMemory } from './user.js'
+import { matchesFilter, sortRecords, comparableValue } from './repository.js'
+import { parseText as parseTextHelper } from '../helpers/ParseTriggerText.js'
 
 let activeRestore = null
 
@@ -104,10 +110,13 @@ function createMemoryRepositories() {
     users: [],
   }
 
+  const cartRepository = new CartRepositoryMemory(state.carts)
   const triggerRepository = new TriggerRepositoryMemory(state.triggers)
+  const parseText = (text, contact) => parseTextHelper(text, contact, { cartRepository })
   const messageRepository = new MessageRepositoryMemory({
     items: state.messages,
     triggerRepository,
+    parseText,
   })
   const contactRepository = new ContactRepositoryMemory({
     items: state.contacts,
@@ -118,7 +127,7 @@ function createMemoryRepositories() {
     state,
     backgroundjobRepository: new BackgroundjobRepositoryMemory(state.backgroundjobs),
     bodyRepository: new BodyRepositoryMemory(state.bodies),
-    cartRepository: new CartRepositoryMemory(state.carts),
+    cartRepository,
     contactRepository,
     integrationlogRepository: new IntegrationlogRepositoryMemory(state.integrationlogs),
     licenseeRepository: new LicenseeRepositoryMemory(state.licensees),
@@ -133,19 +142,190 @@ function createMemoryRepositories() {
   }
 }
 
+class MemoryQuery {
+  constructor(repository, params = {}, { single = false } = {}) {
+    this.repository = repository
+    this.params = params
+    this.single = single
+    this.predicates = []
+    this.skipCount = 0
+    this.limitCount = null
+    this.sortClause = null
+    this.currentField = null
+    this.relations = []
+  }
+
+  sort(order = {}) {
+    this.sortClause = order
+    return this
+  }
+
+  skip(value = 0) {
+    this.skipCount = value
+    return this
+  }
+
+  limit(value) {
+    this.limitCount = value
+    return this
+  }
+
+  where(fieldOrFilter = {}) {
+    if (typeof fieldOrFilter === 'string') {
+      this.currentField = fieldOrFilter
+      return this
+    }
+
+    this.predicates.push((record) => matchesFilter(record, fieldOrFilter))
+    return this
+  }
+
+  equals(value) {
+    const field = this.currentField
+    this.predicates.push((record) => matchesFilter(record, { [field]: value }))
+    return this
+  }
+
+  ne(value) {
+    const field = this.currentField
+    this.predicates.push((record) => matchesFilter(record, { [field]: { $ne: value } }))
+    return this
+  }
+
+  gt(value) {
+    const field = this.currentField
+    this.predicates.push((record) => matchesFilter(record, { [field]: { $gt: value } }))
+    return this
+  }
+
+  gte(value) {
+    const field = this.currentField
+    this.predicates.push((record) => matchesFilter(record, { [field]: { $gte: value } }))
+    return this
+  }
+
+  lt(value) {
+    const field = this.currentField
+    this.predicates.push((record) => matchesFilter(record, { [field]: { $lt: value } }))
+    return this
+  }
+
+  lte(value) {
+    const field = this.currentField
+    this.predicates.push((record) => matchesFilter(record, { [field]: { $lte: value } }))
+    return this
+  }
+
+  or(filters = []) {
+    this.predicates.push((record) => filters.some((filter) => matchesFilter(record, filter)))
+    return this
+  }
+
+  populate(relation) {
+    this.relations.push(relation)
+    return this
+  }
+
+  async countDocuments() {
+    return (await this.resolve()).length
+  }
+
+  async exec() {
+    const records = await this.resolve()
+    return this.single ? (records[0] ?? null) : records
+  }
+
+  then(resolve, reject) {
+    return this.exec().then(resolve, reject)
+  }
+
+  async resolve() {
+    let records = await this.repository.find(this.params)
+
+    records = records.filter((record) => this.predicates.every((predicate) => predicate(record)))
+
+    if (this.sortClause) {
+      records = sortRecords(records, this.sortClause)
+    }
+
+    if (this.skipCount) {
+      records = records.slice(this.skipCount)
+    }
+
+    if (this.limitCount != null) {
+      records = records.slice(0, this.limitCount)
+    }
+
+    if (this.relations.length > 0 && typeof this.repository.populateRecords === 'function') {
+      records = await this.repository.populateRecords(records, this.relations)
+    }
+
+    return records
+  }
+}
+
+function aggregateMessageCounts(repository, pipeline = []) {
+  const matchStage = pipeline.find((stage) => stage?.$match)?.$match ?? {}
+  const records = repository.items.filter((record) => matchesFilter(record, matchStage))
+  const grouped = new Map()
+
+  records.forEach((record) => {
+    const licenseeId = comparableValue(record.licensee)
+    const day = new Date(record.createdAt).toISOString().slice(0, 10)
+    const key = `${licenseeId}:${day}`
+    const current = grouped.get(key) ?? { _id: { licensee: record.licensee, day }, count: 0 }
+    current.count += 1
+    grouped.set(key, current)
+  })
+
+  const groupedByLicensee = new Map()
+
+  Array.from(grouped.values())
+    .sort((left, right) => {
+      const leftLicensee = comparableValue(left._id.licensee)
+      const rightLicensee = comparableValue(right._id.licensee)
+
+      if (leftLicensee !== rightLicensee) {
+        return leftLicensee > rightLicensee ? 1 : -1
+      }
+
+      return left._id.day > right._id.day ? 1 : -1
+    })
+    .forEach((entry) => {
+      const licenseeKey = comparableValue(entry._id.licensee)
+      const current = groupedByLicensee.get(licenseeKey) ?? {
+        _id: entry._id.licensee,
+        days: [],
+      }
+
+      current.days.push({ date: entry._id.day, count: entry.count })
+      groupedByLicensee.set(licenseeKey, current)
+    })
+
+  return Array.from(groupedByLicensee.values())
+}
+
+function createMemoryModelAdapter(repository, { aggregate } = {}) {
+  return {
+    create: async (fields = {}) => await repository.create(fields),
+    find: (params = {}) => new MemoryQuery(repository, params),
+    findOne: (params = {}) => new MemoryQuery(repository, params, { single: true }),
+    findById: (id) => new MemoryQuery(repository, { _id: id?._id ?? id }, { single: true }),
+    deleteMany: async (params = {}) => await repository.delete(params),
+    where: (params = {}) => new MemoryQuery(repository).where(params),
+    aggregate: async (pipeline = []) => (aggregate ? await aggregate(repository, pipeline) : []),
+  }
+}
+
 function bindModelToRepository(model, repository, restores) {
-  patchMember(model, 'create', async (fields = {}) => await repository.create(fields), restores)
-  patchMember(model, 'findById', async (id) => await repository.findFirst({ _id: id?._id ?? id }), restores)
-  patchMember(model, 'findOne', async (params = {}) => await repository.findFirst(params), restores)
-  patchMember(model, 'deleteMany', async (params = {}) => await repository.delete(params), restores)
-  patchMember(
-    model,
-    'where',
-    (params = {}) => ({
-      countDocuments: async () => (await repository.find(params)).length,
-    }),
-    restores,
-  )
+  const adapter = createMemoryModelAdapter(repository)
+
+  patchMember(model, 'create', adapter.create, restores)
+  patchMember(model, 'find', adapter.find, restores)
+  patchMember(model, 'findById', adapter.findById, restores)
+  patchMember(model, 'findOne', adapter.findOne, restores)
+  patchMember(model, 'deleteMany', adapter.deleteMany, restores)
+  patchMember(model, 'where', adapter.where, restores)
 }
 
 function bindRepositoryPrototype(prototype, repository, restores) {
@@ -193,6 +373,15 @@ function installMemoryRepositories() {
 
   const repositories = createMemoryRepositories()
   const restores = []
+  const loadRelation = (repository) => async (value) => {
+    const identifier = value?._id ?? value
+
+    if (identifier == null) {
+      return value
+    }
+
+    return await repository.findFirst({ _id: identifier }, [])
+  }
   const originalCartCreate = repositories.cartRepository.create.bind(repositories.cartRepository)
   const originalCartFind = repositories.cartRepository.find.bind(repositories.cartRepository)
   const originalCartSave = repositories.cartRepository.save.bind(repositories.cartRepository)
@@ -219,7 +408,8 @@ function installMemoryRepositories() {
       return attachCartMethods(serializeCart(cart))
     }
 
-    return attachCartMethods(cart)
+    const [populatedCart] = await repositories.cartRepository.populateRecords([cart], relations)
+    return attachCartMethods(populatedCart)
   }
 
   repositories.cartRepository.save = async (document) => {
@@ -251,7 +441,8 @@ function installMemoryRepositories() {
       return serializeRelations(message, ['contact', 'licensee', 'room', 'trigger', 'cart'])
     }
 
-    return message
+    const [populatedMessage] = await repositories.messageRepository.populateRecords([message], relations)
+    return populatedMessage
   }
 
   repositories.roomRepository.find = async (params = {}) => {
@@ -269,7 +460,57 @@ function installMemoryRepositories() {
       return serializeRelations(room, ['contact'])
     }
 
-    return room
+    const [populatedRoom] = await repositories.roomRepository.populateRecords([room], relations)
+    return populatedRoom
+  }
+
+  repositories.backgroundjobRepository.modelClass = Backgroundjob
+  repositories.bodyRepository.modelClass = Body
+  repositories.cartRepository.modelClass = Cart
+  repositories.contactRepository.modelClass = Contact
+  repositories.integrationlogRepository.modelClass = Integrationlog
+  repositories.licenseeRepository.modelClass = Licensee
+  repositories.messageRepository.modelClass = Message
+  repositories.orderRepository.modelClass = Order
+  repositories.productRepository.modelClass = Product
+  repositories.roomRepository.modelClass = Room
+  repositories.templateRepository.modelClass = Template
+  repositories.triggerRepository.modelClass = Trigger
+  repositories.userRepository.modelClass = User
+
+  repositories.backgroundjobRepository.relationLoaders = {
+    licensee: loadRelation(repositories.licenseeRepository),
+    body: loadRelation(repositories.bodyRepository),
+  }
+  repositories.bodyRepository.relationLoaders = {
+    licensee: loadRelation(repositories.licenseeRepository),
+  }
+  repositories.cartRepository.relationLoaders = {
+    contact: loadRelation(repositories.contactRepository),
+    licensee: loadRelation(repositories.licenseeRepository),
+    'products.product': loadRelation(repositories.productRepository),
+  }
+  repositories.contactRepository.relationLoaders = {
+    licensee: loadRelation(repositories.licenseeRepository),
+  }
+  repositories.messageRepository.relationLoaders = {
+    cart: loadRelation(repositories.cartRepository),
+    contact: loadRelation(repositories.contactRepository),
+    licensee: loadRelation(repositories.licenseeRepository),
+    room: loadRelation(repositories.roomRepository),
+    trigger: loadRelation(repositories.triggerRepository),
+  }
+  repositories.roomRepository.relationLoaders = {
+    contact: loadRelation(repositories.contactRepository),
+  }
+  repositories.templateRepository.relationLoaders = {
+    licensee: loadRelation(repositories.licenseeRepository),
+  }
+  repositories.triggerRepository.relationLoaders = {
+    licensee: loadRelation(repositories.licenseeRepository),
+  }
+  repositories.userRepository.relationLoaders = {
+    licensee: loadRelation(repositories.licenseeRepository),
   }
 
   bindRepositoryPrototype(BackgroundjobRepositoryDatabase.prototype, repositories.backgroundjobRepository, restores)
@@ -286,14 +527,97 @@ function installMemoryRepositories() {
   bindRepositoryPrototype(TriggerRepositoryDatabase.prototype, repositories.triggerRepository, restores)
   bindRepositoryPrototype(UserRepositoryDatabase.prototype, repositories.userRepository, restores)
 
+  patchMember(
+    BackgroundjobRepositoryDatabase.prototype,
+    'model',
+    () => createMemoryModelAdapter(repositories.backgroundjobRepository),
+    restores,
+  )
+  patchMember(
+    BodyRepositoryDatabase.prototype,
+    'model',
+    () => createMemoryModelAdapter(repositories.bodyRepository),
+    restores,
+  )
+  patchMember(
+    CartRepositoryDatabase.prototype,
+    'model',
+    () => createMemoryModelAdapter(repositories.cartRepository),
+    restores,
+  )
+  patchMember(
+    ContactRepositoryDatabase.prototype,
+    'model',
+    () => createMemoryModelAdapter(repositories.contactRepository),
+    restores,
+  )
+  patchMember(
+    IntegrationlogRepositoryDatabase.prototype,
+    'model',
+    () => createMemoryModelAdapter(repositories.integrationlogRepository),
+    restores,
+  )
+  patchMember(
+    LicenseeRepositoryDatabase.prototype,
+    'model',
+    () => createMemoryModelAdapter(repositories.licenseeRepository),
+    restores,
+  )
+  patchMember(
+    MessageRepositoryDatabase.prototype,
+    'model',
+    () => createMemoryModelAdapter(repositories.messageRepository, { aggregate: aggregateMessageCounts }),
+    restores,
+  )
+  patchMember(
+    OrderRepositoryDatabase.prototype,
+    'model',
+    () => createMemoryModelAdapter(repositories.orderRepository),
+    restores,
+  )
+  patchMember(
+    ProductRepositoryDatabase.prototype,
+    'model',
+    () => createMemoryModelAdapter(repositories.productRepository),
+    restores,
+  )
+  patchMember(
+    RoomRepositoryDatabase.prototype,
+    'model',
+    () => createMemoryModelAdapter(repositories.roomRepository),
+    restores,
+  )
+  patchMember(
+    TemplateRepositoryDatabase.prototype,
+    'model',
+    () => createMemoryModelAdapter(repositories.templateRepository),
+    restores,
+  )
+  patchMember(
+    TriggerRepositoryDatabase.prototype,
+    'model',
+    () => createMemoryModelAdapter(repositories.triggerRepository),
+    restores,
+  )
+  patchMember(
+    UserRepositoryDatabase.prototype,
+    'model',
+    () => createMemoryModelAdapter(repositories.userRepository),
+    restores,
+  )
+
   bindModelToRepository(Backgroundjob, repositories.backgroundjobRepository, restores)
   bindModelToRepository(Body, repositories.bodyRepository, restores)
+  bindModelToRepository(Contact, repositories.contactRepository, restores)
   bindModelToRepository(Integrationlog, repositories.integrationlogRepository, restores)
   bindModelToRepository(Licensee, repositories.licenseeRepository, restores)
+  bindModelToRepository(Message, repositories.messageRepository, restores)
+  bindModelToRepository(Order, repositories.orderRepository, restores)
   bindModelToRepository(Product, repositories.productRepository, restores)
   bindModelToRepository(Room, repositories.roomRepository, restores)
   bindModelToRepository(Template, repositories.templateRepository, restores)
   bindModelToRepository(Trigger, repositories.triggerRepository, restores)
+  bindModelToRepository(User, repositories.userRepository, restores)
 
   patchMember(
     IntegrationlogRepositoryDatabase.prototype,

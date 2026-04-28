@@ -91,6 +91,9 @@ describe('MessagesFailedQuery', () => {
       new Date(2021, 6, 3, 0, 0, 0),
       new Date(2021, 6, 3, 23, 59, 59),
       licensee._id,
+      {
+        messageRepository,
+      },
     )
     const records = await messagesFailedQuery.all()
 

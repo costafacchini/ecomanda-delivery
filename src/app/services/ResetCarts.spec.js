@@ -7,12 +7,16 @@ import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
 import moment from 'moment-timezone'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+let dependencies
 
 describe('resetCarts', () => {
   jest.spyOn(global.console, 'info').mockImplementation()
 
   beforeEach(() => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
   })
 
@@ -63,7 +67,7 @@ describe('resetCarts', () => {
         }),
       )
 
-      await resetCarts()
+      await resetCarts(dependencies)
 
       const cartOpenedOnLimitEnding1Reloaded = await cartRepository.findFirst({ _id: cartOpenedOnLimitEnding1 })
       expect(cartOpenedOnLimitEnding1Reloaded.concluded).toEqual(false)

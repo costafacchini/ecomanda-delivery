@@ -1,4 +1,3 @@
-import { Card } from './Card.js'
 import Integrationlog from '@models/Integrationlog'
 import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licenseeIntegrationPagarMe as licenseeFactory } from '@factories/licensee'
@@ -6,17 +5,21 @@ import { contact as contactFactory } from '@factories/contact'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import request from '../../../services/request.js'
+import { createRuntimeDependencies } from '../../../runtime/dependencies.js'
 
 jest.mock('../../../services/request')
 
 describe('PagarMe/Card plugin', () => {
   let licensee
+  let dependencies
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
+  const buildCard = () => dependencies.createPagarMe(licensee).card
 
   beforeEach(async () => {
     installMemoryRepositories()
     jest.clearAllMocks()
+    dependencies = createRuntimeDependencies()
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
   })
@@ -82,7 +85,7 @@ describe('PagarMe/Card plugin', () => {
           },
         })
 
-        const card = new Card()
+        const card = buildCard()
         const response = await card.create(contact, creditCard, 'token')
 
         expect(response.success).toEqual(true)
@@ -148,7 +151,7 @@ describe('PagarMe/Card plugin', () => {
           },
         })
 
-        const card = new Card()
+        const card = buildCard()
         const response = await card.create(contact, creditCard, 'token')
 
         expect(response.success).toEqual(true)
@@ -210,7 +213,7 @@ describe('PagarMe/Card plugin', () => {
           data: bodyResponse,
         })
 
-        const card = new Card()
+        const card = buildCard()
         const response = await card.create(contact, creditCard, 'token')
 
         expect(response.success).toEqual(true)
@@ -262,7 +265,7 @@ describe('PagarMe/Card plugin', () => {
           },
         })
 
-        const card = new Card()
+        const card = buildCard()
         const response = await card.create(contact, creditCard, 'token')
 
         expect(response.success).toEqual(false)
@@ -319,7 +322,7 @@ describe('PagarMe/Card plugin', () => {
           data: bodyResponse,
         })
 
-        const card = new Card()
+        const card = buildCard()
         const response = await card.create(contact, creditCard, 'token')
 
         expect(response.success).toEqual(false)
@@ -363,7 +366,7 @@ describe('PagarMe/Card plugin', () => {
           },
         })
 
-        const card = new Card()
+        const card = buildCard()
         const cards = await card.list(contact, 'token')
         expect(cards[0]).toEqual(
           expect.objectContaining({
@@ -401,7 +404,7 @@ describe('PagarMe/Card plugin', () => {
           },
         })
 
-        const card = new Card()
+        const card = buildCard()
         await card.list(contact, 'token')
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Não foi possível buscar os cartões na pagar.me.
@@ -431,7 +434,7 @@ describe('PagarMe/Card plugin', () => {
           data: bodyResponse,
         })
 
-        const card = new Card()
+        const card = buildCard()
         await card.list(contact, 'token')
         const integrationlog = await Integrationlog.findOne({ contact: contact._id })
         expect(integrationlog.licensee._id).toEqual(contact.licensee._id)
@@ -469,7 +472,7 @@ describe('PagarMe/Card plugin', () => {
           },
         })
 
-        const card = new Card()
+        const card = buildCard()
         const cardData = await card.getById(contact, 'token')
         expect(cardData).toEqual(
           expect.objectContaining({
@@ -508,7 +511,7 @@ describe('PagarMe/Card plugin', () => {
           },
         })
 
-        const card = new Card()
+        const card = buildCard()
         await card.getById(contact, 'token')
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Não foi possível buscar os cartões na pagar.me.
@@ -539,7 +542,7 @@ describe('PagarMe/Card plugin', () => {
           data: bodyResponse,
         })
 
-        const card = new Card()
+        const card = buildCard()
         await card.getById(contact, 'token')
         const integrationlog = await Integrationlog.findOne({ contact: contact._id })
         expect(integrationlog.licensee._id).toEqual(contact.licensee._id)

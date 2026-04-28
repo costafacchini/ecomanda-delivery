@@ -4,17 +4,22 @@ import Integrationlog from '@models/Integrationlog'
 import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licenseePedidos10 as licenseeFactory } from '@factories/licensee'
 import request from '../../../../services/request.js'
+import { createRuntimeDependencies } from '../../../../runtime/dependencies.js'
 
 jest.mock('../../../../services/request')
 
 describe('Pedidos10/OrderStatus plugin', () => {
   let licensee
+  let dependencies
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
+  const buildOrderStatus = (licensee) =>
+    new OrderStatus(licensee, { integrationlogRepository: dependencies.integrationlogRepository })
 
   beforeEach(async () => {
     installMemoryRepositories()
     jest.clearAllMocks()
+    dependencies = createRuntimeDependencies()
     licensee = await Licensee.create(licenseeFactory.build())
     licensee.pedidos10_integration = {
       access_token: 'access-token',
@@ -43,7 +48,7 @@ describe('Pedidos10/OrderStatus plugin', () => {
           data: '',
         })
 
-        const orderStatus = new OrderStatus(licensee)
+        const orderStatus = buildOrderStatus(licensee)
         await orderStatus.change('order-id', 'delivered')
         expect(consoleInfoSpy).toHaveBeenCalledWith('Status do pedido order-id atualizado para delivered! log_id: 1234')
 
@@ -62,7 +67,7 @@ describe('Pedidos10/OrderStatus plugin', () => {
           data: '',
         })
 
-        const orderStatus = new OrderStatus(licensee)
+        const orderStatus = buildOrderStatus(licensee)
         await orderStatus.change('order-id', 'delivered')
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual('')
@@ -93,7 +98,7 @@ describe('Pedidos10/OrderStatus plugin', () => {
           },
         })
 
-        const statusOrder = new OrderStatus(licensee)
+        const statusOrder = buildOrderStatus(licensee)
         await statusOrder.change('order-id', 'delivered')
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Não foi possível alterar o status do pedido no Pedidos 10
@@ -126,7 +131,7 @@ describe('Pedidos10/OrderStatus plugin', () => {
           data: bodyResponse,
         })
 
-        const orderStatus = new OrderStatus(licensee)
+        const orderStatus = buildOrderStatus(licensee)
         await orderStatus.change('order-id', 'delivered')
         const integrationlog = await Integrationlog.findOne({ licensee: licensee._id })
         expect(integrationlog.log_payload).toEqual(bodyResponse)

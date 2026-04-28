@@ -7,40 +7,37 @@ import { TriggersController } from '../controllers/TriggersController.js'
 import { MessagesController } from '../controllers/MessagesController.js'
 import { TemplatesController } from '../controllers/TemplatesController.js'
 import { queueServer } from '../../config/queue.js'
-import { UserRepositoryDatabase } from '../repositories/user.js'
-import { LicenseeRepositoryDatabase } from '../repositories/licensee.js'
-import { ContactRepositoryDatabase } from '../repositories/contact.js'
-import { TriggerRepositoryDatabase } from '../repositories/trigger.js'
-import { TemplateRepositoryDatabase } from '../repositories/template.js'
-import { MessageRepositoryDatabase } from '../repositories/message.js'
 import { LicenseesQuery } from '../queries/LicenseesQuery.js'
 import { ContactsQuery } from '../queries/ContactsQuery.js'
 import { TriggersQuery } from '../queries/TriggersQuery.js'
 import { TemplatesQuery } from '../queries/TemplatesQuery.js'
 import { MessagesQuery } from '../queries/MessagesQuery.js'
-import { createMessengerPlugin } from '../plugins/messengers/factory.js'
-import { PagarMe } from '../plugins/payments/PagarMe.js'
-import { Pedidos10 } from '../plugins/integrations/Pedidos10.js'
-import { FacebookCatalogImporter } from '../plugins/importers/facebook_catalog/index.js'
-import { TemplatesImporter } from '../plugins/importers/template/index.js'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
 
 const router = express.Router()
 const SECRET = process.env.SECRET
 
-const userRepository = new UserRepositoryDatabase()
-const licenseeRepository = new LicenseeRepositoryDatabase()
-const contactRepository = new ContactRepositoryDatabase()
-const triggerRepository = new TriggerRepositoryDatabase()
-const templateRepository = new TemplateRepositoryDatabase()
-const messageRepository = new MessageRepositoryDatabase()
+const {
+  userRepository,
+  licenseeRepository,
+  contactRepository,
+  triggerRepository,
+  templateRepository,
+  messageRepository,
+  createMessengerPlugin,
+  createPagarMe,
+  createPedidos10,
+  createFacebookCatalogImporter,
+  createTemplatesImporter,
+} = createRuntimeDependencies()
 
 const usersController = new UsersController({ userRepository })
 const licenseesController = new LicenseesController({
   licenseeRepository,
   createLicenseesQuery: () => new LicenseesQuery({ licenseeRepository }),
   createMessengerPlugin,
-  createPagarMe: () => new PagarMe(),
-  createPedidos10: (licensee) => new Pedidos10(licensee),
+  createPagarMe,
+  createPedidos10,
 })
 const contactsController = new ContactsController({
   contactRepository,
@@ -50,7 +47,7 @@ const contactsController = new ContactsController({
 const triggersController = new TriggersController({
   triggerRepository,
   createTriggersQuery: () => new TriggersQuery({ triggerRepository }),
-  createFacebookCatalogImporter: (id) => new FacebookCatalogImporter(id),
+  createFacebookCatalogImporter,
 })
 const messagesController = new MessagesController({
   createMessagesQuery: () => new MessagesQuery({ messageRepository }),
@@ -58,7 +55,7 @@ const messagesController = new MessagesController({
 const templatesController = new TemplatesController({
   templateRepository,
   createTemplatesQuery: () => new TemplatesQuery({ templateRepository }),
-  createTemplatesImporter: (id) => new TemplatesImporter(id),
+  createTemplatesImporter,
 })
 
 function authenticate(req, res, next) {

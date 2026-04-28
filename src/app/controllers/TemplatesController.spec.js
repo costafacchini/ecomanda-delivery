@@ -1,20 +1,22 @@
 import Template from '@models/Template.js'
 import User from '@models/User.js'
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { expressServer } from '../../../.jest/server-express'
 import { Dialog } from '@plugins/messengers/Dialog.js'
 import { userSuper as userSuperFactory } from '@factories/user'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { template as templateFactory } from '@factories/template'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { TemplateRepositoryDatabase } from '@repositories/template'
+import { TemplatesQuery } from '@queries/TemplatesQuery'
 
 describe('template controller', () => {
   let token
   let licensee
 
   beforeAll(async () => {
-    await mongoServer.connect()
+    installMemoryRepositories()
 
     await User.create(userSuperFactory.build())
 
@@ -29,8 +31,8 @@ describe('template controller', () => {
     licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
-  afterAll(async () => {
-    await mongoServer.disconnect()
+  afterAll(() => {
+    resetMemoryRepositories()
   })
 
   describe('about auth', () => {
@@ -92,7 +94,7 @@ describe('template controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurred when create the template', async () => {
-        const templateSaveSpy = jest.spyOn(Template.prototype, 'save').mockImplementation(() => {
+        const templateSaveSpy = jest.spyOn(TemplateRepositoryDatabase.prototype, 'create').mockImplementation(() => {
           throw new Error('some error')
         })
 
@@ -168,9 +170,11 @@ describe('template controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurre when update the template', async () => {
-        const templateFindOneSpy = jest.spyOn(Template, 'findOne').mockImplementation(() => {
-          throw new Error('some error')
-        })
+        const templateFindOneSpy = jest
+          .spyOn(TemplateRepositoryDatabase.prototype, 'findFirst')
+          .mockImplementation(() => {
+            throw new Error('some error')
+          })
 
         const template = await Template.create(templateFactory.build({ licensee }))
 
@@ -223,9 +227,11 @@ describe('template controller', () => {
       })
 
       it('returns status 500 and message if occurs another error', async () => {
-        const templateFindOneSpy = jest.spyOn(Template, 'findOne').mockImplementation(() => {
-          throw new Error('some error')
-        })
+        const templateFindOneSpy = jest
+          .spyOn(TemplateRepositoryDatabase.prototype, 'findFirst')
+          .mockImplementation(() => {
+            throw new Error('some error')
+          })
 
         await request(expressServer)
           .get('/resources/templates/12312')
@@ -263,7 +269,7 @@ describe('template controller', () => {
       })
 
       it('returns status 500 and message if occurs another error', async () => {
-        const templateFindSpy = jest.spyOn(Template, 'find').mockImplementation(() => {
+        const templateFindSpy = jest.spyOn(TemplatesQuery.prototype, 'all').mockImplementation(() => {
           throw new Error('some error')
         })
 

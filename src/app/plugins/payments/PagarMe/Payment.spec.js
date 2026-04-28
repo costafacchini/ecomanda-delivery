@@ -1,4 +1,3 @@
-import { Payment } from './Payment.js'
 import Integrationlog from '@models/Integrationlog'
 import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licenseeIntegrationPagarMe as licenseeFactory } from '@factories/licensee'
@@ -8,17 +7,21 @@ import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
 import request from '../../../services/request.js'
+import { createRuntimeDependencies } from '../../../runtime/dependencies.js'
 
 jest.mock('../../../services/request')
 
 describe('PagarMe/Customer plugin', () => {
   let licensee
+  let dependencies
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
+  const buildPayment = () => dependencies.createPagarMe(licensee).payment
 
   beforeEach(async () => {
     installMemoryRepositories()
     jest.clearAllMocks()
+    dependencies = createRuntimeDependencies()
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build({ recipient_id: '2313' }))
   })
@@ -134,7 +137,7 @@ describe('PagarMe/Customer plugin', () => {
           },
         })
 
-        const payment = new Payment()
+        const payment = buildPayment()
         await payment.createPIX(cart, 'token')
         expect(consoleInfoSpy).toHaveBeenCalledWith('Pedido criado na pagar.me! id: or_56GXnk6T0eU88qMm log_id: 1234')
 
@@ -301,7 +304,7 @@ describe('PagarMe/Customer plugin', () => {
           },
         })
 
-        const payment = new Payment()
+        const payment = buildPayment()
         await payment.createPIX(cart, 'token')
         const cartUpdated = await cartRepository.findFirst({ _id: cart._id })
         expect(cartUpdated.order_id).toEqual('or_56GXnk6T0eU88qMm')
@@ -421,7 +424,7 @@ describe('PagarMe/Customer plugin', () => {
           data: bodyResponse,
         })
 
-        const payment = new Payment()
+        const payment = buildPayment()
         await payment.createPIX(cart, 'token')
         const integrationlog = await Integrationlog.findOne({ cart: cart._id })
         expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
@@ -525,7 +528,7 @@ describe('PagarMe/Customer plugin', () => {
           },
         })
 
-        const payment = new Payment()
+        const payment = buildPayment()
         await payment.createPIX(cart, 'token')
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Pedido ${cart._id} não criado na pagar.me.
@@ -630,7 +633,7 @@ describe('PagarMe/Customer plugin', () => {
           data: bodyResponse,
         })
 
-        const payment = new Payment()
+        const payment = buildPayment()
         await payment.createPIX(cart, 'token')
         const integrationlog = await Integrationlog.findOne({ cart: cart._id })
         expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
@@ -768,7 +771,7 @@ describe('PagarMe/Customer plugin', () => {
           },
         })
 
-        const payment = new Payment()
+        const payment = buildPayment()
         await payment.createCreditCard(cart, 'token')
         expect(consoleInfoSpy).toHaveBeenCalledWith('Pedido criado na pagar.me! id: or_56GXnk6T0eU88qMm log_id: 1234')
 
@@ -936,7 +939,7 @@ describe('PagarMe/Customer plugin', () => {
           },
         })
 
-        const payment = new Payment()
+        const payment = buildPayment()
         await payment.createCreditCard(cart, 'token')
         const cartUpdated = await cartRepository.findFirst({ _id: cart._id })
         expect(cartUpdated.order_id).toEqual('or_56GXnk6T0eU88qMm')
@@ -1074,7 +1077,7 @@ describe('PagarMe/Customer plugin', () => {
           data: bodyResponse,
         })
 
-        const payment = new Payment()
+        const payment = buildPayment()
         await payment.createCreditCard(cart, 'token')
         const integrationlog = await Integrationlog.findOne({ cart: cart._id })
         expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
@@ -1176,7 +1179,7 @@ describe('PagarMe/Customer plugin', () => {
           },
         })
 
-        const payment = new Payment()
+        const payment = buildPayment()
         await payment.createCreditCard(cart, 'token')
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Pedido ${cart._id} não criado na pagar.me.
@@ -1279,7 +1282,7 @@ describe('PagarMe/Customer plugin', () => {
           data: bodyResponse,
         })
 
-        const payment = new Payment()
+        const payment = buildPayment()
         await payment.createCreditCard(cart, 'token')
         const integrationlog = await Integrationlog.findOne({ cart: cart._id })
         expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
@@ -1341,7 +1344,7 @@ describe('PagarMe/Customer plugin', () => {
           },
         })
 
-        const payment = new Payment()
+        const payment = buildPayment()
         await payment.delete(cart, 'token')
         expect(consoleInfoSpy).toHaveBeenCalledWith('Pagamento cancelado na pagar.me! id: charge-id log_id: 1234')
 
@@ -1399,7 +1402,7 @@ describe('PagarMe/Customer plugin', () => {
           },
         })
 
-        const payment = new Payment()
+        const payment = buildPayment()
         await payment.delete(cart, 'token')
         const cartUpdated = await cartRepository.findFirst({ _id: cart._id })
         expect(cartUpdated.payment_status).toEqual('voided')
@@ -1457,7 +1460,7 @@ describe('PagarMe/Customer plugin', () => {
           data: bodyResponse,
         })
 
-        const payment = new Payment()
+        const payment = buildPayment()
         await payment.delete(cart, 'token')
         const integrationlog = await Integrationlog.findOne({ cart: cart._id })
         expect(integrationlog.licensee._id).toEqual(cart.licensee._id)
@@ -1521,7 +1524,7 @@ describe('PagarMe/Customer plugin', () => {
           },
         })
 
-        const payment = new Payment()
+        const payment = buildPayment()
         await payment.delete(cart, 'token')
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           `Pagamento ${cart._id} não cancelado na pagar.me.
@@ -1586,7 +1589,7 @@ describe('PagarMe/Customer plugin', () => {
           data: bodyResponse,
         })
 
-        const payment = new Payment()
+        const payment = buildPayment()
         await payment.delete(cart, 'token')
         const integrationlog = await Integrationlog.findOne({ cart: cart._id })
         expect(integrationlog.licensee._id).toEqual(cart.licensee._id)

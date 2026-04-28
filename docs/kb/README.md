@@ -16,9 +16,11 @@ Load ONLY documents relevant to your current task.
 
 | Document | When to Read |
 |----------|--------------|
-| [project-overview](architecture/project-overview.md) | Any task — covers project purpose, folder layout, entry points, plugin system, API, deployment |
-| [job-queue-system](architecture/job-queue-system.md) | Working on async jobs, message ordering, worker logic, or feature flags |
+| [dependency-injection-runtime-wiring](architecture/dependency-injection-runtime-wiring.md) | Executing `.plans/dependency-injection`, removing concrete repository allocation from runtime code, or migrating controller specs from `mongoServer` |
 | [express-conventions](architecture/express-conventions.md) | Working with Express routes, middleware, or configuration |
+| [job-queue-system](architecture/job-queue-system.md) | Working on async jobs, message ordering, worker logic, or feature flags |
+| [project-context-pre-setup](architecture/project-context-pre-setup.md) | Historical migrated AGENTS/project context captured before framework setup; useful only when reconciling old instructions |
+| [project-overview](architecture/project-overview.md) | Any task — covers project purpose, folder layout, entry points, plugin system, API, deployment |
 | [typescript-conventions](architecture/typescript-conventions.md) | Writing TypeScript code |
 
 ### Features
@@ -53,8 +55,6 @@ Load ONLY documents relevant to your current task.
 |----------|--------------|
 | [mistake-log](ai-patterns/mistake-log.md) | Session start — avoid repeated errors |
 | [trigger-log](ai-patterns/trigger-log.md) | Observability for trigger executions |
-| [TRIGGER-CHECKLIST](TRIGGER-CHECKLIST.md) | Quick reference: when to fire each skill, session-start checklist |
-| [UPGRADING](UPGRADING.md) | Upgrading the framework in a consumer repo |
 
 ### Sessions
 

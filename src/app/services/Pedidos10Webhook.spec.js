@@ -5,12 +5,16 @@ import { installMemoryRepositories, resetMemoryRepositories } from '@repositorie
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { body as bodyFactory } from '@factories/body'
 import { Pedidos10 } from '../plugins/integrations/Pedidos10.js'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+let dependencies
 
 describe('processWebhook', () => {
   const pedidos10ProcessOrderFnSpy = jest.spyOn(Pedidos10.prototype, 'processOrder')
 
   beforeEach(() => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
   })
 
@@ -73,7 +77,7 @@ describe('processWebhook', () => {
       bodyId: body._id,
     }
 
-    const actions = await processWebhook(data)
+    const actions = await processWebhook(data, dependencies)
 
     expect(pedidos10ProcessOrderFnSpy).toHaveBeenCalledWith(body.content)
 
