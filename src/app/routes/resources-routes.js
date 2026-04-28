@@ -17,6 +17,8 @@ import { UpdateLicensee } from '../usecases/licensees/UpdateLicensee.js'
 import { SetDialogWebhook } from '../usecases/licensees/SetDialogWebhook.js'
 import { SendLicenseeToPagarMe } from '../usecases/licensees/SendLicenseeToPagarMe.js'
 import { SignPedidos10OrderWebhook } from '../usecases/licensees/SignPedidos10OrderWebhook.js'
+import { CreateContact } from '../usecases/contacts/CreateContact.js'
+import { UpdateContact } from '../usecases/contacts/UpdateContact.js'
 import { createRuntimeDependencies } from '../runtime/dependencies.js'
 
 const router = express.Router()
@@ -55,7 +57,8 @@ const licenseesController = new LicenseesController({
 const contactsController = new ContactsController({
   contactRepository,
   createContactsQuery: () => new ContactsQuery({ contactRepository }),
-  queueServer,
+  createContact: new CreateContact({ contactRepository, jobQueue: queueServer }),
+  updateContact: new UpdateContact({ contactRepository, jobQueue: queueServer }),
 })
 const triggersController = new TriggersController({
   triggerRepository,
