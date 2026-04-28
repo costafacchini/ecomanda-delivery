@@ -1,137 +1,118 @@
-# Plan: Migrate project to TypeScript
+# Plan: JS to TypeScript Migration
 
+**Status**: not-started
 **Created**: 2026-04-02
-**Status**: Draft
-**Branch**: feature/js-to-ts
-**Prerequisite**: `.plans/cra-to-vite` must be complete before Phase 4 (client)
+**Last Updated**: 2026-04-28
+**Assigned Dev**: Alan
+**Master Plan**: None
 
 ## Objective
 
-Migrate the entire codebase (backend + client) from JavaScript to TypeScript incrementally,
-using `allowJs: true` to keep the project running throughout — no big-bang rewrite.
+Migrate the entire codebase (backend + client) from JavaScript to TypeScript incrementally using `allowJs: true`, keeping the project running throughout. No big-bang rewrite — one layer per task, each task is a reviewable and mergeable unit.
 
 ## Scope
 
-| Area | Source files | Test files |
-|------|-------------|------------|
-| Backend (`src/`) | 187 | 118 |
-| Client (`client/src/`) | 62 | 30 |
-| **Total** | **249** | **148** |
+### In Scope
+- Backend TypeScript tooling (tsconfig, babel transform, CI typecheck script)
+- Shared domain types in `src/types/index.ts`
+- Bottom-up backend migration: helpers, config, models, repositories, queries, services, plugins, importers, factories, controllers, jobs, routes, entry points
+- Client migration: tsconfig, services, contexts, components, pages, root files
+- Strict mode tightening (`noImplicitAny`, `strict: true`) as a final phase
+- ESLint TypeScript rules enabled after strict mode passes
 
-## Strategy
+### Out of Scope
+- Changing business logic during rename — {each file rename is type-annotation-only, no logic changes}
+- Removing `allowJs` before Phase 5 is complete — {coexistence is required throughout Phases 1–4}
 
-- **Incremental / bottom-up**: migrate leaf modules first (helpers, types, models), then consumers
-- **allowJs: true** during migration — JS and TS files coexist; rename one group at a time
-- **Lenient tsconfig first** (`strict: false`, `noImplicitAny: false`); tighten in Phase 5
-- **Tests stay as-is** until their source file is migrated; rename `.spec.js` → `.spec.ts` in same PR
-- **One layer per task** — each task is a reviewable, mergeable unit
+## Kill Criteria
 
----
+- If Mongoose schema typing complexity blocks progress for more than 2 weeks with no viable workaround.
+- If `allowJs` coexistence causes Jest transform failures that cannot be resolved within the tooling task.
 
-## Phase 0 — Prerequisites
+## Phases
 
-| # | Task | Status | Files | Depends On |
-|---|------|--------|-------|------------|
-| 0.1 | Complete CRA→Vite migration | Pending | see `.plans/cra-to-vite` | — |
+| Phase | Name | Tasks | Dependencies | Description |
+|-------|------|-------|--------------|-------------|
+| 0 | Prerequisites | task-00 | None | Verify cra-to-vite migration is complete (already satisfied) |
+| 1 | Backend Tooling | task-01, task-02, task-03, task-04 | None | Install TS deps, tsconfig, Jest/Babel transform, CI typecheck |
+| 2 | Shared Domain Types | task-05, task-06, task-07 | Phase 1 | Create `src/types/index.ts`, migrate helpers and config |
+| 3 | Backend Layers | task-08 through task-20 | Phase 2 | Bottom-up migration of all backend source files |
+| 4 | Client Migration | task-21 through task-26 | Phase 0 + Phase 1 | Migrate all client source files |
+| 5 | Strict Mode | task-27, task-28, task-29, task-30 | Phase 3 + Phase 4 | Enable noImplicitAny and strict; add ESLint TS rules |
 
----
+## Task Summary
 
-## Phase 1 — Backend Tooling
+| Task Path | Title | Phase | Status | Depends On |
+|-----------|-------|-------|--------|------------|
+| phase-0/task-00-verify-cra-to-vite-complete | Verify cra-to-vite prerequisite is complete | 0 | not-started | — |
+| phase-1/task-01-backend-ts-deps | Install backend TypeScript dependencies | 1 | not-started | — |
+| phase-1/task-02-tsconfig-root | Create root tsconfig.json | 1 | not-started | phase-1/task-01-backend-ts-deps |
+| phase-1/task-03-jest-babel-ts-transform | Configure Jest/Babel to process .ts files | 1 | not-started | phase-1/task-01-backend-ts-deps |
+| phase-1/task-04-typecheck-ci-script | Add typecheck script and verify zero TS errors | 1 | not-started | phase-1/task-02-tsconfig-root |
+| phase-2/task-05-domain-types | Create src/types/index.ts with domain enums and interfaces | 2 | not-started | phase-1/task-02-tsconfig-root |
+| phase-2/task-06-migrate-helpers | Migrate src/app/helpers/ to .ts | 2 | not-started | phase-2/task-05-domain-types |
+| phase-2/task-07-migrate-config-setup | Migrate src/config/ and src/setup/ to .ts | 2 | not-started | phase-1/task-02-tsconfig-root |
+| phase-3/task-08-migrate-models | Migrate Mongoose models to .ts | 3 | not-started | phase-2/task-05-domain-types |
+| phase-3/task-09-migrate-repositories | Migrate repositories to .ts | 3 | not-started | phase-3/task-08-migrate-models |
+| phase-3/task-10-migrate-queries | Migrate queries layer to .ts | 3 | not-started | phase-3/task-09-migrate-repositories |
+| phase-3/task-11-migrate-services | Migrate services layer to .ts | 3 | not-started | phase-3/task-09-migrate-repositories |
+| phase-3/task-12-migrate-messenger-plugins | Migrate plugins/messengers to .ts | 3 | not-started | phase-3/task-11-migrate-services |
+| phase-3/task-13-migrate-chat-plugins | Migrate plugins/chats to .ts | 3 | not-started | phase-3/task-11-migrate-services |
+| phase-3/task-14-migrate-chatbot-plugins | Migrate plugins/chatbots to .ts | 3 | not-started | phase-3/task-11-migrate-services |
+| phase-3/task-15-migrate-cart-plugins | Migrate plugins/carts to .ts | 3 | not-started | phase-3/task-11-migrate-services |
+| phase-3/task-16-migrate-integration-payment-storage-plugins | Migrate plugins/integrations, payments, and storage to .ts | 3 | not-started | phase-3/task-11-migrate-services |
+| phase-3/task-17-migrate-importers-factories-reports | Migrate importers, factories, and reports to .ts | 3 | not-started | phase-3/task-08-migrate-models |
+| phase-3/task-18-migrate-controllers | Migrate controllers to .ts | 3 | not-started | phase-3/task-11-migrate-services |
+| phase-3/task-19-migrate-jobs | Migrate jobs to .ts | 3 | not-started | phase-3/task-11-migrate-services, phase-3/task-12-migrate-messenger-plugins, phase-3/task-13-migrate-chat-plugins |
+| phase-3/task-20-migrate-routes-websockets-entry | Migrate routes, websockets, and server entry to .ts | 3 | not-started | phase-3/task-18-migrate-controllers |
+| phase-4/task-21-client-ts-setup | Add client TS deps and create client/tsconfig.json | 4 | not-started | phase-0/task-00-verify-cra-to-vite-complete, phase-1/task-01-backend-ts-deps |
+| phase-4/task-22-migrate-client-services | Migrate client/src/services/ to .ts | 4 | not-started | phase-4/task-21-client-ts-setup |
+| phase-4/task-23-migrate-client-contexts | Migrate client/src/contexts/ to .tsx | 4 | not-started | phase-4/task-21-client-ts-setup |
+| phase-4/task-24-migrate-client-components | Migrate client/src/components/ to .tsx | 4 | not-started | phase-4/task-23-migrate-client-contexts |
+| phase-4/task-25-migrate-client-pages | Migrate client/src/pages/ to .tsx | 4 | not-started | phase-4/task-24-migrate-client-components |
+| phase-4/task-26-migrate-client-root | Migrate App.js, index.js, and root client files to .tsx | 4 | not-started | phase-4/task-25-migrate-client-pages |
+| phase-5/task-27-enable-noimplicitany-backend | Enable noImplicitAny on backend tsconfig | 5 | not-started | phase-3/task-20-migrate-routes-websockets-entry |
+| phase-5/task-28-enable-noimplicitany-client | Enable noImplicitAny on client tsconfig | 5 | not-started | phase-4/task-26-migrate-client-root |
+| phase-5/task-29-enable-strict-mode | Enable strict: true in both tsconfigs | 5 | not-started | phase-5/task-27-enable-noimplicitany-backend, phase-5/task-28-enable-noimplicitany-client |
+| phase-5/task-30-eslint-ts-rules | Enable @typescript-eslint/recommended rules in ESLint | 5 | not-started | phase-5/task-29-enable-strict-mode |
 
-| # | Task | Status | Files | Depends On |
-|---|------|--------|-------|------------|
-| 1.1 | Add backend TS deps: `typescript`, `tsx`, `@types/node`, `@types/express`, `@types/bcrypt`, `@types/morgan`, `@types/jsonwebtoken`; install `@babel/preset-typescript` for Jest transform | Pending | `package.json` | — |
-| 1.2 | Create `tsconfig.json` at root: `allowJs: true`, `checkJs: false`, `strict: false`, `module: NodeNext`, `moduleResolution: NodeNext`, `outDir: dist`, path aliases matching `_moduleAliases` | Pending | `tsconfig.json` *(new)* | 1.1 |
-| 1.3 | Update `babel.config.json`: add `@babel/preset-typescript` so Jest can process `.ts` files; update `jest.config.mjs` transform to cover `^.+\.(js\|ts)$` | Pending | `babel.config.json`, `jest.config.mjs` | 1.1 |
-| 1.4 | Add `tsc --noEmit` check to CI (`package.json` scripts: `typecheck`); verify zero TS errors on JS-only codebase | Pending | `package.json` | 1.2 |
+## Branch Convention
 
----
+Pattern: `plan/js-to-ts/phase-{N}/task-{NN}-{slug}`
+Base branch: `main`
 
-## Phase 2 — Shared Domain Types (Backend)
+## Key Files
 
-| # | Task | Status | Files | Depends On |
-|---|------|--------|-------|------------|
-| 2.1 | Create `src/types/index.ts`: enums for `LicenseKind`, `ChatbotDefault`, `WhatsappDefault`, `ChatDefault`, `CartDefault`, `MessageKind`, `MessageDestination`, `MessageStatus`; interfaces for domain objects (`ILicensee`, `IContact`, `IMessage`, `IRoom`, `ITrigger`) | Pending | `src/types/index.ts` *(new)* | 1.2 |
-| 2.2 | Migrate helpers: rename 9 files in `src/app/helpers/` to `.ts`, add types; update imports in consumers | Pending | `src/app/helpers/*.js` → `.ts` + their `.spec.js` → `.spec.ts` | 2.1 |
-| 2.3 | Migrate config files: rename 7 files in `src/config/` + `src/setup/` to `.ts` | Pending | `src/config/*.js` → `.ts`, `src/setup/*.js` → `.ts` | 1.2 |
+| File/Directory | Relevance |
+|----------------|-----------|
+| `src/` | All backend source files (187 .js source, 118 test files) |
+| `client/src/` | All client source files (62 .js source, 30 test files) |
+| `babel.config.json` | Needs `@babel/preset-typescript` added for Jest |
+| `jest.config.mjs` | Transform pattern must cover `.ts` files |
+| `package.json` | New TS deps and typecheck script |
+| `tsconfig.json` | New root-level file for backend |
+| `client/tsconfig.json` | New client-level file |
 
----
+## Defects
 
-## Phase 3 — Backend Layers (bottom-up)
-
-| # | Task | Status | Files | Depends On |
-|---|------|--------|-------|------------|
-| 3.1 | Migrate Mongoose models (14 files): rename to `.ts`, type schema fields, export typed `Document` interfaces using `mongoose` generics; add `@types/mongoose` if needed | Pending | `src/app/models/*.js` → `.ts` | 2.1 |
-| 3.2 | Migrate base `Repository` class and all 10 repository files to `.ts`; type `create/find/update` return values using model interfaces | Pending | `src/app/repositories/*.js` → `.ts` + specs | 3.1 |
-| 3.3 | Migrate queries layer (10 files in `src/app/queries/`) to `.ts` | Pending | `src/app/queries/*.js` → `.ts` + specs | 3.2 |
-| 3.4 | Migrate services layer (18 files in `src/app/services/`) to `.ts` + specs | Pending | `src/app/services/*.js` → `.ts` + specs | 3.2 |
-| 3.5 | Migrate plugins/messengers (6 files + Base) to `.ts` + specs | Pending | `src/app/plugins/messengers/*.js` → `.ts` | 3.4 |
-| 3.6 | Migrate plugins/chats (6 files + Base) to `.ts` + specs | Pending | `src/app/plugins/chats/*.js` → `.ts` | 3.4 |
-| 3.7 | Migrate plugins/chatbots (2 files) to `.ts` + specs | Pending | `src/app/plugins/chatbots/*.js` → `.ts` | 3.4 |
-| 3.8 | Migrate plugins/carts (6 files + adapters) to `.ts` + specs | Pending | `src/app/plugins/carts/**/*.js` → `.ts` | 3.4 |
-| 3.9 | Migrate plugins/integrations (8 files) + payments/PagarMe (6 files) + storage (1 file) to `.ts` | Pending | `src/app/plugins/integrations/**/*.js`, `src/app/plugins/payments/**/*.js`, `src/app/plugins/storage/*.js` → `.ts` | 3.4 |
-| 3.10 | Migrate importers (2 files), factories (12 files), reports (1 file) to `.ts` | Pending | `src/app/factories/*.js`, `src/app/importers/**/*.js`, `src/app/reports/*.js` → `.ts` | 3.1 |
-| 3.11 | Migrate controllers (17 files) to `.ts`: type `Request`/`Response` from Express | Pending | `src/app/controllers/**/*.js` → `.ts` + specs | 3.4 |
-| 3.12 | Migrate jobs (20 files) to `.ts` | Pending | `src/app/jobs/*.js` → `.ts` | 3.4, 3.5, 3.6 |
-| 3.13 | Migrate routes (5 files) + websockets (3 files) + server entry (`server.js`, `worker.js`) to `.ts` | Pending | `src/app/routes/**/*.js`, `src/app/websockets/**/*.js` → `.ts` | 3.11 |
-
----
-
-## Phase 4 — Client (requires Vite migration)
-
-| # | Task | Status | Files | Depends On |
-|---|------|--------|-------|------------|
-| 4.1 | Add client TS deps: `typescript`, `@types/react`, `@types/react-dom`; update `vite.config.js` to handle `.tsx`; create `client/tsconfig.json` (`allowJs: true`, `strict: false`, `jsx: react-jsx`) | Pending | `client/package.json`, `client/tsconfig.json` *(new)*, `client/vite.config.js` | 0.1 |
-| 4.2 | Migrate client services and utilities (non-component `.js` files) to `.ts` | Pending | `client/src/services/*.js` → `.ts` + specs | 4.1 |
-| 4.3 | Migrate client contexts (`src/contexts/`) to `.tsx` + specs | Pending | `client/src/contexts/**/*.js` → `.tsx` + specs | 4.1 |
-| 4.4 | Migrate client components (`src/components/`) to `.tsx` + specs | Pending | `client/src/components/**/*.js` → `.tsx` + specs | 4.3 |
-| 4.5 | Migrate client pages (`src/pages/`) to `.tsx` + specs | Pending | `client/src/pages/**/*.js` → `.tsx` + specs | 4.4 |
-| 4.6 | Migrate `App.js`, `index.js`, `setupTests.js` and remaining root-level client files | Pending | `client/src/App.js`, `client/src/index.js` → `.tsx` | 4.5 |
-
----
-
-## Phase 5 — Tighten Strict Mode
-
-| # | Task | Status | Files | Depends On |
-|---|------|--------|-------|------------|
-| 5.1 | Enable `noImplicitAny: true` in both tsconfigs; fix resulting errors across backend | Pending | `tsconfig.json` | 3.13 |
-| 5.2 | Enable `noImplicitAny: true` for client; fix resulting errors | Pending | `client/tsconfig.json` | 4.6 |
-| 5.3 | Enable `strict: true` in both tsconfigs; fix `strictNullChecks`, `strictFunctionTypes`, etc. | Pending | `tsconfig.json`, `client/tsconfig.json` | 5.1, 5.2 |
-| 5.4 | Update ESLint config: enable `@typescript-eslint/recommended` rules, remove JS-only rules that conflict | Pending | `eslint.config.mjs` | 5.3 |
-
----
-
-## New Dependencies
-
-**Backend** (`package.json`):
-```
-typescript, tsx,
-@types/node, @types/express, @types/bcrypt, @types/morgan, @types/jsonwebtoken,
-@babel/preset-typescript
-```
-
-**Client** (`client/package.json`):
-```
-typescript, @types/react, @types/react-dom
-```
-_(Vitest handles TS natively; no extra Jest TS transform needed after Vite migration)_
+| Defect Task | Title | Found During | Blocks | Status |
 
 ## Risks
 
-| Risk | Mitigation |
-|------|------------|
-| Mongoose model types are complex (dynamic validators, virtuals) | Use `mongoose` generic types (`Schema<ILicensee>`); keep validators untyped initially |
-| 30+ plugin files with deep inheritance chains | Migrate Base class first, then subclasses in same task |
-| `allowJs` means no type-checking on unmigrated files | Acceptable — `tsc --noEmit` only errors on `.ts` files |
-| Circular imports may surface as TS errors | Investigate with `madge` if errors appear |
-| `_moduleAliases` vs `paths` divergence | Mirror exact aliases in `tsconfig.json` `paths` field |
+- Mongoose model types are complex (dynamic validators, virtuals) — Use `mongoose` generic types (`Schema<ILicensee>`); keep validators untyped initially
+- 30+ plugin files with deep inheritance chains — Migrate Base class first, then subclasses in the same task
+- `allowJs` means no type-checking on unmigrated files — Acceptable; `tsc --noEmit` only errors on `.ts` files
+- Circular imports may surface as TS errors — Investigate with `madge` if errors appear
+- `_moduleAliases` vs `paths` divergence — Mirror exact aliases in `tsconfig.json` `paths` field
 
-## Done When
+## Success Criteria
 
 - [ ] All `.js` source files renamed to `.ts` / `.tsx`
 - [ ] All `.spec.js` test files renamed to `.spec.ts`
 - [ ] `tsc --noEmit` passes with `strict: true` on both tsconfigs
-- [ ] `yarn test` (backend) still passes (2611 tests)
-- [ ] `vitest run` (client) still passes (≥121/122)
-- [ ] `vite build` still succeeds
-- [ ] ESLint passes with TS rules enabled
+- [ ] `yarn test` (backend) passes (2611 tests)
+- [ ] `vitest run` (client) passes
+- [ ] `vite build` succeeds
+- [ ] ESLint passes with TypeScript rules enabled
+- [ ] All tests pass
+- [ ] No regressions in existing functionality

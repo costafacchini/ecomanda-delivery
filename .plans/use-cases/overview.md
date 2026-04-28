@@ -1,218 +1,101 @@
 # Plan: Use Cases
 
+**Status**: not-started
 **Created**: 2026-04-02
-**Status**: Draft
-**Branch**: feature/use-cases
-**Prerequisite**: `.plans/dependency-injection` must be complete
-
----
+**Last Updated**: 2026-04-28
+**Assigned Dev**: Alan
+**Master Plan**: None
 
 ## Objective
 
-Extract business logic from controllers into dedicated **use case classes**. Each use case has
-a single responsibility, a single `execute()` method, and receives all dependencies via constructor.
+Extract business logic from controllers into dedicated use case classes, each with a single `execute()` method and constructor-injected dependencies. Controllers become thin HTTP adapters: validate input, invoke use case, send response.
 
-Controllers become **thin**: validate input → invoke use case → send response. No business
-logic, no DB access, no queue calls — all of that lives in use cases.
+## Scope
 
----
+### In Scope
+- Scaffold `src/app/usecases/` directory structure mirroring domain folders
+- Extract use cases for Auth, Licensees, Contacts, Users, Triggers, Orders, Backgroundjobs, and Webhooks
+- Slim each controller to delegate to its use cases
+- Update composition root (route files) to wire use cases into controllers
+- Update controller specs to mock use cases and assert only HTTP behaviour
+- Add use case specs that run without `mongoServer`
 
-## Why Use Cases After DI
+### Out of Scope
+- Read-only `show`/`index` controller actions that contain no business logic — leave in controller unless logic justifies extraction
+- Changing the DI container or repository layer — {prerequisite `dependency-injection` plan owns that}
 
-Use cases need injected repositories from day one — a use case that does
-`new *RepositoryDatabase()` internally is just relocating the same problem. DI must exist
-first so use cases are born properly injectable and testable without a real database.
+## Kill Criteria
 
----
+- If controllers become so thin that use cases duplicate controller boilerplate without adding clarity (i.e. every use case is a one-liner passthrough with no testable logic).
 
-## The Pattern
+## Phases
 
-```js
-// src/app/usecases/licensees/CreateLicensee.js
-class CreateLicensee {
-  constructor({ licenseeRepository }) {
-    this.licenseeRepository = licenseeRepository
-  }
+| Phase | Name | Tasks | Dependencies | Description |
+|-------|------|-------|--------------|-------------|
+| 1 | Scaffold | task-01 | None | Create `src/app/usecases/` directory tree |
+| 2 | Auth | task-02, task-03 | Phase 1 | Extract `AuthenticateUser`; slim `LoginController` |
+| 3 | Licensees | task-04, task-05, task-06 | Phase 1 | Extract 5 licensee use cases; slim `LicenseesController` |
+| 4 | Contacts | task-07, task-08 | Phase 1 | Extract 2 contact use cases; slim `ContactsController` |
+| 5 | Users | task-09, task-10 | Phase 1 | Extract 2 user use cases; slim `UsersController` |
+| 6 | Triggers | task-11, task-12 | Phase 1 | Extract 3 trigger use cases; slim `TriggersController` |
+| 7 | Orders & Backgroundjobs | task-13, task-14, task-15 | Phase 1 | Extract order and backgroundjob use cases; slim controllers |
+| 8 | Webhook Ingestion (optional) | task-16, task-17 | Phase 1 | Extract 2 webhook use cases; slim chat/messenger controllers |
+| 9 | Composition Root & Tests | task-18, task-19 | Phases 2–8 | Wire use cases in routes; update controller specs |
 
-  async execute(fields) {
-    return await this.licenseeRepository.create(fields)
-  }
-}
-export { CreateLicensee }
-```
+## Task Summary
 
-```js
-// controllers/LicenseesController.js (after use cases)
-class LicenseesController {
-  constructor({ createLicensee, updateLicensee, ... }) {
-    this.createLicensee = createLicensee
-  }
+| Task Path | Title | Phase | Status | Depends On |
+|-----------|-------|-------|--------|------------|
+| phase-1/task-01-scaffold-usecases-dir | Scaffold usecases directory structure | 1 | not-started | — |
+| phase-2/task-02-authenticate-user-usecase | Extract AuthenticateUser use case | 2 | not-started | phase-1/task-01-scaffold-usecases-dir |
+| phase-2/task-03-slim-login-controller | Slim LoginController | 2 | not-started | phase-2/task-02-authenticate-user-usecase |
+| phase-3/task-04-licensee-create-update-usecases | Extract CreateLicensee and UpdateLicensee use cases | 3 | not-started | phase-1/task-01-scaffold-usecases-dir |
+| phase-3/task-05-licensee-external-action-usecases | Extract SetDialogWebhook, SendLicenseeToPagarMe, SignPedidos10OrderWebhook | 3 | not-started | phase-1/task-01-scaffold-usecases-dir |
+| phase-3/task-06-slim-licensees-controller | Slim LicenseesController | 3 | not-started | phase-3/task-04-licensee-create-update-usecases, phase-3/task-05-licensee-external-action-usecases |
+| phase-4/task-07-contact-usecases | Extract CreateContact and UpdateContact use cases | 4 | not-started | phase-1/task-01-scaffold-usecases-dir |
+| phase-4/task-08-slim-contacts-controller | Slim ContactsController | 4 | not-started | phase-4/task-07-contact-usecases |
+| phase-5/task-09-user-usecases | Extract CreateUser and UpdateUser use cases | 5 | not-started | phase-1/task-01-scaffold-usecases-dir |
+| phase-5/task-10-slim-users-controller | Slim UsersController | 5 | not-started | phase-5/task-09-user-usecases |
+| phase-6/task-11-trigger-usecases | Extract CreateTrigger, UpdateTrigger, ImportFacebookCatalog use cases | 6 | not-started | phase-1/task-01-scaffold-usecases-dir |
+| phase-6/task-12-slim-triggers-controller | Slim TriggersController | 6 | not-started | phase-6/task-11-trigger-usecases |
+| phase-7/task-13-order-usecases | Extract ReceivePedidos10Order and ChangePedidos10OrderStatus use cases | 7 | not-started | phase-1/task-01-scaffold-usecases-dir |
+| phase-7/task-14-backgroundjob-usecases | Extract ScheduleBackgroundjob use case | 7 | not-started | phase-1/task-01-scaffold-usecases-dir |
+| phase-7/task-15-slim-orders-backgroundjobs-controllers | Slim OrdersController and BackgroundjobsController | 7 | not-started | phase-7/task-13-order-usecases, phase-7/task-14-backgroundjob-usecases |
+| phase-8/task-16-webhook-usecases | Extract IngestChatMessage and IngestMessengerMessage use cases | 8 | not-started | phase-1/task-01-scaffold-usecases-dir |
+| phase-8/task-17-slim-chats-messengers-controllers | Slim ChatsController and MessengersController | 8 | not-started | phase-8/task-16-webhook-usecases |
+| phase-9/task-18-update-composition-root | Update route files to wire use cases into controllers | 9 | not-started | phase-2/task-03-slim-login-controller, phase-3/task-06-slim-licensees-controller, phase-4/task-08-slim-contacts-controller, phase-5/task-10-slim-users-controller, phase-6/task-12-slim-triggers-controller, phase-7/task-15-slim-orders-backgroundjobs-controllers |
+| phase-9/task-19-update-controller-tests | Update controller specs to mock use cases | 9 | not-started | phase-9/task-18-update-composition-root |
 
-  async create(req, res) {
-    try {
-      const licensee = await this.createLicensee.execute(req.body)
-      res.status(201).send(licensee)
-    } catch (err) {
-      res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
-    }
-  }
-}
-```
+## Branch Convention
 
-```js
-// routes/resources-routes.js (composition root wires everything)
-const licenseeRepo = new LicenseeRepositoryDatabase()
-const createLicensee = new CreateLicensee({ licenseeRepository: licenseeRepo })
-const licenseesController = new LicenseesController({ createLicensee })
-```
+Pattern: `plan/use-cases/phase-{N}/task-{NN}-{slug}`
+Base branch: `main`
 
-**Use case test (no DB, no mongoServer):**
-```js
-it('creates a licensee', async () => {
-  const licenseeRepository = new LicenseeRepositoryMemory()
-  const useCase = new CreateLicensee({ licenseeRepository })
-  const result = await useCase.execute({ name: 'Acme', licenseKind: 'demo' })
-  expect(result.name).toBe('Acme')
-})
-```
+## Key Files
 
----
+| File/Directory | Relevance |
+|----------------|-----------|
+| `src/app/controllers/` | All controllers to be slimmed |
+| `src/app/usecases/` | New directory — all use case classes live here |
+| `src/app/routes/resources-routes.js` | Composition root for admin/API routes |
+| `src/app/routes/login-route.js` | Composition root for auth route |
+| `src/app/routes/v1/v1-routes.js` | Composition root for v1 routes |
 
-## Use Cases to Extract
+## Defects
 
-### Auth
-| Use Case | Extracted From | Logic |
-|----------|---------------|-------|
-| `AuthenticateUser` | `LoginController.login` | Find user by email, validate password, sign JWT |
-
-### Licensees
-| Use Case | Extracted From | Logic |
-|----------|---------------|-------|
-| `CreateLicensee` | `LicenseesController.create` | Map 50+ fields, persist |
-| `UpdateLicensee` | `LicenseesController.update` | Permit fields, serialize pedidos10_integration, update |
-| `SetDialogWebhook` | `LicenseesController.setDialogWebhook` | Find licensee, conditionally call messenger plugin webhook |
-| `SendLicenseeToPagarMe` | `LicenseesController.sendToPagarMe` | Find licensee, create or update PagarMe recipient |
-| `SignPedidos10OrderWebhook` | `LicenseesController.signOrderWebhook` | Find licensee, call Pedidos10.signOrderWebhook |
-
-### Contacts
-| Use Case | Extracted From | Logic |
-|----------|---------------|-------|
-| `CreateContact` | `ContactsController.create` | Create contact, enqueue send-contact-to-pagarme job |
-| `UpdateContact` | `ContactsController.update` | Update contact, enqueue send-contact-to-pagarme job |
-
-### Users
-| Use Case | Extracted From | Logic |
-|----------|---------------|-------|
-| `CreateUser` | `UsersController.create` | Create user via repository (removes `new User() + validateSync + save` antipattern) |
-| `UpdateUser` | `UsersController.update` | Update user via repository (removes direct `User.updateOne`) |
-
-### Triggers
-| Use Case | Extracted From | Logic |
-|----------|---------------|-------|
-| `CreateTrigger` | `TriggersController.create` | Create trigger via repository (removes `new Trigger() + validateSync + save`) |
-| `UpdateTrigger` | `TriggersController.update` | Update trigger via repository (removes direct `Trigger.updateOne`) |
-| `ImportFacebookCatalog` | `TriggersController.importation` | Delegate to `FacebookCatalogImporter` |
-
-### Orders / Integrations
-| Use Case | Extracted From | Logic |
-|----------|---------------|-------|
-| `ReceivePedidos10Order` | `OrdersController.create` | Log to integrationlog, save body, enqueue pedidos10-webhook job |
-| `ChangePedidos10OrderStatus` | `OrdersController.changeStatus` | Log to integrationlog, save body, enqueue pedidos10-change-order-status job |
-
-### Background Jobs
-| Use Case | Extracted From | Logic |
-|----------|---------------|-------|
-| `ScheduleBackgroundjob` | `BackgroundjobsController.create` | Create job via repository (removes `new Backgroundjob() + validateSync + save`), enqueue |
-
-### Webhook Ingestion *(low priority — logic is thin)*
-| Use Case | Extracted From | Logic |
-|----------|---------------|-------|
-| `IngestChatMessage` | `ChatsController.message` | Save body, enqueue chat-message job |
-| `IngestMessengerMessage` | `MessengersController.message` | Save body, enqueue messenger-message job |
-
----
-
-## Tasks
-
-### Phase 1 — Scaffold
-
-| # | Task | Status | Files | Depends On |
-|---|------|--------|-------|------------|
-| 1.1 | Create `src/app/usecases/` directory structure mirroring domain folders: `auth/`, `licensees/`, `contacts/`, `users/`, `triggers/`, `orders/`, `backgroundjobs/`, `webhooks/` | Pending | `src/app/usecases/` *(new dir)* | DI plan complete |
-
-### Phase 2 — Auth
-
-| # | Task | Status | Files | Depends On |
-|---|------|--------|-------|------------|
-| 2.1 | Extract `AuthenticateUser` use case + spec | Pending | `usecases/auth/AuthenticateUser.js` *(new)*, `AuthenticateUser.spec.js` *(new)* | 1.1 |
-| 2.2 | Slim `LoginController`: delegate to `AuthenticateUser`, handle only HTTP response | Pending | `controllers/LoginController.js`, `routes/login-route.js` | 2.1 |
-
-### Phase 3 — Licensees
-
-| # | Task | Status | Files | Depends On |
-|---|------|--------|-------|------------|
-| 3.1 | Extract `CreateLicensee` + spec | Pending | `usecases/licensees/CreateLicensee.js` *(new)* | 1.1 |
-| 3.2 | Extract `UpdateLicensee` + spec | Pending | `usecases/licensees/UpdateLicensee.js` *(new)* | 1.1 |
-| 3.3 | Extract `SetDialogWebhook`, `SendLicenseeToPagarMe`, `SignPedidos10OrderWebhook` + specs | Pending | `usecases/licensees/*.js` *(3 new files)* | 1.1 |
-| 3.4 | Slim `LicenseesController`: receive use cases via constructor, replace all method bodies with `execute()` calls | Pending | `controllers/LicenseesController.js` | 3.1–3.3 |
-
-### Phase 4 — Contacts
-
-| # | Task | Status | Files | Depends On |
-|---|------|--------|-------|------------|
-| 4.1 | Extract `CreateContact`, `UpdateContact` + specs | Pending | `usecases/contacts/*.js` *(2 new files)* | 1.1 |
-| 4.2 | Slim `ContactsController` | Pending | `controllers/ContactsController.js` | 4.1 |
-
-### Phase 5 — Users
-
-| # | Task | Status | Files | Depends On |
-|---|------|--------|-------|------------|
-| 5.1 | Extract `CreateUser`, `UpdateUser` + specs | Pending | `usecases/users/*.js` *(2 new files)* | 1.1 |
-| 5.2 | Slim `UsersController`: eliminates `new User() + validateSync + save` antipattern | Pending | `controllers/UsersController.js` | 5.1 |
-
-### Phase 6 — Triggers
-
-| # | Task | Status | Files | Depends On |
-|---|------|--------|-------|------------|
-| 6.1 | Extract `CreateTrigger`, `UpdateTrigger`, `ImportFacebookCatalog` + specs | Pending | `usecases/triggers/*.js` *(3 new files)* | 1.1 |
-| 6.2 | Slim `TriggersController`: eliminates `new Trigger() + validateSync + save` antipattern | Pending | `controllers/TriggersController.js` | 6.1 |
-
-### Phase 7 — Orders & Background Jobs
-
-| # | Task | Status | Files | Depends On |
-|---|------|--------|-------|------------|
-| 7.1 | Extract `ReceivePedidos10Order`, `ChangePedidos10OrderStatus` + specs | Pending | `usecases/orders/*.js` *(2 new files)* | 1.1 |
-| 7.2 | Extract `ScheduleBackgroundjob` + spec | Pending | `usecases/backgroundjobs/ScheduleBackgroundjob.js` *(new)* | 1.1 |
-| 7.3 | Slim `OrdersController`, `BackgroundjobsController` | Pending | `controllers/OrdersController.js`, `controllers/BackgroundjobsController.js` | 7.1, 7.2 |
-
-### Phase 8 — Webhook Ingestion *(optional)*
-
-| # | Task | Status | Files | Depends On |
-|---|------|--------|-------|------------|
-| 8.1 | Extract `IngestChatMessage`, `IngestMessengerMessage` + specs | Pending | `usecases/webhooks/*.js` *(2 new files)* | 1.1 |
-| 8.2 | Slim `ChatsController`, `MessengersController` | Pending | `controllers/ChatsController.js`, `controllers/MessengersController.js` | 8.1 |
-
-### Phase 9 — Update Composition Root & Controller Tests
-
-| # | Task | Status | Files | Depends On |
-|---|------|--------|-------|------------|
-| 9.1 | Update route files to instantiate use cases and inject them into controllers | Pending | `routes/resources-routes.js`, `routes/v1/v1-routes.js`, `routes/login-route.js` | Phases 2–8 |
-| 9.2 | Update controller specs: inject use cases as mocks; controllers now assert only on HTTP response behavior | Pending | `controllers/*.spec.js` | Phases 2–8 |
-
----
+| Defect Task | Title | Found During | Blocks | Status |
 
 ## Risks
 
-| Risk | Mitigation |
-|------|------------|
-| Some controller methods (`show`, `index`) barely have logic | Leave read-only list/show actions in controller if they're just query + send — only extract when there's real business logic |
-| `CreateLicensee` maps 50+ fields — large use case | Acceptable: the mapping is already centralised in the controller; use case owns it instead |
-| `LoginController` uses `jwt.sign` — external dep | Inject a `tokenService` wrapper or pass `jwt` as a dep |
+- `CreateLicensee` maps 50+ fields (large use case) — Acceptable: the mapping is already centralised in the controller; use case inherits ownership
+- `LoginController` uses `jwt.sign` directly — Inject a `tokenService` wrapper or pass `jwt` as a constructor dependency
+- Some `show`/`index` methods have no logic — Leave read-only actions in controller; only extract when there is real business logic
 
-## Done When
+## Success Criteria
 
 - [ ] `src/app/usecases/` exists with 18+ use case classes
 - [ ] No controller method contains business logic (repository calls, queue calls, plugin calls)
 - [ ] Every use case has a spec that runs without `mongoServer`
 - [ ] Route files wire use cases to controllers
-- [ ] All 2611 tests still pass
+- [ ] All tests pass
+- [ ] No regressions in existing functionality
