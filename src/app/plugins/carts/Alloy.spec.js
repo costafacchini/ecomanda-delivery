@@ -7,10 +7,14 @@ import { cart as cartFactory } from '@factories/cart'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
+import { createRuntimeDependencies } from '../../runtime/dependencies.js'
+
+let dependencies
 
 describe('Alloy plugin', () => {
   beforeEach(() => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
     advanceTo(new Date('2021-01-05T10:25:47.000Z'))
   })
@@ -47,7 +51,7 @@ describe('Alloy plugin', () => {
         cartFactory.build({ contact, licensee, delivery_tax: 3.5, note: 'without onion' }),
       )
 
-      const go2go = new Alloy()
+      const go2go = new Alloy(dependencies)
       const cartTransformed = await go2go.transformCart(licensee, cart._id)
 
       expect(cartTransformed.order.provedor).toEqual('')

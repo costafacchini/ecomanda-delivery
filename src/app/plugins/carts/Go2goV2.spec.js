@@ -7,10 +7,14 @@ import { advanceTo, clear } from 'jest-date-mock'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
+import { createRuntimeDependencies } from '../../runtime/dependencies.js'
+
+let dependencies
 
 describe('Go2goV2 plugin', () => {
   beforeEach(() => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
     advanceTo(new Date('2021-01-05T10:25:47.000Z'))
   })
@@ -47,7 +51,7 @@ describe('Go2goV2 plugin', () => {
         cartFactory.build({ contact, licensee, delivery_tax: 3.5, note: 'without onion' }),
       )
 
-      const go2go = new Go2goV2()
+      const go2go = new Go2goV2(dependencies)
       const cartTransformed = await go2go.transformCart(licensee, cart._id)
 
       expect(cartTransformed.order.unidadeId).toEqual('123')

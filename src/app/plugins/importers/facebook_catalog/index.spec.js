@@ -6,10 +6,14 @@ import { triggerMultiProduct as triggerFactory } from '@factories/trigger'
 import { product as productFactory } from '@factories/product'
 import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { createRuntimeDependencies } from '../../../runtime/dependencies.js'
+
+let dependencies
 
 describe('FacebookCatalogImporter', () => {
   beforeAll(() => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
   })
 
   afterAll(() => {
@@ -23,7 +27,7 @@ describe('FacebookCatalogImporter', () => {
     const trigger = await Trigger.create(triggerFactory.build({ licensee }))
     await Product.create(productFactory.build({ licensee, product_retailer_id: '83863' }))
 
-    const facebookCatalogImporter = new FacebookCatalogImporter(trigger._id)
+    const facebookCatalogImporter = new FacebookCatalogImporter(trigger._id, dependencies)
     await facebookCatalogImporter.importCatalog(
       `id	title	description	section
 83863	Double Monster Bacon + Refri	2 Monster Bacon Artesanais + 2 Refri Lata 350ml + Entrega grátis.	Hamburguer

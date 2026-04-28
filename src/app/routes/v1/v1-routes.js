@@ -11,26 +11,25 @@ import { IntegrationsController } from '../../controllers/IntegrationsController
 import { OrdersController } from '../../controllers/OrdersController.js'
 import { queueServer } from '../../../config/queue.js'
 import { publishMessage } from '../../../config/rabbitmq.js'
-import { BodyRepositoryDatabase } from '../../repositories/body.js'
-import { ContactRepositoryDatabase } from '../../repositories/contact.js'
-import { CartRepositoryDatabase } from '../../repositories/cart.js'
-import { MessageRepositoryDatabase } from '../../repositories/message.js'
-import { BackgroundjobRepositoryDatabase } from '../../repositories/backgroundjob.js'
-import { IntegrationlogRepositoryDatabase } from '../../repositories/integrationlog.js'
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
-import { parseCart } from '../../helpers/ParseTriggerText.js'
 import { createCartAdapter } from '../../plugins/carts/adapters/factory.js'
-import { createCartPlugin } from '../../plugins/carts/factory.js'
 import { scheduleSendMessageToMessenger } from '../../repositories/messenger.js'
+import { createRuntimeDependencies } from '../../runtime/dependencies.js'
 
 const router = express.Router()
 
-const bodyRepository = new BodyRepositoryDatabase()
-const contactRepository = new ContactRepositoryDatabase()
-const cartRepository = new CartRepositoryDatabase()
-const messageRepository = new MessageRepositoryDatabase()
-const backgroundjobRepository = new BackgroundjobRepositoryDatabase()
-const integrationlogRepository = new IntegrationlogRepositoryDatabase()
+// Composition root for v1 routes. Separate instance from resources-routes intentionally;
+// each route module owns its own subset of dependencies.
+const {
+  bodyRepository,
+  contactRepository,
+  cartRepository,
+  messageRepository,
+  backgroundjobRepository,
+  integrationlogRepository,
+  parseCart,
+  createCartPlugin,
+} = createRuntimeDependencies()
 
 const chatsController = new ChatsController({ bodyRepository, queueServer, publishMessage })
 const chatbotsController = new ChatbotsController({ bodyRepository, queueServer, publishMessage })

@@ -1,9 +1,10 @@
 import { transformChatBody } from '../services/ChatMessage.js'
+import { jobDependencies } from './dependencies.js'
 
 export default {
   key: 'chat-message',
   workerEnabled: true,
   async handle(data) {
-    return await transformChatBody(data.body)
+    return await transformChatBody(data.body, jobDependencies)
   },
 }

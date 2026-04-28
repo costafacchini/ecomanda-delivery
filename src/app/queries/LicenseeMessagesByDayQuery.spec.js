@@ -71,7 +71,7 @@ describe('LicenseeMessagesByDayQuery', () => {
     const licenseeGamma = await licenseeRepository.create(licenseeFactory.build({ name: 'Gamma' }))
     await contactRepository.create(contactFactory.build({ licensee: licenseeGamma }))
 
-    const query = new LicenseeMessagesByDayQuery(startDate, endDate)
+    const query = new LicenseeMessagesByDayQuery(startDate, endDate, { messageRepository, licenseeRepository })
     const records = await query.all()
 
     expect(records.length).toEqual(3)
@@ -123,7 +123,7 @@ describe('LicenseeMessagesByDayQuery', () => {
       }),
     )
 
-    const query = new LicenseeMessagesByDayQuery(startDate, endDate)
+    const query = new LicenseeMessagesByDayQuery(startDate, endDate, { messageRepository, licenseeRepository })
     query.filterByLicensee(licenseeTwo._id)
     const records = await query.all()
 

@@ -1,8 +1,8 @@
 import request from '../../services/request.js'
 import { ChatsBase } from './Base.js'
-import { RoomRepositoryDatabase } from '../../repositories/room.js'
 import path from 'path'
 import mime from 'mime-types'
+import { requireDependency } from '../../helpers/RequireDependency.js'
 
 const searchContact = async (url, headers, contact, licensee, contactRepository) => {
   const response = await request.get(`${url}contacts/search?q=+${contact.number}`, { headers })
@@ -117,8 +117,7 @@ class Chatwoot extends ChatsBase {
   }
 
   get roomRepository() {
-    this._roomRepository ??= new RoomRepositoryDatabase()
-    return this._roomRepository
+    return requireDependency(this._roomRepository, 'roomRepository', this.constructor.name)
   }
 
   action(responseBody) {

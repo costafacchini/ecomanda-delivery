@@ -2,6 +2,7 @@ import mongoServer from '../../../.jest/utils'
 import { createProduct, getProductBy } from '@repositories/product'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { ProductRepositoryDatabase } from '@repositories/product'
 
 describe('product repository', () => {
   beforeEach(async () => {
@@ -17,11 +18,17 @@ describe('product repository', () => {
     it('creates a product', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
+      const productRepository = new ProductRepositoryDatabase()
 
-      const product = await createProduct({
-        licensee,
-        name: 'Product 1',
-      })
+      const product = await createProduct(
+        {
+          licensee,
+          name: 'Product 1',
+        },
+        {
+          productRepository,
+        },
+      )
 
       expect(product).toEqual(
         expect.objectContaining({
@@ -36,18 +43,34 @@ describe('product repository', () => {
     it('returns one record by filter', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
-      await createProduct({
-        name: 'Product 1',
-        licensee,
-      })
+      const productRepository = new ProductRepositoryDatabase()
+      await createProduct(
+        {
+          name: 'Product 1',
+          licensee,
+        },
+        {
+          productRepository,
+        },
+      )
 
       const anotherLicensee = await licenseeRepository.create(licenseeFactory.build())
-      await createProduct({
-        name: 'Product 1',
-        licensee: anotherLicensee,
-      })
+      await createProduct(
+        {
+          name: 'Product 1',
+          licensee: anotherLicensee,
+        },
+        {
+          productRepository,
+        },
+      )
 
-      const product = await getProductBy({ name: 'Product 1', licensee: licensee._id })
+      const product = await getProductBy(
+        { name: 'Product 1', licensee: licensee._id },
+        {
+          productRepository,
+        },
+      )
 
       expect(product).toEqual(
         expect.objectContaining({

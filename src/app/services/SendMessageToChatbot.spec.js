@@ -7,6 +7,9 @@ import { message as messageFactory } from '@factories/message'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { MessageRepositoryDatabase } from '@repositories/message'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+let dependencies
 
 describe('sendMessageToChatbot', () => {
   const landbotSendMessageSpy = jest.spyOn(Landbot.prototype, 'sendMessage').mockImplementation(() => {})
@@ -14,6 +17,7 @@ describe('sendMessageToChatbot', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
   })
 
   afterEach(() => {
@@ -52,7 +56,7 @@ describe('sendMessageToChatbot', () => {
       token: 'token',
     }
 
-    await sendMessageToChatbot(data)
+    await sendMessageToChatbot(data, dependencies)
 
     expect(landbotSendMessageSpy).toHaveBeenCalledWith('609dcb059f560046cde64748', 'https://messenger.url', 'token')
   })

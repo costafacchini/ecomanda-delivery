@@ -7,11 +7,15 @@ import { message as messageFactory } from '@factories/message'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { MessageRepositoryDatabase } from '@repositories/message'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
 
 describe('closeChat', () => {
+  let dependencies
+
   beforeEach(() => {
     jest.clearAllMocks()
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
   })
 
   afterEach(() => {
@@ -45,7 +49,7 @@ describe('closeChat', () => {
       }),
     )
 
-    await closeChat({ messageId: '609dcb059f560046cde64748' })
+    await closeChat({ messageId: '609dcb059f560046cde64748' }, dependencies)
 
     expect(rocketchatCloseChatSpy).toHaveBeenCalledWith('609dcb059f560046cde64748')
 
@@ -85,7 +89,7 @@ describe('closeChat', () => {
         }),
       )
 
-      const actions = await closeChat({ messageId: '609dcb059f560046cde64748' })
+      const actions = await closeChat({ messageId: '609dcb059f560046cde64748' }, dependencies)
 
       expect(actions.length).toEqual(2)
       expect(actions[0]).toEqual(

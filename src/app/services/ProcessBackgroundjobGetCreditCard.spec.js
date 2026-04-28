@@ -9,10 +9,14 @@ import { Card } from '@plugins/payments/PagarMe/Card.js'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+let dependencies
 
 describe('processBackgroundjobGetCreditCard', () => {
   beforeEach(() => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
   })
 
@@ -46,7 +50,7 @@ describe('processBackgroundjobGetCreditCard', () => {
       jobId: backgroundjob._id,
     }
 
-    await processBackgroundjobGetCreditCard(data)
+    await processBackgroundjobGetCreditCard(data, dependencies)
 
     expect(cardListFnSpy).toHaveBeenCalled()
   })
@@ -109,7 +113,7 @@ describe('processBackgroundjobGetCreditCard', () => {
         jobId: backgroundjob._id,
       }
 
-      await processBackgroundjobGetCreditCard(data)
+      await processBackgroundjobGetCreditCard(data, dependencies)
 
       const backgroundjobUpdated = await Backgroundjob.findById(backgroundjob)
       expect(backgroundjobUpdated.status).toEqual('done')
@@ -194,7 +198,7 @@ describe('processBackgroundjobGetCreditCard', () => {
         jobId: backgroundjob._id,
       }
 
-      await processBackgroundjobGetCreditCard(data)
+      await processBackgroundjobGetCreditCard(data, dependencies)
 
       const contactUpdated = await contactRepository.findFirst({ _id: contact })
 
@@ -236,7 +240,7 @@ describe('processBackgroundjobGetCreditCard', () => {
         jobId: backgroundjob._id,
       }
 
-      await processBackgroundjobGetCreditCard(data)
+      await processBackgroundjobGetCreditCard(data, dependencies)
 
       const backgroundjobUpdated = await Backgroundjob.findById(backgroundjob)
       expect(backgroundjobUpdated.status).toEqual('error')

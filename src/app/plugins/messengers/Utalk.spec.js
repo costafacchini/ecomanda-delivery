@@ -11,6 +11,9 @@ import request from '../../services/request.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 jest.mock('../../services/request')
+import { createRuntimeDependencies } from '../../runtime/dependencies.js'
+
+let dependencies
 
 describe('Utalk plugin', () => {
   let licensee
@@ -23,6 +26,7 @@ describe('Utalk plugin', () => {
 
   beforeEach(async () => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
@@ -61,7 +65,7 @@ describe('Utalk plugin', () => {
           caption: 'Message to send',
         }
 
-        const utalk = new Utalk(licensee)
+        const utalk = new Utalk(licensee, dependencies)
         const messages = await utalk.responseToMessages(responseBody)
 
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -103,7 +107,7 @@ describe('Utalk plugin', () => {
           uid: '3EB016638A2AD49A9ECE',
         }
 
-        const utalk = new Utalk(licensee)
+        const utalk = new Utalk(licensee, dependencies)
         const messages = await utalk.responseToMessages(responseBody)
 
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -136,7 +140,7 @@ describe('Utalk plugin', () => {
           uid: '3EB016638A2AD49A9ECE',
         }
 
-        const utalk = new Utalk(licensee)
+        const utalk = new Utalk(licensee, dependencies)
         const messages = await utalk.responseToMessages(responseBody)
 
         expect(messages.length).toEqual(0)
@@ -169,7 +173,7 @@ describe('Utalk plugin', () => {
           ack: '-1',
         }
 
-        const utalk = new Utalk(licensee)
+        const utalk = new Utalk(licensee, dependencies)
         const messages = await utalk.responseToMessages(responseBody)
 
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -219,7 +223,7 @@ describe('Utalk plugin', () => {
           ack: '-1',
         }
 
-        const utalk = new Utalk(licensee)
+        const utalk = new Utalk(licensee, dependencies)
         const messages = await utalk.responseToMessages(responseBody)
 
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -246,7 +250,7 @@ describe('Utalk plugin', () => {
           token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
         }
 
-        const utalk = new Utalk(licensee)
+        const utalk = new Utalk(licensee, dependencies)
         const messages = await utalk.responseToMessages(responseBody)
 
         expect(messages.length).toEqual(0)
@@ -260,7 +264,7 @@ describe('Utalk plugin', () => {
           token: 'AkkIoqx9AeEu900HOUvUTGqhxcXnmOSsTygT',
         }
 
-        const utalk = new Utalk(licensee)
+        const utalk = new Utalk(licensee, dependencies)
         const messages = await utalk.responseToMessages(responseBody)
 
         expect(messages.length).toEqual(0)
@@ -303,7 +307,7 @@ describe('Utalk plugin', () => {
         ack: '-1',
       }
 
-      const utalk = new Utalk(licensee)
+      const utalk = new Utalk(licensee, dependencies)
       await utalk.responseToMessages(responseBody)
 
       const contactUpdated = await contactRepository.findFirst({
@@ -337,7 +341,7 @@ describe('Utalk plugin', () => {
         uid: '3EB016638A2AD49A9ECE',
       }
 
-      const utalk = new Utalk(licensee)
+      const utalk = new Utalk(licensee, dependencies)
       await utalk.responseToMessages(responseBody)
 
       const contactUpdated = await contactRepository.findFirst({
@@ -373,7 +377,7 @@ describe('Utalk plugin', () => {
         ack: '-1',
       }
 
-      const utalk = new Utalk(licensee)
+      const utalk = new Utalk(licensee, dependencies)
       await utalk.responseToMessages(responseBody)
 
       const contactUpdated = await contactRepository.findFirst({
@@ -402,7 +406,7 @@ describe('Utalk plugin', () => {
           ack: '-1',
         }
 
-        const utalk = new Utalk(licensee)
+        const utalk = new Utalk(licensee, dependencies)
         const messages = await utalk.responseToMessages(responseBody)
 
         const contactRepository = new ContactRepositoryDatabase()
@@ -447,7 +451,7 @@ describe('Utalk plugin', () => {
           uid: '3EB016638A2AD49A9ECE',
         }
 
-        const utalk = new Utalk(licensee)
+        const utalk = new Utalk(licensee, dependencies)
         const messages = await utalk.responseToMessages(responseBody)
 
         const contactRepository = new ContactRepositoryDatabase()
@@ -506,7 +510,7 @@ describe('Utalk plugin', () => {
           ack: '-1',
         }
 
-        const utalk = new Utalk(licensee)
+        const utalk = new Utalk(licensee, dependencies)
         const messages = await utalk.responseToMessages(responseBody)
 
         expect(messages[0].destination).toEqual('to-chatbot')
@@ -532,7 +536,7 @@ describe('Utalk plugin', () => {
           ack: '-1',
         }
 
-        const utalk = new Utalk(licensee)
+        const utalk = new Utalk(licensee, dependencies)
         const messages = await utalk.responseToMessages(responseBody)
 
         expect(messages.length).toEqual(0)
@@ -542,7 +546,7 @@ describe('Utalk plugin', () => {
     it('return the empty data if body is blank', async () => {
       const responseBody = {}
 
-      const utalk = new Utalk(licensee)
+      const utalk = new Utalk(licensee, dependencies)
       const messages = await utalk.responseToMessages(responseBody)
 
       expect(messages.length).toEqual(0)
@@ -554,7 +558,7 @@ describe('Utalk plugin', () => {
         'chat[type]': 'file',
       }
 
-      const utalk = new Utalk(licensee)
+      const utalk = new Utalk(licensee, dependencies)
       const messages = await utalk.responseToMessages(responseBody)
 
       expect(messages.length).toEqual(0)
@@ -603,7 +607,7 @@ describe('Utalk plugin', () => {
 
         expect(message.sended).toEqual(false)
 
-        const utalk = new Utalk(licensee)
+        const utalk = new Utalk(licensee, dependencies)
         await utalk.sendMessage(message._id, 'https://api.utalk.com.br/send/', 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K')
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
@@ -643,7 +647,7 @@ describe('Utalk plugin', () => {
 
         expect(message.sended).toEqual(false)
 
-        const utalk = new Utalk(licensee)
+        const utalk = new Utalk(licensee, dependencies)
         await utalk.sendMessage(message._id, 'https://api.utalk.com.br/send/', 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K')
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           'Mensagem 60958703f415ed4008748637 enviada para Utalk com sucesso! {"type":"send message","cmd":"chat","to":"5511990283745@c.us","token":"WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K","servidor":"res_utalk"}',
@@ -696,7 +700,7 @@ describe('Utalk plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const utalk = new Utalk(licensee)
+          const utalk = new Utalk(licensee, dependencies)
           await utalk.sendMessage(message._id, 'https://api.utalk.com.br/send/', 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K')
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -748,7 +752,7 @@ describe('Utalk plugin', () => {
 
         expect(message.sended).toEqual(false)
 
-        const utalk = new Utalk(licensee)
+        const utalk = new Utalk(licensee, dependencies)
         await utalk.sendMessage(message._id, 'https://api.utalk.com.br/send/', 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K')
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(false)
@@ -765,13 +769,13 @@ describe('Utalk plugin', () => {
 
   describe('#action', () => {
     it('returns send-message-to-chat if message destination is to chat', () => {
-      const utalk = new Utalk(licensee)
+      const utalk = new Utalk(licensee, dependencies)
 
       expect(utalk.action('to-chat')).toEqual('send-message-to-chat')
     })
 
     it('returns send-message-to-chatbot if message destination is to chatbot', () => {
-      const utalk = new Utalk(licensee)
+      const utalk = new Utalk(licensee, dependencies)
 
       expect(utalk.action('to-chatbot')).toEqual('send-message-to-chatbot')
     })

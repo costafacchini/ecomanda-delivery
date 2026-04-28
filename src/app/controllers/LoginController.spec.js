@@ -1,18 +1,18 @@
 import User from '@models/User'
 import jwt from 'jsonwebtoken'
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { expressServer } from '../../../.jest/server-express'
 import { userSuper as userSuperFactory } from '@factories/user'
 
 describe('login controller', () => {
   beforeAll(async () => {
-    await mongoServer.connect()
+    installMemoryRepositories()
     await User.create(userSuperFactory.build())
   })
 
-  afterAll(async () => {
-    await mongoServer.disconnect()
+  afterAll(() => {
+    resetMemoryRepositories()
   })
 
   describe('login', () => {

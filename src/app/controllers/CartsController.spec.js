@@ -1,6 +1,6 @@
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { expressServer } from '../../../.jest/server-express'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
@@ -24,7 +24,7 @@ describe('carts controller', () => {
   })
 
   beforeAll(async () => {
-    await mongoServer.connect()
+    installMemoryRepositories()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build({ cartDefault: 'go2go' }))
@@ -35,8 +35,8 @@ describe('carts controller', () => {
     anotherContact = await contactRepository.create(contactFactory.build({ licensee: anotherLicensee }))
   })
 
-  afterAll(async () => {
-    await mongoServer.disconnect()
+  afterAll(() => {
+    resetMemoryRepositories()
   })
 
   describe('about auth', () => {
@@ -328,7 +328,7 @@ describe('carts controller', () => {
 
       it('returns status 500 and message if the some error ocurred when update the cart', async () => {
         const contactFindOneSpy = jest
-          .spyOn(ContactRepositoryDatabase.prototype, 'findFirst')
+          .spyOn(ContactRepositoryDatabase.prototype, 'getContactByNumber')
           .mockImplementation(() => {
             throw new Error('some error')
           })
@@ -425,7 +425,7 @@ describe('carts controller', () => {
 
       it('returns status 500 and message if occurs another error', async () => {
         const contactFindOneSpy = jest
-          .spyOn(ContactRepositoryDatabase.prototype, 'findFirst')
+          .spyOn(ContactRepositoryDatabase.prototype, 'getContactByNumber')
           .mockImplementation(() => {
             throw new Error('some error')
           })
@@ -493,7 +493,7 @@ describe('carts controller', () => {
 
       it('returns status 500 and message if the some error ocurred when update the cart', async () => {
         const contactFindOneSpy = jest
-          .spyOn(ContactRepositoryDatabase.prototype, 'findFirst')
+          .spyOn(ContactRepositoryDatabase.prototype, 'getContactByNumber')
           .mockImplementation(() => {
             throw new Error('some error')
           })
@@ -606,7 +606,7 @@ describe('carts controller', () => {
 
       it('returns status 500 and message if the some error ocurred when update the cart', async () => {
         const contactFindOneSpy = jest
-          .spyOn(ContactRepositoryDatabase.prototype, 'findFirst')
+          .spyOn(ContactRepositoryDatabase.prototype, 'getContactByNumber')
           .mockImplementation(() => {
             throw new Error('some error')
           })
@@ -663,7 +663,7 @@ describe('carts controller', () => {
 
       it('returns status 500 and message if the some error ocurred when update the cart', async () => {
         const contactFindOneSpy = jest
-          .spyOn(ContactRepositoryDatabase.prototype, 'findFirst')
+          .spyOn(ContactRepositoryDatabase.prototype, 'getContactByNumber')
           .mockImplementation(() => {
             throw new Error('some error')
           })
@@ -808,7 +808,7 @@ describe('carts controller', () => {
 
       it('returns status 500 and message if occurs another error', async () => {
         const contactFindOneSpy = jest
-          .spyOn(ContactRepositoryDatabase.prototype, 'findFirst')
+          .spyOn(ContactRepositoryDatabase.prototype, 'getContactByNumber')
           .mockImplementation(() => {
             throw new Error('some error')
           })
@@ -860,7 +860,7 @@ describe('carts controller', () => {
 
       it('returns status 500 and message if occurs another error', async () => {
         const contactFindOneSpy = jest
-          .spyOn(ContactRepositoryDatabase.prototype, 'findFirst')
+          .spyOn(ContactRepositoryDatabase.prototype, 'getContactByNumber')
           .mockImplementation(() => {
             throw new Error('some error')
           })

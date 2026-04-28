@@ -1,7 +1,5 @@
-import { MessageRepositoryDatabase } from '../repositories/message.js'
-
 class MessagesFailedQuery {
-  constructor(startDate, endDate, licenseeId, { messageRepository = new MessageRepositoryDatabase() } = {}) {
+  constructor(startDate, endDate, licenseeId, { messageRepository } = {}) {
     this.startDate = startDate
     this.endDate = endDate
     this.licenseeId = licenseeId

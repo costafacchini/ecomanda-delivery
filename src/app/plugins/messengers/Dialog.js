@@ -1,12 +1,10 @@
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
 import request from '../../services/request.js'
 import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files.js'
-import { createCartPlugin } from '../../plugins/carts/factory.js'
-import { parseText } from '../../helpers/ParseTriggerText.js'
 import { MessengersBase } from './Base.js'
-import { TemplateRepositoryDatabase } from '../../repositories/template.js'
 import { S3 } from '../storage/S3.js'
 import mime from 'mime-types'
+import { requireDependency } from '../../helpers/RequireDependency.js'
 
 const getWaIdContact = async (number, url, token) => {
   const headers = { 'D360-API-KEY': token }
@@ -147,14 +145,23 @@ const uploadFile = (licensee, contact, fileName, fileBase64) => {
 }
 
 class Dialog extends MessengersBase {
-  constructor(licensee, { templateRepository, messageRepository, ...dependencies } = {}) {
+  constructor(licensee, { templateRepository, messageRepository, parseText, createCartPlugin, ...dependencies } = {}) {
     super(licensee, { messageRepository, ...dependencies })
     this._templateRepository = templateRepository
+    this._parseText = parseText
+    this._createCartPlugin = createCartPlugin
   }
 
   get templateRepository() {
-    this._templateRepository ??= new TemplateRepositoryDatabase()
-    return this._templateRepository
+    return requireDependency(this._templateRepository, 'templateRepository', this.constructor.name)
+  }
+
+  get parseText() {
+    return requireDependency(this._parseText, 'parseText', this.constructor.name)
+  }
+
+  get createCartPlugin() {
+    return requireDependency(this._createCartPlugin, 'createCartPlugin', this.constructor.name)
   }
 
   action(messageDestination) {
@@ -342,7 +349,7 @@ class Dialog extends MessengersBase {
         if (trigger.triggerKind === 'text') {
           messageBody.type = 'text'
           messageBody.text = {
-            body: await parseText(trigger.text, messageToSend.contact),
+            body: await this.parseText(trigger.text, messageToSend.contact),
           }
         }
       } else {
@@ -387,7 +394,7 @@ class Dialog extends MessengersBase {
     }
 
     if (messageToSend.kind === 'cart') {
-      const cartPlugin = createCartPlugin(this.licensee)
+      const cartPlugin = this.createCartPlugin(this.licensee)
       const cartTransformed = await cartPlugin.transformCart(this.licensee, messageToSend.cart)
 
       messageBody.type = 'text'

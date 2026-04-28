@@ -6,6 +6,7 @@ import { queueServer } from './src/config/queue.js'
 import { Worker } from 'bullmq'
 import { connect } from './src/config/database.js'
 import { withTrafficlight, resolveTrafficlightKey } from './src/app/services/Trafficlight.js'
+import { jobDependencies } from './src/app/jobs/dependencies.js'
 
 connect()
 
@@ -18,7 +19,7 @@ queuesWithWorkerEnabled.forEach((queue) => {
       const lockKey = resolveTrafficlightKey(job?.data)
       const handleResult = await withTrafficlight(lockKey, async () => {
         return await queue.handle(job.data)
-      })
+      }, { trafficlightRepository: jobDependencies.trafficlightRepository })
       if (handleResult) {
         for (const actionJob of handleResult) {
           const { action, body } = actionJob

@@ -1,11 +1,12 @@
 import Backgroundjob from '@models/Backgroundjob'
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { queueServer } from '@config/queue'
 import { expressServer } from '../../../.jest/server-express'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { backgroundjob as backgroundjobFactory } from '@factories/backgroundjob'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { BackgroundjobRepositoryDatabase } from '@repositories/backgroundjob'
 
 describe('backgrounndjobs controller', () => {
   let apiToken
@@ -14,15 +15,15 @@ describe('backgrounndjobs controller', () => {
 
   beforeAll(async () => {
     jest.clearAllMocks()
-    await mongoServer.connect()
+    installMemoryRepositories()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     const licensee = await licenseeRepository.create(licenseeFactory.build())
     apiToken = licensee.apiToken
   })
 
-  afterAll(async () => {
-    await mongoServer.disconnect()
+  afterAll(() => {
+    resetMemoryRepositories()
   })
 
   describe('about auth', () => {
@@ -81,9 +82,11 @@ describe('backgrounndjobs controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurred when create the backgroundjob', async () => {
-        const backgroundjobSaveSpy = jest.spyOn(Backgroundjob.prototype, 'save').mockImplementation(() => {
-          throw new Error('some error')
-        })
+        const backgroundjobSaveSpy = jest
+          .spyOn(BackgroundjobRepositoryDatabase.prototype, 'create')
+          .mockImplementation(() => {
+            throw new Error('some error')
+          })
 
         await request(expressServer)
           .post(`/api/v1/backgroundjobs/?token=${apiToken}`)
@@ -250,9 +253,11 @@ describe('backgrounndjobs controller', () => {
       })
 
       it('returns status 500 and message if occurs another error', async () => {
-        const backgroundjobSaveSpy = jest.spyOn(Backgroundjob, 'findOne').mockImplementation(() => {
-          throw new Error('some error')
-        })
+        const backgroundjobSaveSpy = jest
+          .spyOn(BackgroundjobRepositoryDatabase.prototype, 'findFirst')
+          .mockImplementation(() => {
+            throw new Error('some error')
+          })
 
         await request(expressServer)
           .get(`/api/v1/backgroundjobs/9999999999?token=${apiToken}`)

@@ -1,15 +1,6 @@
-import { createChatPlugin } from '../plugins/chats/factory.js'
-import { BodyRepositoryDatabase } from '../repositories/body.js'
-import { ContactRepositoryDatabase } from '../repositories/contact.js'
-import { MessageRepositoryDatabase } from '../repositories/message.js'
-
 async function transformChatBody(
   data,
-  {
-    bodyRepository = new BodyRepositoryDatabase(),
-    contactRepository = new ContactRepositoryDatabase(),
-    messageRepository = new MessageRepositoryDatabase(),
-  } = {},
+  { bodyRepository, contactRepository, messageRepository, createChatPlugin } = {},
 ) {
   const { bodyId } = data
   const body = await bodyRepository.findFirst({ _id: bodyId }, ['licensee'])

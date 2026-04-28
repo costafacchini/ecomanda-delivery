@@ -1,10 +1,18 @@
 import { io } from '../../../../config/http.js'
 import { LicenseeMessagesByDayQuery } from '../../../../app/queries/LicenseeMessagesByDayQuery.js'
+import { LicenseeRepositoryDatabase } from '../../../../app/repositories/licensee.js'
+import { MessageRepositoryDatabase } from '../../../../app/repositories/message.js'
+
+const licenseeRepository = new LicenseeRepositoryDatabase()
+const messageRepository = new MessageRepositoryDatabase()
 
 io.on('connect', (socket) => {
   socket.on('load_licensees_messages_by_day', async (params) => {
     const { initialDate, endDate, licensee } = params
-    const report = new LicenseeMessagesByDayQuery(new Date(initialDate), new Date(endDate))
+    const report = new LicenseeMessagesByDayQuery(new Date(initialDate), new Date(endDate), {
+      messageRepository,
+      licenseeRepository,
+    })
 
     if (licensee) {
       report.filterByLicensee(licensee)

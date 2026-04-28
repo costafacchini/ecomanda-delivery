@@ -1,19 +1,21 @@
 import Trigger from '@models/Trigger'
 import User from '@models/User'
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { expressServer } from '../../../.jest/server-express'
 import { userSuper as userSuperFactory } from '@factories/user'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { triggerMultiProduct as triggerFactory } from '@factories/trigger'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { TriggerRepositoryDatabase } from '@repositories/trigger'
+import { TriggersQuery } from '@queries/TriggersQuery'
 
 describe('trigger controller', () => {
   let token
   let licensee
 
   beforeAll(async () => {
-    await mongoServer.connect()
+    installMemoryRepositories()
 
     await User.create(userSuperFactory.build())
 
@@ -28,8 +30,8 @@ describe('trigger controller', () => {
     licensee = await licenseeRepository.create(licenseeFactory.build())
   })
 
-  afterAll(async () => {
-    await mongoServer.disconnect()
+  afterAll(() => {
+    resetMemoryRepositories()
   })
 
   describe('about auth', () => {
@@ -93,7 +95,7 @@ describe('trigger controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurred when create the trigger', async () => {
-        const triggerSaveSpy = jest.spyOn(Trigger.prototype, 'save').mockImplementation(() => {
+        const triggerSaveSpy = jest.spyOn(TriggerRepositoryDatabase.prototype, 'create').mockImplementation(() => {
           throw new Error('some error')
         })
 
@@ -177,9 +179,11 @@ describe('trigger controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurre when update the trigger', async () => {
-        const triggerFindOneSpy = jest.spyOn(Trigger, 'findOne').mockImplementation(() => {
-          throw new Error('some error')
-        })
+        const triggerFindOneSpy = jest
+          .spyOn(TriggerRepositoryDatabase.prototype, 'findFirst')
+          .mockImplementation(() => {
+            throw new Error('some error')
+          })
 
         const trigger = await Trigger.create(triggerFactory.build({ licensee }))
 
@@ -236,9 +240,11 @@ describe('trigger controller', () => {
       })
 
       it('returns status 500 and message if occurs another error', async () => {
-        const triggerFindOneSpy = jest.spyOn(Trigger, 'findOne').mockImplementation(() => {
-          throw new Error('some error')
-        })
+        const triggerFindOneSpy = jest
+          .spyOn(TriggerRepositoryDatabase.prototype, 'findFirst')
+          .mockImplementation(() => {
+            throw new Error('some error')
+          })
 
         await request(expressServer)
           .get('/resources/triggers/12312')
@@ -273,7 +279,7 @@ describe('trigger controller', () => {
       })
 
       it('returns status 500 and message if occurs another error', async () => {
-        const triggerFindSpy = jest.spyOn(Trigger, 'find').mockImplementation(() => {
+        const triggerFindSpy = jest.spyOn(TriggersQuery.prototype, 'all').mockImplementation(() => {
           throw new Error('some error')
         })
 
@@ -307,9 +313,11 @@ describe('trigger controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurre when update the trigger', async () => {
-        const triggerFindOneSpy = jest.spyOn(Trigger, 'findOne').mockImplementation(() => {
-          throw new Error('some error')
-        })
+        const triggerFindOneSpy = jest
+          .spyOn(TriggerRepositoryDatabase.prototype, 'findFirst')
+          .mockImplementation(() => {
+            throw new Error('some error')
+          })
 
         const trigger = await Trigger.create(triggerFactory.build({ licensee }))
 

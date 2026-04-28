@@ -9,12 +9,16 @@ import { MessageRepositoryDatabase } from '@repositories/message'
 import request from '../services/request.js'
 
 jest.mock('../services/request')
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+let dependencies
 
 describe('resetChatbots', () => {
   jest.spyOn(global.console, 'info').mockImplementation()
 
   beforeEach(() => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
   })
 
@@ -186,7 +190,7 @@ describe('resetChatbots', () => {
 
       expect(contact.landbotId).toEqual('landbot-id')
 
-      await resetChatbots()
+      await resetChatbots(dependencies)
 
       const contactChanged = await contactRepository.findFirst({ _id: contact._id })
       expect(contactChanged.landbotId).toEqual(null)
@@ -268,7 +272,7 @@ describe('resetChatbots', () => {
           },
         })
 
-        await resetChatbots()
+        await resetChatbots(dependencies)
 
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toBe(true)

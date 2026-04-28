@@ -1,9 +1,11 @@
-import { CartRepositoryDatabase } from '../../repositories/cart.js'
-
 class Alloy {
+  constructor({ cartRepository } = {}) {
+    this.cartRepository = cartRepository
+  }
+
   async transformCart(_, cartId) {
-    const cartRepository = new CartRepositoryDatabase()
-    const cart = await cartRepository.findFirst({ _id: cartId }, ['contact'])
+    const resolvedCartId = cartId?._id ?? cartId
+    const cart = await this.cartRepository.findFirst({ _id: resolvedCartId }, ['contact'])
 
     const cartTransformed = {
       order: {

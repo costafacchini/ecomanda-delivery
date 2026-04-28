@@ -2,7 +2,7 @@ import { isMidia } from '../../helpers/Files.js'
 import request from '../../services/request.js'
 import mime from 'mime-types'
 import { ChatsBase } from './Base.js'
-import { RoomRepositoryDatabase } from '../../repositories/room.js'
+import { requireDependency } from '../../helpers/RequireDependency.js'
 
 const createSession = async (url, headers, contact, segments, roomRepository) => {
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })
@@ -117,8 +117,7 @@ class Crisp extends ChatsBase {
   }
 
   get roomRepository() {
-    this._roomRepository ??= new RoomRepositoryDatabase()
-    return this._roomRepository
+    return requireDependency(this._roomRepository, 'roomRepository', this.constructor.name)
   }
 
   action(responseBody) {

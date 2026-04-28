@@ -1,5 +1,5 @@
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { expressServer } from '../../../.jest/server-express'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { publishMessage } from '@config/rabbitmq'
@@ -16,15 +16,15 @@ describe('backups controller', () => {
 
   beforeAll(async () => {
     jest.clearAllMocks()
-    await mongoServer.connect()
+    installMemoryRepositories()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
     apiToken = licensee.apiToken
   })
 
-  afterAll(async () => {
-    await mongoServer.disconnect()
+  afterAll(() => {
+    resetMemoryRepositories()
   })
 
   describe('about auth', () => {

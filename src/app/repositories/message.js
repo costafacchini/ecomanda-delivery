@@ -2,11 +2,15 @@ import { v4 as uuidv4 } from 'uuid'
 import Repository, { RepositoryMemory } from './repository.js'
 import Message from '../models/Message.js'
 import Trigger from '../models/Trigger.js'
-import { parseText } from '../helpers/ParseTriggerText.js'
 import { replace } from '../helpers/Emoji.js'
-import { TriggerRepositoryMemory } from './trigger.js'
+import { requireDependency } from '../helpers/RequireDependency.js'
 
 class MessageRepositoryDatabase extends Repository {
+  constructor({ parseText: parseTextDependency } = {}) {
+    super()
+    this.parseTextDependency = parseTextDependency
+  }
+
   model() {
     return Message
   }
@@ -69,7 +73,7 @@ class MessageRepositoryDatabase extends Repository {
 
     if (kind === 'interactive') {
       kind = 'text'
-      text = await parseText(text, contact)
+      text = await requireDependency(this.parseTextDependency, 'parseText', 'MessageRepositoryDatabase')(text, contact)
     }
 
     return await this.create({ ...fields, kind, text, contact })
@@ -99,9 +103,10 @@ class MessageRepositoryDatabase extends Repository {
 }
 
 class MessageRepositoryMemory extends RepositoryMemory {
-  constructor({ items = [], triggerRepository = new TriggerRepositoryMemory() } = {}) {
+  constructor({ items = [], triggerRepository, parseText: parseTextDependency } = {}) {
     super(items)
     this.triggerRepository = triggerRepository
+    this.parseTextDependency = parseTextDependency
   }
 
   async create(fields = {}) {
@@ -109,13 +114,11 @@ class MessageRepositoryMemory extends RepositoryMemory {
   }
 
   async createInteractiveMessages(fields) {
+    const triggerRepository = requireDependency(this.triggerRepository, 'triggerRepository', 'MessageRepositoryMemory')
     const messages = []
 
     const text = replace(fields.text)
-    const triggers = await this.triggerRepository.find(
-      { expression: text, licensee: fields.licensee },
-      { order: 'asc' },
-    )
+    const triggers = await triggerRepository.find({ expression: text, licensee: fields.licensee }, { order: 'asc' })
 
     if (triggers.length > 0) {
       for (const trigger of triggers) {
@@ -146,7 +149,7 @@ class MessageRepositoryMemory extends RepositoryMemory {
 
     if (kind === 'interactive') {
       kind = 'text'
-      text = await parseText(text, contact)
+      text = await requireDependency(this.parseTextDependency, 'parseText', 'MessageRepositoryMemory')(text, contact)
     }
 
     return await this.create({ ...fields, kind, text, contact })

@@ -5,6 +5,9 @@ import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+let dependencies
 
 describe('sendContactToPagarMe', () => {
   const customerCreateFnSpy = jest.spyOn(Customer.prototype, 'create').mockImplementation(() => {})
@@ -13,6 +16,7 @@ describe('sendContactToPagarMe', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
   })
 
   afterEach(() => {
@@ -28,7 +32,7 @@ describe('sendContactToPagarMe', () => {
 
     const data = { contactId: contact._id.toString() }
 
-    await sendContactToPagarMe(data)
+    await sendContactToPagarMe(data, dependencies)
 
     expect(customerCreateFnSpy).not.toHaveBeenCalled()
     expect(customerUpdateFnSpy).not.toHaveBeenCalled()
@@ -43,7 +47,7 @@ describe('sendContactToPagarMe', () => {
 
     const data = { contactId: contact._id.toString() }
 
-    await sendContactToPagarMe(data)
+    await sendContactToPagarMe(data, dependencies)
 
     expect(customerCreateFnSpy).toHaveBeenCalled()
     expect(customerUpdateFnSpy).not.toHaveBeenCalled()
@@ -58,7 +62,7 @@ describe('sendContactToPagarMe', () => {
 
     const data = { contactId: contact._id.toString() }
 
-    await sendContactToPagarMe(data)
+    await sendContactToPagarMe(data, dependencies)
 
     expect(customerCreateFnSpy).not.toHaveBeenCalled()
     expect(customerUpdateFnSpy).toHaveBeenCalled()

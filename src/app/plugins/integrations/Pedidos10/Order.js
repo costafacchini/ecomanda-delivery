@@ -1,28 +1,17 @@
-import { Parser } from './Parser.js'
-import { Webhook } from './services/Webhook.js'
-import { OrderStatus } from './services/OrderStatus.js'
-import { Auth } from './services/Auth.js'
-import { OrderRepositoryDatabase } from '../../../repositories/order.js'
-import { LicenseeRepositoryDatabase } from '../../../repositories/licensee.js'
+import { requireDependency } from '../../../helpers/RequireDependency.js'
 
 class Order {
   constructor(
     licensee,
-    {
-      orderRepository = new OrderRepositoryDatabase(),
-      licenseeRepository = new LicenseeRepositoryDatabase(),
-      authService,
-      webhookService,
-      orderStatusService,
-    } = {},
+    { orderRepository, licenseeRepository, parser, authService, webhookService, orderStatusService } = {},
   ) {
     this.licensee = licensee
-    this.orderBodyParser = new Parser()
-    this.orderRepository = orderRepository
-    this.licenseeRepository = licenseeRepository
-    this.webhookService = webhookService ?? new Webhook(licensee)
-    this.orderStatusService = orderStatusService ?? new OrderStatus(licensee)
-    this.authService = authService ?? new Auth(licensee, { licenseeRepository })
+    this.orderBodyParser = requireDependency(parser, 'parser', this.constructor.name)
+    this.orderRepository = requireDependency(orderRepository, 'orderRepository', this.constructor.name)
+    this.licenseeRepository = requireDependency(licenseeRepository, 'licenseeRepository', this.constructor.name)
+    this.webhookService = requireDependency(webhookService, 'webhookService', this.constructor.name)
+    this.orderStatusService = requireDependency(orderStatusService, 'orderStatusService', this.constructor.name)
+    this.authService = requireDependency(authService, 'authService', this.constructor.name)
   }
 
   syncLicensee(licensee) {

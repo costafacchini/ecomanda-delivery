@@ -7,12 +7,16 @@ import { message as messageFactory } from '@factories/message'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { MessageRepositoryDatabase } from '@repositories/message'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+let dependencies
 
 describe('sendMessageToMessenger', () => {
   const dialogSendMessageSpy = jest.spyOn(Dialog.prototype, 'sendMessage').mockImplementation(() => {})
 
   beforeEach(() => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
   })
 
@@ -51,7 +55,7 @@ describe('sendMessageToMessenger', () => {
       token: 'k4d5h8fyt',
     }
 
-    await sendMessageToMessenger(data)
+    await sendMessageToMessenger(data, dependencies)
 
     expect(dialogSendMessageSpy).toHaveBeenCalledWith(message._id, 'https://www.dialog.com', 'k4d5h8fyt')
   })

@@ -1,25 +1,16 @@
-import { PagarMe } from '../plugins/payments/PagarMe.js'
-import { BackgroundjobRepositoryDatabase } from '../repositories/backgroundjob.js'
-import { ContactRepositoryDatabase } from '../repositories/contact.js'
-import { CartRepositoryDatabase } from '../repositories/cart.js'
-
 async function processBackgroundjobInviteCreditCard(
   data,
-  {
-    backgroundjobRepository = new BackgroundjobRepositoryDatabase(),
-    contactRepository = new ContactRepositoryDatabase(),
-    cartRepository = new CartRepositoryDatabase(),
-    pagarMe = new PagarMe(),
-  } = {},
+  { backgroundjobRepository, contactRepository, cartRepository, createPagarMe } = {},
 ) {
   const { jobId, credit_card_data, cart_id: cartId } = data
 
-  const backgroundjob = await backgroundjobRepository.findFirst({ _id: jobId })
+  const backgroundjob = await backgroundjobRepository.findFirst({ _id: jobId }, ['licensee'])
 
   try {
     const cart = await cartRepository.findFirst({ _id: cartId }, ['contact'])
 
     const contact = await contactRepository.findFirst({ _id: cart.contact })
+    const pagarMe = createPagarMe(backgroundjob.licensee)
 
     const response = await pagarMe.card.create(contact, credit_card_data, process.env.PAGARME_TOKEN)
 

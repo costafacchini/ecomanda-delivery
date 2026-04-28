@@ -1,10 +1,5 @@
-import { PagarMe } from '../plugins/payments/PagarMe.js'
-import { CartRepositoryDatabase } from '../repositories/cart.js'
-
-async function processPagarmeOrderPaid(
-  body,
-  { cartRepository = new CartRepositoryDatabase(), pagarMe = new PagarMe() } = {},
-) {
+async function processPagarmeOrderPaid(body, { cartRepository, createPagarMe } = {}) {
+  const pagarMe = createPagarMe()
   const event = pagarMe.parser.parseOrderPaidEvent(body)
 
   const cart = await cartRepository.findFirst({ order_id: event.id })

@@ -1,16 +1,17 @@
 import User from '@models/User'
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { expressServer } from '../../../.jest/server-express'
 import { userSuper as userSuperFactory, user as userFactory } from '@factories/user'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { UserRepositoryDatabase } from '@repositories/user'
 
 describe('user controller', () => {
   let token
 
   beforeAll(async () => {
-    await mongoServer.connect()
+    installMemoryRepositories()
     await User.create(userSuperFactory.build())
 
     await request(expressServer)
@@ -21,8 +22,8 @@ describe('user controller', () => {
       })
   })
 
-  afterAll(async () => {
-    await mongoServer.disconnect()
+  afterAll(() => {
+    resetMemoryRepositories()
   })
 
   describe('about auth', () => {
@@ -94,7 +95,7 @@ describe('user controller', () => {
         const licenseeRepository = new LicenseeRepositoryDatabase()
         const licensee = await licenseeRepository.create(licenseeFactory.build())
 
-        const mockFunction = jest.spyOn(User.prototype, 'save').mockImplementation(() => {
+        const mockFunction = jest.spyOn(UserRepositoryDatabase.prototype, 'create').mockImplementation(() => {
           throw new Error('some error')
         })
 
@@ -162,7 +163,7 @@ describe('user controller', () => {
       })
 
       it('returns status 500 and message if the some error ocurre when update the user', async () => {
-        const mockFunction = jest.spyOn(User, 'findOne').mockImplementation(() => {
+        const mockFunction = jest.spyOn(UserRepositoryDatabase.prototype, 'findFirst').mockImplementation(() => {
           throw new Error('some error')
         })
 
@@ -263,7 +264,7 @@ describe('user controller', () => {
       })
 
       it('returns status 500 and message if occurs another error', async () => {
-        const mockFunction = jest.spyOn(User, 'findOne').mockImplementation(() => {
+        const mockFunction = jest.spyOn(UserRepositoryDatabase.prototype, 'findFirst').mockImplementation(() => {
           throw new Error('some error')
         })
 
@@ -301,7 +302,7 @@ describe('user controller', () => {
       })
 
       it('returns status 500 and message if occurs another error', async () => {
-        const mockFunction = jest.spyOn(User, 'find').mockImplementation(() => {
+        const mockFunction = jest.spyOn(UserRepositoryDatabase.prototype, 'find').mockImplementation(() => {
           throw new Error('some error')
         })
 

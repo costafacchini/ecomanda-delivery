@@ -1,11 +1,16 @@
 import Repository, { RepositoryMemory, comparableValue, sortRecords } from './repository.js'
 import Contact from '../models/Contact.js'
 import { MessagesQuery } from '../queries/MessagesQuery.js'
-import { MessageRepositoryDatabase, MessageRepositoryMemory } from './message.js'
 import moment from 'moment-timezone'
 import { NormalizePhone } from '../helpers/NormalizePhone.js'
+import { requireDependency } from '../helpers/RequireDependency.js'
 
 class ContactRepositoryDatabase extends Repository {
+  constructor({ messageRepository } = {}) {
+    super()
+    this.messageRepository = messageRepository
+  }
+
   model() {
     return Contact
   }
@@ -34,7 +39,11 @@ class ContactRepositoryDatabase extends Repository {
   }
 
   async contactWithWhatsappWindowClosed(contactId) {
-    const messageRepository = new MessageRepositoryDatabase()
+    const messageRepository = requireDependency(
+      this.messageRepository,
+      'messageRepository',
+      'ContactRepositoryDatabase',
+    )
     const messagesQuery = new MessagesQuery({ messageRepository })
 
     messagesQuery.page(1)
@@ -63,7 +72,7 @@ class ContactRepositoryDatabase extends Repository {
 }
 
 class ContactRepositoryMemory extends RepositoryMemory {
-  constructor({ items = [], messageRepository = new MessageRepositoryMemory() } = {}) {
+  constructor({ items = [], messageRepository } = {}) {
     super(items)
     this.messageRepository = messageRepository
   }
@@ -73,7 +82,8 @@ class ContactRepositoryMemory extends RepositoryMemory {
   }
 
   async contactWithWhatsappWindowClosed(contactId) {
-    const messages = sortRecords(await this.messageRepository.find({ destination: 'to-chat' }), {
+    const messageRepository = requireDependency(this.messageRepository, 'messageRepository', 'ContactRepositoryMemory')
+    const messages = sortRecords(await messageRepository.find({ destination: 'to-chat' }), {
       createdAt: 'desc',
     }).filter((message) => comparableValue(message.contact) === comparableValue(contactId))
 

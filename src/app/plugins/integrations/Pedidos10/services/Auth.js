@@ -1,15 +1,7 @@
 import request from '../../../../services/request.js'
-import { IntegrationlogRepositoryDatabase } from '../../../../repositories/integrationlog.js'
-import { LicenseeRepositoryDatabase } from '../../../../repositories/licensee.js'
 
 class Auth {
-  constructor(
-    licensee,
-    {
-      integrationlogRepository = new IntegrationlogRepositoryDatabase(),
-      licenseeRepository = new LicenseeRepositoryDatabase(),
-    } = {},
-  ) {
+  constructor(licensee, { integrationlogRepository, licenseeRepository } = {}) {
     this.licensee = licensee
     this.integrationlogRepository = integrationlogRepository
     this.licenseeRepository = licenseeRepository

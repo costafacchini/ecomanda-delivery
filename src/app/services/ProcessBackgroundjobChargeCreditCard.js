@@ -1,24 +1,15 @@
-import { PagarMe } from '../plugins/payments/PagarMe.js'
-import { BackgroundjobRepositoryDatabase } from '../repositories/backgroundjob.js'
-import { CartRepositoryDatabase } from '../repositories/cart.js'
-import { ContactRepositoryDatabase } from '../repositories/contact.js'
-
 async function processBackgroundjobChargeCreditCard(
   data,
-  {
-    backgroundjobRepository = new BackgroundjobRepositoryDatabase(),
-    cartRepository = new CartRepositoryDatabase(),
-    contactRepository = new ContactRepositoryDatabase(),
-    pagarMe = new PagarMe(),
-  } = {},
+  { backgroundjobRepository, cartRepository, contactRepository, createPagarMe } = {},
 ) {
   const { jobId, credit_card_data, cart_id: cartId } = data
 
-  const backgroundjob = await backgroundjobRepository.findFirst({ _id: jobId })
+  const backgroundjob = await backgroundjobRepository.findFirst({ _id: jobId }, ['licensee'])
 
   try {
     const cart = await cartRepository.findFirst({ _id: cartId }, ['contact'])
     const contact = await contactRepository.findFirst({ _id: cart.contact })
+    const pagarMe = createPagarMe(backgroundjob.licensee)
     const card = contact.credit_cards.find(
       (card) =>
         card.first_six_digits == credit_card_data.first_six_digits &&

@@ -1,7 +1,4 @@
-import { createIntegrator } from '../plugins/integrations/factory.js'
-import { OrderRepositoryDatabase } from '../repositories/order.js'
-
-async function sendOrder(data, { orderRepository = new OrderRepositoryDatabase() } = {}) {
+async function sendOrder(data, { orderRepository, createIntegrator } = {}) {
   const { orderId } = data
 
   const order = await orderRepository.findFirst({ _id: orderId }, ['licensee'])

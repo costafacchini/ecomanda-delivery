@@ -1,9 +1,9 @@
-import { Order } from './Pedidos10/Order.js'
+import { requireDependency } from '../../helpers/RequireDependency.js'
 
 class Pedidos10 {
-  constructor(licensee, { orderModule = new Order(licensee) } = {}) {
+  constructor(licensee, { orderModule } = {}) {
     this.licensee = licensee
-    this.orderModule = orderModule
+    this.orderModule = requireDependency(orderModule, 'orderModule', this.constructor.name)
   }
 
   async processOrder(body) {

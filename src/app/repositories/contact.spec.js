@@ -143,7 +143,8 @@ describe('contact repository database', () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
 
-      const contactRepository = new ContactRepositoryDatabase()
+      const messageRepository = new MessageRepositoryDatabase()
+      const contactRepository = new ContactRepositoryDatabase({ messageRepository })
       const contact = await contactRepository.create({
         licensee,
         number: '5511990283745',
@@ -152,7 +153,6 @@ describe('contact repository database', () => {
 
       const now = moment.tz(new Date(), 'UTC')
 
-      const messageRepository = new MessageRepositoryDatabase()
       await messageRepository.create(
         messageFactory.build({
           licensee,
@@ -178,7 +178,8 @@ describe('contact repository database', () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
 
-      const contactRepository = new ContactRepositoryDatabase()
+      const messageRepository = new MessageRepositoryDatabase()
+      const contactRepository = new ContactRepositoryDatabase({ messageRepository })
       const contact = await contactRepository.create({
         licensee,
         number: '5511990283745',
@@ -187,7 +188,6 @@ describe('contact repository database', () => {
 
       const now = moment.tz(new Date(), 'UTC')
 
-      const messageRepository = new MessageRepositoryDatabase()
       await messageRepository.create(
         messageFactory.build({
           licensee,
@@ -213,7 +213,8 @@ describe('contact repository database', () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
 
-      const contactRepository = new ContactRepositoryDatabase()
+      const messageRepository = new MessageRepositoryDatabase()
+      const contactRepository = new ContactRepositoryDatabase({ messageRepository })
       const contact = await contactRepository.create({
         licensee,
         number: '5511990283745',
@@ -227,7 +228,8 @@ describe('contact repository database', () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
 
-      const contactRepository = new ContactRepositoryDatabase()
+      const messageRepository = new MessageRepositoryDatabase()
+      const contactRepository = new ContactRepositoryDatabase({ messageRepository })
       const contact = await contactRepository.create({
         licensee,
         number: '5511990283745',
@@ -236,7 +238,6 @@ describe('contact repository database', () => {
 
       const now = moment.tz(new Date(), 'UTC')
 
-      const messageRepository = new MessageRepositoryDatabase()
       await messageRepository.create(
         messageFactory.build({
           licensee,

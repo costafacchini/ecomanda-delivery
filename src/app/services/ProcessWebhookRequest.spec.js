@@ -4,10 +4,14 @@ import { installMemoryRepositories, resetMemoryRepositories } from '@repositorie
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { body as bodyFactory } from '@factories/body'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
 
 describe('processWebhookRequest', () => {
+  let dependencies
+
   beforeEach(() => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
   })
 
@@ -64,7 +68,7 @@ describe('processWebhookRequest', () => {
         bodyId: body._id,
       }
 
-      const actions = await processWebhookRequest(data)
+      const actions = await processWebhookRequest(data, dependencies)
 
       expect(actions.length).toEqual(1)
       expect(actions[0].action).toEqual('process-pagarme-order-paid')
@@ -98,7 +102,7 @@ describe('processWebhookRequest', () => {
         bodyId: body._id,
       }
 
-      const actions = await processWebhookRequest(data)
+      const actions = await processWebhookRequest(data, dependencies)
 
       expect(actions.length).toEqual(0)
 
@@ -127,7 +131,7 @@ describe('processWebhookRequest', () => {
         bodyId: body._id,
       }
 
-      const actions = await processWebhookRequest(data)
+      const actions = await processWebhookRequest(data, dependencies)
 
       expect(actions.length).toEqual(0)
 

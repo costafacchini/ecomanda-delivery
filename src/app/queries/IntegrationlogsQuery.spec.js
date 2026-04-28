@@ -4,6 +4,7 @@ import Integrationlog from '@models/Integrationlog'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { integrationlog as integrationlogFactory } from '@factories/integrationlog'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { IntegrationlogRepositoryDatabase } from '@repositories/integrationlog'
 
 describe('IntegrationlogsQuery', () => {
   let licensee
@@ -21,6 +22,7 @@ describe('IntegrationlogsQuery', () => {
 
   describe('#all', () => {
     it('returns all integrationlogs ordered by createdAt', async () => {
+      const integrationlogRepository = new IntegrationlogRepositoryDatabase()
       const integrationlog1 = await Integrationlog.create(
         integrationlogFactory.build({
           licensee,
@@ -34,7 +36,7 @@ describe('IntegrationlogsQuery', () => {
         }),
       )
 
-      const integrationlogsQuery = new IntegrationlogsQuery()
+      const integrationlogsQuery = new IntegrationlogsQuery({ integrationlogRepository })
       const records = await integrationlogsQuery.all()
 
       expect(records.length).toEqual(2)
@@ -44,6 +46,7 @@ describe('IntegrationlogsQuery', () => {
 
     describe('filterByCreatedAt', () => {
       it('returns integrationlogs filtered by createdAt', async () => {
+        const integrationlogRepository = new IntegrationlogRepositoryDatabase()
         const integrationlog1 = await Integrationlog.create(
           integrationlogFactory.build({
             licensee,
@@ -69,7 +72,7 @@ describe('IntegrationlogsQuery', () => {
           }),
         )
 
-        const integrationlogsQuery = new IntegrationlogsQuery()
+        const integrationlogsQuery = new IntegrationlogsQuery({ integrationlogRepository })
         integrationlogsQuery.filterByCreatedAt(new Date(2021, 6, 3, 0, 0, 0), new Date(2021, 6, 3, 23, 59, 59))
 
         const records = await integrationlogsQuery.all()
@@ -86,6 +89,7 @@ describe('IntegrationlogsQuery', () => {
 
     describe('filterByLicensee', () => {
       it('returns integrationlogs filtered by licensee', async () => {
+        const integrationlogRepository = new IntegrationlogRepositoryDatabase()
         const integrationlog = await Integrationlog.create(
           integrationlogFactory.build({
             licensee,
@@ -102,7 +106,7 @@ describe('IntegrationlogsQuery', () => {
           }),
         )
 
-        const integrationlogsQuery = new IntegrationlogsQuery()
+        const integrationlogsQuery = new IntegrationlogsQuery({ integrationlogRepository })
         integrationlogsQuery.filterByLicensee(licensee._id)
 
         const records = await integrationlogsQuery.all()
@@ -115,6 +119,7 @@ describe('IntegrationlogsQuery', () => {
 
     describe('sortBy', () => {
       it('returns all integrationlogs ordered by using sortBy clause', async () => {
+        const integrationlogRepository = new IntegrationlogRepositoryDatabase()
         const integrationlog1 = await Integrationlog.create(
           integrationlogFactory.build({
             licensee,
@@ -128,7 +133,7 @@ describe('IntegrationlogsQuery', () => {
           }),
         )
 
-        const integrationlogsQuery = new IntegrationlogsQuery()
+        const integrationlogsQuery = new IntegrationlogsQuery({ integrationlogRepository })
         integrationlogsQuery.sortBy('createdAt', 'asc')
         const records = await integrationlogsQuery.all()
 

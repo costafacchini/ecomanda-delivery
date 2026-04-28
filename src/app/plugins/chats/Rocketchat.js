@@ -1,7 +1,7 @@
 import { replace } from '../../helpers/Emoji.js'
 import request from '../../services/request.js'
 import { ChatsBase } from './Base.js'
-import { RoomRepositoryDatabase } from '../../repositories/room.js'
+import { requireDependency } from '../../helpers/RequireDependency.js'
 
 const createVisitor = async (contact, token, url) => {
   const body = {
@@ -74,8 +74,7 @@ class Rocketchat extends ChatsBase {
   }
 
   get roomRepository() {
-    this._roomRepository ??= new RoomRepositoryDatabase()
-    return this._roomRepository
+    return requireDependency(this._roomRepository, 'roomRepository', this.constructor.name)
   }
 
   action(responseBody) {

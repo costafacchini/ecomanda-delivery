@@ -9,10 +9,14 @@ import { Payment } from '@plugins/payments/PagarMe/Payment.js'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+let dependencies
 
 describe('processBackgroundjobGetPix', () => {
   beforeEach(() => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
   })
 
@@ -46,7 +50,7 @@ describe('processBackgroundjobGetPix', () => {
       jobId: backgroundjob._id,
     }
 
-    await processBackgroundjobGetPix(data)
+    await processBackgroundjobGetPix(data, dependencies)
 
     expect(paymentCreateFnSpy).toHaveBeenCalled()
   })
@@ -83,7 +87,7 @@ describe('processBackgroundjobGetPix', () => {
         jobId: backgroundjob._id,
       }
 
-      await processBackgroundjobGetPix(data)
+      await processBackgroundjobGetPix(data, dependencies)
 
       const backgroundjobUpdated = await Backgroundjob.findById(backgroundjob)
       expect(backgroundjobUpdated.status).toEqual('done')
@@ -123,7 +127,7 @@ describe('processBackgroundjobGetPix', () => {
         jobId: backgroundjob._id,
       }
 
-      await processBackgroundjobGetPix(data)
+      await processBackgroundjobGetPix(data, dependencies)
 
       const backgroundjobUpdated = await Backgroundjob.findById(backgroundjob)
       expect(backgroundjobUpdated.status).toEqual('error')

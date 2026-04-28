@@ -1,13 +1,11 @@
 import { randomUUID } from 'crypto'
-import { TrafficlightRepositoryDatabase } from '../repositories/trafficlight.js'
 
 const LOCK_TTL_MS = Number(process.env.JOB_LOCK_TTL_MS ?? 120000)
 const RETRY_DELAY_MS = Number(process.env.JOB_LOCK_RETRY_DELAY_MS ?? 100)
-const trafficlightRepository = new TrafficlightRepositoryDatabase()
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
-async function acquireLock(lockKey, token) {
+async function acquireLock(lockKey, token, trafficlightRepository) {
   while (true) {
     try {
       const expiresAt = new Date(Date.now() + LOCK_TTL_MS)
@@ -37,13 +35,13 @@ export function resolveTrafficlightKey(data) {
   return null
 }
 
-export async function withTrafficlight(lockKey, handler) {
+export async function withTrafficlight(lockKey, handler, { trafficlightRepository } = {}) {
   if (!lockKey) {
     return await handler()
   }
 
   const token = randomUUID()
-  await acquireLock(lockKey, token)
+  await acquireLock(lockKey, token, trafficlightRepository)
 
   try {
     return await handler()

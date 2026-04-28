@@ -1,8 +1,7 @@
 import request from '../../../../services/request.js'
-import { IntegrationlogRepositoryDatabase } from '../../../../repositories/integrationlog.js'
 
 class Webhook {
-  constructor(licensee, { integrationlogRepository = new IntegrationlogRepositoryDatabase() } = {}) {
+  constructor(licensee, { integrationlogRepository } = {}) {
     this.licensee = licensee
     this.integrationlogRepository = integrationlogRepository
   }

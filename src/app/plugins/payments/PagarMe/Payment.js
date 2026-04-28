@@ -1,8 +1,4 @@
 import request from '../../../services/request.js'
-import { LicenseeRepositoryDatabase } from '../../../repositories/licensee.js'
-import { ContactRepositoryDatabase } from '../../../repositories/contact.js'
-import { CartRepositoryDatabase } from '../../../repositories/cart.js'
-import { IntegrationlogRepositoryDatabase } from '../../../repositories/integrationlog.js'
 
 const buildBody = (cart, contact, buildPaymentBuilder) => {
   return {
@@ -92,12 +88,7 @@ const fillCreditCardFields = (cart, last_transaction) => {
 }
 
 class Payment {
-  constructor({
-    integrationlogRepository = new IntegrationlogRepositoryDatabase(),
-    licenseeRepository = new LicenseeRepositoryDatabase(),
-    contactRepository = new ContactRepositoryDatabase(),
-    cartRepository = new CartRepositoryDatabase(),
-  } = {}) {
+  constructor({ integrationlogRepository, licenseeRepository, contactRepository, cartRepository } = {}) {
     this.integrationlogRepository = integrationlogRepository
     this.licenseeRepository = licenseeRepository
     this.contactRepository = contactRepository

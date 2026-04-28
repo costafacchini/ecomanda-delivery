@@ -1,9 +1,9 @@
 import { Landbot } from './Landbot.js'
 
-function createChatbotPlugin(licensee) {
+function createChatbotPlugin(licensee, dependencies = {}) {
   switch (licensee.chatbotDefault) {
     case 'landbot':
-      return new Landbot(licensee)
+      return new Landbot(licensee, dependencies)
     default:
       throw `Plugin de chatbot não configurado: ${licensee.chatbotDefault}`
   }

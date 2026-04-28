@@ -1,29 +1,27 @@
-import { Dialog } from '../../messengers/Dialog.js'
-import { YCloud } from '../../messengers/YCloud.js'
-import { createTemplate, destroyAllTemplates } from '../../../repositories/template.js'
-import { LicenseeRepositoryDatabase } from '../../../repositories/licensee.js'
-
 class TemplatesImporter {
-  constructor(licenseeId) {
+  constructor(licenseeId, { licenseeRepository, templateRepository, createMessengerPlugin } = {}) {
     this.licenseeId = licenseeId
+    this.licenseeRepository = licenseeRepository
+    this.templateRepository = templateRepository
+    this.createMessengerPlugin = createMessengerPlugin
   }
 
   async import() {
-    const licenseeRepository = new LicenseeRepositoryDatabase()
-    const licensee = await licenseeRepository.findFirst({ _id: this.licenseeId })
+    const licensee = await this.licenseeRepository.findFirst({ _id: this.licenseeId })
 
-    await destroyAllTemplates()
+    await this.templateRepository.delete({})
 
-    if (licensee.whatsappDefault === 'dialog') {
-      const dialog = new Dialog(licensee)
-      const templates = await dialog.searchTemplates(licensee.whatsappUrl, licensee.whatsappToken)
-      templates.forEach((template) => createTemplate(template))
+    if (!licensee) return
+
+    if (!['dialog', 'ycloud', 'pabbly'].includes(licensee.whatsappDefault)) {
+      return
     }
 
-    if (licensee.whatsappDefault === 'ycloud') {
-      const chatwoot = new YCloud(licensee)
-      const templates = await chatwoot.searchTemplates(licensee.whatsappUrl, licensee.whatsappToken)
-      templates.forEach((template) => createTemplate(template))
+    const messengerPlugin = this.createMessengerPlugin(licensee)
+    const templates = await messengerPlugin.searchTemplates(licensee.whatsappUrl, licensee.whatsappToken)
+
+    for (const template of templates) {
+      await this.templateRepository.create(template)
     }
   }
 }

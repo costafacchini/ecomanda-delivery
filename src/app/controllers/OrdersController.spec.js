@@ -2,7 +2,7 @@ import Licensee from '@models/Licensee'
 import Body from '@models/Body'
 import Integrationlog from '@models/Integrationlog'
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { expressServer } from '../../../.jest/server-express'
 import { queueServer } from '@config/queue'
 import { licensee as licenseeFactory } from '@factories/licensee'
@@ -14,14 +14,14 @@ describe('chats controller', () => {
 
   beforeAll(async () => {
     jest.clearAllMocks()
-    await mongoServer.connect()
+    installMemoryRepositories()
 
     const licensee = await Licensee.create(licenseeFactory.build())
     apiToken = licensee.apiToken
   })
 
-  afterAll(async () => {
-    await mongoServer.disconnect()
+  afterAll(() => {
+    resetMemoryRepositories()
   })
 
   describe('about auth', () => {

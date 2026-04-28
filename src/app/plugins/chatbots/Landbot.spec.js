@@ -17,6 +17,9 @@ import request from '../../services/request.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 jest.mock('../../services/request')
+import { createRuntimeDependencies } from '../../runtime/dependencies.js'
+
+let dependencies
 
 describe('Landbot plugin', () => {
   let licensee
@@ -25,6 +28,7 @@ describe('Landbot plugin', () => {
 
   beforeEach(async () => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
@@ -36,7 +40,7 @@ describe('Landbot plugin', () => {
 
   describe('#responseToMessages', () => {
     it('returns the response body transformed in messages', async () => {
-      const contactRepository = new ContactRepositoryDatabase()
+      const contactRepository = dependencies.contactRepository
       const contact = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: true,
@@ -104,7 +108,7 @@ describe('Landbot plugin', () => {
         },
       }
 
-      const landbot = new Landbot(licensee)
+      const landbot = new Landbot(licensee, dependencies)
       const messages = await landbot.responseToMessages(responseBody)
 
       expect(messages.length).toEqual(5)
@@ -179,7 +183,7 @@ describe('Landbot plugin', () => {
     })
 
     it('changes the landbotId in contact if is different', async () => {
-      const contactRepository = new ContactRepositoryDatabase()
+      const contactRepository = dependencies.contactRepository
       const contact = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: true,
@@ -211,7 +215,7 @@ describe('Landbot plugin', () => {
         },
       }
 
-      const landbot = new Landbot(licensee)
+      const landbot = new Landbot(licensee, dependencies)
       await landbot.responseToMessages(responseBody)
 
       const contactUpdated = await contactRepository.findFirst({ _id: contact._id })
@@ -221,7 +225,7 @@ describe('Landbot plugin', () => {
     it('return the empty array if body is blank', async () => {
       const responseBody = {}
 
-      const landbot = new Landbot(licensee)
+      const landbot = new Landbot(licensee, dependencies)
       const messages = await landbot.responseToMessages(responseBody)
 
       expect(messages.length).toEqual(0)
@@ -285,7 +289,7 @@ describe('Landbot plugin', () => {
         },
       }
 
-      const landbot = new Landbot(licensee)
+      const landbot = new Landbot(licensee, dependencies)
       const messages = await landbot.responseToMessages(responseBody)
 
       expect(messages.length).toEqual(0)
@@ -305,7 +309,7 @@ describe('Landbot plugin', () => {
         ],
       }
 
-      const landbot = new Landbot(licensee)
+      const landbot = new Landbot(licensee, dependencies)
       const messages = await landbot.responseToMessages(responseBody)
 
       expect(messages.length).toEqual(0)
@@ -318,7 +322,7 @@ describe('Landbot plugin', () => {
         },
       }
 
-      const landbot = new Landbot(licensee)
+      const landbot = new Landbot(licensee, dependencies)
       const messages = await landbot.responseToMessages(responseBody)
 
       expect(messages.length).toEqual(0)
@@ -348,7 +352,7 @@ describe('Landbot plugin', () => {
         },
       }
 
-      const landbot = new Landbot(licensee)
+      const landbot = new Landbot(licensee, dependencies)
       const messages = await landbot.responseToMessages(responseBody)
 
       expect(messages.length).toEqual(0)
@@ -357,7 +361,7 @@ describe('Landbot plugin', () => {
 
   describe('#responseTransferToMessage', () => {
     it('returns the response body transformed in message', async () => {
-      const contactRepository = new ContactRepositoryDatabase()
+      const contactRepository = dependencies.contactRepository
       const contact = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: true,
@@ -371,7 +375,7 @@ describe('Landbot plugin', () => {
         id_departamento_rocketchat: '100',
       }
 
-      const landbot = new Landbot(licensee)
+      const landbot = new Landbot(licensee, dependencies)
       const message = await landbot.responseTransferToMessage(responseBody)
 
       expect(message.licensee).toEqual(licensee._id)
@@ -393,7 +397,7 @@ describe('Landbot plugin', () => {
         id_departamento_rocketchat: '100',
       }
 
-      const landbot = new Landbot(licensee)
+      const landbot = new Landbot(licensee, dependencies)
       const message = await landbot.responseTransferToMessage(responseBody)
 
       expect(message).toEqual(undefined)
@@ -406,7 +410,7 @@ describe('Landbot plugin', () => {
         id_departamento_rocketchat: '100',
       }
 
-      const landbot = new Landbot(licensee)
+      const landbot = new Landbot(licensee, dependencies)
       const message = await landbot.responseTransferToMessage(responseBody)
 
       expect(message).toEqual(undefined)
@@ -418,7 +422,7 @@ describe('Landbot plugin', () => {
     })
 
     it('close room if the body has a iniciar_nova_conversa with true', async () => {
-      const contactRepository = new ContactRepositoryDatabase()
+      const contactRepository = dependencies.contactRepository
       const contact = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: true,
@@ -439,7 +443,7 @@ describe('Landbot plugin', () => {
         iniciar_nova_conversa: 'true',
       }
 
-      const landbot = new Landbot(licensee)
+      const landbot = new Landbot(licensee, dependencies)
       await landbot.responseTransferToMessage(responseBody)
 
       const modifiedRoom = await Room.findById(room._id)
@@ -448,7 +452,7 @@ describe('Landbot plugin', () => {
     })
 
     it('updates the contact name when name is different of the contact name', async () => {
-      const contactRepository = new ContactRepositoryDatabase()
+      const contactRepository = dependencies.contactRepository
       const contact = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: true,
@@ -463,7 +467,7 @@ describe('Landbot plugin', () => {
         id_departamento_rocketchat: '100',
       }
 
-      const landbot = new Landbot(licensee)
+      const landbot = new Landbot(licensee, dependencies)
       await landbot.responseTransferToMessage(responseBody)
 
       const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
@@ -471,7 +475,7 @@ describe('Landbot plugin', () => {
     })
 
     it('updates the contact email when email is different of the contact email', async () => {
-      const contactRepository = new ContactRepositoryDatabase()
+      const contactRepository = dependencies.contactRepository
       const contact = await contactRepository.create(
         contactFactory.build({
           talkingWithChatBot: true,
@@ -487,7 +491,7 @@ describe('Landbot plugin', () => {
         id_departamento_rocketchat: '100',
       }
 
-      const landbot = new Landbot(licensee)
+      const landbot = new Landbot(licensee, dependencies)
       await landbot.responseTransferToMessage(responseBody)
 
       const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
@@ -498,7 +502,7 @@ describe('Landbot plugin', () => {
   describe('#sendMessage', () => {
     describe('when response status is 201', () => {
       it('marks the message with sended', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -507,7 +511,7 @@ describe('Landbot plugin', () => {
           }),
         )
 
-        const messageRepository = new MessageRepositoryDatabase()
+        const messageRepository = dependencies.messageRepository
         const message = await messageRepository.create(
           messageFactory.build({
             text: 'Message to send',
@@ -546,7 +550,7 @@ describe('Landbot plugin', () => {
 
         expect(message.sended).toEqual(false)
 
-        const landbot = new Landbot(licensee)
+        const landbot = new Landbot(licensee, dependencies)
         await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
 
         expect(request.post).toHaveBeenCalledWith(
@@ -564,7 +568,7 @@ describe('Landbot plugin', () => {
       })
 
       it('logs the success message', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -574,7 +578,7 @@ describe('Landbot plugin', () => {
           }),
         )
 
-        const messageRepository = new MessageRepositoryDatabase()
+        const messageRepository = dependencies.messageRepository
         const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
@@ -599,7 +603,7 @@ describe('Landbot plugin', () => {
           },
         })
 
-        const landbot = new Landbot(licensee)
+        const landbot = new Landbot(licensee, dependencies)
         await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           `Mensagem 60958703f415ed4008748637 enviada para Landbot com sucesso!
@@ -623,7 +627,7 @@ describe('Landbot plugin', () => {
 
           licensee.cartDefault = 'go2go'
 
-          const contactRepository = new ContactRepositoryDatabase()
+          const contactRepository = dependencies.contactRepository
           const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
@@ -632,10 +636,10 @@ describe('Landbot plugin', () => {
             }),
           )
 
-          const cartRepository = new CartRepositoryDatabase()
+          const cartRepository = dependencies.cartRepository
           const cart = await cartRepository.create(cartFactory.build({ contact, licensee }))
 
-          const messageRepository = new MessageRepositoryDatabase()
+          const messageRepository = dependencies.messageRepository
           const message = await messageRepository.create(
             messageFactory.build({
               kind: 'cart',
@@ -676,7 +680,7 @@ describe('Landbot plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const landbot = new Landbot(licensee)
+          const landbot = new Landbot(licensee, dependencies)
           await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
 
           expect(request.post).toHaveBeenCalledWith(
@@ -698,7 +702,7 @@ describe('Landbot plugin', () => {
 
       describe('when message is location', () => {
         it('sends the message', async () => {
-          const contactRepository = new ContactRepositoryDatabase()
+          const contactRepository = dependencies.contactRepository
           const contact = await contactRepository.create(
             contactFactory.build({
               name: 'John Doe',
@@ -707,7 +711,7 @@ describe('Landbot plugin', () => {
             }),
           )
 
-          const messageRepository = new MessageRepositoryDatabase()
+          const messageRepository = dependencies.messageRepository
           const message = await messageRepository.create(
             messageFactory.build({
               kind: 'location',
@@ -748,7 +752,7 @@ describe('Landbot plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const landbot = new Landbot(licensee)
+          const landbot = new Landbot(licensee, dependencies)
           await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
 
           expect(request.post).toHaveBeenCalledWith(
@@ -769,7 +773,7 @@ describe('Landbot plugin', () => {
       describe('when message is file', () => {
         describe('when is image', () => {
           it('sends the message', async () => {
-            const contactRepository = new ContactRepositoryDatabase()
+            const contactRepository = dependencies.contactRepository
             const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
@@ -778,7 +782,7 @@ describe('Landbot plugin', () => {
               }),
             )
 
-            const messageRepository = new MessageRepositoryDatabase()
+            const messageRepository = dependencies.messageRepository
             const message = await messageRepository.create(
               messageFactory.build({
                 kind: 'file',
@@ -818,7 +822,7 @@ describe('Landbot plugin', () => {
 
             expect(message.sended).toEqual(false)
 
-            const landbot = new Landbot(licensee)
+            const landbot = new Landbot(licensee, dependencies)
             await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -827,7 +831,7 @@ describe('Landbot plugin', () => {
 
         describe('when is video', () => {
           it('sends the message', async () => {
-            const contactRepository = new ContactRepositoryDatabase()
+            const contactRepository = dependencies.contactRepository
             const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
@@ -836,7 +840,7 @@ describe('Landbot plugin', () => {
               }),
             )
 
-            const messageRepository = new MessageRepositoryDatabase()
+            const messageRepository = dependencies.messageRepository
             const message = await messageRepository.create(
               messageFactory.build({
                 kind: 'file',
@@ -876,7 +880,7 @@ describe('Landbot plugin', () => {
 
             expect(message.sended).toEqual(false)
 
-            const landbot = new Landbot(licensee)
+            const landbot = new Landbot(licensee, dependencies)
             await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
 
             expect(request.post).toHaveBeenCalledWith(
@@ -896,7 +900,7 @@ describe('Landbot plugin', () => {
 
         describe('when is audio', () => {
           it('sends the message', async () => {
-            const contactRepository = new ContactRepositoryDatabase()
+            const contactRepository = dependencies.contactRepository
             const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
@@ -905,7 +909,7 @@ describe('Landbot plugin', () => {
               }),
             )
 
-            const messageRepository = new MessageRepositoryDatabase()
+            const messageRepository = dependencies.messageRepository
             const message = await messageRepository.create(
               messageFactory.build({
                 kind: 'file',
@@ -945,7 +949,7 @@ describe('Landbot plugin', () => {
 
             expect(message.sended).toEqual(false)
 
-            const landbot = new Landbot(licensee)
+            const landbot = new Landbot(licensee, dependencies)
             await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
 
             expect(request.post).toHaveBeenCalledWith(
@@ -965,7 +969,7 @@ describe('Landbot plugin', () => {
 
         describe('when is document', () => {
           it('sends the message', async () => {
-            const contactRepository = new ContactRepositoryDatabase()
+            const contactRepository = dependencies.contactRepository
             const contact = await contactRepository.create(
               contactFactory.build({
                 name: 'John Doe',
@@ -974,7 +978,7 @@ describe('Landbot plugin', () => {
               }),
             )
 
-            const messageRepository = new MessageRepositoryDatabase()
+            const messageRepository = dependencies.messageRepository
             const message = await messageRepository.create(
               messageFactory.build({
                 kind: 'file',
@@ -1014,7 +1018,7 @@ describe('Landbot plugin', () => {
 
             expect(message.sended).toEqual(false)
 
-            const landbot = new Landbot(licensee)
+            const landbot = new Landbot(licensee, dependencies)
             await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
             const messageUpdated = await messageRepository.findFirst({ _id: message._id })
             expect(messageUpdated.sended).toEqual(true)
@@ -1025,7 +1029,7 @@ describe('Landbot plugin', () => {
 
     describe('when response is not 201', () => {
       it('logs the error message', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
+        const contactRepository = dependencies.contactRepository
         const contact = await contactRepository.create(
           contactFactory.build({
             name: 'John Doe',
@@ -1035,7 +1039,7 @@ describe('Landbot plugin', () => {
           }),
         )
 
-        const messageRepository = new MessageRepositoryDatabase()
+        const messageRepository = dependencies.messageRepository
         const message = await messageRepository.create(
           messageFactory.build({
             _id: '60958703f415ed4008748637',
@@ -1055,7 +1059,7 @@ describe('Landbot plugin', () => {
 
         expect(message.sended).toEqual(false)
 
-        const landbot = new Landbot(licensee)
+        const landbot = new Landbot(licensee, dependencies)
         await landbot.sendMessage(message._id, 'https://url.com.br', 'token')
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(false)
@@ -1097,7 +1101,7 @@ describe('Landbot plugin', () => {
         }),
       )
 
-      const contactRepository = new ContactRepositoryDatabase()
+      const contactRepository = dependencies.contactRepository
       const contact = await contactRepository.create(
         contactFactory.build({
           name: 'John Doe',
@@ -1112,7 +1116,7 @@ describe('Landbot plugin', () => {
         data: {},
       })
 
-      const landbot = new Landbot(licensee)
+      const landbot = new Landbot(licensee, dependencies)
       const result = await landbot.dropConversation(contact._id, 'token')
 
       expect(request.delete).toHaveBeenCalledWith(

@@ -14,6 +14,9 @@ import request from '../../services/request.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 jest.mock('../../services/request')
+import { createRuntimeDependencies } from '../../runtime/dependencies.js'
+
+let dependencies
 
 describe('Rocketchat plugin', () => {
   let licensee
@@ -22,6 +25,7 @@ describe('Rocketchat plugin', () => {
 
   beforeEach(async () => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(licenseeFactory.build())
@@ -79,7 +83,7 @@ describe('Rocketchat plugin', () => {
         ],
       }
 
-      const rocketchat = new Rocketchat(licensee)
+      const rocketchat = new Rocketchat(licensee, dependencies)
       const messages = await rocketchat.responseToMessages(responseBody)
 
       expect(messages.length).toEqual(5)
@@ -147,7 +151,7 @@ describe('Rocketchat plugin', () => {
     it('return the empty data if body is blank', async () => {
       const responseBody = {}
 
-      const rocketchat = new Rocketchat(licensee)
+      const rocketchat = new Rocketchat(licensee, dependencies)
       const messages = await rocketchat.responseToMessages(responseBody)
 
       expect(messages.length).toEqual(0)
@@ -158,7 +162,7 @@ describe('Rocketchat plugin', () => {
         _id: '4sqv8qitNqhgLdvB4',
       }
 
-      const rocketchat = new Rocketchat(licensee)
+      const rocketchat = new Rocketchat(licensee, dependencies)
       const messages = await rocketchat.responseToMessages(responseBody)
 
       expect(messages.length).toEqual(0)
@@ -201,7 +205,7 @@ describe('Rocketchat plugin', () => {
           ],
         }
 
-        const rocketchat = new Rocketchat(licensee)
+        const rocketchat = new Rocketchat(licensee, dependencies)
         const messages = await rocketchat.responseToMessages(responseBody)
 
         expect(messages[0].licensee).toEqual(licensee._id)
@@ -322,7 +326,7 @@ describe('Rocketchat plugin', () => {
 
         expect(message.sended).toEqual(false)
 
-        const rocketchat = new Rocketchat(licensee)
+        const rocketchat = new Rocketchat(licensee, dependencies)
         await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
         const messageUpdated = await messageRepository.findFirst({ _id: message._id })
         expect(messageUpdated.sended).toEqual(true)
@@ -414,7 +418,7 @@ describe('Rocketchat plugin', () => {
 
         expect(message.sended).toEqual(false)
 
-        const rocketchat = new Rocketchat(licensee)
+        const rocketchat = new Rocketchat(licensee, dependencies)
         await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
         expect(consoleInfoSpy).toHaveBeenCalledWith(
           'Mensagem 60958703f415ed4008748637 enviada para Rocketchat com sucesso!',
@@ -514,7 +518,7 @@ describe('Rocketchat plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const rocketchat = new Rocketchat(licensee)
+          const rocketchat = new Rocketchat(licensee, dependencies)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -626,7 +630,7 @@ describe('Rocketchat plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const rocketchat = new Rocketchat(licensee)
+          const rocketchat = new Rocketchat(licensee, dependencies)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -728,7 +732,7 @@ describe('Rocketchat plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const rocketchat = new Rocketchat(licensee)
+          const rocketchat = new Rocketchat(licensee, dependencies)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(true)
@@ -762,7 +766,7 @@ describe('Rocketchat plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const rocketchat = new Rocketchat(licensee)
+          const rocketchat = new Rocketchat(licensee, dependencies)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
@@ -819,7 +823,7 @@ describe('Rocketchat plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const rocketchat = new Rocketchat(licensee)
+          const rocketchat = new Rocketchat(licensee, dependencies)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
@@ -904,7 +908,7 @@ describe('Rocketchat plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const rocketchat = new Rocketchat(licensee)
+          const rocketchat = new Rocketchat(licensee, dependencies)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
@@ -1010,7 +1014,7 @@ describe('Rocketchat plugin', () => {
 
           expect(message.sended).toEqual(false)
 
-          const rocketchat = new Rocketchat(licensee)
+          const rocketchat = new Rocketchat(licensee, dependencies)
           await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
           const messageUpdated = await messageRepository.findFirst({ _id: message._id }, ['room'])
           expect(messageUpdated.sended).toEqual(true)
@@ -1056,7 +1060,7 @@ describe('Rocketchat plugin', () => {
 
       expect(contact.talkingWithChatBot).toEqual(true)
 
-      const rocketchat = new Rocketchat(licensee)
+      const rocketchat = new Rocketchat(licensee, dependencies)
       await rocketchat.transfer(message._id, 'url')
 
       const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
@@ -1086,7 +1090,7 @@ describe('Rocketchat plugin', () => {
         }),
       )
 
-      const rocketchat = new Rocketchat(licensee)
+      const rocketchat = new Rocketchat(licensee, dependencies)
       await rocketchat.transfer(message._id.toString(), 'url')
 
       expect(sendMessageSpy).toHaveBeenCalledTimes(1)
@@ -1129,7 +1133,7 @@ describe('Rocketchat plugin', () => {
       expect(room.roomId).toEqual('ka3DiV9CuHD765')
       expect(room.closed).toEqual(false)
 
-      const rocketchat = new Rocketchat(licensee)
+      const rocketchat = new Rocketchat(licensee, dependencies)
       await rocketchat.closeChat(message._id)
 
       const modifiedRoom = await Room.findById(room._id)
@@ -1180,7 +1184,7 @@ describe('Rocketchat plugin', () => {
 
         expect(contact.talkingWithChatBot).toEqual(false)
 
-        const rocketchat = new Rocketchat(licensee)
+        const rocketchat = new Rocketchat(licensee, dependencies)
         await rocketchat.closeChat(message._id)
 
         const modifiedContact = await contactRepository.findFirst({ _id: contact._id })
@@ -1232,7 +1236,7 @@ describe('Rocketchat plugin', () => {
 
         expect(contact.talkingWithChatBot).toEqual(false)
 
-        const rocketchat = new Rocketchat(licensee)
+        const rocketchat = new Rocketchat(licensee, dependencies)
         const messages = await rocketchat.closeChat(message._id)
 
         expect(messages.length).toEqual(1)
@@ -1247,7 +1251,7 @@ describe('Rocketchat plugin', () => {
         type: 'LivechatSession',
       }
 
-      const rocketchat = new Rocketchat(licensee)
+      const rocketchat = new Rocketchat(licensee, dependencies)
       expect(rocketchat.action(responseBody)).toEqual('close-chat')
     })
 
@@ -1264,7 +1268,7 @@ describe('Rocketchat plugin', () => {
         ],
       }
 
-      const rocketchat = new Rocketchat(licensee)
+      const rocketchat = new Rocketchat(licensee, dependencies)
       expect(rocketchat.action(responseBody)).toEqual('close-chat')
     })
 
@@ -1273,7 +1277,7 @@ describe('Rocketchat plugin', () => {
         type: 'Message',
       }
 
-      const rocketchat = new Rocketchat(licensee)
+      const rocketchat = new Rocketchat(licensee, dependencies)
       expect(rocketchat.action(responseBody)).toEqual('send-message-to-messenger')
     })
   })

@@ -1,16 +1,11 @@
-import { createChatbotPlugin } from '../plugins/chatbots/factory.js'
 import moment from 'moment-timezone'
 import { v4 as uuidv4 } from 'uuid'
-import { createMessengerPlugin } from '../plugins/messengers/factory.js'
-import { LicenseeRepositoryDatabase } from '../repositories/licensee.js'
-import { ContactRepositoryDatabase } from '../repositories/contact.js'
-import { MessageRepositoryDatabase } from '../repositories/message.js'
 import { sortRecords } from '../repositories/repository.js'
 
 const ONE_HOUR = 1
 const TO_MESSENGER = 'to-messenger'
 
-async function getLastMessageOfContact(contactId, { messageRepository = new MessageRepositoryDatabase() } = {}) {
+async function getLastMessageOfContact(contactId, { messageRepository } = {}) {
   const messages = sortRecords(
     await messageRepository.find({
       contact: contactId,
@@ -26,12 +21,7 @@ function getTimeLimit() {
   return moment().tz('UTC').subtract(ONE_HOUR, 'hour')
 }
 
-async function sendMessageToMessegner(
-  licensee,
-  contactId,
-  text,
-  { messageRepository = new MessageRepositoryDatabase() } = {},
-) {
+async function sendMessageToMessegner(licensee, contactId, text, { messageRepository, createMessengerPlugin } = {}) {
   const messageToSend = await messageRepository.create({
     number: uuidv4(),
     text: text,
@@ -47,9 +37,11 @@ async function sendMessageToMessegner(
 }
 
 async function resetChatbots({
-  licenseeRepository = new LicenseeRepositoryDatabase(),
-  contactRepository = new ContactRepositoryDatabase(),
-  messageRepository = new MessageRepositoryDatabase(),
+  licenseeRepository,
+  contactRepository,
+  messageRepository,
+  createChatbotPlugin,
+  createMessengerPlugin,
 } = {}) {
   const licensees = await licenseeRepository.find({ useChatbot: true, chatbotApiToken: { $ne: null } })
   for (const licensee of licensees) {
@@ -76,6 +68,7 @@ async function resetChatbots({
         if (licensee.messageOnResetChatbot && licensee.messageOnResetChatbot !== '') {
           await sendMessageToMessegner(licensee, contact._id, licensee.messageOnResetChatbot, {
             messageRepository,
+            createMessengerPlugin,
           })
         }
       }

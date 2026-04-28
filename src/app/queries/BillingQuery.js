@@ -1,10 +1,7 @@
 import { MessagesQuery } from './MessagesQuery.js'
-import { LicenseeRepositoryDatabase } from '../repositories/licensee.js'
-import { MessageRepositoryDatabase } from '../repositories/message.js'
 import moment from 'moment-timezone'
 
-async function getLicenseeFirstMessage(licensee) {
-  const messageRepository = new MessageRepositoryDatabase()
+async function getLicenseeFirstMessage(licensee, { messageRepository }) {
   const messagesQuery = new MessagesQuery({ messageRepository })
   messagesQuery.filterByLicensee(licensee._id)
   messagesQuery.filterBySended(true)
@@ -16,8 +13,7 @@ async function getLicenseeFirstMessage(licensee) {
   return records[0]
 }
 
-async function getLicenseeLastMessage(licensee) {
-  const messageRepository = new MessageRepositoryDatabase()
+async function getLicenseeLastMessage(licensee, { messageRepository }) {
   const messagesQuery = new MessagesQuery({ messageRepository })
   messagesQuery.filterByLicensee(licensee._id)
   messagesQuery.filterBySended(true)
@@ -28,7 +24,7 @@ async function getLicenseeLastMessage(licensee) {
   return records[0]
 }
 
-async function getMessagesSummary(licensee, reportDate) {
+async function getMessagesSummary(licensee, reportDate, { messageRepository }) {
   const messagesSummary = [
     {
       month: moment.tz(reportDate, 'UTC').subtract(2, 'months').format('MM'),
@@ -44,18 +40,21 @@ async function getMessagesSummary(licensee, reportDate) {
   const startDateMonth1 = moment.tz(reportDate, 'UTC').subtract(2, 'months').startOf('month')
   const endDateMonth1 = moment.tz(reportDate, 'UTC').subtract(2, 'month').endOf('month')
 
-  messagesSummary[0].count = await getMessagesCountedByMonth(licensee, startDateMonth1, endDateMonth1)
+  messagesSummary[0].count = await getMessagesCountedByMonth(licensee, startDateMonth1, endDateMonth1, {
+    messageRepository,
+  })
 
   const startDateMonth2 = moment.tz(reportDate, 'UTC').subtract(1, 'months').startOf('month')
   const endDateMonth2 = moment.tz(reportDate, 'UTC').subtract(1, 'month').endOf('month')
 
-  messagesSummary[1].count = await getMessagesCountedByMonth(licensee, startDateMonth2, endDateMonth2)
+  messagesSummary[1].count = await getMessagesCountedByMonth(licensee, startDateMonth2, endDateMonth2, {
+    messageRepository,
+  })
 
   return messagesSummary
 }
 
-async function getMessagesCountedByMonth(licensee, startDate, endDate) {
-  const messageRepository = new MessageRepositoryDatabase()
+async function getMessagesCountedByMonth(licensee, startDate, endDate, { messageRepository }) {
   const messagesQuery = new MessagesQuery({ messageRepository })
   messagesQuery.filterByLicensee(licensee._id)
   messagesQuery.filterByCreatedAt(startDate, endDate)
@@ -64,19 +63,26 @@ async function getMessagesCountedByMonth(licensee, startDate, endDate) {
 }
 
 class BillingQuery {
-  constructor(reportDate) {
+  constructor(reportDate, { licenseeRepository, messageRepository } = {}) {
     this.reportDate = reportDate
+    this.licenseeRepository = licenseeRepository
+    this.messageRepository = messageRepository
   }
 
   async all() {
     const result = []
 
-    const licenseeRepository = new LicenseeRepositoryDatabase()
-    const licensees = await licenseeRepository.find()
+    const licensees = await this.licenseeRepository.find()
     for (const licensee of licensees) {
-      const firstMessage = await getLicenseeFirstMessage(licensee, this.reportDate)
-      const lastMessage = await getLicenseeLastMessage(licensee, this.reportDate)
-      const messages = await getMessagesSummary(licensee, this.reportDate)
+      const firstMessage = await getLicenseeFirstMessage(licensee, {
+        messageRepository: this.messageRepository,
+      })
+      const lastMessage = await getLicenseeLastMessage(licensee, {
+        messageRepository: this.messageRepository,
+      })
+      const messages = await getMessagesSummary(licensee, this.reportDate, {
+        messageRepository: this.messageRepository,
+      })
 
       result.push({
         _id: licensee._id,

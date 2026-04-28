@@ -1,6 +1,6 @@
 import User from '@models/User'
 import request from 'supertest'
-import mongoServer from '../../../.jest/utils'
+import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { expressServer } from '../../../.jest/server-express'
 import { licenseeComplete as licenseeCompleteFactory, licensee as licenseeFactory } from '@factories/licensee'
 import { userSuper as userSuperFactory } from '@factories/user'
@@ -13,7 +13,7 @@ describe('licensee controller', () => {
   let token
 
   beforeAll(async () => {
-    await mongoServer.connect()
+    installMemoryRepositories()
 
     await User.create(userSuperFactory.build())
 
@@ -25,8 +25,8 @@ describe('licensee controller', () => {
       })
   })
 
-  afterAll(async () => {
-    await mongoServer.disconnect()
+  afterAll(() => {
+    resetMemoryRepositories()
   })
 
   describe('about auth', () => {

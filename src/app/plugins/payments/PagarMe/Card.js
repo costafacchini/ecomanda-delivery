@@ -1,12 +1,7 @@
 import request from '../../../services/request.js'
-import { IntegrationlogRepositoryDatabase } from '../../../repositories/integrationlog.js'
-import { ContactRepositoryDatabase } from '../../../repositories/contact.js'
 
 class Card {
-  constructor({
-    integrationlogRepository = new IntegrationlogRepositoryDatabase(),
-    contactRepository = new ContactRepositoryDatabase(),
-  } = {}) {
+  constructor({ integrationlogRepository, contactRepository } = {}) {
     this.integrationlogRepository = integrationlogRepository
     this.contactRepository = contactRepository
   }

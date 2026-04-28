@@ -1,7 +1,4 @@
-import { createMessengerPlugin } from '../plugins/messengers/factory.js'
-import { MessageRepositoryDatabase } from '../repositories/message.js'
-
-async function sendMessageToMessenger(data, { messageRepository = new MessageRepositoryDatabase() } = {}) {
+async function sendMessageToMessenger(data, { messageRepository, createMessengerPlugin } = {}) {
   const { messageId, url, token } = data
   const message = await messageRepository.findFirst({ _id: messageId }, ['licensee'])
   const licensee = message.licensee

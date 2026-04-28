@@ -1,6 +1,8 @@
-import { CartRepositoryDatabase } from '../../repositories/cart.js'
-
 class Go2goV2 {
+  constructor({ cartRepository } = {}) {
+    this.cartRepository = cartRepository
+  }
+
   getPaymentType(payment_method) {
     if (!payment_method || payment_method === '') return 'Outros'
 
@@ -14,8 +16,8 @@ class Go2goV2 {
   }
 
   async transformCart(licensee, cartId) {
-    const cartRepository = new CartRepositoryDatabase()
-    const cart = await cartRepository.findFirst({ _id: cartId }, ['contact'])
+    const resolvedCartId = cartId?._id ?? cartId
+    const cart = await this.cartRepository.findFirst({ _id: resolvedCartId }, ['contact'])
 
     const cartTransformed = {
       order: {

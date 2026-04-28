@@ -5,12 +5,16 @@ import { installMemoryRepositories, resetMemoryRepositories } from '@repositorie
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { body as bodyFactory } from '@factories/body'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { createRuntimeDependencies } from '../runtime/dependencies.js'
+
+let dependencies
 
 describe('transformChatbotTransferBody', () => {
   let licensee
 
   beforeEach(async () => {
     installMemoryRepositories()
+    dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
 
     const licenseeRepository = new LicenseeRepositoryDatabase()
@@ -43,7 +47,7 @@ describe('transformChatbotTransferBody', () => {
       bodyId: body._id,
     }
 
-    const actions = await transformChatbotTransferBody(data)
+    const actions = await transformChatbotTransferBody(data, dependencies)
 
     expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
@@ -81,7 +85,7 @@ describe('transformChatbotTransferBody', () => {
       bodyId: body._id,
     }
 
-    const actions = await transformChatbotTransferBody(data)
+    const actions = await transformChatbotTransferBody(data, dependencies)
 
     expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 

@@ -1,5 +1,6 @@
 import Repository, { RepositoryMemory } from './repository.js'
 import Product from '../models/Product.js'
+import { requireDependency } from '../helpers/RequireDependency.js'
 
 class ProductRepositoryDatabase extends Repository {
   model() {
@@ -9,14 +10,12 @@ class ProductRepositoryDatabase extends Repository {
 
 class ProductRepositoryMemory extends RepositoryMemory {}
 
-async function createProduct(fields) {
-  const productRepository = new ProductRepositoryDatabase()
-  return await productRepository.create(fields)
+async function createProduct(fields, { productRepository } = {}) {
+  return await requireDependency(productRepository, 'productRepository', 'createProduct').create(fields)
 }
 
-async function getProductBy(filter) {
-  const productRepository = new ProductRepositoryDatabase()
-  return await productRepository.findFirst(filter)
+async function getProductBy(filter, { productRepository } = {}) {
+  return await requireDependency(productRepository, 'productRepository', 'getProductBy').findFirst(filter)
 }
 
 export { ProductRepositoryDatabase, ProductRepositoryMemory, createProduct, getProductBy }

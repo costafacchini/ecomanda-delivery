@@ -64,34 +64,55 @@ function isOperatorObject(value) {
   return isObject(value) && Object.keys(value).some((key) => key.startsWith('$'))
 }
 
+function normalizeExpectedValue(actual, expected) {
+  if (typeof actual === 'boolean' && typeof expected === 'string') {
+    const normalized = expected.toLowerCase()
+
+    if (normalized === 'true') {
+      return true
+    }
+
+    if (normalized === 'false') {
+      return false
+    }
+  }
+
+  return expected
+}
+
 function matchOperator(actual, operator, expected) {
   const comparableActual = comparableValue(actual)
+  const normalizedExpected = normalizeExpectedValue(actual, expected)
 
   switch (operator) {
     case '$ne':
-      if (expected === null) {
+      if (normalizedExpected === null) {
         return actual !== null && actual !== undefined
       }
 
-      return comparableActual !== comparableValue(expected)
+      return comparableActual !== comparableValue(normalizedExpected)
     case '$gt':
-      return comparableActual > comparableValue(expected)
+      return comparableActual > comparableValue(normalizedExpected)
     case '$gte':
-      return comparableActual >= comparableValue(expected)
+      return comparableActual >= comparableValue(normalizedExpected)
     case '$lt':
-      return comparableActual < comparableValue(expected)
+      return comparableActual < comparableValue(normalizedExpected)
     case '$lte':
-      return comparableActual <= comparableValue(expected)
+      return comparableActual <= comparableValue(normalizedExpected)
     case '$in':
-      return (expected ?? []).some((item) => comparableActual === comparableValue(item))
+      return (normalizedExpected ?? []).some((item) => comparableActual === comparableValue(item))
     case '$nin':
-      return !(expected ?? []).some((item) => comparableActual === comparableValue(item))
+      return !(normalizedExpected ?? []).some((item) => comparableActual === comparableValue(item))
     default:
       return false
   }
 }
 
 function matchValue(actual, expected) {
+  if (expected instanceof RegExp) {
+    return expected.test(`${actual ?? ''}`)
+  }
+
   if (isOperatorObject(expected)) {
     return Object.entries(expected).every(([operator, value]) => matchOperator(actual, operator, value))
   }
@@ -100,7 +121,8 @@ function matchValue(actual, expected) {
     return Object.entries(expected).every(([key, value]) => matchValue(actual?.[key], value))
   }
 
-  return comparableValue(actual) === comparableValue(expected)
+  const normalizedExpected = normalizeExpectedValue(actual, expected)
+  return comparableValue(actual) === comparableValue(normalizedExpected)
 }
 
 function matchesFilter(record, params = {}) {
@@ -167,6 +189,8 @@ class RepositoryMemory extends Repository {
   constructor(items = []) {
     super()
     this.items = items
+    this.modelClass = null
+    this.relationLoaders = {}
   }
 
   hydrate(record) {
@@ -184,12 +208,12 @@ class RepositoryMemory extends Repository {
     return record
   }
 
-  async findFirst(params = {}, _relations = []) {
-    return (await this.find(params))[0] ?? null
+  async findFirst(params = {}, relations = []) {
+    return (await this.find(params, relations))[0] ?? null
   }
 
   async create(fields = {}) {
-    const record = buildMemoryRecord(fields)
+    const record = this.prepareRecord(fields)
     this.items.push(record)
 
     return await Promise.resolve(this.hydrate(record))
@@ -199,7 +223,8 @@ class RepositoryMemory extends Repository {
     const record = this.items.find((item) => matchValue(item?._id, id))
 
     if (record) {
-      Object.assign(record, fields ?? {}, { updatedAt: new Date() })
+      const nextRecord = this.prepareRecord({ ...record, ...(fields ?? {}) }, { existingRecord: record })
+      Object.assign(record, nextRecord)
     }
 
     return await Promise.resolve({ acknowledged: true })
@@ -208,15 +233,21 @@ class RepositoryMemory extends Repository {
   async updateMany(params = {}, fields = {}) {
     this.items
       .filter((item) => matchesFilter(item, params ?? {}))
-      .forEach((item) => Object.assign(item, fields ?? {}, { updatedAt: new Date() }))
+      .forEach((item) => {
+        const nextRecord = this.prepareRecord({ ...item, ...(fields ?? {}) }, { existingRecord: item })
+        Object.assign(item, nextRecord)
+      })
 
     return await Promise.resolve({ acknowledged: true })
   }
 
-  async find(params = {}) {
-    return await Promise.resolve(
-      this.items.filter((item) => matchesFilter(item, params ?? {})).map((item) => this.hydrate(item)),
-    )
+  async find(params = {}, relations = []) {
+    this.assertValidParams(params)
+
+    const records = this.items.filter((item) => matchesFilter(item, params ?? {}))
+    const populatedRecords = await this.populateRecords(records, relations)
+
+    return await Promise.resolve(populatedRecords.map((item) => this.hydrate(item)))
   }
 
   async delete(params = {}) {
@@ -230,20 +261,159 @@ class RepositoryMemory extends Repository {
   }
 
   async save(document) {
-    document.updatedAt = new Date()
-
-    const index = this.items.findIndex((item) => matchValue(item?._id, document._id))
+    const existingRecord = this.items.find((item) => matchValue(item?._id, document?._id))
+    const storedRecord = this.prepareRecord(document, { existingRecord })
+    const index = this.items.findIndex((item) => matchValue(item?._id, storedRecord._id))
 
     if (index >= 0) {
-      this.items[index] = document
+      this.items[index] = storedRecord
     } else {
-      if (!document._id) {
-        document._id = new mongoose.Types.ObjectId()
-      }
-      this.items.push(document)
+      this.items.push(storedRecord)
     }
 
-    return await Promise.resolve(this.hydrate(document))
+    return await Promise.resolve(this.hydrate(storedRecord))
+  }
+
+  prepareRecord(fields = {}, { existingRecord = null } = {}) {
+    if (!this.modelClass) {
+      if (existingRecord) {
+        return {
+          ...existingRecord,
+          ...(fields ?? {}),
+          createdAt: existingRecord.createdAt,
+          updatedAt: new Date(),
+        }
+      }
+
+      return buildMemoryRecord(fields)
+    }
+
+    const payload = this.serializeInput(fields)
+    const now = new Date()
+    const document = new this.modelClass({
+      ...(payload ?? {}),
+      _id: payload?._id ?? existingRecord?._id ?? new mongoose.Types.ObjectId(),
+      createdAt: payload?.createdAt ?? existingRecord?.createdAt ?? now,
+      updatedAt: now,
+    })
+    const validationError = document.validateSync()
+
+    if (validationError) {
+      throw validationError
+    }
+
+    const record = this.serializeInput(document)
+    record.createdAt = payload?.createdAt ?? existingRecord?.createdAt ?? record.createdAt ?? now
+    record.updatedAt = now
+
+    return record
+  }
+
+  serializeInput(value) {
+    if (value?.toObject) {
+      return value.toObject({ depopulate: true, versionKey: false, virtuals: false })
+    }
+
+    return { ...(value ?? {}) }
+  }
+
+  async populateRecords(records = [], relations = []) {
+    if (!relations || relations.length === 0) {
+      return records
+    }
+
+    const populatedRecords = []
+
+    for (const record of records) {
+      const clone = this.serializeInput(record)
+
+      for (const relation of relations) {
+        await this.populateRelation(clone, relation)
+      }
+
+      populatedRecords.push(clone)
+    }
+
+    return populatedRecords
+  }
+
+  async populateRelation(record, relation) {
+    const relationLoader = this.relationLoaders?.[relation]
+
+    if (!relationLoader) {
+      return
+    }
+
+    const segments = relation.split('.')
+    await this.populateRelationPath(record, segments, relationLoader)
+  }
+
+  async populateRelationPath(target, segments, relationLoader) {
+    const [segment, ...rest] = segments
+
+    if (!target || !(segment in target)) {
+      return
+    }
+
+    if (rest.length === 0) {
+      if (Array.isArray(target[segment])) {
+        target[segment] = await Promise.all(target[segment].map((value) => relationLoader(value)))
+      } else {
+        target[segment] = await relationLoader(target[segment])
+      }
+
+      return
+    }
+
+    if (Array.isArray(target[segment])) {
+      await Promise.all(target[segment].map((item) => this.populateRelationPath(item, rest, relationLoader)))
+      return
+    }
+
+    await this.populateRelationPath(target[segment], rest, relationLoader)
+  }
+
+  assertValidParams(params = {}) {
+    if (!this.modelClass || !params || typeof params !== 'object' || Array.isArray(params)) {
+      return
+    }
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (key === '$or' || key === '$and') {
+        ;(value ?? []).forEach((filter) => this.assertValidParams(filter))
+        return
+      }
+
+      const schemaPath = this.modelClass.schema?.path(key)
+
+      if (!schemaPath || schemaPath.instance !== 'ObjectId') {
+        return
+      }
+
+      this.assertValidObjectIdValue(key, value)
+    })
+  }
+
+  assertValidObjectIdValue(path, value) {
+    if (value == null || value instanceof RegExp) {
+      return
+    }
+
+    if (Array.isArray(value)) {
+      value.forEach((item) => this.assertValidObjectIdValue(path, item))
+      return
+    }
+
+    if (isOperatorObject(value)) {
+      Object.values(value).forEach((item) => this.assertValidObjectIdValue(path, item))
+      return
+    }
+
+    const comparable = comparableValue(value)
+
+    if (typeof comparable === 'string' && !mongoose.isValidObjectId(comparable)) {
+      throw new mongoose.Error.CastError('ObjectId', comparable, path)
+    }
   }
 }
 
