@@ -3,7 +3,6 @@ import Repository, { RepositoryMemory } from './repository.js'
 import Message from '../models/Message.js'
 import Trigger from '../models/Trigger.js'
 import { replace } from '../helpers/Emoji.js'
-import { TriggerRepositoryMemory } from './trigger.js'
 import { requireDependency } from '../helpers/RequireDependency.js'
 
 class MessageRepositoryDatabase extends Repository {
@@ -104,7 +103,7 @@ class MessageRepositoryDatabase extends Repository {
 }
 
 class MessageRepositoryMemory extends RepositoryMemory {
-  constructor({ items = [], triggerRepository = new TriggerRepositoryMemory(), parseText: parseTextDependency } = {}) {
+  constructor({ items = [], triggerRepository, parseText: parseTextDependency } = {}) {
     super(items)
     this.triggerRepository = triggerRepository
     this.parseTextDependency = parseTextDependency
@@ -115,13 +114,11 @@ class MessageRepositoryMemory extends RepositoryMemory {
   }
 
   async createInteractiveMessages(fields) {
+    const triggerRepository = requireDependency(this.triggerRepository, 'triggerRepository', 'MessageRepositoryMemory')
     const messages = []
 
     const text = replace(fields.text)
-    const triggers = await this.triggerRepository.find(
-      { expression: text, licensee: fields.licensee },
-      { order: 'asc' },
-    )
+    const triggers = await triggerRepository.find({ expression: text, licensee: fields.licensee }, { order: 'asc' })
 
     if (triggers.length > 0) {
       for (const trigger of triggers) {

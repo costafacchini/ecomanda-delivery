@@ -33,6 +33,10 @@ import { Recipient } from '../plugins/payments/PagarMe/Recipient.js'
 import { FacebookCatalogImporter } from '../plugins/importers/facebook_catalog/index.js'
 import { TemplatesImporter } from '../plugins/importers/template/index.js'
 
+// Builds the full runtime dependency graph from caller-supplied repositories.
+// All repository arguments are required at call time; undefined repos will cause runtime errors
+// when the corresponding factory functions are first invoked. Use createRuntimeDependencies()
+// for production wiring — it supplies concrete Database instances for every repo.
 function buildRuntimeDependencies({
   backgroundjobRepository,
   bodyRepository,

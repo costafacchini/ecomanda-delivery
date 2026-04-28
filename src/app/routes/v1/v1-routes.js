@@ -18,6 +18,8 @@ import { createRuntimeDependencies } from '../../runtime/dependencies.js'
 
 const router = express.Router()
 
+// Composition root for v1 routes. Separate instance from resources-routes intentionally;
+// each route module owns its own subset of dependencies.
 const {
   bodyRepository,
   contactRepository,

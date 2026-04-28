@@ -25,7 +25,7 @@ import { TemplateRepositoryDatabase, TemplateRepositoryMemory } from './template
 import { TrafficlightRepositoryMemory } from './trafficlight.js'
 import { TriggerRepositoryDatabase, TriggerRepositoryMemory } from './trigger.js'
 import { UserRepositoryDatabase, UserRepositoryMemory } from './user.js'
-import { matchesFilter, sortRecords, comparableValue } from './repository.js'
+import { RepositoryMemory, matchesFilter, sortRecords, comparableValue } from './repository.js'
 import { parseText as parseTextHelper } from '../helpers/ParseTriggerText.js'
 
 let activeRestore = null
@@ -329,24 +329,20 @@ function bindModelToRepository(model, repository, restores) {
 }
 
 function bindRepositoryPrototype(prototype, repository, restores) {
-  const methods = [
-    'findFirst',
-    'create',
-    'update',
-    'updateMany',
-    'find',
-    'delete',
-    'save',
-    'contactWithWhatsappWindowClosed',
-    'getContactByNumber',
-    'createInteractiveMessages',
-    'createTextMessageInsteadInteractive',
-    'createMessageToWarnAboutWindowOfWhatsassHasExpired',
-    'createMessageToWarnAboutWindowOfWhatsassIsEnding',
-  ]
+  // Stable base CRUD API — explicitly listed to avoid patching Repository internals like model().
+  const baseMethods = ['findFirst', 'create', 'update', 'updateMany', 'find', 'delete', 'save']
 
-  methods.forEach((method) => {
-    if (typeof repository[method] === 'function') {
+  // Custom business methods defined directly on the concrete Memory subclass are discovered
+  // dynamically so new methods are auto-patched without requiring updates here.
+  // RepositoryMemory internals (hydrate, prepareRecord, populateRecords, etc.) are excluded
+  // to prevent them from leaking onto Database prototypes.
+  const repositoryMemoryOwnMethods = new Set(Object.getOwnPropertyNames(RepositoryMemory.prototype))
+  const customMethods = Object.getOwnPropertyNames(Object.getPrototypeOf(repository)).filter(
+    (name) => name !== 'constructor' && !repositoryMemoryOwnMethods.has(name),
+  )
+
+  ;[...baseMethods, ...customMethods].forEach((method) => {
+    if (typeof repository[method] === 'function' && method in prototype) {
       patchMember(prototype, method, repository[method].bind(repository), restores)
     }
   })

@@ -17,6 +17,8 @@ import { createRuntimeDependencies } from '../runtime/dependencies.js'
 const router = express.Router()
 const SECRET = process.env.SECRET
 
+// Composition root for resource routes. Each route module creates its own dependency set;
+// repos are stateless so separate instances across route files are safe.
 const {
   userRepository,
   licenseeRepository,
