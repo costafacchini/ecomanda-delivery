@@ -19,6 +19,8 @@ import { SendLicenseeToPagarMe } from '../usecases/licensees/SendLicenseeToPagar
 import { SignPedidos10OrderWebhook } from '../usecases/licensees/SignPedidos10OrderWebhook.js'
 import { CreateContact } from '../usecases/contacts/CreateContact.js'
 import { UpdateContact } from '../usecases/contacts/UpdateContact.js'
+import { CreateUser } from '../usecases/users/CreateUser.js'
+import { UpdateUser } from '../usecases/users/UpdateUser.js'
 import { createRuntimeDependencies } from '../runtime/dependencies.js'
 
 const router = express.Router()
@@ -40,7 +42,11 @@ const {
   createTemplatesImporter,
 } = createRuntimeDependencies()
 
-const usersController = new UsersController({ userRepository })
+const usersController = new UsersController({
+  userRepository,
+  createUser: new CreateUser({ userRepository }),
+  updateUser: new UpdateUser({ userRepository }),
+})
 const licenseesController = new LicenseesController({
   licenseeRepository,
   createLicenseesQuery: () => new LicenseesQuery({ licenseeRepository }),
