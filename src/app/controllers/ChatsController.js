@@ -1,7 +1,6 @@
 class ChatsController {
-  constructor({ bodyRepository, queueServer, publishMessage } = {}) {
-    this.bodyRepository = bodyRepository
-    this.queueServer = queueServer
+  constructor({ ingestChatMessage, publishMessage } = {}) {
+    this.ingestChatMessage = ingestChatMessage
     this.publishMessage = publishMessage
 
     this.message = this.message.bind(this)
@@ -9,14 +8,7 @@ class ChatsController {
   }
 
   async message(req, res) {
-    const { body } = req
-    // Remove crmData because of Rocketchat send a higher history inside the body
-    delete body['crmData']
-
-    console.info(`Mensagem chegando do plugin de chat: ${JSON.stringify(body)}`)
-    const bodySaved = await this.bodyRepository.create({ content: body, licensee: req.licensee._id, kind: 'normal' })
-
-    await this.queueServer.addJob('chat-message', { bodyId: bodySaved._id, licenseeId: req.licensee._id })
+    await this.ingestChatMessage.execute({ body: req.body, licenseeId: req.licensee._id })
 
     res.status(200).send({ body: 'Solicitação de mensagem para a plataforma de chat agendado' })
   }

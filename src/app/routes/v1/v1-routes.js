@@ -12,6 +12,8 @@ import { OrdersController } from '../../controllers/OrdersController.js'
 import { ReceivePedidos10Order } from '../../usecases/orders/ReceivePedidos10Order.js'
 import { ChangePedidos10OrderStatus } from '../../usecases/orders/ChangePedidos10OrderStatus.js'
 import { ScheduleBackgroundjob } from '../../usecases/backgroundjobs/ScheduleBackgroundjob.js'
+import { IngestChatMessage } from '../../usecases/webhooks/IngestChatMessage.js'
+import { IngestMessengerMessage } from '../../usecases/webhooks/IngestMessengerMessage.js'
 import { queueServer } from '../../../config/queue.js'
 import { publishMessage } from '../../../config/rabbitmq.js'
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
@@ -34,9 +36,15 @@ const {
   createCartPlugin,
 } = createRuntimeDependencies()
 
-const chatsController = new ChatsController({ bodyRepository, queueServer, publishMessage })
+const ingestChatMessage = new IngestChatMessage({ chatRepository: bodyRepository, jobQueue: queueServer })
+const ingestMessengerMessage = new IngestMessengerMessage({
+  messengerRepository: bodyRepository,
+  jobQueue: queueServer,
+})
+
+const chatsController = new ChatsController({ ingestChatMessage, publishMessage })
 const chatbotsController = new ChatbotsController({ bodyRepository, queueServer, publishMessage })
-const messengersController = new MessengersController({ bodyRepository, queueServer })
+const messengersController = new MessengersController({ ingestMessengerMessage })
 const backupsController = new BackupsController({ publishMessage })
 const adressesController = new AdressesController({
   contactRepository,
