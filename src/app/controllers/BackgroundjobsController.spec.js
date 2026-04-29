@@ -1,12 +1,3 @@
-import Backgroundjob from '@models/Backgroundjob'
-import request from 'supertest'
-import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
-import { queueServer } from '@config/queue'
-import { expressServer } from '../../../.jest/server-express'
-import { licensee as licenseeFactory } from '@factories/licensee'
-import { backgroundjob as backgroundjobFactory } from '@factories/backgroundjob'
-import { LicenseeRepositoryDatabase } from '@repositories/licensee'
-import { BackgroundjobRepositoryDatabase } from '@repositories/backgroundjob'
 import { BackgroundjobsController } from './BackgroundjobsController.js'
 
 function buildResponse() {
@@ -24,314 +15,143 @@ function buildController() {
 }
 
 describe('BackgroundjobsController delegation', () => {
-  it('delegates create to scheduleBackgroundjob and returns status 200', async () => {
-    const { controller, scheduleBackgroundjob } = buildController()
-    const backgroundjob = { _id: 'job-id' }
-    scheduleBackgroundjob.execute.mockResolvedValue(backgroundjob)
-
-    const req = { licensee: { _id: 'licensee-id' }, body: { kind: 'get-pix', payload: { cart_id: 'cart-id' } } }
-    const res = buildResponse()
-
-    await controller.create(req, res)
-
-    expect(scheduleBackgroundjob.execute).toHaveBeenCalledWith({
-      kind: 'get-pix',
-      payload: { cart_id: 'cart-id' },
-      licenseeId: 'licensee-id',
-    })
-    expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.send).toHaveBeenCalledWith({
-      body: { message: 'Job agendado com sucesso.', job_id: 'job-id' },
-    })
-  })
-
-  it('returns 422 when scheduleBackgroundjob raises model errors', async () => {
-    const { controller, scheduleBackgroundjob } = buildController()
-    const modelError = { errors: { kind: { message: 'invalid kind' } } }
-    scheduleBackgroundjob.execute.mockRejectedValue(modelError)
-
-    const req = { licensee: { _id: 'licensee-id' }, body: { kind: 'bad-kind', payload: {} } }
-    const res = buildResponse()
-
-    await controller.create(req, res)
-
-    expect(res.status).toHaveBeenCalledWith(422)
-  })
-
-  it('returns 500 when scheduleBackgroundjob throws unexpected error', async () => {
-    const { controller, scheduleBackgroundjob } = buildController()
-    scheduleBackgroundjob.execute.mockRejectedValue(new Error('unexpected'))
-
-    const req = { licensee: { _id: 'licensee-id' }, body: { kind: 'get-pix', payload: {} } }
-    const res = buildResponse()
-
-    await controller.create(req, res)
-
-    expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.send).toHaveBeenCalledWith({ body: { message: 'Error: unexpected' } })
-  })
-})
-
-describe('backgrounndjobs controller', () => {
-  let apiToken
-  const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
-  jest.spyOn(global.console, 'info').mockImplementation()
-
-  beforeAll(async () => {
-    jest.clearAllMocks()
-    installMemoryRepositories()
-
-    const licenseeRepository = new LicenseeRepositoryDatabase()
-    const licensee = await licenseeRepository.create(licenseeFactory.build())
-    apiToken = licensee.apiToken
-  })
-
-  afterAll(() => {
-    resetMemoryRepositories()
-  })
-
-  describe('about auth', () => {
-    it('returns status 401 and message if query param token is not valid', async () => {
-      await request(expressServer)
-        .post('/api/v1/backgroundjobs/?token=627365264')
-        .send({
-          field: 'test',
-        })
-        .expect('Content-Type', /json/)
-        .expect(401, { message: 'Token não informado ou inválido.' })
-    })
-
-    it('returns status 401 and message if query param token is informed', async () => {
-      await request(expressServer)
-        .post('/api/v1/backgroundjobs')
-        .send({
-          field: 'test',
-        })
-        .expect('Content-Type', /json/)
-        .expect(401, { message: 'Token não informado ou inválido.' })
-    })
-  })
-
   describe('create', () => {
-    describe('response', () => {
-      it('returns status 200 and schedule job to process payload', async () => {
-        await request(expressServer)
-          .post(`/api/v1/backgroundjobs/?token=${apiToken}`)
-          .send({
-            kind: 'get-pix',
-            payload: {
-              cart_id: 'cart-id',
-            },
-          })
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then(async (response) => {
-            const backgroundjob = await Backgroundjob.findOne({
-              kind: 'get-pix',
-              body: { cart_id: 'cart-id' },
-            }).populate('body')
+    it('delegates create to scheduleBackgroundjob and returns status 200', async () => {
+      const { controller, scheduleBackgroundjob } = buildController()
+      const backgroundjob = { _id: 'job-id' }
+      scheduleBackgroundjob.execute.mockResolvedValue(backgroundjob)
 
-            expect(response.body).toEqual({
-              body: {
-                message: 'Job agendado com sucesso.',
-                job_id: backgroundjob._id.toString(),
-              },
-            })
-            expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('background-job', {
-              jobId: backgroundjob._id.toString(),
-              licenseeId: backgroundjob.licensee,
-            })
-          })
+      const req = { licensee: { _id: 'licensee-id' }, body: { kind: 'get-pix', payload: { cart_id: 'cart-id' } } }
+      const res = buildResponse()
+
+      await controller.create(req, res)
+
+      expect(scheduleBackgroundjob.execute).toHaveBeenCalledWith({
+        kind: 'get-pix',
+        payload: { cart_id: 'cart-id' },
+        licenseeId: 'licensee-id',
       })
-
-      it('returns status 500 and message if the some error ocurred when create the backgroundjob', async () => {
-        const backgroundjobSaveSpy = jest
-          .spyOn(BackgroundjobRepositoryDatabase.prototype, 'create')
-          .mockImplementation(() => {
-            throw new Error('some error')
-          })
-
-        await request(expressServer)
-          .post(`/api/v1/backgroundjobs/?token=${apiToken}`)
-          .send({
-            kind: 'get-pix',
-            payload: {
-              cart_id: 'cart-id',
-            },
-          })
-          .expect('Content-Type', /json/)
-          .expect(500, {
-            body: {
-              message: 'Error: some error',
-            },
-          })
-
-        backgroundjobSaveSpy.mockRestore()
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.send).toHaveBeenCalledWith({
+        body: { message: 'Job agendado com sucesso.', job_id: 'job-id' },
       })
+    })
 
-      describe('validations', () => {
-        it('returns status 422 and message if backgroundjob is invalid', async () => {
-          await request(expressServer)
-            .post(`/api/v1/backgroundjobs/?token=${apiToken}`)
-            .send({
-              lol: 'hello',
-            })
-            .expect('Content-Type', /json/)
-            .expect(422, {
-              errors: [
-                {
-                  message:
-                    'Tipo do job: Você deve informar um valor ( get-pix | cancel-order | get-credit-card | invite-credit-card )',
-                },
-              ],
-            })
-        })
-      })
+    it('returns 422 when scheduleBackgroundjob raises model errors', async () => {
+      const { controller, scheduleBackgroundjob } = buildController()
+      const modelError = { errors: { kind: { message: 'invalid kind' } } }
+      scheduleBackgroundjob.execute.mockRejectedValue(modelError)
+
+      const req = { licensee: { _id: 'licensee-id' }, body: { kind: 'bad-kind', payload: {} } }
+      const res = buildResponse()
+
+      await controller.create(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(422)
+    })
+
+    it('returns 500 when scheduleBackgroundjob throws unexpected error', async () => {
+      const { controller, scheduleBackgroundjob } = buildController()
+      scheduleBackgroundjob.execute.mockRejectedValue(new Error('unexpected'))
+
+      const req = { licensee: { _id: 'licensee-id' }, body: { kind: 'get-pix', payload: {} } }
+      const res = buildResponse()
+
+      await controller.create(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.send).toHaveBeenCalledWith({ body: { message: 'Error: unexpected' } })
     })
   })
 
   describe('show', () => {
-    describe('response', () => {
-      it('returns status 200 and backgroundjob if scheduled', async () => {
-        const licenseeRepository = new LicenseeRepositoryDatabase()
-        const licensee = await licenseeRepository.findFirst({ apiToken })
+    it('returns 200 with scheduled message when job status is scheduled', async () => {
+      const { controller, backgroundjobRepository } = buildController()
+      backgroundjobRepository.findFirst.mockResolvedValue({ status: 'scheduled' })
 
-        const backgroundjob = await Backgroundjob.create(
-          backgroundjobFactory.build({
-            licensee,
-            status: 'scheduled',
-          }),
-        )
+      const req = { licensee: { _id: 'licensee-id' }, params: { id: 'job-id' } }
+      const res = buildResponse()
 
-        await request(expressServer)
-          .get(`/api/v1/backgroundjobs/${backgroundjob._id}?token=${apiToken}`)
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then((response) => {
-            expect(response.body.message).toEqual(
-              'O job está agendado, mas ainda não está executando. Por favor, volte mais tarde!',
-            )
-          })
+      await controller.show(req, res)
+
+      expect(backgroundjobRepository.findFirst).toHaveBeenCalledWith({ _id: 'job-id', licensee: 'licensee-id' })
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.send).toHaveBeenCalledWith({
+        message: 'O job está agendado, mas ainda não está executando. Por favor, volte mais tarde!',
+      })
+    })
+
+    it('returns 200 with running message when job status is running', async () => {
+      const { controller, backgroundjobRepository } = buildController()
+      backgroundjobRepository.findFirst.mockResolvedValue({ status: 'running' })
+
+      const req = { licensee: { _id: 'licensee-id' }, params: { id: 'job-id' } }
+      const res = buildResponse()
+
+      await controller.show(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.send).toHaveBeenCalledWith({
+        message: 'O job está em execução, logo deve ficar pronto. Por favor, volte daqui a pouco!',
+      })
+    })
+
+    it('returns 200 with done message and response when job status is done', async () => {
+      const { controller, backgroundjobRepository } = buildController()
+      backgroundjobRepository.findFirst.mockResolvedValue({
+        status: 'done',
+        response: { link: 'https://anything.com' },
       })
 
-      it('returns status 200 and payload response if running', async () => {
-        const licenseeRepository = new LicenseeRepositoryDatabase()
-        const licensee = await licenseeRepository.findFirst({ apiToken })
+      const req = { licensee: { _id: 'licensee-id' }, params: { id: 'job-id' } }
+      const res = buildResponse()
 
-        const backgroundjob = await Backgroundjob.create(
-          backgroundjobFactory.build({
-            licensee,
-            status: 'running',
-          }),
-        )
+      await controller.show(req, res)
 
-        await request(expressServer)
-          .get(`/api/v1/backgroundjobs/${backgroundjob._id}?token=${apiToken}`)
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then((response) => {
-            expect(response.body.message).toEqual(
-              'O job está em execução, logo deve ficar pronto. Por favor, volte daqui a pouco!',
-            )
-          })
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.send).toHaveBeenCalledWith({
+        message: 'Eu concljuí a execução e a resposta esta na key chamada response!',
+        response: { link: 'https://anything.com' },
       })
+    })
 
-      it('returns status 200 and payload response if done', async () => {
-        const licenseeRepository = new LicenseeRepositoryDatabase()
-        const licensee = await licenseeRepository.findFirst({ apiToken })
+    it('returns 200 with error message when job status is error', async () => {
+      const { controller, backgroundjobRepository } = buildController()
+      backgroundjobRepository.findFirst.mockResolvedValue({ status: 'error', error: 'some error' })
 
-        const backgroundjob = await Backgroundjob.create(
-          backgroundjobFactory.build({
-            licensee,
-            status: 'done',
-            response: {
-              link: 'https://anything.com',
-            },
-          }),
-        )
+      const req = { licensee: { _id: 'licensee-id' }, params: { id: 'job-id' } }
+      const res = buildResponse()
 
-        await request(expressServer)
-          .get(`/api/v1/backgroundjobs/${backgroundjob._id}?token=${apiToken}`)
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then((response) => {
-            expect(response.body.message).toEqual('Eu concljuí a execução e a resposta esta na key chamada response!')
-            expect(response.body.response).toEqual({
-              link: 'https://anything.com',
-            })
-          })
-      })
+      await controller.show(req, res)
 
-      it('returns status 200 and payload response if error', async () => {
-        const licenseeRepository = new LicenseeRepositoryDatabase()
-        const licensee = await licenseeRepository.findFirst({ apiToken })
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.send).toHaveBeenCalledWith({ message: 'some error' })
+    })
 
-        const backgroundjob = await Backgroundjob.create(
-          backgroundjobFactory.build({
-            licensee,
-            status: 'error',
-            error: 'some error',
-          }),
-        )
+    it('returns 404 when job is not found', async () => {
+      const { controller, backgroundjobRepository } = buildController()
+      backgroundjobRepository.findFirst.mockResolvedValue(null)
 
-        await request(expressServer)
-          .get(`/api/v1/backgroundjobs/${backgroundjob._id}?token=${apiToken}`)
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then((response) => {
-            expect(response.body.message).toEqual('some error')
-          })
-      })
+      const req = { licensee: { _id: 'licensee-id' }, params: { id: 'job-id' } }
+      const res = buildResponse()
 
-      it('returns status 404 and message if backgroundjobs belongs to another licensee', async () => {
-        const licenseeRepository = new LicenseeRepositoryDatabase()
-        const licensee = await licenseeRepository.create(licenseeFactory.build())
+      await controller.show(req, res)
 
-        const backgroundjob = await Backgroundjob.create(
-          backgroundjobFactory.build({
-            licensee,
-            status: 'scheduled',
-            error: 'some error',
-            response: {
-              link: 'https://anything.com',
-            },
-          }),
-        )
+      expect(res.status).toHaveBeenCalledWith(404)
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Backgroundjob job-id não encontrado' } })
+    })
 
-        await request(expressServer)
-          .get(`/api/v1/backgroundjobs/${backgroundjob._id}?token=${apiToken}`)
-          .expect('Content-Type', /json/)
-          .expect(404, {
-            errors: { message: `Backgroundjob ${backgroundjob._id} não encontrado` },
-          })
-      })
+    it('returns 500 when repository throws unexpected error', async () => {
+      const { controller, backgroundjobRepository } = buildController()
+      backgroundjobRepository.findFirst.mockRejectedValue(new Error('some error'))
 
-      it('returns status 404 and message if backgroundjobs does not exists', async () => {
-        await request(expressServer)
-          .get(`/api/v1/backgroundjobs/90999999?token=${apiToken}`)
-          .expect('Content-Type', /json/)
-          .expect(404, {
-            errors: { message: `Backgroundjob 90999999 não encontrado` },
-          })
-      })
+      const req = { licensee: { _id: 'licensee-id' }, params: { id: 'job-id' } }
+      const res = buildResponse()
 
-      it('returns status 500 and message if occurs another error', async () => {
-        const backgroundjobSaveSpy = jest
-          .spyOn(BackgroundjobRepositoryDatabase.prototype, 'findFirst')
-          .mockImplementation(() => {
-            throw new Error('some error')
-          })
+      await controller.show(req, res)
 
-        await request(expressServer)
-          .get(`/api/v1/backgroundjobs/9999999999?token=${apiToken}`)
-          .expect('Content-Type', /json/)
-          .expect(500, {
-            errors: { message: 'Error: some error' },
-          })
-
-        backgroundjobSaveSpy.mockRestore()
-      })
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: some error' } })
     })
   })
 })

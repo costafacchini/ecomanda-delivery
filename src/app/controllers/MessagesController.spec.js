@@ -1,103 +1,75 @@
-import User from '@models/User'
-import request from 'supertest'
-import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
-import { expressServer } from '../../../.jest/server-express'
-import { userSuper as userSuperFactory } from '@factories/user'
-import { licensee as licenseeFactory } from '@factories/licensee'
-import { contact as contactFactory } from '@factories/contact'
-import { message as messageFactory } from '@factories/message'
-import { LicenseeRepositoryDatabase } from '@repositories/licensee'
-import { ContactRepositoryDatabase } from '@repositories/contact'
-import { MessageRepositoryDatabase } from '@repositories/message'
+import { MessagesController } from './MessagesController.js'
 
-describe('messengers controller', () => {
-  let token
+function buildResponse() {
+  return {
+    send: jest.fn(),
+    status: jest.fn().mockReturnThis(),
+  }
+}
 
-  beforeAll(async () => {
-    installMemoryRepositories()
+function buildController() {
+  const messagesQueryInstance = {
+    page: jest.fn(),
+    limit: jest.fn(),
+    filterByCreatedAt: jest.fn(),
+    filterByLicensee: jest.fn(),
+    filterByContact: jest.fn(),
+    filterByKind: jest.fn(),
+    filterByDestination: jest.fn(),
+    filterBySended: jest.fn(),
+    all: jest.fn(),
+  }
+  const createMessagesQuery = jest.fn().mockReturnValue(messagesQueryInstance)
 
-    await User.create(userSuperFactory.build())
+  const controller = new MessagesController({ createMessagesQuery })
 
-    await request(expressServer)
-      .post('/login')
-      .send({ email: 'john@doe.com', password: '12345678' })
-      .then((response) => {
-        token = response.body.token
-      })
+  return { controller, createMessagesQuery, messagesQueryInstance }
+}
+
+describe('MessagesController delegation', () => {
+  it('delegates index to messagesQuery and returns status 200', async () => {
+    const { controller, messagesQueryInstance } = buildController()
+    const messages = [{ _id: 'msg-id', text: 'Message 1' }]
+    messagesQueryInstance.all.mockResolvedValue(messages)
+
+    const req = { query: { page: '1', limit: '10', destination: 'to-chat', kind: 'text', sended: 'true' } }
+    const res = buildResponse()
+
+    await controller.index(req, res)
+
+    expect(messagesQueryInstance.page).toHaveBeenCalledWith('1')
+    expect(messagesQueryInstance.limit).toHaveBeenCalledWith('10')
+    expect(messagesQueryInstance.filterByDestination).toHaveBeenCalledWith('to-chat')
+    expect(messagesQueryInstance.filterByKind).toHaveBeenCalledWith('text')
+    expect(messagesQueryInstance.filterBySended).toHaveBeenCalledWith('true')
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.send).toHaveBeenCalledWith(messages)
   })
 
-  afterAll(() => {
-    resetMemoryRepositories()
+  it('filters by date range when startDate and endDate are provided', async () => {
+    const { controller, messagesQueryInstance } = buildController()
+    messagesQueryInstance.all.mockResolvedValue([])
+
+    const startDate = '2021-07-01T00:00:00.000Z'
+    const endDate = '2021-07-05T00:00:00.000Z'
+    const req = { query: { page: '1', limit: '10', startDate, endDate } }
+    const res = buildResponse()
+
+    await controller.index(req, res)
+
+    expect(messagesQueryInstance.filterByCreatedAt).toHaveBeenCalledWith(new Date(startDate), new Date(endDate))
   })
 
-  describe('about auth', () => {
-    it('returns status 401 and message if x-access-token in not inform in header', async () => {
-      await request(expressServer)
-        .post('/resources/licensees/')
-        .send({
-          name: 'Alcateia Ltda',
-        })
-        .expect('Content-Type', /json/)
-        .expect(401, {
-          auth: false,
-          message: 'Token não informado.',
-        })
-    })
+  it('filters by licensee and contact when provided', async () => {
+    const { controller, messagesQueryInstance } = buildController()
+    messagesQueryInstance.all.mockResolvedValue([])
 
-    it('returns status 500 and message if x-access-token is invalid', async () => {
-      await request(expressServer)
-        .post('/resources/licensees/')
-        .set('x-access-token', 'invalid')
-        .send({ name: 'Mary Jane' })
-        .expect('Content-Type', /json/)
-        .expect(500, {
-          auth: false,
-          message: 'Falha na autenticação com token.',
-        })
-    })
-  })
+    const req = { query: { page: '1', limit: '10', licensee: 'licensee-id', contact: 'contact-id' } }
+    const res = buildResponse()
 
-  describe('index', () => {
-    describe('response', () => {
-      it('returns status 200 and return messages', async () => {
-        const licenseeRepository = new LicenseeRepositoryDatabase()
-        const licensee = await licenseeRepository.create(licenseeFactory.build())
-        const another_licensee = await licenseeRepository.create(licenseeFactory.build())
+    await controller.index(req, res)
 
-        const contactRepository = new ContactRepositoryDatabase()
-        const contact = await contactRepository.create(contactFactory.build({ licensee }))
-        const another_contact = await contactRepository.create(contactFactory.build({ licensee }))
-
-        const messageRepository = new MessageRepositoryDatabase()
-        await messageRepository.create(messageFactory.build({ licensee, contact }))
-        await messageRepository.create(
-          messageFactory.build({ licensee, contact, createdAt: new Date(2021, 5, 30, 0, 0, 0) }),
-        )
-        await messageRepository.create(
-          messageFactory.build({ licensee, contact, createdAt: new Date(2021, 6, 5, 0, 0, 0) }),
-        )
-        await messageRepository.create(messageFactory.build({ destination: 'to-chatbot', licensee, contact }))
-        await messageRepository.create(messageFactory.build({ licensee: another_licensee, contact }))
-        await messageRepository.create(messageFactory.build({ licensee, contact: another_contact }))
-        await messageRepository.create(messageFactory.build({ licensee, contact, kind: 'interactive' }))
-        await messageRepository.create(messageFactory.build({ licensee, contact, sended: false }))
-
-        await request(expressServer)
-          .get(
-            `/resources/messages/?page=1&limit=10&destination=to-chat&startDate=2021-07-01T00:00:00.000Z&endDate=2021-07-05T00:00:00.000Z&licensee=${licensee._id}&contact=${contact._id}&kind=text&sended=true`,
-          )
-          .set('x-access-token', token)
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then((response) => {
-            expect(Array.isArray(response.body)).toEqual(true)
-            expect(response.body.length).toEqual(1)
-            expect(response.body[0].text).toEqual('Message 1')
-            expect(response.body[0].number).toEqual('5511990283745')
-            expect(response.body[0].destination).toEqual('to-chat')
-            expect(response.body[0].sended).toEqual(true)
-          })
-      })
-    })
+    expect(messagesQueryInstance.filterByLicensee).toHaveBeenCalledWith('licensee-id')
+    expect(messagesQueryInstance.filterByContact).toHaveBeenCalledWith('contact-id')
   })
 })

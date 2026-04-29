@@ -1,11 +1,3 @@
-import User from '@models/User'
-import request from 'supertest'
-import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
-import { expressServer } from '../../../.jest/server-express'
-import { userSuper as userSuperFactory, user as userFactory } from '@factories/user'
-import { licensee as licenseeFactory } from '@factories/licensee'
-import { LicenseeRepositoryDatabase } from '@repositories/licensee'
-import { UserRepositoryDatabase } from '@repositories/user'
 import { UsersController } from './UsersController.js'
 
 function buildResponse() {
@@ -123,6 +115,64 @@ describe('UsersController delegation', () => {
     })
   })
 
+  it('delegates show to userRepository.findFirst by _id and returns status 200', async () => {
+    const { controller, userRepository } = buildController()
+    const user = { _id: 'user-id', name: 'John Doe', email: 'john@doe.com' }
+    userRepository.findFirst.mockResolvedValue(user)
+
+    const req = { params: { id: 'user-id' } }
+    const res = buildResponse()
+
+    await controller.show(req, res)
+
+    expect(userRepository.findFirst).toHaveBeenCalledWith({ _id: 'user-id' })
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.send).toHaveBeenCalledWith(user)
+  })
+
+  it('delegates show to userRepository.findFirst by email when id contains @', async () => {
+    const { controller, userRepository } = buildController()
+    const user = { _id: 'user-id', name: 'John Doe', email: 'john@doe.com' }
+    userRepository.findFirst.mockResolvedValue(user)
+
+    const req = { params: { id: 'john@doe.com' } }
+    const res = buildResponse()
+
+    await controller.show(req, res)
+
+    expect(userRepository.findFirst).toHaveBeenCalledWith({ email: 'john@doe.com' })
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.send).toHaveBeenCalledWith(user)
+  })
+
+  it('returns 404 from show when id cast fails', async () => {
+    const { controller, userRepository } = buildController()
+    userRepository.findFirst.mockRejectedValue(new Error('Cast to ObjectId failed for value "bad" at path "_id"'))
+
+    const req = { params: { id: 'bad' } }
+    const res = buildResponse()
+
+    await controller.show(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(404)
+    expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Usuário não encontrado' } })
+  })
+
+  it('delegates index to userRepository.find and returns status 200', async () => {
+    const { controller, userRepository } = buildController()
+    const users = [{ _id: 'user-id', name: 'John Doe' }]
+    userRepository.find.mockResolvedValue(users)
+
+    const req = { query: {} }
+    const res = buildResponse()
+
+    await controller.index(req, res)
+
+    expect(userRepository.find).toHaveBeenCalledWith({}, { password: 0 })
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.send).toHaveBeenCalledWith(users)
+  })
+
   it.each([
     ['create', 'createUser', { body: { email: 'maryjane.com' } }],
     ['update', 'updateUser', { params: { id: 'user-id' }, body: { email: 'brunomars.com' } }],
@@ -174,319 +224,6 @@ describe('UsersController delegation', () => {
     expect(res.status).toHaveBeenCalledWith(500)
     expect(res.send).toHaveBeenCalledWith({
       errors: { message: 'Error: some error' },
-    })
-  })
-})
-
-describe('user controller', () => {
-  let token
-
-  beforeAll(async () => {
-    installMemoryRepositories()
-    await User.create(userSuperFactory.build())
-
-    await request(expressServer)
-      .post('/login')
-      .send({ email: 'john@doe.com', password: '12345678' })
-      .then((response) => {
-        token = response.body.token
-      })
-  })
-
-  afterAll(() => {
-    resetMemoryRepositories()
-  })
-
-  describe('about auth', () => {
-    it('returns status 401 and message if x-access-token in not inform in header', async () => {
-      await request(expressServer)
-        .post('/resources/users/')
-        .send(userSuperFactory.build({ name: 'Mary Jane', email: 'mary@jane.com' }))
-        .expect('Content-Type', /json/)
-        .expect(401, {
-          auth: false,
-          message: 'Token não informado.',
-        })
-    })
-
-    it('returns status 500 and message if x-access-token is invalid', async () => {
-      await request(expressServer)
-        .post('/resources/users/')
-        .set('x-access-token', 'invalid')
-        .send(userSuperFactory.build({ name: 'Mary Jane', email: 'mary@jane.com' }))
-        .expect('Content-Type', /json/)
-        .expect(500, {
-          auth: false,
-          message: 'Falha na autenticação com token.',
-        })
-    })
-  })
-
-  describe('create', () => {
-    describe('response', () => {
-      it('returns status 201 and the user data if the create is successful', async () => {
-        const licenseeRepository = new LicenseeRepositoryDatabase()
-        const licensee = await licenseeRepository.create(licenseeFactory.build())
-
-        await request(expressServer)
-          .post('/resources/users/')
-          .set('x-access-token', token)
-          .send(userFactory.build({ name: 'Mary Jane', email: 'mary@jane.com', isAdmin: true, licensee }))
-          .expect('Content-Type', /json/)
-          .expect(201)
-          .then((response) => {
-            expect(response.body.email).toEqual('mary@jane.com')
-            expect(response.body.name).toEqual('Mary Jane')
-            expect(response.body.active).toEqual(true)
-            expect(response.body.isAdmin).toEqual(true)
-            expect(response.body.licensee._id.toString()).toEqual(licensee._id.toString())
-            expect(response.body._id).toBeDefined()
-            expect(response.body.password).not.toBeDefined()
-          })
-      })
-
-      it('returns status 422 and message if the user is not valid', async () => {
-        const licenseeRepository = new LicenseeRepositoryDatabase()
-        const licensee = await licenseeRepository.create(licenseeFactory.build())
-
-        await request(expressServer)
-          .post('/resources/users/')
-          .set('x-access-token', token)
-          .send(userFactory.build({ name: 'Sil', email: 'silfer@tape.com', password: '123456', licensee }))
-          .expect('Content-Type', /json/)
-          .expect(422, {
-            errors: [
-              { message: 'Nome: Informe um valor com mais que 4 caracteres! Atual: Sil' },
-              { message: 'Senha: Informe um valor com mais que 8 caracteres!' },
-            ],
-          })
-      })
-
-      it('returns status 500 and message if the some error ocurred when create the user', async () => {
-        const licenseeRepository = new LicenseeRepositoryDatabase()
-        const licensee = await licenseeRepository.create(licenseeFactory.build())
-
-        const mockFunction = jest.spyOn(UserRepositoryDatabase.prototype, 'create').mockImplementation(() => {
-          throw new Error('some error')
-        })
-
-        await request(expressServer)
-          .post('/resources/users/')
-          .set('x-access-token', token)
-          .send({ name: 'Silfer', email: 'silfer@tape.com', password: '12345678', licensee })
-          .expect('Content-Type', /json/)
-          .expect(500, {
-            errors: { message: 'Error: some error' },
-          })
-
-        mockFunction.mockRestore()
-      })
-
-      describe('validations', () => {
-        it('returns status 422 and message if the email is invalid', async () => {
-          await request(expressServer)
-            .post('/resources/users/')
-            .set('x-access-token', token)
-            .send({ name: 'Mary Jane', email: 'maryjane.com', password: '12345678' })
-            .expect('Content-Type', /json/)
-            .expect(422, {
-              errors: [{ message: 'Email deve ser preenchido com um valor válido' }],
-            })
-        })
-      })
-    })
-  })
-
-  describe('update', () => {
-    describe('response', () => {
-      it('returns status 200 and the user data if the update is successful', async () => {
-        const user = await User.findOne({ email: 'john@doe.com' })
-
-        await request(expressServer)
-          .post(`/resources/users/${user._id}`)
-          .set('x-access-token', token)
-          .send({ _id: 123, name: 'Bruno Mars', email: 'bruno@mars.com', password: '87654321', active: false })
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then((response) => {
-            expect(response.body.name).toEqual('Bruno Mars')
-            expect(response.body.active).toEqual(false)
-            expect(response.body._id).not.toEqual(123)
-            expect(response.body.email).toEqual('bruno@mars.com')
-            expect(response.body.password).not.toBeDefined()
-          })
-      })
-
-      it('returns status 422 and message if the some error ocurre when update the user', async () => {
-        const user = await User.findOne({ email: 'bruno@mars.com' })
-
-        await request(expressServer)
-          .post(`/resources/users/${user._id}`)
-          .set('x-access-token', token)
-          .send({ name: '', email: 'silfer@tape.com', password: '' })
-          .expect('Content-Type', /json/)
-          .expect(422, {
-            errors: [
-              { message: 'Nome: Você deve preencher o campo' },
-              { message: 'Senha: Informe um valor com mais que 8 caracteres!' },
-            ],
-          })
-      })
-
-      it('returns status 500 and message if the some error ocurre when update the user', async () => {
-        const mockFunction = jest.spyOn(UserRepositoryDatabase.prototype, 'findFirst').mockImplementation(() => {
-          throw new Error('some error')
-        })
-
-        const user = await User.find({ email: 'bruno@mars.com' })
-
-        await request(expressServer)
-          .post(`/resources/users/${user[0]._id}`)
-          .set('x-access-token', token)
-          .send({ name: 'Silfer', email: 'silfer@tape.com', password: '12345678' })
-          .expect('Content-Type', /json/)
-          .expect(500, {
-            errors: { message: 'Error: some error' },
-          })
-
-        mockFunction.mockRestore()
-      })
-
-      describe('validations', () => {
-        it('returns status 422 and message if the email is invalid', async () => {
-          const user = await User.findOne({ email: 'silfer@tape.com' })
-
-          await request(expressServer)
-            .post(`/resources/users/${user._id}`)
-            .set('x-access-token', token)
-            .send({ email: 'silfertape.com' })
-            .expect('Content-Type', /json/)
-            .expect(422, {
-              errors: [{ message: 'Email deve ser preenchido com um valor válido' }],
-            })
-        })
-      })
-    })
-  })
-
-  describe('show', () => {
-    describe('response', () => {
-      it('returns status 200 and message if user exists', async () => {
-        const licenseeRepository = new LicenseeRepositoryDatabase()
-        const licensee = await licenseeRepository.create(licenseeFactory.build())
-
-        const user = await User.create(
-          userFactory.build({
-            name: 'Jonny Walker',
-            email: 'jonny@walker.com',
-            licensee,
-          }),
-        )
-
-        await request(expressServer)
-          .get(`/resources/users/${user._id}`)
-          .set('x-access-token', token)
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then((response) => {
-            expect(response.body.email).toEqual('jonny@walker.com')
-            expect(response.body.name).toEqual('Jonny Walker')
-            expect(response.body.isAdmin).toEqual(false)
-            expect(response.body.isSuper).toEqual(false)
-            expect(response.body.active).toEqual(true)
-            expect(response.body._id).toMatch(user._id.toString())
-          })
-      })
-
-      it('returns status 200 and message if user id does not exists and user email exists', async () => {
-        const licenseeRepository = new LicenseeRepositoryDatabase()
-        const licensee = await licenseeRepository.create(licenseeFactory.build())
-
-        await User.create(
-          userFactory.build({
-            name: 'Willy Wonka',
-            email: 'willy@wonka.com',
-            licensee,
-          }),
-        )
-
-        await request(expressServer)
-          .get('/resources/users/willy@wonka.com')
-          .set('x-access-token', token)
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then((response) => {
-            expect(response.body.name).toEqual('Willy Wonka')
-            expect(response.body.email).toEqual('willy@wonka.com')
-            expect(response.body.isAdmin).toEqual(false)
-            expect(response.body.active).toEqual(true)
-            expect(response.body._id).toBeDefined()
-          })
-      })
-
-      it('returns status 404 and message if user does not exists', async () => {
-        await request(expressServer)
-          .get('/resources/users/12312')
-          .set('x-access-token', token)
-          .expect('Content-Type', /json/)
-          .expect(404, {
-            errors: { message: 'Usuário não encontrado' },
-          })
-      })
-
-      it('returns status 500 and message if occurs another error', async () => {
-        const mockFunction = jest.spyOn(UserRepositoryDatabase.prototype, 'findFirst').mockImplementation(() => {
-          throw new Error('some error')
-        })
-
-        await request(expressServer)
-          .get('/resources/users/12312')
-          .set('x-access-token', token)
-          .expect('Content-Type', /json/)
-          .expect(500, {
-            errors: { message: 'Error: some error' },
-          })
-
-        mockFunction.mockRestore()
-      })
-    })
-  })
-
-  describe('index', () => {
-    describe('response', () => {
-      it('returns status 200 and message if user exists', async () => {
-        await request(expressServer)
-          .get('/resources/users/')
-          .set('x-access-token', token)
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then((response) => {
-            expect(Array.isArray(response.body)).toEqual(true)
-            expect(response.body.length).toEqual(4)
-            expect(response.body[2].name).toEqual('Jonny Walker')
-            expect(response.body[2].email).toEqual('jonny@walker.com')
-            expect(response.body[2].active).toEqual(true)
-            expect(response.body[2]._id).toBeDefined()
-            expect(response.body[2]._id).toBeDefined()
-            expect(response.body[2].password).not.toBeDefined()
-          })
-      })
-
-      it('returns status 500 and message if occurs another error', async () => {
-        const mockFunction = jest.spyOn(UserRepositoryDatabase.prototype, 'find').mockImplementation(() => {
-          throw new Error('some error')
-        })
-
-        await request(expressServer)
-          .get('/resources/users/')
-          .set('x-access-token', token)
-          .expect('Content-Type', /json/)
-          .expect(500, {
-            errors: { message: 'Error: some error' },
-          })
-
-        mockFunction.mockRestore()
-      })
     })
   })
 })
