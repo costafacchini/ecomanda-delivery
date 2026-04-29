@@ -126,17 +126,20 @@ describe('UsersController delegation', () => {
   it.each([
     ['create', 'createUser', { body: { email: 'maryjane.com' } }],
     ['update', 'updateUser', { params: { id: 'user-id' }, body: { email: 'brunomars.com' } }],
-  ])('returns status 422 when %s validation fails before delegating to the use case', async (method, dependency, req) => {
-    const dependencies = buildController()
-    const res = buildResponse()
+  ])(
+    'returns status 422 when %s validation fails before delegating to the use case',
+    async (method, dependency, req) => {
+      const dependencies = buildController()
+      const res = buildResponse()
 
-    await runValidations(dependencies.controller, req)
-    await dependencies.controller[method](req, res)
+      await runValidations(dependencies.controller, req)
+      await dependencies.controller[method](req, res)
 
-    expect(dependencies[dependency].execute).not.toHaveBeenCalled()
-    expect(res.status).toHaveBeenCalledWith(422)
-    expect(res.json).toHaveBeenCalledWith(invalidEmailResponse)
-  })
+      expect(dependencies[dependency].execute).not.toHaveBeenCalled()
+      expect(res.status).toHaveBeenCalledWith(422)
+      expect(res.json).toHaveBeenCalledWith(invalidEmailResponse)
+    },
+  )
 
   it.each([
     ['create', 'createUser', { body: { email: 'mary@jane.com' } }],

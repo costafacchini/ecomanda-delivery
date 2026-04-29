@@ -2,7 +2,7 @@
 
 **Status**: in-progress
 **Created**: 2026-04-02
-**Last Updated**: 2026-04-29T11:54Z
+**Last Updated**: 2026-04-29T11:58Z
 **Assigned Dev**: Alan
 **Master Plan**: None
 
@@ -56,7 +56,7 @@ Extract business logic from controllers into dedicated use case classes, each wi
 | phase-4/task-08-slim-contacts-controller | Slim ContactsController | 4 | complete | phase-4/task-07-contact-usecases |
 | phase-5/task-09-user-usecases | Extract CreateUser and UpdateUser use cases | 5 | complete | phase-1/task-01-scaffold-usecases-dir |
 | phase-5/task-10-slim-users-controller | Slim UsersController | 5 | complete | phase-5/task-09-user-usecases |
-| phase-6/task-11-trigger-usecases | Extract CreateTrigger, UpdateTrigger, ImportFacebookCatalog use cases | 6 | not-started | phase-1/task-01-scaffold-usecases-dir |
+| phase-6/task-11-trigger-usecases | Extract CreateTrigger, UpdateTrigger, ImportFacebookCatalog use cases | 6 | complete | phase-1/task-01-scaffold-usecases-dir |
 | phase-6/task-12-slim-triggers-controller | Slim TriggersController | 6 | not-started | phase-6/task-11-trigger-usecases |
 | phase-7/task-13-order-usecases | Extract ReceivePedidos10Order and ChangePedidos10OrderStatus use cases | 7 | not-started | phase-1/task-01-scaffold-usecases-dir |
 | phase-7/task-14-backgroundjob-usecases | Extract ScheduleBackgroundjob use case | 7 | not-started | phase-1/task-01-scaffold-usecases-dir |
