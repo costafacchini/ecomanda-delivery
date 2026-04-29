@@ -22,9 +22,16 @@ Git-native Markdown plans for multi-step work.
 
 | # | Plan | Folder | Status | Description |
 |---|------|--------|--------|-------------|
-| 1 | [Use Cases](./use-cases/overview.md) | `use-cases/` | in-progress | Extract business logic from controllers into dedicated use case classes; controllers become thin (validate → execute → respond) |
-| 2 | [JS → TypeScript](./js-to-ts/overview.md) | `js-to-ts/` | not-started | Incremental migration of all source files (backend + client) to TypeScript using `allowJs: true` throughout |
-| 3 | [Remove PDV](./remove-pdv/overview.md) | `remove-pdv/` | not-started | Delete cart, payment (PagarMe), and order integration (Pedidos10) domain — strip PDV fields from Licensee and Contact |
+| 1 | [JS → TypeScript](./js-to-ts/overview.md) | `js-to-ts/` | not-started | Incremental migration of all source files (backend + client) to TypeScript using `allowJs: true` throughout |
+| 2 | [Remove PDV](./remove-pdv/overview.md) | `remove-pdv/` | not-started | Delete cart, payment (PagarMe), and order integration (Pedidos10) domain — strip PDV fields from Licensee and Contact |
+
+---
+
+## Completed Plans
+
+| # | Plan | Folder | Completed | Description |
+|---|------|--------|-----------|-------------|
+| 1 | [Use Cases](./use-cases/overview.md) | `use-cases/` | 2026-04-29 | Extract business logic from controllers into dedicated use case classes; controllers become thin (validate → execute → respond) |
 
 ---
 
