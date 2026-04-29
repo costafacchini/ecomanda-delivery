@@ -19,6 +19,9 @@ import { SendLicenseeToPagarMe } from '../usecases/licensees/SendLicenseeToPagar
 import { SignPedidos10OrderWebhook } from '../usecases/licensees/SignPedidos10OrderWebhook.js'
 import { CreateContact } from '../usecases/contacts/CreateContact.js'
 import { UpdateContact } from '../usecases/contacts/UpdateContact.js'
+import { CreateTrigger } from '../usecases/triggers/CreateTrigger.js'
+import { ImportFacebookCatalog } from '../usecases/triggers/ImportFacebookCatalog.js'
+import { UpdateTrigger } from '../usecases/triggers/UpdateTrigger.js'
 import { CreateUser } from '../usecases/users/CreateUser.js'
 import { UpdateUser } from '../usecases/users/UpdateUser.js'
 import { createRuntimeDependencies } from '../runtime/dependencies.js'
@@ -69,7 +72,9 @@ const contactsController = new ContactsController({
 const triggersController = new TriggersController({
   triggerRepository,
   createTriggersQuery: () => new TriggersQuery({ triggerRepository }),
-  createFacebookCatalogImporter,
+  createTrigger: new CreateTrigger({ triggerRepository }),
+  updateTrigger: new UpdateTrigger({ triggerRepository }),
+  importFacebookCatalog: new ImportFacebookCatalog({ createFacebookCatalogImporter }),
 })
 const messagesController = new MessagesController({
   createMessagesQuery: () => new MessagesQuery({ messageRepository }),
