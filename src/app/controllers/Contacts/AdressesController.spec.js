@@ -1,3 +1,5 @@
+import { ContactRepositoryMemory } from '@repositories/contact'
+import { NormalizePhone } from '../../helpers/NormalizePhone.js'
 import { AdressesController } from './AdressesController.js'
 
 function buildResponse() {
@@ -8,42 +10,25 @@ function buildResponse() {
 }
 
 function buildController() {
-  const contactRepository = {
-    findFirst: jest.fn(),
-    update: jest.fn(),
-  }
-  const normalizePhone = jest.fn()
-
-  const controller = new AdressesController({ contactRepository, normalizePhone })
-
-  return { controller, contactRepository, normalizePhone }
+  const contactRepository = new ContactRepositoryMemory()
+  const controller = new AdressesController({
+    contactRepository,
+    normalizePhone: (number) => new NormalizePhone(number),
+  })
+  return { controller, contactRepository }
 }
 
-describe('AdressesController delegation', () => {
+describe('AdressesController', () => {
   describe('update', () => {
-    it('updates contact address and returns status 200', async () => {
-      const { controller, contactRepository, normalizePhone } = buildController()
-      const normalizedPhone = { number: '5511990283745', type: '@c.us' }
-      normalizePhone.mockReturnValue(normalizedPhone)
+    it('updates contact address and returns the updated contact with status 200', async () => {
+      const { controller, contactRepository } = buildController()
 
-      const contact = { _id: 'contact-id', number: '5511990283745' }
-      const updatedContact = {
-        _id: 'contact-id',
-        name: 'John Doe',
+      const contact = await contactRepository.create({
         number: '5511990283745',
         type: '@c.us',
-        address: 'Rua dois de outubro',
-        address_number: '123',
-        address_complement: 'rooms 1 and 2',
-        neighborhood: 'Pedra branca',
-        city: 'São Paulo',
-        cep: '98543287',
-        uf: 'SP',
-        delivery_tax: 10.39,
         licensee: 'licensee-id',
-      }
-      contactRepository.findFirst.mockResolvedValueOnce(contact).mockResolvedValueOnce(updatedContact)
-      contactRepository.update.mockResolvedValue()
+        name: 'John Doe',
+      })
 
       const req = {
         params: { number: '11990283745' },
@@ -64,33 +49,20 @@ describe('AdressesController delegation', () => {
 
       await controller.update(req, res)
 
-      expect(normalizePhone).toHaveBeenCalledWith('11990283745')
-      expect(contactRepository.findFirst).toHaveBeenCalledWith({
-        number: normalizedPhone.number,
-        licensee: 'licensee-id',
-        type: normalizedPhone.type,
-      })
-      expect(contactRepository.update).toHaveBeenCalledWith('contact-id', {
-        address: 'Rua dois de outubro',
-        address_number: '123',
-        address_complement: 'rooms 1 and 2',
-        neighborhood: 'Pedra branca',
-        city: 'São Paulo',
-        cep: '98543287',
-        uf: 'SP',
-        delivery_tax: 10.39,
-      })
       expect(res.status).toHaveBeenCalledWith(200)
-      expect(res.send).toHaveBeenCalledWith(updatedContact)
+
+      const updated = await contactRepository.findFirst({ _id: contact._id })
+      expect(updated.address).toBe('Rua dois de outubro')
+      expect(updated.address_number).toBe('123')
+      expect(updated.delivery_tax).toBe(10.39)
+      expect(updated.licensee).toBe('licensee-id') // not overwritten by body
     })
 
     it('returns 404 when contact is not found', async () => {
-      const { controller, contactRepository, normalizePhone } = buildController()
-      normalizePhone.mockReturnValue({ number: '5511111111', type: '@c.us' })
-      contactRepository.findFirst.mockResolvedValue(null)
+      const { controller } = buildController()
 
       const req = {
-        params: { number: '1111111' },
+        params: { number: '11111111111' },
         body: { address: 'Some street' },
         licensee: { _id: 'licensee-id' },
       }
@@ -99,17 +71,19 @@ describe('AdressesController delegation', () => {
       await controller.update(req, res)
 
       expect(res.status).toHaveBeenCalledWith(404)
-      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Contato 1111111 não encontrado' } })
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Contato 11111111111 não encontrado' } })
     })
 
     it('returns 500 when an unexpected error occurs', async () => {
-      const { controller, contactRepository, normalizePhone } = buildController()
-      normalizePhone.mockReturnValue({ number: '5511990283745', type: '@c.us' })
-      contactRepository.findFirst.mockRejectedValue(new Error('some error'))
+      const contactRepository = { findFirst: jest.fn().mockRejectedValue(new Error('db error')) }
+      const controller = new AdressesController({
+        contactRepository,
+        normalizePhone: (number) => new NormalizePhone(number),
+      })
 
       const req = {
         params: { number: '11990283745' },
-        body: { address: 'Address modified' },
+        body: { address: 'Anything' },
         licensee: { _id: 'licensee-id' },
       }
       const res = buildResponse()
@@ -117,49 +91,40 @@ describe('AdressesController delegation', () => {
       await controller.update(req, res)
 
       expect(res.status).toHaveBeenCalledWith(500)
-      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: some error' } })
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: db error' } })
     })
   })
 
   describe('show', () => {
-    it('returns contact address data and status 200', async () => {
-      const { controller, contactRepository, normalizePhone } = buildController()
-      const normalizedPhone = { number: '5511990283745', type: '@c.us' }
-      normalizePhone.mockReturnValue(normalizedPhone)
+    it('returns contact address data with status 200', async () => {
+      const { controller, contactRepository } = buildController()
 
-      const contact = {
-        _id: 'contact-id',
-        name: 'John Doe',
+      const contact = await contactRepository.create({
         number: '5511990283745',
         type: '@c.us',
+        licensee: 'licensee-id',
         address: 'Rua dois de outubro',
-        licensee: { _id: 'licensee-id' },
-      }
-      contactRepository.findFirst.mockResolvedValue(contact)
+      })
 
       const req = {
-        params: { number: '5511990283745' },
+        params: { number: '11990283745' },
         licensee: { _id: 'licensee-id' },
       }
       const res = buildResponse()
 
       await controller.show(req, res)
 
-      expect(contactRepository.findFirst).toHaveBeenCalledWith(
-        { number: normalizedPhone.number, licensee: 'licensee-id', type: normalizedPhone.type },
-        ['licensee'],
-      )
       expect(res.status).toHaveBeenCalledWith(200)
-      expect(res.send).toHaveBeenCalledWith(contact)
+      expect(res.send).toHaveBeenCalledWith(
+        expect.objectContaining({ _id: contact._id, address: 'Rua dois de outubro' }),
+      )
     })
 
     it('returns 404 when contact is not found', async () => {
-      const { controller, contactRepository, normalizePhone } = buildController()
-      normalizePhone.mockReturnValue({ number: '5511111111', type: '@c.us' })
-      contactRepository.findFirst.mockResolvedValue(null)
+      const { controller } = buildController()
 
       const req = {
-        params: { number: '111111' },
+        params: { number: '11111111111' },
         licensee: { _id: 'licensee-id' },
       }
       const res = buildResponse()
@@ -167,16 +132,18 @@ describe('AdressesController delegation', () => {
       await controller.show(req, res)
 
       expect(res.status).toHaveBeenCalledWith(404)
-      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Contato 111111 não encontrado' } })
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Contato 11111111111 não encontrado' } })
     })
 
     it('returns 500 when an unexpected error occurs', async () => {
-      const { controller, contactRepository, normalizePhone } = buildController()
-      normalizePhone.mockReturnValue({ number: '5511990283745', type: '@c.us' })
-      contactRepository.findFirst.mockRejectedValue(new Error('some error'))
+      const contactRepository = { findFirst: jest.fn().mockRejectedValue(new Error('db error')) }
+      const controller = new AdressesController({
+        contactRepository,
+        normalizePhone: (number) => new NormalizePhone(number),
+      })
 
       const req = {
-        params: { number: '5511990283745' },
+        params: { number: '11990283745' },
         licensee: { _id: 'licensee-id' },
       }
       const res = buildResponse()
@@ -184,7 +151,7 @@ describe('AdressesController delegation', () => {
       await controller.show(req, res)
 
       expect(res.status).toHaveBeenCalledWith(500)
-      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: some error' } })
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: db error' } })
     })
   })
 })
