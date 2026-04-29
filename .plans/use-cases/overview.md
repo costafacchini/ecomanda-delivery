@@ -2,7 +2,7 @@
 
 **Status**: in-progress
 **Created**: 2026-04-02
-**Last Updated**: 2026-04-28T23:12Z
+**Last Updated**: 2026-04-29T11:49Z
 **Assigned Dev**: Alan
 **Master Plan**: None
 
@@ -54,7 +54,7 @@ Extract business logic from controllers into dedicated use case classes, each wi
 | phase-3/task-06-slim-licensees-controller | Slim LicenseesController | 3 | complete | phase-3/task-04-licensee-create-update-usecases, phase-3/task-05-licensee-external-action-usecases |
 | phase-4/task-07-contact-usecases | Extract CreateContact and UpdateContact use cases | 4 | complete | phase-1/task-01-scaffold-usecases-dir |
 | phase-4/task-08-slim-contacts-controller | Slim ContactsController | 4 | complete | phase-4/task-07-contact-usecases |
-| phase-5/task-09-user-usecases | Extract CreateUser and UpdateUser use cases | 5 | not-started | phase-1/task-01-scaffold-usecases-dir |
+| phase-5/task-09-user-usecases | Extract CreateUser and UpdateUser use cases | 5 | complete | phase-1/task-01-scaffold-usecases-dir |
 | phase-5/task-10-slim-users-controller | Slim UsersController | 5 | not-started | phase-5/task-09-user-usecases |
 | phase-6/task-11-trigger-usecases | Extract CreateTrigger, UpdateTrigger, ImportFacebookCatalog use cases | 6 | not-started | phase-1/task-01-scaffold-usecases-dir |
 | phase-6/task-12-slim-triggers-controller | Slim TriggersController | 6 | not-started | phase-6/task-11-trigger-usecases |
