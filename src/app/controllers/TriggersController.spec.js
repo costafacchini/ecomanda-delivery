@@ -1,4 +1,5 @@
 import { triggerMultiProduct as triggerFactory } from '@factories/trigger'
+import { TriggerRepositoryMemory } from '@repositories/trigger'
 import { TriggersController } from './TriggersController.js'
 
 function buildResponse() {
@@ -10,9 +11,7 @@ function buildResponse() {
 }
 
 function buildController() {
-  const triggerRepository = {
-    findFirst: jest.fn(),
-  }
+  const triggerRepository = new TriggerRepositoryMemory()
   const triggersQueryInstance = {
     page: jest.fn(),
     limit: jest.fn(),
@@ -108,22 +107,29 @@ describe('TriggersController delegation', () => {
 
   it('delegates show to triggerRepository.findFirst and returns status 200', async () => {
     const { controller, triggerRepository } = buildController()
-    const trigger = { _id: 'trigger-id', name: 'Send multi products' }
-    triggerRepository.findFirst.mockResolvedValue(trigger)
+    const seeded = await triggerRepository.create({ name: 'Send multi products' })
 
-    const req = { params: { id: 'trigger-id' } }
+    const req = { params: { id: seeded._id } }
     const res = buildResponse()
 
     await controller.show(req, res)
 
-    expect(triggerRepository.findFirst).toHaveBeenCalledWith({ _id: 'trigger-id' }, ['licensee'])
     expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.send).toHaveBeenCalledWith(trigger)
+    expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ name: 'Send multi products' }))
   })
 
   it('returns 404 from show when id cast fails', async () => {
-    const { controller, triggerRepository } = buildController()
-    triggerRepository.findFirst.mockRejectedValue(new Error('Cast to ObjectId failed for value "bad" at path "_id"'))
+    const triggerRepository = {
+      findFirst: jest.fn().mockRejectedValue(new Error('Cast to ObjectId failed for value "bad" at path "_id"')),
+    }
+    const triggersQueryInstance = { page: jest.fn(), limit: jest.fn(), filterByKind: jest.fn(), filterByLicensee: jest.fn(), filterByExpression: jest.fn(), all: jest.fn() }
+    const controller = new TriggersController({
+      triggerRepository,
+      createTriggersQuery: jest.fn().mockReturnValue(triggersQueryInstance),
+      createTrigger: { execute: jest.fn() },
+      updateTrigger: { execute: jest.fn() },
+      importFacebookCatalog: { execute: jest.fn() },
+    })
 
     const req = { params: { id: 'bad' } }
     const res = buildResponse()

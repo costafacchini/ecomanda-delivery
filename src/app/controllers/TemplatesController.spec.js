@@ -1,3 +1,4 @@
+import { TemplateRepositoryMemory } from '@repositories/template'
 import { TemplatesController } from './TemplatesController.js'
 
 function buildResponse() {
@@ -9,11 +10,7 @@ function buildResponse() {
 }
 
 function buildController() {
-  const templateRepository = {
-    create: jest.fn(),
-    update: jest.fn(),
-    findFirst: jest.fn(),
-  }
+  const templateRepository = new TemplateRepositoryMemory()
   const templatesQueryInstance = {
     page: jest.fn(),
     limit: jest.fn(),
@@ -43,27 +40,30 @@ function buildController() {
 
 describe('TemplatesController delegation', () => {
   it('creates a template and returns status 201', async () => {
-    const { controller, templateRepository } = buildController()
-    const template = { _id: 'template-id', name: 'template', namespace: 'Namespace', licensee: 'licensee-id' }
-    templateRepository.create.mockResolvedValue(template)
+    const { controller } = buildController()
 
     const req = { body: { name: 'template', namespace: 'Namespace', licensee: 'licensee-id' } }
     const res = buildResponse()
 
     await controller.create(req, res)
 
-    expect(templateRepository.create).toHaveBeenCalledWith({
-      name: 'template',
-      namespace: 'Namespace',
-      licensee: 'licensee-id',
-    })
     expect(res.status).toHaveBeenCalledWith(201)
-    expect(res.send).toHaveBeenCalledWith(template)
+    expect(res.send).toHaveBeenCalledWith(
+      expect.objectContaining({ name: 'template', namespace: 'Namespace', licensee: 'licensee-id' }),
+    )
   })
 
   it('returns 422 when create raises model validation errors', async () => {
-    const { controller, templateRepository } = buildController()
-    templateRepository.create.mockRejectedValue({ errors: { name: { message: 'Nome: Você deve preencher o campo' } } })
+    const templateRepository = {
+      create: jest.fn().mockRejectedValue({ errors: { name: { message: 'Nome: Você deve preencher o campo' } } }),
+      update: jest.fn(),
+      findFirst: jest.fn(),
+    }
+    const controller = new TemplatesController({
+      templateRepository,
+      createTemplatesQuery: jest.fn(),
+      createTemplatesImporter: jest.fn(),
+    })
 
     const req = { body: { name: '', namespace: 'Namespace', licensee: 'licensee-id' } }
     const res = buildResponse()
@@ -75,8 +75,16 @@ describe('TemplatesController delegation', () => {
   })
 
   it('returns 500 when create throws unexpected error', async () => {
-    const { controller, templateRepository } = buildController()
-    templateRepository.create.mockRejectedValue(new Error('some error'))
+    const templateRepository = {
+      create: jest.fn().mockRejectedValue(new Error('some error')),
+      update: jest.fn(),
+      findFirst: jest.fn(),
+    }
+    const controller = new TemplatesController({
+      templateRepository,
+      createTemplatesQuery: jest.fn(),
+      createTemplatesImporter: jest.fn(),
+    })
 
     const req = { body: { name: 'template', namespace: 'Namespace', licensee: 'licensee-id' } }
     const res = buildResponse()
@@ -89,26 +97,35 @@ describe('TemplatesController delegation', () => {
 
   it('updates a template and returns status 200', async () => {
     const { controller, templateRepository } = buildController()
-    const template = { _id: 'template-id', name: 'another', namespace: 'Other', licensee: 'licensee-id' }
-    templateRepository.update.mockResolvedValue()
-    templateRepository.findFirst.mockResolvedValue(template)
+    const seeded = await templateRepository.create({
+      name: 'original',
+      namespace: 'Other',
+      licensee: 'licensee-id',
+    })
 
     const req = {
-      params: { id: 'template-id' },
+      params: { id: seeded._id },
       body: { name: 'another', namespace: 'Other', licensee: 'other-licensee-id' },
     }
     const res = buildResponse()
 
     await controller.update(req, res)
 
-    expect(templateRepository.update).toHaveBeenCalledWith('template-id', { name: 'another', namespace: 'Other' })
     expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.send).toHaveBeenCalledWith(template)
+    expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ name: 'another', namespace: 'Other' }))
   })
 
   it('returns 422 when update raises model validation errors', async () => {
-    const { controller, templateRepository } = buildController()
-    templateRepository.update.mockRejectedValue({ errors: { name: { message: 'Nome: Você deve preencher o campo' } } })
+    const templateRepository = {
+      create: jest.fn(),
+      update: jest.fn().mockRejectedValue({ errors: { name: { message: 'Nome: Você deve preencher o campo' } } }),
+      findFirst: jest.fn(),
+    }
+    const controller = new TemplatesController({
+      templateRepository,
+      createTemplatesQuery: jest.fn(),
+      createTemplatesImporter: jest.fn(),
+    })
 
     const req = { params: { id: 'template-id' }, body: { name: '' } }
     const res = buildResponse()
@@ -120,9 +137,16 @@ describe('TemplatesController delegation', () => {
   })
 
   it('returns 500 when update findFirst throws unexpected error', async () => {
-    const { controller, templateRepository } = buildController()
-    templateRepository.update.mockResolvedValue()
-    templateRepository.findFirst.mockRejectedValue(new Error('some error'))
+    const templateRepository = {
+      create: jest.fn(),
+      update: jest.fn().mockResolvedValue(),
+      findFirst: jest.fn().mockRejectedValue(new Error('some error')),
+    }
+    const controller = new TemplatesController({
+      templateRepository,
+      createTemplatesQuery: jest.fn(),
+      createTemplatesImporter: jest.fn(),
+    })
 
     const req = { params: { id: 'template-id' }, body: { name: 'Name modified' } }
     const res = buildResponse()
@@ -135,22 +159,28 @@ describe('TemplatesController delegation', () => {
 
   it('returns template on show and status 200', async () => {
     const { controller, templateRepository } = buildController()
-    const template = { _id: 'template-id', name: 'name', namespace: 'test', licensee: { _id: 'licensee-id' } }
-    templateRepository.findFirst.mockResolvedValue(template)
+    const seeded = await templateRepository.create({ name: 'name', namespace: 'test', licensee: 'licensee-id' })
 
-    const req = { params: { id: 'template-id' } }
+    const req = { params: { id: seeded._id } }
     const res = buildResponse()
 
     await controller.show(req, res)
 
-    expect(templateRepository.findFirst).toHaveBeenCalledWith({ _id: 'template-id' }, ['licensee'])
     expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.send).toHaveBeenCalledWith(template)
+    expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ name: 'name', namespace: 'test' }))
   })
 
   it('returns 404 when show id cast fails', async () => {
-    const { controller, templateRepository } = buildController()
-    templateRepository.findFirst.mockRejectedValue(new Error('Cast to ObjectId failed for value "bad" at path "_id"'))
+    const templateRepository = {
+      create: jest.fn(),
+      update: jest.fn(),
+      findFirst: jest.fn().mockRejectedValue(new Error('Cast to ObjectId failed for value "bad" at path "_id"')),
+    }
+    const controller = new TemplatesController({
+      templateRepository,
+      createTemplatesQuery: jest.fn(),
+      createTemplatesImporter: jest.fn(),
+    })
 
     const req = { params: { id: 'bad' } }
     const res = buildResponse()

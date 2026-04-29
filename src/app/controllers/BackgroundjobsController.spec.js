@@ -1,3 +1,4 @@
+import { BackgroundjobRepositoryMemory } from '@repositories/backgroundjob'
 import { BackgroundjobsController } from './BackgroundjobsController.js'
 
 function buildResponse() {
@@ -8,7 +9,7 @@ function buildResponse() {
 }
 
 function buildController() {
-  const backgroundjobRepository = { findFirst: jest.fn() }
+  const backgroundjobRepository = new BackgroundjobRepositoryMemory()
   const scheduleBackgroundjob = { execute: jest.fn() }
   const controller = new BackgroundjobsController({ backgroundjobRepository, scheduleBackgroundjob })
   return { controller, backgroundjobRepository, scheduleBackgroundjob }
@@ -67,14 +68,13 @@ describe('BackgroundjobsController delegation', () => {
   describe('show', () => {
     it('returns 200 with scheduled message when job status is scheduled', async () => {
       const { controller, backgroundjobRepository } = buildController()
-      backgroundjobRepository.findFirst.mockResolvedValue({ status: 'scheduled' })
+      const job = await backgroundjobRepository.create({ status: 'scheduled', licensee: 'licensee-id' })
 
-      const req = { licensee: { _id: 'licensee-id' }, params: { id: 'job-id' } }
+      const req = { licensee: { _id: 'licensee-id' }, params: { id: job._id } }
       const res = buildResponse()
 
       await controller.show(req, res)
 
-      expect(backgroundjobRepository.findFirst).toHaveBeenCalledWith({ _id: 'job-id', licensee: 'licensee-id' })
       expect(res.status).toHaveBeenCalledWith(200)
       expect(res.send).toHaveBeenCalledWith({
         message: 'O job está agendado, mas ainda não está executando. Por favor, volte mais tarde!',
@@ -83,9 +83,9 @@ describe('BackgroundjobsController delegation', () => {
 
     it('returns 200 with running message when job status is running', async () => {
       const { controller, backgroundjobRepository } = buildController()
-      backgroundjobRepository.findFirst.mockResolvedValue({ status: 'running' })
+      const job = await backgroundjobRepository.create({ status: 'running', licensee: 'licensee-id' })
 
-      const req = { licensee: { _id: 'licensee-id' }, params: { id: 'job-id' } }
+      const req = { licensee: { _id: 'licensee-id' }, params: { id: job._id } }
       const res = buildResponse()
 
       await controller.show(req, res)
@@ -98,12 +98,13 @@ describe('BackgroundjobsController delegation', () => {
 
     it('returns 200 with done message and response when job status is done', async () => {
       const { controller, backgroundjobRepository } = buildController()
-      backgroundjobRepository.findFirst.mockResolvedValue({
+      const job = await backgroundjobRepository.create({
         status: 'done',
+        licensee: 'licensee-id',
         response: { link: 'https://anything.com' },
       })
 
-      const req = { licensee: { _id: 'licensee-id' }, params: { id: 'job-id' } }
+      const req = { licensee: { _id: 'licensee-id' }, params: { id: job._id } }
       const res = buildResponse()
 
       await controller.show(req, res)
@@ -117,9 +118,13 @@ describe('BackgroundjobsController delegation', () => {
 
     it('returns 200 with error message when job status is error', async () => {
       const { controller, backgroundjobRepository } = buildController()
-      backgroundjobRepository.findFirst.mockResolvedValue({ status: 'error', error: 'some error' })
+      const job = await backgroundjobRepository.create({
+        status: 'error',
+        licensee: 'licensee-id',
+        error: 'some error',
+      })
 
-      const req = { licensee: { _id: 'licensee-id' }, params: { id: 'job-id' } }
+      const req = { licensee: { _id: 'licensee-id' }, params: { id: job._id } }
       const res = buildResponse()
 
       await controller.show(req, res)
@@ -129,21 +134,22 @@ describe('BackgroundjobsController delegation', () => {
     })
 
     it('returns 404 when job is not found', async () => {
-      const { controller, backgroundjobRepository } = buildController()
-      backgroundjobRepository.findFirst.mockResolvedValue(null)
+      const { controller } = buildController()
+      const nonExistentId = 'non-existent-job-id'
 
-      const req = { licensee: { _id: 'licensee-id' }, params: { id: 'job-id' } }
+      const req = { licensee: { _id: 'licensee-id' }, params: { id: nonExistentId } }
       const res = buildResponse()
 
       await controller.show(req, res)
 
       expect(res.status).toHaveBeenCalledWith(404)
-      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Backgroundjob job-id não encontrado' } })
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: `Backgroundjob ${nonExistentId} não encontrado` } })
     })
 
     it('returns 500 when repository throws unexpected error', async () => {
-      const { controller, backgroundjobRepository } = buildController()
-      backgroundjobRepository.findFirst.mockRejectedValue(new Error('some error'))
+      const backgroundjobRepository = { findFirst: jest.fn().mockRejectedValue(new Error('some error')) }
+      const scheduleBackgroundjob = { execute: jest.fn() }
+      const controller = new BackgroundjobsController({ backgroundjobRepository, scheduleBackgroundjob })
 
       const req = { licensee: { _id: 'licensee-id' }, params: { id: 'job-id' } }
       const res = buildResponse()

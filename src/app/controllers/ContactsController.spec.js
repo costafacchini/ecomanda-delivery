@@ -1,3 +1,4 @@
+import { ContactRepositoryMemory } from '@repositories/contact'
 import { ContactsController } from './ContactsController.js'
 
 function buildResponse() {
@@ -16,9 +17,7 @@ async function runValidations(controller, req) {
 }
 
 function buildController() {
-  const contactRepository = {
-    findFirst: jest.fn(),
-  }
+  const contactRepository = new ContactRepositoryMemory()
   const contactsQueryInstance = {
     page: jest.fn(),
     limit: jest.fn(),
@@ -211,22 +210,25 @@ describe('ContactsController delegation', () => {
 
   it('delegates show to contactRepository.findFirst and returns status 200', async () => {
     const { controller, contactRepository } = buildController()
-    const contact = { _id: 'contact-id', name: 'John Doe' }
-    contactRepository.findFirst.mockResolvedValue(contact)
+    const seeded = await contactRepository.create({ name: 'John Doe', number: '5511990283745' })
 
-    const req = { params: { id: 'contact-id' } }
+    const req = { params: { id: seeded._id } }
     const res = buildResponse()
 
     await controller.show(req, res)
 
-    expect(contactRepository.findFirst).toHaveBeenCalledWith({ _id: 'contact-id' }, ['licensee'])
     expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.send).toHaveBeenCalledWith(contact)
+    expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ _id: seeded._id, name: 'John Doe' }))
   })
 
   it('returns 404 from show when id cast fails', async () => {
-    const { controller, contactRepository } = buildController()
-    contactRepository.findFirst.mockRejectedValue(new Error('Cast to ObjectId failed for value "bad" at path "_id"'))
+    const contactRepository = {
+      findFirst: jest.fn().mockRejectedValue(new Error('Cast to ObjectId failed for value "bad" at path "_id"')),
+    }
+    const createContactsQuery = jest.fn()
+    const createContact = { execute: jest.fn() }
+    const updateContact = { execute: jest.fn() }
+    const controller = new ContactsController({ contactRepository, createContactsQuery, createContact, updateContact })
 
     const req = { params: { id: 'bad' } }
     const res = buildResponse()

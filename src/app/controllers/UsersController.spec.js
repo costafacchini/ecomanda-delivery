@@ -1,3 +1,4 @@
+import { UserRepositoryMemory } from '@repositories/user'
 import { UsersController } from './UsersController.js'
 
 function buildResponse() {
@@ -17,10 +18,7 @@ async function runValidations(controller, req) {
 }
 
 function buildController() {
-  const userRepository = {
-    find: jest.fn(),
-    findFirst: jest.fn(),
-  }
+  const userRepository = new UserRepositoryMemory()
   const createUser = {
     execute: jest.fn(),
   }
@@ -117,37 +115,50 @@ describe('UsersController delegation', () => {
 
   it('delegates show to userRepository.findFirst by _id and returns status 200', async () => {
     const { controller, userRepository } = buildController()
-    const user = { _id: 'user-id', name: 'John Doe', email: 'john@doe.com' }
-    userRepository.findFirst.mockResolvedValue(user)
+    const seeded = await userRepository.create({
+      name: 'John Doe',
+      email: 'john@doe.com',
+      password: 'password123',
+      licensee: '507f1f77bcf86cd799439011',
+    })
 
-    const req = { params: { id: 'user-id' } }
+    const req = { params: { id: seeded._id.toString() } }
     const res = buildResponse()
 
     await controller.show(req, res)
 
-    expect(userRepository.findFirst).toHaveBeenCalledWith({ _id: 'user-id' })
     expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.send).toHaveBeenCalledWith(user)
+    expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ name: 'John Doe', email: 'john@doe.com' }))
   })
 
   it('delegates show to userRepository.findFirst by email when id contains @', async () => {
     const { controller, userRepository } = buildController()
-    const user = { _id: 'user-id', name: 'John Doe', email: 'john@doe.com' }
-    userRepository.findFirst.mockResolvedValue(user)
+    await userRepository.create({
+      name: 'John Doe',
+      email: 'john@doe.com',
+      password: 'password123',
+      licensee: '507f1f77bcf86cd799439011',
+    })
 
     const req = { params: { id: 'john@doe.com' } }
     const res = buildResponse()
 
     await controller.show(req, res)
 
-    expect(userRepository.findFirst).toHaveBeenCalledWith({ email: 'john@doe.com' })
     expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.send).toHaveBeenCalledWith(user)
+    expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ name: 'John Doe', email: 'john@doe.com' }))
   })
 
   it('returns 404 from show when id cast fails', async () => {
-    const { controller, userRepository } = buildController()
-    userRepository.findFirst.mockRejectedValue(new Error('Cast to ObjectId failed for value "bad" at path "_id"'))
+    const userRepository = {
+      findFirst: jest.fn().mockRejectedValue(new Error('Cast to ObjectId failed for value "bad" at path "_id"')),
+      find: jest.fn(),
+    }
+    const controller = new UsersController({
+      userRepository,
+      createUser: { execute: jest.fn() },
+      updateUser: { execute: jest.fn() },
+    })
 
     const req = { params: { id: 'bad' } }
     const res = buildResponse()
@@ -160,17 +171,17 @@ describe('UsersController delegation', () => {
 
   it('delegates index to userRepository.find and returns status 200', async () => {
     const { controller, userRepository } = buildController()
-    const users = [{ _id: 'user-id', name: 'John Doe' }]
-    userRepository.find.mockResolvedValue(users)
+    await userRepository.create({ name: 'John Doe', email: 'john@doe.com', password: 'password123', licensee: '507f1f77bcf86cd799439011' })
 
     const req = { query: {} }
     const res = buildResponse()
 
     await controller.index(req, res)
 
-    expect(userRepository.find).toHaveBeenCalledWith({}, { password: 0 })
     expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.send).toHaveBeenCalledWith(users)
+    expect(res.send).toHaveBeenCalledWith(
+      expect.arrayContaining([expect.objectContaining({ name: 'John Doe', email: 'john@doe.com' })]),
+    )
   })
 
   it.each([

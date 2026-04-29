@@ -1,3 +1,4 @@
+import { BodyRepositoryMemory } from '@repositories/body'
 import { ChatbotsController } from './ChatbotsController.js'
 
 function buildResponse() {
@@ -8,7 +9,7 @@ function buildResponse() {
 }
 
 function buildController() {
-  const bodyRepository = { create: jest.fn() }
+  const bodyRepository = new BodyRepositoryMemory()
   const queueServer = { addJob: jest.fn() }
   const publishMessage = jest.fn()
 
@@ -20,8 +21,6 @@ function buildController() {
 describe('ChatbotsController delegation', () => {
   it('creates body, enqueues chatbot-message job and returns status 200 on message', async () => {
     const { controller, bodyRepository, queueServer } = buildController()
-    const body = { _id: 'body-id', licensee: 'licensee-id' }
-    bodyRepository.create.mockResolvedValue(body)
     queueServer.addJob.mockResolvedValue()
 
     const req = { body: { field: 'test' }, licensee: { _id: 'licensee-id' } }
@@ -31,16 +30,19 @@ describe('ChatbotsController delegation', () => {
 
     await controller.message(req, res)
 
-    expect(bodyRepository.create).toHaveBeenCalledWith({ content: req.body, licensee: 'licensee-id', kind: 'normal' })
-    expect(queueServer.addJob).toHaveBeenCalledWith('chatbot-message', { bodyId: 'body-id', licenseeId: 'licensee-id' })
+    const bodies = await bodyRepository.find({ licensee: 'licensee-id' })
+    const createdBody = bodies[0]
+
+    expect(queueServer.addJob).toHaveBeenCalledWith('chatbot-message', {
+      bodyId: createdBody._id,
+      licenseeId: 'licensee-id',
+    })
     expect(res.status).toHaveBeenCalledWith(200)
     expect(res.send).toHaveBeenCalledWith({ body: 'Solicitação de mensagem para a plataforma de chatbot agendado' })
   })
 
   it('creates body, enqueues chatbot-transfer-to-chat job and returns status 200 on transfer', async () => {
     const { controller, bodyRepository, queueServer } = buildController()
-    const body = { _id: 'body-id', licensee: 'licensee-id' }
-    bodyRepository.create.mockResolvedValue(body)
     queueServer.addJob.mockResolvedValue()
 
     const req = { body: { field: 'alter' }, licensee: { _id: 'licensee-id' } }
@@ -50,9 +52,11 @@ describe('ChatbotsController delegation', () => {
 
     await controller.transfer(req, res)
 
-    expect(bodyRepository.create).toHaveBeenCalledWith({ content: req.body, licensee: 'licensee-id', kind: 'normal' })
+    const bodies = await bodyRepository.find({ licensee: 'licensee-id' })
+    const createdBody = bodies[0]
+
     expect(queueServer.addJob).toHaveBeenCalledWith('chatbot-transfer-to-chat', {
-      bodyId: 'body-id',
+      bodyId: createdBody._id,
       licenseeId: 'licensee-id',
     })
     expect(res.status).toHaveBeenCalledWith(200)

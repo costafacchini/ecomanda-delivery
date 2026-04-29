@@ -1,3 +1,4 @@
+import { BodyRepositoryMemory } from '@repositories/body'
 import { IntegrationsController } from './IntegrationsController.js'
 
 function buildResponse() {
@@ -8,7 +9,7 @@ function buildResponse() {
 }
 
 function buildController() {
-  const bodyRepository = { create: jest.fn() }
+  const bodyRepository = new BodyRepositoryMemory()
   const publishMessage = jest.fn()
 
   const controller = new IntegrationsController({ bodyRepository, publishMessage })
@@ -19,8 +20,6 @@ function buildController() {
 describe('IntegrationsController delegation', () => {
   it('creates a body and publishes process-webhook-request, then returns 200', async () => {
     const { controller, bodyRepository, publishMessage } = buildController()
-    const bodySaved = { _id: 'body-id' }
-    bodyRepository.create.mockResolvedValue(bodySaved)
 
     const req = {
       body: { kind: 'get-pix', payload: { cart_id: 'cart-id' } },
@@ -31,12 +30,10 @@ describe('IntegrationsController delegation', () => {
 
     await controller.create(req, res)
 
-    expect(bodyRepository.create).toHaveBeenCalledWith({
-      content: { kind: 'get-pix', payload: { cart_id: 'cart-id' }, provider: 'pagarme' },
-      licensee: 'licensee-id',
-      kind: 'webhook',
-    })
-    expect(publishMessage).toHaveBeenCalledWith({ key: 'process-webhook-request', body: { bodyId: 'body-id' } })
+    const bodies = await bodyRepository.find({ licensee: 'licensee-id' })
+    const createdBody = bodies[0]
+
+    expect(publishMessage).toHaveBeenCalledWith({ key: 'process-webhook-request', body: { bodyId: createdBody._id } })
     expect(res.sendStatus).toHaveBeenCalledWith(200)
   })
 })

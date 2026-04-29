@@ -1,3 +1,4 @@
+import { LicenseeRepositoryMemory } from '@repositories/licensee'
 import { LicenseesController } from './LicenseesController.js'
 import { WEBHOOK_CONFIGURED_MESSAGE } from '../usecases/licensees/SetDialogWebhook.js'
 import { LICENSEE_SENT_TO_PAGARME_MESSAGE } from '../usecases/licensees/SendLicenseeToPagarMe.js'
@@ -20,9 +21,7 @@ async function runValidations(controller, req) {
 }
 
 function buildController() {
-  const licenseeRepository = {
-    findFirst: jest.fn(),
-  }
+  const licenseeRepository = new LicenseeRepositoryMemory()
   const licenseesQueryInstance = {
     page: jest.fn(),
     limit: jest.fn(),
@@ -233,18 +232,19 @@ describe('LicenseesController delegation', () => {
 
   it('delegates show to licenseeRepository.findFirst and returns status 200', async () => {
     const { controller, licenseeRepository } = buildController()
-    const licensee = { _id: 'licensee-id', name: 'Alcateia', pedidos10_integration: { username: 'alcateia' } }
-    licenseeRepository.findFirst.mockResolvedValue(licensee)
+    const seeded = await licenseeRepository.create({
+      name: 'Alcateia',
+      pedidos10_integration: { username: 'alcateia' },
+    })
 
-    const req = { params: { id: 'licensee-id' } }
+    const req = { params: { id: seeded._id } }
     const res = buildResponse()
 
     await controller.show(req, res)
 
-    expect(licenseeRepository.findFirst).toHaveBeenCalledWith({ _id: 'licensee-id' })
     expect(res.status).toHaveBeenCalledWith(200)
     expect(res.send).toHaveBeenCalledWith(
-      expect.objectContaining({ _id: 'licensee-id', pedidos10_integration: '{"username":"alcateia"}' }),
+      expect.objectContaining({ pedidos10_integration: '{"username":"alcateia"}' }),
     )
   })
 

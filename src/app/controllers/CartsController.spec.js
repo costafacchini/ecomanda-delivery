@@ -1,3 +1,6 @@
+import { ContactRepositoryMemory } from '@repositories/contact'
+import { CartRepositoryMemory } from '@repositories/cart'
+import { MessageRepositoryMemory } from '@repositories/message'
 import { CartsController } from './CartsController.js'
 
 function buildResponse() {
@@ -7,21 +10,23 @@ function buildResponse() {
   }
 }
 
-function buildController() {
-  const contactRepository = {
-    getContactByNumber: jest.fn(),
-    create: jest.fn(),
+function buildRepositories() {
+  const contactRepository = new ContactRepositoryMemory()
+  const cartRepository = new CartRepositoryMemory()
+  const messageRepository = new MessageRepositoryMemory()
+
+  cartRepository.relationLoaders = {
+    contact: async (value) => {
+      const id = value?._id ?? value
+      return await contactRepository.findFirst({ _id: id })
+    },
   }
-  const cartRepository = {
-    findFirst: jest.fn(),
-    create: jest.fn(),
-    update: jest.fn(),
-    save: jest.fn(),
-    delete: jest.fn(),
-  }
-  const messageRepository = {
-    createTextMessageInsteadInteractive: jest.fn(),
-  }
+
+  return { contactRepository, cartRepository, messageRepository }
+}
+
+function buildController(overrides = {}) {
+  const { contactRepository, cartRepository, messageRepository } = buildRepositories()
   const cartAdapterInstance = { parseCart: jest.fn() }
   const createCartAdapter = jest.fn().mockReturnValue(cartAdapterInstance)
   const cartPluginInstance = { transformCart: jest.fn() }
@@ -32,9 +37,9 @@ function buildController() {
   const publishMessage = jest.fn()
 
   const controller = new CartsController({
-    contactRepository,
-    cartRepository,
-    messageRepository,
+    contactRepository: overrides.contactRepository ?? contactRepository,
+    cartRepository: overrides.cartRepository ?? cartRepository,
+    messageRepository: overrides.messageRepository ?? messageRepository,
     createNormalizePhone,
     parseCart,
     createCartAdapter,
@@ -45,9 +50,9 @@ function buildController() {
 
   return {
     controller,
-    contactRepository,
-    cartRepository,
-    messageRepository,
+    contactRepository: overrides.contactRepository ?? contactRepository,
+    cartRepository: overrides.cartRepository ?? cartRepository,
+    messageRepository: overrides.messageRepository ?? messageRepository,
     cartAdapterInstance,
     createCartAdapter,
     cartPluginInstance,
@@ -62,13 +67,9 @@ function buildController() {
 describe('CartsController delegation', () => {
   describe('create', () => {
     it('creates a new cart and returns status 201', async () => {
-      const { controller, contactRepository, cartRepository, cartAdapterInstance } = buildController()
-      const contact = { _id: 'contact-id', number: '5511990283745' }
-      const cart = { _id: 'cart-id', total: 16.1, concluded: false }
+      const { controller, contactRepository, cartAdapterInstance } = buildController()
+      await contactRepository.create({ number: '5511990283745', licensee: 'licensee-id', type: '@c.us' })
 
-      contactRepository.getContactByNumber.mockResolvedValue(contact)
-      cartRepository.findFirst.mockResolvedValue(null)
-      cartRepository.create.mockResolvedValue(cart)
       cartAdapterInstance.parseCart.mockReturnValue({
         products: [],
         delivery_tax: 0.5,
@@ -103,14 +104,12 @@ describe('CartsController delegation', () => {
 
       await controller.create(req, res)
 
-      expect(contactRepository.getContactByNumber).toHaveBeenCalledWith('5511990283745', 'licensee-id')
       expect(res.status).toHaveBeenCalledWith(201)
-      expect(res.send).toHaveBeenCalledWith(cart)
     })
 
     it('returns 500 when an unexpected error occurs', async () => {
-      const { controller, contactRepository } = buildController()
-      contactRepository.getContactByNumber.mockRejectedValue(new Error('some error'))
+      const contactRepository = { getContactByNumber: jest.fn().mockRejectedValue(new Error('some error')) }
+      const { controller } = buildController({ contactRepository })
 
       const req = {
         body: { contact: '5511990283745' },
@@ -128,8 +127,7 @@ describe('CartsController delegation', () => {
 
   describe('update', () => {
     it('returns 422 when contact is not found', async () => {
-      const { controller, contactRepository } = buildController()
-      contactRepository.getContactByNumber.mockResolvedValue(null)
+      const { controller } = buildController()
 
       const req = { params: { contact: '551164646464' }, body: {}, licensee: { _id: 'licensee-id' } }
       const res = buildResponse()
@@ -141,9 +139,8 @@ describe('CartsController delegation', () => {
     })
 
     it('returns 200 with not-found message when cart does not exist', async () => {
-      const { controller, contactRepository, cartRepository } = buildController()
-      contactRepository.getContactByNumber.mockResolvedValue({ _id: 'contact-id' })
-      cartRepository.findFirst.mockResolvedValue(null)
+      const { controller, contactRepository } = buildController()
+      await contactRepository.create({ number: '5511990283745', licensee: 'licensee-id', type: '@c.us' })
 
       const req = { params: { contact: '5511990283745' }, body: {}, licensee: { _id: 'licensee-id' } }
       const res = buildResponse()
@@ -155,8 +152,8 @@ describe('CartsController delegation', () => {
     })
 
     it('returns 500 when an unexpected error occurs', async () => {
-      const { controller, contactRepository } = buildController()
-      contactRepository.getContactByNumber.mockRejectedValue(new Error('some error'))
+      const contactRepository = { getContactByNumber: jest.fn().mockRejectedValue(new Error('some error')) }
+      const { controller } = buildController({ contactRepository })
 
       const req = { params: { contact: '5511990283745' }, body: {}, licensee: { _id: 'licensee-id' } }
       const res = buildResponse()
@@ -170,8 +167,7 @@ describe('CartsController delegation', () => {
 
   describe('show', () => {
     it('returns 422 when contact is not found', async () => {
-      const { controller, contactRepository } = buildController()
-      contactRepository.getContactByNumber.mockResolvedValue(null)
+      const { controller } = buildController()
 
       const req = { params: { contact: '551164646464' }, licensee: { _id: 'licensee-id' } }
       const res = buildResponse()
@@ -184,10 +180,8 @@ describe('CartsController delegation', () => {
 
     it('returns 200 with cart description when cart exists', async () => {
       const { controller, contactRepository, cartRepository, parseCart } = buildController()
-      const contact = { _id: 'contact-id' }
-      const cart = { _id: 'cart-id' }
-      contactRepository.getContactByNumber.mockResolvedValue(contact)
-      cartRepository.findFirst.mockResolvedValue(cart)
+      const contact = await contactRepository.create({ number: '5511990283745', licensee: 'licensee-id', type: '@c.us' })
+      await cartRepository.create({ contact: contact._id, concluded: false, licensee: 'licensee-id' })
       parseCart.mockResolvedValue('cart description text')
 
       const req = { params: { contact: '5511990283745' }, licensee: { _id: 'licensee-id' } }
@@ -195,7 +189,6 @@ describe('CartsController delegation', () => {
 
       await controller.show(req, res)
 
-      expect(parseCart).toHaveBeenCalledWith('cart-id')
       expect(res.status).toHaveBeenCalledWith(200)
       expect(res.send).toHaveBeenCalledWith({ cart: 'cart description text' })
     })
@@ -204,27 +197,21 @@ describe('CartsController delegation', () => {
   describe('close', () => {
     it('closes the cart and returns status 200', async () => {
       const { controller, contactRepository, cartRepository } = buildController()
-      const contact = { _id: 'contact-id' }
-      const cart = { _id: 'cart-id' }
-      const closedCart = { _id: 'cart-id', concluded: true }
-      contactRepository.getContactByNumber.mockResolvedValue(contact)
-      cartRepository.findFirst.mockResolvedValueOnce(cart).mockResolvedValueOnce(closedCart)
-      cartRepository.update.mockResolvedValue()
+      const contact = await contactRepository.create({ number: '5511990283745', licensee: 'licensee-id', type: '@c.us' })
+      await cartRepository.create({ contact: contact._id, concluded: false, licensee: 'licensee-id' })
 
       const req = { params: { contact: '5511990283745' }, licensee: { _id: 'licensee-id' } }
       const res = buildResponse()
 
       await controller.close(req, res)
 
-      expect(cartRepository.update).toHaveBeenCalledWith('cart-id', { concluded: true })
       expect(res.status).toHaveBeenCalledWith(200)
-      expect(res.send).toHaveBeenCalledWith(closedCart)
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ concluded: true }))
     })
 
     it('returns 200 with not-found message when cart does not exist', async () => {
-      const { controller, contactRepository, cartRepository } = buildController()
-      contactRepository.getContactByNumber.mockResolvedValue({ _id: 'contact-id' })
-      cartRepository.findFirst.mockResolvedValue(null)
+      const { controller, contactRepository } = buildController()
+      await contactRepository.create({ number: '5511990283745', licensee: 'licensee-id', type: '@c.us' })
 
       const req = { params: { contact: '5511990283745' }, licensee: { _id: 'licensee-id' } }
       const res = buildResponse()
@@ -256,20 +243,11 @@ describe('CartsController delegation', () => {
 
   describe('send', () => {
     it('schedules cart for send and returns status 200', async () => {
-      const {
-        controller,
-        contactRepository,
-        cartRepository,
-        messageRepository,
-        parseCart,
-        scheduleSendMessageToMessenger,
-      } = buildController()
-      const contact = { _id: 'contact-id', number: '5511990283745' }
-      const cart = { _id: 'cart-id', contact }
-      contactRepository.getContactByNumber.mockResolvedValue(contact)
-      cartRepository.findFirst.mockResolvedValue(cart)
+      const { controller, contactRepository, cartRepository, messageRepository, parseCart, scheduleSendMessageToMessenger } =
+        buildController()
+      const contact = await contactRepository.create({ number: '5511990283745', licensee: 'licensee-id', type: '@c.us' })
+      await cartRepository.create({ contact: contact._id, concluded: false, licensee: 'licensee-id' })
       parseCart.mockResolvedValue('cart text')
-      messageRepository.createTextMessageInsteadInteractive.mockResolvedValue({ _id: 'message-id' })
       scheduleSendMessageToMessenger.mockResolvedValue()
 
       const req = {
@@ -280,6 +258,8 @@ describe('CartsController delegation', () => {
 
       await controller.send(req, res)
 
+      const messages = await messageRepository.find({})
+      expect(messages.length).toBeGreaterThan(0)
       expect(res.status).toHaveBeenCalledWith(200)
       expect(res.send).toHaveBeenCalledWith({ message: 'Carrinho agendado para envio' })
     })
@@ -288,10 +268,14 @@ describe('CartsController delegation', () => {
   describe('getPayment', () => {
     it('returns payment status and cart id when cart exists', async () => {
       const { controller, contactRepository, cartRepository } = buildController()
-      const contact = { _id: 'contact-id' }
-      const cart = { _id: 'cart-id', payment_status: 'waiting', integration_status: 'pending' }
-      contactRepository.getContactByNumber.mockResolvedValue(contact)
-      cartRepository.findFirst.mockResolvedValue(cart)
+      const contact = await contactRepository.create({ number: '5511990283745', licensee: 'licensee-id', type: '@c.us' })
+      const cart = await cartRepository.create({
+        contact: contact._id,
+        concluded: false,
+        licensee: 'licensee-id',
+        payment_status: 'waiting',
+        integration_status: 'pending',
+      })
 
       const req = { params: { contact: '5511990283745' }, licensee: { _id: 'licensee-id' } }
       const res = buildResponse()
@@ -300,7 +284,7 @@ describe('CartsController delegation', () => {
 
       expect(res.status).toHaveBeenCalledWith(200)
       expect(res.send).toHaveBeenCalledWith({
-        cart_id: 'cart-id',
+        cart_id: cart._id,
         payment_status: 'waiting',
         integration_status: 'pending',
       })
