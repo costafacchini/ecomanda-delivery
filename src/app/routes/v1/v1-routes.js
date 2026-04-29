@@ -9,6 +9,9 @@ import { DelayController } from '../../controllers/DelayController.js'
 import { BackgroundjobsController } from '../../controllers/BackgroundjobsController.js'
 import { IntegrationsController } from '../../controllers/IntegrationsController.js'
 import { OrdersController } from '../../controllers/OrdersController.js'
+import { ReceivePedidos10Order } from '../../usecases/orders/ReceivePedidos10Order.js'
+import { ChangePedidos10OrderStatus } from '../../usecases/orders/ChangePedidos10OrderStatus.js'
+import { ScheduleBackgroundjob } from '../../usecases/backgroundjobs/ScheduleBackgroundjob.js'
 import { queueServer } from '../../../config/queue.js'
 import { publishMessage } from '../../../config/rabbitmq.js'
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
@@ -51,9 +54,19 @@ const cartsController = new CartsController({
   publishMessage,
 })
 const delayController = new DelayController()
-const backgroundjobsController = new BackgroundjobsController({ backgroundjobRepository, queueServer })
+const backgroundjobsController = new BackgroundjobsController({
+  backgroundjobRepository,
+  scheduleBackgroundjob: new ScheduleBackgroundjob({ backgroundjobRepository, jobQueue: queueServer }),
+})
 const integrationsController = new IntegrationsController({ bodyRepository, publishMessage })
-const ordersController = new OrdersController({ integrationlogRepository, bodyRepository, queueServer })
+const ordersController = new OrdersController({
+  receivePedidos10Order: new ReceivePedidos10Order({ integrationlogRepository, bodyRepository, jobQueue: queueServer }),
+  changePedidos10OrderStatus: new ChangePedidos10OrderStatus({
+    integrationlogRepository,
+    bodyRepository,
+    jobQueue: queueServer,
+  }),
+})
 
 router.post('/chat/message', chatsController.message)
 router.post('/chat/reset', chatsController.reset)

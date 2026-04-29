@@ -1,9 +1,9 @@
 import { sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
 
 class BackgroundjobsController {
-  constructor({ backgroundjobRepository, queueServer } = {}) {
+  constructor({ backgroundjobRepository, scheduleBackgroundjob } = {}) {
     this.backgroundjobRepository = backgroundjobRepository
-    this.queueServer = queueServer
+    this.scheduleBackgroundjob = scheduleBackgroundjob
 
     this.create = this.create.bind(this)
     this.show = this.show.bind(this)
@@ -13,14 +13,9 @@ class BackgroundjobsController {
     const { kind, payload } = req.body
 
     try {
-      const backgroundjob = await this.backgroundjobRepository.create({
+      const backgroundjob = await this.scheduleBackgroundjob.execute({
         kind,
-        body: payload,
-        licensee: req.licensee._id,
-      })
-
-      await this.queueServer.addJob('background-job', {
-        jobId: backgroundjob._id.toString(),
+        payload,
         licenseeId: req.licensee._id,
       })
 

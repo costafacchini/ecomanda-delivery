@@ -1,8 +1,7 @@
 class OrdersController {
-  constructor({ integrationlogRepository, bodyRepository, queueServer } = {}) {
-    this.integrationlogRepository = integrationlogRepository
-    this.bodyRepository = bodyRepository
-    this.queueServer = queueServer
+  constructor({ receivePedidos10Order, changePedidos10OrderStatus } = {}) {
+    this.receivePedidos10Order = receivePedidos10Order
+    this.changePedidos10OrderStatus = changePedidos10OrderStatus
 
     this.create = this.create.bind(this)
     this.changeStatus = this.changeStatus.bind(this)
@@ -10,38 +9,23 @@ class OrdersController {
 
   async create(req, res) {
     const { MerchantExternalCode, order } = req.body
-    const body = { MerchantExternalCode, order }
 
-    const integrationlog = await this.integrationlogRepository.create({
-      licensee: req.licensee._id,
-      log_payload: body,
+    const bodySaved = await this.receivePedidos10Order.execute({
+      licenseeId: req.licensee._id,
+      MerchantExternalCode,
+      order,
     })
-
-    const bodySaved = await this.bodyRepository.create({ content: body, licensee: req.licensee._id, kind: 'pedidos10' })
-
-    console.info(`Requisição do Pedidos 10 para processar pedidos recebida: ${integrationlog._id}`)
-
-    await this.queueServer.addJob('pedidos10-webhook', { bodyId: bodySaved._id, licenseeId: req.licensee._id })
 
     res.status(202).send({ id: bodySaved._id })
   }
 
   async changeStatus(req, res) {
     const { order, status } = req.body
-    const body = { order, status }
 
-    const integrationlog = await this.integrationlogRepository.create({
-      licensee: req.licensee._id,
-      log_payload: body,
-    })
-
-    const bodySaved = await this.bodyRepository.create({ content: body, licensee: req.licensee._id, kind: 'pedidos10' })
-
-    console.info(`Requisição para mudar o status do pedido recebida: ${integrationlog._id}`)
-
-    await this.queueServer.addJob('pedidos10-change-order-status', {
-      bodyId: bodySaved._id,
+    const bodySaved = await this.changePedidos10OrderStatus.execute({
       licenseeId: req.licensee._id,
+      order,
+      status,
     })
 
     res.status(200).send({ id: bodySaved._id })

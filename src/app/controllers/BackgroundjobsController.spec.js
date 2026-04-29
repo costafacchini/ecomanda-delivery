@@ -7,6 +7,70 @@ import { licensee as licenseeFactory } from '@factories/licensee'
 import { backgroundjob as backgroundjobFactory } from '@factories/backgroundjob'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { BackgroundjobRepositoryDatabase } from '@repositories/backgroundjob'
+import { BackgroundjobsController } from './BackgroundjobsController.js'
+
+function buildResponse() {
+  return {
+    status: jest.fn().mockReturnThis(),
+    send: jest.fn(),
+  }
+}
+
+function buildController() {
+  const backgroundjobRepository = { findFirst: jest.fn() }
+  const scheduleBackgroundjob = { execute: jest.fn() }
+  const controller = new BackgroundjobsController({ backgroundjobRepository, scheduleBackgroundjob })
+  return { controller, backgroundjobRepository, scheduleBackgroundjob }
+}
+
+describe('BackgroundjobsController delegation', () => {
+  it('delegates create to scheduleBackgroundjob and returns status 200', async () => {
+    const { controller, scheduleBackgroundjob } = buildController()
+    const backgroundjob = { _id: 'job-id' }
+    scheduleBackgroundjob.execute.mockResolvedValue(backgroundjob)
+
+    const req = { licensee: { _id: 'licensee-id' }, body: { kind: 'get-pix', payload: { cart_id: 'cart-id' } } }
+    const res = buildResponse()
+
+    await controller.create(req, res)
+
+    expect(scheduleBackgroundjob.execute).toHaveBeenCalledWith({
+      kind: 'get-pix',
+      payload: { cart_id: 'cart-id' },
+      licenseeId: 'licensee-id',
+    })
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.send).toHaveBeenCalledWith({
+      body: { message: 'Job agendado com sucesso.', job_id: 'job-id' },
+    })
+  })
+
+  it('returns 422 when scheduleBackgroundjob raises model errors', async () => {
+    const { controller, scheduleBackgroundjob } = buildController()
+    const modelError = { errors: { kind: { message: 'invalid kind' } } }
+    scheduleBackgroundjob.execute.mockRejectedValue(modelError)
+
+    const req = { licensee: { _id: 'licensee-id' }, body: { kind: 'bad-kind', payload: {} } }
+    const res = buildResponse()
+
+    await controller.create(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(422)
+  })
+
+  it('returns 500 when scheduleBackgroundjob throws unexpected error', async () => {
+    const { controller, scheduleBackgroundjob } = buildController()
+    scheduleBackgroundjob.execute.mockRejectedValue(new Error('unexpected'))
+
+    const req = { licensee: { _id: 'licensee-id' }, body: { kind: 'get-pix', payload: {} } }
+    const res = buildResponse()
+
+    await controller.create(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.send).toHaveBeenCalledWith({ body: { message: 'Error: unexpected' } })
+  })
+})
 
 describe('backgrounndjobs controller', () => {
   let apiToken
