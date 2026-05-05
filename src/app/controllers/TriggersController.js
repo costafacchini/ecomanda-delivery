@@ -1,29 +1,12 @@
 import { sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
-import _ from 'lodash'
-
-function permit(fields) {
-  const permitedFields = [
-    'name',
-    'triggerKind',
-    'expression',
-    'catalogMulti',
-    'catalogSingle',
-    'textReplyButton',
-    'messagesList',
-    'licensee',
-    'order',
-    'text',
-    'catalogId',
-  ]
-
-  return _.pick(fields, permitedFields)
-}
 
 class TriggersController {
-  constructor({ triggerRepository, createTriggersQuery, createFacebookCatalogImporter } = {}) {
+  constructor({ triggerRepository, createTriggersQuery, createTrigger, updateTrigger, importFacebookCatalog } = {}) {
     this.triggerRepository = triggerRepository
     this.createTriggersQuery = createTriggersQuery
-    this.createFacebookCatalogImporter = createFacebookCatalogImporter
+    this.createTrigger = createTrigger
+    this.updateTrigger = updateTrigger
+    this.importFacebookCatalog = importFacebookCatalog
 
     this.create = this.create.bind(this)
     this.update = this.update.bind(this)
@@ -33,60 +16,30 @@ class TriggersController {
   }
 
   async create(req, res) {
-    const {
-      name,
-      triggerKind,
-      expression,
-      catalogMulti,
-      catalogSingle,
-      textReplyButton,
-      messagesList,
-      licensee,
-      order,
-      text,
-      catalogId,
-    } = req.body
-
     try {
-      const trigger = await this.triggerRepository.create({
-        name,
-        triggerKind,
-        expression,
-        catalogMulti,
-        catalogSingle,
-        textReplyButton,
-        messagesList,
-        licensee,
-        order,
-        text,
-        catalogId,
-      })
+      const trigger = await this.createTrigger.execute(req.body)
 
-      res.status(201).send(trigger)
+      return res.status(201).send(trigger)
     } catch (err) {
       if ('errors' in err) {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
       }
-      res.status(500).send({ errors: { message: err.toString() } })
+
+      return res.status(500).send({ errors: { message: err.toString() } })
     }
   }
 
   async update(req, res) {
-    const fields = permit(req.body)
-    delete fields.licensee
-
     try {
-      await this.triggerRepository.update(req.params.id, { ...fields })
-    } catch (err) {
-      return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
-    }
+      const trigger = await this.updateTrigger.execute(req.params.id, req.body)
 
-    try {
-      const trigger = await this.triggerRepository.findFirst({ _id: req.params.id })
-
-      res.status(200).send(trigger)
+      return res.status(200).send(trigger)
     } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      if ('errors' in err) {
+        return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
+      }
+
+      return res.status(500).send({ errors: { message: err.toString() } })
     }
   }
 
@@ -135,14 +88,12 @@ class TriggersController {
   }
 
   async importation(req, res) {
-    const data = req.body.text
     try {
-      const facebookCatalogImporter = this.createFacebookCatalogImporter(req.params.id)
-      await facebookCatalogImporter.importCatalog(data)
+      await this.importFacebookCatalog.execute(req.params.id, req.body.text)
 
-      res.status(201).send({ body: 'OK' })
+      return res.status(201).send({ body: 'OK' })
     } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      return res.status(500).send({ errors: { message: err.toString() } })
     }
   }
 }

@@ -12,6 +12,18 @@ import { ContactsQuery } from '../queries/ContactsQuery.js'
 import { TriggersQuery } from '../queries/TriggersQuery.js'
 import { TemplatesQuery } from '../queries/TemplatesQuery.js'
 import { MessagesQuery } from '../queries/MessagesQuery.js'
+import { CreateLicensee } from '../usecases/licensees/CreateLicensee.js'
+import { UpdateLicensee } from '../usecases/licensees/UpdateLicensee.js'
+import { SetDialogWebhook } from '../usecases/licensees/SetDialogWebhook.js'
+import { SendLicenseeToPagarMe } from '../usecases/licensees/SendLicenseeToPagarMe.js'
+import { SignPedidos10OrderWebhook } from '../usecases/licensees/SignPedidos10OrderWebhook.js'
+import { CreateContact } from '../usecases/contacts/CreateContact.js'
+import { UpdateContact } from '../usecases/contacts/UpdateContact.js'
+import { CreateTrigger } from '../usecases/triggers/CreateTrigger.js'
+import { ImportFacebookCatalog } from '../usecases/triggers/ImportFacebookCatalog.js'
+import { UpdateTrigger } from '../usecases/triggers/UpdateTrigger.js'
+import { CreateUser } from '../usecases/users/CreateUser.js'
+import { UpdateUser } from '../usecases/users/UpdateUser.js'
 import { createRuntimeDependencies } from '../runtime/dependencies.js'
 
 const router = express.Router()
@@ -33,23 +45,36 @@ const {
   createTemplatesImporter,
 } = createRuntimeDependencies()
 
-const usersController = new UsersController({ userRepository })
+const usersController = new UsersController({
+  userRepository,
+  createUser: new CreateUser({ userRepository }),
+  updateUser: new UpdateUser({ userRepository }),
+})
 const licenseesController = new LicenseesController({
   licenseeRepository,
   createLicenseesQuery: () => new LicenseesQuery({ licenseeRepository }),
-  createMessengerPlugin,
-  createPagarMe,
-  createPedidos10,
+  createLicensee: new CreateLicensee({ licenseeRepository }),
+  updateLicensee: new UpdateLicensee({ licenseeRepository }),
+  setDialogWebhook: new SetDialogWebhook({ licenseeRepository, createMessengerPlugin }),
+  sendLicenseeToPagarMe: new SendLicenseeToPagarMe({
+    licenseeRepository,
+    createPagarMe,
+    pagarMeToken: process.env.PAGARME_TOKEN,
+  }),
+  signPedidos10OrderWebhook: new SignPedidos10OrderWebhook({ licenseeRepository, createPedidos10 }),
 })
 const contactsController = new ContactsController({
   contactRepository,
   createContactsQuery: () => new ContactsQuery({ contactRepository }),
-  queueServer,
+  createContact: new CreateContact({ contactRepository, jobQueue: queueServer }),
+  updateContact: new UpdateContact({ contactRepository, jobQueue: queueServer }),
 })
 const triggersController = new TriggersController({
   triggerRepository,
   createTriggersQuery: () => new TriggersQuery({ triggerRepository }),
-  createFacebookCatalogImporter,
+  createTrigger: new CreateTrigger({ triggerRepository }),
+  updateTrigger: new UpdateTrigger({ triggerRepository }),
+  importFacebookCatalog: new ImportFacebookCatalog({ createFacebookCatalogImporter }),
 })
 const messagesController = new MessagesController({
   createMessagesQuery: () => new MessagesQuery({ messageRepository }),

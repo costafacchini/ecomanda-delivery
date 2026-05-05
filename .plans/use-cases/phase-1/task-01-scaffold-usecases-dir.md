@@ -44,6 +44,12 @@ Create each sub-directory under `src/app/usecases/` with a `.gitkeep` file so th
 - [ ] Existing tests still pass
 - [ ] `pre-commit-check` passes
 
+## Documentation / KB Updates
+
+- [ ] No product or API documentation changes expected for directory scaffolding alone
+- [ ] If the implementation uncovers a non-obvious wiring pattern for future use case tasks, capture it with `document-solution`
+- [ ] If any KB files change, run `check-kb-index`
+
 ## Completion Criteria
 
 - [ ] `src/app/usecases/` exists with 8 domain sub-directories

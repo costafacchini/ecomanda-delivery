@@ -46,6 +46,12 @@ Constructor-injected repositories and queue. `execute(body)` saves then enqueues
 - [ ] Existing tests still pass
 - [ ] `pre-commit-check` passes
 
+## Documentation / KB Updates
+
+- [ ] No product or API documentation changes expected for this extraction alone
+- [ ] If the chat/messenger ingestion pattern becomes reusable for later use-case extractions, capture it with `document-solution`
+- [ ] If any KB files change, run `check-kb-index`
+
 ## Completion Criteria
 
 - [ ] Both use case files and specs created and passing

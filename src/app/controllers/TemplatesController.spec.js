@@ -1,318 +1,238 @@
-import Template from '@models/Template.js'
-import User from '@models/User.js'
-import request from 'supertest'
-import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
-import { expressServer } from '../../../.jest/server-express'
-import { Dialog } from '@plugins/messengers/Dialog.js'
-import { userSuper as userSuperFactory } from '@factories/user'
-import { licensee as licenseeFactory } from '@factories/licensee'
-import { template as templateFactory } from '@factories/template'
-import { LicenseeRepositoryDatabase } from '@repositories/licensee'
-import { TemplateRepositoryDatabase } from '@repositories/template'
-import { TemplatesQuery } from '@queries/TemplatesQuery'
+import { TemplateRepositoryMemory } from '@repositories/template'
+import { TemplatesController } from './TemplatesController.js'
 
-describe('template controller', () => {
-  let token
-  let licensee
+function buildResponse() {
+  return {
+    json: jest.fn(),
+    send: jest.fn(),
+    status: jest.fn().mockReturnThis(),
+  }
+}
 
-  beforeAll(async () => {
-    installMemoryRepositories()
+function buildController() {
+  const templateRepository = new TemplateRepositoryMemory()
+  const templatesQueryInstance = {
+    page: jest.fn(),
+    limit: jest.fn(),
+    filterByLicensee: jest.fn(),
+    filterByExpression: jest.fn(),
+    all: jest.fn(),
+  }
+  const createTemplatesQuery = jest.fn().mockReturnValue(templatesQueryInstance)
+  const templateImporterInstance = { import: jest.fn() }
+  const createTemplatesImporter = jest.fn().mockReturnValue(templateImporterInstance)
 
-    await User.create(userSuperFactory.build())
-
-    await request(expressServer)
-      .post('/login')
-      .send({ email: 'john@doe.com', password: '12345678' })
-      .then((response) => {
-        token = response.body.token
-      })
-
-    const licenseeRepository = new LicenseeRepositoryDatabase()
-    licensee = await licenseeRepository.create(licenseeFactory.build())
+  const controller = new TemplatesController({
+    templateRepository,
+    createTemplatesQuery,
+    createTemplatesImporter,
   })
 
-  afterAll(() => {
-    resetMemoryRepositories()
+  return {
+    controller,
+    templateRepository,
+    createTemplatesQuery,
+    templatesQueryInstance,
+    createTemplatesImporter,
+    templateImporterInstance,
+  }
+}
+
+describe('TemplatesController delegation', () => {
+  it('creates a template and returns status 201', async () => {
+    const { controller } = buildController()
+
+    const req = { body: { name: 'template', namespace: 'Namespace', licensee: 'licensee-id' } }
+    const res = buildResponse()
+
+    await controller.create(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(201)
+    expect(res.send).toHaveBeenCalledWith(
+      expect.objectContaining({ name: 'template', namespace: 'Namespace', licensee: 'licensee-id' }),
+    )
   })
 
-  describe('about auth', () => {
-    it('returns status 401 and message if x-access-token in not inform in header', async () => {
-      await request(expressServer)
-        .post('/resources/templates/')
-        .send({
-          name: 'template',
-        })
-        .expect('Content-Type', /json/)
-        .expect(401, {
-          auth: false,
-          message: 'Token não informado.',
-        })
+  it('returns 422 when create raises model validation errors', async () => {
+    const templateRepository = {
+      create: jest.fn().mockRejectedValue({ errors: { name: { message: 'Nome: Você deve preencher o campo' } } }),
+      update: jest.fn(),
+      findFirst: jest.fn(),
+    }
+    const controller = new TemplatesController({
+      templateRepository,
+      createTemplatesQuery: jest.fn(),
+      createTemplatesImporter: jest.fn(),
     })
 
-    it('returns status 500 and message if x-access-token in invalid', async () => {
-      await request(expressServer)
-        .post('/resources/templates/')
-        .set('x-access-token', 'invalid')
-        .send({ name: 'outro' })
-        .expect('Content-Type', /json/)
-        .expect(500, {
-          auth: false,
-          message: 'Falha na autenticação com token.',
-        })
-    })
+    const req = { body: { name: '', namespace: 'Namespace', licensee: 'licensee-id' } }
+    const res = buildResponse()
+
+    await controller.create(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(422)
+    expect(res.json).toHaveBeenCalledWith({ errors: [{ message: 'Nome: Você deve preencher o campo' }] })
   })
 
-  describe('create', () => {
-    describe('response', () => {
-      it('returns status 201 and the template data if the create is successful', async () => {
-        await request(expressServer)
-          .post('/resources/templates/')
-          .set('x-access-token', token)
-          .send(
-            templateFactory.build({
-              licensee,
-            }),
-          )
-          .expect('Content-Type', /json/)
-          .expect(201)
-          .then((response) => {
-            expect(response.body.name).toEqual('template')
-            expect(response.body.namespace).toEqual('Namespace')
-            expect(response.body.licensee).toEqual(licensee._id.toString())
-          })
-      })
-
-      it('returns status 422 and message if the template is not valid', async () => {
-        await request(expressServer)
-          .post('/resources/templates/')
-          .set('x-access-token', token)
-          .send(templateFactory.build({ name: '', licensee }))
-          .expect('Content-Type', /json/)
-          .expect(422, {
-            errors: [{ message: 'Nome: Você deve preencher o campo' }],
-          })
-      })
-
-      it('returns status 500 and message if the some error ocurred when create the template', async () => {
-        const templateSaveSpy = jest.spyOn(TemplateRepositoryDatabase.prototype, 'create').mockImplementation(() => {
-          throw new Error('some error')
-        })
-
-        await request(expressServer)
-          .post('/resources/templates/')
-          .set('x-access-token', token)
-          .send(templateFactory.build({ licensee }))
-          .expect('Content-Type', /json/)
-          .expect(500, {
-            errors: { message: 'Error: some error' },
-          })
-
-        templateSaveSpy.mockRestore()
-      })
-
-      describe('validations', () => {
-        it('returns status 422 and message if templates is invalid', async () => {
-          await request(expressServer)
-            .post('/resources/templates/')
-            .set('x-access-token', token)
-            .send({
-              name: 'Template',
-            })
-            .expect('Content-Type', /json/)
-            .expect(422, {
-              errors: [{ message: 'Licensee: Você deve preencher o campo' }],
-            })
-        })
-      })
+  it('returns 500 when create throws unexpected error', async () => {
+    const templateRepository = {
+      create: jest.fn().mockRejectedValue(new Error('some error')),
+      update: jest.fn(),
+      findFirst: jest.fn(),
+    }
+    const controller = new TemplatesController({
+      templateRepository,
+      createTemplatesQuery: jest.fn(),
+      createTemplatesImporter: jest.fn(),
     })
+
+    const req = { body: { name: 'template', namespace: 'Namespace', licensee: 'licensee-id' } }
+    const res = buildResponse()
+
+    await controller.create(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: some error' } })
   })
 
-  describe('update', () => {
-    describe('response', () => {
-      it('returns status 200 and the template data if the update is successful', async () => {
-        const template = await Template.create(templateFactory.build({ licensee }))
-
-        const licenseeRepository = new LicenseeRepositoryDatabase()
-        const licenseeNew = await licenseeRepository.create(licenseeFactory.build())
-
-        await request(expressServer)
-          .post(`/resources/templates/${template._id}`)
-          .set('x-access-token', token)
-          .send({
-            _id: 123,
-            name: 'another',
-            namespace: 'Other',
-            licensee,
-          })
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then((response) => {
-            expect(response.body.name).toEqual('another')
-            expect(response.body.namespace).toEqual('Other')
-            expect(response.body.licensee).toEqual(licensee._id.toString())
-
-            expect(response.body._id).not.toEqual(123)
-            expect(response.body.licensee).not.toEqual(licenseeNew._id.toString())
-          })
-      })
-
-      it('returns status 422 and message if the template is not valid', async () => {
-        const template = await Template.create(templateFactory.build({ licensee }))
-
-        await request(expressServer)
-          .post(`/resources/templates/${template._id}`)
-          .set('x-access-token', token)
-          .send({ name: '' })
-          .expect('Content-Type', /json/)
-          .expect(422, {
-            errors: [{ message: 'Nome: Você deve preencher o campo' }],
-          })
-      })
-
-      it('returns status 500 and message if the some error ocurre when update the template', async () => {
-        const templateFindOneSpy = jest
-          .spyOn(TemplateRepositoryDatabase.prototype, 'findFirst')
-          .mockImplementation(() => {
-            throw new Error('some error')
-          })
-
-        const template = await Template.create(templateFactory.build({ licensee }))
-
-        await request(expressServer)
-          .post(`/resources/templates/${template._id}`)
-          .set('x-access-token', token)
-          .send({ name: 'Name modified' })
-          .expect('Content-Type', /json/)
-          .expect(500, {
-            errors: { message: 'Error: some error' },
-          })
-
-        templateFindOneSpy.mockRestore()
-      })
+  it('updates a template and returns status 200', async () => {
+    const { controller, templateRepository } = buildController()
+    const seeded = await templateRepository.create({
+      name: 'original',
+      namespace: 'Other',
+      licensee: 'licensee-id',
     })
+
+    const req = {
+      params: { id: seeded._id },
+      body: { name: 'another', namespace: 'Other', licensee: 'other-licensee-id' },
+    }
+    const res = buildResponse()
+
+    await controller.update(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ name: 'another', namespace: 'Other' }))
   })
 
-  describe('show', () => {
-    describe('response', () => {
-      it('returns status 200 and message if template exists', async () => {
-        const template = await Template.create(
-          templateFactory.build({
-            name: 'name',
-            namespace: 'test',
-            licensee,
-          }),
-        )
-
-        await request(expressServer)
-          .get(`/resources/templates/${template._id}`)
-          .set('x-access-token', token)
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then((response) => {
-            expect(response.body.name).toEqual('name')
-            expect(response.body.namespace).toEqual('test')
-            expect(response.body.licensee._id.toString()).toEqual(licensee._id.toString())
-            expect(response.body._id).toEqual(template._id.toString())
-          })
-      })
-
-      it('returns status 404 and message if template does not exists', async () => {
-        await request(expressServer)
-          .get('/resources/templates/12312')
-          .set('x-access-token', token)
-          .expect('Content-Type', /json/)
-          .expect(404, {
-            errors: { message: 'Template 12312 não encontrado' },
-          })
-      })
-
-      it('returns status 500 and message if occurs another error', async () => {
-        const templateFindOneSpy = jest
-          .spyOn(TemplateRepositoryDatabase.prototype, 'findFirst')
-          .mockImplementation(() => {
-            throw new Error('some error')
-          })
-
-        await request(expressServer)
-          .get('/resources/templates/12312')
-          .set('x-access-token', token)
-          .expect('Content-Type', /json/)
-          .expect(500, {
-            errors: { message: 'Error: some error' },
-          })
-
-        templateFindOneSpy.mockRestore()
-      })
+  it('returns 422 when update raises model validation errors', async () => {
+    const templateRepository = {
+      create: jest.fn(),
+      update: jest.fn().mockRejectedValue({ errors: { name: { message: 'Nome: Você deve preencher o campo' } } }),
+      findFirst: jest.fn(),
+    }
+    const controller = new TemplatesController({
+      templateRepository,
+      createTemplatesQuery: jest.fn(),
+      createTemplatesImporter: jest.fn(),
     })
+
+    const req = { params: { id: 'template-id' }, body: { name: '' } }
+    const res = buildResponse()
+
+    await controller.update(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(422)
+    expect(res.json).toHaveBeenCalledWith({ errors: [{ message: 'Nome: Você deve preencher o campo' }] })
   })
 
-  describe('index', () => {
-    describe('response', () => {
-      it('returns status 200 and message if template exists', async () => {
-        await Template.create(templateFactory.build({ licensee }))
-        await Template.create(templateFactory.build({ licensee }))
-        await Template.create(templateFactory.build({ licensee }))
-        await Template.create(templateFactory.build({ licensee }))
-
-        await request(expressServer)
-          .get(`/resources/templates/?expression=template&page=1&limit=3`)
-          .set('x-access-token', token)
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then((response) => {
-            expect(Array.isArray(response.body)).toEqual(true)
-            expect(response.body.length).toEqual(3)
-            expect(response.body[1].name).toEqual('template')
-            expect(response.body[1].namespace).toEqual('Namespace')
-            expect(response.body[1].licensee).toEqual(licensee._id.toString())
-          })
-      })
-
-      it('returns status 500 and message if occurs another error', async () => {
-        const templateFindSpy = jest.spyOn(TemplatesQuery.prototype, 'all').mockImplementation(() => {
-          throw new Error('some error')
-        })
-
-        await request(expressServer)
-          .get('/resources/templates/')
-          .set('x-access-token', token)
-          .expect('Content-Type', /json/)
-          .expect(500, {
-            errors: { message: 'Error: some error' },
-          })
-
-        templateFindSpy.mockRestore()
-      })
+  it('returns 500 when update findFirst throws unexpected error', async () => {
+    const templateRepository = {
+      create: jest.fn(),
+      update: jest.fn().mockResolvedValue(),
+      findFirst: jest.fn().mockRejectedValue(new Error('some error')),
+    }
+    const controller = new TemplatesController({
+      templateRepository,
+      createTemplatesQuery: jest.fn(),
+      createTemplatesImporter: jest.fn(),
     })
+
+    const req = { params: { id: 'template-id' }, body: { name: 'Name modified' } }
+    const res = buildResponse()
+
+    await controller.update(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: some error' } })
   })
 
-  describe('importation', () => {
-    describe('response', () => {
-      it('returns status 201 if the importation is successful', async () => {
-        jest.spyOn(Dialog.prototype, 'searchTemplates').mockImplementation(() => {})
+  it('returns template on show and status 200', async () => {
+    const { controller, templateRepository } = buildController()
+    const seeded = await templateRepository.create({ name: 'name', namespace: 'test', licensee: 'licensee-id' })
 
-        await request(expressServer)
-          .post(`/resources/templates/${licensee._id}/importation`)
-          .set('x-access-token', token)
-          .expect(201)
-      })
+    const req = { params: { id: seeded._id } }
+    const res = buildResponse()
 
-      it('returns status 500 and message if the some error ocurre when update the template', async () => {
-        const licenseeFindOneSpy = jest
-          .spyOn(LicenseeRepositoryDatabase.prototype, 'findFirst')
-          .mockImplementation(() => {
-            throw new Error('some error')
-          })
+    await controller.show(req, res)
 
-        await request(expressServer)
-          .post(`/resources/templates/${licensee._id}/importation`)
-          .set('x-access-token', token)
-          .expect(500, {
-            errors: { message: 'Error: some error' },
-          })
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ name: 'name', namespace: 'test' }))
+  })
 
-        licenseeFindOneSpy.mockRestore()
-      })
+  it('returns 404 when show id cast fails', async () => {
+    const templateRepository = {
+      create: jest.fn(),
+      update: jest.fn(),
+      findFirst: jest.fn().mockRejectedValue(new Error('Cast to ObjectId failed for value "bad" at path "_id"')),
+    }
+    const controller = new TemplatesController({
+      templateRepository,
+      createTemplatesQuery: jest.fn(),
+      createTemplatesImporter: jest.fn(),
     })
+
+    const req = { params: { id: 'bad' } }
+    const res = buildResponse()
+
+    await controller.show(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(404)
+    expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Template bad não encontrado' } })
+  })
+
+  it('delegates index to templatesQuery and returns status 200', async () => {
+    const { controller, templatesQueryInstance } = buildController()
+    const templates = [{ _id: 'template-id', name: 'template' }]
+    templatesQueryInstance.all.mockResolvedValue(templates)
+
+    const req = { query: { page: '1', limit: '3', expression: 'template' } }
+    const res = buildResponse()
+
+    await controller.index(req, res)
+
+    expect(templatesQueryInstance.page).toHaveBeenCalledWith('1')
+    expect(templatesQueryInstance.limit).toHaveBeenCalledWith('3')
+    expect(templatesQueryInstance.filterByExpression).toHaveBeenCalledWith('template')
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.send).toHaveBeenCalledWith(templates)
+  })
+
+  it('delegates importation to templateImporter and returns status 201', async () => {
+    const { controller, createTemplatesImporter, templateImporterInstance } = buildController()
+    templateImporterInstance.import.mockResolvedValue()
+
+    const req = { params: { id: 'licensee-id' } }
+    const res = buildResponse()
+
+    await controller.importation(req, res)
+
+    expect(createTemplatesImporter).toHaveBeenCalledWith('licensee-id')
+    expect(templateImporterInstance.import).toHaveBeenCalled()
+    expect(res.status).toHaveBeenCalledWith(201)
+    expect(res.send).toHaveBeenCalledWith({ body: 'OK' })
+  })
+
+  it('returns 500 when importation throws unexpected error', async () => {
+    const { controller, templateImporterInstance } = buildController()
+    templateImporterInstance.import.mockRejectedValue(new Error('some error'))
+
+    const req = { params: { id: 'licensee-id' } }
+    const res = buildResponse()
+
+    await controller.importation(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: some error' } })
   })
 })

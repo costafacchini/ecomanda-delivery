@@ -47,6 +47,12 @@ Mock job queue. Use in-memory repositories. Assert log record created and queue 
 - [ ] Existing tests still pass
 - [ ] `pre-commit-check` passes
 
+## Documentation / KB Updates
+
+- [ ] No product or API documentation changes expected for this extraction alone
+- [ ] If the Pedidos10 webhook/order-status orchestration pattern becomes reusable for later use-case extractions, capture it with `document-solution`
+- [ ] If any KB files change, run `check-kb-index`
+
 ## Completion Criteria
 
 - [ ] Both use case files and specs created and passing

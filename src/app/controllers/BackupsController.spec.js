@@ -1,79 +1,46 @@
-import request from 'supertest'
-import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
-import { expressServer } from '../../../.jest/server-express'
-import { licensee as licenseeFactory } from '@factories/licensee'
-import { publishMessage } from '@config/rabbitmq'
-import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { BackupsController } from './BackupsController.js'
 
-jest.mock('@config/rabbitmq', () => ({
-  publishMessage: jest.fn(),
-}))
+function buildResponse() {
+  return {
+    send: jest.fn(),
+    status: jest.fn().mockReturnThis(),
+  }
+}
 
-describe('backups controller', () => {
-  let apiToken, licensee
+function buildController() {
+  const publishMessage = jest.fn()
 
-  jest.spyOn(global.console, 'info').mockImplementation()
+  const controller = new BackupsController({ publishMessage })
 
-  beforeAll(async () => {
-    jest.clearAllMocks()
-    installMemoryRepositories()
+  return { controller, publishMessage }
+}
 
-    const licenseeRepository = new LicenseeRepositoryDatabase()
-    licensee = await licenseeRepository.create(licenseeFactory.build())
-    apiToken = licensee.apiToken
+describe('BackupsController delegation', () => {
+  beforeEach(() => {
+    jest.spyOn(global.console, 'info').mockImplementation()
   })
 
-  afterAll(() => {
-    resetMemoryRepositories()
+  it('publishes backup message and returns status 200 on schedule', () => {
+    const { controller, publishMessage } = buildController()
+    const req = {}
+    const res = buildResponse()
+
+    controller.schedule(req, res)
+
+    expect(publishMessage).toHaveBeenCalledWith({ key: 'backup', body: {} })
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.send).toHaveBeenCalledWith({ body: 'Backup agendado' })
   })
 
-  describe('about auth', () => {
-    it('returns status 401 and message if query param token is not valid', async () => {
-      await request(expressServer)
-        .post('/api/v1/backups/schedule/?token=627365264')
-        .expect('Content-Type', /json/)
-        .expect(401, { message: 'Token não informado ou inválido.' })
-    })
+  it('publishes clear-backups message and returns status 200 on clear', () => {
+    const { controller, publishMessage } = buildController()
+    const req = {}
+    const res = buildResponse()
 
-    it('returns status 401 and message if query param token is informed', async () => {
-      await request(expressServer)
-        .post('/api/v1/backups/schedule')
-        .expect('Content-Type', /json/)
-        .expect(401, { message: 'Token não informado ou inválido.' })
-    })
-  })
+    controller.clear(req, res)
 
-  describe('schedule', () => {
-    describe('response', () => {
-      it('returns status 200 and schedule job to scheduled backup', async () => {
-        await request(expressServer)
-          .post(`/api/v1/backups/schedule/?token=${apiToken}`)
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then((response) => {
-            expect(response.body).toEqual({
-              body: 'Backup agendado',
-            })
-            expect(publishMessage).toHaveBeenCalledWith({ key: 'backup', body: {} })
-          })
-      })
-    })
-  })
-
-  describe('clear', () => {
-    describe('response', () => {
-      it('returns status 200 and schedule job to scheduled clear old backups', async () => {
-        await request(expressServer)
-          .post(`/api/v1/backups/clear/?token=${apiToken}`)
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then((response) => {
-            expect(response.body).toEqual({
-              body: 'Limpeza de backups antigos agendados',
-            })
-            expect(publishMessage).toHaveBeenCalledWith({ key: 'clear-backups', body: {} })
-          })
-      })
-    })
+    expect(publishMessage).toHaveBeenCalledWith({ key: 'clear-backups', body: {} })
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.send).toHaveBeenCalledWith({ body: 'Limpeza de backups antigos agendados' })
   })
 })

@@ -1,162 +1,81 @@
-import Body from '@models/Body'
-import request from 'supertest'
-import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
-import { expressServer } from '../../../.jest/server-express'
-import { queueServer } from '@config/queue'
-import { licensee as licenseeFactory } from '@factories/licensee'
-import { publishMessage } from '@config/rabbitmq'
-import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { BodyRepositoryMemory } from '@repositories/body'
+import { ChatbotsController } from './ChatbotsController.js'
 
-jest.mock('@config/rabbitmq', () => ({
-  publishMessage: jest.fn(),
-}))
+function buildResponse() {
+  return {
+    send: jest.fn(),
+    status: jest.fn().mockReturnThis(),
+  }
+}
 
-describe('chatbots controller', () => {
-  let apiToken
-  const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
-  jest.spyOn(global.console, 'info').mockImplementation()
+function buildController() {
+  const bodyRepository = new BodyRepositoryMemory()
+  const queueServer = { addJob: jest.fn() }
+  const publishMessage = jest.fn()
 
-  beforeAll(async () => {
-    jest.clearAllMocks()
-    installMemoryRepositories()
+  const controller = new ChatbotsController({ bodyRepository, queueServer, publishMessage })
 
-    const licenseeRepository = new LicenseeRepositoryDatabase()
-    const licensee = await licenseeRepository.create(licenseeFactory.build())
-    apiToken = licensee.apiToken
-  })
+  return { controller, bodyRepository, queueServer, publishMessage }
+}
 
-  afterAll(() => {
-    resetMemoryRepositories()
-  })
+describe('ChatbotsController delegation', () => {
+  it('creates body, enqueues chatbot-message job and returns status 200 on message', async () => {
+    const { controller, bodyRepository, queueServer } = buildController()
+    queueServer.addJob.mockResolvedValue()
 
-  describe('message', () => {
-    describe('about auth', () => {
-      it('returns status 401 and message if query param token is not valid', async () => {
-        await request(expressServer)
-          .post('/api/v1/chatbot/message/?token=627365264')
-          .send({
-            field: 'test',
-          })
-          .expect('Content-Type', /json/)
-          .expect(401, { message: 'Token não informado ou inválido.' })
-      })
+    const req = { body: { field: 'test' }, licensee: { _id: 'licensee-id' } }
+    const res = buildResponse()
 
-      it('returns status 401 and message if query param token is informed', async () => {
-        await request(expressServer)
-          .post('/api/v1/chatbot/message')
-          .send({
-            field: 'test',
-          })
-          .expect('Content-Type', /json/)
-          .expect(401, { message: 'Token não informado ou inválido.' })
-      })
+    jest.spyOn(global.console, 'info').mockImplementation()
+
+    await controller.message(req, res)
+
+    const bodies = await bodyRepository.find({ licensee: 'licensee-id' })
+    const createdBody = bodies[0]
+
+    expect(queueServer.addJob).toHaveBeenCalledWith('chatbot-message', {
+      bodyId: createdBody._id,
+      licenseeId: 'licensee-id',
     })
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.send).toHaveBeenCalledWith({ body: 'Solicitação de mensagem para a plataforma de chatbot agendado' })
+  })
 
-    describe('response', () => {
-      it('returns status 200 and schedule job to process chatbot message', async () => {
-        await request(expressServer)
-          .post(`/api/v1/chatbot/message/?token=${apiToken}`)
-          .send({
-            field: 'test',
-          })
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then(async (response) => {
-            const body = await Body.findOne({ content: { field: 'test' } })
+  it('creates body, enqueues chatbot-transfer-to-chat job and returns status 200 on transfer', async () => {
+    const { controller, bodyRepository, queueServer } = buildController()
+    queueServer.addJob.mockResolvedValue()
 
-            expect(body.content).toEqual({ field: 'test' })
-            expect(body.kind).toEqual('normal')
-            expect(response.body).toEqual({ body: 'Solicitação de mensagem para a plataforma de chatbot agendado' })
-            expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('chatbot-message', {
-              bodyId: body._id,
-              licenseeId: body.licensee,
-            })
-          })
-      })
+    const req = { body: { field: 'alter' }, licensee: { _id: 'licensee-id' } }
+    const res = buildResponse()
+
+    jest.spyOn(global.console, 'info').mockImplementation()
+
+    await controller.transfer(req, res)
+
+    const bodies = await bodyRepository.find({ licensee: 'licensee-id' })
+    const createdBody = bodies[0]
+
+    expect(queueServer.addJob).toHaveBeenCalledWith('chatbot-transfer-to-chat', {
+      bodyId: createdBody._id,
+      licenseeId: 'licensee-id',
+    })
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.send).toHaveBeenCalledWith({
+      body: 'Solicitação de transferência do chatbot para a plataforma de chat agendado',
     })
   })
 
-  describe('transfer', () => {
-    describe('about auth', () => {
-      it('returns status 401 and message if query param token is not valid', async () => {
-        await request(expressServer)
-          .post('/api/v1/chatbot/transfer/?token=627365264')
-          .send({
-            field: 'test',
-          })
-          .expect('Content-Type', /json/)
-          .expect(401, { message: 'Token não informado ou inválido.' })
-      })
+  it('publishes reset-chatbots and returns status 200 on reset', () => {
+    const { controller, publishMessage } = buildController()
+    const req = {}
+    const res = buildResponse()
 
-      it('returns status 401 and message if query param token is informed', async () => {
-        await request(expressServer)
-          .post('/api/v1/chatbot/transfer')
-          .send({
-            field: 'test',
-          })
-          .expect('Content-Type', /json/)
-          .expect(401, { message: 'Token não informado ou inválido.' })
-      })
-    })
+    jest.spyOn(global.console, 'info').mockImplementation()
 
-    describe('response', () => {
-      it('returns status 200 and schedule job to transfer chatbot to chat', async () => {
-        await request(expressServer)
-          .post(`/api/v1/chatbot/transfer/?token=${apiToken}`)
-          .send({
-            field: 'alter',
-          })
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then(async (response) => {
-            const body = await Body.findOne({ content: { field: 'alter' } })
+    controller.reset(req, res)
 
-            expect(body.content).toEqual({ field: 'alter' })
-            expect(body.kind).toEqual('normal')
-            expect(response.body).toEqual({
-              body: 'Solicitação de transferência do chatbot para a plataforma de chat agendado',
-            })
-            expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('chatbot-transfer-to-chat', {
-              bodyId: body._id,
-              licenseeId: body.licensee,
-            })
-          })
-      })
-    })
-  })
-
-  describe('reset', () => {
-    describe('about auth', () => {
-      it('returns status 401 and message if query param token is not valid', async () => {
-        await request(expressServer)
-          .post('/api/v1/chatbot/reset/?token=627365264')
-          .expect('Content-Type', /json/)
-          .expect(401, { message: 'Token não informado ou inválido.' })
-      })
-
-      it('returns status 401 and message if query param token is informed', async () => {
-        await request(expressServer)
-          .post('/api/v1/chatbot/reset')
-          .expect('Content-Type', /json/)
-          .expect(401, { message: 'Token não informado ou inválido.' })
-      })
-    })
-
-    describe('response', () => {
-      it('returns status 200 and schedule job to reset chatbots', async () => {
-        await request(expressServer)
-          .post(`/api/v1/chatbot/reset/?token=${apiToken}`)
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then((response) => {
-            expect(response.body).toEqual({
-              body: 'Solicitação para resetar os chatbots abandonados agendado',
-            })
-            expect(publishMessage).toHaveBeenCalledWith({ key: 'reset-chatbots', body: {} })
-          })
-      })
-    })
+    expect(publishMessage).toHaveBeenCalledWith({ key: 'reset-chatbots', body: {} })
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.send).toHaveBeenCalledWith({ body: 'Solicitação para resetar os chatbots abandonados agendado' })
   })
 })

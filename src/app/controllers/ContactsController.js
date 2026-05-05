@@ -1,36 +1,12 @@
 import { check, validationResult } from 'express-validator'
 import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
-import _ from 'lodash'
-
-function permit(fields) {
-  const permitedFields = [
-    'name',
-    'number',
-    'type',
-    'talkingWithChatBot',
-    'licensee',
-    'waId',
-    'landbotId',
-    'email',
-    'address',
-    'address_number',
-    'address_complement',
-    'neighborhood',
-    'city',
-    'cep',
-    'uf',
-    'delivery_tax',
-    'plugin_cart_id',
-  ]
-
-  return _.pick(fields, permitedFields)
-}
 
 class ContactsController {
-  constructor({ contactRepository, createContactsQuery, queueServer } = {}) {
+  constructor({ contactRepository, createContactsQuery, createContact, updateContact } = {}) {
     this.contactRepository = contactRepository
     this.createContactsQuery = createContactsQuery
-    this.queueServer = queueServer
+    this.createContact = createContact
+    this.updateContact = updateContact
 
     this.create = this.create.bind(this)
     this.update = this.update.bind(this)
@@ -53,76 +29,30 @@ class ContactsController {
       return res.status(422).send({ errors: sanitizeExpressErrors(errors.array()) })
     }
 
-    const {
-      name,
-      number,
-      type,
-      talkingWithChatBot,
-      licensee,
-      waId,
-      landbotId,
-      email,
-      address,
-      address_number,
-      address_complement,
-      neighborhood,
-      city,
-      cep,
-      uf,
-      delivery_tax,
-      plugin_cart_id,
-    } = req.body
-
     try {
-      const contact = await this.contactRepository.create({
-        name,
-        number,
-        type,
-        talkingWithChatBot,
-        licensee,
-        waId,
-        landbotId,
-        email,
-        address,
-        address_number,
-        address_complement,
-        neighborhood,
-        city,
-        cep,
-        uf,
-        delivery_tax,
-        plugin_cart_id,
-      })
+      const contact = await this.createContact.execute(req.body)
 
-      await this.queueServer.addJob('send-contact-to-pagarme', { contactId: contact._id.toString() })
-
-      res.status(201).send(contact)
+      return res.status(201).send(contact)
     } catch (err) {
-      if ('errors' in err) {
+      if (err?.errors) {
         return res.status(422).send({ errors: sanitizeModelErrors(err.errors) })
       }
-      res.status(500).send({ errors: { message: err.toString() } })
+
+      return res.status(500).send({ errors: { message: err.toString() } })
     }
   }
 
   async update(req, res) {
-    const fields = permit(req.body)
-    delete fields.licensee
-
     try {
-      await this.contactRepository.update(req.params.id, { ...fields })
+      const contact = await this.updateContact.execute(req.params.id, req.body)
+
+      return res.status(200).send(contact)
     } catch (err) {
-      return res.status(422).send({ errors: sanitizeModelErrors(err.errors) })
-    }
+      if (err?.errors) {
+        return res.status(422).send({ errors: sanitizeModelErrors(err.errors) })
+      }
 
-    try {
-      const contact = await this.contactRepository.findFirst({ _id: req.params.id })
-
-      await this.queueServer.addJob('send-contact-to-pagarme', { contactId: contact._id.toString() })
-
-      res.status(200).send(contact)
-    } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      return res.status(500).send({ errors: { message: err.toString() } })
     }
   }
 

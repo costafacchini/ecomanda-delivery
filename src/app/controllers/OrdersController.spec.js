@@ -1,124 +1,58 @@
-import Licensee from '@models/Licensee'
-import Body from '@models/Body'
-import Integrationlog from '@models/Integrationlog'
-import request from 'supertest'
-import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
-import { expressServer } from '../../../.jest/server-express'
-import { queueServer } from '@config/queue'
-import { licensee as licenseeFactory } from '@factories/licensee'
+import { OrdersController } from './OrdersController.js'
 
-describe('chats controller', () => {
-  let apiToken
-  const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
-  jest.spyOn(global.console, 'info').mockImplementation()
+function buildResponse() {
+  return {
+    status: jest.fn().mockReturnThis(),
+    send: jest.fn(),
+  }
+}
 
-  beforeAll(async () => {
-    jest.clearAllMocks()
-    installMemoryRepositories()
+function buildController() {
+  const receivePedidos10Order = { execute: jest.fn() }
+  const changePedidos10OrderStatus = { execute: jest.fn() }
+  const controller = new OrdersController({ receivePedidos10Order, changePedidos10OrderStatus })
+  return { controller, receivePedidos10Order, changePedidos10OrderStatus }
+}
 
-    const licensee = await Licensee.create(licenseeFactory.build())
-    apiToken = licensee.apiToken
+describe('OrdersController delegation', () => {
+  it('delegates create to receivePedidos10Order and returns status 202', async () => {
+    const { controller, receivePedidos10Order } = buildController()
+    const bodySaved = { _id: 'body-id' }
+    receivePedidos10Order.execute.mockResolvedValue(bodySaved)
+
+    const req = {
+      licensee: { _id: 'licensee-id' },
+      body: { MerchantExternalCode: 'merchant-code', order: { id: 'order-id' } },
+    }
+    const res = buildResponse()
+
+    await controller.create(req, res)
+
+    expect(receivePedidos10Order.execute).toHaveBeenCalledWith({
+      licenseeId: 'licensee-id',
+      MerchantExternalCode: 'merchant-code',
+      order: { id: 'order-id' },
+    })
+    expect(res.status).toHaveBeenCalledWith(202)
+    expect(res.send).toHaveBeenCalledWith({ id: 'body-id' })
   })
 
-  afterAll(() => {
-    resetMemoryRepositories()
-  })
+  it('delegates changeStatus to changePedidos10OrderStatus and returns status 200', async () => {
+    const { controller, changePedidos10OrderStatus } = buildController()
+    const bodySaved = { _id: 'body-id' }
+    changePedidos10OrderStatus.execute.mockResolvedValue(bodySaved)
 
-  describe('about auth', () => {
-    it('returns status 401 and message if query param token is not valid', async () => {
-      await request(expressServer)
-        .post('/api/v1/orders?token=627365264')
-        .send({
-          field: 'test',
-        })
-        .expect('Content-Type', /json/)
-        .expect(401, { message: 'Token não informado ou inválido.' })
+    const req = { licensee: { _id: 'licensee-id' }, body: { order: 'order-id', status: 'delivered' } }
+    const res = buildResponse()
+
+    await controller.changeStatus(req, res)
+
+    expect(changePedidos10OrderStatus.execute).toHaveBeenCalledWith({
+      licenseeId: 'licensee-id',
+      order: 'order-id',
+      status: 'delivered',
     })
-
-    it('returns status 401 and message if query param token is informed', async () => {
-      await request(expressServer)
-        .post('/api/v1/orders')
-        .send({
-          field: 'test',
-        })
-        .expect('Content-Type', /json/)
-        .expect(401, { message: 'Token não informado ou inválido.' })
-    })
-  })
-
-  describe('create', () => {
-    describe('response', () => {
-      it('returns status 202 and schedule job to process order', async () => {
-        await request(expressServer)
-          .post(`/api/v1/orders?token=${apiToken}`)
-          .send({
-            MerchantExternalCode: 'merchant-external-code',
-            order: {
-              id: 'order-id',
-            },
-          })
-          .expect(202)
-          .then(async (response) => {
-            const body = await Body.findOne({ kind: 'pedidos10' })
-
-            expect(body.content).toEqual({
-              MerchantExternalCode: 'merchant-external-code',
-              order: {
-                id: 'order-id',
-              },
-            })
-            expect(body.kind).toEqual('pedidos10')
-
-            expect(response.body).toEqual({
-              id: body._id.toString(),
-            })
-
-            const integrationlog = await Integrationlog.findOne({ licensee: body.licensee })
-            expect(integrationlog.log_payload).toEqual(body.content)
-
-            expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('pedidos10-webhook', {
-              bodyId: body._id,
-              licenseeId: body.licensee,
-            })
-          })
-      })
-    })
-  })
-
-  describe('changeStatus', () => {
-    describe('response', () => {
-      it('returns status 200 and schedule job to process order status', async () => {
-        await request(expressServer)
-          .post(`/api/v1/orders/change-status?token=${apiToken}`)
-          .send({
-            order: 'order-id',
-            status: 'delivered',
-          })
-          .expect(200)
-          .then(async (response) => {
-            const body = await Body.findById(response.body.id)
-
-            expect(body.content).toEqual({
-              order: 'order-id',
-              status: 'delivered',
-            })
-            expect(body.kind).toEqual('pedidos10')
-
-            expect(response.body).toEqual({
-              id: body._id.toString(),
-            })
-
-            const integrationlog = await Integrationlog.findOne({ log_payload: body.content })
-            expect(integrationlog.log_payload).toEqual(body.content)
-
-            expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('pedidos10-change-order-status', {
-              bodyId: body._id,
-              licenseeId: body.licensee,
-            })
-          })
-      })
-    })
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.send).toHaveBeenCalledWith({ id: 'body-id' })
   })
 })

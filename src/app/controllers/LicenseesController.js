@@ -1,79 +1,23 @@
 import { check, validationResult } from 'express-validator'
 import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
-import _ from 'lodash'
-
-function permit(fields) {
-  const permitedFields = [
-    'name',
-    'email',
-    'phone',
-    'active',
-    'licenseKind',
-    'useChatbot',
-    'chatbotDefault',
-    'chatbotUrl',
-    'chatbotAuthorizationToken',
-    'chatbotApiToken',
-    'messageOnResetChatbot',
-    'whatsappDefault',
-    'whatsappToken',
-    'whatsappUrl',
-    'chatDefault',
-    'chatUrl',
-    'awsId',
-    'awsSecret',
-    'bucketName',
-    'chatIdentifier',
-    'chatKey',
-    'cartDefault',
-    'unidadeId',
-    'statusId',
-    'messageOnCloseChat',
-    'useCartGallabox',
-    'productFractional2Name',
-    'productFractional2Id',
-    'productFractional3Name',
-    'productFractional3Id',
-    'productFractionalSize3Name',
-    'productFractionalSize3Id',
-    'productFractionalSize4Name',
-    'productFractionalSize4Id',
-    'productFractionals',
-    'pedidos10_active',
-    'pedidos10_integration',
-    'pedidos10_integrator',
-    'document',
-    'kind',
-    'financial_player_fee',
-    'holder_name',
-    'bank',
-    'branch_number',
-    'branch_check_digit',
-    'account_number',
-    'account_check_digit',
-    'holder_kind',
-    'holder_document',
-    'account_type',
-    'useSenderName',
-    'useFileIDYcloud',
-  ]
-
-  return _.pick(fields, permitedFields)
-}
 
 class LicenseesController {
   constructor({
     licenseeRepository,
     createLicenseesQuery,
-    createMessengerPlugin: createMessengerPluginDependency,
-    createPagarMe,
-    createPedidos10,
+    createLicensee,
+    updateLicensee,
+    setDialogWebhook,
+    sendLicenseeToPagarMe,
+    signPedidos10OrderWebhook,
   } = {}) {
     this.licenseeRepository = licenseeRepository
     this.createLicenseesQuery = createLicenseesQuery
-    this.createMessengerPlugin = createMessengerPluginDependency
-    this.createPagarMe = createPagarMe
-    this.createPedidos10 = createPedidos10
+    this.createLicensee = createLicensee
+    this.updateLicensee = updateLicensee
+    this.setDialogWebhookUseCase = setDialogWebhook
+    this.sendLicenseeToPagarMe = sendLicenseeToPagarMe
+    this.signPedidos10OrderWebhook = signPedidos10OrderWebhook
 
     this.create = this.create.bind(this)
     this.update = this.update.bind(this)
@@ -99,123 +43,16 @@ class LicenseesController {
       return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
     }
 
-    const {
-      name,
-      email,
-      phone,
-      active,
-      licenseKind,
-      useChatbot,
-      chatbotDefault,
-      chatbotUrl,
-      chatbotAuthorizationToken,
-      messageOnResetChatbot,
-      chatbotApiToken,
-      whatsappDefault,
-      whatsappToken,
-      whatsappUrl,
-      chatDefault,
-      chatUrl,
-      awsId,
-      awsSecret,
-      bucketName,
-      chatIdentifier,
-      chatKey,
-      cartDefault,
-      unidadeId,
-      statusId,
-      messageOnCloseChat,
-      useCartGallabox,
-      productFractional2Name,
-      productFractional2Id,
-      productFractional3Name,
-      productFractional3Id,
-      productFractionalSize3Name,
-      productFractionalSize3Id,
-      productFractionalSize4Name,
-      productFractionalSize4Id,
-      productFractionals,
-      pedidos10_active,
-      pedidos10_integration,
-      pedidos10_integrator,
-      document,
-      kind,
-      financial_player_fee,
-      holder_name,
-      bank,
-      branch_number,
-      branch_check_digit,
-      account_number,
-      account_check_digit,
-      holder_kind,
-      holder_document,
-      account_type,
-      useSenderName,
-      useFileIDYcloud,
-    } = req.body
-
     try {
-      const licensee = await this.licenseeRepository.create({
-        name,
-        email,
-        phone,
-        active,
-        licenseKind,
-        useChatbot,
-        chatbotDefault,
-        chatbotUrl,
-        chatbotAuthorizationToken,
-        messageOnResetChatbot,
-        chatbotApiToken,
-        whatsappDefault,
-        whatsappToken,
-        whatsappUrl,
-        chatDefault,
-        chatUrl,
-        awsId,
-        awsSecret,
-        bucketName,
-        chatIdentifier,
-        chatKey,
-        cartDefault,
-        unidadeId,
-        statusId,
-        messageOnCloseChat,
-        useCartGallabox,
-        productFractional2Name,
-        productFractional2Id,
-        productFractional3Name,
-        productFractional3Id,
-        productFractionalSize3Name,
-        productFractionalSize3Id,
-        productFractionalSize4Name,
-        productFractionalSize4Id,
-        productFractionals,
-        pedidos10_active,
-        pedidos10_integration: JSON.parse(pedidos10_integration || '{}'),
-        pedidos10_integrator,
-        document,
-        kind,
-        financial_player_fee,
-        holder_name,
-        bank,
-        branch_number,
-        branch_check_digit,
-        account_number,
-        account_check_digit,
-        holder_kind,
-        holder_document,
-        account_type,
-        useSenderName,
-        useFileIDYcloud,
-      })
+      const licensee = await this.createLicensee.execute(req.body)
 
-      res.status(201).send(licensee)
+      return res.status(201).send(licensee)
     } catch (err) {
-      if ('errors' in err) {
+      if (err?.errors) {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
       }
-      res.status(500).send({ errors: { message: err.toString() } })
+
+      return res.status(500).send({ errors: { message: err.toString() } })
     }
   }
 
@@ -225,22 +62,16 @@ class LicenseesController {
       return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
     }
 
-    const fields = permit(req.body)
-
     try {
-      fields.pedidos10_integration = JSON.parse(fields.pedidos10_integration || '{}')
-      await this.licenseeRepository.update(req.params.id, { ...fields })
-    } catch (err) {
-      return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
-    }
+      const licensee = await this.updateLicensee.execute(req.params.id, req.body)
 
-    try {
-      const licensee = await this.licenseeRepository.findFirst({ _id: req.params.id })
-      licensee.pedidos10_integration = JSON.stringify(licensee.pedidos10_integration)
-
-      res.status(200).send(licensee)
+      return res.status(200).send(licensee)
     } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      if (err?.errors) {
+        return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
+      }
+
+      return res.status(500).send({ errors: { message: err.toString() } })
     }
   }
 
@@ -303,50 +134,31 @@ class LicenseesController {
 
   async setDialogWebhook(req, res) {
     try {
-      const licensee = await this.licenseeRepository.findFirst({ _id: req.params.id })
+      const response = await this.setDialogWebhookUseCase.execute(req.params.id)
 
-      if (licensee.whatsappDefault === 'dialog') {
-        const pluginWhatsapp = this.createMessengerPlugin(licensee)
-        await pluginWhatsapp.setWebhook(licensee.whatsappUrl, licensee.whatsappToken)
-      }
-
-      res.status(200).send({ message: 'Webhook configurado!' })
+      return res.status(200).send(response)
     } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      return res.status(500).send({ errors: { message: err.toString() } })
     }
   }
 
   async sendToPagarMe(req, res) {
     try {
-      const licensee = await this.licenseeRepository.findFirst({ _id: req.params.id })
-      const pagarMe = this.createPagarMe()
+      const response = await this.sendLicenseeToPagarMe.execute(req.params.id)
 
-      if (licensee.recipient_id) {
-        pagarMe.recipient.update(licensee, process.env.PAGARME_TOKEN)
-      } else {
-        pagarMe.recipient.create(licensee, process.env.PAGARME_TOKEN)
-      }
-
-      res.status(200).send({ message: 'Licenciado enviado para a pagar.me!' })
+      return res.status(200).send(response)
     } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      return res.status(500).send({ errors: { message: err.toString() } })
     }
   }
 
   async signOrderWebhook(req, res) {
     try {
-      const licensee = await this.licenseeRepository.findFirst({ _id: req.params.id })
+      const response = await this.signPedidos10OrderWebhook.execute(req.params.id)
 
-      if (!licensee.pedidos10_integration) {
-        return res.status(200).send({ message: 'Webhook não assinado pois não tem os dados para o login!' })
-      }
-
-      const pedidos10 = this.createPedidos10(licensee)
-      await pedidos10.signOrderWebhook()
-
-      res.status(200).send({ message: 'Webhook assinado!' })
+      return res.status(200).send(response)
     } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      return res.status(500).send({ errors: { message: err.toString() } })
     }
   }
 }

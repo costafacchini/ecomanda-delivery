@@ -45,6 +45,12 @@ Mock `createContact.execute` and `updateContact.execute`. Assert HTTP response b
 - [ ] Existing tests still pass
 - [ ] `pre-commit-check` passes
 
+## Documentation / KB Updates
+
+- [ ] No product or API documentation changes expected for this controller-slimming extraction alone
+- [ ] If the controller-to-use-case wiring pattern reveals a reusable route composition convention, capture it with `document-solution`
+- [ ] If any KB files change, run `check-kb-index`
+
 ## Completion Criteria
 
 - [ ] No business logic in `ContactsController`

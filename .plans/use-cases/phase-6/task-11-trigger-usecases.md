@@ -52,6 +52,12 @@ Follow the repository pattern for Create/Update. `ImportFacebookCatalog.execute(
 - [ ] Existing tests still pass
 - [ ] `pre-commit-check` passes
 
+## Documentation / KB Updates
+
+- [ ] No product or API documentation changes expected for this extraction alone
+- [ ] If the importer-trigger orchestration pattern becomes reusable for later use-case extractions, capture it with `document-solution`
+- [ ] If any KB files change, run `check-kb-index`
+
 ## Completion Criteria
 
 - [ ] Three use case files and specs created and passing

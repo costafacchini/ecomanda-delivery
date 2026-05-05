@@ -9,6 +9,17 @@ import { DelayController } from '../../controllers/DelayController.js'
 import { BackgroundjobsController } from '../../controllers/BackgroundjobsController.js'
 import { IntegrationsController } from '../../controllers/IntegrationsController.js'
 import { OrdersController } from '../../controllers/OrdersController.js'
+import { ReceivePedidos10Order } from '../../usecases/orders/ReceivePedidos10Order.js'
+import { ChangePedidos10OrderStatus } from '../../usecases/orders/ChangePedidos10OrderStatus.js'
+import { ScheduleBackgroundjob } from '../../usecases/backgroundjobs/ScheduleBackgroundjob.js'
+import { GetBackgroundjobStatus } from '../../usecases/backgroundjobs/GetBackgroundjobStatus.js'
+import { UpdateContactAddress } from '../../usecases/contacts/UpdateContactAddress.js'
+import { CreateCart } from '../../usecases/carts/CreateCart.js'
+import { UpdateCart } from '../../usecases/carts/UpdateCart.js'
+import { AddCartItem } from '../../usecases/carts/AddCartItem.js'
+import { SendCart } from '../../usecases/carts/SendCart.js'
+import { IngestChatMessage } from '../../usecases/webhooks/IngestChatMessage.js'
+import { IngestMessengerMessage } from '../../usecases/webhooks/IngestMessengerMessage.js'
 import { queueServer } from '../../../config/queue.js'
 import { publishMessage } from '../../../config/rabbitmq.js'
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
@@ -31,29 +42,60 @@ const {
   createCartPlugin,
 } = createRuntimeDependencies()
 
-const chatsController = new ChatsController({ bodyRepository, queueServer, publishMessage })
+const ingestChatMessage = new IngestChatMessage({ chatRepository: bodyRepository, jobQueue: queueServer })
+const ingestMessengerMessage = new IngestMessengerMessage({
+  messengerRepository: bodyRepository,
+  jobQueue: queueServer,
+})
+
+const chatsController = new ChatsController({ ingestChatMessage, publishMessage })
 const chatbotsController = new ChatbotsController({ bodyRepository, queueServer, publishMessage })
-const messengersController = new MessengersController({ bodyRepository, queueServer })
+const messengersController = new MessengersController({ ingestMessengerMessage })
 const backupsController = new BackupsController({ publishMessage })
 const adressesController = new AdressesController({
   contactRepository,
   normalizePhone: (number) => new NormalizePhone(number),
+  updateContactAddress: new UpdateContactAddress({
+    contactRepository,
+    normalizePhone: (number) => new NormalizePhone(number),
+  }),
 })
 const cartsController = new CartsController({
   contactRepository,
   cartRepository,
-  messageRepository,
-  createNormalizePhone: (number) => new NormalizePhone(number),
   parseCart,
-  createCartAdapter,
   createCartPlugin,
-  scheduleSendMessageToMessenger,
   publishMessage,
+  createCart: new CreateCart({
+    contactRepository,
+    cartRepository,
+    createNormalizePhone: (number) => new NormalizePhone(number),
+    createCartAdapter,
+  }),
+  updateCart: new UpdateCart({ contactRepository, cartRepository }),
+  addCartItem: new AddCartItem({ contactRepository, cartRepository }),
+  sendCart: new SendCart({
+    contactRepository,
+    cartRepository,
+    messageRepository,
+    parseCart,
+    scheduleSendMessageToMessenger,
+  }),
 })
 const delayController = new DelayController()
-const backgroundjobsController = new BackgroundjobsController({ backgroundjobRepository, queueServer })
+const backgroundjobsController = new BackgroundjobsController({
+  scheduleBackgroundjob: new ScheduleBackgroundjob({ backgroundjobRepository, jobQueue: queueServer }),
+  getBackgroundjobStatus: new GetBackgroundjobStatus({ backgroundjobRepository }),
+})
 const integrationsController = new IntegrationsController({ bodyRepository, publishMessage })
-const ordersController = new OrdersController({ integrationlogRepository, bodyRepository, queueServer })
+const ordersController = new OrdersController({
+  receivePedidos10Order: new ReceivePedidos10Order({ integrationlogRepository, bodyRepository, jobQueue: queueServer }),
+  changePedidos10OrderStatus: new ChangePedidos10OrderStatus({
+    integrationlogRepository,
+    bodyRepository,
+    jobQueue: queueServer,
+  }),
+})
 
 router.post('/chat/message', chatsController.message)
 router.post('/chat/reset', chatsController.reset)

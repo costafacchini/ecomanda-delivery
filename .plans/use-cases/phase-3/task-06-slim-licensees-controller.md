@@ -45,6 +45,12 @@ Mock each use case. Assert that the controller calls `execute()` with the right 
 - [ ] Existing tests still pass
 - [ ] `pre-commit-check` passes
 
+## Documentation / KB Updates
+
+- [ ] No product or API documentation changes expected for this controller-slimming extraction alone
+- [ ] If the controller-to-use-case wiring pattern reveals a reusable route composition convention, capture it with `document-solution`
+- [ ] If any KB files change, run `check-kb-index`
+
 ## Completion Criteria
 
 - [ ] No business logic remains in `LicenseesController`

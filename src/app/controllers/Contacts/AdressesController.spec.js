@@ -1,182 +1,143 @@
-import request from 'supertest'
-import mongoServer from '../../../../.jest/utils'
-import { expressServer } from '../../../../.jest/server-express'
-import { licensee as licenseeFactory } from '@factories/licensee'
-import { contact as contactFactory } from '@factories/contact'
-import { LicenseeRepositoryDatabase } from '@repositories/licensee'
-import { ContactRepositoryDatabase } from '@repositories/contact'
+import { ContactRepositoryMemory } from '@repositories/contact'
+import { NormalizePhone } from '../../helpers/NormalizePhone.js'
+import { AdressesController } from './AdressesController.js'
 
-describe('addresses controller', () => {
-  let licensee
+function buildResponse() {
+  return {
+    send: jest.fn(),
+    status: jest.fn().mockReturnThis(),
+  }
+}
 
-  beforeAll(async () => {
-    await mongoServer.connect()
-
-    const licenseeRepository = new LicenseeRepositoryDatabase()
-    licensee = await licenseeRepository.create(licenseeFactory.build())
+function buildController() {
+  const contactRepository = new ContactRepositoryMemory()
+  const updateContactAddress = { execute: jest.fn() }
+  const controller = new AdressesController({
+    contactRepository,
+    normalizePhone: (number) => new NormalizePhone(number),
+    updateContactAddress,
   })
+  return { controller, contactRepository, updateContactAddress }
+}
 
-  afterAll(async () => {
-    await mongoServer.disconnect()
-  })
-
-  describe('about auth', () => {
-    it('returns status 401 and message if query param token is not valid', async () => {
-      await request(expressServer)
-        .get('/api/v1/contacts/address/48999083624?token=627365264')
-        .expect('Content-Type', /json/)
-        .expect(401, { message: 'Token não informado ou inválido.' })
-    })
-
-    it('returns status 401 and message if query param token is informed', async () => {
-      await request(expressServer)
-        .get('/api/v1/contacts/address')
-        .expect('Content-Type', /json/)
-        .expect(401, { message: 'Token não informado ou inválido.' })
-    })
-  })
-
+describe('AdressesController', () => {
   describe('update', () => {
-    describe('response', () => {
-      it('returns status 200 and the contact address data if the update is successful', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
-        await contactRepository.create(
-          contactFactory.build({
-            number: '5511990283745',
-            name: 'John Doe',
-            type: '@c.us',
-            licensee,
-          }),
-        )
+    it('delegates to updateContactAddress and returns the updated contact with status 200', async () => {
+      const { controller, updateContactAddress } = buildController()
+      const contact = { _id: 'contact-id', address: 'Rua dois de outubro' }
+      updateContactAddress.execute.mockResolvedValue(contact)
 
-        await request(expressServer)
-          .post(`/api/v1/contacts/address/11990283745?token=${licensee.apiToken}`)
-          .send({
-            address: 'Rua dois de outubro',
-            address_number: '123',
-            address_complement: 'rooms 1 and 2',
-            neighborhood: 'Pedra branca',
-            city: 'São Paulo',
-            cep: '98543287',
-            uf: 'SP',
-            delivery_tax: 10.39,
-          })
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then((response) => {
-            expect(response.body.name).toEqual('John Doe')
-            expect(response.body.number).toEqual('5511990283745')
-            expect(response.body.type).toEqual('@c.us')
-            expect(response.body.address).toEqual('Rua dois de outubro')
-            expect(response.body.address_number).toEqual('123')
-            expect(response.body.address_complement).toEqual('rooms 1 and 2')
-            expect(response.body.neighborhood).toEqual('Pedra branca')
-            expect(response.body.city).toEqual('São Paulo')
-            expect(response.body.uf).toEqual('SP')
-            expect(response.body.cep).toEqual('98543287')
-            expect(response.body.delivery_tax).toEqual(10.39)
-            expect(response.body.licensee).toEqual(licensee._id.toString())
-          })
+      const req = {
+        params: { number: '11990283745' },
+        body: { address: 'Rua dois de outubro', licensee: 'should-be-ignored' },
+        licensee: { _id: 'licensee-id' },
+      }
+      const res = buildResponse()
+
+      await controller.update(req, res)
+
+      expect(updateContactAddress.execute).toHaveBeenCalledWith({
+        number: '11990283745',
+        licenseeId: 'licensee-id',
+        fields: req.body,
       })
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.send).toHaveBeenCalledWith(contact)
+    })
 
-      it('returns status 404 and message if the contact is not founded', async () => {
-        await request(expressServer)
-          .post(`/api/v1/contacts/address/1111111?token=${licensee.apiToken}`)
-          .expect('Content-Type', /json/)
-          .expect(404, { errors: { message: 'Contato 1111111 não encontrado' } })
-      })
+    it('returns 404 when updateContactAddress returns null', async () => {
+      const { controller, updateContactAddress } = buildController()
+      updateContactAddress.execute.mockResolvedValue(null)
 
-      it('returns status 500 and message if the some error ocurred when update the contact', async () => {
-        const contactFindOneSpy = jest
-          .spyOn(ContactRepositoryDatabase.prototype, 'findFirst')
-          .mockImplementation(() => {
-            throw new Error('some error')
-          })
+      const req = {
+        params: { number: '11111111111' },
+        body: { address: 'Some street' },
+        licensee: { _id: 'licensee-id' },
+      }
+      const res = buildResponse()
 
-        const contactRepository = new ContactRepositoryDatabase()
-        await contactRepository.create(contactFactory.build({ number: '5511990283745', licensee }))
+      await controller.update(req, res)
 
-        await request(expressServer)
-          .post(`/api/v1/contacts/address/11990283745?token=${licensee.apiToken}`)
-          .send({ address: 'Address modified' })
-          .expect('Content-Type', /json/)
-          .expect(500, {
-            errors: { message: 'Error: some error' },
-          })
+      expect(res.status).toHaveBeenCalledWith(404)
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Contato 11111111111 não encontrado' } })
+    })
 
-        contactFindOneSpy.mockRestore()
-      })
+    it('returns 500 when updateContactAddress throws an unexpected error', async () => {
+      const { controller, updateContactAddress } = buildController()
+      updateContactAddress.execute.mockRejectedValue(new Error('db error'))
+
+      const req = {
+        params: { number: '11990283745' },
+        body: { address: 'Anything' },
+        licensee: { _id: 'licensee-id' },
+      }
+      const res = buildResponse()
+
+      await controller.update(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: db error' } })
     })
   })
 
   describe('show', () => {
-    describe('response', () => {
-      it('returns status 200 and message if contact exists', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
-        const contact = await contactRepository.create(
-          contactFactory.build({
-            name: 'John Doe',
-            type: '@c.us',
-            licensee,
-            address: 'Rua dois de outubro',
-            address_number: '123',
-            address_complement: 'rooms 1 and 2',
-            neighborhood: 'Pedra branca',
-            city: 'São Paulo',
-            cep: '98543287',
-            uf: 'SP',
-            delivery_tax: 10.39,
-          }),
-        )
+    it('returns contact address data with status 200', async () => {
+      const { controller, contactRepository } = buildController()
 
-        await request(expressServer)
-          .get(`/api/v1/contacts/address/${contact.number}?token=${licensee.apiToken}`)
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then((response) => {
-            expect(response.body.name).toEqual('John Doe')
-            expect(response.body.number).toEqual('5511990283745')
-            expect(response.body.type).toEqual('@c.us')
-            expect(response.body.address).toEqual('Rua dois de outubro')
-            expect(response.body.address_number).toEqual('123')
-            expect(response.body.address_complement).toEqual('rooms 1 and 2')
-            expect(response.body.neighborhood).toEqual('Pedra branca')
-            expect(response.body.city).toEqual('São Paulo')
-            expect(response.body.uf).toEqual('SP')
-            expect(response.body.cep).toEqual('98543287')
-            expect(response.body.delivery_tax).toEqual(10.39)
-            expect(response.body.licensee._id.toString()).toEqual(licensee._id.toString())
-          })
+      const contact = await contactRepository.create({
+        number: '5511990283745',
+        type: '@c.us',
+        licensee: 'licensee-id',
+        address: 'Rua dois de outubro',
       })
 
-      it('returns status 404 and message if contact does not exists', async () => {
-        await request(expressServer)
-          .get(`/api/v1/contacts/address/111111?token=${licensee.apiToken}`)
-          .expect('Content-Type', /json/)
-          .expect(404, {
-            errors: { message: 'Contato 111111 não encontrado' },
-          })
+      const req = {
+        params: { number: '11990283745' },
+        licensee: { _id: 'licensee-id' },
+      }
+      const res = buildResponse()
+
+      await controller.show(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.send).toHaveBeenCalledWith(
+        expect.objectContaining({ _id: contact._id, address: 'Rua dois de outubro' }),
+      )
+    })
+
+    it('returns 404 when contact is not found', async () => {
+      const { controller } = buildController()
+
+      const req = {
+        params: { number: '11111111111' },
+        licensee: { _id: 'licensee-id' },
+      }
+      const res = buildResponse()
+
+      await controller.show(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(404)
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Contato 11111111111 não encontrado' } })
+    })
+
+    it('returns 500 when an unexpected error occurs', async () => {
+      const contactRepository = { findFirst: jest.fn().mockRejectedValue(new Error('db error')) }
+      const controller = new AdressesController({
+        contactRepository,
+        normalizePhone: (number) => new NormalizePhone(number),
+        updateContactAddress: { execute: jest.fn() },
       })
 
-      it('returns status 500 and message if occurs another error', async () => {
-        const contactFindOneSpy = jest
-          .spyOn(ContactRepositoryDatabase.prototype, 'findFirst')
-          .mockImplementation(() => {
-            throw new Error('some error')
-          })
+      const req = {
+        params: { number: '11990283745' },
+        licensee: { _id: 'licensee-id' },
+      }
+      const res = buildResponse()
 
-        const contactRepository = new ContactRepositoryDatabase()
-        const contact = await contactRepository.create(contactFactory.build({ number: '5511990283745', licensee }))
+      await controller.show(req, res)
 
-        await request(expressServer)
-          .get(`/api/v1/contacts/address/${contact.number}?token=${licensee.apiToken}`)
-          .expect('Content-Type', /json/)
-          .expect(500, {
-            errors: { message: 'Error: some error' },
-          })
-
-        contactFindOneSpy.mockRestore()
-      })
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: db error' } })
     })
   })
 })

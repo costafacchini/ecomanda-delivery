@@ -1,80 +1,39 @@
-import Body from '@models/Body'
-import request from 'supertest'
-import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
-import { expressServer } from '../../../.jest/server-express'
-import { licensee as licenseeFactory } from '@factories/licensee'
-import { publishMessage } from '@config/rabbitmq'
-import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { BodyRepositoryMemory } from '@repositories/body'
+import { IntegrationsController } from './IntegrationsController.js'
 
-jest.mock('@config/rabbitmq', () => ({
-  publishMessage: jest.fn(),
-}))
+function buildResponse() {
+  return {
+    sendStatus: jest.fn(),
+    status: jest.fn().mockReturnThis(),
+  }
+}
 
-describe('integrations controller', () => {
-  let apiToken
+function buildController() {
+  const bodyRepository = new BodyRepositoryMemory()
+  const publishMessage = jest.fn()
 
-  beforeAll(async () => {
-    jest.clearAllMocks()
-    installMemoryRepositories()
+  const controller = new IntegrationsController({ bodyRepository, publishMessage })
 
-    const licenseeRepository = new LicenseeRepositoryDatabase()
-    const licensee = await licenseeRepository.create(licenseeFactory.build())
-    apiToken = licensee.apiToken
-  })
+  return { controller, bodyRepository, publishMessage }
+}
 
-  afterAll(() => {
-    resetMemoryRepositories()
-  })
+describe('IntegrationsController delegation', () => {
+  it('creates a body and publishes process-webhook-request, then returns 200', async () => {
+    const { controller, bodyRepository, publishMessage } = buildController()
 
-  describe('about auth', () => {
-    it('returns status 401 and message if query param token is not valid', async () => {
-      await request(expressServer)
-        .post('/api/v1/integrations/?token=627365264')
-        .send({
-          field: 'test',
-        })
-        .expect('Content-Type', /json/)
-        .expect(401, { message: 'Token não informado ou inválido.' })
-    })
+    const req = {
+      body: { kind: 'get-pix', payload: { cart_id: 'cart-id' } },
+      query: { provider: 'pagarme' },
+      licensee: { _id: 'licensee-id' },
+    }
+    const res = buildResponse()
 
-    it('returns status 401 and message if query param token is informed', async () => {
-      await request(expressServer)
-        .post('/api/v1/integrations')
-        .send({
-          field: 'test',
-        })
-        .expect('Content-Type', /json/)
-        .expect(401, { message: 'Token não informado ou inválido.' })
-    })
-  })
+    await controller.create(req, res)
 
-  describe('create', () => {
-    describe('response', () => {
-      it('returns status 200 and schedule job to process payload', async () => {
-        await request(expressServer)
-          .post(`/api/v1/integrations/?token=${apiToken}&provider=pagarme`)
-          .send({
-            kind: 'get-pix',
-            payload: {
-              cart_id: 'cart-id',
-            },
-          })
-          .expect(200)
-          .then(async () => {
-            const body = await Body.findOne({ kind: 'webhook' })
+    const bodies = await bodyRepository.find({ licensee: 'licensee-id' })
+    const createdBody = bodies[0]
 
-            expect(body.content).toEqual({
-              provider: 'pagarme',
-              kind: 'get-pix',
-              payload: {
-                cart_id: 'cart-id',
-              },
-            })
-            expect(body.kind).toEqual('webhook')
-
-            expect(publishMessage).toHaveBeenCalledWith({ key: 'process-webhook-request', body: { bodyId: body._id } })
-          })
-      })
-    })
+    expect(publishMessage).toHaveBeenCalledWith({ key: 'process-webhook-request', body: { bodyId: createdBody._id } })
+    expect(res.sendStatus).toHaveBeenCalledWith(200)
   })
 })

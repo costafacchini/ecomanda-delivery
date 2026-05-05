@@ -1,76 +1,38 @@
-import Body from '@models/Body'
-import request from 'supertest'
-import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
-import { expressServer } from '../../../.jest/server-express'
-import { queueServer } from '@config/queue'
-import { licensee as licenseeFactory } from '@factories/licensee'
-import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import { MessengersController } from './MessengersController.js'
 
-describe('messengers controller', () => {
-  let apiToken
-  const queueServerAddJobSpy = jest.spyOn(queueServer, 'addJob').mockImplementation(() => Promise.resolve())
-  jest.spyOn(global.console, 'info').mockImplementation()
+function buildResponse() {
+  return {
+    json: jest.fn(),
+    send: jest.fn(),
+    status: jest.fn().mockReturnThis(),
+  }
+}
 
-  beforeAll(async () => {
-    jest.clearAllMocks()
-    installMemoryRepositories()
+function buildController() {
+  const ingestMessengerMessage = {
+    execute: jest.fn(),
+  }
 
-    const licenseeRepository = new LicenseeRepositoryDatabase()
-    const licensee = await licenseeRepository.create(licenseeFactory.build())
-    apiToken = licensee.apiToken
-  })
+  const controller = new MessengersController({ ingestMessengerMessage })
 
-  afterAll(() => {
-    resetMemoryRepositories()
-  })
+  return { controller, ingestMessengerMessage }
+}
 
-  describe('about auth', () => {
-    it('returns status 401 and message if query param token is not valid', async () => {
-      await request(expressServer)
-        .post('/api/v1/messenger/message/?token=627365264')
-        .send({
-          field: 'test',
-        })
-        .expect('Content-Type', /json/)
-        .expect(401, { message: 'Token não informado ou inválido.' })
-    })
+describe('MessengersController delegation', () => {
+  it('delegates message to ingestMessengerMessage use case and returns status 200', async () => {
+    const { controller, ingestMessengerMessage } = buildController()
+    const req = {
+      body: { field: 'test' },
+      licensee: { _id: 'licensee-id' },
+    }
+    const res = buildResponse()
 
-    it('returns status 401 and message if query param token is informed', async () => {
-      await request(expressServer)
-        .post('/api/v1/messenger/message')
-        .send({
-          field: 'test',
-        })
-        .expect('Content-Type', /json/)
-        .expect(401, { message: 'Token não informado ou inválido.' })
-    })
-  })
+    ingestMessengerMessage.execute.mockResolvedValue({})
 
-  describe('create', () => {
-    describe('response', () => {
-      it('returns status 200 and schedule job to process chat message', async () => {
-        await request(expressServer)
-          .post(`/api/v1/messenger/message/?token=${apiToken}`)
-          .send({
-            field: 'test',
-          })
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .then(async (response) => {
-            const body = await Body.findOne({ content: { field: 'test' } })
+    await controller.message(req, res)
 
-            expect(body.content).toEqual({ field: 'test' })
-            expect(body.kind).toEqual('normal')
-            expect(response.body).toEqual({
-              body: 'Solicitação de mensagem para a plataforma de messenger agendado',
-            })
-            expect(queueServerAddJobSpy).toHaveBeenCalledTimes(1)
-            expect(queueServerAddJobSpy).toHaveBeenCalledWith('messenger-message', {
-              bodyId: body._id,
-              licenseeId: body.licensee,
-            })
-          })
-      })
-    })
+    expect(ingestMessengerMessage.execute).toHaveBeenCalledWith({ body: req.body, licenseeId: 'licensee-id' })
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.send).toHaveBeenCalledWith({ body: 'Solicitação de mensagem para a plataforma de messenger agendado' })
   })
 })

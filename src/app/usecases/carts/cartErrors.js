@@ -1,0 +1,3 @@
+const CART_NOT_FOUND = 'CART_NOT_FOUND'
+
+export { CART_NOT_FOUND }
