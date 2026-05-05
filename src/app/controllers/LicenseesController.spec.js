@@ -243,9 +243,7 @@ describe('LicenseesController delegation', () => {
     await controller.show(req, res)
 
     expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.send).toHaveBeenCalledWith(
-      expect.objectContaining({ pedidos10_integration: '{"username":"alcateia"}' }),
-    )
+    expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ pedidos10_integration: '{"username":"alcateia"}' }))
   })
 
   it('delegates index to licenseesQuery and returns status 200', async () => {

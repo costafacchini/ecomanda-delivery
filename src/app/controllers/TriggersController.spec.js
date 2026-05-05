@@ -122,7 +122,14 @@ describe('TriggersController delegation', () => {
     const triggerRepository = {
       findFirst: jest.fn().mockRejectedValue(new Error('Cast to ObjectId failed for value "bad" at path "_id"')),
     }
-    const triggersQueryInstance = { page: jest.fn(), limit: jest.fn(), filterByKind: jest.fn(), filterByLicensee: jest.fn(), filterByExpression: jest.fn(), all: jest.fn() }
+    const triggersQueryInstance = {
+      page: jest.fn(),
+      limit: jest.fn(),
+      filterByKind: jest.fn(),
+      filterByLicensee: jest.fn(),
+      filterByExpression: jest.fn(),
+      all: jest.fn(),
+    }
     const controller = new TriggersController({
       triggerRepository,
       createTriggersQuery: jest.fn().mockReturnValue(triggersQueryInstance),

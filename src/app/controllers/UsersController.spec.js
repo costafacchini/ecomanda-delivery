@@ -171,7 +171,12 @@ describe('UsersController delegation', () => {
 
   it('delegates index to userRepository.find and returns status 200', async () => {
     const { controller, userRepository } = buildController()
-    await userRepository.create({ name: 'John Doe', email: 'john@doe.com', password: 'password123', licensee: '507f1f77bcf86cd799439011' })
+    await userRepository.create({
+      name: 'John Doe',
+      email: 'john@doe.com',
+      password: 'password123',
+      licensee: '507f1f77bcf86cd799439011',
+    })
 
     const req = { query: {} }
     const res = buildResponse()
