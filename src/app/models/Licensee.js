@@ -57,13 +57,13 @@ const licenseeSchema = new Schema(
     },
     whatsappDefault: {
       type: String,
-      enum: ['utalk', 'dialog', 'ycloud', 'pabbly', ''],
+      enum: ['utalk', 'dialog', 'ycloud', 'pabbly', 'baileys', ''],
     },
     whatsappToken: {
       type: String,
       required: [
         function () {
-          return !!this.whatsappDefault
+          return !!this.whatsappDefault && this.whatsappDefault !== 'baileys'
         },
         'Token de Whatsapp: deve ser preenchido quando tiver um plugin configurado',
       ],
@@ -72,7 +72,7 @@ const licenseeSchema = new Schema(
       type: String,
       required: [
         function () {
-          return !!this.whatsappDefault
+          return !!this.whatsappDefault && this.whatsappDefault !== 'baileys'
         },
         'URL de Whatsapp: deve ser preenchido quando tiver um plugin configurado',
       ],
