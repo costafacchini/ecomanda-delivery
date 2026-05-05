@@ -14,6 +14,10 @@ import { ChangePedidos10OrderStatus } from '../../usecases/orders/ChangePedidos1
 import { ScheduleBackgroundjob } from '../../usecases/backgroundjobs/ScheduleBackgroundjob.js'
 import { GetBackgroundjobStatus } from '../../usecases/backgroundjobs/GetBackgroundjobStatus.js'
 import { UpdateContactAddress } from '../../usecases/contacts/UpdateContactAddress.js'
+import { CreateCart } from '../../usecases/carts/CreateCart.js'
+import { UpdateCart } from '../../usecases/carts/UpdateCart.js'
+import { AddCartItem } from '../../usecases/carts/AddCartItem.js'
+import { SendCart } from '../../usecases/carts/SendCart.js'
 import { IngestChatMessage } from '../../usecases/webhooks/IngestChatMessage.js'
 import { IngestMessengerMessage } from '../../usecases/webhooks/IngestMessengerMessage.js'
 import { queueServer } from '../../../config/queue.js'
@@ -59,13 +63,24 @@ const adressesController = new AdressesController({
 const cartsController = new CartsController({
   contactRepository,
   cartRepository,
-  messageRepository,
-  createNormalizePhone: (number) => new NormalizePhone(number),
   parseCart,
-  createCartAdapter,
   createCartPlugin,
-  scheduleSendMessageToMessenger,
   publishMessage,
+  createCart: new CreateCart({
+    contactRepository,
+    cartRepository,
+    createNormalizePhone: (number) => new NormalizePhone(number),
+    createCartAdapter,
+  }),
+  updateCart: new UpdateCart({ contactRepository, cartRepository }),
+  addCartItem: new AddCartItem({ contactRepository, cartRepository }),
+  sendCart: new SendCart({
+    contactRepository,
+    cartRepository,
+    messageRepository,
+    parseCart,
+    scheduleSendMessageToMessenger,
+  }),
 })
 const delayController = new DelayController()
 const backgroundjobsController = new BackgroundjobsController({

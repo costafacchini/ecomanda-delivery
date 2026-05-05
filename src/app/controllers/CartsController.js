@@ -1,55 +1,26 @@
-import _ from 'lodash'
-
-function permit(fields) {
-  const permitedFields = [
-    'delivery_tax',
-    'products',
-    'concluded',
-    'catalog',
-    'address',
-    'address_number',
-    'address_complement',
-    'neighborhood',
-    'city',
-    'cep',
-    'uf',
-    'note',
-    'change',
-    'partner_key',
-    'payment_method',
-    'points',
-    'discount',
-    'latitude',
-    'longitude',
-    'location',
-    'documento',
-    'delivery_method',
-  ]
-
-  return _.pick(fields, permitedFields)
-}
+import { CART_NOT_FOUND } from '../usecases/carts/cartErrors.js'
 
 class CartsController {
   constructor({
     contactRepository,
     cartRepository,
-    messageRepository,
-    createNormalizePhone,
     parseCart: parseCartDependency,
-    createCartAdapter: createCartAdapterDependency,
     createCartPlugin: createCartPluginDependency,
-    scheduleSendMessageToMessenger: scheduleSendMessageToMessengerDependency,
     publishMessage: publishMessageDependency,
+    createCart: createCartUseCase,
+    updateCart: updateCartUseCase,
+    addCartItem: addCartItemUseCase,
+    sendCart: sendCartUseCase,
   } = {}) {
     this.contactRepository = contactRepository
     this.cartRepository = cartRepository
-    this.messageRepository = messageRepository
-    this.createNormalizePhone = createNormalizePhone
     this.parseCart = parseCartDependency
-    this.createCartAdapter = createCartAdapterDependency
     this.createCartPlugin = createCartPluginDependency
-    this.scheduleSendMessageToMessenger = scheduleSendMessageToMessengerDependency
     this.publishMessage = publishMessageDependency
+    this.createCart = createCartUseCase
+    this.updateCart = updateCartUseCase
+    this.addCartItem = addCartItemUseCase
+    this.sendCart = sendCartUseCase
 
     this.create = this.create.bind(this)
     this.update = this.update.bind(this)
@@ -70,142 +41,36 @@ class CartsController {
     if (!name) name = req.query.name
 
     try {
-      let cartContact = await this.contactRepository.getContactByNumber(contact, req.licensee._id)
-      if (!cartContact) {
-        if (!name) name = contact
-
-        const normalizedPhone = this.createNormalizePhone(contact)
-
-        cartContact = await this.contactRepository.create({
-          licensee: req.licensee._id,
-          number: normalizedPhone.number,
-          type: normalizedPhone.type,
-          name,
-          talkingWithChatBot: req.licensee.useChatbot,
-        })
-      }
-
-      const plugin = req.query.origin
-      const cartPlugin = this.createCartAdapter(plugin)
-
-      const {
-        delivery_tax,
-        products,
-        concluded,
-        catalog,
-        address,
-        address_number,
-        address_complement,
-        neighborhood,
-        city,
-        cep,
-        uf,
-        note,
-        change,
-        partner_key,
-        payment_method,
-        points,
-        discount,
-        latitude,
-        longitude,
-        location,
-        documento,
-        delivery_method,
-      } = cartPlugin.parseCart(req.licensee, contact, req.body)
-
-      let cart = await this.cartRepository.findFirst({ contact: cartContact._id, concluded: false })
-
-      if (!cart) {
-        cart = await this.cartRepository.create({
-          delivery_tax,
-          contact: cartContact._id,
-          licensee: req.licensee._id,
-          products,
-          concluded,
-          catalog,
-          address,
-          address_number,
-          address_complement,
-          neighborhood,
-          city,
-          cep,
-          uf,
-          note,
-          change,
-          partner_key,
-          payment_method,
-          points,
-          discount,
-          latitude,
-          longitude,
-          location,
-          documento,
-          delivery_method,
-        })
-      } else {
-        cart.delivery_tax = delivery_tax
-        cart.catalog = catalog
-        cart.address = address
-        cart.address_number = address_number
-        cart.address_complement = address_complement
-        cart.neighborhood = neighborhood
-        cart.city = city
-        cart.cep = cep
-        cart.uf = uf
-        cart.note = note
-        cart.change = change
-        cart.partner_key = partner_key
-        cart.payment_method = payment_method
-        cart.points = points
-        cart.discount = discount
-        cart.latitude = latitude
-        cart.longitude = longitude
-        cart.location = location
-        cart.documento = documento
-        cart.delivery_method = delivery_method
-        Array.prototype.push.apply(cart.products, products)
-        cart.total = cart.calculateTotal()
-
-        await this.cartRepository.update(cart._id, { ...cart })
-      }
-
-      res.status(201).send(cart)
+      const result = await this.createCart.execute({
+        contact,
+        name,
+        licensee: req.licensee,
+        origin: req.query.origin,
+        body: req.body,
+      })
+      res.status(201).send(result)
     } catch (err) {
       res.status(500).send({ errors: { message: err.toString() } })
     }
   }
 
   async update(req, res) {
-    const fields = permit(req.body)
-    delete fields.licensee
-    delete fields.contact
-
     try {
-      const contact = await this.contactRepository.getContactByNumber(req.params.contact, req.licensee._id)
-      if (!contact) {
+      const result = await this.updateCart.execute({
+        contactNumber: req.params.contact,
+        licenseeId: req.licensee._id,
+        fields: req.body,
+      })
+
+      if (result === null) {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
       }
 
-      let cart = await this.cartRepository.findFirst({ contact: contact._id, concluded: false })
-
-      if (!cart) {
-        return res.status(200).send({ errors: { message: `Carrinho não encontrado` } })
+      if (result === CART_NOT_FOUND) {
+        return res.status(200).send({ errors: { message: 'Carrinho não encontrado' } })
       }
 
-      Object.keys(fields).forEach((field) => {
-        if (Array.isArray(fields[field])) {
-          fields[field].forEach((item) => {
-            cart[field].push(item)
-          })
-        } else {
-          cart[field] = fields[field]
-        }
-      })
-      cart.total = cart.calculateTotal()
-
-      await this.cartRepository.update(cart._id, { ...cart })
-
-      res.status(200).send(cart)
+      res.status(200).send(result)
     } catch (err) {
       res.status(500).send({ errors: { message: err.toString() } })
     }
@@ -259,30 +124,21 @@ class CartsController {
 
   async addItem(req, res) {
     try {
-      const contact = await this.contactRepository.getContactByNumber(req.params.contact, req.licensee._id)
+      const result = await this.addCartItem.execute({
+        contactNumber: req.params.contact,
+        licenseeId: req.licensee._id,
+        products: req.body.products,
+      })
 
-      if (!contact) {
+      if (result === null) {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
       }
 
-      const cart = await this.cartRepository.findFirst({ contact: contact._id, concluded: false })
-
-      if (!cart) {
-        return res.status(200).send({ errors: { message: `Carrinho não encontrado` } })
+      if (result === CART_NOT_FOUND) {
+        return res.status(200).send({ errors: { message: 'Carrinho não encontrado' } })
       }
 
-      req.body.products?.forEach((product) => {
-        const cartItem = cart.products.find((item) => item.product_retailer_id == product.product_retailer_id)
-        if (cartItem) {
-          cartItem.quantity = cartItem.quantity + product.quantity
-        } else {
-          cart.products.push(product)
-        }
-      })
-
-      await this.cartRepository.save(cart)
-
-      res.status(200).send(cart)
+      res.status(200).send(result)
     } catch (err) {
       res.status(500).send({ errors: { message: err.toString() } })
     }
@@ -315,45 +171,20 @@ class CartsController {
 
   async send(req, res) {
     try {
-      const contact = await this.contactRepository.getContactByNumber(req.params.contact, req.licensee._id)
+      const result = await this.sendCart.execute({
+        contactNumber: req.params.contact,
+        licenseeId: req.licensee._id,
+        whatsappUrl: req.licensee.whatsappUrl,
+        whatsappToken: req.licensee.whatsappToken,
+      })
 
-      if (!contact) {
+      if (result === null) {
         return res.status(422).send({ errors: { message: `Contato ${req.params.contact} não encontrado` } })
       }
 
-      let cart
-      try {
-        cart = await this.cartRepository.findFirst(
-          {
-            contact: contact._id,
-            concluded: false,
-          },
-          ['contact'],
-        )
-      } catch {
+      if (result === CART_NOT_FOUND) {
         return res.status(200).send({ errors: { message: 'Carrinho não encontrado' } })
       }
-
-      if (!cart) {
-        return res.status(200).send({ errors: { message: 'Carrinho não encontrado' } })
-      }
-
-      const cartDescription = await this.parseCart(cart._id)
-      const message = await this.messageRepository.createTextMessageInsteadInteractive({
-        text: cartDescription,
-        kind: 'text',
-        licensee: req.licensee._id,
-        contact: cart.contact,
-        destination: 'to-messenger',
-      })
-
-      await this.scheduleSendMessageToMessenger({
-        messageId: message._id,
-        contactId: cart.contact._id,
-        licenseeId: req.licensee._id,
-        url: req.licensee.whatsappUrl,
-        token: req.licensee.whatsappToken,
-      })
 
       res.status(200).send({ message: 'Carrinho agendado para envio' })
     } catch (err) {

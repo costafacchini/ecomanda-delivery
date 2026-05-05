@@ -1,7 +1,7 @@
 import { ContactRepositoryMemory } from '@repositories/contact'
 import { CartRepositoryMemory } from '@repositories/cart'
-import { MessageRepositoryMemory } from '@repositories/message'
 import { CartsController } from './CartsController.js'
+import { CART_NOT_FOUND } from '../usecases/carts/cartErrors.js'
 
 function buildResponse() {
   return {
@@ -13,87 +13,62 @@ function buildResponse() {
 function buildRepositories() {
   const contactRepository = new ContactRepositoryMemory()
   const cartRepository = new CartRepositoryMemory()
-  const messageRepository = new MessageRepositoryMemory()
 
-  cartRepository.relationLoaders = {
-    contact: async (value) => {
-      const id = value?._id ?? value
-      return await contactRepository.findFirst({ _id: id })
-    },
-  }
-
-  return { contactRepository, cartRepository, messageRepository }
+  return { contactRepository, cartRepository }
 }
 
 function buildController(overrides = {}) {
-  const { contactRepository, cartRepository, messageRepository } = buildRepositories()
-  const cartAdapterInstance = { parseCart: jest.fn() }
-  const createCartAdapter = jest.fn().mockReturnValue(cartAdapterInstance)
+  const { contactRepository, cartRepository } = buildRepositories()
   const cartPluginInstance = { transformCart: jest.fn() }
   const createCartPlugin = jest.fn().mockReturnValue(cartPluginInstance)
   const parseCart = jest.fn()
-  const createNormalizePhone = jest.fn()
-  const scheduleSendMessageToMessenger = jest.fn()
   const publishMessage = jest.fn()
+
+  const createCart = { execute: jest.fn() }
+  const updateCart = { execute: jest.fn() }
+  const addCartItem = { execute: jest.fn() }
+  const sendCart = { execute: jest.fn() }
 
   const controller = new CartsController({
     contactRepository: overrides.contactRepository ?? contactRepository,
     cartRepository: overrides.cartRepository ?? cartRepository,
-    messageRepository: overrides.messageRepository ?? messageRepository,
-    createNormalizePhone,
     parseCart,
-    createCartAdapter,
     createCartPlugin,
-    scheduleSendMessageToMessenger,
     publishMessage,
+    createCart,
+    updateCart,
+    addCartItem,
+    sendCart,
   })
 
   return {
     controller,
     contactRepository: overrides.contactRepository ?? contactRepository,
     cartRepository: overrides.cartRepository ?? cartRepository,
-    messageRepository: overrides.messageRepository ?? messageRepository,
-    cartAdapterInstance,
-    createCartAdapter,
     cartPluginInstance,
     createCartPlugin,
     parseCart,
-    createNormalizePhone,
-    scheduleSendMessageToMessenger,
     publishMessage,
+    createCart,
+    updateCart,
+    addCartItem,
+    sendCart,
   }
 }
 
 describe('CartsController delegation', () => {
   describe('create', () => {
-    it('creates a new cart and returns status 201', async () => {
-      const { controller, contactRepository, cartAdapterInstance } = buildController()
-      await contactRepository.create({ number: '5511990283745', licensee: 'licensee-id', type: '@c.us' })
+    it('delegates to createCart use case and returns status 201', async () => {
+      const { controller, createCart, cartRepository, contactRepository } = buildController()
 
-      cartAdapterInstance.parseCart.mockReturnValue({
-        products: [],
-        delivery_tax: 0.5,
-        concluded: false,
-        catalog: null,
-        address: '',
-        address_number: '',
-        address_complement: '',
-        neighborhood: '',
-        city: '',
-        cep: '',
-        uf: '',
-        note: '',
-        change: 0,
-        partner_key: '',
-        payment_method: '',
-        points: 0,
-        discount: 0,
-        latitude: null,
-        longitude: null,
-        location: null,
-        documento: '',
-        delivery_method: '',
+      const contact = await contactRepository.create({
+        number: '5511990283745',
+        licensee: 'licensee-id',
+        type: '@c.us',
       })
+      const cart = await cartRepository.create({ contact: contact._id, licensee: 'licensee-id', concluded: false })
+
+      createCart.execute.mockResolvedValue(cart)
 
       const req = {
         body: { contact: '5511990283745' },
@@ -104,12 +79,20 @@ describe('CartsController delegation', () => {
 
       await controller.create(req, res)
 
+      expect(createCart.execute).toHaveBeenCalledWith({
+        contact: '5511990283745',
+        name: undefined,
+        licensee: req.licensee,
+        origin: undefined,
+        body: req.body,
+      })
       expect(res.status).toHaveBeenCalledWith(201)
     })
 
     it('returns 500 when an unexpected error occurs', async () => {
-      const contactRepository = { getContactByNumber: jest.fn().mockRejectedValue(new Error('some error')) }
-      const { controller } = buildController({ contactRepository })
+      const { controller, createCart } = buildController()
+
+      createCart.execute.mockRejectedValue(new Error('some error'))
 
       const req = {
         body: { contact: '5511990283745' },
@@ -126,8 +109,10 @@ describe('CartsController delegation', () => {
   })
 
   describe('update', () => {
-    it('returns 422 when contact is not found', async () => {
-      const { controller } = buildController()
+    it('returns 422 when contact is not found (use case returns null)', async () => {
+      const { controller, updateCart } = buildController()
+
+      updateCart.execute.mockResolvedValue(null)
 
       const req = { params: { contact: '551164646464' }, body: {}, licensee: { _id: 'licensee-id' } }
       const res = buildResponse()
@@ -138,9 +123,10 @@ describe('CartsController delegation', () => {
       expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Contato 551164646464 não encontrado' } })
     })
 
-    it('returns 200 with not-found message when cart does not exist', async () => {
-      const { controller, contactRepository } = buildController()
-      await contactRepository.create({ number: '5511990283745', licensee: 'licensee-id', type: '@c.us' })
+    it('returns 200 with not-found message when use case returns CART_NOT_FOUND', async () => {
+      const { controller, updateCart } = buildController()
+
+      updateCart.execute.mockResolvedValue(CART_NOT_FOUND)
 
       const req = { params: { contact: '5511990283745' }, body: {}, licensee: { _id: 'licensee-id' } }
       const res = buildResponse()
@@ -151,14 +137,187 @@ describe('CartsController delegation', () => {
       expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Carrinho não encontrado' } })
     })
 
+    it('returns 200 with cart when use case succeeds', async () => {
+      const { controller, updateCart, cartRepository, contactRepository } = buildController()
+
+      const contact = await contactRepository.create({
+        number: '5511990283745',
+        licensee: 'licensee-id',
+        type: '@c.us',
+      })
+      const cart = await cartRepository.create({ contact: contact._id, licensee: 'licensee-id', concluded: false })
+
+      updateCart.execute.mockResolvedValue(cart)
+
+      const req = { params: { contact: '5511990283745' }, body: { note: 'test' }, licensee: { _id: 'licensee-id' } }
+      const res = buildResponse()
+
+      await controller.update(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.send).toHaveBeenCalledWith(cart)
+    })
+
     it('returns 500 when an unexpected error occurs', async () => {
-      const contactRepository = { getContactByNumber: jest.fn().mockRejectedValue(new Error('some error')) }
-      const { controller } = buildController({ contactRepository })
+      const { controller, updateCart } = buildController()
+
+      updateCart.execute.mockRejectedValue(new Error('some error'))
 
       const req = { params: { contact: '5511990283745' }, body: {}, licensee: { _id: 'licensee-id' } }
       const res = buildResponse()
 
       await controller.update(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: some error' } })
+    })
+  })
+
+  describe('addItem', () => {
+    it('returns 422 when contact is not found (use case returns null)', async () => {
+      const { controller, addCartItem } = buildController()
+
+      addCartItem.execute.mockResolvedValue(null)
+
+      const req = {
+        params: { contact: '551164646464' },
+        body: { products: [] },
+        licensee: { _id: 'licensee-id' },
+      }
+      const res = buildResponse()
+
+      await controller.addItem(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(422)
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Contato 551164646464 não encontrado' } })
+    })
+
+    it('returns 200 with not-found message when use case returns CART_NOT_FOUND', async () => {
+      const { controller, addCartItem } = buildController()
+
+      addCartItem.execute.mockResolvedValue(CART_NOT_FOUND)
+
+      const req = {
+        params: { contact: '5511990283745' },
+        body: { products: [] },
+        licensee: { _id: 'licensee-id' },
+      }
+      const res = buildResponse()
+
+      await controller.addItem(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Carrinho não encontrado' } })
+    })
+
+    it('returns 200 with cart when use case succeeds', async () => {
+      const { controller, addCartItem, cartRepository, contactRepository } = buildController()
+
+      const contact = await contactRepository.create({
+        number: '5511990283745',
+        licensee: 'licensee-id',
+        type: '@c.us',
+      })
+      const cart = await cartRepository.create({ contact: contact._id, licensee: 'licensee-id', concluded: false })
+
+      addCartItem.execute.mockResolvedValue(cart)
+
+      const req = {
+        params: { contact: '5511990283745' },
+        body: { products: [] },
+        licensee: { _id: 'licensee-id' },
+      }
+      const res = buildResponse()
+
+      await controller.addItem(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.send).toHaveBeenCalledWith(cart)
+    })
+
+    it('returns 500 when an unexpected error occurs', async () => {
+      const { controller, addCartItem } = buildController()
+
+      addCartItem.execute.mockRejectedValue(new Error('some error'))
+
+      const req = {
+        params: { contact: '5511990283745' },
+        body: { products: [] },
+        licensee: { _id: 'licensee-id' },
+      }
+      const res = buildResponse()
+
+      await controller.addItem(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: some error' } })
+    })
+  })
+
+  describe('send', () => {
+    it('returns 200 with scheduled message when use case succeeds (returns undefined)', async () => {
+      const { controller, sendCart } = buildController()
+
+      sendCart.execute.mockResolvedValue(undefined)
+
+      const req = {
+        params: { contact: '5511990283745' },
+        licensee: { _id: 'licensee-id', whatsappUrl: 'https://url', whatsappToken: 'token' },
+      }
+      const res = buildResponse()
+
+      await controller.send(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.send).toHaveBeenCalledWith({ message: 'Carrinho agendado para envio' })
+    })
+
+    it('returns 422 when contact is not found (use case returns null)', async () => {
+      const { controller, sendCart } = buildController()
+
+      sendCart.execute.mockResolvedValue(null)
+
+      const req = {
+        params: { contact: '551164646464' },
+        licensee: { _id: 'licensee-id', whatsappUrl: 'https://url', whatsappToken: 'token' },
+      }
+      const res = buildResponse()
+
+      await controller.send(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(422)
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Contato 551164646464 não encontrado' } })
+    })
+
+    it('returns 200 with not-found message when use case returns CART_NOT_FOUND', async () => {
+      const { controller, sendCart } = buildController()
+
+      sendCart.execute.mockResolvedValue(CART_NOT_FOUND)
+
+      const req = {
+        params: { contact: '5511990283745' },
+        licensee: { _id: 'licensee-id', whatsappUrl: 'https://url', whatsappToken: 'token' },
+      }
+      const res = buildResponse()
+
+      await controller.send(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Carrinho não encontrado' } })
+    })
+
+    it('returns 500 when an unexpected error occurs', async () => {
+      const { controller, sendCart } = buildController()
+
+      sendCart.execute.mockRejectedValue(new Error('some error'))
+
+      const req = {
+        params: { contact: '5511990283745' },
+        licensee: { _id: 'licensee-id', whatsappUrl: 'https://url', whatsappToken: 'token' },
+      }
+      const res = buildResponse()
+
+      await controller.send(req, res)
 
       expect(res.status).toHaveBeenCalledWith(500)
       expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: some error' } })
@@ -246,40 +405,6 @@ describe('CartsController delegation', () => {
       expect(res.send).toHaveBeenCalledWith({
         body: 'Solicitação para avisar os carts com janela vencendo agendado com sucesso',
       })
-    })
-  })
-
-  describe('send', () => {
-    it('schedules cart for send and returns status 200', async () => {
-      const {
-        controller,
-        contactRepository,
-        cartRepository,
-        messageRepository,
-        parseCart,
-        scheduleSendMessageToMessenger,
-      } = buildController()
-      const contact = await contactRepository.create({
-        number: '5511990283745',
-        licensee: 'licensee-id',
-        type: '@c.us',
-      })
-      await cartRepository.create({ contact: contact._id, concluded: false, licensee: 'licensee-id' })
-      parseCart.mockResolvedValue('cart text')
-      scheduleSendMessageToMessenger.mockResolvedValue()
-
-      const req = {
-        params: { contact: '5511990283745' },
-        licensee: { _id: 'licensee-id', whatsappUrl: 'https://url', whatsappToken: 'token' },
-      }
-      const res = buildResponse()
-
-      await controller.send(req, res)
-
-      const messages = await messageRepository.find({})
-      expect(messages.length).toBeGreaterThan(0)
-      expect(res.status).toHaveBeenCalledWith(200)
-      expect(res.send).toHaveBeenCalledWith({ message: 'Carrinho agendado para envio' })
     })
   })
 
