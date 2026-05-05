@@ -180,7 +180,11 @@ describe('CartsController delegation', () => {
 
     it('returns 200 with cart description when cart exists', async () => {
       const { controller, contactRepository, cartRepository, parseCart } = buildController()
-      const contact = await contactRepository.create({ number: '5511990283745', licensee: 'licensee-id', type: '@c.us' })
+      const contact = await contactRepository.create({
+        number: '5511990283745',
+        licensee: 'licensee-id',
+        type: '@c.us',
+      })
       await cartRepository.create({ contact: contact._id, concluded: false, licensee: 'licensee-id' })
       parseCart.mockResolvedValue('cart description text')
 
@@ -197,7 +201,11 @@ describe('CartsController delegation', () => {
   describe('close', () => {
     it('closes the cart and returns status 200', async () => {
       const { controller, contactRepository, cartRepository } = buildController()
-      const contact = await contactRepository.create({ number: '5511990283745', licensee: 'licensee-id', type: '@c.us' })
+      const contact = await contactRepository.create({
+        number: '5511990283745',
+        licensee: 'licensee-id',
+        type: '@c.us',
+      })
       await cartRepository.create({ contact: contact._id, concluded: false, licensee: 'licensee-id' })
 
       const req = { params: { contact: '5511990283745' }, licensee: { _id: 'licensee-id' } }
@@ -243,9 +251,19 @@ describe('CartsController delegation', () => {
 
   describe('send', () => {
     it('schedules cart for send and returns status 200', async () => {
-      const { controller, contactRepository, cartRepository, messageRepository, parseCart, scheduleSendMessageToMessenger } =
-        buildController()
-      const contact = await contactRepository.create({ number: '5511990283745', licensee: 'licensee-id', type: '@c.us' })
+      const {
+        controller,
+        contactRepository,
+        cartRepository,
+        messageRepository,
+        parseCart,
+        scheduleSendMessageToMessenger,
+      } = buildController()
+      const contact = await contactRepository.create({
+        number: '5511990283745',
+        licensee: 'licensee-id',
+        type: '@c.us',
+      })
       await cartRepository.create({ contact: contact._id, concluded: false, licensee: 'licensee-id' })
       parseCart.mockResolvedValue('cart text')
       scheduleSendMessageToMessenger.mockResolvedValue()
@@ -268,7 +286,11 @@ describe('CartsController delegation', () => {
   describe('getPayment', () => {
     it('returns payment status and cart id when cart exists', async () => {
       const { controller, contactRepository, cartRepository } = buildController()
-      const contact = await contactRepository.create({ number: '5511990283745', licensee: 'licensee-id', type: '@c.us' })
+      const contact = await contactRepository.create({
+        number: '5511990283745',
+        licensee: 'licensee-id',
+        type: '@c.us',
+      })
       const cart = await cartRepository.create({
         contact: contact._id,
         concluded: false,

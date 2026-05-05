@@ -11,55 +11,43 @@ function buildResponse() {
 
 function buildController() {
   const contactRepository = new ContactRepositoryMemory()
+  const updateContactAddress = { execute: jest.fn() }
   const controller = new AdressesController({
     contactRepository,
     normalizePhone: (number) => new NormalizePhone(number),
+    updateContactAddress,
   })
-  return { controller, contactRepository }
+  return { controller, contactRepository, updateContactAddress }
 }
 
 describe('AdressesController', () => {
   describe('update', () => {
-    it('updates contact address and returns the updated contact with status 200', async () => {
-      const { controller, contactRepository } = buildController()
-
-      const contact = await contactRepository.create({
-        number: '5511990283745',
-        type: '@c.us',
-        licensee: 'licensee-id',
-        name: 'John Doe',
-      })
+    it('delegates to updateContactAddress and returns the updated contact with status 200', async () => {
+      const { controller, updateContactAddress } = buildController()
+      const contact = { _id: 'contact-id', address: 'Rua dois de outubro' }
+      updateContactAddress.execute.mockResolvedValue(contact)
 
       const req = {
         params: { number: '11990283745' },
-        body: {
-          address: 'Rua dois de outubro',
-          address_number: '123',
-          address_complement: 'rooms 1 and 2',
-          neighborhood: 'Pedra branca',
-          city: 'São Paulo',
-          cep: '98543287',
-          uf: 'SP',
-          delivery_tax: 10.39,
-          licensee: 'should-be-ignored',
-        },
+        body: { address: 'Rua dois de outubro', licensee: 'should-be-ignored' },
         licensee: { _id: 'licensee-id' },
       }
       const res = buildResponse()
 
       await controller.update(req, res)
 
+      expect(updateContactAddress.execute).toHaveBeenCalledWith({
+        number: '11990283745',
+        licenseeId: 'licensee-id',
+        fields: req.body,
+      })
       expect(res.status).toHaveBeenCalledWith(200)
-
-      const updated = await contactRepository.findFirst({ _id: contact._id })
-      expect(updated.address).toBe('Rua dois de outubro')
-      expect(updated.address_number).toBe('123')
-      expect(updated.delivery_tax).toBe(10.39)
-      expect(updated.licensee).toBe('licensee-id') // not overwritten by body
+      expect(res.send).toHaveBeenCalledWith(contact)
     })
 
-    it('returns 404 when contact is not found', async () => {
-      const { controller } = buildController()
+    it('returns 404 when updateContactAddress returns null', async () => {
+      const { controller, updateContactAddress } = buildController()
+      updateContactAddress.execute.mockResolvedValue(null)
 
       const req = {
         params: { number: '11111111111' },
@@ -74,12 +62,9 @@ describe('AdressesController', () => {
       expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Contato 11111111111 não encontrado' } })
     })
 
-    it('returns 500 when an unexpected error occurs', async () => {
-      const contactRepository = { findFirst: jest.fn().mockRejectedValue(new Error('db error')) }
-      const controller = new AdressesController({
-        contactRepository,
-        normalizePhone: (number) => new NormalizePhone(number),
-      })
+    it('returns 500 when updateContactAddress throws an unexpected error', async () => {
+      const { controller, updateContactAddress } = buildController()
+      updateContactAddress.execute.mockRejectedValue(new Error('db error'))
 
       const req = {
         params: { number: '11990283745' },
@@ -140,6 +125,7 @@ describe('AdressesController', () => {
       const controller = new AdressesController({
         contactRepository,
         normalizePhone: (number) => new NormalizePhone(number),
+        updateContactAddress: { execute: jest.fn() },
       })
 
       const req = {

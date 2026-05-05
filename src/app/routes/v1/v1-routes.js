@@ -13,6 +13,7 @@ import { ReceivePedidos10Order } from '../../usecases/orders/ReceivePedidos10Ord
 import { ChangePedidos10OrderStatus } from '../../usecases/orders/ChangePedidos10OrderStatus.js'
 import { ScheduleBackgroundjob } from '../../usecases/backgroundjobs/ScheduleBackgroundjob.js'
 import { GetBackgroundjobStatus } from '../../usecases/backgroundjobs/GetBackgroundjobStatus.js'
+import { UpdateContactAddress } from '../../usecases/contacts/UpdateContactAddress.js'
 import { IngestChatMessage } from '../../usecases/webhooks/IngestChatMessage.js'
 import { IngestMessengerMessage } from '../../usecases/webhooks/IngestMessengerMessage.js'
 import { queueServer } from '../../../config/queue.js'
@@ -50,6 +51,10 @@ const backupsController = new BackupsController({ publishMessage })
 const adressesController = new AdressesController({
   contactRepository,
   normalizePhone: (number) => new NormalizePhone(number),
+  updateContactAddress: new UpdateContactAddress({
+    contactRepository,
+    normalizePhone: (number) => new NormalizePhone(number),
+  }),
 })
 const cartsController = new CartsController({
   contactRepository,
