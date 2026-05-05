@@ -92,9 +92,9 @@
     tslib "^2.6.2"
 
 "@aws-sdk/client-s3@^3.32.0":
-  version "3.1042.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.1042.0.tgz#a84ad453b1b3b28a2b33dc0a88750ae9d417b7a6"
-  integrity sha512-z3Ibstr7ckDT10dz/nkk4+93LitrrO49Oq563/JoFHt30ZNodPBCfSxysKcelLyi/lNVF1MZrhZZfikUAG3iNQ==
+  version "3.1043.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.1043.0.tgz#b0b52e5fc98db8650da175ad533e25b4909608c1"
+  integrity sha512-QrDh9PACpmijOgbVnvQIvoWFZcMEBoGw0qiQRfGvsUEcB1JPCS2U5R0irB4XQSmsBlQUNlNeXVfpx3JI++NqrA==
   dependencies:
     "@aws-crypto/sha1-browser" "5.2.0"
     "@aws-crypto/sha256-browser" "5.2.0"
@@ -480,9 +480,9 @@
     tslib "^2.6.2"
 
 "@aws-sdk/s3-request-presigner@^3.32.0":
-  version "3.1042.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/s3-request-presigner/-/s3-request-presigner-3.1042.0.tgz#fa14ecb795314449839148d739d9fc1ae2b7d7aa"
-  integrity sha512-yWgXWDg4W0Vk1xlY4M7puM07ce6PPBS4tBytNOpu57k+wY0puXgxkGN0+k/dUAA4sR4Th6+wDps50gBBLj48Ew==
+  version "3.1043.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/s3-request-presigner/-/s3-request-presigner-3.1043.0.tgz#0b790223fff04e6ea7edcfb8e7b69c4d8cbe4f3e"
+  integrity sha512-IgHbDo7c2crU4aGa7FjlMAUUAPgiN4koR060ImbzcFRd2G0v0PXio599O+VDjdmIbOqZwGRQHTbfBKhnDbQZ7g==
   dependencies:
     "@aws-sdk/signature-v4-multi-region" "^3.996.25"
     "@aws-sdk/types" "^3.973.8"
@@ -5084,9 +5084,9 @@ fast-safe-stringify@^2.1.1:
   integrity sha512-W+KJc2dmILlPplD/H4K9l9LcAHAfPtP6BY84uVLXQ6Evcz9Lcg33Y2z1IVblT6xdY54PXYVHEv+0Wpq8Io6zkA==
 
 fast-xml-builder@^1.1.5:
-  version "1.1.7"
-  resolved "https://registry.yarnpkg.com/fast-xml-builder/-/fast-xml-builder-1.1.7.tgz#b445dfa48d5e7636a50d7ff39c7f4254552bfdff"
-  integrity sha512-Yh7/7rQuMXICNr0oMYDR2yHP6oUvmQsTToFeOWj/kIDhAwQ+c4Ol/lbcwOmEM5OHYQmh6S6EQSQ1sljCKP36bQ==
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/fast-xml-builder/-/fast-xml-builder-1.1.8.tgz#7bbc0c3957587f3c44d13c10fa1fdf8d4bcc328b"
+  integrity sha512-sDVBc2gg8pSKvcbE8rBmOyjSGQf0AdsbqvHeIOv3D/uYNoV4eCReQXyDF8Pdv8+m1FHazACypSz2hR7O2S1LLw==
   dependencies:
     path-expression-matcher "^1.1.3"
 
