@@ -1320,9 +1320,9 @@ js-yaml@^4.1.1:
     argparse "^2.0.1"
 
 jsdom@^29.0.0:
-  version "29.1.0"
-  resolved "https://registry.yarnpkg.com/jsdom/-/jsdom-29.1.0.tgz#94f1e55fca85f646e91e5d886a25109b33bcc284"
-  integrity sha512-YNUc7fB9QuvSSQWfrH0xF+TyABkxUwx8sswgIDaCrw4Hol8BghdZDkITtZheRJeMtzWlnTfsM3bBBusRvpO1wg==
+  version "29.1.1"
+  resolved "https://registry.yarnpkg.com/jsdom/-/jsdom-29.1.1.tgz#5b9704906f3cd510c34aa941ae2f8f7f8179df01"
+  integrity sha512-ECi4Fi2f7BdJtUKTflYRTiaMxIB0O6zfR1fX0GXpUrf6flp8QIYn1UT20YQqdSOfk2dfkCwS8LAFoJDEppNK5Q==
   dependencies:
     "@asamuzakjp/css-color" "^5.1.11"
     "@asamuzakjp/dom-selector" "^7.1.1"
@@ -1490,9 +1490,9 @@ loose-envify@^1.4.0:
     js-tokens "^3.0.0 || ^4.0.0"
 
 lru-cache@^11.3.5:
-  version "11.3.5"
-  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-11.3.5.tgz#29047d348c0b2793e3112a01c739bb7c6d855637"
-  integrity sha512-NxVFwLAnrd9i7KUBxC4DrUhmgjzOs+1Qm50D3oF1/oL+r1NpZ4gA7xvG0/zJ8evR7zIKn4vLf7qTNduWFtCrRw==
+  version "11.3.6"
+  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-11.3.6.tgz#f0306ad6e9f0a5dc25b16aeba4e8f57b7ec2df55"
+  integrity sha512-Gf/KoL3C/MlI7Bt0PGI9I+TeTC/I6r/csU58N4BSNc4lppLBeKsOdFYkK+dX0ABDUMJNfCHTyPpzwwO21Awd3A==
 
 lz-string@^1.5.0:
   version "1.5.0"
@@ -2109,17 +2109,17 @@ tinyrainbow@^3.1.0:
   resolved "https://registry.yarnpkg.com/tinyrainbow/-/tinyrainbow-3.1.0.tgz#1d8a623893f95cf0a2ddb9e5d11150e191409421"
   integrity sha512-Bf+ILmBgretUrdJxzXM0SgXLZ3XfiaUuOj/IKQHuTXip+05Xn+uyEYdVg0kYDipTBcLrCVyUzAPz7QmArb0mmw==
 
-tldts-core@^7.0.29:
-  version "7.0.29"
-  resolved "https://registry.yarnpkg.com/tldts-core/-/tldts-core-7.0.29.tgz#c3806f5af57b0351ed9415899be2a8dafa3f56dc"
-  integrity sha512-W99NuU7b1DcG3uJ3v9k9VztCH3WialNbBkBft5wCs8V8mexu0XQqaZEYb9l9RNNzK8+3EJ9PKWB0/RUtTQ/o+Q==
+tldts-core@^7.0.30:
+  version "7.0.30"
+  resolved "https://registry.yarnpkg.com/tldts-core/-/tldts-core-7.0.30.tgz#c495dba27778f2220bea94f3f6399005c7aca61c"
+  integrity sha512-uiHN8PIB1VmWyS98eZYja4xzlYqeFZVjb4OuYlJQnZAuJhMw4PbKQOKgHKhBdJR3FE/t5mUQ1Kd80++B+qhD1Q==
 
 tldts@^7.0.5:
-  version "7.0.29"
-  resolved "https://registry.yarnpkg.com/tldts/-/tldts-7.0.29.tgz#5a246d4ffcdf8b34cd9cc2dea424162a653f69d1"
-  integrity sha512-JIXCerhudr/N6OWLwLF1HVsTTUo7ry6qHa5eWZEkiMuxsIiAACL55tGLfqfHfoH7QaMQUW8fngD7u7TxWexYQg==
+  version "7.0.30"
+  resolved "https://registry.yarnpkg.com/tldts/-/tldts-7.0.30.tgz#497cea8d610953222f9dcb3ceb07c7207efcd816"
+  integrity sha512-ELrFxuqsDdHUwoh0XxDbxuLD3Wnz49Z57IFvTtvWy1hJdcMZjXLIuonjilCiWHlT2GbE4Wlv1wKVTzDFnXH1aw==
   dependencies:
-    tldts-core "^7.0.29"
+    tldts-core "^7.0.30"
 
 tmp@^0.2.4:
   version "0.2.5"
