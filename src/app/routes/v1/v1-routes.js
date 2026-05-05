@@ -12,6 +12,7 @@ import { OrdersController } from '../../controllers/OrdersController.js'
 import { ReceivePedidos10Order } from '../../usecases/orders/ReceivePedidos10Order.js'
 import { ChangePedidos10OrderStatus } from '../../usecases/orders/ChangePedidos10OrderStatus.js'
 import { ScheduleBackgroundjob } from '../../usecases/backgroundjobs/ScheduleBackgroundjob.js'
+import { GetBackgroundjobStatus } from '../../usecases/backgroundjobs/GetBackgroundjobStatus.js'
 import { IngestChatMessage } from '../../usecases/webhooks/IngestChatMessage.js'
 import { IngestMessengerMessage } from '../../usecases/webhooks/IngestMessengerMessage.js'
 import { queueServer } from '../../../config/queue.js'
@@ -63,8 +64,8 @@ const cartsController = new CartsController({
 })
 const delayController = new DelayController()
 const backgroundjobsController = new BackgroundjobsController({
-  backgroundjobRepository,
   scheduleBackgroundjob: new ScheduleBackgroundjob({ backgroundjobRepository, jobQueue: queueServer }),
+  getBackgroundjobStatus: new GetBackgroundjobStatus({ backgroundjobRepository }),
 })
 const integrationsController = new IntegrationsController({ bodyRepository, publishMessage })
 const ordersController = new OrdersController({
