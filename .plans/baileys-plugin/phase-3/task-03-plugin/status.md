@@ -1,9 +1,9 @@
 # Status: Baileys Plugin + Wiring
 
-**Current Status**: not-started
+**Current Status**: in-progress
 **Last Updated**: 2026-05-05
-**Agent**: —
-**Branch**: —
+**Agent**: claude-sonnet-4-6
+**Branch**: plan/baileys-plugin/phase-3/task-03-plugin
 **PR**: —
 
 ## Status History
@@ -11,6 +11,7 @@
 | Timestamp | Status | Agent | Notes |
 |-----------|--------|-------|-------|
 | 2026-05-05 | not-started | — | Task created |
+| 2026-05-05 | in-progress | claude-sonnet-4-6 | Implementation started |
 
 ## Blockers
 
