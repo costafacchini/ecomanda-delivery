@@ -8,9 +8,7 @@ describe('GetBaileysQr', () => {
     const plugin = { getQrCode: jest.fn().mockResolvedValue('qr-string-data') }
     const createMessengerPlugin = jest.fn().mockReturnValue(plugin)
     const useCase = new GetBaileysQr({ licenseeRepository, createMessengerPlugin })
-    const licensee = await licenseeRepository.create(
-      licenseeCompleteFactory.build({ whatsappDefault: 'baileys' }),
-    )
+    const licensee = await licenseeRepository.create(licenseeCompleteFactory.build({ whatsappDefault: 'baileys' }))
 
     const response = await useCase.execute(licensee._id)
 
@@ -24,9 +22,7 @@ describe('GetBaileysQr', () => {
     const plugin = { getQrCode: jest.fn().mockResolvedValue(null) }
     const createMessengerPlugin = jest.fn().mockReturnValue(plugin)
     const useCase = new GetBaileysQr({ licenseeRepository, createMessengerPlugin })
-    const licensee = await licenseeRepository.create(
-      licenseeCompleteFactory.build({ whatsappDefault: 'baileys' }),
-    )
+    const licensee = await licenseeRepository.create(licenseeCompleteFactory.build({ whatsappDefault: 'baileys' }))
 
     const response = await useCase.execute(licensee._id)
 
@@ -38,9 +34,7 @@ describe('GetBaileysQr', () => {
     const plugin = { getQrCode: jest.fn() }
     const createMessengerPlugin = jest.fn().mockReturnValue(plugin)
     const useCase = new GetBaileysQr({ licenseeRepository, createMessengerPlugin })
-    const licensee = await licenseeRepository.create(
-      licenseeCompleteFactory.build({ whatsappDefault: 'dialog' }),
-    )
+    const licensee = await licenseeRepository.create(licenseeCompleteFactory.build({ whatsappDefault: 'dialog' }))
 
     const response = await useCase.execute(licensee._id)
 
