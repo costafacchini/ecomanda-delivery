@@ -501,7 +501,7 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
                 )}
 
               {props.values.whatsappDefault === 'baileys' && (
-                <div className='row pb-4'>
+                <div className='row mt-3 pb-4'>
                   <div className='form-group col-3'>
                     <button
                       onClick={async (event) => {
