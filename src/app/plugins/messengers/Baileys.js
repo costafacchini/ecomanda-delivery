@@ -118,7 +118,7 @@ class Baileys extends MessengersBase {
   }
 
   async sendMessage(messageId) {
-    const { default: makeWASocket, initAuthCreds } = await import('@whiskeysockets/baileys')
+    const { default: makeWASocket, initAuthCreds, Browsers } = await import('@whiskeysockets/baileys')
 
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
 
@@ -142,7 +142,7 @@ class Baileys extends MessengersBase {
       socket = makeWASocket({
         auth: state,
         printQRInTerminal: false,
-        browser: ['ecomanda', 'Chrome', '1.0.0'],
+        browser: Browsers.ubuntu('Chrome'),
       })
 
       socket.ev.on('creds.update', () => {
@@ -180,13 +180,13 @@ class Baileys extends MessengersBase {
           }, timeoutMs)
 
           import('@whiskeysockets/baileys')
-            .then(({ default: makeWASocket, initAuthCreds }) => {
+            .then(({ default: makeWASocket, initAuthCreds, Browsers }) => {
               const { state, rawKeys } = this.buildAuthState(session, initAuthCreds)
 
               socket = makeWASocket({
                 auth: state,
                 printQRInTerminal: false,
-                browser: ['ecomanda', 'Chrome', '1.0.0'],
+                browser: Browsers.ubuntu('Chrome'),
               })
 
               socket.ev.on('connection.update', (update) => {
