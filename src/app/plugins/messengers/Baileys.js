@@ -56,7 +56,8 @@ class Baileys extends MessengersBase {
     }
 
     const remoteJid = body.key.remoteJid
-    const normalizePhone = new NormalizePhone(remoteJid)
+    const phone = remoteJid.replace(/@s\.whatsapp\.net$/, '').replace(/@g\.us$/, '')
+    const normalizePhone = new NormalizePhone(phone)
 
     this.contactData = {
       number: normalizePhone.number,

@@ -26,11 +26,9 @@ jest.mock('@whiskeysockets/baileys', () => ({
   default: (...args) => mockMakeWASocket(...args),
 }))
 
-// The remoteJid '5511990283745@s.whatsapp.net' is processed by NormalizePhone which strips
-// non-digit/dot characters and produces '5511990283745.' (trailing dot from the domain part).
-// Contacts stored via the Baileys parser will have this number format.
+// The JID suffix is stripped before NormalizePhone so the stored number is clean (no trailing dot).
 const REMOTE_JID = '5511990283745@s.whatsapp.net'
-const PARSED_NUMBER = '5511990283745.'
+const PARSED_NUMBER = '5511990283745'
 const PARSED_WA_ID = '5511990283745'
 const PARSED_TYPE = '@c.us'
 
@@ -232,6 +230,21 @@ describe('Baileys plugin', () => {
 
         const updatedContact = await contactRepository.findFirst({ _id: contact._id })
         expect(updatedContact.name).toEqual('New Name')
+      })
+
+      it('stores contact number without trailing dot when JID contains @s.whatsapp.net', async () => {
+        const body = {
+          key: { remoteJid: REMOTE_JID, id: 'BAILEYS-MSG-ID-006' },
+          pushName: 'Regression Test',
+          message: { conversation: 'no trailing dot' },
+        }
+
+        const baileys = new Baileys(licensee, dependencies)
+        await baileys.responseToMessages(body)
+
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.findFirst({ licensee: licensee._id })
+        expect(contact.number).not.toMatch(/\.$/)
       })
     })
   })
