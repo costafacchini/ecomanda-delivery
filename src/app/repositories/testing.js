@@ -25,6 +25,8 @@ import { TemplateRepositoryDatabase, TemplateRepositoryMemory } from './template
 import { TrafficlightRepositoryMemory } from './trafficlight.js'
 import { TriggerRepositoryDatabase, TriggerRepositoryMemory } from './trigger.js'
 import { UserRepositoryDatabase, UserRepositoryMemory } from './user.js'
+import WhatsappSession from '../models/WhatsappSession.js'
+import { WhatsappSessionRepositoryDatabase, WhatsappSessionRepositoryMemory } from './whatsappsession.js'
 import { RepositoryMemory, matchesFilter, sortRecords, comparableValue } from './repository.js'
 import { parseText as parseTextHelper } from '../helpers/ParseTriggerText.js'
 
@@ -108,6 +110,7 @@ function createMemoryRepositories() {
     trafficlights: [],
     triggers: [],
     users: [],
+    whatsappSessions: [],
   }
 
   const cartRepository = new CartRepositoryMemory(state.carts)
@@ -139,6 +142,7 @@ function createMemoryRepositories() {
     trafficlightRepository: new TrafficlightRepositoryMemory(state.trafficlights),
     triggerRepository,
     userRepository: new UserRepositoryMemory(state.users),
+    whatsappSessionRepository: new WhatsappSessionRepositoryMemory(state.whatsappSessions),
   }
 }
 
@@ -473,6 +477,7 @@ function installMemoryRepositories() {
   repositories.templateRepository.modelClass = Template
   repositories.triggerRepository.modelClass = Trigger
   repositories.userRepository.modelClass = User
+  repositories.whatsappSessionRepository.modelClass = WhatsappSession
 
   repositories.backgroundjobRepository.relationLoaders = {
     licensee: loadRelation(repositories.licenseeRepository),
@@ -508,6 +513,9 @@ function installMemoryRepositories() {
   repositories.userRepository.relationLoaders = {
     licensee: loadRelation(repositories.licenseeRepository),
   }
+  repositories.whatsappSessionRepository.relationLoaders = {
+    licensee: loadRelation(repositories.licenseeRepository),
+  }
 
   bindRepositoryPrototype(BackgroundjobRepositoryDatabase.prototype, repositories.backgroundjobRepository, restores)
   bindRepositoryPrototype(BodyRepositoryDatabase.prototype, repositories.bodyRepository, restores)
@@ -522,6 +530,7 @@ function installMemoryRepositories() {
   bindRepositoryPrototype(TemplateRepositoryDatabase.prototype, repositories.templateRepository, restores)
   bindRepositoryPrototype(TriggerRepositoryDatabase.prototype, repositories.triggerRepository, restores)
   bindRepositoryPrototype(UserRepositoryDatabase.prototype, repositories.userRepository, restores)
+  bindRepositoryPrototype(WhatsappSessionRepositoryDatabase.prototype, repositories.whatsappSessionRepository, restores)
 
   patchMember(
     BackgroundjobRepositoryDatabase.prototype,
@@ -601,6 +610,12 @@ function installMemoryRepositories() {
     () => createMemoryModelAdapter(repositories.userRepository),
     restores,
   )
+  patchMember(
+    WhatsappSessionRepositoryDatabase.prototype,
+    'model',
+    () => createMemoryModelAdapter(repositories.whatsappSessionRepository),
+    restores,
+  )
 
   bindModelToRepository(Backgroundjob, repositories.backgroundjobRepository, restores)
   bindModelToRepository(Body, repositories.bodyRepository, restores)
@@ -614,6 +629,7 @@ function installMemoryRepositories() {
   bindModelToRepository(Template, repositories.templateRepository, restores)
   bindModelToRepository(Trigger, repositories.triggerRepository, restores)
   bindModelToRepository(User, repositories.userRepository, restores)
+  bindModelToRepository(WhatsappSession, repositories.whatsappSessionRepository, restores)
 
   patchMember(
     IntegrationlogRepositoryDatabase.prototype,
