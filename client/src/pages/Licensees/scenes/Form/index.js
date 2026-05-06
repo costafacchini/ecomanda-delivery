@@ -1,8 +1,11 @@
+import { useState } from 'react'
+import { QRCodeSVG } from 'qrcode.react'
 import { FieldWithError, Form } from '../../../../components/form'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router'
 import {
   setLicenseeWebhook,
+  getBaileysQr,
   importLicenseeTemplate,
   sendLicenseePagarMe,
   signOrderWebhook,
@@ -68,6 +71,8 @@ const licenseeInitialValues = {
 
 function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
   let navigate = useNavigate()
+  const [baileysQr, setBaileysQr] = useState(null)
+  const [baileysStatus, setBaileysStatus] = useState(null)
 
   return (
     <div>
@@ -408,38 +413,43 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
                   <option value='dialog'>Dialog360</option>
                   <option value='ycloud'>YCloud</option>
                   <option value='pabbly'>Pabbly</option>
+                  <option value='baileys'>Baileys</option>
                 </select>
               </div>
             </div>
 
             <fieldset className='pb-4' disabled={props.values.whatsappDefault === ''}>
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='whatsappToken'>Token do whatsapp</label>
-                  <FieldWithError
-                    id='whatsappToken'
-                    name='whatsappToken'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.whatsappToken}
-                  />
-                </div>
-              </div>
+              {props.values.whatsappDefault !== 'baileys' && (
+                <>
+                  <div className='row'>
+                    <div className='form-group col-5'>
+                      <label htmlFor='whatsappToken'>Token do whatsapp</label>
+                      <FieldWithError
+                        id='whatsappToken'
+                        name='whatsappToken'
+                        type='text'
+                        onChange={props.handleChange}
+                        onBlur={props.handleBlur}
+                        value={props.values.whatsappToken}
+                      />
+                    </div>
+                  </div>
 
-              <div className='row pb-4'>
-                <div className='form-group col-5'>
-                  <label htmlFor='whatsappUrl'>Url do whatsapp</label>
-                  <FieldWithError
-                    id='whatsappUrl'
-                    name='whatsappUrl'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.whatsappUrl}
-                  />
-                </div>
-              </div>
+                  <div className='row pb-4'>
+                    <div className='form-group col-5'>
+                      <label htmlFor='whatsappUrl'>Url do whatsapp</label>
+                      <FieldWithError
+                        id='whatsappUrl'
+                        name='whatsappUrl'
+                        type='text'
+                        onChange={props.handleChange}
+                        onBlur={props.handleBlur}
+                        value={props.values.whatsappUrl}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
 
               {props.values.whatsappDefault === 'ycloud' && (
                 <div className='row pb-2'>
@@ -489,6 +499,39 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
                     </div>
                   </div>
                 )}
+
+              {props.values.whatsappDefault === 'baileys' && (
+                <div className='row pb-4'>
+                  <div className='form-group col-3'>
+                    <button
+                      onClick={async (event) => {
+                        event.preventDefault()
+                        setBaileysQr(null)
+                        setBaileysStatus(null)
+                        const response = await getBaileysQr(props.values)
+                        if (response.data?.qr) {
+                          setBaileysQr(response.data.qr)
+                        } else {
+                          setBaileysStatus(response.data?.message ?? 'Erro ao gerar QR')
+                        }
+                      }}
+                      className='btn btn-info'
+                    >
+                      Gerar QR Code
+                    </button>
+                  </div>
+                  {baileysQr && (
+                    <div className='form-group col-3'>
+                      <QRCodeSVG value={baileysQr} size={200} />
+                    </div>
+                  )}
+                  {baileysStatus && (
+                    <div className='form-group col-3'>
+                      <p>{baileysStatus}</p>
+                    </div>
+                  )}
+                </div>
+              )}
             </fieldset>
 
             <fieldset className='pb-4'>

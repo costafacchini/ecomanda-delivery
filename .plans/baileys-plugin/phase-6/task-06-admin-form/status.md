@@ -1,9 +1,9 @@
 # Status: Admin Form — Baileys QR Code Display
 
-**Current Status**: not-started
+**Current Status**: in-progress
 **Last Updated**: 2026-05-05
-**Agent**: —
-**Branch**: —
+**Agent**: claude-sonnet-4-6
+**Branch**: plan/baileys-plugin/phase-6/task-06-admin-form
 **PR**: —
 
 ## Status History
