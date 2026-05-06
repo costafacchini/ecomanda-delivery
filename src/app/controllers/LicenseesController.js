@@ -1,5 +1,6 @@
 import { check, validationResult } from 'express-validator'
 import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
+import { GetBaileysQr } from '../usecases/licensees/GetBaileysQr.js'
 
 class LicenseesController {
   constructor({
@@ -10,6 +11,7 @@ class LicenseesController {
     setDialogWebhook,
     sendLicenseeToPagarMe,
     signPedidos10OrderWebhook,
+    createMessengerPlugin,
   } = {}) {
     this.licenseeRepository = licenseeRepository
     this.createLicenseesQuery = createLicenseesQuery
@@ -18,6 +20,7 @@ class LicenseesController {
     this.setDialogWebhookUseCase = setDialogWebhook
     this.sendLicenseeToPagarMe = sendLicenseeToPagarMe
     this.signPedidos10OrderWebhook = signPedidos10OrderWebhook
+    this.getBaileysQrUseCase = new GetBaileysQr({ licenseeRepository, createMessengerPlugin })
 
     this.create = this.create.bind(this)
     this.update = this.update.bind(this)
@@ -26,6 +29,7 @@ class LicenseesController {
     this.setDialogWebhook = this.setDialogWebhook.bind(this)
     this.sendToPagarMe = this.sendToPagarMe.bind(this)
     this.signOrderWebhook = this.signOrderWebhook.bind(this)
+    this.getBaileysQr = this.getBaileysQr.bind(this)
   }
 
   validations() {
@@ -159,6 +163,16 @@ class LicenseesController {
       return res.status(200).send(response)
     } catch (err) {
       return res.status(500).send({ errors: { message: err.toString() } })
+    }
+  }
+
+  async getBaileysQr(req, res) {
+    try {
+      const response = await this.getBaileysQrUseCase.execute(req.params.id)
+
+      return res.status(200).send(response)
+    } catch (error) {
+      return res.status(408).send({ message: error.message })
     }
   }
 }

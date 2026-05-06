@@ -62,6 +62,7 @@ const licenseesController = new LicenseesController({
     pagarMeToken: process.env.PAGARME_TOKEN,
   }),
   signPedidos10OrderWebhook: new SignPedidos10OrderWebhook({ licenseeRepository, createPedidos10 }),
+  createMessengerPlugin,
 })
 const contactsController = new ContactsController({
   contactRepository,
@@ -127,6 +128,7 @@ router.get('/templates', templatesController.index)
 router.post('/templates/:id/importation', templatesController.importation)
 
 router.post('/licensees/:id/dialogwebhook', licenseesController.setDialogWebhook)
+router.post('/licensees/:id/baileys-qr', (req, res) => licenseesController.getBaileysQr(req, res))
 router.post('/licensees/:id/sign-order-webhook', licenseesController.signOrderWebhook)
 router.post('/licensees/:id/integration/pagarme', licenseesController.sendToPagarMe)
 

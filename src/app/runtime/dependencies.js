@@ -1,3 +1,4 @@
+import { WhatsappSessionRepositoryDatabase } from '../repositories/whatsappsession.js'
 import { BackgroundjobRepositoryDatabase } from '../repositories/backgroundjob.js'
 import { BodyRepositoryDatabase } from '../repositories/body.js'
 import { CartRepositoryDatabase } from '../repositories/cart.js'
@@ -52,6 +53,7 @@ function buildRuntimeDependencies({
   trafficlightRepository,
   triggerRepository,
   userRepository,
+  whatsappSessionRepository,
 } = {}) {
   const parseText = (text, contact) => parseTextHelper(text, contact, { cartRepository })
   const parseCart = (cartId) => parseCartHelper(cartId, { cartRepository })
@@ -81,6 +83,7 @@ function buildRuntimeDependencies({
       templateRepository,
       parseText,
       createCartPlugin,
+      whatsappSessionRepository,
     })
   const createPagarMe = (licensee) =>
     new PagarMe(licensee, {
@@ -130,6 +133,7 @@ function buildRuntimeDependencies({
     trafficlightRepository,
     triggerRepository,
     userRepository,
+    whatsappSessionRepository,
     parseText,
     parseCart,
     createCartPlugin,
@@ -166,6 +170,7 @@ function createRuntimeDependencies(overrides = {}) {
     trafficlightRepository: overrides.trafficlightRepository ?? new TrafficlightRepositoryDatabase(),
     triggerRepository,
     userRepository: overrides.userRepository ?? new UserRepositoryDatabase(),
+    whatsappSessionRepository: overrides.whatsappSessionRepository ?? new WhatsappSessionRepositoryDatabase(),
   })
 }
 

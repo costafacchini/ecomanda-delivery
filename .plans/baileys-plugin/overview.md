@@ -1,6 +1,6 @@
 # Plan: Baileys WhatsApp Plugin
 
-**Status**: not-started
+**Status**: complete
 **Created**: 2026-05-05
 **Last Updated**: 2026-05-05
 **Estimated Demo Date**: —
@@ -54,7 +54,7 @@ Add a Baileys-based WhatsApp messenger plugin that follows the same architecture
 | phase-4/task-04-tests | Baileys Plugin Tests | 4 | complete | phase-3/task-03-plugin |
 | phase-5/task-05-qr-endpoint | Baileys QR Code Endpoint | 5 | complete | phase-3/task-03-plugin |
 | phase-6/task-06-admin-form | Admin Form — Baileys QR Display | 6 | complete | phase-5/task-05-qr-endpoint |
-| phase-3/task-07-defect-jid-normalize | Defect: JID Suffix Not Stripped Before NormalizePhone | 3 | not-started | — |
+| phase-3/task-07-defect-jid-normalize | Defect: JID Suffix Not Stripped Before NormalizePhone | 3 | complete | — |
 
 ## Branch Convention
 

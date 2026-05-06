@@ -26,6 +26,10 @@ function setLicenseeWebhook(licensee) {
   return api().post(`resources/licensees/${licensee.id}/dialogwebhook`, { headers, body: licensee })
 }
 
+function getBaileysQr(licensee) {
+  return api().post(`resources/licensees/${licensee.id}/baileys-qr`, { headers })
+}
+
 function sendLicenseePagarMe(licensee) {
   return api().post(`resources/licensees/${licensee.id}/integration/pagarme`, { headers, body: licensee })
 }
@@ -44,6 +48,7 @@ export {
   getLicensee,
   updateLicensee,
   setLicenseeWebhook,
+  getBaileysQr,
   importLicenseeTemplate,
   sendLicenseePagarMe,
   signOrderWebhook,
