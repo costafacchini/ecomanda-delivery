@@ -187,40 +187,45 @@ class Baileys extends MessengersBase {
             .then(({ default: makeWASocket, initAuthCreds, Browsers, fetchLatestBaileysVersion }) => {
               const { state, rawKeys } = this.buildAuthState(session, initAuthCreds)
 
-              fetchLatestBaileysVersion().then(({ version }) => {
-                socket = makeWASocket({
-                  version,
-                  auth: state,
-                  printQRInTerminal: false,
-                  browser: Browsers.ubuntu('Chrome'),
+              fetchLatestBaileysVersion()
+                .then(({ version }) => {
+                  socket = makeWASocket({
+                    version,
+                    auth: state,
+                    printQRInTerminal: false,
+                    browser: Browsers.ubuntu('Chrome'),
+                  })
+
+                  socket.ev.on('connection.update', (update) => {
+                    const { qr, connection } = update
+
+                    if (qr) {
+                      resolve(qr)
+                      return
+                    }
+
+                    if (connection === 'open') {
+                      clearTimeout(timer)
+                      socket.end()
+                      resolve(null)
+                    }
+
+                    if (connection === 'close') {
+                      clearTimeout(timer)
+                      reject(new Error('Conexão encerrada antes de receber o QR'))
+                    }
+                  })
+
+                  socket.ev.on('creds.update', () => {
+                    this.saveSession(session, state.creds, rawKeys).catch((err) => {
+                      console.error(`Baileys: erro ao salvar sessão: ${err.message ?? err}`)
+                    })
+                  })
                 })
-
-                socket.ev.on('connection.update', (update) => {
-                  const { qr, connection } = update
-
-                  if (qr) {
-                    resolve(qr)
-                    return
-                  }
-
-                  if (connection === 'open') {
-                    clearTimeout(timer)
-                    socket.end()
-                    resolve(null)
-                  }
-
-                  if (connection === 'close') {
-                    clearTimeout(timer)
-                    reject(new Error('Conexão encerrada antes de receber o QR'))
-                  }
+                .catch((err) => {
+                  clearTimeout(timer)
+                  reject(err)
                 })
-              })
-
-              socket.ev.on('creds.update', () => {
-                this.saveSession(session, state.creds, rawKeys).catch((err) => {
-                  console.error(`Baileys: erro ao salvar sessão: ${err.message ?? err}`)
-                })
-              })
             })
             .catch((err) => {
               clearTimeout(timer)
