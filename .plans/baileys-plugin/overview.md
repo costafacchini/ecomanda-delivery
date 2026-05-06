@@ -48,12 +48,13 @@ Add a Baileys-based WhatsApp messenger plugin that follows the same architecture
 
 | Task Path | Title | Phase | Status | Depends On |
 |-----------|-------|-------|--------|------------|
-| phase-1/task-01-data-model | WhatsappSession Model + Licensee Schema | 1 | not-started | — |
-| phase-2/task-02-repository | WhatsappSession Repository | 2 | not-started | phase-1/task-01-data-model |
-| phase-3/task-03-plugin | Baileys Plugin + Wiring | 3 | not-started | phase-2/task-02-repository |
-| phase-4/task-04-tests | Baileys Plugin Tests | 4 | not-started | phase-3/task-03-plugin |
-| phase-5/task-05-qr-endpoint | Baileys QR Code Endpoint | 5 | not-started | phase-3/task-03-plugin |
-| phase-6/task-06-admin-form | Admin Form — Baileys QR Display | 6 | not-started | phase-5/task-05-qr-endpoint |
+| phase-1/task-01-data-model | WhatsappSession Model + Licensee Schema | 1 | complete | — |
+| phase-2/task-02-repository | WhatsappSession Repository | 2 | complete | phase-1/task-01-data-model |
+| phase-3/task-03-plugin | Baileys Plugin + Wiring | 3 | complete | phase-2/task-02-repository |
+| phase-4/task-04-tests | Baileys Plugin Tests | 4 | complete | phase-3/task-03-plugin |
+| phase-5/task-05-qr-endpoint | Baileys QR Code Endpoint | 5 | complete | phase-3/task-03-plugin |
+| phase-6/task-06-admin-form | Admin Form — Baileys QR Display | 6 | complete | phase-5/task-05-qr-endpoint |
+| phase-3/task-07-defect-jid-normalize | Defect: JID Suffix Not Stripped Before NormalizePhone | 3 | not-started | — |
 
 ## Branch Convention
 
@@ -95,6 +96,12 @@ Base branch: `main`
 - [ ] Admin form hides token/URL fields when `baileys` is selected
 - [ ] All existing tests pass (no regressions)
 - [ ] `npx eslint .` passes clean
+
+## Defects
+
+| Task Path | Title | Found During | Blocks | Status |
+|-----------|-------|--------------|--------|--------|
+| phase-3/task-07-defect-jid-normalize | JID Suffix Not Stripped Before NormalizePhone | Code review (task-03) | None | not-started |
 
 ## References
 
