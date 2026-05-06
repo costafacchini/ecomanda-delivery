@@ -177,7 +177,7 @@ class Baileys extends MessengersBase {
           let socket
           const timer = setTimeout(() => {
             if (socket) socket.end()
-            reject(new Error('QR Code timeout'))
+            reject(new Error('Timeout ao gerar QR Code'))
           }, timeoutMs)
 
           import('@whiskeysockets/baileys')
