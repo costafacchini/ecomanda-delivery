@@ -118,9 +118,12 @@ class Baileys extends MessengersBase {
   }
 
   async sendMessage(messageId) {
-    const { default: makeWASocket, initAuthCreds, Browsers, fetchLatestBaileysVersion } = await import(
-      '@whiskeysockets/baileys'
-    )
+    const {
+      default: makeWASocket,
+      initAuthCreds,
+      Browsers,
+      fetchLatestBaileysVersion,
+    } = await import('@whiskeysockets/baileys')
 
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
 
