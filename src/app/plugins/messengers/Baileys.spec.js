@@ -26,6 +26,7 @@ jest.mock('@whiskeysockets/baileys', () => ({
   default: (...args) => mockMakeWASocket(...args),
   initAuthCreds: () => ({ noiseKey: {}, signedIdentityKey: {}, signedPreKey: {}, registrationId: 0, advSecretKey: '' }),
   Browsers: { ubuntu: () => ['Ubuntu', 'Chrome', '22.04.4'] },
+  fetchLatestBaileysVersion: async () => ({ version: [2, 3000, 0] }),
 }))
 
 // The JID suffix is stripped before NormalizePhone so the stored number is clean (no trailing dot).

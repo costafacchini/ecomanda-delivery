@@ -118,7 +118,9 @@ class Baileys extends MessengersBase {
   }
 
   async sendMessage(messageId) {
-    const { default: makeWASocket, initAuthCreds, Browsers } = await import('@whiskeysockets/baileys')
+    const { default: makeWASocket, initAuthCreds, Browsers, fetchLatestBaileysVersion } = await import(
+      '@whiskeysockets/baileys'
+    )
 
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
 
@@ -136,10 +138,12 @@ class Baileys extends MessengersBase {
 
     const session = await this.loadOrCreateSession()
     const { state, rawKeys } = this.buildAuthState(session, initAuthCreds)
+    const { version } = await fetchLatestBaileysVersion()
 
     let socket
     try {
       socket = makeWASocket({
+        version,
         auth: state,
         printQRInTerminal: false,
         browser: Browsers.ubuntu('Chrome'),
@@ -180,30 +184,36 @@ class Baileys extends MessengersBase {
           }, timeoutMs)
 
           import('@whiskeysockets/baileys')
-            .then(({ default: makeWASocket, initAuthCreds, Browsers }) => {
+            .then(({ default: makeWASocket, initAuthCreds, Browsers, fetchLatestBaileysVersion }) => {
               const { state, rawKeys } = this.buildAuthState(session, initAuthCreds)
 
-              socket = makeWASocket({
-                auth: state,
-                printQRInTerminal: false,
-                browser: Browsers.ubuntu('Chrome'),
-              })
+              fetchLatestBaileysVersion().then(({ version }) => {
+                socket = makeWASocket({
+                  version,
+                  auth: state,
+                  printQRInTerminal: false,
+                  browser: Browsers.ubuntu('Chrome'),
+                })
 
-              socket.ev.on('connection.update', (update) => {
-                const { qr, connection } = update
+                socket.ev.on('connection.update', (update) => {
+                  const { qr, connection } = update
 
-                if (qr) {
-                  clearTimeout(timer)
-                  socket.end()
-                  resolve(qr)
-                  return
-                }
+                  if (qr) {
+                    resolve(qr)
+                    return
+                  }
 
-                if (connection === 'open') {
-                  clearTimeout(timer)
-                  socket.end()
-                  resolve(null)
-                }
+                  if (connection === 'open') {
+                    clearTimeout(timer)
+                    socket.end()
+                    resolve(null)
+                  }
+
+                  if (connection === 'close') {
+                    clearTimeout(timer)
+                    reject(new Error('Conexão encerrada antes de receber o QR'))
+                  }
+                })
               })
 
               socket.ev.on('creds.update', () => {
