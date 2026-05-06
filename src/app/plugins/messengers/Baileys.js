@@ -91,8 +91,8 @@ class Baileys extends MessengersBase {
     await this.whatsappSessionRepository.update(session._id, { creds, keys })
   }
 
-  buildAuthState(session) {
-    const creds = session.creds ?? {}
+  buildAuthState(session, initAuthCreds) {
+    const creds = session.creds && Object.keys(session.creds).length > 0 ? session.creds : initAuthCreds()
     const keys = session.keys ?? {}
 
     return {
@@ -118,7 +118,7 @@ class Baileys extends MessengersBase {
   }
 
   async sendMessage(messageId) {
-    const { default: makeWASocket } = await import('@whiskeysockets/baileys')
+    const { default: makeWASocket, initAuthCreds } = await import('@whiskeysockets/baileys')
 
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
 
@@ -135,7 +135,7 @@ class Baileys extends MessengersBase {
     }
 
     const session = await this.loadOrCreateSession()
-    const { state, rawKeys } = this.buildAuthState(session)
+    const { state, rawKeys } = this.buildAuthState(session, initAuthCreds)
 
     let socket
     try {
@@ -173,8 +173,6 @@ class Baileys extends MessengersBase {
     return new Promise((resolve, reject) => {
       this.loadOrCreateSession()
         .then((session) => {
-          const { state, rawKeys } = this.buildAuthState(session)
-
           let socket
           const timer = setTimeout(() => {
             if (socket) socket.end()
@@ -182,7 +180,9 @@ class Baileys extends MessengersBase {
           }, timeoutMs)
 
           import('@whiskeysockets/baileys')
-            .then(({ default: makeWASocket }) => {
+            .then(({ default: makeWASocket, initAuthCreds }) => {
+              const { state, rawKeys } = this.buildAuthState(session, initAuthCreds)
+
               socket = makeWASocket({
                 auth: state,
                 printQRInTerminal: false,

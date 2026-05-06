@@ -24,6 +24,7 @@ const mockMakeWASocket = jest.fn(() => ({
 jest.mock('@whiskeysockets/baileys', () => ({
   __esModule: true,
   default: (...args) => mockMakeWASocket(...args),
+  initAuthCreds: () => ({ noiseKey: {}, signedIdentityKey: {}, signedPreKey: {}, registrationId: 0, advSecretKey: '' }),
 }))
 
 // The JID suffix is stripped before NormalizePhone so the stored number is clean (no trailing dot).
