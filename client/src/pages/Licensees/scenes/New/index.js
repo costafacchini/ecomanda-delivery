@@ -1,4 +1,4 @@
-import Form from '../Form'
+import LicenseeWizard from './LicenseeWizard'
 import { toast } from 'react-toastify';
 import { useState } from 'react';
 import { createLicensee } from '../../../../services/licensee'
@@ -11,10 +11,9 @@ function LicenseeNew({ currentUser }) {
   return (
     <div className='row'>
       <div className='col'>
-        <h3>Licenciado criando</h3>
-        <Form
-          errors={errors}
+        <LicenseeWizard
           currentUser={currentUser}
+          errors={errors}
           onSubmit={async (values) => {
             const response = await createLicensee(values)
 
