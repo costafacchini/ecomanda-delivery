@@ -11,6 +11,8 @@ import {
   signOrderWebhook,
 } from '../../../../services/licensee'
 import MainPanel from './panels/MainPanel'
+import ChatPanel from './panels/ChatPanel'
+import ChatbotPanel from './panels/ChatbotPanel'
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string()
@@ -105,182 +107,21 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
               setFieldValue={props.setFieldValue}
             />
 
-            <fieldset className='pb-4' disabled={!props.values.useChatbot}>
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='chatbotDefault'>Chatbot padrão</label>
-                  <select
-                    value={props.values.chatbotDefault}
-                    className='form-select'
-                    id='chatbotDefault'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                  >
-                    <option value=''></option>
-                    <option value='landbot'>Landbot</option>
-                  </select>
-                </div>
-              </div>
+            <ChatbotPanel
+              values={props.values}
+              errors={props.errors}
+              touched={props.touched}
+              handleChange={props.handleChange}
+              handleBlur={props.handleBlur}
+            />
 
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='chatbotUrl'>URL do chatbot</label>
-                  <FieldWithError
-                    id='chatbotUrl'
-                    name='chatbotUrl'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.chatbotUrl}
-                  />
-                </div>
-              </div>
-
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='chatbotAuthorizationToken'>Token do chatbot</label>
-                  <FieldWithError
-                    id='chatbotAuthorizationToken'
-                    name='chatbotAuthorizationToken'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.chatbotAuthorizationToken}
-                  />
-                </div>
-              </div>
-
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='chatbotApiToken'>Token de acesso via API do chatbot</label>
-                  <FieldWithError
-                    id='chatbotApiToken'
-                    name='chatbotApiToken'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.chatbotApiToken}
-                  />
-                </div>
-              </div>
-
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='messageOnResetChatbot'>Mensagem de encerramento de chatbot abandonado</label>
-                  <textarea
-                    className='form-control'
-                    rows={4}
-                    id='messageOnResetChatbot'
-                    name='messageOnResetChatbot'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.messageOnResetChatbot}
-                  />
-                </div>
-              </div>
-
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='messageOnCloseChat'>Mensagem de encerramento de chat</label>
-                  <textarea
-                    className='form-control'
-                    rows={4}
-                    id='messageOnCloseChat'
-                    name='messageOnCloseChat'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.messageOnCloseChat}
-                  />
-                </div>
-              </div>
-            </fieldset>
-
-            <div className='row'>
-              <div className='form-group col-5'>
-                <label htmlFor='chatDefault'>Chat padrão</label>
-                <select
-                  value={props.values.chatDefault}
-                  className='form-select'
-                  id='chatDefault'
-                  onChange={props.handleChange}
-                  onBlur={props.handleBlur}
-                >
-                  <option value=''></option>
-                  <option value='rocketchat'>Rocketchat</option>
-                  <option value='crisp'>Crisp</option>
-                  <option value='cuboup'>CuboUp</option>
-                  <option value='chatwoot'>Chatwoot</option>
-                </select>
-              </div>
-            </div>
-
-            <fieldset className='pb-4' disabled={props.values.chatDefault === ''}>
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='chatUrl'>Url do chat</label>
-                  <FieldWithError
-                    id='chatUrl'
-                    name='chatUrl'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.chatUrl}
-                  />
-                </div>
-              </div>
-
-              <div className='row pb-2'>
-                <div className='col-3'>
-                  <div className='form-check'>
-                    <input
-                      type='checkbox'
-                      className='form-check-input'
-                      id='useSenderName'
-                      onChange={props.handleChange}
-                      onBlur={props.handleBlur}
-                      checked={props.values.useSenderName}
-                    />
-                    <label className='form-check-label' htmlFor='useSenderName'>
-                      Usa o remetente no nome do chat?
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              {['crisp', 'chatwoot'].includes(props.values.chatDefault) && (
-                <>
-                  <div className='row'>
-                    <div className='form-group col-5'>
-                      <label htmlFor='chatIdentifier'>Identifier</label>
-                      <FieldWithError
-                        id='chatIdentifier'
-                        name='chatIdentifier'
-                        type='text'
-                        onChange={props.handleChange}
-                        onBlur={props.handleBlur}
-                        value={props.values.chatIdentifier}
-                      />
-                    </div>
-                  </div>
-
-                  <div className='row'>
-                    <div className='form-group col-5'>
-                      <label htmlFor='chatKey'>Key</label>
-                      <FieldWithError
-                        id='chatKey'
-                        name='chatKey'
-                        type='text'
-                        onChange={props.handleChange}
-                        onBlur={props.handleBlur}
-                        value={props.values.chatKey}
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
-            </fieldset>
+            <ChatPanel
+              values={props.values}
+              errors={props.errors}
+              touched={props.touched}
+              handleChange={props.handleChange}
+              handleBlur={props.handleBlur}
+            />
 
             <div className='row'>
               <div className='form-group col-5'>
