@@ -37,7 +37,7 @@ function SignIn() {
 
   return (
     <>
-      <div style={{ background: "linear-gradient(to right, #f1faee, #a8dadc)" }} className='h-100'>
+      <div style={{ background: "linear-gradient(135deg, #2c3e50, #3498db)" }} className='h-100'>
         <div className='h-100 container'>
           <div className='row h-100 justify-content-center pb-5'>
             <div className={`col h-100 col-12 col-md-8 col-lg-6 col-xl-4 ${styles.login}`}>
