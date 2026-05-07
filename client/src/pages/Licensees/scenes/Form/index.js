@@ -177,16 +177,7 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
                   touched={props.touched}
                   handleChange={props.handleChange}
                   handleBlur={props.handleBlur}
-                  setFieldValue={props.setFieldValue}
                   currentUser={currentUser}
-                  useChat={useChat}
-                  setUseChat={setUseChat}
-                  useWhatsapp={useWhatsapp}
-                  setUseWhatsapp={setUseWhatsapp}
-                  useCart={useCart}
-                  setUseCart={setUseCart}
-                  usePagarMe={usePagarMe}
-                  setUsePagarMe={setUsePagarMe}
                 />
               </div>
               <div className={`tab-pane fade ${activeTab === 'chat' ? 'show active' : ''}`}>

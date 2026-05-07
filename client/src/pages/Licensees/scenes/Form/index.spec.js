@@ -29,7 +29,6 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Telefone')).toHaveValue('')
     expect(screen.getByLabelText('API token')).toHaveValue('')
     expect(screen.getByLabelText('Ativo')).not.toBeChecked()
-    expect(screen.getByLabelText('Integração com Plataforma de ChatBot?')).not.toBeChecked()
     expect(screen.getByLabelText('Usa o remetente no nome do chat?')).not.toBeChecked()
     expect(screen.getByLabelText('Chatbot padrão')).toHaveValue('')
     expect(screen.getByLabelText('URL do chatbot')).toHaveValue('')
@@ -120,7 +119,6 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Telefone')).toHaveValue('48999999215')
     expect(screen.getByLabelText('API token')).toHaveValue('token')
     expect(screen.getByLabelText('Licença')).toHaveValue('paid')
-    expect(screen.getByLabelText('Integração com Plataforma de ChatBot?')).toBeChecked()
     expect(screen.getByLabelText('Usa o remetente no nome do chat?')).toBeChecked()
     expect(screen.getByLabelText('Chatbot padrão')).toHaveValue('landbot')
     expect(screen.getByLabelText('Whatsapp padrão')).toHaveValue('utalk')
@@ -156,16 +154,14 @@ describe('<LicenseeForm />', () => {
   })
 
   describe('fields', () => {
-    it('shows the ChatBot tab nav item only when "Integração com Plataforma de ChatBot?" is checked', () => {
+    it('shows the ChatBot tab nav item only when useChatbot is true in initialValues', () => {
       mount({ initialValues: { useChatbot: true } })
 
-      expect(screen.getByLabelText('Integração com Plataforma de ChatBot?')).toBeChecked()
       expect(screen.getByRole('button', { name: 'ChatBot' })).toBeInTheDocument()
 
       cleanup()
       mount({ initialValues: { useChatbot: false } })
 
-      expect(screen.getByLabelText('Integração com Plataforma de ChatBot?')).not.toBeChecked()
       expect(screen.queryByRole('button', { name: 'ChatBot' })).not.toBeInTheDocument()
     })
 
