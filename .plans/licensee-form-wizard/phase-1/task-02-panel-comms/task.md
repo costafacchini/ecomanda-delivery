@@ -1,4 +1,4 @@
-# Task: ChatPanel + WhatsAppPanel
+# Task: ChatPanel + ChatbotPanel
 
 **Plan**: Licensee Form Wizard
 **Task ID**: task-02
@@ -8,74 +8,96 @@
 
 ## Before You Start
 
-- [ ] Read `client/src/pages/Licensees/scenes/Form/index.js` (after task-01 changes) to identify remaining field groups
-- [ ] Identify all Formik props and helpers used by chat/whatsapp sections
-- [ ] Identify baileysQr state and getBaileysQr service usage — these must be threaded as props to WhatsAppPanel
+- [ ] Confirm task-01 branch exists and is complete
+- [ ] Branch from task-01: `git switch plan/licensee-form-wizard/phase-1/task-01-panel-general && git switch -c plan/licensee-form-wizard/phase-1/task-02-panel-comms`
+- [ ] Read `Form/index.js` (post task-01) to confirm which JSX remains
 
 ## Context
 
-Extraction of the **chat/operator configuration** and **WhatsApp/messenger configuration** fields. The WhatsAppPanel is the most complex: it contains the Baileys QR code generation UI (introduced in the baileys-plugin plan), conditional rendering for token/URL vs. QR display, and local `baileysQr` state.
+Extract **Chat** and **ChatBot** configuration fields into two panel components.
 
-**ChatPanel** fields:
-- attendant fields (attendantDefault?), productFractional, productRandomSorting, sendInactiveMessage, inactiveMessage
+### ChatPanel fields (Form/index.js lines ~316–399)
 
-**WhatsAppPanel** fields:
-- whatsappDefault (combobox — already in GeneralPanel; WhatsAppPanel shows conditional fields based on its value)
-- whatsappToken, whatsappUrl (hidden when whatsappDefault === 'baileys')
-- Gerar QR Code button + QRCodeSVG display (shown when whatsappDefault === 'baileys')
-- baileysQr local state + getBaileysQr call
+The **chatDefault combo is the tab trigger** — it moves inside this panel (not in the main tab questions area, as it was before). The question checkbox `useChat` controls tab visibility; `chatDefault` is the provider selector inside the tab.
+
+Fields:
+- chatDefault (select: Rocketchat / Crisp / CuboUp / Chatwoot)
+- chatUrl (text)
+- useSenderName (checkbox — "Usa o remetente no nome do chat?")
+- chatIdentifier (text — only when `chatDefault` is `crisp` or `chatwoot`)
+- chatKey (text — only when `chatDefault` is `crisp` or `chatwoot`)
+
+Preserve existing conditional: `{['crisp', 'chatwoot'].includes(values.chatDefault) && (...)}`
+
+The outer `<fieldset disabled={chatDefault === ''}>` is replaced by the tab visibility rule (panel not shown when `useChat` is false). Inside the panel, no extra disabled wrapper needed.
+
+### ChatbotPanel fields (Form/index.js lines ~224–314)
+
+Fields:
+- chatbotDefault (select: Landbot)
+- chatbotUrl (text)
+- chatbotAuthorizationToken (text — "Token do chatbot")
+- chatbotApiToken (text — "Token de acesso via API do chatbot")
+- messageOnResetChatbot (textarea — "Mensagem de encerramento de chatbot abandonado")
+- messageOnCloseChat (textarea — "Mensagem de encerramento de chat")
+
+The outer `<fieldset disabled={!useChatbot}>` is replaced by tab visibility. No disabled wrapper inside the panel.
 
 ## File Ownership
 
 | File | Action | Notes |
 |------|--------|-------|
 | `client/src/pages/Licensees/scenes/Form/panels/ChatPanel.js` | create | New panel component |
-| `client/src/pages/Licensees/scenes/Form/panels/WhatsAppPanel.js` | create | New panel component; receives baileysQr/setBaileysQr as props OR manages its own local state |
-| `client/src/pages/Licensees/scenes/Form/index.js` | modify | Replace inlined JSX with `<ChatPanel>` and `<WhatsAppPanel>` |
+| `client/src/pages/Licensees/scenes/Form/panels/ChatbotPanel.js` | create | New panel component |
+| `client/src/pages/Licensees/scenes/Form/index.js` | modify | Replace extracted JSX with panel imports |
 
 ### Do NOT Modify
 
-- `client/src/pages/Licensees/scenes/Form/panels/GeneralPanel.js` (task-01)
-- `client/src/pages/Licensees/scenes/Form/panels/ChatbotPanel.js` (task-01)
-- `client/src/pages/Licensees/scenes/Form/panels/AwsPanel.js` (task-03)
-- Any other panel files (task-03)
+- `client/src/pages/Licensees/scenes/Form/panels/MainPanel.js` (task-01)
+- Any infra panels (task-03)
 
 ## Conflict Avoidance Notes
 
-Branch from task-01's branch (chained): `git switch plan/licensee-form-wizard/phase-1/task-01-panel-general && git switch -c plan/licensee-form-wizard/phase-1/task-02-panel-comms`
+Chain from task-01's branch (see Before You Start above).
 
 ## Implementation Steps
 
 ### Step 1: Create ChatPanel.js
-Extract chat-related fields. Props: `{ values, errors, touched, handleChange, handleBlur }`
 
-### Step 2: Create WhatsAppPanel.js
-Extract WhatsApp fields including:
-- Conditional display of whatsappToken/whatsappUrl (hidden when `values.whatsappDefault === 'baileys'`)
-- Gerar QR Code button (visible when `values.whatsappDefault === 'baileys'`)
-- QRCodeSVG component for QR display
+```js
+function ChatPanel({ values, errors, touched, handleChange, handleBlur }) { ... }
+```
 
-**State decision**: WhatsAppPanel manages its own `baileysQr` and `baileysQrStatus` local state (avoids lifting state to Form/index.js). It receives `licenseeId` as a prop for the API call.
+Include the `crisp`/`chatwoot` conditional for chatIdentifier and chatKey.
 
-Props: `{ values, errors, touched, handleChange, handleBlur, licenseeId }`
+### Step 2: Create ChatbotPanel.js
+
+```js
+function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }) { ... }
+```
 
 ### Step 3: Update Form/index.js
-Import and render `<ChatPanel>` and `<WhatsAppPanel>`. Remove now-extracted JSX. Pass `licenseeId` (available from the `licensee` prop or URL param) to WhatsAppPanel.
+
+Replace the two extracted JSX blocks with `<ChatPanel>` and `<ChatbotPanel>`.
+Remove the `useChatbot` `<fieldset disabled>` wrapper — tab visibility handles that.
+Remove the `chatDefault === ''` `<fieldset disabled>` wrapper.
 
 ## Testing
 
-- [ ] Run `npx jest --testPathPattern=Licensees` and confirm no failures
-- [ ] Manual: switch whatsappDefault to 'baileys' — verify QR button appears, token/URL hide
-- [ ] Manual: click Gerar QR Code — verify QR code displays (requires running backend)
+- [ ] Run `npx jest --testPathPattern=Licensees` — no failures
+- [ ] Manual: verify Chat fields still render (chatUrl, useSenderName, chatIdentifier/Key for crisp)
+- [ ] Manual: verify ChatBot fields still render
+- [ ] No visual change expected — extraction only
 
 ## Documentation / KB Updates
 
-No KB/doc updates required — presentational extraction only.
+No KB/doc updates required.
 
 ## Completion Criteria
 
-- [ ] `ChatPanel.js` and `WhatsAppPanel.js` created under `panels/`
+- [ ] `ChatPanel.js` and `ChatbotPanel.js` created under `panels/`
 - [ ] `Form/index.js` imports and renders both panels
-- [ ] Baileys QR generation still works end-to-end
+- [ ] Conditional logic for chatIdentifier/chatKey preserved
+- [ ] `<fieldset disabled>` wrappers removed for these sections
 - [ ] All tests pass
 - [ ] `npx eslint .` passes

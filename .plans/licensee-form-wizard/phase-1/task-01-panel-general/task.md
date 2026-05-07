@@ -1,4 +1,4 @@
-# Task: GeneralPanel + ChatbotPanel
+# Task: MainPanel
 
 **Plan**: Licensee Form Wizard
 **Task ID**: task-01
@@ -8,40 +8,64 @@
 
 ## Before You Start
 
-- [ ] Read `client/src/pages/Licensees/scenes/Form/index.js` in full to identify the exact field groups
-- [ ] Note all Formik props and helpers used by the general/chatbot sections
+- [ ] Read `client/src/pages/Licensees/scenes/Form/index.js` in full
 - [ ] Confirm `client/src/pages/Licensees/scenes/Form/panels/` does not yet exist
 
 ## Context
 
-`Form/index.js` is ~960 lines with all fields inlined. This task extracts the **general licensee fields** and **chatbot configuration fields** into two presentational components. No behavior change — pure extraction.
+Extract the **main tab fields** from `Form/index.js` into a `MainPanel` component. This panel contains identity data, read-only tokens/webhook URLs, and the 6 integration questions.
 
-**GeneralPanel** fields (from top of form):
-- name, phone, email, active, licenseKind, contractStartedAt, contractEndedAt, whatsappDefault
+The 6 questions are **not** implemented here — they will be `props` passed in from `Form/index.js` (just checkboxes rendered via props). MainPanel is purely presentational; the question state lives in the parent.
 
-**ChatbotPanel** fields:
-- chatbotDefault, chatbotApiToken, chatbotUrl, messageOnInactive, messageOnInactiveAlt, noteOnInactive
+### Fields to extract (lines 88–223 + 866–926 of current Form/index.js)
+
+**Identity fields**:
+- name (text)
+- active (checkbox)
+- kind (select: Jurídica / Física)
+- document (text)
+- email (text)
+- licenseKind (select: Demonstração / Grátis / Pago)
+- phone (text)
+- apiToken (`disabled` — read-only, auto-generated)
+
+**Read-only webhook URLs** (`disabled`):
+- urlChatWebhook
+- urlChatbotWebhook
+- urlChatbotTransfer
+- urlWhatsappWebhook
+
+**AWS fields** (no conditional logic — always shown; keep in this panel pending remove-pdv):
+- awsId, awsSecret, bucketName
+
+**6 integration questions** — rendered as checkboxes, values/handlers passed as props:
+```
+useChat        — "Integração com Plataforma de Chat?"
+useChatbot     — "Integração com Plataforma de ChatBot?" (Formik field via props.values.useChatbot)
+useWhatsapp    — "Integração com Plataforma de WhatsApp?"
+useCart        — "Integração com Carrinho de Compras?"
+usePagarMe     — "Integração com PagarMe?"
+(Q6 Pedidos10) — rendered only when currentUser.isPedidos10, value = currentUser.isPedidos10 (read-only indicator)
+```
+
+> Note: Q1, Q3, Q4, Q5 are local state managed by `Form/index.js`; Q2 (`useChatbot`) is a Formik field. MainPanel receives all of them as props and just renders checkboxes.
 
 ## File Ownership
 
 | File | Action | Notes |
 |------|--------|-------|
-| `client/src/pages/Licensees/scenes/Form/panels/GeneralPanel.js` | create | New panel component |
-| `client/src/pages/Licensees/scenes/Form/panels/ChatbotPanel.js` | create | New panel component |
-| `client/src/pages/Licensees/scenes/Form/index.js` | modify | Replace inlined JSX with `<GeneralPanel>` and `<ChatbotPanel>` |
+| `client/src/pages/Licensees/scenes/Form/panels/MainPanel.js` | create | New panel component |
+| `client/src/pages/Licensees/scenes/Form/index.js` | modify | Replace extracted JSX with `<MainPanel>` |
 
 ### Do NOT Modify
 
-- `client/src/pages/Licensees/scenes/Form/panels/ChatPanel.js` (task-02)
-- `client/src/pages/Licensees/scenes/Form/panels/WhatsAppPanel.js` (task-02)
-- `client/src/pages/Licensees/scenes/Form/panels/AwsPanel.js` (task-03)
-- Any other panel files (task-03)
+- Any other `panels/*.js` files (tasks 02 and 03)
 
 ## Conflict Avoidance Notes
 
-task-01, task-02, task-03 all modify `Form/index.js`. Run them sequentially (01 → 02 → 03) on chained branches, or coordinate file sections carefully if truly parallel.
-
-**Recommended approach**: chain branches — task-02 branches from task-01, task-03 branches from task-02.
+Tasks 01, 02, 03 all modify `Form/index.js`. Run sequentially on chained branches:
+- task-02 branches from task-01's branch
+- task-03 branches from task-02's branch
 
 ## Implementation Steps
 
@@ -50,35 +74,52 @@ task-01, task-02, task-03 all modify `Form/index.js`. Run them sequentially (01 
 mkdir -p client/src/pages/Licensees/scenes/Form/panels
 ```
 
-### Step 2: Create GeneralPanel.js
-Extract fields: name, phone, email, active, licenseKind, contractStartedAt, contractEndedAt, whatsappDefault.
+### Step 2: Create MainPanel.js
 
-Props: `{ values, errors, touched, handleChange, handleBlur, setFieldValue }`
+Props interface:
+```js
+function MainPanel({
+  values,          // Formik values
+  errors,
+  touched,
+  handleChange,
+  handleBlur,
+  currentUser,     // for Q6 Pedidos10 visibility
+  // Question state (local state from Form/index.js)
+  useChat, setUseChat,
+  useWhatsapp, setUseWhatsapp,
+  useCart, setUseCart,
+  usePagarMe, setUsePagarMe,
+  setFieldValue,   // to reset chatDefault/whatsappDefault/cartDefault on uncheck
+})
+```
 
-### Step 3: Create ChatbotPanel.js
-Extract fields: chatbotDefault, chatbotApiToken, chatbotUrl, messageOnInactive, messageOnInactiveAlt, noteOnInactive.
+Question checkbox behaviour on uncheck:
+- `useChat` off → `setFieldValue('chatDefault', '')`
+- `useWhatsapp` off → `setFieldValue('whatsappDefault', '')`
+- `useCart` off → `setFieldValue('cartDefault', '')`
+- `usePagarMe` off → no field reset (preserve financial data)
 
-Visibility logic: show chatbotApiToken and chatbotUrl only when `values.chatbotDefault !== 'none'` (carry forward existing conditional).
+### Step 3: Update Form/index.js
 
-Props: `{ values, errors, touched, handleChange, handleBlur }`
-
-### Step 4: Replace inlined JSX in Form/index.js
-Import and render `<GeneralPanel>` and `<ChatbotPanel>` in place of the extracted JSX. Pass all required props explicitly.
+Replace the extracted JSX blocks with `<MainPanel {...questionProps} {...formikProps} currentUser={currentUser} />`.
+Do NOT yet add tab structure — that is task-04.
 
 ## Testing
 
-- [ ] Run `npx jest --testPathPattern=Licensees` and confirm no test failures
-- [ ] Manual: open the Create Licensee form and verify general and chatbot fields are visible and functional
-- [ ] No visual change expected — this is a pure extraction
+- [ ] Run `npx jest --testPathPattern=Licensees` — no failures
+- [ ] Manual: verify all identity fields still render and save correctly
+- [ ] Manual: verify read-only fields (apiToken, webhook URLs) are disabled
+- [ ] No visual change expected
 
 ## Documentation / KB Updates
 
-No KB/doc updates required — this is a presentational refactor with no behavior change.
+No KB/doc updates required — pure extraction.
 
 ## Completion Criteria
 
-- [ ] `GeneralPanel.js` and `ChatbotPanel.js` created under `panels/`
-- [ ] `Form/index.js` imports and renders both panels
-- [ ] No field is lost or duplicated
+- [ ] `MainPanel.js` created under `panels/`
+- [ ] `Form/index.js` imports and renders `<MainPanel>`
+- [ ] No field lost or duplicated
 - [ ] All tests pass
 - [ ] `npx eslint .` passes
