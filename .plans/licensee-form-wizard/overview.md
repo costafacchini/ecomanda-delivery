@@ -30,8 +30,7 @@ Split the large licensee form (~960 lines) into contextual tab panels. The main 
 - Update existing tests
 
 ### Out of Scope
-- AWS fields (`awsId`, `awsSecret`, `bucketName`) — not listed in wizard spec; keep in main tab as-is pending removal by remove-pdv plan
-- New backend model fields — UI state only
+- New backend model fields — UI state only for questions
 - Multi-step wizard with Next/Back navigation
 - Accessibility audit
 
@@ -80,6 +79,7 @@ Split the large licensee form (~960 lines) into contextual tab panels. The main 
 | phase-1/task-01-panel-general | MainPanel | 1 | not-started | — |
 | phase-1/task-02-panel-comms | ChatPanel + ChatbotPanel | 1 | not-started | — |
 | phase-1/task-03-panel-infra | WhatsAppPanel + CartPanel + PagarMePanel + Pedidos10Panel | 1 | not-started | — |
+| phase-1/task-06-remove-aws | Remove AWS Fields — Use Env Vars | 1 | not-started | — |
 | phase-2/task-04-tab-shell | Tab Shell in Form/index.js | 2 | not-started | phase-1/* |
 | phase-3/task-05-tests | Update Licensee Form Tests | 3 | not-started | phase-2/task-04-tab-shell |
 

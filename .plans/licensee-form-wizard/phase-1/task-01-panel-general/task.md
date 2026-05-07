@@ -10,6 +10,7 @@
 
 - [ ] Read `client/src/pages/Licensees/scenes/Form/index.js` in full
 - [ ] Confirm `client/src/pages/Licensees/scenes/Form/panels/` does not yet exist
+- [ ] Confirm task-06-remove-aws is complete (AWS fields removed from model) — or coordinate so MainPanel simply doesn't render them
 
 ## Context
 
@@ -35,9 +36,6 @@ The 6 questions are **not** implemented here — they will be `props` passed in 
 - urlChatbotTransfer
 - urlWhatsappWebhook
 
-**AWS fields** (no conditional logic — always shown; keep in this panel pending remove-pdv):
-- awsId, awsSecret, bucketName
-
 **6 integration questions** — rendered as checkboxes, values/handlers passed as props:
 ```
 useChat        — "Integração com Plataforma de Chat?"
@@ -55,7 +53,7 @@ usePagarMe     — "Integração com PagarMe?"
 | File | Action | Notes |
 |------|--------|-------|
 | `client/src/pages/Licensees/scenes/Form/panels/MainPanel.js` | create | New panel component |
-| `client/src/pages/Licensees/scenes/Form/index.js` | modify | Replace extracted JSX with `<MainPanel>` |
+| `client/src/pages/Licensees/scenes/Form/index.js` | modify | Replace extracted JSX with `<MainPanel>`; remove awsId/awsSecret/bucketName from `licenseeInitialValues` and field JSX |
 
 ### Do NOT Modify
 
