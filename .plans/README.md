@@ -34,6 +34,7 @@ Git-native Markdown plans for multi-step work.
 | 1 | [Use Cases](./use-cases/overview.md) | `use-cases/` | 2026-04-29 | Extract business logic from controllers into dedicated use case classes; controllers become thin (validate → execute → respond) |
 | 2 | [Baileys WhatsApp Plugin](./baileys-plugin/overview.md) | `baileys-plugin/` | 2026-05-05 | Add Baileys-based WhatsApp messenger plugin with session persistence (WhatsappSession model), following the Dialog plugin architecture |
 | 3 | [Licensee Form Wizard](./licensee-form-wizard/overview.md) | `licensee-form-wizard/` | 2026-05-07 | Split the licensee form into Bootstrap 5 Nav Tabs with panels shown/hidden based on question checkboxes; removed per-licensee AWS fields |
+| 4 | [Licensee Create Wizard](./licensee-wizard/overview.md) | `licensee-wizard/` | 2026-05-07 | Multi-step wizard for New Licensee (7 steps, Yes/No gates); removed question checkboxes from Edit form |
 
 ---
 

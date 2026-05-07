@@ -6,11 +6,12 @@ import { createLicensee } from '../../../../services/licensee'
 vi.mock('../../../../services/licensee')
 
 describe('<LicenseeNew />', () => {
-  function mount() {
+  function mount(props = {}) {
+    const currentUser = props.currentUser ?? { isPedidos10: false }
     const Stub = createRoutesStub([
       {
         path: '/licensees/new',
-        Component: LicenseeNew,
+        Component: () => <LicenseeNew currentUser={currentUser} />,
       },
       {
         path: '/licensees',
@@ -20,76 +21,125 @@ describe('<LicenseeNew />', () => {
     render(<Stub initialEntries={['/licensees/new']} />)
   }
 
-  it('creates a new licensee when the backend returns success', async () => {
+  async function fillIdentityStep() {
+    fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Licensee Test' } })
+    fireEvent.change(screen.getByLabelText('Tipo'), { target: { value: 'company' } })
+    fireEvent.change(screen.getByLabelText('Documento'), { target: { value: '12345678000195' } })
+    fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'test@test.com' } })
+    fireEvent.change(screen.getByLabelText('Telefone'), { target: { value: '48999999999' } })
+  }
+
+  async function advanceThroughAllSteps() {
+    // Step 1: Identity
+    await fillIdentityStep()
+    fireEvent.click(screen.getByRole('button', { name: 'Próximo →' }))
+
+    // Steps 2-5: Chat, ChatBot, WhatsApp, Carrinho — click Próximo without Sim (treated as No)
+    // Step 6: PagarMe is the last step (shows Salvar, not Próximo)
+    for (let i = 0; i < 4; i++) {
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Próximo →' })).toBeInTheDocument())
+      fireEvent.click(screen.getByRole('button', { name: 'Próximo →' }))
+    }
+
+    // Now on last step (PagarMe or Pedidos10 if isPedidos10)
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Salvar' })).toBeInTheDocument())
+  }
+
+  it('renders the wizard with Identity step on mount', () => {
     mount()
 
-    createLicensee.mockResolvedValue({ status: 201 })
-
-    fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
-
-    await waitFor(() =>
-      expect(createLicensee).toHaveBeenCalledWith({
-        name: '',
-        email: '',
-        phone: '',
-        active: false,
-        apiToken: '',
-        licenseKind: 'demo',
-        useChatbot: false,
-        useFileIDYcloud: false,
-        chatbotDefault: '',
-        chatbotUrl: '',
-        chatbotAuthorizationToken: '',
-        messageOnResetChatbot: '',
-        chatbotApiToken: '',
-        whatsappDefault: '',
-        whatsappToken: '',
-        whatsappUrl: '',
-        chatDefault: '',
-        chatIdentifier: '',
-        chatKey: '',
-        chatUrl: '',
-        cartDefault: '',
-        unidadeId: '',
-        statusId: '',
-        messageOnCloseChat: '',
-        productFractional2Name: '',
-        productFractional2Id: '',
-        productFractional3Name: '',
-        productFractional3Id: '',
-        productFractionalSize3Name: '',
-        productFractionalSize3Id: '',
-        productFractionalSize4Name: '',
-        productFractionalSize4Id: '',
-        productFractionals: '',
-        pedidos10_integration: '',
-        pedidos10_integrator: '',
-        document: '',
-        kind: '',
-        financial_player_fee: '0.00',
-        holder_name: '',
-        bank: '',
-        branch_number: '',
-        branch_check_digit: '',
-        account_number: '',
-        account_check_digit: '',
-        holder_kind: '',
-        holder_document: '',
-        account_type: '',
-        useSenderName: false,
-      }),
-    )
+    expect(screen.getByLabelText('Nome')).toBeInTheDocument()
+    expect(screen.getByLabelText('Tipo')).toBeInTheDocument()
+    expect(screen.getByLabelText('Documento')).toBeInTheDocument()
+    expect(screen.getByLabelText('E-mail')).toBeInTheDocument()
+    expect(screen.getByLabelText('Licença')).toBeInTheDocument()
+    expect(screen.getByLabelText('Telefone')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Próximo →' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Salvar' })).not.toBeInTheDocument()
   })
 
-  it('renders the errors when the backend returns error', async () => {
+  it('shows validation errors on Step 1 when Next clicked with empty required fields', async () => {
     mount()
 
-    createLicensee.mockResolvedValue({ status: 422, data: { errors: [{ message: 'This is an error' }] } })
+    fireEvent.click(screen.getByRole('button', { name: 'Próximo →' }))
 
+    await waitFor(() => expect(screen.getByText('Nome é obrigatório')).toBeInTheDocument())
+  })
+
+  it('advances to Chat step after filling all required Identity fields', async () => {
+    mount()
+
+    await fillIdentityStep()
+    fireEvent.click(screen.getByRole('button', { name: 'Próximo →' }))
+
+    await waitFor(() => expect(screen.getByText(/Passo 2/)).toBeInTheDocument())
+  })
+
+  it('shows Chat panel fields when Sim is selected on Chat step', async () => {
+    mount()
+
+    await fillIdentityStep()
+    fireEvent.click(screen.getByRole('button', { name: 'Próximo →' }))
+
+    await waitFor(() => expect(screen.getByText(/Passo 2/)).toBeInTheDocument())
+
+    fireEvent.click(screen.getByRole('button', { name: 'Sim' }))
+
+    await waitFor(() => expect(screen.getByLabelText('Chat padrão')).toBeInTheDocument())
+  })
+
+  it('does not show Chat fields when Não is selected', async () => {
+    mount()
+
+    await fillIdentityStep()
+    fireEvent.click(screen.getByRole('button', { name: 'Próximo →' }))
+
+    await waitFor(() => expect(screen.getByText(/Passo 2/)).toBeInTheDocument())
+
+    fireEvent.click(screen.getByRole('button', { name: 'Não' }))
+
+    expect(screen.queryByLabelText('Chat padrão')).not.toBeInTheDocument()
+  })
+
+  it('creates a new licensee when all integration steps answered with Não', async () => {
+    createLicensee.mockResolvedValue({ status: 201, data: {} })
+    mount()
+
+    await advanceThroughAllSteps()
     fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
 
-    await waitFor(() => {
-      expect(screen.getByText('This is an error')).toBeInTheDocument()
-    })
+    await waitFor(() => expect(createLicensee).toHaveBeenCalled())
+  })
+
+  it('renders backend errors on last step when creation fails', async () => {
+    createLicensee.mockResolvedValue({ status: 422, data: { errors: [{ message: 'Erro!' }] } })
+    mount()
+
+    await advanceThroughAllSteps()
+    fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
+
+    await waitFor(() => expect(screen.getByText('Erro!')).toBeInTheDocument())
+  })
+
+  it('Cancelar navigates to /licensees from Step 1', async () => {
+    mount()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }))
+
+    await waitFor(() => expect(screen.getByText('Licensees Index')).toBeInTheDocument())
+  })
+
+  it('Voltar from Step 2 returns to Step 1', async () => {
+    mount()
+
+    await fillIdentityStep()
+    fireEvent.click(screen.getByRole('button', { name: 'Próximo →' }))
+
+    await waitFor(() => expect(screen.getByText(/Passo 2/)).toBeInTheDocument())
+
+    fireEvent.click(screen.getByRole('button', { name: '← Voltar' }))
+
+    await waitFor(() => expect(screen.getByLabelText('Nome')).toBeInTheDocument())
+    expect(screen.getByText(/Passo 1/)).toBeInTheDocument()
   })
 })

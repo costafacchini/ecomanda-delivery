@@ -7,11 +7,6 @@ function MainPanel({
   handleChange,
   handleBlur,
   currentUser,
-  useChat, setUseChat,
-  useWhatsapp, setUseWhatsapp,
-  useCart, setUseCart,
-  usePagarMe, setUsePagarMe,
-  setFieldValue,
 }) {
   return (
     <>
@@ -104,7 +99,7 @@ function MainPanel({
         </div>
       </div>
 
-      <div className='row'>
+      <div className='row mt-3'>
         <div className='form-group col-5'>
           <label htmlFor='phone'>Telefone</label>
           <FieldWithError
@@ -118,7 +113,7 @@ function MainPanel({
         </div>
       </div>
 
-      <div className='row pb-4'>
+      <div className='row'>
         <div className='form-group col-5'>
           <label htmlFor='apiToken'>API token</label>
           <FieldWithError
@@ -132,129 +127,6 @@ function MainPanel({
           />
         </div>
       </div>
-
-      <div className='row pb-2'>
-        <div className='col-3'>
-          <div className='form-check'>
-            <input
-              type='checkbox'
-              className='form-check-input'
-              id='questionUseChat'
-              checked={useChat}
-              onChange={(e) => {
-                setUseChat(e.target.checked)
-                if (!e.target.checked) {
-                  setFieldValue('chatDefault', '')
-                }
-              }}
-            />
-            <label className='form-check-label' htmlFor='questionUseChat'>
-              Integração com Plataforma de Chat?
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <div className='row pb-2'>
-        <div className='col-3'>
-          <div className='form-check'>
-            <input
-              type='checkbox'
-              className='form-check-input'
-              id='useChatbot'
-              onChange={handleChange}
-              onBlur={handleBlur}
-              checked={values.useChatbot}
-            />
-            <label className='form-check-label' htmlFor='useChatbot'>
-              Integração com Plataforma de ChatBot?
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <div className='row pb-2'>
-        <div className='col-3'>
-          <div className='form-check'>
-            <input
-              type='checkbox'
-              className='form-check-input'
-              id='questionUseWhatsapp'
-              checked={useWhatsapp}
-              onChange={(e) => {
-                setUseWhatsapp(e.target.checked)
-                if (!e.target.checked) {
-                  setFieldValue('whatsappDefault', '')
-                }
-              }}
-            />
-            <label className='form-check-label' htmlFor='questionUseWhatsapp'>
-              Integração com Plataforma de WhatsApp?
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <div className='row pb-2'>
-        <div className='col-3'>
-          <div className='form-check'>
-            <input
-              type='checkbox'
-              className='form-check-input'
-              id='questionUseCart'
-              checked={useCart}
-              onChange={(e) => {
-                setUseCart(e.target.checked)
-                if (!e.target.checked) {
-                  setFieldValue('cartDefault', '')
-                }
-              }}
-            />
-            <label className='form-check-label' htmlFor='questionUseCart'>
-              Integração com Carrinho de Compras?
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <div className='row pb-2'>
-        <div className='col-3'>
-          <div className='form-check'>
-            <input
-              type='checkbox'
-              className='form-check-input'
-              id='questionUsePagarMe'
-              checked={usePagarMe}
-              onChange={(e) => {
-                setUsePagarMe(e.target.checked)
-              }}
-            />
-            <label className='form-check-label' htmlFor='questionUsePagarMe'>
-              Integração com PagarMe?
-            </label>
-          </div>
-        </div>
-      </div>
-
-      {currentUser && currentUser.isPedidos10 && (
-        <div className='row pb-2'>
-          <div className='col-3'>
-            <div className='form-check'>
-              <input
-                type='checkbox'
-                className='form-check-input'
-                id='questionUsePedidos10'
-                checked={currentUser.isPedidos10}
-                readOnly
-                disabled
-              />
-              <label className='form-check-label' htmlFor='questionUsePedidos10'>
-                Integração com Pedidos10?
-              </label>
-            </div>
-          </div>
-        </div>
-      )}
 
       <fieldset>
         <div className='row'>

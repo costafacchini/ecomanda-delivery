@@ -68,12 +68,10 @@ const licenseeInitialValues = {
 function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
   let navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('principal')
-  const [useChat, setUseChat] = useState(Boolean(initialValues?.chatDefault))
-  const [useWhatsapp, setUseWhatsapp] = useState(Boolean(initialValues?.whatsappDefault))
-  const [useCart, setUseCart] = useState(Boolean(initialValues?.cartDefault))
-  const [usePagarMe, setUsePagarMe] = useState(
-    Boolean(initialValues?.holder_name || (initialValues?.financial_player_fee && initialValues?.financial_player_fee !== '0.00'))
-  )
+  const [useChat, setUseChat] = useState(true)
+  const [useWhatsapp, setUseWhatsapp] = useState(true)
+  const [useCart, setUseCart] = useState(true)
+  const [usePagarMe, setUsePagarMe] = useState(true)
 
   useEffect(() => { if (!useChat && activeTab === 'chat') setActiveTab('principal') }, [useChat])
   useEffect(() => { if (!useWhatsapp && activeTab === 'whatsapp') setActiveTab('principal') }, [useWhatsapp])
@@ -101,61 +99,51 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
                   Principal
                 </button>
               </li>
-              {useChat && (
-                <li className="nav-item">
-                  <button
-                    type="button"
-                    className={`nav-link ${activeTab === 'chat' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('chat')}
-                  >
-                    Chat
-                  </button>
-                </li>
-              )}
-              {props.values.useChatbot && (
-                <li className="nav-item">
-                  <button
-                    type="button"
-                    className={`nav-link ${activeTab === 'chatbot' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('chatbot')}
-                  >
-                    ChatBot
-                  </button>
-                </li>
-              )}
-              {useWhatsapp && (
-                <li className="nav-item">
-                  <button
-                    type="button"
-                    className={`nav-link ${activeTab === 'whatsapp' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('whatsapp')}
-                  >
-                    WhatsApp
-                  </button>
-                </li>
-              )}
-              {useCart && (
-                <li className="nav-item">
-                  <button
-                    type="button"
-                    className={`nav-link ${activeTab === 'carrinho' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('carrinho')}
-                  >
-                    Carrinho de Compras
-                  </button>
-                </li>
-              )}
-              {usePagarMe && (
-                <li className="nav-item">
-                  <button
-                    type="button"
-                    className={`nav-link ${activeTab === 'pagarme' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('pagarme')}
-                  >
-                    PagarMe
-                  </button>
-                </li>
-              )}
+              <li className="nav-item">
+                <button
+                  type="button"
+                  className={`nav-link ${activeTab === 'chat' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('chat')}
+                >
+                  Chat
+                </button>
+              </li>
+              <li className="nav-item">
+                <button
+                  type="button"
+                  className={`nav-link ${activeTab === 'chatbot' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('chatbot')}
+                >
+                  ChatBot
+                </button>
+              </li>
+              <li className="nav-item">
+                <button
+                  type="button"
+                  className={`nav-link ${activeTab === 'whatsapp' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('whatsapp')}
+                >
+                  WhatsApp
+                </button>
+              </li>
+              <li className="nav-item">
+                <button
+                  type="button"
+                  className={`nav-link ${activeTab === 'carrinho' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('carrinho')}
+                >
+                  Carrinho de Compras
+                </button>
+              </li>
+              <li className="nav-item">
+                <button
+                  type="button"
+                  className={`nav-link ${activeTab === 'pagarme' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('pagarme')}
+                >
+                  PagarMe
+                </button>
+              </li>
               {currentUser?.isPedidos10 && (
                 <li className="nav-item">
                   <button
@@ -177,16 +165,7 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
                   touched={props.touched}
                   handleChange={props.handleChange}
                   handleBlur={props.handleBlur}
-                  setFieldValue={props.setFieldValue}
                   currentUser={currentUser}
-                  useChat={useChat}
-                  setUseChat={setUseChat}
-                  useWhatsapp={useWhatsapp}
-                  setUseWhatsapp={setUseWhatsapp}
-                  useCart={useCart}
-                  setUseCart={setUseCart}
-                  usePagarMe={usePagarMe}
-                  setUsePagarMe={setUsePagarMe}
                 />
               </div>
               <div className={`tab-pane fade ${activeTab === 'chat' ? 'show active' : ''}`}>
