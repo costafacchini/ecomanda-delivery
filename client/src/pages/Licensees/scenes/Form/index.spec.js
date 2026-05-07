@@ -29,7 +29,7 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Telefone')).toHaveValue('')
     expect(screen.getByLabelText('API token')).toHaveValue('')
     expect(screen.getByLabelText('Ativo')).not.toBeChecked()
-    expect(screen.getByLabelText('Usa chatbot?')).not.toBeChecked()
+    expect(screen.getByLabelText('Integração com Plataforma de ChatBot?')).not.toBeChecked()
     expect(screen.getByLabelText('Usa o remetente no nome do chat?')).not.toBeChecked()
     expect(screen.getByLabelText('Chatbot padrão')).toHaveValue('')
     expect(screen.getByLabelText('URL do chatbot')).toHaveValue('')
@@ -42,9 +42,6 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Whatsapp padrão')).toHaveValue('')
     expect(screen.getByLabelText('Token do whatsapp')).toHaveValue('')
     expect(screen.getByLabelText('Url do whatsapp')).toHaveValue('')
-    expect(screen.getByLabelText('Id da AWS')).toHaveValue('')
-    expect(screen.getByLabelText('Senha AWS')).toHaveValue('')
-    expect(screen.getByLabelText('Nome do bucket AWS')).toHaveValue('')
     expect(screen.getByLabelText('Plugin para uso de carrinho de compra')).toHaveValue('')
     expect(screen.getByLabelText('Id da loja')).toHaveValue('')
     expect(screen.getByLabelText('Id do status do carrinho de compra')).toHaveValue('')
@@ -123,7 +120,7 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Telefone')).toHaveValue('48999999215')
     expect(screen.getByLabelText('API token')).toHaveValue('token')
     expect(screen.getByLabelText('Licença')).toHaveValue('paid')
-    expect(screen.getByLabelText('Usa chatbot?')).toBeChecked()
+    expect(screen.getByLabelText('Integração com Plataforma de ChatBot?')).toBeChecked()
     expect(screen.getByLabelText('Usa o remetente no nome do chat?')).toBeChecked()
     expect(screen.getByLabelText('Chatbot padrão')).toHaveValue('landbot')
     expect(screen.getByLabelText('Whatsapp padrão')).toHaveValue('utalk')
@@ -138,9 +135,6 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Url do chat')).toHaveValue('URL do chat')
     expect(screen.getByLabelText('Identifier')).toHaveValue('identifier')
     expect(screen.getByLabelText('Key')).toHaveValue('key')
-    expect(screen.getByLabelText('Id da AWS')).toHaveValue('ID da AWS')
-    expect(screen.getByLabelText('Senha AWS')).toHaveValue('Senha da AWS')
-    expect(screen.getByLabelText('Nome do bucket AWS')).toHaveValue('Nome do bucket')
     expect(screen.getByLabelText('Plugin para uso de carrinho de compra')).toHaveValue('go2go')
     expect(screen.getByLabelText('Id da loja')).toHaveValue('999')
     expect(screen.getByLabelText('Id do status do carrinho de compra')).toHaveValue('5433')
@@ -162,10 +156,10 @@ describe('<LicenseeForm />', () => {
   })
 
   describe('fields', () => {
-    it('disables chatbot fields if "Usa chatbot?" is false', () => {
+    it('disables chatbot fields if "Integração com Plataforma de ChatBot?" is false', () => {
       mount({ initialValues: { useChatbot: true } })
 
-      expect(screen.getByLabelText('Usa chatbot?')).toBeChecked()
+      expect(screen.getByLabelText('Integração com Plataforma de ChatBot?')).toBeChecked()
       expect(screen.getByLabelText('Chatbot padrão')).toBeEnabled()
       expect(screen.getByLabelText('URL do chatbot')).toBeEnabled()
       expect(screen.getByLabelText('Token do chatbot')).toBeEnabled()
@@ -175,7 +169,7 @@ describe('<LicenseeForm />', () => {
       cleanup()
       mount({ initialValues: { useChatbot: false } })
 
-      expect(screen.getByLabelText('Usa chatbot?')).not.toBeChecked()
+      expect(screen.getByLabelText('Integração com Plataforma de ChatBot?')).not.toBeChecked()
       expect(screen.getByLabelText('Chatbot padrão')).toBeDisabled()
       expect(screen.getByLabelText('URL do chatbot')).toBeDisabled()
       expect(screen.getByLabelText('Token do chatbot')).toBeDisabled()
@@ -323,9 +317,6 @@ describe('<LicenseeForm />', () => {
         chatIdentifier: '',
         chatKey: '',
         chatUrl: '',
-        awsId: '',
-        awsSecret: '',
-        bucketName: '',
         cartDefault: '',
         unidadeId: '',
         statusId: '',

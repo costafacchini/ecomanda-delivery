@@ -10,6 +10,7 @@ import {
   sendLicenseePagarMe,
   signOrderWebhook,
 } from '../../../../services/licensee'
+import MainPanel from './panels/MainPanel'
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string()
@@ -33,9 +34,6 @@ const licenseeInitialValues = {
   whatsappUrl: '',
   chatDefault: '',
   chatUrl: '',
-  awsId: '',
-  awsSecret: '',
-  bucketName: '',
   chatKey: '',
   chatIdentifier: '',
   cartDefault: '',
@@ -73,6 +71,10 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
   let navigate = useNavigate()
   const [baileysQr, setBaileysQr] = useState(null)
   const [baileysStatus, setBaileysStatus] = useState(null)
+  const [useChat, setUseChat] = useState(false)
+  const [useWhatsapp, setUseWhatsapp] = useState(false)
+  const [useCart, setUseCart] = useState(false)
+  const [usePagarMe, setUsePagarMe] = useState(false)
 
   return (
     <div>
@@ -85,141 +87,23 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
       >
         {(props) => (
           <form onSubmit={props.handleSubmit}>
-            <div className='row'>
-              <div className='form-group col-5'>
-                <label htmlFor='name'>Nome</label>
-                <FieldWithError
-                  id='name'
-                  type='text'
-                  onChange={props.handleChange}
-                  onBlur={props.handleBlur}
-                  value={props.values.name}
-                  name='name'
-                />
-              </div>
-              <div className='form-group col-5'>
-                <div className='form-check mt-4'>
-                  <input
-                    checked={props.values.active}
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    type='checkbox'
-                    className='form-check-input'
-                    id='active'
-                  />
-                  <label className='form-check-label' htmlFor='active'>
-                    Ativo
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <div className='row'>
-              <div className='form-group col-2'>
-                <label htmlFor='kind'>Tipo</label>
-                <select
-                  value={props.values.kind}
-                  className='form-select'
-                  id='kind'
-                  onChange={props.handleChange}
-                  onBlur={props.handleBlur}
-                >
-                  <option value=''></option>
-                  <option value='company'>Jurídica</option>
-                  <option value='individual'>Física</option>
-                </select>
-              </div>
-
-              <div className='form-group col-3'>
-                <label htmlFor='document'>Documento</label>
-                <FieldWithError
-                  id='document'
-                  name='document'
-                  type='text'
-                  onChange={props.handleChange}
-                  onBlur={props.handleBlur}
-                  value={props.values.document}
-                />
-              </div>
-            </div>
-
-            <div className='row'>
-              <div className='form-group col-5'>
-                <label htmlFor='email'>E-email</label>
-                <FieldWithError
-                  id='email'
-                  name='email'
-                  type='text'
-                  onChange={props.handleChange}
-                  onBlur={props.handleBlur}
-                  value={props.values.email}
-                />
-              </div>
-            </div>
-
-            <div className='row'>
-              <div className='form-group col-5'>
-                <label htmlFor='licenseKind'>Licença</label>
-                <select
-                  value={props.values.licenseKind}
-                  className='form-select'
-                  id='licenseKind'
-                  onChange={props.handleChange}
-                  onBlur={props.handleBlur}
-                >
-                  <option value='demo'>Demonstração</option>
-                  <option value='free'>Grátis</option>
-                  <option value='paid'>Pago</option>
-                </select>
-              </div>
-            </div>
-
-            <div className='row'>
-              <div className='form-group col-5'>
-                <label htmlFor='phone'>Telefone</label>
-                <FieldWithError
-                  id='phone'
-                  type='text'
-                  onChange={props.handleChange}
-                  onBlur={props.handleBlur}
-                  value={props.values.phone}
-                  name='phone'
-                />
-              </div>
-            </div>
-
-            <div className='row pb-4'>
-              <div className='form-group col-5'>
-                <label htmlFor='apiToken'>API token</label>
-                <FieldWithError
-                  disabled
-                  id='apiToken'
-                  type='text'
-                  onChange={props.handleChange}
-                  onBlur={props.handleBlur}
-                  value={props.values.apiToken}
-                  name='apiToken'
-                />
-              </div>
-            </div>
-
-            <div className='row pb-2'>
-              <div className='col-3'>
-                <div className='form-check'>
-                  <input
-                    type='checkbox'
-                    className='form-check-input'
-                    id='useChatbot'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    checked={props.values.useChatbot}
-                  />
-                  <label className='form-check-label' htmlFor='useChatbot'>
-                    Usa chatbot?
-                  </label>
-                </div>
-              </div>
-            </div>
+            <MainPanel
+              values={props.values}
+              errors={props.errors}
+              touched={props.touched}
+              handleChange={props.handleChange}
+              handleBlur={props.handleBlur}
+              currentUser={currentUser}
+              useChat={useChat}
+              setUseChat={setUseChat}
+              useWhatsapp={useWhatsapp}
+              setUseWhatsapp={setUseWhatsapp}
+              useCart={useCart}
+              setUseCart={setUseCart}
+              usePagarMe={usePagarMe}
+              setUsePagarMe={setUsePagarMe}
+              setFieldValue={props.setFieldValue}
+            />
 
             <fieldset className='pb-4' disabled={!props.values.useChatbot}>
               <div className='row'>
@@ -537,50 +421,6 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
             <fieldset className='pb-4'>
               <div className='row'>
                 <div className='form-group col-5'>
-                  <label htmlFor='awsId'>Id da AWS</label>
-                  <FieldWithError
-                    id='awsId'
-                    name='awsId'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.awsId}
-                  />
-                </div>
-              </div>
-
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='awsSecret'>Senha AWS</label>
-                  <FieldWithError
-                    id='awsSecret'
-                    name='awsSecret'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.awsSecret}
-                  />
-                </div>
-              </div>
-
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='bucketName'>Nome do bucket AWS</label>
-                  <FieldWithError
-                    id='bucketName'
-                    name='bucketName'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.bucketName}
-                  />
-                </div>
-              </div>
-            </fieldset>
-
-            <fieldset className='pb-4'>
-              <div className='row'>
-                <div className='form-group col-5'>
                   <label htmlFor='cartDefault'>Plugin para uso de carrinho de compra</label>
                   <select
                     value={props.values.cartDefault}
@@ -862,68 +702,6 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
                 </div>
               </fieldset>
             )}
-
-            <fieldset>
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='urlChatWebhook'>URL para webhook de Chat</label>
-                  <FieldWithError
-                    disabled
-                    id='urlChatWebhook'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.urlChatWebhook}
-                    name='urlChatWebhook'
-                  />
-                </div>
-              </div>
-
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='urlChatbotWebhook'>URL para webhook de Chatbot</label>
-                  <FieldWithError
-                    disabled
-                    id='urlChatbotWebhook'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.urlChatbotWebhook}
-                    name='urlChatbotWebhook'
-                  />
-                </div>
-              </div>
-
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='urlChatbotTransfer'>URL de webhook para transferir do Chatbot para o Chat</label>
-                  <FieldWithError
-                    disabled
-                    id='urlChatbotTransfer'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.urlChatbotTransfer}
-                    name='urlChatbotTransfer'
-                  />
-                </div>
-              </div>
-
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='urlWhatsappWebhook'>URL para webhook de whatsapp</label>
-                  <FieldWithError
-                    disabled
-                    id='urlWhatsappWebhook'
-                    type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.urlWhatsappWebhook}
-                    name='urlWhatsappWebhook'
-                  />
-                </div>
-              </div>
-            </fieldset>
 
             {errors && (
               <div className='alert alert-danger'>

@@ -1,9 +1,9 @@
 # Status: GeneralPanel + ChatbotPanel
 
-**Current Status**: not-started
-**Last Updated**: 2026-05-06
-**Agent**: —
-**Branch**: —
+**Current Status**: in-progress
+**Last Updated**: 2026-05-07
+**Agent**: claude-sonnet-4-6
+**Branch**: plan/licensee-form-wizard/phase-1/task-01-panel-general
 **PR**: —
 
 ## Status History
@@ -11,6 +11,7 @@
 | Timestamp | Status | Agent | Notes |
 |-----------|--------|-------|-------|
 | 2026-05-06 | not-started | — | Plan created |
+| 2026-05-07 | in-progress | claude-sonnet-4-6 | Execution started |
 
 ## Blockers
 
