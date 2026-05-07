@@ -29,7 +29,6 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Telefone')).toHaveValue('')
     expect(screen.getByLabelText('API token')).toHaveValue('')
     expect(screen.getByLabelText('Ativo')).not.toBeChecked()
-    expect(screen.getByLabelText('Usa chatbot?')).not.toBeChecked()
     expect(screen.getByLabelText('Usa o remetente no nome do chat?')).not.toBeChecked()
     expect(screen.getByLabelText('Chatbot padrão')).toHaveValue('')
     expect(screen.getByLabelText('URL do chatbot')).toHaveValue('')
@@ -42,9 +41,6 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Whatsapp padrão')).toHaveValue('')
     expect(screen.getByLabelText('Token do whatsapp')).toHaveValue('')
     expect(screen.getByLabelText('Url do whatsapp')).toHaveValue('')
-    expect(screen.getByLabelText('Id da AWS')).toHaveValue('')
-    expect(screen.getByLabelText('Senha AWS')).toHaveValue('')
-    expect(screen.getByLabelText('Nome do bucket AWS')).toHaveValue('')
     expect(screen.getByLabelText('Plugin para uso de carrinho de compra')).toHaveValue('')
     expect(screen.getByLabelText('Id da loja')).toHaveValue('')
     expect(screen.getByLabelText('Id do status do carrinho de compra')).toHaveValue('')
@@ -123,7 +119,6 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Telefone')).toHaveValue('48999999215')
     expect(screen.getByLabelText('API token')).toHaveValue('token')
     expect(screen.getByLabelText('Licença')).toHaveValue('paid')
-    expect(screen.getByLabelText('Usa chatbot?')).toBeChecked()
     expect(screen.getByLabelText('Usa o remetente no nome do chat?')).toBeChecked()
     expect(screen.getByLabelText('Chatbot padrão')).toHaveValue('landbot')
     expect(screen.getByLabelText('Whatsapp padrão')).toHaveValue('utalk')
@@ -138,9 +133,6 @@ describe('<LicenseeForm />', () => {
     expect(screen.getByLabelText('Url do chat')).toHaveValue('URL do chat')
     expect(screen.getByLabelText('Identifier')).toHaveValue('identifier')
     expect(screen.getByLabelText('Key')).toHaveValue('key')
-    expect(screen.getByLabelText('Id da AWS')).toHaveValue('ID da AWS')
-    expect(screen.getByLabelText('Senha AWS')).toHaveValue('Senha da AWS')
-    expect(screen.getByLabelText('Nome do bucket AWS')).toHaveValue('Nome do bucket')
     expect(screen.getByLabelText('Plugin para uso de carrinho de compra')).toHaveValue('go2go')
     expect(screen.getByLabelText('Id da loja')).toHaveValue('999')
     expect(screen.getByLabelText('Id do status do carrinho de compra')).toHaveValue('5433')
@@ -162,38 +154,16 @@ describe('<LicenseeForm />', () => {
   })
 
   describe('fields', () => {
-    it('disables chatbot fields if "Usa chatbot?" is false', () => {
-      mount({ initialValues: { useChatbot: true } })
-
-      expect(screen.getByLabelText('Usa chatbot?')).toBeChecked()
-      expect(screen.getByLabelText('Chatbot padrão')).toBeEnabled()
-      expect(screen.getByLabelText('URL do chatbot')).toBeEnabled()
-      expect(screen.getByLabelText('Token do chatbot')).toBeEnabled()
-      expect(screen.getByLabelText('Token de acesso via API do chatbot')).toBeEnabled()
-      expect(screen.getByLabelText('Mensagem de encerramento de chatbot abandonado')).toBeEnabled()
-
-      cleanup()
+    it('always shows the ChatBot tab nav item regardless of useChatbot in initialValues', () => {
       mount({ initialValues: { useChatbot: false } })
 
-      expect(screen.getByLabelText('Usa chatbot?')).not.toBeChecked()
-      expect(screen.getByLabelText('Chatbot padrão')).toBeDisabled()
-      expect(screen.getByLabelText('URL do chatbot')).toBeDisabled()
-      expect(screen.getByLabelText('Token do chatbot')).toBeDisabled()
-      expect(screen.getByLabelText('Token de acesso via API do chatbot')).toBeDisabled()
-      expect(screen.getByLabelText('Mensagem de encerramento de chatbot abandonado')).toBeDisabled()
+      expect(screen.getByRole('button', { name: 'ChatBot' })).toBeInTheDocument()
     })
 
-    it('disables chat fields if "Chat padrão" is blank', () => {
-      mount({ initialValues: { chatDefault: 'crisp' } })
-
-      expect(screen.getByLabelText('Url do chat')).toBeEnabled()
-      expect(screen.getByLabelText('Identifier')).toBeEnabled()
-      expect(screen.getByLabelText('Key')).toBeEnabled()
-
-      cleanup()
+    it('always shows the Chat tab nav item regardless of chatDefault', () => {
       mount({ initialValues: { chatDefault: '' } })
 
-      expect(screen.getByLabelText('Url do chat')).toBeDisabled()
+      expect(screen.getByRole('button', { name: 'Chat' })).toBeInTheDocument()
     })
 
     it('disables whatsapp fields if "Whatsapp padrão" is blank', () => {
@@ -265,18 +235,17 @@ describe('<LicenseeForm />', () => {
     })
 
     describe('Pedidos 10 fieldset', () => {
-      it('show fiels when user isPedidos10', () => {
+      it('shows the Pedidos10 tab nav item only when currentUser isPedidos10', () => {
         mount({ currentUser: { } })
 
-        expect(screen.queryByLabelText('Dados da integração')).not.toBeInTheDocument()
-        expect(screen.queryByLabelText('Software Integrador')).not.toBeInTheDocument()
-        expect(screen.queryByRole('button', { name: 'Assinar Webhook P10' })).not.toBeInTheDocument()
+        expect(screen.queryByRole('button', { name: 'Pedidos10' })).not.toBeInTheDocument()
 
         cleanup()
         mount({ currentUser: { isPedidos10: true } })
 
-        expect(screen.getByLabelText('Dados da integração')).toBeVisible()
-        expect(screen.getByLabelText('Software Integrador')).toBeVisible()
+        expect(screen.getByRole('button', { name: 'Pedidos10' })).toBeInTheDocument()
+        expect(screen.getByLabelText('Dados da integração')).toBeInTheDocument()
+        expect(screen.getByLabelText('Software Integrador')).toBeInTheDocument()
         expect(screen.getByRole('button', { name: 'Assinar Webhook P10' })).toBeInTheDocument()
       })
 
@@ -289,6 +258,89 @@ describe('<LicenseeForm />', () => {
 
         expect(signOrderWebhook).toHaveBeenCalledTimes(1)
       })
+    })
+  })
+
+  describe('tabs', () => {
+    it('shows all integration tab nav items by default', () => {
+      mount()
+
+      expect(screen.getByRole('button', { name: 'Principal' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Chat' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'ChatBot' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'WhatsApp' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Carrinho de Compras' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'PagarMe' })).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Pedidos10' })).not.toBeInTheDocument()
+    })
+
+    it('marks the Principal tab nav button as active on initial render', () => {
+      mount()
+
+      expect(screen.getByRole('button', { name: 'Principal' })).toHaveClass('active')
+    })
+
+    it('shows the Chat tab nav item when chatDefault is set', () => {
+      mount({ initialValues: { chatDefault: 'crisp' } })
+
+      expect(screen.getByRole('button', { name: 'Chat' })).toBeInTheDocument()
+    })
+
+    it('shows the ChatBot tab nav item when useChatbot is true', () => {
+      mount({ initialValues: { useChatbot: true } })
+
+      expect(screen.getByRole('button', { name: 'ChatBot' })).toBeInTheDocument()
+    })
+
+    it('shows the WhatsApp tab nav item when whatsappDefault is set', () => {
+      mount({ initialValues: { whatsappDefault: 'utalk' } })
+
+      expect(screen.getByRole('button', { name: 'WhatsApp' })).toBeInTheDocument()
+    })
+
+    it('shows the Pedidos10 tab nav item when currentUser isPedidos10', () => {
+      mount({ currentUser: { isPedidos10: true } })
+
+      expect(screen.getByRole('button', { name: 'Pedidos10' })).toBeInTheDocument()
+    })
+
+    it('clicking a tab nav button marks it as active and removes active from Principal', () => {
+      mount({ initialValues: { chatDefault: 'crisp' } })
+
+      const chatTab = screen.getByRole('button', { name: 'Chat' })
+      expect(chatTab).not.toHaveClass('active')
+
+      fireEvent.click(chatTab)
+
+      expect(chatTab).toHaveClass('active')
+      expect(screen.getByRole('button', { name: 'Principal' })).not.toHaveClass('active')
+    })
+
+    it('clicking Principal tab after another tab makes Principal active again', () => {
+      mount({ initialValues: { chatDefault: 'crisp' } })
+
+      fireEvent.click(screen.getByRole('button', { name: 'Chat' }))
+      expect(screen.getByRole('button', { name: 'Chat' })).toHaveClass('active')
+
+      fireEvent.click(screen.getByRole('button', { name: 'Principal' }))
+      expect(screen.getByRole('button', { name: 'Principal' })).toHaveClass('active')
+      expect(screen.getByRole('button', { name: 'Chat' })).not.toHaveClass('active')
+    })
+
+    it('all tab panes are present in the DOM regardless of which tab is active', () => {
+      mount({
+        initialValues: {
+          chatDefault: 'crisp',
+          useChatbot: true,
+          whatsappDefault: 'utalk',
+          cartDefault: 'go2go',
+          holder_name: 'John',
+        },
+        currentUser: { isPedidos10: true },
+      })
+
+      const tabPanes = document.querySelectorAll('.tab-pane')
+      expect(tabPanes).toHaveLength(7)
     })
   })
 
@@ -323,9 +375,6 @@ describe('<LicenseeForm />', () => {
         chatIdentifier: '',
         chatKey: '',
         chatUrl: '',
-        awsId: '',
-        awsSecret: '',
-        bucketName: '',
         cartDefault: '',
         unidadeId: '',
         statusId: '',

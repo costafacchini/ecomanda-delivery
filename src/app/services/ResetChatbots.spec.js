@@ -231,9 +231,6 @@ describe('resetChatbots', () => {
             whatsappDefault: 'utalk',
             whatsappToken: 'WTIgtlBwDk4kJNv7oMMderfTWihceFm2mI9K',
             whatsappUrl: 'https://v1.utalk.chat/send/',
-            awsId: 'aws-id',
-            awsSecret: 'aws-secret',
-            bucketName: 'bucket-name',
           }),
         )
 

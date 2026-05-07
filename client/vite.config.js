@@ -42,6 +42,12 @@ export default defineConfig(({ mode }) => {
       modules: {
         localsConvention: 'camelCase',
       },
+      preprocessorOptions: {
+        scss: {
+          quietDeps: true,
+          silenceDeprecations: ['import', 'global-builtin', 'color-functions', 'if-function'],
+        },
+      },
     },
     test: {
       environment: 'jsdom',

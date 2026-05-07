@@ -29,14 +29,14 @@ class S3 {
     this.fileBase64 = fileBase64
 
     this.aws = new S3Client({
-      region: 'us-east-1',
+      region: process.env.AWS_DEFAULT_REGION ?? 'us-east-1',
       credentials: {
-        accessKeyId: licensee.awsId,
-        secretAccessKey: licensee.awsSecret,
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
       },
     })
 
-    this.bucketName = this.licensee.bucketName
+    this.bucketName = process.env.AWS_BUCKET_NAME
   }
 
   async presignedUrl() {
