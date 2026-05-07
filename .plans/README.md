@@ -24,6 +24,7 @@ Git-native Markdown plans for multi-step work.
 |---|------|--------|--------|-------------|
 | 1 | [JS → TypeScript](./js-to-ts/overview.md) | `js-to-ts/` | not-started | Incremental migration of all source files (backend + client) to TypeScript using `allowJs: true` throughout |
 | 2 | [Remove PDV](./remove-pdv/overview.md) | `remove-pdv/` | not-started | Delete cart, payment (PagarMe), and order integration (Pedidos10) domain — strip PDV fields from Licensee and Contact |
+| 3 | [Licensee Form Wizard](./licensee-form-wizard/overview.md) | `licensee-form-wizard/` | not-started | Split the licensee form into Bootstrap 5 Nav Tabs with panels shown/hidden based on whatsappDefault and chatbotDefault choices |
 
 ---
 
