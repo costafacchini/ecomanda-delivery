@@ -144,9 +144,6 @@ describe('LicenseesQuery', () => {
           whatsappDefault: 'utalk',
           whatsappUrl: 'https://v1.utalk.chat/send/',
           whatsappToken: 'key',
-          bucketName: 'bucket',
-          awsId: 'id',
-          awsSecret: 'secret',
         }),
       )
       const licensee2 = await licenseeRepository.create(
