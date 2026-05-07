@@ -154,26 +154,16 @@ describe('<LicenseeForm />', () => {
   })
 
   describe('fields', () => {
-    it('shows the ChatBot tab nav item only when useChatbot is true in initialValues', () => {
-      mount({ initialValues: { useChatbot: true } })
-
-      expect(screen.getByRole('button', { name: 'ChatBot' })).toBeInTheDocument()
-
-      cleanup()
+    it('always shows the ChatBot tab nav item regardless of useChatbot in initialValues', () => {
       mount({ initialValues: { useChatbot: false } })
 
-      expect(screen.queryByRole('button', { name: 'ChatBot' })).not.toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'ChatBot' })).toBeInTheDocument()
     })
 
-    it('shows the Chat tab nav item only when "Chat padrão" is set', () => {
-      mount({ initialValues: { chatDefault: 'crisp' } })
-
-      expect(screen.getByRole('button', { name: 'Chat' })).toBeInTheDocument()
-
-      cleanup()
+    it('always shows the Chat tab nav item regardless of chatDefault', () => {
       mount({ initialValues: { chatDefault: '' } })
 
-      expect(screen.queryByRole('button', { name: 'Chat' })).not.toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Chat' })).toBeInTheDocument()
     })
 
     it('disables whatsapp fields if "Whatsapp padrão" is blank', () => {
@@ -272,15 +262,15 @@ describe('<LicenseeForm />', () => {
   })
 
   describe('tabs', () => {
-    it('shows only the Principal tab nav item by default on a new licensee form', () => {
+    it('shows all integration tab nav items by default', () => {
       mount()
 
       expect(screen.getByRole('button', { name: 'Principal' })).toBeInTheDocument()
-      expect(screen.queryByRole('button', { name: 'Chat' })).not.toBeInTheDocument()
-      expect(screen.queryByRole('button', { name: 'ChatBot' })).not.toBeInTheDocument()
-      expect(screen.queryByRole('button', { name: 'WhatsApp' })).not.toBeInTheDocument()
-      expect(screen.queryByRole('button', { name: 'Carrinho de Compras' })).not.toBeInTheDocument()
-      expect(screen.queryByRole('button', { name: 'PagarMe' })).not.toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Chat' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'ChatBot' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'WhatsApp' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Carrinho de Compras' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'PagarMe' })).toBeInTheDocument()
       expect(screen.queryByRole('button', { name: 'Pedidos10' })).not.toBeInTheDocument()
     })
 
