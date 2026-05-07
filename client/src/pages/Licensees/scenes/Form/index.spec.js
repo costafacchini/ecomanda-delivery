@@ -156,38 +156,28 @@ describe('<LicenseeForm />', () => {
   })
 
   describe('fields', () => {
-    it('disables chatbot fields if "Integração com Plataforma de ChatBot?" is false', () => {
+    it('shows the ChatBot tab nav item only when "Integração com Plataforma de ChatBot?" is checked', () => {
       mount({ initialValues: { useChatbot: true } })
 
       expect(screen.getByLabelText('Integração com Plataforma de ChatBot?')).toBeChecked()
-      expect(screen.getByLabelText('Chatbot padrão')).toBeEnabled()
-      expect(screen.getByLabelText('URL do chatbot')).toBeEnabled()
-      expect(screen.getByLabelText('Token do chatbot')).toBeEnabled()
-      expect(screen.getByLabelText('Token de acesso via API do chatbot')).toBeEnabled()
-      expect(screen.getByLabelText('Mensagem de encerramento de chatbot abandonado')).toBeEnabled()
+      expect(screen.getByRole('button', { name: 'ChatBot' })).toBeInTheDocument()
 
       cleanup()
       mount({ initialValues: { useChatbot: false } })
 
       expect(screen.getByLabelText('Integração com Plataforma de ChatBot?')).not.toBeChecked()
-      expect(screen.getByLabelText('Chatbot padrão')).toBeDisabled()
-      expect(screen.getByLabelText('URL do chatbot')).toBeDisabled()
-      expect(screen.getByLabelText('Token do chatbot')).toBeDisabled()
-      expect(screen.getByLabelText('Token de acesso via API do chatbot')).toBeDisabled()
-      expect(screen.getByLabelText('Mensagem de encerramento de chatbot abandonado')).toBeDisabled()
+      expect(screen.queryByRole('button', { name: 'ChatBot' })).not.toBeInTheDocument()
     })
 
-    it('disables chat fields if "Chat padrão" is blank', () => {
+    it('shows the Chat tab nav item only when "Chat padrão" is set', () => {
       mount({ initialValues: { chatDefault: 'crisp' } })
 
-      expect(screen.getByLabelText('Url do chat')).toBeEnabled()
-      expect(screen.getByLabelText('Identifier')).toBeEnabled()
-      expect(screen.getByLabelText('Key')).toBeEnabled()
+      expect(screen.getByRole('button', { name: 'Chat' })).toBeInTheDocument()
 
       cleanup()
       mount({ initialValues: { chatDefault: '' } })
 
-      expect(screen.getByLabelText('Url do chat')).toBeDisabled()
+      expect(screen.queryByRole('button', { name: 'Chat' })).not.toBeInTheDocument()
     })
 
     it('disables whatsapp fields if "Whatsapp padrão" is blank', () => {
@@ -259,18 +249,17 @@ describe('<LicenseeForm />', () => {
     })
 
     describe('Pedidos 10 fieldset', () => {
-      it('show fiels when user isPedidos10', () => {
+      it('shows the Pedidos10 tab nav item only when currentUser isPedidos10', () => {
         mount({ currentUser: { } })
 
-        expect(screen.queryByLabelText('Dados da integração')).not.toBeInTheDocument()
-        expect(screen.queryByLabelText('Software Integrador')).not.toBeInTheDocument()
-        expect(screen.queryByRole('button', { name: 'Assinar Webhook P10' })).not.toBeInTheDocument()
+        expect(screen.queryByRole('button', { name: 'Pedidos10' })).not.toBeInTheDocument()
 
         cleanup()
         mount({ currentUser: { isPedidos10: true } })
 
-        expect(screen.getByLabelText('Dados da integração')).toBeVisible()
-        expect(screen.getByLabelText('Software Integrador')).toBeVisible()
+        expect(screen.getByRole('button', { name: 'Pedidos10' })).toBeInTheDocument()
+        expect(screen.getByLabelText('Dados da integração')).toBeInTheDocument()
+        expect(screen.getByLabelText('Software Integrador')).toBeInTheDocument()
         expect(screen.getByRole('button', { name: 'Assinar Webhook P10' })).toBeInTheDocument()
       })
 
@@ -283,6 +272,89 @@ describe('<LicenseeForm />', () => {
 
         expect(signOrderWebhook).toHaveBeenCalledTimes(1)
       })
+    })
+  })
+
+  describe('tabs', () => {
+    it('shows only the Principal tab nav item by default on a new licensee form', () => {
+      mount()
+
+      expect(screen.getByRole('button', { name: 'Principal' })).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Chat' })).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'ChatBot' })).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'WhatsApp' })).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Carrinho de Compras' })).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'PagarMe' })).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Pedidos10' })).not.toBeInTheDocument()
+    })
+
+    it('marks the Principal tab nav button as active on initial render', () => {
+      mount()
+
+      expect(screen.getByRole('button', { name: 'Principal' })).toHaveClass('active')
+    })
+
+    it('shows the Chat tab nav item when chatDefault is set', () => {
+      mount({ initialValues: { chatDefault: 'crisp' } })
+
+      expect(screen.getByRole('button', { name: 'Chat' })).toBeInTheDocument()
+    })
+
+    it('shows the ChatBot tab nav item when useChatbot is true', () => {
+      mount({ initialValues: { useChatbot: true } })
+
+      expect(screen.getByRole('button', { name: 'ChatBot' })).toBeInTheDocument()
+    })
+
+    it('shows the WhatsApp tab nav item when whatsappDefault is set', () => {
+      mount({ initialValues: { whatsappDefault: 'utalk' } })
+
+      expect(screen.getByRole('button', { name: 'WhatsApp' })).toBeInTheDocument()
+    })
+
+    it('shows the Pedidos10 tab nav item when currentUser isPedidos10', () => {
+      mount({ currentUser: { isPedidos10: true } })
+
+      expect(screen.getByRole('button', { name: 'Pedidos10' })).toBeInTheDocument()
+    })
+
+    it('clicking a tab nav button marks it as active and removes active from Principal', () => {
+      mount({ initialValues: { chatDefault: 'crisp' } })
+
+      const chatTab = screen.getByRole('button', { name: 'Chat' })
+      expect(chatTab).not.toHaveClass('active')
+
+      fireEvent.click(chatTab)
+
+      expect(chatTab).toHaveClass('active')
+      expect(screen.getByRole('button', { name: 'Principal' })).not.toHaveClass('active')
+    })
+
+    it('clicking Principal tab after another tab makes Principal active again', () => {
+      mount({ initialValues: { chatDefault: 'crisp' } })
+
+      fireEvent.click(screen.getByRole('button', { name: 'Chat' }))
+      expect(screen.getByRole('button', { name: 'Chat' })).toHaveClass('active')
+
+      fireEvent.click(screen.getByRole('button', { name: 'Principal' }))
+      expect(screen.getByRole('button', { name: 'Principal' })).toHaveClass('active')
+      expect(screen.getByRole('button', { name: 'Chat' })).not.toHaveClass('active')
+    })
+
+    it('all tab panes are present in the DOM regardless of which tab is active', () => {
+      mount({
+        initialValues: {
+          chatDefault: 'crisp',
+          useChatbot: true,
+          whatsappDefault: 'utalk',
+          cartDefault: 'go2go',
+          holder_name: 'John',
+        },
+        currentUser: { isPedidos10: true },
+      })
+
+      const tabPanes = document.querySelectorAll('.tab-pane')
+      expect(tabPanes).toHaveLength(7)
     })
   })
 
