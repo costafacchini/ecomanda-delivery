@@ -1,7 +1,7 @@
 import { FieldWithError } from '../../../../../components/form'
 import { sendLicenseePagarMe } from '../../../../../services/licensee'
 
-function PagarMePanel({ values, errors, touched, handleChange, handleBlur }) {
+function PagarMePanel({ values, errors, touched, handleChange, handleBlur, wizardMode = false }) {
   return (
     <fieldset className='pb-4'>
       <div className='row'>
@@ -140,19 +140,21 @@ function PagarMePanel({ values, errors, touched, handleChange, handleBlur }) {
         </div>
       </div>
 
-      <div className='row'>
-        <div className='form-group col-3'>
-          <button
-            onClick={async (event) => {
-              event.preventDefault()
-              await sendLicenseePagarMe(values)
-            }}
-            className='btn btn-info'
-          >
-            Integrar com a Pagar.Me
-          </button>
+      {!wizardMode && (
+        <div className='row'>
+          <div className='form-group col-3'>
+            <button
+              onClick={async (event) => {
+                event.preventDefault()
+                await sendLicenseePagarMe(values)
+              }}
+              className='btn btn-info'
+            >
+              Integrar com a Pagar.Me
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </fieldset>
   )
 }

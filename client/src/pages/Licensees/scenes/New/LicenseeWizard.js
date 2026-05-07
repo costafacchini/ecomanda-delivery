@@ -3,6 +3,12 @@ import { useNavigate } from 'react-router'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { FieldWithError } from '../../../../components/form'
+import ChatPanel from '../Form/panels/ChatPanel'
+import ChatbotPanel from '../Form/panels/ChatbotPanel'
+import WhatsAppPanel from '../Form/panels/WhatsAppPanel'
+import CartPanel from '../Form/panels/CartPanel'
+import PagarMePanel from '../Form/panels/PagarMePanel'
+import Pedidos10Panel from '../Form/panels/Pedidos10Panel'
 
 const licenseeInitialValues = {
   name: '',
@@ -74,6 +80,65 @@ const identitySchema = Yup.object().shape({
   phone:       Yup.string().required('Telefone é obrigatório'),
 })
 
+const chatSchema = Yup.object().shape({
+  chatDefault: Yup.string().required('Chat padrão é obrigatório'),
+  chatUrl:     Yup.string().required('URL do chat é obrigatória'),
+  chatIdentifier: Yup.string().when('chatDefault', {
+    is: (v) => ['crisp', 'chatwoot'].includes(v),
+    then: (s) => s.required('Identifier é obrigatório'),
+  }),
+  chatKey: Yup.string().when('chatDefault', {
+    is: (v) => ['crisp', 'chatwoot'].includes(v),
+    then: (s) => s.required('Key é obrigatória'),
+  }),
+})
+
+const chatbotSchema = Yup.object().shape({
+  chatbotDefault:            Yup.string().required('Chatbot padrão é obrigatório'),
+  chatbotUrl:                Yup.string().required('URL do chatbot é obrigatória'),
+  chatbotAuthorizationToken: Yup.string().required('Token do chatbot é obrigatório'),
+  chatbotApiToken:           Yup.string().required('Token de API é obrigatório'),
+  messageOnResetChatbot:     Yup.string().required('Mensagem de reset é obrigatória'),
+  messageOnCloseChat:        Yup.string().required('Mensagem de encerramento é obrigatória'),
+})
+
+const whatsappSchema = Yup.object().shape({
+  whatsappDefault: Yup.string().required('WhatsApp padrão é obrigatório'),
+  whatsappToken: Yup.string().when('whatsappDefault', {
+    is: (v) => v && v !== 'baileys',
+    then: (s) => s.required('Token do WhatsApp é obrigatório'),
+  }),
+  whatsappUrl: Yup.string().when('whatsappDefault', {
+    is: (v) => v && v !== 'baileys',
+    then: (s) => s.required('URL do WhatsApp é obrigatória'),
+  }),
+})
+
+const cartSchema = Yup.object().shape({
+  cartDefault:        Yup.string().required('Plugin de carrinho é obrigatório'),
+  unidadeId:          Yup.string().required('Id da loja é obrigatório'),
+  statusId:           Yup.string().required('Id do status é obrigatório'),
+  productFractionals: Yup.string().required('Produtos fracionados são obrigatórios'),
+})
+
+const pagarmeSchema = Yup.object().shape({
+  financial_player_fee: Yup.string().required('Taxa é obrigatória'),
+  holder_name:          Yup.string().required('Nome do titular é obrigatório'),
+  holder_kind:          Yup.string().required('Tipo do titular é obrigatório'),
+  holder_document:      Yup.string().required('Documento do titular é obrigatório'),
+  bank:                 Yup.string().required('Banco é obrigatório'),
+  branch_number:        Yup.string().required('Agência é obrigatória'),
+  branch_check_digit:   Yup.string().required('Dígito da agência é obrigatório'),
+  account_number:       Yup.string().required('Conta é obrigatória'),
+  account_check_digit:  Yup.string().required('Dígito da conta é obrigatório'),
+  account_type:         Yup.string().required('Tipo da conta é obrigatório'),
+})
+
+const pedidos10Schema = Yup.object().shape({
+  pedidos10_integrator:  Yup.string().required('Software integrador é obrigatório'),
+  pedidos10_integration: Yup.string().required('Dados da integração são obrigatórios'),
+})
+
 function IdentityStep({ values, errors, touched, handleChange, handleBlur }) {
   return (
     <>
@@ -136,11 +201,41 @@ function IdentityStep({ values, errors, touched, handleChange, handleBlur }) {
   )
 }
 
+function YesNoGate({ label, isYes, onChange }) {
+  return (
+    <div className='mb-3'>
+      <p className='fw-semibold'>{label}</p>
+      <div className='btn-group' role='group'>
+        <button
+          type='button'
+          className={`btn ${isYes === true ? 'btn-primary' : 'btn-outline-primary'}`}
+          onClick={() => onChange(true)}
+        >
+          Sim
+        </button>
+        <button
+          type='button'
+          className={`btn ${isYes === false ? 'btn-secondary' : 'btn-outline-secondary'}`}
+          onClick={() => onChange(false)}
+        >
+          Não
+        </button>
+      </div>
+    </div>
+  )
+}
+
 function LicenseeWizard({ currentUser, onSubmit, errors: backendErrors }) {
   const navigate = useNavigate()
   const steps = STEPS.filter(s => !s.pedidos10Only || currentUser?.isPedidos10)
   const [currentStep, setCurrentStep] = useState(0)
   const [stepErrors, setStepErrors] = useState(null)
+  const [useChat,      setUseChat]      = useState(null)
+  const [useWhatsapp,  setUseWhatsapp]  = useState(null)
+  const [useCart,      setUseCart]      = useState(null)
+  const [usePagarMe,   setUsePagarMe]   = useState(null)
+  const [usePedidos10, setUsePedidos10] = useState(null)
+  // useChatbot → formik.values.useChatbot (Formik field)
 
   const totalSteps = steps.length
   const step = steps[currentStep]
@@ -150,7 +245,12 @@ function LicenseeWizard({ currentUser, onSubmit, errors: backendErrors }) {
   async function validateStep(values) {
     const schemas = {
       identity: identitySchema,
-      // STEPS 2-7 ADDED IN task-04 ↓
+      chat:      useChat                  ? chatSchema      : null,
+      chatbot:   values.useChatbot        ? chatbotSchema   : null,
+      whatsapp:  useWhatsapp              ? whatsappSchema  : null,
+      carrinho:  useCart                  ? cartSchema      : null,
+      pagarme:   usePagarMe               ? pagarmeSchema   : null,
+      pedidos10: usePedidos10             ? pedidos10Schema : null,
     }
     const schema = schemas[step.id]
     if (!schema) return true
@@ -191,7 +291,116 @@ function LicenseeWizard({ currentUser, onSubmit, errors: backendErrors }) {
                 handleBlur={formik.handleBlur}
               />
             )}
-            {/* STEPS 2-7 ADDED IN task-04 ↓ */}
+            {step.id === 'chat' && (
+              <>
+                <YesNoGate
+                  label='Deseja integrar com uma Plataforma de Chat?'
+                  isYes={useChat}
+                  onChange={setUseChat}
+                />
+                {useChat && (
+                  <ChatPanel
+                    values={formik.values}
+                    errors={formik.errors}
+                    touched={formik.touched}
+                    handleChange={formik.handleChange}
+                    handleBlur={formik.handleBlur}
+                  />
+                )}
+              </>
+            )}
+            {step.id === 'chatbot' && (
+              <>
+                <YesNoGate
+                  label='Deseja integrar com uma Plataforma de ChatBot?'
+                  isYes={formik.values.useChatbot || null}
+                  onChange={(val) => formik.setFieldValue('useChatbot', val)}
+                />
+                {formik.values.useChatbot && (
+                  <ChatbotPanel
+                    values={formik.values}
+                    errors={formik.errors}
+                    touched={formik.touched}
+                    handleChange={formik.handleChange}
+                    handleBlur={formik.handleBlur}
+                  />
+                )}
+              </>
+            )}
+            {step.id === 'whatsapp' && (
+              <>
+                <YesNoGate
+                  label='Deseja integrar com uma Plataforma de WhatsApp?'
+                  isYes={useWhatsapp}
+                  onChange={setUseWhatsapp}
+                />
+                {useWhatsapp && (
+                  <WhatsAppPanel
+                    values={formik.values}
+                    errors={formik.errors}
+                    touched={formik.touched}
+                    handleChange={formik.handleChange}
+                    handleBlur={formik.handleBlur}
+                  />
+                )}
+              </>
+            )}
+            {step.id === 'carrinho' && (
+              <>
+                <YesNoGate
+                  label='Deseja integrar com um Carrinho de Compras?'
+                  isYes={useCart}
+                  onChange={setUseCart}
+                />
+                {useCart && (
+                  <CartPanel
+                    values={formik.values}
+                    errors={formik.errors}
+                    touched={formik.touched}
+                    handleChange={formik.handleChange}
+                    handleBlur={formik.handleBlur}
+                  />
+                )}
+              </>
+            )}
+            {step.id === 'pagarme' && (
+              <>
+                <YesNoGate
+                  label='Deseja integrar com o PagarMe?'
+                  isYes={usePagarMe}
+                  onChange={setUsePagarMe}
+                />
+                {usePagarMe && (
+                  <PagarMePanel
+                    values={formik.values}
+                    errors={formik.errors}
+                    touched={formik.touched}
+                    handleChange={formik.handleChange}
+                    handleBlur={formik.handleBlur}
+                    wizardMode={true}
+                  />
+                )}
+              </>
+            )}
+            {step.id === 'pedidos10' && (
+              <>
+                <YesNoGate
+                  label='Deseja integrar com o Pedidos10?'
+                  isYes={usePedidos10}
+                  onChange={setUsePedidos10}
+                />
+                {usePedidos10 && (
+                  <Pedidos10Panel
+                    values={formik.values}
+                    errors={formik.errors}
+                    touched={formik.touched}
+                    handleChange={formik.handleChange}
+                    handleBlur={formik.handleBlur}
+                    wizardMode={true}
+                  />
+                )}
+              </>
+            )}
           </div>
 
           {(backendErrors || stepErrors) && (

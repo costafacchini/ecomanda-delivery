@@ -1,6 +1,6 @@
 import { signOrderWebhook } from '../../../../../services/licensee'
 
-function Pedidos10Panel({ values, errors, touched, handleChange, handleBlur }) {
+function Pedidos10Panel({ values, errors, touched, handleChange, handleBlur, wizardMode = false }) {
   return (
     <fieldset>
       <div className='row'>
@@ -35,19 +35,21 @@ function Pedidos10Panel({ values, errors, touched, handleChange, handleBlur }) {
         </div>
       </div>
 
-      <div className='row'>
-        <div className='form-group col-3'>
-          <button
-            onClick={async (event) => {
-              event.preventDefault()
-              await signOrderWebhook(values)
-            }}
-            className='btn btn-info'
-          >
-            Assinar Webhook P10
-          </button>
+      {!wizardMode && (
+        <div className='row'>
+          <div className='form-group col-3'>
+            <button
+              onClick={async (event) => {
+                event.preventDefault()
+                await signOrderWebhook(values)
+              }}
+              className='btn btn-info'
+            >
+              Assinar Webhook P10
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </fieldset>
   )
 }
