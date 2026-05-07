@@ -24,9 +24,6 @@ const licenseeComplete = Factory.define(() => ({
   whatsappToken: 'whatsapp-token',
   whatsappUrl: 'https://whatsapp.url',
   chatUrl: 'https://chat.url',
-  awsId: 'aws-id',
-  awsSecret: 'aws-secret',
-  bucketName: 'bocket-name',
 }))
 
 const licenseeIntegrationPagarMe = Factory.define(() => ({

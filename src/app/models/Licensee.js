@@ -108,33 +108,6 @@ const licenseeSchema = new Schema(
         'Identifier (Conta) do Chat: deve ser preenchido quando o plugin de chat for crisp ou chatwoot',
       ],
     },
-    awsId: {
-      type: String,
-      required: [
-        function () {
-          return this.whatsappDefault === 'utalk'
-        },
-        'Id da AWS: deve ser preenchido quando utilizar os plugins da uTalk',
-      ],
-    },
-    awsSecret: {
-      type: String,
-      required: [
-        function () {
-          return this.whatsappDefault === 'utalk'
-        },
-        'Senha da AWS: deve ser preenchido quando utilizar os plugins da uTalk',
-      ],
-    },
-    bucketName: {
-      type: String,
-      required: [
-        function () {
-          return this.whatsappDefault === 'utalk'
-        },
-        'Nome do Bucket da AWS: deve ser preenchido quando utilizar os plugins da uTalk',
-      ],
-    },
     cartDefault: {
       type: String,
       enum: ['alloy', 'go2go', 'go2go_v2', ''],
