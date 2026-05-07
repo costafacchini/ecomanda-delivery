@@ -264,7 +264,53 @@ function LicenseeWizard({ currentUser, onSubmit, errors: backendErrors }) {
   }
 
   return (
-    <Formik initialValues={licenseeInitialValues} validationSchema={Yup.object()} onSubmit={(values) => onSubmit(values)}>
+    <Formik initialValues={licenseeInitialValues} validationSchema={Yup.object()} onSubmit={(values) => {
+        const cleaned = { ...values }
+        if (!useChat) {
+          cleaned.chatDefault = ''
+          cleaned.chatUrl = ''
+          cleaned.chatIdentifier = ''
+          cleaned.chatKey = ''
+          cleaned.useSenderName = false
+        }
+        if (!cleaned.useChatbot) {
+          cleaned.chatbotDefault = ''
+          cleaned.chatbotUrl = ''
+          cleaned.chatbotAuthorizationToken = ''
+          cleaned.chatbotApiToken = ''
+          cleaned.messageOnResetChatbot = ''
+          cleaned.messageOnCloseChat = ''
+        }
+        if (!useWhatsapp) {
+          cleaned.whatsappDefault = ''
+          cleaned.whatsappToken = ''
+          cleaned.whatsappUrl = ''
+          cleaned.useFileIDYcloud = false
+        }
+        if (!useCart) {
+          cleaned.cartDefault = ''
+          cleaned.unidadeId = ''
+          cleaned.statusId = ''
+          cleaned.productFractionals = ''
+        }
+        if (!usePagarMe) {
+          cleaned.financial_player_fee = '0.00'
+          cleaned.holder_name = ''
+          cleaned.holder_kind = ''
+          cleaned.holder_document = ''
+          cleaned.bank = ''
+          cleaned.branch_number = ''
+          cleaned.branch_check_digit = ''
+          cleaned.account_number = ''
+          cleaned.account_check_digit = ''
+          cleaned.account_type = ''
+        }
+        if (!usePedidos10) {
+          cleaned.pedidos10_integrator = ''
+          cleaned.pedidos10_integration = ''
+        }
+        onSubmit(cleaned)
+      }}>
       {(formik) => (
         <form onSubmit={formik.handleSubmit}>
           <h3>Criar Licenciado</h3>
