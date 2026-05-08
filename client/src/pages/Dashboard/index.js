@@ -23,21 +23,27 @@ export default function Dashboard() {
 
   if (user?.isSuper) {
     return (
-      <div className="row g-3">
-        <div className="col-12 col-md-6"><SuperLicenseesCard /></div>
-        <div className="col-12 col-md-6"><SuperMessageVolumeCard /></div>
-        <div className="col-12 col-md-6"><SuperDeliveryRateCard /></div>
-        <div className="col-12 col-md-6"><SuperQueueCard /></div>
-        <div className="col-12"><SuperConversationsCard /></div>
-      </div>
+      <>
+        <h1>Dashboard</h1>
+        <div className="row g-3">
+          <div className="col-12 col-md-6"><SuperLicenseesCard /></div>
+          <div className="col-12 col-md-6"><SuperMessageVolumeCard /></div>
+          <div className="col-12 col-md-6"><SuperDeliveryRateCard /></div>
+          <div className="col-12 col-md-6"><SuperQueueCard /></div>
+          <div className="col-12"><SuperConversationsCard /></div>
+        </div>
+      </>
     )
   }
 
   return (
-    <div className="row g-3">
-      <div className="col-12 col-md-4"><LicenseeContactsCard /></div>
-      <div className="col-12 col-md-4"><LicenseeMessagesTodayCard /></div>
-      <div className="col-12 col-md-4"><LicenseeMessagesPerDayCard /></div>
-    </div>
+    <>
+      <h1>Dashboard</h1>
+      <div className="row g-3">
+        <div className="col-12 col-md-4"><LicenseeContactsCard /></div>
+        <div className="col-12 col-md-4"><LicenseeMessagesTodayCard /></div>
+        <div className="col-12 col-md-4"><LicenseeMessagesPerDayCard /></div>
+      </div>
+    </>
   )
 }
