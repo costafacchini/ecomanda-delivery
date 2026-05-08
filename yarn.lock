@@ -3693,10 +3693,10 @@ ajv@^6.14.0:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-amqplib@1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/amqplib/-/amqplib-1.0.6.tgz#439a8d7039b0a787fb9fb6834421f79fa2a6fb7e"
-  integrity sha512-HGls46nTCt5xInwow2gPcm9mX512CIA7VJWn/GS9A2ymt0PVcAzkd9GsK2tQuUTdKhTu87ZKGl5UMLdcBKNa4A==
+amqplib@1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/amqplib/-/amqplib-1.0.7.tgz#5753c9bdd10baffc9a5c1d91dee76ef00b27b03a"
+  integrity sha512-Z2hsSfPS0YuoRYsuVCkj/PRdh9gkdEWgyuVR0F2IVdhTwM/jdRX6aPpGnQ3vTXGhsUZO2uWVAF/+GfCazXYXIg==
   dependencies:
     buffer-more-ints "~1.0.0"
 
