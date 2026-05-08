@@ -10,79 +10,118 @@
 
 ## Objective
 
-Replace the empty `Dashboard` stub with role-aware stat widgets fetched via REST. Super users see platform-wide operational metrics with a clickable failed-messages resend flow; licensee-linked users see their own scoped data.
+Replace the empty `Dashboard` stub with role-aware stat widgets. Each card is self-contained — it fires its own independent REST request and has its own loading/error state. All responses are cached in Redis for 10 minutes to avoid slow repeated aggregations.
 
 ## User Kinds
 
-| Kind | Condition | Dashboard focus |
-|------|-----------|-----------------|
-| **Super** | `isSuper: true`, no `licensee` ref | Platform-wide: licensees, message volume, delivery rate, queue health, conversations |
-| **Licensee** | `isSuper: false`, has `licensee` ref | Scoped: their contacts + messages |
+| Kind | Condition | Cards |
+|------|-----------|-------|
+| **Super** | `isSuper: true`, no `licensee` ref | 5 cards — platform-wide metrics |
+| **Licensee** | `isSuper: false`, has `licensee` ref | 3 cards — scoped to their licensee |
 
 ## API Contract
 
-### `GET /resources/dashboard/stats`
+One endpoint per card. All under `/resources/dashboard/`. The controller resolves user kind from `req.userId` on every request and gates access accordingly (403 if wrong kind).
 
-**Super user response:**
+### Super endpoints (5)
+
+| Endpoint | Card | Cache key |
+|----------|------|-----------|
+| `GET /resources/dashboard/licensees` | Licenciados | `dashboard:super:licensees` |
+| `GET /resources/dashboard/message-volume` | Volume de Mensagens | `dashboard:super:message-volume` |
+| `GET /resources/dashboard/delivery-rate` | Taxa de Entrega | `dashboard:super:delivery-rate` |
+| `GET /resources/dashboard/queue` | Fila | `dashboard:super:queue` |
+| `GET /resources/dashboard/conversations` | Conversas | `dashboard:super:conversations` |
+
+### Licensee endpoints (3)
+
+| Endpoint | Card | Cache key |
+|----------|------|-----------|
+| `GET /resources/dashboard/contacts` | Contatos | `dashboard:licensee:{licenseeId}:contacts` |
+| `GET /resources/dashboard/messages-today` | Mensagens Hoje | `dashboard:licensee:{licenseeId}:messages-today` |
+| `GET /resources/dashboard/messages-per-day` | Mensagens por Dia | `dashboard:licensee:{licenseeId}:messages-per-day` |
+
+### Response shapes
+
+**`/licensees`**
+```json
+{ "total": 15, "active": 12, "by_kind": { "demo": 3, "free": 5, "paid": 7 } }
+```
+
+**`/message-volume`**
 ```json
 {
-  "kind": "super",
-  "licensees": {
-    "total": 15, "active": 12,
-    "by_kind": { "demo": 3, "free": 5, "paid": 7 }
-  },
-  "message_volume": {
-    "per_day": [{ "date": "2026-05-01", "count": 150 }],
-    "per_hour": [{ "hour": "2026-05-07T14", "count": 45 }],
-    "peak_throughput": 87,
-    "avg_transfer_rate": 12.5
-  },
-  "delivery_rate": {
-    "sent_today": 423, "failed_today": 5,
-    "sent_pct": 98.8, "failed_pct": 1.2
-  },
-  "queue": {
-    "pending_messages": 12,
-    "avg_time_in_queue_seconds": 4.2
-  },
-  "conversations": {
-    "started_today": 34, "ended_today": 28,
-    "avg_messages_per_conversation": 6.3,
-    "avg_duration_seconds": 182.4
-  }
+  "per_day": [{ "date": "2026-05-01", "count": 150 }],
+  "per_hour": [{ "hour": "2026-05-07T14", "count": 45 }],
+  "peak_throughput": 87,
+  "avg_transfer_rate": 12.5
 }
 ```
 
-**Licensee user response:**
+**`/delivery-rate`**
+```json
+{ "sent_today": 423, "failed_today": 5, "sent_pct": 98.8, "failed_pct": 1.2 }
+```
+
+**`/queue`**
+```json
+{ "pending_messages": 12, "avg_time_in_queue_seconds": 4.2 }
+```
+
+**`/conversations`**
 ```json
 {
-  "kind": "licensee",
-  "contacts": { "total": 89, "in_chatbot": 12 },
-  "messages": {
-    "sent_today": 45, "failed_today": 2,
-    "per_day": [{ "date": "2026-05-01", "count": 38 }]
-  }
+  "started_today": 34, "ended_today": 28,
+  "avg_messages_per_conversation": 6.3, "avg_duration_seconds": 182.4
 }
+```
+
+**`/contacts`**
+```json
+{ "total": 89, "in_chatbot": 12 }
+```
+
+**`/messages-today`**
+```json
+{ "sent_today": 45, "failed_today": 2, "sent_pct": 97.8, "failed_pct": 2.2 }
+```
+
+**`/messages-per-day`**
+```json
+{ "per_day": [{ "date": "2026-05-01", "count": 38 }] }
 ```
 
 ### `POST /resources/messages/:id/resend`
 
-Resets message state (`sended: false`, `error: null`, `sendedAt: null`) and re-adds to Bull queue (`send-message-to-messenger`).
-Returns 200 with updated message, 403 if licensee user attempts to resend another licensee's message, 404 if not found.
+Resets message state (`sended: false`, `error: null`, `sendedAt: null`) and re-adds to Bull queue (`send-message-to-messenger`). Returns 200 with updated message, 403 for cross-licensee attempts, 404 if not found.
+
+## Caching
+
+- **Store**: Redis (`redisConnection` from `src/config/redis.js`)
+- **TTL**: 600 seconds (10 minutes)
+- **Pattern** (used in every dashboard action):
+  ```js
+  const cached = await redisConnection.get(cacheKey)
+  if (cached) return res.status(200).json(JSON.parse(cached))
+  // compute...
+  await redisConnection.setex(cacheKey, 600, JSON.stringify(data))
+  return res.status(200).json(data)
+  ```
+- Super keys are **global** (same data for all super users)
+- Licensee keys are **scoped** by `licenseeId`
 
 ## Scope
 
 ### In Scope
-- Room schema: `closedAt: Date` field + update 5 close sites across 3 plugin files
-- `GET /resources/dashboard/stats` — single endpoint, role-branched
-- `POST /resources/messages/:id/resend` — resets and re-queues failed message
-- Super widgets: licensees, message volume (day/hour/peak/rate), delivery rate (counts+%), queue (pending+avgTime), conversations (started/ended/avgMsgs/avgDuration)
-- Licensee widgets: contacts, messages today, messages per day
-- Clickable failed-messages card → Bootstrap modal with per-row resend buttons
+- Room schema: `closedAt: Date` + update 5 close sites
+- 8 dashboard endpoints + 1 resend endpoint, all in `DashboardController`
+- Redis caching (10 min TTL) on all dashboard endpoints
+- Frontend: 5 or 3 independent card components (based on user kind), each with own fetch + loading + error state
+- Clickable failed-count → Bootstrap modal with resend buttons
 
 ### Out of Scope
-- Socket.IO / real-time push — REST only (decided 2026-05-07)
-- Queue size, Consumer delay — dropped (decided 2026-05-07)
+- Socket.IO / real-time push — REST only
+- Queue size, Consumer delay — dropped
 - Tier 2 / Tier 3 widgets (carts, orders, revenue) — follow-on
 - Charts library — plain Bootstrap cards + tables only
 
@@ -91,16 +130,16 @@ Returns 200 with updated message, 403 if licensee user attempts to resend anothe
 | Phase | Name | Tasks | Dependencies | Description |
 |-------|------|-------|--------------|-------------|
 | 1 | Schema | task-01 | None | Add `closedAt` to Room + update close logic in plugins |
-| 2 | Backend | task-02 | Phase 1 | DashboardController + resend endpoint + specs |
-| 3 | Frontend | task-03 | Phase 2 | Dashboard page + resend modal |
+| 2 | Backend | task-02 | Phase 1 | 8 dashboard endpoints + resend endpoint + Redis caching + specs |
+| 3 | Frontend | task-03 | Phase 2 | Independent card components + resend modal |
 
 ## Task Summary
 
 | Task Path | Title | Phase | Status | Depends On |
 |-----------|-------|-------|--------|------------|
 | phase-1/task-01-room-schema | Room schema — closedAt field | 1 | not-started | — |
-| phase-2/task-02-backend | Backend — DashboardController + resend endpoint | 2 | not-started | phase-1/task-01-room-schema |
-| phase-3/task-03-frontend | Frontend dashboard widgets + resend modal | 3 | not-started | phase-2/task-02-backend |
+| phase-2/task-02-backend | Backend — dashboard endpoints + resend + caching | 2 | not-started | phase-1/task-01-room-schema |
+| phase-3/task-03-frontend | Frontend — independent card components + resend modal | 3 | not-started | phase-2/task-02-backend |
 
 ## Branch Convention
 
@@ -121,29 +160,29 @@ Base branch: `main`
 | `src/app/plugins/chats/Rocketchat.js` | 2 close sites (Phase 1) |
 | `src/app/plugins/chats/Chatwoot.js` | 2 close sites (Phase 1) |
 | `src/app/plugins/chatbots/Landbot.js` | 1 close site (Phase 1) |
-| `src/app/controllers/DashboardController.js` | New controller (Phase 2) |
+| `src/app/controllers/DashboardController.js` | 8 dashboard actions + resend (Phase 2) |
 | `src/app/controllers/MessagesController.js` | Add resend action (Phase 2) |
-| `src/app/routes/resources-routes.js` | Register both routes (Phase 2) |
-| `client/src/pages/Dashboard/index.js` | Implement widgets + modal (Phase 3) |
-| `client/src/services/dashboard.js` | New service (Phase 3) |
-| `client/src/services/message.js` | Add resendMessage (Phase 3) |
+| `src/app/routes/resources-routes.js` | Register all 9 routes (Phase 2) |
+| `src/config/redis.js` | `redisConnection` — used for caching (read-only ref) |
+| `client/src/pages/Dashboard/index.js` | Renders card components (Phase 3) |
+| `client/src/services/dashboard.js` | 8 service functions (Phase 3) |
+| `client/src/services/message.js` | Add `resendMessage` (Phase 3) |
 
 ## Risks
 
-- JWT payload only contains `user._id` — one extra DB read per stats call.
-- `avg_transfer_rate` = `total messages / 24` — messages-per-hour average, not byte rate.
-- `ended_today` uses `closedAt` (accurate after Phase 1); existing rooms closed before Phase 1 ships will not have `closedAt` set.
-- `avg_time_in_queue_seconds` excludes messages where `sendedAt` was never set (permanently failed).
-- Resend resets `sended`, `error`, and `sendedAt` — if the messenger plugin is offline the message will fail again silently; acceptable for now.
+- One extra DB read per request to resolve user kind — acceptable; could be eliminated later by encoding `isSuper`/`licenseeId` in the JWT.
+- Cache invalidation: stats are stale for up to 10 minutes after data changes — acceptable for a dashboard.
+- Rooms closed before Phase 1 ships will have no `closedAt` — `ended_today` and `avg_duration_seconds` will undercount until backfill or naturally over time.
+- `avg_time_in_queue_seconds` excludes messages where `sendedAt` was never set.
+- Resend resets message state; if the messenger is offline it will fail again silently.
 
 ## Success Criteria
 
-- [ ] Super user sees all 5 widget sections with real data
-- [ ] Licensee user sees 3 scoped widget cards
-- [ ] Failed stat in Delivery Rate card opens modal with resend buttons
-- [ ] Successful resend removes the row and decrements the failed count in the card
-- [ ] `avg_duration_seconds` uses `closedAt`, not `updatedAt`
-- [ ] Resend returns 403 for cross-licensee attempts
+- [ ] 8 dashboard endpoints return correct data for the right user kind; 403 for wrong kind
+- [ ] All responses are served from Redis cache on repeat requests within 10 minutes
+- [ ] Each frontend card loads independently — slow cards don't block fast ones
+- [ ] Failed stat opens modal; resend removes row and decrements count
+- [ ] `avg_duration_seconds` uses `closedAt`
 - [ ] All existing tests pass (`npx jest`)
 - [ ] `npx eslint .` reports no new errors
 
