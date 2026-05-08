@@ -24,7 +24,6 @@ Git-native Markdown plans for multi-step work.
 |---|------|--------|--------|-------------|
 | 1 | [JS → TypeScript](./js-to-ts/overview.md) | `js-to-ts/` | not-started | Incremental migration of all source files (backend + client) to TypeScript using `allowJs: true` throughout |
 | 2 | [Remove PDV](./remove-pdv/overview.md) | `remove-pdv/` | not-started | Delete cart, payment (PagarMe), and order integration (Pedidos10) domain — strip PDV fields from Licensee and Contact |
-| 3 | [Dashboard Widgets](./dashboard-widgets/overview.md) | `dashboard-widgets/` | not-started | Add four REST-fed stat widgets to the empty Dashboard page (active licensees, plan breakdown, messages today, messages per day) |
 
 ---
 
@@ -36,6 +35,7 @@ Git-native Markdown plans for multi-step work.
 | 2 | [Baileys WhatsApp Plugin](./baileys-plugin/overview.md) | `baileys-plugin/` | 2026-05-05 | Add Baileys-based WhatsApp messenger plugin with session persistence (WhatsappSession model), following the Dialog plugin architecture |
 | 3 | [Licensee Form Wizard](./licensee-form-wizard/overview.md) | `licensee-form-wizard/` | 2026-05-07 | Split the licensee form into Bootstrap 5 Nav Tabs with panels shown/hidden based on question checkboxes; removed per-licensee AWS fields |
 | 4 | [Licensee Create Wizard](./licensee-wizard/overview.md) | `licensee-wizard/` | 2026-05-07 | Multi-step wizard for New Licensee (7 steps, Yes/No gates); removed question checkboxes from Edit form |
+| 5 | [Dashboard Widgets](./dashboard-widgets/overview.md) | `dashboard-widgets/` | 2026-05-07 | Role-aware dashboard: 5 super cards + 3 licensee cards, per-card REST endpoints, Redis caching, resend modal |
 
 ---
 
