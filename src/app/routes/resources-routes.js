@@ -6,7 +6,9 @@ import { ContactsController } from '../controllers/ContactsController.js'
 import { TriggersController } from '../controllers/TriggersController.js'
 import { MessagesController } from '../controllers/MessagesController.js'
 import { TemplatesController } from '../controllers/TemplatesController.js'
+import { DashboardController } from '../controllers/DashboardController.js'
 import { queueServer } from '../../config/queue.js'
+import { redisConnection } from '../../config/redis.js'
 import { LicenseesQuery } from '../queries/LicenseesQuery.js'
 import { ContactsQuery } from '../queries/ContactsQuery.js'
 import { TriggersQuery } from '../queries/TriggersQuery.js'
@@ -38,6 +40,7 @@ const {
   triggerRepository,
   templateRepository,
   messageRepository,
+  roomRepository,
   createMessengerPlugin,
   createPagarMe,
   createPedidos10,
@@ -79,6 +82,17 @@ const triggersController = new TriggersController({
 })
 const messagesController = new MessagesController({
   createMessagesQuery: () => new MessagesQuery({ messageRepository }),
+  userRepository,
+  messageRepository,
+  queueServer,
+})
+const dashboardController = new DashboardController({
+  userRepository,
+  licenseeRepository,
+  contactRepository,
+  messageRepository,
+  roomRepository,
+  redisConnection,
 })
 const templatesController = new TemplatesController({
   templateRepository,
@@ -133,5 +147,15 @@ router.post('/licensees/:id/sign-order-webhook', licenseesController.signOrderWe
 router.post('/licensees/:id/integration/pagarme', licenseesController.sendToPagarMe)
 
 router.get('/messages', messagesController.index)
+router.post('/messages/:id/resend', messagesController.resend)
+
+router.get('/dashboard/licensees', dashboardController.licensees)
+router.get('/dashboard/message-volume', dashboardController.messageVolume)
+router.get('/dashboard/delivery-rate', dashboardController.deliveryRate)
+router.get('/dashboard/queue', dashboardController.queue)
+router.get('/dashboard/conversations', dashboardController.conversations)
+router.get('/dashboard/contacts', dashboardController.contacts)
+router.get('/dashboard/messages-today', dashboardController.messagesToday)
+router.get('/dashboard/messages-per-day', dashboardController.messagesPerDay)
 
 export default router

@@ -334,6 +334,7 @@ class Chatwoot extends ChatsBase {
 
     const room = await this.roomRepository.findFirst({ roomId: message.room.roomId })
     room.closed = true
+    room.closedAt = new Date()
     await this.roomRepository.save(room)
 
     if (licensee.messageOnCloseChat) {
@@ -467,6 +468,7 @@ class Chatwoot extends ChatsBase {
       if (response.data.error === 'Resource could not be found') {
         const roomSaved = await this.roomRepository.findFirst({ roomId: room.roomId })
         roomSaved.closed = true
+        roomSaved.closedAt = new Date()
         await this.roomRepository.save(roomSaved)
 
         await this.contactRepository.update(contact._id, {

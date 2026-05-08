@@ -10,6 +10,7 @@ const closeRoom = async (contact, roomRepository) => {
   const room = await roomRepository.findFirst({ contact: contact._id, closed: false })
   if (room) {
     room.closed = true
+    room.closedAt = new Date()
     await roomRepository.save(room)
   }
 }

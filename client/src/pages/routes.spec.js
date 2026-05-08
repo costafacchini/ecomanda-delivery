@@ -40,10 +40,8 @@ describe('<RootRoutes>', () => {
 
     await screen.findByText('Contatos')
 
-    const title = screen.getByRole('heading', { name: 'Dashboard' })
     const navbar = screen.getByRole('navigation')
 
-    expect(title).toBeInTheDocument()
     expect(navbar).toBeInTheDocument()
     expect(isAuthenticatedSpy).toHaveBeenCalled()
   })

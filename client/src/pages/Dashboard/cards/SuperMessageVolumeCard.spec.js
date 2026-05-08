@@ -1,0 +1,63 @@
+import { render, screen } from '@testing-library/react'
+import SuperMessageVolumeCard from './SuperMessageVolumeCard'
+import { getDashboardMessageVolume } from '../../../services/dashboard'
+
+vi.mock('../../../services/dashboard')
+
+describe('<SuperMessageVolumeCard />', () => {
+  it('shows loading state while the request is in flight', () => {
+    getDashboardMessageVolume.mockReturnValue(new Promise(() => {}))
+
+    render(<SuperMessageVolumeCard />)
+
+    expect(screen.getByText('Carregando...')).toBeInTheDocument()
+  })
+
+  it('shows an error message when the request fails', async () => {
+    getDashboardMessageVolume.mockRejectedValue(new Error('fail'))
+
+    render(<SuperMessageVolumeCard />)
+
+    expect(await screen.findByText('Erro ao carregar dados.')).toBeInTheDocument()
+  })
+
+  it('renders throughput metrics and per-day/per-hour rows on success', async () => {
+    getDashboardMessageVolume.mockResolvedValue({
+      data: {
+        peak_throughput: 120,
+        avg_transfer_rate: 45,
+        per_day: [
+          { date: '2026-05-01', count: 200 },
+          { date: '2026-05-02', count: 180 },
+        ],
+        per_hour: [
+          { hour: 9, count: 30 },
+          { hour: 10, count: 50 },
+        ],
+      },
+    })
+
+    render(<SuperMessageVolumeCard />)
+
+    expect(await screen.findByText('120')).toBeInTheDocument()
+    expect(screen.getByText('45')).toBeInTheDocument()
+    expect(screen.getByText('2026-05-01')).toBeInTheDocument()
+    expect(screen.getByText('2026-05-02')).toBeInTheDocument()
+    expect(screen.getByText('9h')).toBeInTheDocument()
+    expect(screen.getByText('10h')).toBeInTheDocument()
+    expect(screen.getByText('Volume de Mensagens')).toBeInTheDocument()
+  })
+
+  it('renders empty tables when per_day and per_hour are absent', async () => {
+    getDashboardMessageVolume.mockResolvedValue({
+      data: { peak_throughput: 0, avg_transfer_rate: 0 },
+    })
+
+    render(<SuperMessageVolumeCard />)
+
+    await screen.findByText('Volume de Mensagens')
+
+    expect(screen.getByText('Por Dia')).toBeInTheDocument()
+    expect(screen.getByText('Por Hora')).toBeInTheDocument()
+  })
+})

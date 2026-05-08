@@ -1,8 +1,12 @@
 class MessagesController {
-  constructor({ createMessagesQuery } = {}) {
+  constructor({ createMessagesQuery, userRepository, messageRepository, queueServer } = {}) {
     this.createMessagesQuery = createMessagesQuery
+    this.userRepository = userRepository
+    this.messageRepository = messageRepository
+    this.queueServer = queueServer
 
     this.index = this.index.bind(this)
+    this.resend = this.resend.bind(this)
   }
 
   async index(req, res) {
@@ -41,6 +45,41 @@ class MessagesController {
     const messages = await messagesQuery.all()
 
     res.status(200).send(messages)
+  }
+
+  async resend(req, res) {
+    try {
+      const [user, message] = await Promise.all([
+        this.userRepository.findFirst({ _id: req.userId }),
+        this.messageRepository.findFirst({ _id: req.params.id }),
+      ])
+
+      if (!message) return res.status(404).json({ errors: { message: 'Message not found' } })
+
+      if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
+
+      if (!user.isSuper) {
+        if (message.licensee.toString() !== user.licensee.toString()) {
+          return res.status(403).json({ errors: { message: 'Forbidden' } })
+        }
+      }
+
+      if (message.sended) {
+        return res.status(422).json({ errors: { message: 'Message already sended' } })
+      }
+
+      message.sended = false
+      message.error = null
+      message.sendedAt = null
+
+      await this.messageRepository.save(message)
+
+      await this.queueServer.addJob('send-message-to-messenger', { messageId: message._id })
+
+      return res.status(200).json(message)
+    } catch (err) {
+      return res.status(500).json({ errors: { message: err.toString() } })
+    }
   }
 }
 
