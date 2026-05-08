@@ -170,6 +170,7 @@ class Rocketchat extends ChatsBase {
         : JSON.stringify(response.data)
       if (messageToSend.error.includes('room-closed')) {
         room.closed = true
+        room.closedAt = new Date()
         await this.roomRepository.save(room)
         messageToSend.room = null
       }
@@ -195,6 +196,7 @@ class Rocketchat extends ChatsBase {
     const messages = []
 
     room.closed = true
+    room.closedAt = new Date()
     await this.roomRepository.save(room)
 
     if (licensee.messageOnCloseChat) {

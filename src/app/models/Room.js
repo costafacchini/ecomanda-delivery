@@ -9,6 +9,7 @@ const roomSchema = new Schema(
     roomId: String,
     token: String,
     closed: { type: Boolean, default: false },
+    closedAt: { type: Date },
     contact: {
       type: ObjectId,
       ref: 'Contact',
