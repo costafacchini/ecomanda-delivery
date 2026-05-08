@@ -197,22 +197,45 @@ export default function Dashboard() {
 
 ### Step 1: Create dashboard service
 
-`client/src/services/dashboard.js` — 8 functions, one per endpoint:
+`client/src/services/dashboard.js` — 8 functions, one per endpoint. Time-scoped functions accept an optional `{ startDate, endDate }` object; non-date-scoped ones (`licensees`, `contacts`) do not.
+
 ```js
 import { getToken } from './auth'
 import api from './api'
+import parseUrl from './objectToQueryParameter'
 
 const headers = () => ({ 'x-access-token': getToken() })
 
-export function getDashboardLicensees()    { return api().get('resources/dashboard/licensees',       { headers: headers() }) }
-export function getDashboardMessageVolume(){ return api().get('resources/dashboard/message-volume',  { headers: headers() }) }
-export function getDashboardDeliveryRate() { return api().get('resources/dashboard/delivery-rate',   { headers: headers() }) }
-export function getDashboardQueue()        { return api().get('resources/dashboard/queue',            { headers: headers() }) }
-export function getDashboardConversations(){ return api().get('resources/dashboard/conversations',    { headers: headers() }) }
-export function getDashboardContacts()     { return api().get('resources/dashboard/contacts',         { headers: headers() }) }
-export function getDashboardMessagesToday(){ return api().get('resources/dashboard/messages-today',   { headers: headers() }) }
-export function getDashboardMessagesPerDay(){ return api().get('resources/dashboard/messages-per-day',{ headers: headers() }) }
+// Point-in-time — no date params
+export function getDashboardLicensees() {
+  return api().get('resources/dashboard/licensees', { headers: headers() })
+}
+export function getDashboardContacts() {
+  return api().get('resources/dashboard/contacts', { headers: headers() })
+}
+
+// Time-scoped — accept optional { startDate, endDate }
+export function getDashboardMessageVolume(params = {}) {
+  return api().get(parseUrl('resources/dashboard/message-volume', params), { headers: headers() })
+}
+export function getDashboardDeliveryRate(params = {}) {
+  return api().get(parseUrl('resources/dashboard/delivery-rate', params), { headers: headers() })
+}
+export function getDashboardQueue(params = {}) {
+  return api().get(parseUrl('resources/dashboard/queue', params), { headers: headers() })
+}
+export function getDashboardConversations(params = {}) {
+  return api().get(parseUrl('resources/dashboard/conversations', params), { headers: headers() })
+}
+export function getDashboardMessagesToday(params = {}) {
+  return api().get(parseUrl('resources/dashboard/messages-today', params), { headers: headers() })
+}
+export function getDashboardMessagesPerDay(params = {}) {
+  return api().get(parseUrl('resources/dashboard/messages-per-day', params), { headers: headers() })
+}
 ```
+
+Each time-scoped card calls its function with no args initially (backend defaults to today). When a calendar component is added later, pass `{ startDate: isoString, endDate: isoString }` as the argument — no other changes required.
 
 ### Step 2: Add resendMessage to message service
 

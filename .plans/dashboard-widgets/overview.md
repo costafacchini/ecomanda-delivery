@@ -25,21 +25,23 @@ One endpoint per card. All under `/resources/dashboard/`. The controller resolve
 
 ### Super endpoints (5)
 
-| Endpoint | Card | Cache key |
-|----------|------|-----------|
-| `GET /resources/dashboard/licensees` | Licenciados | `dashboard:super:licensees` |
-| `GET /resources/dashboard/message-volume` | Volume de Mensagens | `dashboard:super:message-volume` |
-| `GET /resources/dashboard/delivery-rate` | Taxa de Entrega | `dashboard:super:delivery-rate` |
-| `GET /resources/dashboard/queue` | Fila | `dashboard:super:queue` |
-| `GET /resources/dashboard/conversations` | Conversas | `dashboard:super:conversations` |
+| Endpoint | Card | Date params | Cache key |
+|----------|------|-------------|-----------|
+| `GET /resources/dashboard/licensees` | Licenciados | — | `dashboard:super:licensees` |
+| `GET /resources/dashboard/message-volume?startDate=&endDate=` | Volume de Mensagens | optional | `dashboard:super:message-volume:{start}:{end}` |
+| `GET /resources/dashboard/delivery-rate?startDate=&endDate=` | Taxa de Entrega | optional | `dashboard:super:delivery-rate:{start}:{end}` |
+| `GET /resources/dashboard/queue?startDate=&endDate=` | Fila | optional | `dashboard:super:queue:{start}:{end}` |
+| `GET /resources/dashboard/conversations?startDate=&endDate=` | Conversas | optional | `dashboard:super:conversations:{start}:{end}` |
 
 ### Licensee endpoints (3)
 
-| Endpoint | Card | Cache key |
-|----------|------|-----------|
-| `GET /resources/dashboard/contacts` | Contatos | `dashboard:licensee:{licenseeId}:contacts` |
-| `GET /resources/dashboard/messages-today` | Mensagens Hoje | `dashboard:licensee:{licenseeId}:messages-today` |
-| `GET /resources/dashboard/messages-per-day` | Mensagens por Dia | `dashboard:licensee:{licenseeId}:messages-per-day` |
+| Endpoint | Card | Date params | Cache key |
+|----------|------|-------------|-----------|
+| `GET /resources/dashboard/contacts` | Contatos | — | `dashboard:licensee:{id}:contacts` |
+| `GET /resources/dashboard/messages-today?startDate=&endDate=` | Mensagens Hoje | optional | `dashboard:licensee:{id}:messages-today:{start}:{end}` |
+| `GET /resources/dashboard/messages-per-day?startDate=&endDate=` | Mensagens por Dia | optional | `dashboard:licensee:{id}:messages-per-day:{start}:{end}` |
+
+> When `startDate`/`endDate` are absent, the backend defaults to today's range (start of day → end of day). This makes adding a calendar component a frontend-only change — just pass `{ startDate, endDate }` to the service function.
 
 ### Response shapes
 

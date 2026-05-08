@@ -18,6 +18,24 @@ JWT payload: `{ id: user._id }`. Middleware sets `req.userId`. Each action fetch
 - Super-only endpoints return `403` if `!user.isSuper`
 - Licensee-only endpoints return `403` if `user.isSuper`
 
+### Date range params
+All time-scoped endpoints accept optional query params `startDate` and `endDate` (ISO 8601 strings). When absent, default to today's range.
+
+**Helper: `_parseDateRange(query)`** — used in every time-scoped action:
+```js
+_parseDateRange(query) {
+  const now = new Date()
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000)
+  return {
+    startDate: query.startDate ? new Date(query.startDate) : startOfDay,
+    endDate:   query.endDate   ? new Date(query.endDate)   : endOfDay,
+  }
+}
+```
+
+Cards **not** date-scoped (no params): `licensees`, `contacts` — these are point-in-time counts.
+
 ### Caching
 `redisConnection` is exported from `src/config/redis.js` — import it directly into `DashboardController`. Pattern for every action:
 ```js
@@ -28,17 +46,17 @@ await redisConnection.setex(cacheKey, 600, JSON.stringify(data))
 return res.status(200).json(data)
 ```
 
-Cache keys:
-- Super (global): `dashboard:super:licensees`, `dashboard:super:message-volume`, `dashboard:super:delivery-rate`, `dashboard:super:queue`, `dashboard:super:conversations`
-- Licensee (per licensee): `dashboard:licensee:{licenseeId}:contacts`, `dashboard:licensee:{licenseeId}:messages-today`, `dashboard:licensee:{licenseeId}:messages-per-day`
+Cache keys — time-scoped endpoints **include the date range** so different calendar selections get independent cache entries:
+- `dashboard:super:licensees` (no dates)
+- `dashboard:super:message-volume:{startDate}:{endDate}`
+- `dashboard:super:delivery-rate:{startDate}:{endDate}`
+- `dashboard:super:queue:{startDate}:{endDate}`
+- `dashboard:super:conversations:{startDate}:{endDate}`
+- `dashboard:licensee:{licenseeId}:contacts` (no dates)
+- `dashboard:licensee:{licenseeId}:messages-today:{startDate}:{endDate}`
+- `dashboard:licensee:{licenseeId}:messages-per-day:{startDate}:{endDate}`
 
-### Date helpers (reused across actions)
-```js
-const now = new Date()
-const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000)
-const sevenDaysAgo = new Date(startOfDay.getTime() - 6 * 24 * 60 * 60 * 1000)
-```
+Where `{startDate}` and `{endDate}` are the ISO strings as received (or the default values formatted as ISO).
 
 ### Aggregation pipelines
 
@@ -163,59 +181,66 @@ async _cached(key, fn) {
 }
 ```
 
-**Super actions (5)** — each follows: fetch user → check `isSuper` → check cache → compute → store cache → return
+**Super actions (5)** — each follows: fetch user → check `isSuper` → parse date range → check cache → compute → store cache → return
 
 `licensees(req, res)`:
 - Gate: `!user.isSuper` → 403
+- **No date params** — point-in-time count
 - Cache key: `dashboard:super:licensees`
 - Queries (Promise.all): countDocuments for total, active, demo, free, paid
 - Returns: `{ total, active, by_kind: { demo, free, paid } }`
 
 `messageVolume(req, res)`:
 - Gate: `!user.isSuper` → 403
-- Cache key: `dashboard:super:message-volume`
-- Queries: per-day pipeline, per-hour pipeline
-- Computes: `peak_throughput = Math.max(...perHour.map(h => h.count))` (0 if empty), `avg_transfer_rate = parseFloat(((sentToday + failedToday) / 24).toFixed(2))`
-- Note: needs `sentToday` + `failedToday` counts for avg_transfer_rate — include them in the Promise.all
+- Parses `startDate`/`endDate` from `req.query` via `_parseDateRange`
+- Cache key: `dashboard:super:message-volume:${startDate.toISOString()}:${endDate.toISOString()}`
+- Queries: per-day pipeline, per-hour pipeline, sentCount + failedCount (for avg_transfer_rate)
+- Computes: `peak_throughput = Math.max(...perHour.map(h => h.count))` (0 if empty), `avg_transfer_rate = parseFloat(((sent + failed) / hourSpan).toFixed(2))` where `hourSpan = (endDate - startDate) / 3_600_000`
 - Returns: `{ per_day, per_hour, peak_throughput, avg_transfer_rate }`
 
 `deliveryRate(req, res)`:
 - Gate: `!user.isSuper` → 403
-- Cache key: `dashboard:super:delivery-rate`
-- Queries: countDocuments sended:true today, sended:false today
+- Parses date range
+- Cache key: `dashboard:super:delivery-rate:${startDate.toISOString()}:${endDate.toISOString()}`
+- Queries: countDocuments sended:true in range, sended:false in range
 - Computes percentages (0 if total is 0)
-- Returns: `{ sent_today, failed_today, sent_pct, failed_pct }`
+- Returns: `{ sent_today: sentCount, failed_today: failedCount, sent_pct, failed_pct }`
 
 `queue(req, res)`:
 - Gate: `!user.isSuper` → 403
-- Cache key: `dashboard:super:queue`
-- Queries: countDocuments `{ sended: false, destination: 'to-messenger' }`, avg-time-in-queue pipeline
+- Parses date range
+- Cache key: `dashboard:super:queue:${startDate.toISOString()}:${endDate.toISOString()}`
+- Queries: countDocuments `{ sended: false, destination: 'to-messenger' }` (current, no date filter), avg-time-in-queue pipeline scoped to date range
 - Returns: `{ pending_messages, avg_time_in_queue_seconds }`
 
 `conversations(req, res)`:
 - Gate: `!user.isSuper` → 403
-- Cache key: `dashboard:super:conversations`
-- Queries: Room.countDocuments started today, Room.countDocuments `{ closedAt: { $gte, $lt } }`, avg-msg-per-conv pipeline, avg-duration pipeline
-- Returns: `{ started_today, ended_today, avg_messages_per_conversation, avg_duration_seconds }`
+- Parses date range
+- Cache key: `dashboard:super:conversations:${startDate.toISOString()}:${endDate.toISOString()}`
+- Queries: Room.countDocuments started in range, Room.countDocuments `{ closedAt: { $gte, $lt } }`, avg-msg-per-conv pipeline scoped to range, avg-duration pipeline scoped to range
+- Returns: `{ started_today: startedCount, ended_today: endedCount, avg_messages_per_conversation, avg_duration_seconds }`
 
 **Licensee actions (3)** — cache key scoped by `user.licensee`
 
 `contacts(req, res)`:
 - Gate: `user.isSuper` → 403
+- **No date params** — point-in-time count
 - Cache key: `dashboard:licensee:${user.licensee}:contacts`
 - Queries: countDocuments total, countDocuments talkingWithChatBot:true
 - Returns: `{ total, in_chatbot }`
 
 `messagesToday(req, res)`:
 - Gate: `user.isSuper` → 403
-- Cache key: `dashboard:licensee:${user.licensee}:messages-today`
-- Queries: countDocuments sended:true today, sended:false today (both filtered by licensee)
-- Returns: `{ sent_today, failed_today, sent_pct, failed_pct }`
+- Parses date range
+- Cache key: `dashboard:licensee:${user.licensee}:messages-today:${startDate.toISOString()}:${endDate.toISOString()}`
+- Queries: countDocuments sended:true/false in range, both filtered by licensee
+- Returns: `{ sent_today: sentCount, failed_today: failedCount, sent_pct, failed_pct }`
 
 `messagesPerDay(req, res)`:
 - Gate: `user.isSuper` → 403
-- Cache key: `dashboard:licensee:${user.licensee}:messages-per-day`
-- Queries: per-day pipeline with `licensee: user.licensee` filter
+- Parses date range
+- Cache key: `dashboard:licensee:${user.licensee}:messages-per-day:${startDate.toISOString()}:${endDate.toISOString()}`
+- Queries: per-day pipeline with `licensee: user.licensee` filter and the parsed date range
 - Returns: `{ per_day }`
 
 ### Step 3: Update MessagesController
