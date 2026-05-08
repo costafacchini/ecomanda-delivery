@@ -10,4 +10,9 @@ function getMessages(queryParams) {
   return api().get(url, { headers })
 }
 
-export { getMessages }
+function resendMessage(id) {
+  const resendHeaders = { 'x-access-token': getToken() }
+  return api().post(`resources/messages/${id}/resend`, { headers: resendHeaders })
+}
+
+export { getMessages, resendMessage }
