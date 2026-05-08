@@ -90,11 +90,11 @@ describe('MessagesController resend', () => {
   const LICENSEE_ID = 'licensee-id'
   const OTHER_LICENSEE_ID = 'other-licensee-id'
 
-  function buildMessage(licenseeId = LICENSEE_ID) {
+  function buildMessage(licenseeId = LICENSEE_ID, { sended = false } = {}) {
     return {
       _id: 'msg-id',
       licensee: { toString: () => licenseeId },
-      sended: true,
+      sended,
       error: 'some error',
       sendedAt: new Date(),
     }
@@ -141,6 +141,20 @@ describe('MessagesController resend', () => {
 
     expect(queueServer.addJob).not.toHaveBeenCalled()
     expect(res.status).toHaveBeenCalledWith(403)
+  })
+
+  it('returns 422 when message is already sended', async () => {
+    const superUser = { _id: 'user-id', isSuper: true }
+    const message = buildMessage(LICENSEE_ID, { sended: true })
+    const { controller, queueServer } = buildController({ user: superUser, message })
+    const req = { userId: 'user-id', params: { id: 'msg-id' } }
+    const res = buildResponse()
+
+    await controller.resend(req, res)
+
+    expect(queueServer.addJob).not.toHaveBeenCalled()
+    expect(res.status).toHaveBeenCalledWith(422)
+    expect(res.json).toHaveBeenCalledWith({ errors: { message: 'Message already sended' } })
   })
 
   it('returns 404 when message not found', async () => {

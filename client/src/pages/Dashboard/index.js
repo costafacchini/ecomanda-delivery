@@ -24,7 +24,6 @@ export default function Dashboard() {
   if (user?.isSuper) {
     return (
       <>
-        <h1>Dashboard</h1>
         <div className="row g-3">
           <div className="col-12 col-md-6"><SuperLicenseesCard /></div>
           <div className="col-12 col-md-6"><SuperMessageVolumeCard /></div>
@@ -38,7 +37,6 @@ export default function Dashboard() {
 
   return (
     <>
-      <h1>Dashboard</h1>
       <div className="row g-3">
         <div className="col-12 col-md-4"><LicenseeContactsCard /></div>
         <div className="col-12 col-md-4"><LicenseeMessagesTodayCard /></div>

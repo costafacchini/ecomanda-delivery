@@ -64,6 +64,10 @@ class MessagesController {
         }
       }
 
+      if (message.sended) {
+        return res.status(422).json({ errors: { message: 'Message already sended' } })
+      }
+
       message.sended = false
       message.error = null
       message.sendedAt = null
