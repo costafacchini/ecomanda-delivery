@@ -2,12 +2,13 @@ import { MessagesController } from './MessagesController.js'
 
 function buildResponse() {
   return {
+    json: jest.fn(),
     send: jest.fn(),
     status: jest.fn().mockReturnThis(),
   }
 }
 
-function buildController() {
+function buildController({ user = null, message = null } = {}) {
   const messagesQueryInstance = {
     page: jest.fn(),
     limit: jest.fn(),
@@ -21,9 +22,20 @@ function buildController() {
   }
   const createMessagesQuery = jest.fn().mockReturnValue(messagesQueryInstance)
 
-  const controller = new MessagesController({ createMessagesQuery })
+  const userRepository = {
+    findFirst: jest.fn().mockResolvedValue(user),
+  }
+  const messageRepository = {
+    findFirst: jest.fn().mockResolvedValue(message),
+    save: jest.fn().mockResolvedValue(undefined),
+  }
+  const queueServer = {
+    addJob: jest.fn().mockResolvedValue(undefined),
+  }
 
-  return { controller, createMessagesQuery, messagesQueryInstance }
+  const controller = new MessagesController({ createMessagesQuery, userRepository, messageRepository, queueServer })
+
+  return { controller, createMessagesQuery, messagesQueryInstance, userRepository, messageRepository, queueServer }
 }
 
 describe('MessagesController delegation', () => {
@@ -71,5 +83,75 @@ describe('MessagesController delegation', () => {
 
     expect(messagesQueryInstance.filterByLicensee).toHaveBeenCalledWith('licensee-id')
     expect(messagesQueryInstance.filterByContact).toHaveBeenCalledWith('contact-id')
+  })
+})
+
+describe('MessagesController resend', () => {
+  const LICENSEE_ID = 'licensee-id'
+  const OTHER_LICENSEE_ID = 'other-licensee-id'
+
+  function buildMessage(licenseeId = LICENSEE_ID) {
+    return {
+      _id: 'msg-id',
+      licensee: { toString: () => licenseeId },
+      sended: true,
+      error: 'some error',
+      sendedAt: new Date(),
+    }
+  }
+
+  it('resets message fields, enqueues, and returns 200 for super user', async () => {
+    const superUser = { _id: 'user-id', isSuper: true }
+    const message = buildMessage()
+    const { controller, messageRepository, queueServer } = buildController({ user: superUser, message })
+    const req = { userId: 'user-id', params: { id: 'msg-id' } }
+    const res = buildResponse()
+
+    await controller.resend(req, res)
+
+    expect(message.sended).toBe(false)
+    expect(message.error).toBeNull()
+    expect(message.sendedAt).toBeNull()
+    expect(messageRepository.save).toHaveBeenCalledWith(message)
+    expect(queueServer.addJob).toHaveBeenCalledWith('send-message-to-messenger', { messageId: message._id })
+    expect(res.status).toHaveBeenCalledWith(200)
+  })
+
+  it('resets message and returns 200 for licensee user owning the message', async () => {
+    const licenseeUser = { _id: 'user-id', isSuper: false, licensee: { toString: () => LICENSEE_ID } }
+    const message = buildMessage(LICENSEE_ID)
+    const { controller, queueServer } = buildController({ user: licenseeUser, message })
+    const req = { userId: 'user-id', params: { id: 'msg-id' } }
+    const res = buildResponse()
+
+    await controller.resend(req, res)
+
+    expect(queueServer.addJob).toHaveBeenCalledWith('send-message-to-messenger', { messageId: message._id })
+    expect(res.status).toHaveBeenCalledWith(200)
+  })
+
+  it('returns 403 when licensee user attempts cross-licensee resend', async () => {
+    const licenseeUser = { _id: 'user-id', isSuper: false, licensee: { toString: () => OTHER_LICENSEE_ID } }
+    const message = buildMessage(LICENSEE_ID)
+    const { controller, queueServer } = buildController({ user: licenseeUser, message })
+    const req = { userId: 'user-id', params: { id: 'msg-id' } }
+    const res = buildResponse()
+
+    await controller.resend(req, res)
+
+    expect(queueServer.addJob).not.toHaveBeenCalled()
+    expect(res.status).toHaveBeenCalledWith(403)
+  })
+
+  it('returns 404 when message not found', async () => {
+    const superUser = { _id: 'user-id', isSuper: true }
+    const { controller, queueServer } = buildController({ user: superUser, message: null })
+    const req = { userId: 'user-id', params: { id: 'nonexistent-id' } }
+    const res = buildResponse()
+
+    await controller.resend(req, res)
+
+    expect(queueServer.addJob).not.toHaveBeenCalled()
+    expect(res.status).toHaveBeenCalledWith(404)
   })
 })
