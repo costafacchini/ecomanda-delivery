@@ -1,11 +1,15 @@
+import { sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
+
 class MessagesController {
-  constructor({ createMessagesQuery, userRepository, messageRepository, queueServer } = {}) {
+  constructor({ createMessagesQuery, userRepository, messageRepository, queueServer, createMessage } = {}) {
     this.createMessagesQuery = createMessagesQuery
     this.userRepository = userRepository
     this.messageRepository = messageRepository
     this.queueServer = queueServer
+    this.createMessage = createMessage
 
     this.index = this.index.bind(this)
+    this.create = this.create.bind(this)
     this.resend = this.resend.bind(this)
   }
 
@@ -45,6 +49,18 @@ class MessagesController {
     const messages = await messagesQuery.all()
 
     res.status(200).send(messages)
+  }
+
+  async create(req, res) {
+    try {
+      const message = await this.createMessage.execute(req.body)
+      return res.status(201).send(message)
+    } catch (err) {
+      if (err?.errors) {
+        return res.status(422).send({ errors: sanitizeModelErrors(err.errors) })
+      }
+      return res.status(500).send({ errors: { message: err.toString() } })
+    }
   }
 
   async resend(req, res) {

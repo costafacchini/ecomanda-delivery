@@ -26,6 +26,7 @@ import { ImportFacebookCatalog } from '../usecases/triggers/ImportFacebookCatalo
 import { UpdateTrigger } from '../usecases/triggers/UpdateTrigger.js'
 import { CreateUser } from '../usecases/users/CreateUser.js'
 import { UpdateUser } from '../usecases/users/UpdateUser.js'
+import { CreateMessage } from '../usecases/messages/CreateMessage.js'
 import { createRuntimeDependencies } from '../runtime/dependencies.js'
 
 const router = express.Router()
@@ -41,6 +42,7 @@ const {
   templateRepository,
   messageRepository,
   roomRepository,
+  whatsappSessionRepository,
   createMessengerPlugin,
   createPagarMe,
   createPedidos10,
@@ -66,6 +68,7 @@ const licenseesController = new LicenseesController({
   }),
   signPedidos10OrderWebhook: new SignPedidos10OrderWebhook({ licenseeRepository, createPedidos10 }),
   createMessengerPlugin,
+  whatsappSessionRepository,
 })
 const contactsController = new ContactsController({
   contactRepository,
@@ -85,6 +88,7 @@ const messagesController = new MessagesController({
   userRepository,
   messageRepository,
   queueServer,
+  createMessage: new CreateMessage({ messageRepository, contactRepository, jobQueue: queueServer }),
 })
 const dashboardController = new DashboardController({
   userRepository,
@@ -142,11 +146,13 @@ router.get('/templates', templatesController.index)
 router.post('/templates/:id/importation', templatesController.importation)
 
 router.post('/licensees/:id/dialogwebhook', licenseesController.setDialogWebhook)
+router.get('/licensees/:id/baileys-status', licenseesController.getBaileysStatus)
 router.post('/licensees/:id/baileys-qr', (req, res) => licenseesController.getBaileysQr(req, res))
 router.post('/licensees/:id/sign-order-webhook', licenseesController.signOrderWebhook)
 router.post('/licensees/:id/integration/pagarme', licenseesController.sendToPagarMe)
 
 router.get('/messages', messagesController.index)
+router.post('/messages', messagesController.create)
 router.post('/messages/:id/resend', messagesController.resend)
 
 router.get('/dashboard/licensees', dashboardController.licensees)

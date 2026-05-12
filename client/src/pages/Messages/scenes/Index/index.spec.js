@@ -52,16 +52,18 @@ describe('<MessageIndex />', () => {
     expect(screen.getByText('to-chat')).toBeInTheDocument()
     expect(screen.getByText('Sim')).toBeInTheDocument()
 
-    expect(getMessages).toHaveBeenCalledWith({
-      "contact": "",
-      "destination": "",
-      "endDate": "",
-      "kind": "",
-      "licensee": "",
-      "onlyErrors": false,
-      "startDate": "",
-      "page": 1,
-    })
+    expect(getMessages).toHaveBeenCalledWith(
+      expect.objectContaining({
+        contact: "",
+        destination: "",
+        kind: "",
+        licensee: "",
+        onlyErrors: false,
+        page: 1,
+        startDate: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
+        endDate: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
+      })
+    )
   })
 
   describe('pagination', () => {
@@ -83,7 +85,15 @@ describe('<MessageIndex />', () => {
   })
 
   describe('startDate filter', () => {
-    it('changes the filters to get the messages', async () => {
+    beforeEach(() => {
+      vi.spyOn(Intl, 'DateTimeFormat').mockImplementation(() => ({ resolvedOptions: () => ({ timeZone: 'UTC' }) }))
+    })
+
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
+    it('converts the local datetime to UTC before querying', async () => {
       getMessages.mockResolvedValue({ status: 201, data: [{ id: '1', contact: { name: 'Contact' } }] })
 
       mount({ currentUser })
@@ -94,13 +104,20 @@ describe('<MessageIndex />', () => {
 
       await screen.findByText('Contact')
 
-      expect(getMessages).toHaveBeenCalledWith(expect.objectContaining({ startDate: '2012-12-12T10:25:12.000' }))
-
+      expect(getMessages).toHaveBeenCalledWith(expect.objectContaining({ startDate: '2012-12-12T10:25:12.000Z' }))
     })
   })
 
   describe('endDate filter', () => {
-    it('changes the filters to get the messages', async () => {
+    beforeEach(() => {
+      vi.spyOn(Intl, 'DateTimeFormat').mockImplementation(() => ({ resolvedOptions: () => ({ timeZone: 'UTC' }) }))
+    })
+
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
+    it('converts the local datetime to UTC before querying', async () => {
       getMessages.mockResolvedValue({ status: 201, data: [{ id: '1', contact: { name: 'Contact' } }] })
 
       mount({ currentUser })
@@ -111,8 +128,7 @@ describe('<MessageIndex />', () => {
 
       await screen.findByText('Contact')
 
-      expect(getMessages).toHaveBeenCalledWith(expect.objectContaining({ endDate: '2012-12-12T18:14:37.000' }))
-
+      expect(getMessages).toHaveBeenCalledWith(expect.objectContaining({ endDate: '2012-12-12T18:14:37.000Z' }))
     })
   })
 

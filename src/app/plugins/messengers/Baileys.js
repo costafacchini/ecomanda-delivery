@@ -1,6 +1,7 @@
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
 import { MessengersBase } from './Base.js'
 import { requireDependency } from '../../helpers/RequireDependency.js'
+import { isPhoto, isVideo } from '../../helpers/Files.js'
 
 class Baileys extends MessengersBase {
   constructor(licensee, { whatsappSessionRepository, ...dependencies } = {}) {
@@ -87,13 +88,22 @@ class Baileys extends MessengersBase {
     return session
   }
 
-  async saveSession(session, creds, keys) {
-    await this.whatsappSessionRepository.update(session._id, { creds, keys })
+  async saveSession(session, creds, keys, BufferJSON) {
+    // Serialize Buffers to { type: 'Buffer', data: '<base64>' } before storing in MongoDB,
+    // so BufferJSON.reviver can restore them correctly on the next load.
+    const serialized = JSON.parse(JSON.stringify({ creds, keys }, BufferJSON.replacer))
+    await this.whatsappSessionRepository.update(session._id, serialized)
   }
 
-  buildAuthState(session, initAuthCreds) {
-    const creds = session.creds && Object.keys(session.creds).length > 0 ? session.creds : initAuthCreds()
-    const keys = session.keys ?? {}
+  buildAuthState(session, initAuthCreds, BufferJSON) {
+    // Deserialize creds and keys from MongoDB — plain objects must become real Buffer instances
+    // so Baileys crypto operations receive the correct types.
+    const creds =
+      session.creds && Object.keys(session.creds).length > 0
+        ? JSON.parse(JSON.stringify(session.creds), BufferJSON.reviver)
+        : initAuthCreds()
+
+    const keys = session.keys ? JSON.parse(JSON.stringify(session.keys), BufferJSON.reviver) : {}
 
     return {
       state: {
@@ -121,6 +131,7 @@ class Baileys extends MessengersBase {
     const {
       default: makeWASocket,
       initAuthCreds,
+      BufferJSON,
       Browsers,
       fetchLatestBaileysVersion,
     } = await import('@whiskeysockets/baileys')
@@ -132,15 +143,13 @@ class Baileys extends MessengersBase {
       return
     }
 
-    if (messageToSend.kind !== 'text') {
-      console.warn(
-        `Baileys: tipo de mensagem '${messageToSend.kind}' não suportado no escopo inicial. Mensagem ${messageId} ignorada.`,
-      )
+    if (!['text', 'file'].includes(messageToSend.kind)) {
+      console.warn(`Baileys: tipo de mensagem '${messageToSend.kind}' não suportado. Mensagem ${messageId} ignorada.`)
       return
     }
 
     const session = await this.loadOrCreateSession()
-    const { state, rawKeys } = this.buildAuthState(session, initAuthCreds)
+    const { state, rawKeys } = this.buildAuthState(session, initAuthCreds, BufferJSON)
     const { version } = await fetchLatestBaileysVersion()
 
     let socket
@@ -153,19 +162,59 @@ class Baileys extends MessengersBase {
       })
 
       socket.ev.on('creds.update', () => {
-        this.saveSession(session, state.creds, rawKeys).catch((err) => {
+        this.saveSession(session, state.creds, rawKeys, BufferJSON).catch((err) => {
           console.error(`Baileys: erro ao salvar sessão: ${err.message ?? err}`)
         })
       })
 
-      const jid = `${messageToSend.contact.waId || messageToSend.contact.number}@s.whatsapp.net`
-      const result = await socket.sendMessage(jid, { text: messageToSend.text })
+      await new Promise((resolve, reject) => {
+        socket.ev.on('connection.update', ({ connection, lastDisconnect }) => {
+          if (connection === 'open') resolve()
+          if (connection === 'close') reject(lastDisconnect?.error ?? new Error('Connection Closed'))
+        })
+      })
+
+      const rawNumber = messageToSend.contact.waId || messageToSend.contact.number
+      const [registeredAccount] = await socket.onWhatsApp(rawNumber)
+      if (!registeredAccount?.exists) {
+        throw new Error(`Número ${rawNumber} não encontrado no WhatsApp`)
+      }
+      const jid = registeredAccount.jid
+      console.info(`Baileys: enviando mensagem ${messageId} para JID resolvido: ${jid}`)
+
+      let messageContent
+      if (messageToSend.kind === 'file') {
+        if (isPhoto(messageToSend.url)) {
+          messageContent = { image: { url: messageToSend.url }, caption: messageToSend.text ?? '' }
+        } else if (isVideo(messageToSend.url)) {
+          messageContent = { video: { url: messageToSend.url }, caption: messageToSend.text ?? '' }
+        } else {
+          messageContent = {
+            document: { url: messageToSend.url },
+            fileName: messageToSend.fileName ?? '',
+            caption: messageToSend.text ?? '',
+          }
+        }
+      } else {
+        messageContent = { text: messageToSend.text }
+      }
+
+      const result = await socket.sendMessage(jid, messageContent)
+
+      // Wait for Baileys to flush the message over the WebSocket before closing.
+      // sendMessage() resolves when the message is queued, not yet transmitted.
+      await new Promise((resolve) => setTimeout(resolve, 3000))
 
       messageToSend.messageWaId = result?.key?.id ?? null
       messageToSend.sended = true
       await this.messageRepository.save(messageToSend)
       console.info(`Mensagem ${messageId} enviada via Baileys com sucesso!`)
     } catch (error) {
+      const statusCode = error?.output?.statusCode
+      if (statusCode === 401) {
+        // Session was logged out — clear stale creds so the next status check reflects disconnected.
+        await this.whatsappSessionRepository.update(session._id, { creds: {}, keys: {} }).catch(() => {})
+      }
       messageToSend.error = error.message ?? String(error)
       await this.messageRepository.save(messageToSend)
       console.error(`Mensagem ${messageId} não enviada via Baileys. Erro: ${error.message ?? error}`)
@@ -174,6 +223,39 @@ class Baileys extends MessengersBase {
         socket.end()
       }
     }
+  }
+
+  async _reconnectAfterPairing(session, state, rawKeys, BufferJSON) {
+    const { default: makeWASocket, Browsers, fetchLatestBaileysVersion } = await import('@whiskeysockets/baileys')
+    const { version } = await fetchLatestBaileysVersion()
+
+    const socket = makeWASocket({
+      version,
+      auth: state,
+      printQRInTerminal: false,
+      browser: Browsers.ubuntu('Chrome'),
+    })
+
+    socket.ev.on('creds.update', () => {
+      this.saveSession(session, state.creds, rawKeys, BufferJSON).catch((err) => {
+        console.error(`Baileys: erro ao salvar sessão no reconect: ${err.message ?? err}`)
+      })
+    })
+
+    return new Promise((resolve) => {
+      const timeout = setTimeout(() => {
+        socket.end()
+        resolve()
+      }, 15000)
+
+      socket.ev.on('connection.update', ({ connection }) => {
+        if (connection === 'open' || connection === 'close') {
+          clearTimeout(timeout)
+          socket.end()
+          resolve()
+        }
+      })
+    })
   }
 
   getQrCode(timeoutMs = 15000) {
@@ -187,8 +269,8 @@ class Baileys extends MessengersBase {
           }, timeoutMs)
 
           import('@whiskeysockets/baileys')
-            .then(({ default: makeWASocket, initAuthCreds, Browsers, fetchLatestBaileysVersion }) => {
-              const { state, rawKeys } = this.buildAuthState(session, initAuthCreds)
+            .then(({ default: makeWASocket, initAuthCreds, BufferJSON, Browsers, fetchLatestBaileysVersion }) => {
+              const { state, rawKeys } = this.buildAuthState(session, initAuthCreds, BufferJSON)
 
               fetchLatestBaileysVersion()
                 .then(({ version }) => {
@@ -215,12 +297,31 @@ class Baileys extends MessengersBase {
 
                     if (connection === 'close') {
                       clearTimeout(timer)
-                      reject(new Error('Conexão encerrada antes de receber o QR'))
+                      const statusCode = update.lastDisconnect?.error?.output?.statusCode
+                      if (statusCode === 515) {
+                        // 515 = Restart Required — WhatsApp closes the stream after QR pairing and
+                        // expects the client to reconnect with the fresh credentials to complete
+                        // device linking (otherwise the phone stays at "Connecting...").
+                        socket.end()
+                        resolve(null)
+                        this._reconnectAfterPairing(session, state, rawKeys, BufferJSON).catch(() => {})
+                      } else if (statusCode === 401) {
+                        // 401 = Logged Out — device was removed from WhatsApp linked devices.
+                        // Clear the stale credentials and retry to produce a fresh QR code.
+                        socket.end()
+                        this.whatsappSessionRepository
+                          .update(session._id, { creds: {}, keys: {} })
+                          .then(() => this.getQrCode(timeoutMs))
+                          .then(resolve)
+                          .catch(reject)
+                      } else {
+                        reject(new Error('Conexão encerrada antes de receber o QR'))
+                      }
                     }
                   })
 
                   socket.ev.on('creds.update', () => {
-                    this.saveSession(session, state.creds, rawKeys).catch((err) => {
+                    this.saveSession(session, state.creds, rawKeys, BufferJSON).catch((err) => {
                       console.error(`Baileys: erro ao salvar sessão: ${err.message ?? err}`)
                     })
                   })

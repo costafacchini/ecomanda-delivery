@@ -9,8 +9,8 @@ import isEmpty from 'lodash/isEmpty'
 
 function MessagesIndex({ currentUser}) {
   const [filters, setFilters] = useState({
-    startDate: '',
-    endDate: '',
+    startDate: moment().subtract(3, 'hours').format('YYYY-MM-DDTHH:mm'),
+    endDate: moment().format('YYYY-MM-DDTHH:mm'),
     licensee: '',
     onlyErrors: false,
     contact: '',
@@ -39,7 +39,14 @@ function MessagesIndex({ currentUser}) {
     async (changedFilters) => {
       const newFilters = { ...filters, ...changedFilters }
       setFilters(newFilters)
-      const { data: messages } = await getMessages(newFilters)
+
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+      const apiFilters = {
+        ...newFilters,
+        ...(newFilters.startDate && { startDate: moment.tz(newFilters.startDate, tz).utc().toISOString() }),
+        ...(newFilters.endDate && { endDate: moment.tz(newFilters.endDate, tz).utc().toISOString() }),
+      }
+      const { data: messages } = await getMessages(apiFilters)
       addPage(messages, newFilters)
     },
     [filters, setFilters, addPage]
@@ -276,7 +283,7 @@ function MessagesIndex({ currentUser}) {
                   </div>
                 </td>
                 <td>{message.destination}</td>
-                <td>{moment(message.createdAt).tz('America/Sao_Paulo').format('DD/MM/YYYY hh:mm:ss')}</td>
+                <td>{moment(message.createdAt).tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format('DD/MM/YYYY HH:mm:ss')}</td>
                 <td>{message.sended ? 'Sim' : 'Não'}</td>
               </tr>
             ))}
