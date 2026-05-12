@@ -1,11 +1,29 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { FieldWithError } from '../../../../../components/form'
-import { setLicenseeWebhook, getBaileysQr, importLicenseeTemplate } from '../../../../../services/licensee'
+import { setLicenseeWebhook, getBaileysQr, getBaileysStatus, importLicenseeTemplate } from '../../../../../services/licensee'
 
-function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur }) {
+function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isActive }) {
   const [baileysQr, setBaileysQr] = useState(null)
   const [baileysStatus, setBaileysStatus] = useState(null)
+  const [baileysConnected, setBaileysConnected] = useState(null)
+  const [baileysChecking, setBaileysChecking] = useState(false)
+
+  useEffect(() => {
+    if (!isActive || values.whatsappDefault !== 'baileys' || !values.id) return
+
+    setBaileysChecking(true)
+    getBaileysStatus(values)
+      .then((response) => {
+        setBaileysConnected(response.data?.connected ?? false)
+      })
+      .catch(() => {
+        setBaileysConnected(false)
+      })
+      .finally(() => {
+        setBaileysChecking(false)
+      })
+  }, [isActive])
 
   return (
     <>
@@ -113,26 +131,80 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur }) {
 
         {values.whatsappDefault === 'baileys' && (
           <div className='row mt-3 pb-4'>
-            <div className='form-group col-3'>
-              <button
-                onClick={async (event) => {
-                  event.preventDefault()
-                  setBaileysQr(null)
-                  setBaileysStatus(null)
-                  const response = await getBaileysQr(values)
-                  if (response.data?.qr) {
-                    setBaileysQr(response.data.qr)
-                  } else {
-                    setBaileysStatus(response.data?.message ?? 'Erro ao gerar QR')
-                  }
-                }}
-                className='btn btn-info'
-              >
-                Gerar QR Code
-              </button>
-            </div>
-            {baileysQr && (
+            {baileysChecking && (
+              <div className='form-group col-12'>
+                <span className='text-muted'>Verificando conexão...</span>
+              </div>
+            )}
+
+            {!baileysChecking && baileysConnected && (
+              <div className='form-group col-12 d-flex align-items-center gap-3'>
+                <span className='badge bg-success fs-6'>Conectado</span>
+                <button
+                  onClick={async (event) => {
+                    event.preventDefault()
+                    setBaileysConnected(null)
+                    setBaileysQr(null)
+                    setBaileysStatus(null)
+                    const response = await getBaileysQr(values)
+                    if (response.data?.qr) {
+                      setBaileysQr(response.data.qr)
+                      setBaileysConnected(false)
+                    } else {
+                      setBaileysStatus(response.data?.message ?? 'Erro ao gerar QR')
+                    }
+                  }}
+                  className='btn btn-outline-secondary btn-sm'
+                >
+                  Reconectar
+                </button>
+              </div>
+            )}
+
+            {!baileysChecking && baileysConnected === false && (
               <div className='form-group col-3'>
+                <button
+                  onClick={async (event) => {
+                    event.preventDefault()
+                    setBaileysQr(null)
+                    setBaileysStatus(null)
+                    const response = await getBaileysQr(values)
+                    if (response.data?.qr) {
+                      setBaileysQr(response.data.qr)
+                    } else {
+                      setBaileysStatus(response.data?.message ?? 'Erro ao gerar QR')
+                    }
+                  }}
+                  className='btn btn-info'
+                >
+                  Gerar QR Code
+                </button>
+              </div>
+            )}
+
+            {!baileysChecking && baileysConnected === null && !values.id && (
+              <div className='form-group col-3'>
+                <button
+                  onClick={async (event) => {
+                    event.preventDefault()
+                    setBaileysQr(null)
+                    setBaileysStatus(null)
+                    const response = await getBaileysQr(values)
+                    if (response.data?.qr) {
+                      setBaileysQr(response.data.qr)
+                    } else {
+                      setBaileysStatus(response.data?.message ?? 'Erro ao gerar QR')
+                    }
+                  }}
+                  className='btn btn-info'
+                >
+                  Gerar QR Code
+                </button>
+              </div>
+            )}
+
+            {baileysQr && (
+              <div className='form-group col-3 mt-2'>
                 <QRCodeSVG value={baileysQr} size={200} />
               </div>
             )}

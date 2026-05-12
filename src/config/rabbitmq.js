@@ -1,4 +1,4 @@
-import amqp from 'amqplib/callback_api.js'
+import amqp from 'amqplib/callback_api'
 const RABBIT_URL = process.env.CLOUDAMQP_URL
 import jobs from '../app/jobs/index.js'
 

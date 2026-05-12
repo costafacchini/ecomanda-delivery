@@ -17,9 +17,13 @@ queuesWithWorkerEnabled.forEach((queue) => {
     queue.name,
     async (job) => {
       const lockKey = resolveTrafficlightKey(job?.data)
-      const handleResult = await withTrafficlight(lockKey, async () => {
-        return await queue.handle(job.data)
-      }, { trafficlightRepository: jobDependencies.trafficlightRepository })
+      const handleResult = await withTrafficlight(
+        lockKey,
+        async () => {
+          return await queue.handle(job.data)
+        },
+        { trafficlightRepository: jobDependencies.trafficlightRepository },
+      )
       if (handleResult) {
         for (const actionJob of handleResult) {
           const { action, body } = actionJob

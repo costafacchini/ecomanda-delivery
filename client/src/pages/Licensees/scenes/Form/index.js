@@ -193,6 +193,7 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
                   touched={props.touched}
                   handleChange={props.handleChange}
                   handleBlur={props.handleBlur}
+                  isActive={activeTab === 'whatsapp'}
                 />
               </div>
               <div className={`tab-pane fade ${activeTab === 'carrinho' ? 'show active' : ''}`}>
