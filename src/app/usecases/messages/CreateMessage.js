@@ -1,6 +1,7 @@
 const CREATE_MESSAGE_FIELDS = [
   'licensee',
   'contact',
+  'phone',
   'kind',
   'destination',
   'text',
@@ -25,13 +26,29 @@ function pickFields(fields = {}, keys = []) {
 }
 
 class CreateMessage {
-  constructor({ messageRepository, jobQueue } = {}) {
+  constructor({ messageRepository, contactRepository, jobQueue } = {}) {
     this.messageRepository = messageRepository
+    this.contactRepository = contactRepository
     this.jobQueue = jobQueue
   }
 
   async execute(fields = {}) {
     const payload = pickFields(fields, CREATE_MESSAGE_FIELDS)
+
+    if (!payload.licensee) {
+      throw new Error('licensee is required')
+    }
+
+    if (payload.phone && !payload.contact) {
+      const contact = await this.contactRepository.getContactByNumber(payload.phone, payload.licensee)
+      if (!contact) {
+        throw new Error(`Contact not found for phone ${payload.phone}`)
+      }
+      payload.contact = contact._id
+    }
+
+    delete payload.phone
+
     const message = await this.messageRepository.create(payload)
 
     if (message.destination === 'to-messenger') {

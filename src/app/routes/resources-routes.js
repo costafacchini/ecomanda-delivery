@@ -88,7 +88,7 @@ const messagesController = new MessagesController({
   userRepository,
   messageRepository,
   queueServer,
-  createMessage: new CreateMessage({ messageRepository, jobQueue: queueServer }),
+  createMessage: new CreateMessage({ messageRepository, contactRepository, jobQueue: queueServer }),
 })
 const dashboardController = new DashboardController({
   userRepository,
