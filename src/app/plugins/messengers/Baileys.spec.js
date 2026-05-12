@@ -362,10 +362,10 @@ describe('Baileys plugin', () => {
         await jest.runAllTimersAsync()
         await sendPromise
 
-        expect(mockSocketSendMessage).toHaveBeenCalledWith(
-          expect.any(String),
-          { image: { url: 'https://example.com/photo.jpg' }, caption: 'Look at this' },
-        )
+        expect(mockSocketSendMessage).toHaveBeenCalledWith(expect.any(String), {
+          image: { url: 'https://example.com/photo.jpg' },
+          caption: 'Look at this',
+        })
         const updatedMessage = await messageRepository.findFirst({ _id: message._id })
         expect(updatedMessage.sended).toEqual(true)
       })
@@ -385,10 +385,10 @@ describe('Baileys plugin', () => {
         await jest.runAllTimersAsync()
         await sendPromise
 
-        expect(mockSocketSendMessage).toHaveBeenCalledWith(
-          expect.any(String),
-          { video: { url: 'https://example.com/clip.mp4' }, caption: 'Watch this' },
-        )
+        expect(mockSocketSendMessage).toHaveBeenCalledWith(expect.any(String), {
+          video: { url: 'https://example.com/clip.mp4' },
+          caption: 'Watch this',
+        })
       })
 
       it('sends document content for a non-media URL', async () => {
@@ -406,10 +406,11 @@ describe('Baileys plugin', () => {
         await jest.runAllTimersAsync()
         await sendPromise
 
-        expect(mockSocketSendMessage).toHaveBeenCalledWith(
-          expect.any(String),
-          { document: { url: 'https://example.com/contract.pdf' }, fileName: 'contract.pdf', caption: '' },
-        )
+        expect(mockSocketSendMessage).toHaveBeenCalledWith(expect.any(String), {
+          document: { url: 'https://example.com/contract.pdf' },
+          fileName: 'contract.pdf',
+          caption: '',
+        })
       })
     })
   })
