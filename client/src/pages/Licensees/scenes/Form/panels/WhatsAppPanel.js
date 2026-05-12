@@ -139,7 +139,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
 
             {!baileysChecking && baileysConnected && (
               <div className='form-group col-12 d-flex align-items-center gap-3'>
-                <span className='badge bg-success fs-6'>Conectado</span>
+                <span className='text-success fw-semibold'>&#10003; Conectado</span>
                 <button
                   onClick={async (event) => {
                     event.preventDefault()
