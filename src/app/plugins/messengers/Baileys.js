@@ -1,6 +1,7 @@
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
 import { MessengersBase } from './Base.js'
 import { requireDependency } from '../../helpers/RequireDependency.js'
+import { isPhoto, isVideo } from '../../helpers/Files.js'
 
 class Baileys extends MessengersBase {
   constructor(licensee, { whatsappSessionRepository, ...dependencies } = {}) {
@@ -142,9 +143,9 @@ class Baileys extends MessengersBase {
       return
     }
 
-    if (messageToSend.kind !== 'text') {
+    if (!['text', 'file'].includes(messageToSend.kind)) {
       console.warn(
-        `Baileys: tipo de mensagem '${messageToSend.kind}' não suportado no escopo inicial. Mensagem ${messageId} ignorada.`,
+        `Baileys: tipo de mensagem '${messageToSend.kind}' não suportado. Mensagem ${messageId} ignorada.`,
       )
       return
     }
@@ -182,7 +183,21 @@ class Baileys extends MessengersBase {
       }
       const jid = registeredAccount.jid
       console.info(`Baileys: enviando mensagem ${messageId} para JID resolvido: ${jid}`)
-      const result = await socket.sendMessage(jid, { text: messageToSend.text })
+
+      let messageContent
+      if (messageToSend.kind === 'file') {
+        if (isPhoto(messageToSend.url)) {
+          messageContent = { image: { url: messageToSend.url }, caption: messageToSend.text ?? '' }
+        } else if (isVideo(messageToSend.url)) {
+          messageContent = { video: { url: messageToSend.url }, caption: messageToSend.text ?? '' }
+        } else {
+          messageContent = { document: { url: messageToSend.url }, fileName: messageToSend.fileName ?? '', caption: messageToSend.text ?? '' }
+        }
+      } else {
+        messageContent = { text: messageToSend.text }
+      }
+
+      const result = await socket.sendMessage(jid, messageContent)
 
       // Wait for Baileys to flush the message over the WebSocket before closing.
       // sendMessage() resolves when the message is queued, not yet transmitted.
