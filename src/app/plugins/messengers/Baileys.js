@@ -144,9 +144,7 @@ class Baileys extends MessengersBase {
     }
 
     if (!['text', 'file'].includes(messageToSend.kind)) {
-      console.warn(
-        `Baileys: tipo de mensagem '${messageToSend.kind}' não suportado. Mensagem ${messageId} ignorada.`,
-      )
+      console.warn(`Baileys: tipo de mensagem '${messageToSend.kind}' não suportado. Mensagem ${messageId} ignorada.`)
       return
     }
 
@@ -191,7 +189,11 @@ class Baileys extends MessengersBase {
         } else if (isVideo(messageToSend.url)) {
           messageContent = { video: { url: messageToSend.url }, caption: messageToSend.text ?? '' }
         } else {
-          messageContent = { document: { url: messageToSend.url }, fileName: messageToSend.fileName ?? '', caption: messageToSend.text ?? '' }
+          messageContent = {
+            document: { url: messageToSend.url },
+            fileName: messageToSend.fileName ?? '',
+            caption: messageToSend.text ?? '',
+          }
         }
       } else {
         messageContent = { text: messageToSend.text }
