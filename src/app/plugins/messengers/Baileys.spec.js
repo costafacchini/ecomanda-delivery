@@ -13,10 +13,15 @@ jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 
 const mockSocketSendMessage = jest.fn()
 const mockSocketEnd = jest.fn()
-const mockSocketEvOn = jest.fn()
+const mockSocketOnWhatsApp = jest.fn()
+// Immediately fires connection:open so the sendMessage connection-ready Promise resolves.
+const mockSocketEvOn = jest.fn((event, callback) => {
+  if (event === 'connection.update') callback({ connection: 'open' })
+})
 
 const mockMakeWASocket = jest.fn(() => ({
   sendMessage: mockSocketSendMessage,
+  onWhatsApp: mockSocketOnWhatsApp,
   end: mockSocketEnd,
   ev: { on: mockSocketEvOn },
 }))
@@ -25,6 +30,7 @@ jest.mock('@whiskeysockets/baileys', () => ({
   __esModule: true,
   default: (...args) => mockMakeWASocket(...args),
   initAuthCreds: () => ({ noiseKey: {}, signedIdentityKey: {}, signedPreKey: {}, registrationId: 0, advSecretKey: '' }),
+  BufferJSON: { replacer: (_, val) => val, reviver: (_, val) => val },
   Browsers: { ubuntu: () => ['Ubuntu', 'Chrome', '22.04.4'] },
   fetchLatestBaileysVersion: () => ({ version: [2, 3000, 0] }),
 }))
@@ -40,12 +46,14 @@ let dependencies
 describe('Baileys plugin', () => {
   let licensee
   const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
+  const consoleWarnSpy = jest.spyOn(global.console, 'warn').mockImplementation()
   const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
 
   beforeEach(async () => {
     installMemoryRepositories()
     dependencies = createRuntimeDependencies()
     jest.clearAllMocks()
+    mockSocketOnWhatsApp.mockResolvedValue([{ exists: true, jid: `${PARSED_WA_ID}@s.whatsapp.net` }])
     const licenseeRepository = new LicenseeRepositoryDatabase()
     licensee = await licenseeRepository.create(
       licenseeFactory.build({
@@ -253,38 +261,51 @@ describe('Baileys plugin', () => {
   })
 
   describe('#sendMessage', () => {
+    beforeEach(() => {
+      jest.useFakeTimers()
+    })
+
+    afterEach(() => {
+      jest.useRealTimers()
+    })
+
+    async function createContactAndMessage(overrides = {}) {
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
+        contactFactory.build({
+          name: 'John Doe',
+          number: PARSED_NUMBER,
+          type: PARSED_TYPE,
+          waId: PARSED_WA_ID,
+          talkingWithChatBot: false,
+          licensee,
+        }),
+      )
+      const messageRepository = new MessageRepositoryDatabase()
+      const message = await messageRepository.create(
+        messageFactory.build({
+          text: 'Hello via Baileys',
+          kind: 'text',
+          sended: false,
+          contact,
+          licensee,
+          destination: 'to-messenger',
+          ...overrides,
+        }),
+      )
+      return { contact, message, messageRepository }
+    }
+
     describe('text message', () => {
       it('sends the message via Baileys socket, sets sended true and stores messageWaId', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
-        const contact = await contactRepository.create(
-          contactFactory.build({
-            name: 'John Doe',
-            number: PARSED_NUMBER,
-            type: PARSED_TYPE,
-            waId: PARSED_WA_ID,
-            talkingWithChatBot: false,
-            licensee,
-          }),
-        )
+        const { message, messageRepository } = await createContactAndMessage()
 
-        const messageRepository = new MessageRepositoryDatabase()
-        const message = await messageRepository.create(
-          messageFactory.build({
-            text: 'Hello via Baileys',
-            kind: 'text',
-            sended: false,
-            contact,
-            licensee,
-            destination: 'to-messenger',
-          }),
-        )
-
-        mockSocketSendMessage.mockResolvedValueOnce({
-          key: { id: 'SENT-MSG-WA-ID' },
-        })
+        mockSocketSendMessage.mockResolvedValueOnce({ key: { id: 'SENT-MSG-WA-ID' } })
 
         const baileys = new Baileys(licensee, dependencies)
-        await baileys.sendMessage(message._id)
+        const sendPromise = baileys.sendMessage(message._id)
+        await jest.runAllTimersAsync()
+        await sendPromise
 
         const updatedMessage = await messageRepository.findFirst({ _id: message._id }, ['contact'])
         expect(updatedMessage.sended).toEqual(true)
@@ -293,29 +314,7 @@ describe('Baileys plugin', () => {
       })
 
       it('saves error to message and keeps sended false when socket throws', async () => {
-        const contactRepository = new ContactRepositoryDatabase()
-        const contact = await contactRepository.create(
-          contactFactory.build({
-            name: 'John Doe',
-            number: PARSED_NUMBER,
-            type: PARSED_TYPE,
-            waId: PARSED_WA_ID,
-            talkingWithChatBot: false,
-            licensee,
-          }),
-        )
-
-        const messageRepository = new MessageRepositoryDatabase()
-        const message = await messageRepository.create(
-          messageFactory.build({
-            text: 'Will fail',
-            kind: 'text',
-            sended: false,
-            contact,
-            licensee,
-            destination: 'to-messenger',
-          }),
-        )
+        const { message, messageRepository } = await createContactAndMessage()
 
         mockSocketSendMessage.mockRejectedValueOnce(new Error('Socket connection failed'))
 
@@ -326,6 +325,91 @@ describe('Baileys plugin', () => {
         expect(updatedMessage.sended).toEqual(false)
         expect(updatedMessage.error).toEqual('Socket connection failed')
         expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('Socket connection failed'))
+      })
+
+      it('logs error and returns without sending when message is not found', async () => {
+        const baileys = new Baileys(licensee, dependencies)
+        await baileys.sendMessage('000000000000000000000000')
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('não encontrada'))
+        expect(mockSocketSendMessage).not.toHaveBeenCalled()
+      })
+
+      it('logs warning and returns without sending when kind is not supported', async () => {
+        const { message } = await createContactAndMessage({ kind: 'location' })
+
+        const baileys = new Baileys(licensee, dependencies)
+        await baileys.sendMessage(message._id)
+
+        expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('não suportado'))
+        expect(mockSocketSendMessage).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('file message', () => {
+      it('sends image content for a photo URL', async () => {
+        const { message, messageRepository } = await createContactAndMessage({
+          kind: 'file',
+          url: 'https://example.com/photo.jpg',
+          fileName: 'photo.jpg',
+          text: 'Look at this',
+        })
+
+        mockSocketSendMessage.mockResolvedValueOnce({ key: { id: 'IMG-WA-ID' } })
+
+        const baileys = new Baileys(licensee, dependencies)
+        const sendPromise = baileys.sendMessage(message._id)
+        await jest.runAllTimersAsync()
+        await sendPromise
+
+        expect(mockSocketSendMessage).toHaveBeenCalledWith(
+          expect.any(String),
+          { image: { url: 'https://example.com/photo.jpg' }, caption: 'Look at this' },
+        )
+        const updatedMessage = await messageRepository.findFirst({ _id: message._id })
+        expect(updatedMessage.sended).toEqual(true)
+      })
+
+      it('sends video content for a video URL', async () => {
+        const { message } = await createContactAndMessage({
+          kind: 'file',
+          url: 'https://example.com/clip.mp4',
+          fileName: 'clip.mp4',
+          text: 'Watch this',
+        })
+
+        mockSocketSendMessage.mockResolvedValueOnce({ key: { id: 'VID-WA-ID' } })
+
+        const baileys = new Baileys(licensee, dependencies)
+        const sendPromise = baileys.sendMessage(message._id)
+        await jest.runAllTimersAsync()
+        await sendPromise
+
+        expect(mockSocketSendMessage).toHaveBeenCalledWith(
+          expect.any(String),
+          { video: { url: 'https://example.com/clip.mp4' }, caption: 'Watch this' },
+        )
+      })
+
+      it('sends document content for a non-media URL', async () => {
+        const { message } = await createContactAndMessage({
+          kind: 'file',
+          url: 'https://example.com/contract.pdf',
+          fileName: 'contract.pdf',
+          text: '',
+        })
+
+        mockSocketSendMessage.mockResolvedValueOnce({ key: { id: 'DOC-WA-ID' } })
+
+        const baileys = new Baileys(licensee, dependencies)
+        const sendPromise = baileys.sendMessage(message._id)
+        await jest.runAllTimersAsync()
+        await sendPromise
+
+        expect(mockSocketSendMessage).toHaveBeenCalledWith(
+          expect.any(String),
+          { document: { url: 'https://example.com/contract.pdf' }, fileName: 'contract.pdf', caption: '' },
+        )
       })
     })
   })
@@ -362,9 +446,10 @@ describe('Baileys plugin', () => {
 
       const creds = { registered: true, me: { id: '5511999999999' } }
       const keys = { 'pre-key': { 1: 'key-data' } }
+      const mockBufferJSON = { replacer: (_, val) => val, reviver: (_, val) => val }
 
       const baileys = new Baileys(licensee, dependencies)
-      await baileys.saveSession(session, creds, keys)
+      await baileys.saveSession(session, creds, keys, mockBufferJSON)
 
       const updatedSession = await whatsappSessionRepository.findFirst({ _id: session._id })
       expect(updatedSession.creds).toEqual(creds)
