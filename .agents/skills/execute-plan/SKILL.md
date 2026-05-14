@@ -23,7 +23,23 @@ HIGH-CONTEXT: Full plan directory (.plans/{slug}/), AGENTS.md
 
 ## Instructions
 
+> **Before executing a plan with multiple tasks**, run `./scripts/wave-planner <slug>` to
+> identify which tasks can run in parallel. Tasks within the same wave have no mutual
+> dependencies and may be executed concurrently with agent teams. The output is also
+> written to `.plans/<slug>/waves.json` when the `--json` flag is passed.
+
 ### Step 1: Load Plan State
+
+**Pre-check — plan must be merged into `main`**:
+
+```bash
+git fetch origin
+git show origin/main:.plans/{plan-slug}/overview.md > /dev/null 2>&1
+```
+
+If this command fails, the plan branch has not been merged. Stop and instruct the user:
+
+> "Plan `{plan-slug}` is not yet in `main`. Merge the `plan/{plan-slug}` PR first, then re-run `/execute-plan {plan-slug}`."
 
 1. Read `.plans/{plan-slug}/overview.md` for phases and dependencies
 2. Read ALL `status.md` files to build current state map
@@ -118,7 +134,11 @@ When all tasks are `complete` or `adapted` (or remaining are blocked and unresol
 
 1. Update `.plans/{plan-slug}/overview.md` status to `complete`
 2. Move the plan from Active to Completed table in `.plans/README.md`
-3. Report summary:
+3. Clean up worktrees (if parallel execution was used in Step 4):
+   - For each task worktree created during this plan:
+     `git worktree remove .worktrees/{plan-slug}/{task-path} --force`
+   - Verify: `git worktree list`
+4. Report summary:
    - Total tasks completed vs adapted vs blocked
    - List of branches created
    - Test / verification and KB/doc follow-up status

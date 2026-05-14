@@ -117,7 +117,33 @@ Add the new plan to `.plans/README.md` in the Active Plans table:
 | [{Plan Title}]({slug}/overview.md) | {Objective} | 0/{N} | not-started | {YYYY-MM-DD} |
 ```
 
-### Step 8: Report Summary
+### Step 8: Commit Plan to a Branch and Open PR
+
+All plan files must be reviewed and merged into `main` before any task execution begins.
+
+```bash
+git fetch origin
+git switch main
+git pull origin main
+git switch -c plan/{slug}
+git add .plans/{slug}/ .plans/README.md
+git commit -m "plan({slug}): create plan"
+git push -u origin plan/{slug}
+gh pr create \
+  --base main \
+  --title "plan({slug}): [Plan Title]" \
+  --body "## Plan: [Plan Title]
+
+[1-2 sentence objective]
+
+**Type**: Type 1 / 2 / 3
+**Phases**: N  **Tasks**: N
+**Assigned Dev**: [NAME]
+
+> Merge this PR before running \`/execute-plan {slug}\` or any \`/execute-task\`."
+```
+
+### Step 9: Report Summary
 
 Present the plan to the user:
 - Plan name, slug, and type classification
@@ -126,11 +152,12 @@ Present the plan to the user:
 - Planned test / verification coverage
 - Planned KB / documentation follow-up
 - Branch convention
-- Suggest next step: `/execute-plan {slug}` or `/execute-task {slug}/{task-path}` (for example `/execute-task {slug}/task-01-db-schema` or `/execute-task {slug}/phase-1/task-01-db-schema`)
+- PR link — **execution is blocked until this PR is merged into `main`**
+- Suggest next step: after merging, run `/execute-plan {slug}` or `/execute-task {slug}/{task-path}`
 
-### Step 9: Present for Approval
+### Step 10: Present for Approval
 
-Present the full plan for user approval before any execution begins. Do not proceed with `/execute-plan` or `/execute-task` until confirmed.
+Present the full plan for user approval. The PR must be merged into `main` before any `/execute-plan` or `/execute-task` may proceed.
 
 ## Output
 

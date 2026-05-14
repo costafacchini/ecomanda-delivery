@@ -8,7 +8,6 @@
 **Estimated Demo Date**: [YYYY-MM-DD]
 **Assigned Dev**: [NAME]
 **Assigned QA**: [NAME or "unassigned"]
-**Master Plan**: {slug or "None"}
 
 <!-- Status values: not-started | in-progress | complete -->
 <!-- A plan is in-progress when any task is in-progress. Complete when all tasks are complete or adapted, CI is green for completed work, any PR/review/merge follow-up is tracked, and required KB/doc follow-up is complete or explicitly marked not needed. -->
