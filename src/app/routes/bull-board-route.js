@@ -3,7 +3,7 @@ import { BullMQAdapter } from '@bull-board/api/bullMQAdapter'
 import { ExpressAdapter } from '@bull-board/express'
 import { queueServer } from '../../config/queue.js'
 
-const adapters = queueServer.queues.map((queue) => new BullMQAdapter(queue.bull), { readOnlyMode: true })
+const adapters = queueServer.queues.map((queue) => new BullMQAdapter(queue.bull, { readOnlyMode: true }))
 
 const serverAdapter = new ExpressAdapter()
 serverAdapter.setBasePath('/queue')
