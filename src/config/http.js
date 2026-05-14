@@ -3,6 +3,7 @@ import('../app/repositories/index.js')
 import createError from 'http-errors'
 import express from 'express'
 import helmet from 'helmet'
+import cookieParser from 'cookie-parser'
 import logger from 'morgan'
 import { connect } from './database.js'
 import { enableCors } from './cors.js'
@@ -21,6 +22,7 @@ app.use(helmet(helmetConfig()))
 
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ limit: '50mb', extended: false }))
+app.use(cookieParser())
 app.use(logger('dev'))
 connect()
 
