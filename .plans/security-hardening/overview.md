@@ -38,8 +38,8 @@ Fix security issues identified in the OWASP-aligned security review (2026-05-14)
 
 | Phase | Name | Tasks | Dependencies | Description |
 |-------|------|-------|--------------|-------------|
-| 1 | Foundational Hardening | task-01, task-02, task-03, task-10 | None | Helmet, rate limiting, Bull Board auth, centralized logger (26 source files + 22 specs) |
-| 2 | Route & Auth Hardening | task-05, task-07, task-08, task-09 | Phase 1 (task-05 depends on task-01) | Error response hardening, JWT/RBAC fixes, v1 input validation, CORS observability |
+| 1 | Foundational Hardening | task-01, task-02, task-10 | None | Helmet, rate limiting, centralized logger (26 source files + 22 specs) — all parallel |
+| 2 | Route & Auth Hardening | task-03, task-05, task-07, task-08, task-09 | Phase 1 | Bull Board auth (depends on task-01), error hardening (depends on task-01), JWT/RBAC, v1 validation, CORS observability |
 
 ## Task Summary
 
@@ -47,8 +47,8 @@ Fix security issues identified in the OWASP-aligned security review (2026-05-14)
 |-----------|-------|-------|--------|------------|
 | phase-1/task-01-helmet-cors | Helmet Security Headers | 1 | not-started | — |
 | phase-1/task-02-rate-limiting | Rate Limiting on Login | 1 | not-started | — |
-| phase-1/task-03-bull-board-auth | Bull Board Authentication | 1 | not-started | — |
 | phase-1/task-10-centralized-logger | Centralized Logger | 1 | not-started | — |
+| phase-2/task-03-bull-board-auth | Bull Board Authentication (cookie) | 2 | not-started | phase-1/task-01-helmet-cors |
 | phase-2/task-05-error-response-hardening | Error Response Hardening | 2 | not-started | phase-1/task-01-helmet-cors |
 | phase-2/task-07-jwt-rbac | JWT 500→401 Fix + RBAC on Resources Routes | 2 | not-started | — |
 | phase-2/task-08-v1-input-validation | Input Validation on v1 API Routes | 2 | not-started | — |
@@ -60,6 +60,7 @@ Pattern: `plan/security-hardening/{task-path}`
 
 Example branches:
 - `plan/security-hardening/phase-1/task-01-helmet-cors`
+- `plan/security-hardening/phase-2/task-03-bull-board-auth`
 - `plan/security-hardening/phase-2/task-07-jwt-rbac`
 
 Base branch: `main`
