@@ -1,4 +1,4 @@
-# Status: API Token — Query String → Authorization Header
+# Status: CORS Origin Observability → Restriction
 
 **Current Status**: not-started
 **Last Updated**: 2026-05-14

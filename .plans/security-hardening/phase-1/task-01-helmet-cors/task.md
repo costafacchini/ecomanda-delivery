@@ -1,4 +1,4 @@
-# Task: Helmet Headers + CORS Restriction
+# Task: Helmet Security Headers
 
 **Plan**: Security Hardening
 **Phase**: 1
@@ -9,15 +9,15 @@
 
 ## Objective
 
-Add Helmet HTTP security headers and restrict CORS to a configurable list of allowed origins, replacing the current open `cors()` call.
+Add Helmet HTTP security headers to all responses. CORS restriction is deferred — see `phase-2/task-09-cors-observability`.
 
 ## Context
 
-`src/config/http.js` sets up the Express app. Currently there are no security headers and CORS is configured as `cors()` with no options (allows all origins).
+`src/config/http.js` sets up the Express app. There are currently no security headers (no CSP, no X-Frame-Options, no HSTS, etc.).
 
-`src/config/cors.js` exports `enableCors(app)` which calls `app.use(cors())`. This needs to read from `process.env.ALLOWED_ORIGINS` (comma-separated) and fall back to `*` only in development.
+Helmet is the standard Express middleware for setting secure HTTP headers. It should be applied as the first middleware in the chain, before `express.json()`.
 
-Helmet is the standard Express security headers middleware (sets CSP, X-Frame-Options, HSTS, X-Content-Type-Options, etc.). Install it and apply it early in the middleware chain in `src/config/http.js`.
+**CORS is intentionally not touched here.** We don't know which origins are currently sending requests (some are webhook callers with no `Origin` header at all), so restricting CORS without prior observation could silently break integrations. See `task-09-cors-observability` for the safe path.
 
 Note: `task-05-error-response-hardening` in phase 2 also modifies `src/config/http.js` — it depends on this task completing first.
 
@@ -25,7 +25,7 @@ Note: `task-05-error-response-hardening` in phase 2 also modifies `src/config/ht
 
 - [ ] `git switch main && git pull --rebase origin main`
 - [ ] Verify this task's `status.md` shows `not-started`
-- [ ] Check no other branch is currently modifying `src/config/cors.js` or `src/config/http.js`
+- [ ] Check no other branch is currently modifying `src/config/http.js`
 - [ ] Look up current Helmet version: `npm show helmet version`
 - [ ] Mark this task `in-progress` in `status.md` before proceeding
 
@@ -33,13 +33,13 @@ Note: `task-05-error-response-hardening` in phase 2 also modifies `src/config/ht
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/config/cors.js` | modify | Add origin allowlist from env var |
 | `src/config/http.js` | modify | Add `helmet()` middleware early in chain |
 | `package.json` | modify | Add helmet dependency |
 | `yarn.lock` | modify | Updated by yarn |
 
 ### Do NOT Modify
 
+- `src/config/cors.js` — not in scope for this task; CORS deferred to task-09
 - `src/app/routes/login-route.js` — owned by task-02
 - `src/app/routes/bull-board-route.js` — owned by task-03
 - `src/config/routes.js` — owned by task-03
@@ -65,49 +65,20 @@ app.use(helmet())
 app.use(express.json({ limit: '50mb' }))
 ```
 
-### Step 3: Update src/config/cors.js
-
-Read allowed origins from the environment. In development fall back to all origins:
-
-```js
-import cors from 'cors'
-
-function enableCors(app) {
-  const allowedOrigins = process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(',').map((o) => o.trim())
-    : null
-
-  const corsOptions = allowedOrigins
-    ? { origin: allowedOrigins, credentials: true }
-    : {} // open in dev (no ALLOWED_ORIGINS set)
-
-  app.use(cors(corsOptions))
-}
-
-export { enableCors }
-```
-
-### Step 4: Document the new env var
-
-Add `ALLOWED_ORIGINS` to any `.env.example` or environment documentation if it exists in the project.
-
 ## Testing
 
 - [ ] `npx jest` — all existing tests pass
-- [ ] Start the dev server (`yarn run dev`) and confirm security headers appear (use `curl -I http://localhost:PORT/`)
-- [ ] Confirm `X-Frame-Options`, `X-Content-Type-Options`, `Strict-Transport-Security` are present
-- [ ] Confirm a request from an unlisted origin is rejected when `ALLOWED_ORIGINS` is set
+- [ ] Start the dev server (`yarn run dev`) and confirm security headers appear: `curl -I http://localhost:PORT/`
+- [ ] Confirm `X-Frame-Options`, `X-Content-Type-Options`, `Strict-Transport-Security` are present in the response
 - [ ] `pre-commit-check` passes
 
 ## Documentation / KB Updates
 
-- [ ] If a `.env.example` exists, add `ALLOWED_ORIGINS=` entry
-- [ ] No KB doc required — standard Helmet/CORS setup is well-documented externally
+- [ ] No KB doc required — standard Helmet setup
 
 ## Completion Criteria
 
-- [ ] Helmet middleware applied before other middleware in `http.js`
-- [ ] CORS reads from `ALLOWED_ORIGINS` env var; falls back to open in dev
+- [ ] Helmet middleware applied as the first middleware in `http.js`
 - [ ] All tests pass
 - [ ] Changes committed to `plan/security-hardening/phase-1/task-01-helmet-cors`
 - [ ] `status.md` updated to `complete`
@@ -115,3 +86,4 @@ Add `ALLOWED_ORIGINS` to any `.env.example` or environment documentation if it e
 ## Conflict Avoidance Notes
 
 - `task-05-error-response-hardening` (phase 2) also modifies `src/config/http.js`. It must branch from the merged output of this task.
+- `task-09-cors-observability` (phase 2) owns `src/config/cors.js` — do not touch that file here.
