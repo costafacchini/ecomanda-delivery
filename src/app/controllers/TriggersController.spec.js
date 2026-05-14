@@ -120,7 +120,7 @@ describe('TriggersController delegation', () => {
 
   it('returns 404 from show when id cast fails', async () => {
     const triggerRepository = {
-      findFirst: jest.fn().mockRejectedValue(new Error('Cast to ObjectId failed for value "bad" at path "_id"')),
+      findFirst: jest.fn().mockRejectedValue(Object.assign(new Error('Cast to ObjectId failed'), { name: 'CastError', kind: 'ObjectId' })),
     }
     const triggersQueryInstance = {
       page: jest.fn(),
@@ -197,7 +197,7 @@ describe('TriggersController delegation', () => {
 
     expect(res.status).toHaveBeenCalledWith(500)
     expect(res.send).toHaveBeenCalledWith({
-      errors: { message: 'Error: some error' },
+      errors: { message: 'Erro interno do servidor.' },
     })
   })
 

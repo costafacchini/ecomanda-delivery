@@ -59,7 +59,7 @@ class MessagesController {
       if (err?.errors) {
         return res.status(422).send({ errors: sanitizeModelErrors(err.errors) })
       }
-      return res.status(500).send({ errors: { message: err.toString() } })
+      return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 
@@ -94,7 +94,7 @@ class MessagesController {
 
       return res.status(200).json(message)
     } catch (err) {
-      return res.status(500).json({ errors: { message: err.toString() } })
+      return res.status(500).json({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 }

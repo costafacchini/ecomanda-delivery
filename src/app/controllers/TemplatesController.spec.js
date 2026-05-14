@@ -92,7 +92,7 @@ describe('TemplatesController delegation', () => {
     await controller.create(req, res)
 
     expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: some error' } })
+    expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor.' } })
   })
 
   it('updates a template and returns status 200', async () => {
@@ -154,7 +154,7 @@ describe('TemplatesController delegation', () => {
     await controller.update(req, res)
 
     expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: some error' } })
+    expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor.' } })
   })
 
   it('returns template on show and status 200', async () => {
@@ -174,7 +174,7 @@ describe('TemplatesController delegation', () => {
     const templateRepository = {
       create: jest.fn(),
       update: jest.fn(),
-      findFirst: jest.fn().mockRejectedValue(new Error('Cast to ObjectId failed for value "bad" at path "_id"')),
+      findFirst: jest.fn().mockRejectedValue(Object.assign(new Error('Cast to ObjectId failed'), { name: 'CastError', kind: 'ObjectId' })),
     }
     const controller = new TemplatesController({
       templateRepository,
@@ -233,6 +233,6 @@ describe('TemplatesController delegation', () => {
     await controller.importation(req, res)
 
     expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: some error' } })
+    expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor.' } })
   })
 })

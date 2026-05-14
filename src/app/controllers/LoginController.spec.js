@@ -86,6 +86,6 @@ describe('LoginController', () => {
     await controller.login(req, res)
 
     expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ message: 'Erro ao tentar fazer login. Error: Erro' })
+    expect(res.json).toHaveBeenCalledWith({ message: 'Erro interno do servidor.' })
   })
 })

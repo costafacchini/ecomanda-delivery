@@ -38,7 +38,7 @@ class ContactsController {
         return res.status(422).send({ errors: sanitizeModelErrors(err.errors) })
       }
 
-      return res.status(500).send({ errors: { message: err.toString() } })
+      return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 
@@ -52,7 +52,7 @@ class ContactsController {
         return res.status(422).send({ errors: sanitizeModelErrors(err.errors) })
       }
 
-      return res.status(500).send({ errors: { message: err.toString() } })
+      return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 
@@ -62,10 +62,10 @@ class ContactsController {
 
       res.status(200).send(contact)
     } catch (err) {
-      if (err.toString().includes('Cast to ObjectId failed for value')) {
+      if (err.name === 'CastError' && err.kind === 'ObjectId') {
         return res.status(404).send({ errors: { message: `Contato ${req.params.id} não encontrado` } })
       } else {
-        return res.status(500).send({ errors: { message: err.toString() } })
+        return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
       }
     }
   }
@@ -100,7 +100,7 @@ class ContactsController {
 
       res.status(200).send(contacts)
     } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 }

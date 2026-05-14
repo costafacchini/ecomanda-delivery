@@ -76,7 +76,7 @@ describe('AdressesController', () => {
       await controller.update(req, res)
 
       expect(res.status).toHaveBeenCalledWith(500)
-      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: db error' } })
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor.' } })
     })
   })
 
@@ -137,7 +137,7 @@ describe('AdressesController', () => {
       await controller.show(req, res)
 
       expect(res.status).toHaveBeenCalledWith(500)
-      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: db error' } })
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor.' } })
     })
   })
 })

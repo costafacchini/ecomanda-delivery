@@ -114,7 +114,7 @@ describe('CartsController delegation', () => {
       await controller.create(req, res)
 
       expect(res.status).toHaveBeenCalledWith(500)
-      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: some error' } })
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor.' } })
     })
   })
 
@@ -179,7 +179,7 @@ describe('CartsController delegation', () => {
       await controller.update(req, res)
 
       expect(res.status).toHaveBeenCalledWith(500)
-      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: some error' } })
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor.' } })
     })
   })
 
@@ -260,7 +260,7 @@ describe('CartsController delegation', () => {
       await controller.addItem(req, res)
 
       expect(res.status).toHaveBeenCalledWith(500)
-      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: some error' } })
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor.' } })
     })
   })
 
@@ -330,7 +330,7 @@ describe('CartsController delegation', () => {
       await controller.send(req, res)
 
       expect(res.status).toHaveBeenCalledWith(500)
-      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: some error' } })
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor.' } })
     })
   })
 

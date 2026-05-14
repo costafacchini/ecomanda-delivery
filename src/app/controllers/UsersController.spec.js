@@ -151,7 +151,7 @@ describe('UsersController delegation', () => {
 
   it('returns 404 from show when id cast fails', async () => {
     const userRepository = {
-      findFirst: jest.fn().mockRejectedValue(new Error('Cast to ObjectId failed for value "bad" at path "_id"')),
+      findFirst: jest.fn().mockRejectedValue(Object.assign(new Error('Cast to ObjectId failed'), { name: 'CastError', kind: 'ObjectId' })),
       find: jest.fn(),
     }
     const controller = new UsersController({
@@ -239,7 +239,7 @@ describe('UsersController delegation', () => {
 
     expect(res.status).toHaveBeenCalledWith(500)
     expect(res.send).toHaveBeenCalledWith({
-      errors: { message: 'Error: some error' },
+      errors: { message: 'Erro interno do servidor.' },
     })
   })
 })

@@ -51,7 +51,7 @@ class CartsController {
       })
       res.status(201).send(result)
     } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 
@@ -73,7 +73,7 @@ class CartsController {
 
       res.status(200).send(result)
     } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 
@@ -95,7 +95,7 @@ class CartsController {
 
       res.status(200).send({ cart: cartDescription })
     } catch (err) {
-      return res.status(500).send({ errors: { message: err.toString() } })
+      return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 
@@ -119,7 +119,7 @@ class CartsController {
 
       res.status(200).send(cart)
     } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 
@@ -141,7 +141,7 @@ class CartsController {
 
       res.status(200).send(result)
     } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 
@@ -166,7 +166,7 @@ class CartsController {
 
       res.status(200).send(cart)
     } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 
@@ -189,7 +189,7 @@ class CartsController {
 
       res.status(200).send({ message: 'Carrinho agendado para envio' })
     } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 
@@ -212,7 +212,7 @@ class CartsController {
 
       res.status(200).send(cartTransformed)
     } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 
@@ -234,7 +234,7 @@ class CartsController {
         .status(200)
         .send({ cart_id: cart._id, payment_status: cart.payment_status, integration_status: cart.integration_status })
     } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 

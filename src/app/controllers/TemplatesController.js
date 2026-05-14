@@ -31,7 +31,7 @@ class TemplatesController {
       if ('errors' in err) {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
       }
-      res.status(500).send({ errors: { message: err.toString() } })
+      res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 
@@ -50,7 +50,7 @@ class TemplatesController {
 
       res.status(200).send(template)
     } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 
@@ -60,10 +60,10 @@ class TemplatesController {
 
       res.status(200).send(template)
     } catch (err) {
-      if (err.toString().includes('Cast to ObjectId failed for value')) {
+      if (err.name === 'CastError' && err.kind === 'ObjectId') {
         return res.status(404).send({ errors: { message: `Template ${req.params.id} não encontrado` } })
       } else {
-        return res.status(500).send({ errors: { message: err.toString() } })
+        return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
       }
     }
   }
@@ -90,7 +90,7 @@ class TemplatesController {
 
       res.status(200).send(templates)
     } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 
@@ -101,7 +101,7 @@ class TemplatesController {
 
       res.status(201).send({ body: 'OK' })
     } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 }

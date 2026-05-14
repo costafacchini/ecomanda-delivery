@@ -20,7 +20,7 @@ class AdressesController {
 
       res.status(200).send(result)
     } catch (err) {
-      return res.status(500).send({ errors: { message: err.toString() } })
+      return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 
@@ -44,7 +44,7 @@ class AdressesController {
 
       res.status(200).send(contact)
     } catch (err) {
-      return res.status(500).send({ errors: { message: err.toString() } })
+      return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
 }
