@@ -1,6 +1,7 @@
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
 import request from '../../services/request.js'
 import { MessengersBase } from './Base.js'
+import { logger } from '../../helpers/logger.js'
 
 class Utalk extends MessengersBase {
   constructor(licensee, { messageRepository, ...dependencies } = {}) {
@@ -168,11 +169,11 @@ class Utalk extends MessengersBase {
     if (!response.data.status) {
       messageToSend.sended = true
       await this.messageRepository.save(messageToSend)
-      console.info(`Mensagem ${messageId} enviada para Utalk com sucesso! ${JSON.stringify(response.data)}`)
+      logger.info(`Mensagem ${messageId} enviada para Utalk com sucesso! ${JSON.stringify(response.data)}`)
     } else {
       messageToSend.error = JSON.stringify(response.data)
       await this.messageRepository.save(messageToSend)
-      console.error(`Mensagem ${messageId} não enviada para Utalk. ${JSON.stringify(response.data)}`)
+      logger.error(`Mensagem ${messageId} não enviada para Utalk. ${JSON.stringify(response.data)}`)
     }
   }
 }

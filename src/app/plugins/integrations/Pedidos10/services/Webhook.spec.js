@@ -7,12 +7,14 @@ import request from '../../../../services/request.js'
 import { createRuntimeDependencies } from '../../../../runtime/dependencies.js'
 
 jest.mock('../../../../services/request')
+jest.mock('../../../../helpers/logger.js', () => ({
+  logger: { debug: jest.fn(), info: jest.fn(), warn: jest.fn(), error: jest.fn(), fatal: jest.fn() },
+}))
+import { logger } from '../../../../helpers/logger.js'
 
 describe('Pedidos10/Webhook plugin', () => {
   let licensee
   let dependencies
-  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
-  const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
   const buildWebhook = (licensee) =>
     new Webhook(licensee, { integrationlogRepository: dependencies.integrationlogRepository })
 
@@ -49,7 +51,7 @@ describe('Pedidos10/Webhook plugin', () => {
 
         const webhook = buildWebhook(licensee)
         await webhook.sign()
-        expect(consoleInfoSpy).toHaveBeenCalledWith('Webhook do Pedidos 10 assinado com sucesso! log_id: 1234')
+        expect(logger.info).toHaveBeenCalledWith('Webhook do Pedidos 10 assinado com sucesso! log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
       })
@@ -97,7 +99,7 @@ describe('Pedidos10/Webhook plugin', () => {
 
         const webhook = buildWebhook(licensee)
         await webhook.sign()
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Não foi possível assinar o webhook de pedidos do Pedidos 10
            status: 422
            mensagem: {"message":"The request is invalid.","errors":{"customer.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}

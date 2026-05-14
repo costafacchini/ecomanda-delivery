@@ -1,3 +1,5 @@
+import { logger } from '../helpers/logger.js'
+
 class ChatsController {
   constructor({ ingestChatMessage, publishMessage } = {}) {
     this.ingestChatMessage = ingestChatMessage
@@ -14,7 +16,7 @@ class ChatsController {
   }
 
   reset(_, res) {
-    console.info('Agendando para resetar chats expirando')
+    logger.info('Agendando para resetar chats expirando')
 
     this.publishMessage({ key: 'reset-chats', body: {} })
 

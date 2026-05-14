@@ -1,4 +1,5 @@
 import { CART_NOT_FOUND } from '../usecases/carts/cartErrors.js'
+import { logger } from '../helpers/logger.js'
 
 class CartsController {
   constructor({
@@ -238,7 +239,7 @@ class CartsController {
   }
 
   reset(_, res) {
-    console.info('Agendando para resetar carts expirando')
+    logger.info('Agendando para resetar carts expirando')
 
     this.publishMessage({ key: 'reset-carts', body: {} })
 

@@ -1,4 +1,5 @@
 import { replace } from '../../helpers/Emoji.js'
+import { logger } from '../../helpers/logger.js'
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
 import { v4 as uuidv4 } from 'uuid'
 import request from '../../services/request.js'
@@ -74,7 +75,7 @@ class Landbot {
     })
 
     if (!contact) {
-      console.info(`Contato com telefone ${normalizePhone.number} e licenciado ${this.licensee._id} não encontrado`)
+      logger.info(`Contato com telefone ${normalizePhone.number} e licenciado ${this.licensee._id} não encontrado`)
       return []
     }
 
@@ -88,7 +89,7 @@ class Landbot {
       const kind = Landbot.kindToMessageKind(message.type)
 
       if (!kind) {
-        console.info(`Tipo de mensagem retornado pela Landbot não reconhecido: ${message.type}`)
+        logger.info(`Tipo de mensagem retornado pela Landbot não reconhecido: ${message.type}`)
         continue
       }
 
@@ -185,7 +186,7 @@ class Landbot {
     })
 
     if (!contact) {
-      console.info(`Contato com telefone ${normalizePhone.number} e licenciado ${this.licensee._id} não encontrado`)
+      logger.info(`Contato com telefone ${normalizePhone.number} e licenciado ${this.licensee._id} não encontrado`)
       return
     }
 
@@ -265,7 +266,7 @@ class Landbot {
     if (response.status === 201) {
       messageToSend.sended = true
       await this.messageRepository.save(messageToSend)
-      console.info(
+      logger.info(
         `Mensagem ${messageToSend._id} enviada para Landbot com sucesso!
            status: ${response.status}
            body: ${JSON.stringify(response.data)}`,
@@ -273,7 +274,7 @@ class Landbot {
     } else {
       messageToSend.error = JSON.stringify(response.data)
       await this.messageRepository.save(messageToSend)
-      console.error(
+      logger.error(
         `Mensagem ${messageToSend._id} não enviada para Landbot.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}`,

@@ -14,15 +14,16 @@ import request from '../../services/request.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 jest.mock('../../services/request')
+jest.mock('../../helpers/logger.js', () => ({
+  logger: { debug: jest.fn(), info: jest.fn(), warn: jest.fn(), error: jest.fn(), fatal: jest.fn() },
+}))
 import { createRuntimeDependencies } from '../../runtime/dependencies.js'
+import { logger } from '../../helpers/logger.js'
 
 let dependencies
 
 describe('Rocketchat plugin', () => {
   let licensee
-  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
-  const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
-
   beforeEach(async () => {
     installMemoryRepositories()
     dependencies = createRuntimeDependencies()
@@ -420,7 +421,7 @@ describe('Rocketchat plugin', () => {
 
         const rocketchat = new Rocketchat(licensee, dependencies)
         await rocketchat.sendMessage(message._id, 'https://rocket.com.br')
-        expect(consoleInfoSpy).toHaveBeenCalledWith(
+        expect(logger.info).toHaveBeenCalledWith(
           'Mensagem 60958703f415ed4008748637 enviada para Rocketchat com sucesso!',
         )
       })
@@ -771,7 +772,7 @@ describe('Rocketchat plugin', () => {
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
 
-          expect(consoleErrorSpy).toHaveBeenCalledWith(
+          expect(logger.error).toHaveBeenCalledWith(
             'Não foi possível criar o visitante na Rocketchat {"success":false}',
           )
         })
@@ -828,7 +829,7 @@ describe('Rocketchat plugin', () => {
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
 
-          expect(consoleErrorSpy).toHaveBeenCalledWith('Não foi possível criar a sala na Rocketchat {"success":false}')
+          expect(logger.error).toHaveBeenCalledWith('Não foi possível criar a sala na Rocketchat {"success":false}')
         })
       })
 
@@ -914,7 +915,7 @@ describe('Rocketchat plugin', () => {
           expect(messageUpdated.sended).toEqual(false)
           expect(messageUpdated.error).toEqual('{"success":false}')
 
-          expect(consoleErrorSpy).toHaveBeenCalledWith(
+          expect(logger.error).toHaveBeenCalledWith(
             'Mensagem 60958703f415ed4008748637 não enviada para a Rocketchat {"success":false}',
           )
         })
@@ -1026,7 +1027,7 @@ describe('Rocketchat plugin', () => {
           const roomClosed = await Room.findById(room._id)
           expect(roomClosed.closed).toEqual(true)
 
-          expect(consoleInfoSpy).toHaveBeenCalledWith(
+          expect(logger.info).toHaveBeenCalledWith(
             'Mensagem 60958703f415ed4008748637 enviada para Rocketchat com sucesso!',
           )
         })

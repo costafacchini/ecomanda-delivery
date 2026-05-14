@@ -1,3 +1,5 @@
+import { logger } from '../helpers/logger.js'
+
 class ChatbotsController {
   constructor({ bodyRepository, queueServer, publishMessage } = {}) {
     this.bodyRepository = bodyRepository
@@ -10,7 +12,7 @@ class ChatbotsController {
   }
 
   async message(req, res) {
-    console.info(`Mensagem chegando do plugin de chatbot: ${JSON.stringify(req.body)}`)
+    logger.info('Mensagem chegando do plugin de chatbot', req.body)
     const body = await this.bodyRepository.create({ content: req.body, licensee: req.licensee._id, kind: 'normal' })
 
     await this.queueServer.addJob('chatbot-message', { bodyId: body._id, licenseeId: req.licensee._id })
@@ -19,7 +21,7 @@ class ChatbotsController {
   }
 
   async transfer(req, res) {
-    console.info(`Transferencia solicitada: ${JSON.stringify(req.body)}`)
+    logger.info('Transferencia solicitada', req.body)
     const body = await this.bodyRepository.create({ content: req.body, licensee: req.licensee._id, kind: 'normal' })
 
     await this.queueServer.addJob('chatbot-transfer-to-chat', { bodyId: body._id, licenseeId: req.licensee._id })
@@ -28,7 +30,7 @@ class ChatbotsController {
   }
 
   reset(_, res) {
-    console.info('Agendando para resetar chatbots abandonados')
+    logger.info('Agendando para resetar chatbots abandonados')
 
     this.publishMessage({ key: 'reset-chatbots', body: {} })
 

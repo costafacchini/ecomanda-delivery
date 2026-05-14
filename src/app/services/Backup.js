@@ -1,4 +1,5 @@
 import fs from 'fs'
+import { logger } from '../helpers/logger.js'
 import os from 'os'
 import path from 'path'
 import spawn from 'child_process'
@@ -20,9 +21,9 @@ async function backup() {
 
     await upload(buf, filename)
 
-    console.info('Backup efetuado com sucesso!')
+    logger.info('Backup efetuado com sucesso!')
   } catch (err) {
-    console.info(`Erro ao tentar efetuar o backup ${err.toString()}`)
+    logger.error(`Erro ao tentar efetuar o backup ${err.toString()}`)
   }
 }
 
@@ -62,7 +63,7 @@ function doBackup(mongoURI) {
 
     mongodump.stdout.pipe(fs.createWriteStream(output))
     mongodump.stderr.on('data', function (data) {
-      console.log(data.toString('ascii'))
+      logger.info(data.toString('ascii'))
     })
     mongodump.on('error', reject)
 

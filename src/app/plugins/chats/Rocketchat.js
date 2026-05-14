@@ -1,6 +1,7 @@
 import { replace } from '../../helpers/Emoji.js'
 import request from '../../services/request.js'
 import { ChatsBase } from './Base.js'
+import { logger } from '../../helpers/logger.js'
 import { requireDependency } from '../../helpers/RequireDependency.js'
 
 const createVisitor = async (contact, token, url) => {
@@ -15,7 +16,7 @@ const createVisitor = async (contact, token, url) => {
   const response = await request.post(`${url}/api/v1/livechat/visitor`, { body })
 
   if (response.data.success !== true) {
-    console.error(`Não foi possível criar o visitante na Rocketchat ${JSON.stringify(response.data)}`)
+    logger.error(`Não foi possível criar o visitante na Rocketchat ${JSON.stringify(response.data)}`)
   }
 
   return response.data.success === true
@@ -25,7 +26,7 @@ const createRoom = async (contact, token, url, roomRepository) => {
   const response = await request.get(`${url}/api/v1/livechat/room?token=${token}`)
 
   if (response.data.success !== true) {
-    console.error(`Não foi possível criar a sala na Rocketchat ${JSON.stringify(response.data)}`)
+    logger.error(`Não foi possível criar a sala na Rocketchat ${JSON.stringify(response.data)}`)
     return
   }
 
@@ -163,7 +164,7 @@ class Rocketchat extends ChatsBase {
       messageToSend.sended = true
       await this.messageRepository.save(messageToSend)
 
-      console.info(`Mensagem ${messageToSend._id} enviada para Rocketchat com sucesso!`)
+      logger.info(`Mensagem ${messageToSend._id} enviada para Rocketchat com sucesso!`)
     } else {
       messageToSend.error = messageToSend.error
         ? `${messageToSend.error} | ${JSON.stringify(response.data)}`
@@ -179,7 +180,7 @@ class Rocketchat extends ChatsBase {
       if (messageToSend.error.includes('room-closed')) {
         await this.sendMessage(messageToSend._id, url)
       } else {
-        console.error(`Mensagem ${messageToSend._id} não enviada para a Rocketchat ${JSON.stringify(response.data)}`)
+        logger.error(`Mensagem ${messageToSend._id} não enviada para a Rocketchat ${JSON.stringify(response.data)}`)
       }
     }
 

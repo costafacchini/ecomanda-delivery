@@ -3,6 +3,16 @@ import { CartRepositoryMemory } from '@repositories/cart'
 import { CartsController } from './CartsController.js'
 import { CART_NOT_FOUND } from '../usecases/carts/cartErrors.js'
 
+jest.mock('../helpers/logger.js', () => ({
+  logger: {
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    fatal: jest.fn(),
+  },
+}))
+
 function buildResponse() {
   return {
     send: jest.fn(),
@@ -395,8 +405,6 @@ describe('CartsController delegation', () => {
       const { controller, publishMessage } = buildController()
       const req = {}
       const res = buildResponse()
-
-      jest.spyOn(global.console, 'info').mockImplementation()
 
       controller.reset(req, res)
 

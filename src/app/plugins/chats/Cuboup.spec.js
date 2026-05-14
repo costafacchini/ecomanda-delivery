@@ -12,14 +12,22 @@ import request from '../../services/request.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 jest.mock('../../services/request')
+jest.mock('../../helpers/logger.js', () => ({
+  logger: {
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    fatal: jest.fn(),
+  },
+}))
 import { createRuntimeDependencies } from '../../runtime/dependencies.js'
+import { logger } from '../../helpers/logger.js'
 
 let dependencies
 
 describe('Cuboup plugin', () => {
   let licensee
-  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
-  const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
 
   beforeEach(async () => {
     installMemoryRepositories()
@@ -269,7 +277,7 @@ describe('Cuboup plugin', () => {
         const cuboup = new Cuboup(licensee, dependencies)
         const message = await cuboup.responseToMessages(responseBody)
 
-        expect(consoleInfoSpy).toHaveBeenCalledWith('Tipo de mensagem retornado pela CuboUp não reconhecido: any')
+        expect(logger.info).toHaveBeenCalledWith('Tipo de mensagem retornado pela CuboUp não reconhecido: any')
 
         expect(message).toEqual([])
       })
@@ -475,7 +483,7 @@ describe('Cuboup plugin', () => {
 
         const cuboup = new Cuboup(licensee, dependencies)
         await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
-        expect(consoleInfoSpy).toHaveBeenCalledWith(
+        expect(logger.info).toHaveBeenCalledWith(
           'Mensagem 60958703f415ed4008748637 enviada para CuboUp com sucesso!',
         )
       })
@@ -587,7 +595,7 @@ describe('Cuboup plugin', () => {
         expect(messageUpdated.sended).toEqual(false)
         expect(messageUpdated.error).toEqual('mensagem: {"error":"Error message"}')
 
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Mensagem 60958703f415ed4008748637 não enviada para CuboUp.
            status: 404
            mensagem: {"error":"Error message"}`,

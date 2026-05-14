@@ -1,3 +1,5 @@
+import { logger } from '../helpers/logger.js'
+
 class BackupsController {
   constructor({ publishMessage } = {}) {
     this.publishMessage = publishMessage
@@ -7,7 +9,7 @@ class BackupsController {
   }
 
   schedule(_, res) {
-    console.info('Agendando backup')
+    logger.info('Agendando backup')
 
     this.publishMessage({ key: 'backup', body: {} })
 
@@ -15,7 +17,7 @@ class BackupsController {
   }
 
   clear(_, res) {
-    console.info('Agendar limpeza de backups antigos')
+    logger.info('Agendar limpeza de backups antigos')
 
     this.publishMessage({ key: 'clear-backups', body: {} })
 

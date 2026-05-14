@@ -1,4 +1,5 @@
 import Repository from '../../repositories/repository.js'
+import { logger } from '../../helpers/logger.js'
 import { v4 as uuidv4 } from 'uuid'
 import { S3 } from '../storage/S3.js'
 import { requireDependency } from '../../helpers/RequireDependency.js'
@@ -236,7 +237,7 @@ class MessengersBase {
       try {
         processedMessages.push(await this.messageRepository.create(messageToSend))
       } catch (error) {
-        console.error('Não consegui criar a mensagem, verifique os erros:', error)
+        logger.error('Não consegui criar a mensagem, verifique os erros', error)
       }
     }
 

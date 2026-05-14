@@ -14,14 +14,22 @@ import request from '../../services/request.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 jest.mock('../../services/request')
+jest.mock('../../helpers/logger.js', () => ({
+  logger: {
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    fatal: jest.fn(),
+  },
+}))
 import { createRuntimeDependencies } from '../../runtime/dependencies.js'
+import { logger } from '../../helpers/logger.js'
 
 let dependencies
 
 describe('Crisp plugin', () => {
   let licensee
-  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
-  const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
 
   beforeEach(async () => {
     installMemoryRepositories()
@@ -720,7 +728,7 @@ describe('Crisp plugin', () => {
 
         const crisp = new Crisp(licensee, dependencies)
         await crisp.sendMessage(message._id, '631d631e-2047-453e-9989-93edda91b945')
-        expect(consoleInfoSpy).toHaveBeenCalledWith('Mensagem 60958703f415ed4008748637 enviada para Crisp com sucesso!')
+        expect(logger.info).toHaveBeenCalledWith('Mensagem 60958703f415ed4008748637 enviada para Crisp com sucesso!')
       })
 
       describe('when message has a departament', () => {
@@ -1023,7 +1031,7 @@ describe('Crisp plugin', () => {
           const messageUpdated = await messageRepository.findFirst({ _id: message._id })
           expect(messageUpdated.sended).toEqual(false)
 
-          expect(consoleErrorSpy).toHaveBeenCalledWith(
+          expect(logger.error).toHaveBeenCalledWith(
             'Não foi possível criar a sessão na Crisp {"error":true,"reason":"invalid_session","data":{}}',
           )
         })
@@ -1094,7 +1102,7 @@ describe('Crisp plugin', () => {
             'mensagem: {"error":true,"reason":"invalid_data","data":{"namespace":"data","message":"data.user.type should be equal to one of the allowed values"}}',
           )
 
-          expect(consoleErrorSpy).toHaveBeenCalledWith(
+          expect(logger.error).toHaveBeenCalledWith(
             `Mensagem 60958703f415ed4008748637 não enviada para Crisp.
            status: 404
            mensagem: {"error":true,"reason":"invalid_data","data":{"namespace":"data","message":"data.user.type should be equal to one of the allowed values"}}`,

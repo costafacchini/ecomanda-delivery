@@ -1,5 +1,6 @@
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
 import { MessengersBase } from './Base.js'
+import { logger } from '../../helpers/logger.js'
 import { requireDependency } from '../../helpers/RequireDependency.js'
 import { isPhoto, isVideo } from '../../helpers/Files.js'
 
@@ -139,12 +140,12 @@ class Baileys extends MessengersBase {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
 
     if (!messageToSend) {
-      console.error(`Baileys: mensagem ${messageId} não encontrada.`)
+      logger.error(`Baileys: mensagem ${messageId} não encontrada.`)
       return
     }
 
     if (!['text', 'file'].includes(messageToSend.kind)) {
-      console.warn(`Baileys: tipo de mensagem '${messageToSend.kind}' não suportado. Mensagem ${messageId} ignorada.`)
+      logger.warn(`Baileys: tipo de mensagem '${messageToSend.kind}' não suportado. Mensagem ${messageId} ignorada.`)
       return
     }
 
@@ -163,7 +164,7 @@ class Baileys extends MessengersBase {
 
       socket.ev.on('creds.update', () => {
         this.saveSession(session, state.creds, rawKeys, BufferJSON).catch((err) => {
-          console.error(`Baileys: erro ao salvar sessão: ${err.message ?? err}`)
+          logger.error(`Baileys: erro ao salvar sessão: ${err.message ?? err}`)
         })
       })
 
@@ -180,7 +181,7 @@ class Baileys extends MessengersBase {
         throw new Error(`Número ${rawNumber} não encontrado no WhatsApp`)
       }
       const jid = registeredAccount.jid
-      console.info(`Baileys: enviando mensagem ${messageId} para JID resolvido: ${jid}`)
+      logger.info(`Baileys: enviando mensagem ${messageId} para JID resolvido: ${jid}`)
 
       let messageContent
       if (messageToSend.kind === 'file') {
@@ -208,7 +209,7 @@ class Baileys extends MessengersBase {
       messageToSend.messageWaId = result?.key?.id ?? null
       messageToSend.sended = true
       await this.messageRepository.save(messageToSend)
-      console.info(`Mensagem ${messageId} enviada via Baileys com sucesso!`)
+      logger.info(`Mensagem ${messageId} enviada via Baileys com sucesso!`)
     } catch (error) {
       const statusCode = error?.output?.statusCode
       if (statusCode === 401) {
@@ -217,7 +218,7 @@ class Baileys extends MessengersBase {
       }
       messageToSend.error = error.message ?? String(error)
       await this.messageRepository.save(messageToSend)
-      console.error(`Mensagem ${messageId} não enviada via Baileys. Erro: ${error.message ?? error}`)
+      logger.error(`Mensagem ${messageId} não enviada via Baileys. Erro: ${error.message ?? error}`)
     } finally {
       if (socket) {
         socket.end()
@@ -238,7 +239,7 @@ class Baileys extends MessengersBase {
 
     socket.ev.on('creds.update', () => {
       this.saveSession(session, state.creds, rawKeys, BufferJSON).catch((err) => {
-        console.error(`Baileys: erro ao salvar sessão no reconect: ${err.message ?? err}`)
+        logger.error(`Baileys: erro ao salvar sessão no reconect: ${err.message ?? err}`)
       })
     })
 
@@ -322,7 +323,7 @@ class Baileys extends MessengersBase {
 
                   socket.ev.on('creds.update', () => {
                     this.saveSession(session, state.creds, rawKeys, BufferJSON).catch((err) => {
-                      console.error(`Baileys: erro ao salvar sessão: ${err.message ?? err}`)
+                      logger.error(`Baileys: erro ao salvar sessão: ${err.message ?? err}`)
                     })
                   })
                 })
