@@ -2,16 +2,22 @@ import('../app/repositories/index.js')
 
 import createError from 'http-errors'
 import express from 'express'
+import helmet from 'helmet'
 import logger from 'morgan'
 import { connect } from './database.js'
 import { enableCors } from './cors.js'
 import { routes } from './routes.js'
+import { helmetConfig } from './security.js'
 import http from 'http'
 import { Server } from 'socket.io'
 import Rollbar from 'rollbar'
 import { frontendDistDir } from './frontend-paths.js'
 
 const app = express()
+
+app.set('trust proxy', 1)
+
+app.use(helmet(helmetConfig()))
 
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ limit: '50mb', extended: false }))
