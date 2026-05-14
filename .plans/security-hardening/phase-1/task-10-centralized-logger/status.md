@@ -1,4 +1,4 @@
-# Status: Sanitize ChatbotsController Logging
+# Status: Centralized Logger
 
 **Current Status**: not-started
 **Last Updated**: 2026-05-14

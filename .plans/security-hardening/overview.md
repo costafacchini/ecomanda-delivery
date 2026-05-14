@@ -21,7 +21,7 @@ Fix security issues identified in the OWASP-aligned security review (2026-05-14)
 - Error response sanitization (no stack traces)
 - JWT verification 500 → 401 fix
 - Role-based authorization on `/resources/users` and `/resources/licensees`
-- `req.body` logging sanitization in `ChatbotsController`
+- Centralized logger: `LOG_LEVEL`-gated meta, PII out of info-level logs, Sentry integration
 - Input validation on v1 API routes
 
 ### Out of Scope
@@ -38,7 +38,7 @@ Fix security issues identified in the OWASP-aligned security review (2026-05-14)
 
 | Phase | Name | Tasks | Dependencies | Description |
 |-------|------|-------|--------------|-------------|
-| 1 | Foundational Hardening | task-01 through task-04 | None | Low-risk, independent fixes: Helmet, rate limiting, Bull Board auth, logging sanitization |
+| 1 | Foundational Hardening | task-01, task-02, task-03, task-10 | None | Helmet, rate limiting, Bull Board auth, centralized logger (26 source files + 22 specs) |
 | 2 | Route & Auth Hardening | task-05, task-07, task-08, task-09 | Phase 1 (task-05 depends on task-01) | Error response hardening, JWT/RBAC fixes, v1 input validation, CORS observability |
 
 ## Task Summary
@@ -48,7 +48,7 @@ Fix security issues identified in the OWASP-aligned security review (2026-05-14)
 | phase-1/task-01-helmet-cors | Helmet Security Headers | 1 | not-started | — |
 | phase-1/task-02-rate-limiting | Rate Limiting on Login | 1 | not-started | — |
 | phase-1/task-03-bull-board-auth | Bull Board Authentication | 1 | not-started | — |
-| phase-1/task-04-sanitize-logging | Sanitize ChatbotsController Logging | 1 | not-started | — |
+| phase-1/task-10-centralized-logger | Centralized Logger | 1 | not-started | — |
 | phase-2/task-05-error-response-hardening | Error Response Hardening | 2 | not-started | phase-1/task-01-helmet-cors |
 | phase-2/task-07-jwt-rbac | JWT 500→401 Fix + RBAC on Resources Routes | 2 | not-started | — |
 | phase-2/task-08-v1-input-validation | Input Validation on v1 API Routes | 2 | not-started | — |
@@ -73,7 +73,7 @@ Base branch: `main`
 | `src/app/routes/login-route.js` | Login endpoint — no rate limiting (task-02) |
 | `src/app/routes/bull-board-route.js` | Bull Board router — no auth (task-03) |
 | `src/config/routes.js` | Route mounting — `/queue` needs auth middleware (task-03) |
-| `src/app/controllers/ChatbotsController.js` | Logs full `req.body` (task-04) |
+| `src/app/controllers/ChatbotsController.js` | Logs full `req.body` — fixed by task-10 (meta suppressed at info level) |
 | `src/app/routes/resources-routes.js` | JWT verify returns 500; no RBAC on users/licensees (task-07) |
 | `src/app/routes/v1/v1-routes.js` | No express-validator on any v1 route (task-08) |
 
@@ -89,7 +89,10 @@ Base branch: `main`
 - [ ] No stack traces or raw error objects returned to API callers
 - [ ] JWT verification failure returns 401, not 500
 - [ ] Helmet headers present on all responses
-- [ ] ChatbotsController no longer logs `req.body` verbatim
+- [ ] All `console.*` calls replaced with centralized `logger`
+- [ ] At `LOG_LEVEL=info` (default): no `req.body` or response payloads in logs
+- [ ] At `LOG_LEVEL=debug`: full meta visible for investigation
+- [ ] Sentry receives `error`/`fatal` exceptions when `SENTRY_DSN` is set
 - [ ] `/resources/users` and `/resources/licensees` write operations restricted to super users
 - [ ] v1 routes validate required inputs and return 422 on bad input
 - [ ] CORS origin list is known and restriction is in place (Phase B of task-09)
