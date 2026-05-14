@@ -31,6 +31,17 @@ If `complete`, inform and stop. If `in-progress`, ask to resume or restart.
 
 ### Step 2: Pre-Flight Protocol
 
+**Pre-check — plan must be merged into `main`**:
+
+```bash
+git fetch origin
+git show origin/main:.plans/{plan-slug}/overview.md > /dev/null 2>&1
+```
+
+If this command fails, the plan branch has not been merged. Stop and instruct the user:
+
+> "Plan `{plan-slug}` is not yet in `main`. Merge the `plan/{plan-slug}` PR first, then re-run `/execute-task {plan-slug}/{task-path}`."
+
 1. **Resume path**: Already on task branch with uncommitted work → resume. On another branch with uncommitted changes → stop and ask to commit/stash. Otherwise: `git switch {base-branch} && git pull origin {base-branch}`.
 2. **Read JIRA**: If referenced, read description AND comments for latest requirements.
 3. **Prerequisites**: For each dependency, read `status.md` — must be `complete` or `adapted`. Report blockers and stop if not.

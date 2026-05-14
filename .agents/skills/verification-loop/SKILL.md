@@ -136,6 +136,24 @@ Skipped phases (reason):
 - ...
 ```
 
+## Snapshot Regression Check
+
+Before starting a major refactor, capture a baseline with:
+
+```bash
+./scripts/snapshot before --label pre-refactor
+```
+
+After the refactor, run `compare` as part of the verification loop:
+
+```bash
+./scripts/snapshot compare --threshold 20
+```
+
+This reports percentage changes in file count, test file count, and source line
+count, and exits 1 if any metric drops beyond the threshold. Wire this step
+between Phase 4 (tests) and Phase 5 (security) for automated CI gates.
+
 ## Relationship to Other Skills
 
 - `pre-commit-check` — fast gate before every commit (linter + conventions + KB check)
