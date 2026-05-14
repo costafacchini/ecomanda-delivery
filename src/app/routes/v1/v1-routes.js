@@ -1,4 +1,6 @@
 import express from 'express'
+import { body, param, query, validationResult } from 'express-validator'
+import { sanitizeExpressErrors } from '../../helpers/SanitizeErrors.js'
 import { ChatsController } from '../../controllers/ChatsController.js'
 import { ChatbotsController } from '../../controllers/ChatbotsController.js'
 import { MessengersController } from '../../controllers/MessengersController.js'
@@ -28,6 +30,44 @@ import { scheduleSendMessageToMessenger } from '../../repositories/messenger.js'
 import { createRuntimeDependencies } from '../../runtime/dependencies.js'
 
 const router = express.Router()
+
+function validate(req, res, next) {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
+  }
+  next()
+}
+
+function cartsCreateValidations() {
+  return [
+    body('contact').optional().isString().trim(),
+    query('contact').optional().isString().trim(),
+    body('name').optional().isString().trim(),
+  ]
+}
+
+function cartsAddItemValidations() {
+  return [
+    param('contact').notEmpty().withMessage('contact é obrigatório').isString().trim(),
+    body('products').isArray({ min: 1 }).withMessage('products deve ser um array com pelo menos um item'),
+  ]
+}
+
+function ordersCreateValidations() {
+  return [
+    body('MerchantExternalCode').notEmpty().withMessage('MerchantExternalCode é obrigatório').isString().trim(),
+    body('order').notEmpty().withMessage('order é obrigatório'),
+  ]
+}
+
+function delayValidations() {
+  return [
+    param('time')
+      .isInt({ min: 0, max: 30000 })
+      .withMessage('time deve ser um inteiro entre 0 e 30000'),
+  ]
+}
 
 // Composition root for v1 routes. Separate instance from resources-routes intentionally;
 // each route module owns its own subset of dependencies.
@@ -113,23 +153,23 @@ router.get('/contacts/address/:number', adressesController.show)
 router.post('/contacts/address/:number', adressesController.update)
 
 router.post('/carts/reset', cartsController.reset)
-router.post('/carts', cartsController.create)
+router.post('/carts', cartsCreateValidations(), validate, cartsController.create)
 router.post('/carts/:contact', cartsController.update)
 router.delete('/carts/:contact', cartsController.close)
 router.get('/carts/:contact', cartsController.show)
-router.post('/carts/:contact/item', cartsController.addItem)
+router.post('/carts/:contact/item', cartsAddItemValidations(), validate, cartsController.addItem)
 router.delete('/carts/:contact/item', cartsController.removeItem)
 router.post('/carts/:contact/send', cartsController.send)
 router.get('/carts/:contact/cart', cartsController.getCart)
 router.get('/carts/:contact/payment', cartsController.getPayment)
 
-router.get('/delay/:time', delayController.time)
-router.post('/delay/:time', delayController.time)
+router.get('/delay/:time', delayValidations(), validate, delayController.time)
+router.post('/delay/:time', delayValidations(), validate, delayController.time)
 
 router.get('/backgroundjobs/:id', backgroundjobsController.show)
 router.post('/backgroundjobs', backgroundjobsController.create)
 
-router.post('/orders', ordersController.create)
+router.post('/orders', ordersCreateValidations(), validate, ordersController.create)
 router.post('/orders/change-status', ordersController.changeStatus)
 
 router.post('/integrations', integrationsController.create)
