@@ -8,7 +8,7 @@ const jest = {
   transform: {
     '^.+\\.js$': 'babel-jest',
   },
-  transformIgnorePatterns: ['node_modules/(?!(module-alias|isomorphic-fetch|uuid|@whiskeysockets/baileys)/)'],
+  transformIgnorePatterns: ['node_modules/(?!(module-alias|isomorphic-fetch|uuid|@whiskeysockets/baileys|archiver|archiver-utils|zip-stream|compress-commons|crc32-stream|readdir-glob|is-stream)/)'],
   moduleNameMapper: {
     '^\\.jest(.*)$': '<rootDir>/.jest$1',
     '@models(.*)$': '<rootDir>/src/app/models$1',
