@@ -9,7 +9,13 @@ jest.mock('../../../config/rabbitmq.js', () => ({ publishMessage: jest.fn() }))
 // without a live database connection.
 jest.mock('../../runtime/dependencies.js', () => {
   const contactRepository = { findFirst: jest.fn(), find: jest.fn() }
-  const cartRepository = { findFirst: jest.fn(), find: jest.fn(), create: jest.fn(), save: jest.fn(), update: jest.fn() }
+  const cartRepository = {
+    findFirst: jest.fn(),
+    find: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+    update: jest.fn(),
+  }
   const deps = {
     bodyRepository: { findFirst: jest.fn(), find: jest.fn(), create: jest.fn(), save: jest.fn() },
     contactRepository,
@@ -131,7 +137,9 @@ describe('POST /v1/carts/:contact/item — input validation', () => {
 // ---------------------------------------------------------------------------
 describe('POST /v1/orders — input validation', () => {
   it('returns 422 when MerchantExternalCode is missing', async () => {
-    const res = await request(app).post('/v1/orders').send({ order: { id: 'ord-1' } })
+    const res = await request(app)
+      .post('/v1/orders')
+      .send({ order: { id: 'ord-1' } })
     expect(res.status).toBe(422)
     expect(res.body.errors[0].message).toMatch(/MerchantExternalCode/)
   })

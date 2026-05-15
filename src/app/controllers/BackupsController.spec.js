@@ -26,8 +26,7 @@ function buildController() {
 }
 
 describe('BackupsController delegation', () => {
-  beforeEach(() => {
-  })
+  beforeEach(() => {})
 
   it('publishes backup message and returns status 200 on schedule', () => {
     const { controller, publishMessage } = buildController()

@@ -99,7 +99,7 @@ class ContactsController {
       const contacts = await contactsQuery.all()
 
       res.status(200).send(contacts)
-    } catch (err) {
+    } catch {
       res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }

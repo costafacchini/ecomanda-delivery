@@ -50,7 +50,7 @@ class CartsController {
         body: req.body,
       })
       res.status(201).send(result)
-    } catch (err) {
+    } catch {
       res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
@@ -72,7 +72,7 @@ class CartsController {
       }
 
       res.status(200).send(result)
-    } catch (err) {
+    } catch {
       res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
@@ -94,7 +94,7 @@ class CartsController {
       const cartDescription = await this.parseCart(cart._id)
 
       res.status(200).send({ cart: cartDescription })
-    } catch (err) {
+    } catch {
       return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
@@ -118,7 +118,7 @@ class CartsController {
       cart = await this.cartRepository.findFirst({ _id: cart._id })
 
       res.status(200).send(cart)
-    } catch (err) {
+    } catch {
       res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
@@ -140,7 +140,7 @@ class CartsController {
       }
 
       res.status(200).send(result)
-    } catch (err) {
+    } catch {
       res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
@@ -165,7 +165,7 @@ class CartsController {
       cart = await this.cartRepository.findFirst({ _id: cart._id })
 
       res.status(200).send(cart)
-    } catch (err) {
+    } catch {
       res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
@@ -188,7 +188,7 @@ class CartsController {
       }
 
       res.status(200).send({ message: 'Carrinho agendado para envio' })
-    } catch (err) {
+    } catch {
       res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
@@ -211,7 +211,7 @@ class CartsController {
       const cartTransformed = await cartPlugin.transformCart(req.licensee, cart)
 
       res.status(200).send(cartTransformed)
-    } catch (err) {
+    } catch {
       res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
@@ -233,7 +233,7 @@ class CartsController {
       res
         .status(200)
         .send({ cart_id: cart._id, payment_status: cart.payment_status, integration_status: cart.integration_status })
-    } catch (err) {
+    } catch {
       res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }

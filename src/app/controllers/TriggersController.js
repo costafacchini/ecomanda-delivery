@@ -82,7 +82,7 @@ class TriggersController {
       const triggers = await triggersQuery.all()
 
       res.status(200).send(triggers)
-    } catch (err) {
+    } catch {
       res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
@@ -92,7 +92,7 @@ class TriggersController {
       await this.importFacebookCatalog.execute(req.params.id, req.body.text)
 
       return res.status(201).send({ body: 'OK' })
-    } catch (err) {
+    } catch {
       return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }

@@ -76,7 +76,7 @@ class UsersController {
   async index(req, res) {
     try {
       res.status(200).send(await this.userRepository.find({}, { password: 0 }))
-    } catch (err) {
+    } catch {
       res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }

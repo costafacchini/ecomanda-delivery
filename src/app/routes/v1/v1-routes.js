@@ -62,11 +62,7 @@ function ordersCreateValidations() {
 }
 
 function delayValidations() {
-  return [
-    param('time')
-      .isInt({ min: 0, max: 30000 })
-      .withMessage('time deve ser um inteiro entre 0 e 30000'),
-  ]
+  return [param('time').isInt({ min: 0, max: 30000 }).withMessage('time deve ser um inteiro entre 0 e 30000')]
 }
 
 // Composition root for v1 routes. Separate instance from resources-routes intentionally;

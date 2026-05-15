@@ -49,7 +49,7 @@ class TemplatesController {
       const template = await this.templateRepository.findFirst({ _id: req.params.id })
 
       res.status(200).send(template)
-    } catch (err) {
+    } catch {
       res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
@@ -89,7 +89,7 @@ class TemplatesController {
       const templates = await templatesQuery.all()
 
       res.status(200).send(templates)
-    } catch (err) {
+    } catch {
       res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
@@ -100,7 +100,7 @@ class TemplatesController {
       await templateImporter.import()
 
       res.status(201).send({ body: 'OK' })
-    } catch (err) {
+    } catch {
       res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }

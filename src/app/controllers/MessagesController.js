@@ -93,7 +93,7 @@ class MessagesController {
       await this.queueServer.addJob('send-message-to-messenger', { messageId: message._id })
 
       return res.status(200).json(message)
-    } catch (err) {
+    } catch {
       return res.status(500).json({ errors: { message: 'Erro interno do servidor.' } })
     }
   }

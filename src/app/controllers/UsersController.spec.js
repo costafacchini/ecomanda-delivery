@@ -151,7 +151,11 @@ describe('UsersController delegation', () => {
 
   it('returns 404 from show when id cast fails', async () => {
     const userRepository = {
-      findFirst: jest.fn().mockRejectedValue(Object.assign(new Error('Cast to ObjectId failed'), { name: 'CastError', kind: 'ObjectId' })),
+      findFirst: jest
+        .fn()
+        .mockRejectedValue(
+          Object.assign(new Error('Cast to ObjectId failed'), { name: 'CastError', kind: 'ObjectId' }),
+        ),
       find: jest.fn(),
     }
     const controller = new UsersController({

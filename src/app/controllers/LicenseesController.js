@@ -135,7 +135,7 @@ class LicenseesController {
       const licensees = await licenseesQuery.all()
 
       res.status(200).send(licensees)
-    } catch (err) {
+    } catch {
       res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
@@ -145,7 +145,7 @@ class LicenseesController {
       const response = await this.setDialogWebhookUseCase.execute(req.params.id)
 
       return res.status(200).send(response)
-    } catch (err) {
+    } catch {
       return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
@@ -155,7 +155,7 @@ class LicenseesController {
       const response = await this.sendLicenseeToPagarMe.execute(req.params.id)
 
       return res.status(200).send(response)
-    } catch (err) {
+    } catch {
       return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }
@@ -165,7 +165,7 @@ class LicenseesController {
       const response = await this.signPedidos10OrderWebhook.execute(req.params.id)
 
       return res.status(200).send(response)
-    } catch (err) {
+    } catch {
       return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
     }
   }

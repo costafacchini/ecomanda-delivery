@@ -15,7 +15,6 @@ import { createRuntimeDependencies } from '../runtime/dependencies.js'
 let dependencies
 
 describe('resetCarts', () => {
-
   beforeEach(() => {
     installMemoryRepositories()
     dependencies = createRuntimeDependencies()

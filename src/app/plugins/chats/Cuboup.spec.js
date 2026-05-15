@@ -483,9 +483,7 @@ describe('Cuboup plugin', () => {
 
         const cuboup = new Cuboup(licensee, dependencies)
         await cuboup.sendMessage(message._id, 'https://url.com.br/jkJGs5a4ea/pAOqw2340')
-        expect(logger.info).toHaveBeenCalledWith(
-          'Mensagem 60958703f415ed4008748637 enviada para CuboUp com sucesso!',
-        )
+        expect(logger.info).toHaveBeenCalledWith('Mensagem 60958703f415ed4008748637 enviada para CuboUp com sucesso!')
       })
 
       describe('when message is for group', () => {

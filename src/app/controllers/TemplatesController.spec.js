@@ -174,7 +174,11 @@ describe('TemplatesController delegation', () => {
     const templateRepository = {
       create: jest.fn(),
       update: jest.fn(),
-      findFirst: jest.fn().mockRejectedValue(Object.assign(new Error('Cast to ObjectId failed'), { name: 'CastError', kind: 'ObjectId' })),
+      findFirst: jest
+        .fn()
+        .mockRejectedValue(
+          Object.assign(new Error('Cast to ObjectId failed'), { name: 'CastError', kind: 'ObjectId' }),
+        ),
     }
     const controller = new TemplatesController({
       templateRepository,

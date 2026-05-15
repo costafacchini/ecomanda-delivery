@@ -17,7 +17,6 @@ import { createRuntimeDependencies } from '../runtime/dependencies.js'
 let dependencies
 
 describe('resetChatbots', () => {
-
   beforeEach(() => {
     installMemoryRepositories()
     dependencies = createRuntimeDependencies()

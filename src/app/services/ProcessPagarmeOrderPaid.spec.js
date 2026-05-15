@@ -81,8 +81,6 @@ describe('processPagarmeOrderPaid', () => {
     await processPagarmeOrderPaid(body, dependencies)
 
     expect(logger.info).toHaveBeenCalledTimes(1)
-    expect(logger.info).toHaveBeenCalledWith(
-      'Carrinho não encontrado referente ao pagamento pagarme-id da pagar.me!',
-    )
+    expect(logger.info).toHaveBeenCalledWith('Carrinho não encontrado referente ao pagamento pagarme-id da pagar.me!')
   })
 })

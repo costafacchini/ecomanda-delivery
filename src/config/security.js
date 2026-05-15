@@ -10,11 +10,9 @@ export function helmetConfig() {
         'style-src': ["'self'", 'https:', "'unsafe-inline'"],
         'img-src': ["'self'", 'data:', 'blob:'],
         'font-src': ["'self'", 'https:', 'data:'],
-        'connect-src': [
-          "'self'",
-          isDev ? 'ws://localhost:*' : null,
-          isDev ? 'http://localhost:*' : null,
-        ].filter(Boolean),
+        'connect-src': ["'self'", isDev ? 'ws://localhost:*' : null, isDev ? 'http://localhost:*' : null].filter(
+          Boolean,
+        ),
         'object-src': ["'none'"],
         'base-uri': ["'self'"],
         'form-action': ["'self'"],
@@ -23,9 +21,7 @@ export function helmetConfig() {
         'upgrade-insecure-requests': isDev ? null : [],
       },
     },
-    strictTransportSecurity: isDev
-      ? false
-      : { maxAge: 31536000, includeSubDomains: true },
+    strictTransportSecurity: isDev ? false : { maxAge: 31536000, includeSubDomains: true },
     crossOriginEmbedderPolicy: false,
   }
 }
