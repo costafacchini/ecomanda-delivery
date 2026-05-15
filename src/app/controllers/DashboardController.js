@@ -65,8 +65,8 @@ class DashboardController {
       })
 
       return res.status(200).json(data)
-    } catch {
-      return res.status(500).json({ errors: { message: 'Erro interno do servidor.' } })
+    } catch (err) {
+      return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -117,8 +117,8 @@ class DashboardController {
       })
 
       return res.status(200).json(data)
-    } catch {
-      return res.status(500).json({ errors: { message: 'Erro interno do servidor.' } })
+    } catch (err) {
+      return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -151,8 +151,8 @@ class DashboardController {
       })
 
       return res.status(200).json(data)
-    } catch {
-      return res.status(500).json({ errors: { message: 'Erro interno do servidor.' } })
+    } catch (err) {
+      return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -182,8 +182,8 @@ class DashboardController {
       })
 
       return res.status(200).json(data)
-    } catch {
-      return res.status(500).json({ errors: { message: 'Erro interno do servidor.' } })
+    } catch (err) {
+      return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -234,8 +234,8 @@ class DashboardController {
       })
 
       return res.status(200).json(data)
-    } catch {
-      return res.status(500).json({ errors: { message: 'Erro interno do servidor.' } })
+    } catch (err) {
+      return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -256,8 +256,8 @@ class DashboardController {
       })
 
       return res.status(200).json(data)
-    } catch {
-      return res.status(500).json({ errors: { message: 'Erro interno do servidor.' } })
+    } catch (err) {
+      return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -290,8 +290,8 @@ class DashboardController {
       })
 
       return res.status(200).json(data)
-    } catch {
-      return res.status(500).json({ errors: { message: 'Erro interno do servidor.' } })
+    } catch (err) {
+      return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -317,8 +317,8 @@ class DashboardController {
       })
 
       return res.status(200).json(data)
-    } catch {
-      return res.status(500).json({ errors: { message: 'Erro interno do servidor.' } })
+    } catch (err) {
+      return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 }

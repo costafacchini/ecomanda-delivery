@@ -92,7 +92,7 @@ describe('TemplatesController delegation', () => {
     await controller.create(req, res)
 
     expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor.' } })
+    expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor: some error' } })
   })
 
   it('updates a template and returns status 200', async () => {
@@ -154,7 +154,7 @@ describe('TemplatesController delegation', () => {
     await controller.update(req, res)
 
     expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor.' } })
+    expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor: some error' } })
   })
 
   it('returns template on show and status 200', async () => {
@@ -237,6 +237,6 @@ describe('TemplatesController delegation', () => {
     await controller.importation(req, res)
 
     expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor.' } })
+    expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor: some error' } })
   })
 })

@@ -29,7 +29,7 @@ class BackgroundjobsController {
       if ('errors' in err) {
         return res.status(422).send({ errors: sanitizeModelErrors(err.errors) })
       }
-      res.status(500).send({ body: { message: 'Erro interno do servidor.' } })
+      return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -47,7 +47,7 @@ class BackgroundjobsController {
       if (err.name === 'CastError' && err.kind === 'ObjectId') {
         return res.status(404).send({ errors: { message: `Backgroundjob ${req.params.id} não encontrado` } })
       }
-      return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
+      return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 }

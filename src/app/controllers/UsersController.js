@@ -33,7 +33,7 @@ class UsersController {
       if ('errors' in err) {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
       }
-      res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
+      res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -53,7 +53,7 @@ class UsersController {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
       }
 
-      res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
+      res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -68,7 +68,7 @@ class UsersController {
       if (err.name === 'CastError' && err.kind === 'ObjectId') {
         return res.status(404).send({ errors: { message: 'Usuário não encontrado' } })
       } else {
-        return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
+        return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
       }
     }
   }
@@ -76,8 +76,8 @@ class UsersController {
   async index(req, res) {
     try {
       res.status(200).send(await this.userRepository.find({}, { password: 0 }))
-    } catch {
-      res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
+    } catch (err) {
+      res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 }

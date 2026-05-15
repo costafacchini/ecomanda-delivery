@@ -60,7 +60,7 @@ describe('BackgroundjobsController delegation', () => {
       await controller.create(req, res)
 
       expect(res.status).toHaveBeenCalledWith(500)
-      expect(res.send).toHaveBeenCalledWith({ body: { message: 'Erro interno do servidor.' } })
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor: unexpected' } })
     })
   })
 
@@ -123,7 +123,7 @@ describe('BackgroundjobsController delegation', () => {
       await controller.show(req, res)
 
       expect(res.status).toHaveBeenCalledWith(500)
-      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor.' } })
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor: some error' } })
     })
   })
 })

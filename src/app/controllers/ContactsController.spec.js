@@ -140,7 +140,7 @@ describe('ContactsController delegation', () => {
 
     expect(res.status).toHaveBeenCalledWith(500)
     expect(res.send).toHaveBeenCalledWith({
-      errors: { message: 'Erro interno do servidor.' },
+      errors: { message: 'Erro interno do servidor: some error' },
     })
   })
 
@@ -204,7 +204,7 @@ describe('ContactsController delegation', () => {
 
     expect(res.status).toHaveBeenCalledWith(500)
     expect(res.send).toHaveBeenCalledWith({
-      errors: { message: 'Erro interno do servidor.' },
+      errors: { message: 'Erro interno do servidor: some error' },
     })
   })
 

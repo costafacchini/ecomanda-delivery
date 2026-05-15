@@ -25,7 +25,7 @@ class TriggersController {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
       }
 
-      return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
+      return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -39,7 +39,7 @@ class TriggersController {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
       }
 
-      return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
+      return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -52,7 +52,7 @@ class TriggersController {
       if (err.name === 'CastError' && err.kind === 'ObjectId') {
         return res.status(404).send({ errors: { message: `Trigger ${req.params.id} não encontrada` } })
       } else {
-        return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
+        return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
       }
     }
   }
@@ -82,8 +82,8 @@ class TriggersController {
       const triggers = await triggersQuery.all()
 
       res.status(200).send(triggers)
-    } catch {
-      res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
+    } catch (err) {
+      res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -92,8 +92,8 @@ class TriggersController {
       await this.importFacebookCatalog.execute(req.params.id, req.body.text)
 
       return res.status(201).send({ body: 'OK' })
-    } catch {
-      return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
+    } catch (err) {
+      return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 }

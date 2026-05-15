@@ -59,7 +59,7 @@ class MessagesController {
       if (err?.errors) {
         return res.status(422).send({ errors: sanitizeModelErrors(err.errors) })
       }
-      return res.status(500).send({ errors: { message: 'Erro interno do servidor.' } })
+      return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -93,8 +93,8 @@ class MessagesController {
       await this.queueServer.addJob('send-message-to-messenger', { messageId: message._id })
 
       return res.status(200).json(message)
-    } catch {
-      return res.status(500).json({ errors: { message: 'Erro interno do servidor.' } })
+    } catch (err) {
+      return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 }
