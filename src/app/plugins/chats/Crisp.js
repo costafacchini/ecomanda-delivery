@@ -1,4 +1,5 @@
 import { isMidia } from '../../helpers/Files.js'
+import { logger } from '../../helpers/logger.js'
 import request from '../../services/request.js'
 import mime from 'mime-types'
 import { ChatsBase } from './Base.js'
@@ -8,7 +9,7 @@ const createSession = async (url, headers, contact, segments, roomRepository) =>
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })
 
   if (response.status !== 201) {
-    console.error(`Não foi possível criar a sessão na Crisp ${JSON.stringify(response.data)}`)
+    logger.error(`Não foi possível criar a sessão na Crisp ${JSON.stringify(response.data)}`)
     return
   } else {
     const room = await roomRepository.create({
@@ -90,11 +91,11 @@ const persistPostedMessage = async (messageRepository, message, response) => {
     message.sended = true
     await messageRepository.save(message)
 
-    console.info(`Mensagem ${message._id} enviada para Crisp com sucesso!`)
+    logger.info(`Mensagem ${message._id} enviada para Crisp com sucesso!`)
   } else {
     message.error = `mensagem: ${JSON.stringify(response.data)}`
     await messageRepository.save(message)
-    console.error(
+    logger.error(
       `Mensagem ${message._id} não enviada para Crisp.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}`,

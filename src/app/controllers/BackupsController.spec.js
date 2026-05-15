@@ -1,5 +1,15 @@
 import { BackupsController } from './BackupsController.js'
 
+jest.mock('../helpers/logger.js', () => ({
+  logger: {
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    fatal: jest.fn(),
+  },
+}))
+
 function buildResponse() {
   return {
     send: jest.fn(),
@@ -16,9 +26,7 @@ function buildController() {
 }
 
 describe('BackupsController delegation', () => {
-  beforeEach(() => {
-    jest.spyOn(global.console, 'info').mockImplementation()
-  })
+  beforeEach(() => {})
 
   it('publishes backup message and returns status 200 on schedule', () => {
     const { controller, publishMessage } = buildController()

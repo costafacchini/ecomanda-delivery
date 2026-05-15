@@ -1,5 +1,6 @@
 import request from '../../services/request.js'
 import { ChatsBase } from './Base.js'
+import { logger } from '../../helpers/logger.js'
 import path from 'path'
 import mime from 'mime-types'
 import { requireDependency } from '../../helpers/RequireDependency.js'
@@ -59,9 +60,7 @@ const createContact = async (url, headers, contact, licensee, contactRepository)
       chatwootSourceId: null,
     })
 
-    console.error(
-      `Chatwoot - erro: Não foi possível criar o contato na Chatwoot. Essa é a resposta do servidor ${JSON.stringify(response.data)}`,
-    )
+    logger.error('Chatwoot - erro: Não foi possível criar o contato na Chatwoot', response.data)
     return
   } else if (response.data?.payload?.contact_inbox) {
     await contactRepository.update(contact._id, {
@@ -90,9 +89,7 @@ const createConversation = async (url, headers, contact, inboxId, roomRepository
   const response = await request.post(`${url}conversations`, { headers, body })
 
   if (response.status !== 200) {
-    console.error(
-      `Chatwoot - erro: Não foi possível criar a conversa na Chatwoot. A resposta do servidor é essa ${JSON.stringify(response.data)}`,
-    )
+    logger.error('Chatwoot - erro: Não foi possível criar a conversa na Chatwoot', response.data)
     return
   } else {
     const room = await roomRepository.create({
@@ -383,7 +380,7 @@ class Chatwoot extends ChatsBase {
       const fileResponse = await request.download(message.url)
 
       if (!fileResponse || !fileResponse.data) {
-        console.error('Chatwoot - erro: Erro: fileResponse ou fileResponse.data é null/undefined', fileResponse)
+        logger.error('Chatwoot - erro: Erro: fileResponse ou fileResponse.data é null/undefined', fileResponse)
         message.error = 'Chatwoot - erro: Erro ao baixar arquivo: resposta inválida'
         await this.messageRepository.save(message)
         return false
@@ -460,7 +457,7 @@ class Chatwoot extends ChatsBase {
       message.messageChatId = response.data?.id
       await this.messageRepository.save(message)
 
-      console.info(`Chatwoot: Mensagem ${message._id} enviada para Chatwoot com sucesso!`)
+      logger.info(`Chatwoot: Mensagem ${message._id} enviada para Chatwoot com sucesso!`)
       return true
     } else {
       message.error = `mensagem: ${JSON.stringify(response.data)}`
@@ -478,7 +475,7 @@ class Chatwoot extends ChatsBase {
 
         return false
       }
-      console.error(
+      logger.error(
         `Chatwoot - erro: Mensagem ${message._id} não enviada para Chatwoot.
            status: ${response.status}`,
       )

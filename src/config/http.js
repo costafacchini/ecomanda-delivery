@@ -2,10 +2,14 @@ import('../app/repositories/index.js')
 
 import createError from 'http-errors'
 import express from 'express'
+import helmet from 'helmet'
+import cookieParser from 'cookie-parser'
 import logger from 'morgan'
+import { logger as appLogger } from '../app/helpers/logger.js'
 import { connect } from './database.js'
 import { enableCors } from './cors.js'
 import { routes } from './routes.js'
+import { helmetConfig } from './security.js'
 import http from 'http'
 import { Server } from 'socket.io'
 import Rollbar from 'rollbar'
@@ -13,8 +17,13 @@ import { frontendDistDir } from './frontend-paths.js'
 
 const app = express()
 
+app.set('trust proxy', 1)
+
+app.use(helmet(helmetConfig()))
+
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ limit: '50mb', extended: false }))
+app.use(cookieParser())
 app.use(logger('dev'))
 connect()
 
@@ -37,14 +46,10 @@ if (process.env.ROLLBAR_ACCESS_TOKEN) {
 
   app.use(rollbar.errorHandler())
 } else {
-  app.use(function (err, req, res) {
-    // set locals, only providing error in development
-    res.locals.message = err.message
-    res.locals.error = req.app.get('env') === 'development' ? err : {}
-
-    // render the error page
-    res.status(err.status || 500)
-    res.status(err.status || 500).send(err)
+  app.use(function (err, req, res, _next) {
+    const status = err.status || 500
+    appLogger.error('Unhandled error', err)
+    res.status(status).json({ message: status < 500 ? err.message : 'Erro interno do servidor.' })
   })
 }
 

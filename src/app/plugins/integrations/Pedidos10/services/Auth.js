@@ -1,4 +1,5 @@
 import request from '../../../../services/request.js'
+import { logger } from '../../../../helpers/logger.js'
 
 class Auth {
   constructor(licensee, { integrationlogRepository, licenseeRepository } = {}) {
@@ -34,12 +35,12 @@ class Auth {
 
       await this.licenseeRepository.save(this.licensee)
 
-      console.info(`Login efetuado na API do Pedidos 10! log_id: ${integrationlog._id}`)
+      logger.info(`Login efetuado na API do Pedidos 10! log_id: ${integrationlog._id}`)
     } else {
       this.licensee.pedidos10_integration.authenticated = false
       await this.licenseeRepository.save(this.licensee)
 
-      console.error(
+      logger.error(
         `Não foi possível fazer a autenticação na API do Pedidos 10
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}

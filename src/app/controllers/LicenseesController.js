@@ -60,7 +60,7 @@ class LicenseesController {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
       }
 
-      return res.status(500).send({ errors: { message: err.toString() } })
+      return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -79,7 +79,7 @@ class LicenseesController {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
       }
 
-      return res.status(500).send({ errors: { message: err.toString() } })
+      return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -90,10 +90,10 @@ class LicenseesController {
 
       res.status(200).send(licensee)
     } catch (err) {
-      if (err.toString().includes('Cast to ObjectId failed for value')) {
+      if (err.name === 'CastError' && err.kind === 'ObjectId') {
         return res.status(404).send({ errors: { message: 'Licenciado 12312 não encontrado' } })
       } else {
-        return res.status(500).send({ errors: { message: err.toString() } })
+        return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
       }
     }
   }
@@ -136,7 +136,7 @@ class LicenseesController {
 
       res.status(200).send(licensees)
     } catch (err) {
-      res.status(500).send({ errors: { message: err.toString() } })
+      res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -146,7 +146,7 @@ class LicenseesController {
 
       return res.status(200).send(response)
     } catch (err) {
-      return res.status(500).send({ errors: { message: err.toString() } })
+      return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -156,7 +156,7 @@ class LicenseesController {
 
       return res.status(200).send(response)
     } catch (err) {
-      return res.status(500).send({ errors: { message: err.toString() } })
+      return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -166,7 +166,7 @@ class LicenseesController {
 
       return res.status(200).send(response)
     } catch (err) {
-      return res.status(500).send({ errors: { message: err.toString() } })
+      return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -175,8 +175,8 @@ class LicenseesController {
       const response = await this.getBaileysQrUseCase.execute(req.params.id)
 
       return res.status(200).send(response)
-    } catch (error) {
-      return res.status(408).send({ message: error.message })
+    } catch (err) {
+      return res.status(408).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
@@ -185,8 +185,8 @@ class LicenseesController {
       const response = await this.getBaileysStatusUseCase.execute(req.params.id)
 
       return res.status(200).send(response)
-    } catch (error) {
-      return res.status(500).send({ message: error.message })
+    } catch (err) {
+      return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 }

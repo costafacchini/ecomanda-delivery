@@ -1,6 +1,16 @@
 import { BodyRepositoryMemory } from '@repositories/body'
 import { ChatbotsController } from './ChatbotsController.js'
 
+jest.mock('../helpers/logger.js', () => ({
+  logger: {
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    fatal: jest.fn(),
+  },
+}))
+
 function buildResponse() {
   return {
     send: jest.fn(),
@@ -26,8 +36,6 @@ describe('ChatbotsController delegation', () => {
     const req = { body: { field: 'test' }, licensee: { _id: 'licensee-id' } }
     const res = buildResponse()
 
-    jest.spyOn(global.console, 'info').mockImplementation()
-
     await controller.message(req, res)
 
     const bodies = await bodyRepository.find({ licensee: 'licensee-id' })
@@ -48,8 +56,6 @@ describe('ChatbotsController delegation', () => {
     const req = { body: { field: 'alter' }, licensee: { _id: 'licensee-id' } }
     const res = buildResponse()
 
-    jest.spyOn(global.console, 'info').mockImplementation()
-
     await controller.transfer(req, res)
 
     const bodies = await bodyRepository.find({ licensee: 'licensee-id' })
@@ -69,8 +75,6 @@ describe('ChatbotsController delegation', () => {
     const { controller, publishMessage } = buildController()
     const req = {}
     const res = buildResponse()
-
-    jest.spyOn(global.console, 'info').mockImplementation()
 
     controller.reset(req, res)
 

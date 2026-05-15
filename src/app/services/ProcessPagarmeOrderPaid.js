@@ -1,3 +1,5 @@
+import { logger } from '../helpers/logger.js'
+
 async function processPagarmeOrderPaid(body, { cartRepository, createPagarMe } = {}) {
   const pagarMe = createPagarMe()
   const event = pagarMe.parser.parseOrderPaidEvent(body)
@@ -9,7 +11,7 @@ async function processPagarmeOrderPaid(body, { cartRepository, createPagarMe } =
 
     await cartRepository.save(cart)
   } else {
-    console.info(`Carrinho não encontrado referente ao pagamento ${event.id} da pagar.me!`)
+    logger.info(`Carrinho não encontrado referente ao pagamento ${event.id} da pagar.me!`)
   }
 }
 

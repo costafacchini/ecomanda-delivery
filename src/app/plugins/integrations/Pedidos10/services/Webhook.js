@@ -1,4 +1,5 @@
 import request from '../../../../services/request.js'
+import { logger } from '../../../../helpers/logger.js'
 
 class Webhook {
   constructor(licensee, { integrationlogRepository } = {}) {
@@ -28,9 +29,9 @@ class Webhook {
     })
 
     if (response.status === 200) {
-      console.info(`Webhook do Pedidos 10 assinado com sucesso! log_id: ${integrationlog._id}`)
+      logger.info(`Webhook do Pedidos 10 assinado com sucesso! log_id: ${integrationlog._id}`)
     } else {
-      console.error(
+      logger.error(
         `Não foi possível assinar o webhook de pedidos do Pedidos 10
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}

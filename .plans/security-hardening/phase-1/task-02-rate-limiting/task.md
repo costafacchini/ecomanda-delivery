@@ -44,31 +44,44 @@ Rate limiting should be applied at the route level (not globally) to avoid inter
 
 ## Implementation Steps
 
-### Step 1: Install express-rate-limit
+### Step 1: Install express-rate-limit and rate-limit-redis
+
+**IMPORTANT**: Current latest is v8.5.2 (not v7). API changed: `max` → `limit`, `standardHeaders: true` → `standardHeaders: 'draft-7'`.
 
 ```bash
-npm show express-rate-limit version   # get latest
-yarn add express-rate-limit@<version>
+npm show express-rate-limit version   # verify 8.5.2
+npm show rate-limit-redis version     # verify 5.0.0
+yarn add express-rate-limit@8.5.2 rate-limit-redis@5.0.0
 ```
+
+Also verify `app.set('trust proxy', 1)` is set in `src/config/http.js` (task-01 owns http.js — confirm before running).
 
 ### Step 2: Update src/app/routes/login-route.js
 
+See `docs/kb/research/rate-limiting-2026.md` for full rationale.
+
 ```js
 import express from 'express'
-import rateLimit from 'express-rate-limit'
+import { rateLimit } from 'express-rate-limit'
+import { RedisStore } from 'rate-limit-redis'
 import jwt from 'jsonwebtoken'
 import { LoginController } from '../controllers/LoginController.js'
 import { UserRepositoryDatabase } from '../repositories/user.js'
 import { AuthenticateUser } from '../usecases/auth/AuthenticateUser.js'
+import { redisConnection } from '../../config/redis.js'
 
 const router = express.Router()
 
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10,
-  standardHeaders: true,
+  windowMs: 15 * 60 * 1000,
+  limit: 10,                        // v8: 'limit' not 'max'
+  standardHeaders: 'draft-7',       // v8: string not boolean
   legacyHeaders: false,
   message: { message: 'Muitas tentativas de login. Tente novamente em 15 minutos.' },
+  store: new RedisStore({
+    sendCommand: (command, ...args) => redisConnection.call(command, ...args),
+    prefix: 'rl:login:',
+  }),
 })
 
 const SECRET = process.env.SECRET

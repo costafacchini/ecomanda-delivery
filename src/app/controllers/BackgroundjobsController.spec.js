@@ -60,7 +60,7 @@ describe('BackgroundjobsController delegation', () => {
       await controller.create(req, res)
 
       expect(res.status).toHaveBeenCalledWith(500)
-      expect(res.send).toHaveBeenCalledWith({ body: { message: 'Error: unexpected' } })
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor: unexpected' } })
     })
   })
 
@@ -101,7 +101,7 @@ describe('BackgroundjobsController delegation', () => {
     it('returns 404 when id cast fails', async () => {
       const { controller, getBackgroundjobStatus } = buildController()
       getBackgroundjobStatus.execute.mockRejectedValue(
-        new Error('Cast to ObjectId failed for value "bad" at path "_id"'),
+        Object.assign(new Error('Cast to ObjectId failed'), { name: 'CastError', kind: 'ObjectId' }),
       )
 
       const req = { licensee: { _id: 'licensee-id' }, params: { id: 'bad' } }
@@ -123,7 +123,7 @@ describe('BackgroundjobsController delegation', () => {
       await controller.show(req, res)
 
       expect(res.status).toHaveBeenCalledWith(500)
-      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Error: some error' } })
+      expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Erro interno do servidor: some error' } })
     })
   })
 })

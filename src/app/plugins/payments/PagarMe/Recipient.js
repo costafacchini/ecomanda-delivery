@@ -1,4 +1,5 @@
 import request from '../../../services/request.js'
+import { logger } from '../../../helpers/logger.js'
 
 class Recipient {
   constructor({ integrationlogRepository, licenseeRepository } = {}) {
@@ -40,11 +41,11 @@ class Recipient {
       licensee.recipient_id = response.data.id
       await this.licenseeRepository.save(licensee)
 
-      console.info(
+      logger.info(
         `Licenciado ${licensee.name} criado na pagar.me! id: ${licensee.recipient_id} log_id: ${integrationlog._id}`,
       )
     } else {
-      console.error(
+      logger.error(
         `Licenciado ${licensee.name} não criado na pagar.me.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}
@@ -73,11 +74,11 @@ class Recipient {
     })
 
     if (response.status === 200) {
-      console.info(
+      logger.info(
         `Licenciado ${licensee.name} atualizado na pagar.me! id: ${licensee.recipient_id} log_id: ${integrationlog._id}`,
       )
     } else {
-      console.error(
+      logger.error(
         `Licenciado ${licensee.name} não atualizado na pagar.me.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}

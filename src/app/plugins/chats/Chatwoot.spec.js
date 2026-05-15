@@ -14,14 +14,22 @@ import request from '../../services/request.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 jest.mock('../../services/request')
+jest.mock('../../helpers/logger.js', () => ({
+  logger: {
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    fatal: jest.fn(),
+  },
+}))
 import { createRuntimeDependencies } from '../../runtime/dependencies.js'
+import { logger } from '../../helpers/logger.js'
 
 let dependencies
 
 describe('Chatwoot plugin', () => {
   let licensee
-  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
-  const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
 
   beforeEach(async () => {
     installMemoryRepositories()
@@ -1395,7 +1403,7 @@ describe('Chatwoot plugin', () => {
         expect(messageUpdated.sended).toEqual(false)
         expect(messageUpdated.error).toEqual('mensagem: {"error":true,"message":"Invalid message"}')
 
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Chatwoot - erro: Mensagem 60958703f415ed4008748637 não enviada para Chatwoot.
            status: 400`,
         )
@@ -1443,7 +1451,7 @@ describe('Chatwoot plugin', () => {
 
         expect(request.post).toHaveBeenCalledTimes(1)
 
-        expect(consoleInfoSpy).toHaveBeenCalledWith(
+        expect(logger.info).toHaveBeenCalledWith(
           'Chatwoot: Mensagem 60958703f415ed4008748637 enviada para Chatwoot com sucesso!',
         )
       })

@@ -1,9 +1,10 @@
 import fs from 'fs'
+import { logger } from '../helpers/logger.js'
 import os from 'os'
 import path from 'path'
 import spawn from 'child_process'
 import { Writable } from 'stream'
-import archiver from 'archiver'
+import { ZipArchive } from 'archiver'
 import mime from 'mime-types'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 
@@ -20,15 +21,15 @@ async function backup() {
 
     await upload(buf, filename)
 
-    console.info('Backup efetuado com sucesso!')
+    logger.info('Backup efetuado com sucesso!')
   } catch (err) {
-    console.info(`Erro ao tentar efetuar o backup ${err.toString()}`)
+    logger.error(`Erro ao tentar efetuar o backup ${err.toString()}`)
   }
 }
 
 function zipBackup(file) {
   return new Promise((resolve, reject) => {
-    const archive = archiver.create('zip', {})
+    const archive = new ZipArchive({})
     const chunks = []
     const output = new Writable({
       write(chunk, _encoding, callback) {
@@ -62,7 +63,7 @@ function doBackup(mongoURI) {
 
     mongodump.stdout.pipe(fs.createWriteStream(output))
     mongodump.stderr.on('data', function (data) {
-      console.log(data.toString('ascii'))
+      logger.info(data.toString('ascii'))
     })
     mongodump.on('error', reject)
 

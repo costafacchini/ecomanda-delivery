@@ -7,13 +7,14 @@ import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
 import moment from 'moment-timezone'
+jest.mock('../helpers/logger.js', () => ({
+  logger: { debug: jest.fn(), info: jest.fn(), warn: jest.fn(), error: jest.fn(), fatal: jest.fn() },
+}))
 import { createRuntimeDependencies } from '../runtime/dependencies.js'
 
 let dependencies
 
 describe('resetCarts', () => {
-  jest.spyOn(global.console, 'info').mockImplementation()
-
   beforeEach(() => {
     installMemoryRepositories()
     dependencies = createRuntimeDependencies()

@@ -109,22 +109,34 @@ function authenticate(req, res, next) {
   if (!token) return res.status(401).json({ auth: false, message: 'Token não informado.' })
 
   jwt.verify(token, SECRET, function (err, decoded) {
-    if (err) return res.status(500).json({ auth: false, message: 'Falha na autenticação com token.' })
+    if (err) return res.status(401).json({ auth: false, message: 'Falha na autenticação com token.' })
 
     req.userId = decoded.id
     next()
   })
 }
 
+async function requireSuper(req, res, next) {
+  try {
+    const user = await userRepository.findFirst({ _id: req.userId })
+    if (!user || !user.isSuper) {
+      return res.status(403).json({ message: 'Acesso negado.' })
+    }
+    next()
+  } catch (err) {
+    next(err)
+  }
+}
+
 router.use(authenticate)
 
-router.post('/users', usersController.validations(), usersController.create)
-router.post('/users/:id', usersController.validations(), usersController.update)
+router.post('/users', requireSuper, usersController.validations(), usersController.create)
+router.post('/users/:id', requireSuper, usersController.validations(), usersController.update)
 router.get('/users/:id', usersController.show)
 router.get('/users', usersController.index)
 
-router.post('/licensees', licenseesController.validations(), licenseesController.create)
-router.post('/licensees/:id', licenseesController.validations(), licenseesController.update)
+router.post('/licensees', requireSuper, licenseesController.validations(), licenseesController.create)
+router.post('/licensees/:id', requireSuper, licenseesController.validations(), licenseesController.update)
 router.get('/licensees/:id', licenseesController.show)
 router.get('/licensees', licenseesController.index)
 

@@ -8,6 +8,11 @@ import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
 import { createRuntimeDependencies } from '../runtime/dependencies.js'
 
+jest.mock('../helpers/logger.js', () => ({
+  logger: { debug: jest.fn(), info: jest.fn(), warn: jest.fn(), error: jest.fn(), fatal: jest.fn() },
+}))
+import { logger } from '../helpers/logger.js'
+
 let dependencies
 
 describe('processPagarmeOrderPaid', () => {
@@ -60,8 +65,6 @@ describe('processPagarmeOrderPaid', () => {
   })
 
   it('logs message when cart is not found', async () => {
-    const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
-
     const body = {
       data: {
         id: 'pagarme-id',
@@ -77,11 +80,7 @@ describe('processPagarmeOrderPaid', () => {
 
     await processPagarmeOrderPaid(body, dependencies)
 
-    expect(consoleInfoSpy).toHaveBeenCalledTimes(1)
-    expect(consoleInfoSpy).toHaveBeenCalledWith(
-      'Carrinho não encontrado referente ao pagamento pagarme-id da pagar.me!',
-    )
-
-    consoleInfoSpy.mockRestore()
+    expect(logger.info).toHaveBeenCalledTimes(1)
+    expect(logger.info).toHaveBeenCalledWith('Carrinho não encontrado referente ao pagamento pagarme-id da pagar.me!')
   })
 })

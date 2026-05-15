@@ -1,5 +1,6 @@
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
 import request from '../../services/request.js'
+import { logger } from '../../helpers/logger.js'
 import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files.js'
 import { MessengersBase } from './Base.js'
 import { S3 } from '../storage/S3.js'
@@ -289,7 +290,7 @@ class Dialog extends MessengersBase {
       if (waContact.valid) {
         waId = waContact.waId
       } else {
-        console.error(
+        logger.error(
           `A mensagem não foi enviada para a Dialog pois o contato não é válido ${JSON.stringify(waContact.data)}`,
         )
         return
@@ -408,11 +409,11 @@ class Dialog extends MessengersBase {
       messageToSend.messageWaId = messageResponse.data.messages[0].id
       messageToSend.sended = true
       await this.messageRepository.save(messageToSend)
-      console.info(`Mensagem ${messageId} enviada para Dialog360 com sucesso! ${JSON.stringify(messageResponse.data)}`)
+      logger.info(`Mensagem ${messageId} enviada para Dialog360 com sucesso! ${JSON.stringify(messageResponse.data)}`)
     } else {
       messageToSend.error = JSON.stringify(messageResponse.data)
       await this.messageRepository.save(messageToSend)
-      console.error(`Mensagem ${messageId} não enviada para Dialog360. ${JSON.stringify(messageResponse.data)}`)
+      logger.error(`Mensagem ${messageId} não enviada para Dialog360. ${JSON.stringify(messageResponse.data)}`)
     }
   }
 

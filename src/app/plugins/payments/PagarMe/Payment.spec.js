@@ -10,12 +10,14 @@ import request from '../../../services/request.js'
 import { createRuntimeDependencies } from '../../../runtime/dependencies.js'
 
 jest.mock('../../../services/request')
+jest.mock('../../../helpers/logger.js', () => ({
+  logger: { debug: jest.fn(), info: jest.fn(), warn: jest.fn(), error: jest.fn(), fatal: jest.fn() },
+}))
+import { logger } from '../../../helpers/logger.js'
 
 describe('PagarMe/Customer plugin', () => {
   let licensee
   let dependencies
-  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
-  const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
   const buildPayment = () => dependencies.createPagarMe(licensee).payment
 
   beforeEach(async () => {
@@ -139,7 +141,7 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = buildPayment()
         await payment.createPIX(cart, 'token')
-        expect(consoleInfoSpy).toHaveBeenCalledWith('Pedido criado na pagar.me! id: or_56GXnk6T0eU88qMm log_id: 1234')
+        expect(logger.info).toHaveBeenCalledWith('Pedido criado na pagar.me! id: or_56GXnk6T0eU88qMm log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
       })
@@ -530,7 +532,7 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = buildPayment()
         await payment.createPIX(cart, 'token')
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Pedido ${cart._id} não criado na pagar.me.
            status: 422
            mensagem: {"message":"The request is invalid.","errors":{"order.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
@@ -773,7 +775,7 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = buildPayment()
         await payment.createCreditCard(cart, 'token')
-        expect(consoleInfoSpy).toHaveBeenCalledWith('Pedido criado na pagar.me! id: or_56GXnk6T0eU88qMm log_id: 1234')
+        expect(logger.info).toHaveBeenCalledWith('Pedido criado na pagar.me! id: or_56GXnk6T0eU88qMm log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
       })
@@ -1181,7 +1183,7 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = buildPayment()
         await payment.createCreditCard(cart, 'token')
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Pedido ${cart._id} não criado na pagar.me.
            status: 422
            mensagem: {"message":"The request is invalid.","errors":{"order.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
@@ -1346,7 +1348,7 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = buildPayment()
         await payment.delete(cart, 'token')
-        expect(consoleInfoSpy).toHaveBeenCalledWith('Pagamento cancelado na pagar.me! id: charge-id log_id: 1234')
+        expect(logger.info).toHaveBeenCalledWith('Pagamento cancelado na pagar.me! id: charge-id log_id: 1234')
 
         integrationlogCreateSpy.mockRestore()
       })
@@ -1526,7 +1528,7 @@ describe('PagarMe/Customer plugin', () => {
 
         const payment = buildPayment()
         await payment.delete(cart, 'token')
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Pagamento ${cart._id} não cancelado na pagar.me.
            status: 422
            mensagem: {"message":"The request is invalid.","errors":{"charge.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}

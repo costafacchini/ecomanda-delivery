@@ -9,13 +9,14 @@ import { MessageRepositoryDatabase } from '@repositories/message'
 import request from '../services/request.js'
 
 jest.mock('../services/request')
+jest.mock('../helpers/logger.js', () => ({
+  logger: { debug: jest.fn(), info: jest.fn(), warn: jest.fn(), error: jest.fn(), fatal: jest.fn() },
+}))
 import { createRuntimeDependencies } from '../runtime/dependencies.js'
 
 let dependencies
 
 describe('resetChatbots', () => {
-  jest.spyOn(global.console, 'info').mockImplementation()
-
   beforeEach(() => {
     installMemoryRepositories()
     dependencies = createRuntimeDependencies()

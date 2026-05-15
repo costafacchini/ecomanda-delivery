@@ -8,12 +8,14 @@ import request from '../../../services/request.js'
 import { createRuntimeDependencies } from '../../../runtime/dependencies.js'
 
 jest.mock('../../../services/request')
+jest.mock('../../../helpers/logger.js', () => ({
+  logger: { debug: jest.fn(), info: jest.fn(), warn: jest.fn(), error: jest.fn(), fatal: jest.fn() },
+}))
+import { logger } from '../../../helpers/logger.js'
 
 describe('PagarMe/Card plugin', () => {
   let licensee
   let dependencies
-  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
-  const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
   const buildCard = () => dependencies.createPagarMe(licensee).card
 
   beforeEach(async () => {
@@ -89,7 +91,7 @@ describe('PagarMe/Card plugin', () => {
         const response = await card.create(contact, creditCard, 'token')
 
         expect(response.success).toEqual(true)
-        expect(consoleInfoSpy).toHaveBeenCalledWith(
+        expect(logger.info).toHaveBeenCalledWith(
           'Cartão 123412******1234 John Doe criado na pagar.me! id: card_3dlyaY6SPSb log_id: 1234',
         )
 
@@ -275,7 +277,7 @@ describe('PagarMe/Card plugin', () => {
            mensagem: {"message":"The request is invalid.","errors":{"card.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
            log_id: 1234`,
         )
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Cartão 123412******1234 John Doe não criado na pagar.me.
            status: 422
            mensagem: {"message":"The request is invalid.","errors":{"card.automaticanticipationsettings.type":["The type field is invalid. Possible values are 'full','1025'"]}}
@@ -406,7 +408,7 @@ describe('PagarMe/Card plugin', () => {
 
         const card = buildCard()
         await card.list(contact, 'token')
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Não foi possível buscar os cartões na pagar.me.
            status: 401
            mensagem: {"message":"Authorization has been denied for this request."}
@@ -513,7 +515,7 @@ describe('PagarMe/Card plugin', () => {
 
         const card = buildCard()
         await card.getById(contact, 'token')
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(logger.error).toHaveBeenCalledWith(
           `Não foi possível buscar os cartões na pagar.me.
            status: 401
            mensagem: {"message":"Authorization has been denied for this request."}

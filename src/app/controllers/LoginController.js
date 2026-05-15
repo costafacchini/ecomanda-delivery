@@ -13,6 +13,15 @@ class LoginController {
   async login(req, res) {
     try {
       const token = await this.authenticateUser.execute(req.body)
+
+      const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000
+      res.cookie('access_token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Strict',
+        maxAge: SEVEN_DAYS_MS,
+      })
+
       return res.status(200).json({ token })
     } catch (err) {
       if (err instanceof AuthenticateUserInvalidCredentialsError) {
@@ -23,7 +32,7 @@ class LoginController {
         return res.status(422).json({ message: err.message })
       }
 
-      return res.status(500).json({ message: `Erro ao tentar fazer login. ${err}` })
+      return res.status(500).json({ message: 'Erro interno do servidor.' })
     }
   }
 }

@@ -1,4 +1,5 @@
 import { replace } from '../../helpers/Emoji.js'
+import { logger } from '../../helpers/logger.js'
 import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files.js'
 import { NormalizePhone } from '../../helpers/NormalizePhone.js'
 import { v4 as uuidv4 } from 'uuid'
@@ -46,7 +47,7 @@ class Cuboup extends ChatsBase {
     messageToSend.kind = Cuboup.kindToMessageKind(message.type)
 
     if (!messageToSend.kind) {
-      console.info(`Tipo de mensagem retornado pela CuboUp não reconhecido: ${message.type}`)
+      logger.info(`Tipo de mensagem retornado pela CuboUp não reconhecido: ${message.type}`)
       this.messageParsed = null
       return []
     }
@@ -149,11 +150,11 @@ class Cuboup extends ChatsBase {
     if (response.status === 200) {
       messageToSend.sended = true
       await this.messageRepository.save(messageToSend)
-      console.info(`Mensagem ${messageToSend._id} enviada para CuboUp com sucesso!`)
+      logger.info(`Mensagem ${messageToSend._id} enviada para CuboUp com sucesso!`)
     } else {
       messageToSend.error = `mensagem: ${JSON.stringify(response.data)}`
       await this.messageRepository.save(messageToSend)
-      console.error(
+      logger.error(
         `Mensagem ${messageToSend._id} não enviada para CuboUp.
            status: ${response.status}
            mensagem: ${JSON.stringify(response.data)}`,

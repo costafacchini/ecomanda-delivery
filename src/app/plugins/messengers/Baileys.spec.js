@@ -10,6 +10,10 @@ import { WhatsappSessionRepositoryDatabase } from '@repositories/whatsappsession
 import { createRuntimeDependencies } from '../../runtime/dependencies.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
+jest.mock('../../helpers/logger.js', () => ({
+  logger: { debug: jest.fn(), info: jest.fn(), warn: jest.fn(), error: jest.fn(), fatal: jest.fn() },
+}))
+import { logger } from '../../helpers/logger.js'
 
 const mockSocketSendMessage = jest.fn()
 const mockSocketEnd = jest.fn()
@@ -45,10 +49,6 @@ let dependencies
 
 describe('Baileys plugin', () => {
   let licensee
-  const consoleInfoSpy = jest.spyOn(global.console, 'info').mockImplementation()
-  const consoleWarnSpy = jest.spyOn(global.console, 'warn').mockImplementation()
-  const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation()
-
   beforeEach(async () => {
     installMemoryRepositories()
     dependencies = createRuntimeDependencies()
@@ -310,7 +310,7 @@ describe('Baileys plugin', () => {
         const updatedMessage = await messageRepository.findFirst({ _id: message._id }, ['contact'])
         expect(updatedMessage.sended).toEqual(true)
         expect(updatedMessage.messageWaId).toEqual('SENT-MSG-WA-ID')
-        expect(consoleInfoSpy).toHaveBeenCalledWith(expect.stringContaining('enviada via Baileys'))
+        expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('enviada via Baileys'))
       })
 
       it('saves error to message and keeps sended false when socket throws', async () => {
@@ -324,14 +324,14 @@ describe('Baileys plugin', () => {
         const updatedMessage = await messageRepository.findFirst({ _id: message._id }, ['contact'])
         expect(updatedMessage.sended).toEqual(false)
         expect(updatedMessage.error).toEqual('Socket connection failed')
-        expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('Socket connection failed'))
+        expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('Socket connection failed'))
       })
 
       it('logs error and returns without sending when message is not found', async () => {
         const baileys = new Baileys(licensee, dependencies)
         await baileys.sendMessage('000000000000000000000000')
 
-        expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('não encontrada'))
+        expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('não encontrada'))
         expect(mockSocketSendMessage).not.toHaveBeenCalled()
       })
 
@@ -341,7 +341,7 @@ describe('Baileys plugin', () => {
         const baileys = new Baileys(licensee, dependencies)
         await baileys.sendMessage(message._id)
 
-        expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('não suportado'))
+        expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('não suportado'))
         expect(mockSocketSendMessage).not.toHaveBeenCalled()
       })
     })

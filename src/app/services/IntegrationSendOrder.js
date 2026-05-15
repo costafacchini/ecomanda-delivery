@@ -9,7 +9,7 @@ async function sendOrder(data, { orderRepository, createIntegrator } = {}) {
     order.integration_status = 'done'
   } catch (err) {
     order.integration_status = 'error'
-    order.integration_error = err.toString()
+    order.integration_error = err.message || 'Erro desconhecido'
   }
 
   await orderRepository.save(order)

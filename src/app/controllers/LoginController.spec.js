@@ -8,6 +8,7 @@ import { LoginController } from './LoginController.js'
 
 function buildResponse() {
   return {
+    cookie: jest.fn(),
     json: jest.fn(),
     status: jest.fn().mockReturnThis(),
   }
@@ -36,6 +37,12 @@ describe('LoginController', () => {
     await controller.login(req, res)
 
     expect(authenticateUser.execute).toHaveBeenCalledWith(req.body)
+    expect(res.cookie).toHaveBeenCalledWith('access_token', 'signed-token', {
+      httpOnly: true,
+      secure: expect.any(Boolean),
+      sameSite: 'Strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    })
     expect(res.status).toHaveBeenCalledWith(200)
     expect(res.json).toHaveBeenCalledWith({ token: 'signed-token' })
   })
@@ -79,6 +86,6 @@ describe('LoginController', () => {
     await controller.login(req, res)
 
     expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ message: 'Erro ao tentar fazer login. Error: Erro' })
+    expect(res.json).toHaveBeenCalledWith({ message: 'Erro interno do servidor.' })
   })
 })

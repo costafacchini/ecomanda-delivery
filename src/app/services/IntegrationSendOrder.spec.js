@@ -74,7 +74,7 @@ describe('sendOrder', () => {
 
       const orderUpdated = await orderRepository.findFirst({ _id: order._id })
       expect(orderUpdated.integration_status).toEqual('error')
-      expect(orderUpdated.integration_error).toEqual('Error: some error')
+      expect(orderUpdated.integration_error).toEqual('some error')
 
       integratorSendOrderErrorSpy.mockRestore()
     })

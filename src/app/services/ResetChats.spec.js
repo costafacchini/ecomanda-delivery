@@ -9,13 +9,14 @@ import { ContactRepositoryDatabase } from '@repositories/contact'
 import { MessageRepositoryDatabase } from '@repositories/message'
 
 const spySendMessage = jest.spyOn(Rocketchat.prototype, 'sendMessage').mockImplementation()
+jest.mock('../helpers/logger.js', () => ({
+  logger: { debug: jest.fn(), info: jest.fn(), warn: jest.fn(), error: jest.fn(), fatal: jest.fn() },
+}))
 import { createRuntimeDependencies } from '../runtime/dependencies.js'
 
 let dependencies
 
 describe('resetChats', () => {
-  jest.spyOn(global.console, 'info').mockImplementation()
-
   beforeEach(() => {
     installMemoryRepositories()
     dependencies = createRuntimeDependencies()
