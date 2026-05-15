@@ -4,7 +4,7 @@ import os from 'os'
 import path from 'path'
 import spawn from 'child_process'
 import { Writable } from 'stream'
-import archiver from 'archiver'
+import { ZipArchive } from 'archiver'
 import mime from 'mime-types'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 
@@ -29,7 +29,7 @@ async function backup() {
 
 function zipBackup(file) {
   return new Promise((resolve, reject) => {
-    const archive = archiver.create('zip', {})
+    const archive = new ZipArchive({})
     const chunks = []
     const output = new Writable({
       write(chunk, _encoding, callback) {
