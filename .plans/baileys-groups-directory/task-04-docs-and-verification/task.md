@@ -16,6 +16,7 @@ Update the Baileys documentation for the new sync/group-send flow and capture th
 This repo already has a Baileys KB guide, and it currently documents QR pairing and the existing send/receive flow. After tasks 1-3 land, the guide and API docs will be stale unless they cover:
 
 - the new sync endpoint
+- the new `Contact` group field and contacts index filters
 - how imported groups appear in the existing Contacts model/UI
 - how group sends work through the existing message-creation flow
 - the explicit no-history constraint for this feature
@@ -58,6 +59,8 @@ Relevant files and docs:
 Extend `docs/kb/features/baileys-whatsapp-guide.md` with:
 - how to trigger the new sync
 - what gets imported into `Contact`
+- how the explicit group field is populated
+- how to query only group contacts and filter by `updatedAt`
 - how to inspect groups afterward
 - how to send to an imported group through the existing message flow
 - the known limitation/caveat that this feature does not depend on contact discovery
@@ -72,6 +75,8 @@ Validate with a real linked Baileys session:
 - QR/status still work
 - sync returns counts
 - imported `@g.us` groups appear in the Contacts screen
+- contacts index API can return only group contacts
+- contacts index API can filter contacts by `updatedAt`
 - a text message can be sent to an imported group
 - no chat/message history is read or persisted by the sync implementation
 

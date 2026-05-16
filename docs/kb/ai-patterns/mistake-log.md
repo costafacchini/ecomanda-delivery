@@ -1,6 +1,6 @@
 # Mistake Log
 
-**Last Updated**: 2026-04-23
+**Last Updated**: 2026-05-16
 **Context**: Read at session start to avoid repeating known error patterns.
 
 When the AI is corrected, `log-mistake` appends an entry here.
@@ -90,4 +90,12 @@ not yet represented by the task list.
 **Correct**: When the user distinguishes between required and optional capabilities, center the plan on the required outcome and move optional capabilities out of scope or into explicit non-blocking follow-up notes.
 **Area**: Create-plan scoping, requirements prioritization
 **Prevention**: Before finalizing a plan, restate the one indispensable user outcome and remove any secondary capability that is not needed to deliver it.
+**Count**: 1
+
+## [2026-05-16] When the user adds schema or index-filter requirements, reflect them explicitly in the plan
+
+**Wrong**: Narrowed the Baileys plan to group discovery/send but did not immediately add the user-requested `Contact` group field and contacts index filter work to the plan structure.
+**Correct**: When the user adds concrete schema or endpoint requirements, update the plan's scope, key files, task ownership, and success criteria so those technical changes are visible as first-class deliverables.
+**Area**: Create-plan scoping, API/data-model requirements
+**Prevention**: After any plan correction, scan for implied model, query, controller, and spec changes rather than only updating the headline objective.
 **Count**: 1

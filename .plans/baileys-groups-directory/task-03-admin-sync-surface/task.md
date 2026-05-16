@@ -28,6 +28,7 @@ Expected UX:
 - after sync, show counts returned by the backend
 - make it easy to filter/read `@g.us` records on the Contacts page
 - do not add new contact-search UI as part of this task
+- prefer the backend `isGroup` filter instead of client-side-only filtering
 
 ## Before You Start
 
@@ -77,6 +78,8 @@ Update `WhatsAppPanel` to:
 Use the existing Contacts page rather than adding a brand-new screen. Add a minimal filter/toggle so admins can switch among:
 - all contacts
 - WhatsApp groups (`@g.us`)
+
+If date filtering is surfaced in the UI during this task, use the backend `updatedAt` filter rather than local client filtering. If the UI does not need that control yet, leave the API support backend-only and document that choice in `status.md`.
 
 ## Testing
 

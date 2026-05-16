@@ -1,4 +1,4 @@
-# Status: Directory Sync API
+# Status: Contact Group Field, Filters, and Sync API
 
 **Current Status**: not-started
 **Last Updated**: 2026-05-16
