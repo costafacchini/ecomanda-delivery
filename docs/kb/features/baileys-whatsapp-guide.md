@@ -131,8 +131,8 @@ POST http://127.0.0.1:5001/login
 Content-Type: application/json
 
 {
-  "email": "ticketmaker@ticketmaker.com",
-  "password": "alan1234"
+  "email": <email>,
+  "password": <password>
 }
 ```
 
@@ -155,16 +155,17 @@ Use this `token` as the `x-access-token` header in all subsequent admin requests
 
 ```http
 POST http://127.0.0.1:5001/resources/messages
-x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMDM0NDNhZjE1NTI3YjdmOGIzNjUxOSIsImlhdCI6MTc3ODYxNTE4OSwiZXhwIjoxNzc5MjE5OTg5fQ.CEwH-lqfJfmqLeqXUn7N_YU8EeRmQkbdPqpEhlocXwo
+x-access-token: <jwt-token>
 Content-Type: application/json
 
 {
-  "licensee": "69fca90c786ebdbf4292b881",
-  "contact": "6a03546aced98cfaa86943cd",
-  "kind": "file",
-  "fileName": "name.png",
-  "url": "https://fortbras.zibb.com.br/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBOHJ2Q0E9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--370a932c92e56026175f2cf52ba94b046b29afbe/%7B49EEF65A-4B9A-4DF2-8449-94109286B94E%7D.png",
-  "text": "Hello from ecomanda!",
+  "licensee": <licensee-id>,
+  "contact": <contact-id>, you can use it or phone
+  "phone": <phone-number or group JID>,
+  "kind": <"text" | "file">,
+  "fileName": <required if kind is "file">,
+  "url": <required if kind is "file">,
+  "text": <text>,
   "destination": "to-messenger"
 }
 ```
