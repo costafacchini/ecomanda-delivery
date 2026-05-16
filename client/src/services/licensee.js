@@ -46,6 +46,10 @@ function signOrderWebhook(licensee) {
   return api().post(`resources/licensees/${licensee.id}/sign-order-webhook`, { headers, body: licensee })
 }
 
+function syncBaileysDirectory(licensee) {
+  return api().post(`resources/licensees/${licensee.id}/baileys-sync`, { headers })
+}
+
 export {
   createLicensee,
   getLicensees,
@@ -57,4 +61,5 @@ export {
   importLicenseeTemplate,
   sendLicenseePagarMe,
   signOrderWebhook,
+  syncBaileysDirectory,
 }
