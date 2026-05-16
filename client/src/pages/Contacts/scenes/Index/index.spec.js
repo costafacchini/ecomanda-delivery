@@ -70,6 +70,67 @@ describe('<ContactsIndex />', () => {
     expect(getContacts).toHaveBeenNthCalledWith(2, { page: 1, expression: 'expression' })
   })
 
+  describe('group filter toggle', () => {
+    it('renders a "Todos os Contatos" toggle button by default', async () => {
+      getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build()] })
+
+      mount({ currentUser })
+
+      expect(await screen.findByRole('button', { name: 'Todos os Contatos' })).toBeInTheDocument()
+    })
+
+    it('sends isGroup=true filter when toggle is clicked', async () => {
+      getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build()] })
+
+      mount({ currentUser })
+
+      await screen.findByRole('button', { name: 'Todos os Contatos' })
+
+      getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'Group Contact' })] })
+
+      fireEvent.click(screen.getByRole('button', { name: 'Todos os Contatos' }))
+
+      await screen.findByText('Group Contact')
+
+      expect(getContacts).toHaveBeenCalledWith(expect.objectContaining({ isGroup: true, page: 1 }))
+    })
+
+    it('switches button label to "Apenas Grupos" after toggle', async () => {
+      getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build()] })
+
+      mount({ currentUser })
+
+      await screen.findByRole('button', { name: 'Todos os Contatos' })
+
+      getContacts.mockResolvedValue({ status: 201, data: [] })
+
+      fireEvent.click(screen.getByRole('button', { name: 'Todos os Contatos' }))
+
+      expect(await screen.findByRole('button', { name: 'Apenas Grupos' })).toBeInTheDocument()
+    })
+
+    it('clears the isGroup filter when toggled again', async () => {
+      getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build()] })
+
+      mount({ currentUser })
+
+      await screen.findByRole('button', { name: 'Todos os Contatos' })
+
+      getContacts.mockResolvedValue({ status: 201, data: [] })
+      fireEvent.click(screen.getByRole('button', { name: 'Todos os Contatos' }))
+
+      await screen.findByRole('button', { name: 'Apenas Grupos' })
+
+      getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'All again' })] })
+      fireEvent.click(screen.getByRole('button', { name: 'Apenas Grupos' }))
+
+      await screen.findByText('All again')
+
+      const lastCall = getContacts.mock.calls[getContacts.mock.calls.length - 1][0]
+      expect(lastCall.isGroup).toBeUndefined()
+    })
+  })
+
   describe('licensee select filter', () => {
     it('does not show the licensee if logged user is not super', async () => {
       getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'Contact' })] })

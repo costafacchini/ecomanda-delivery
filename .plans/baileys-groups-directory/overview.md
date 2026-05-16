@@ -51,9 +51,9 @@ Extend the existing Baileys integration so a connected WhatsApp account can disc
 
 | Task Path | Title | Phase | Status | Depends On |
 |-----------|-------|-------|--------|------------|
-| task-01-plugin-core | Baileys Group/Directory Core | 1 | complete | — |
+| task-01-plugin-core | Baileys Group/Directory Core | 1 | not-started | — |
 | task-02-directory-sync-api | Contact Group Field, Filters, and Sync API | 2 | complete | task-01-plugin-core |
-| task-03-admin-sync-surface | Admin Sync Surface | 3 | not-started | task-02-directory-sync-api |
+| task-03-admin-sync-surface | Admin Sync Surface | 3 | complete | task-02-directory-sync-api |
 | task-04-docs-and-verification | Docs and Live Verification | 4 | not-started | task-02-directory-sync-api, task-03-admin-sync-surface |
 
 ## Branch Convention
