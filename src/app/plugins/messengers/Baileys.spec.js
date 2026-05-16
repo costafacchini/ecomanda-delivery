@@ -18,6 +18,7 @@ import { logger } from '../../helpers/logger.js'
 const mockSocketSendMessage = jest.fn()
 const mockSocketEnd = jest.fn()
 const mockSocketOnWhatsApp = jest.fn()
+const mockSocketGroupFetchAllParticipating = jest.fn()
 // Immediately fires connection:open so the sendMessage connection-ready Promise resolves.
 const mockSocketEvOn = jest.fn((event, callback) => {
   if (event === 'connection.update') callback({ connection: 'open' })
@@ -26,6 +27,7 @@ const mockSocketEvOn = jest.fn((event, callback) => {
 const mockMakeWASocket = jest.fn(() => ({
   sendMessage: mockSocketSendMessage,
   onWhatsApp: mockSocketOnWhatsApp,
+  groupFetchAllParticipating: mockSocketGroupFetchAllParticipating,
   end: mockSocketEnd,
   ev: { on: mockSocketEvOn },
 }))
@@ -412,6 +414,142 @@ describe('Baileys plugin', () => {
           caption: '',
         })
       })
+    })
+  })
+
+  describe('#fetchGroups', () => {
+    beforeEach(() => {
+      jest.useFakeTimers()
+    })
+
+    afterEach(() => {
+      jest.useRealTimers()
+    })
+
+    it('returns a normalized groups payload from groupFetchAllParticipating', async () => {
+      mockSocketGroupFetchAllParticipating.mockResolvedValueOnce({
+        '120363000000000001@g.us': { id: '120363000000000001@g.us', subject: 'Sales Team' },
+        '120363000000000002@g.us': { id: '120363000000000002@g.us', subject: 'Support Squad' },
+      })
+
+      const baileys = new Baileys(licensee, dependencies)
+      const result = await baileys.fetchGroups()
+
+      expect(result).toEqual({
+        groups: expect.arrayContaining([
+          { waId: '120363000000000001@g.us', name: 'Sales Team', number: '120363000000000001', type: '@g.us' },
+          { waId: '120363000000000002@g.us', name: 'Support Squad', number: '120363000000000002', type: '@g.us' },
+        ]),
+      })
+      expect(result.groups).toHaveLength(2)
+    })
+
+    it('falls back to waId as group name when subject is missing', async () => {
+      mockSocketGroupFetchAllParticipating.mockResolvedValueOnce({
+        '120363000000000003@g.us': { id: '120363000000000003@g.us' },
+      })
+
+      const baileys = new Baileys(licensee, dependencies)
+      const result = await baileys.fetchGroups()
+
+      expect(result.groups[0].name).toEqual('120363000000000003@g.us')
+    })
+
+    it('returns an empty groups array when the account belongs to no groups', async () => {
+      mockSocketGroupFetchAllParticipating.mockResolvedValueOnce({})
+
+      const baileys = new Baileys(licensee, dependencies)
+      const result = await baileys.fetchGroups()
+
+      expect(result).toEqual({ groups: [] })
+    })
+
+    it('closes the socket after a successful fetch', async () => {
+      mockSocketGroupFetchAllParticipating.mockResolvedValueOnce({})
+
+      const baileys = new Baileys(licensee, dependencies)
+      await baileys.fetchGroups()
+
+      expect(mockSocketEnd).toHaveBeenCalled()
+    })
+
+    it('closes the socket even when groupFetchAllParticipating throws', async () => {
+      mockSocketGroupFetchAllParticipating.mockRejectedValueOnce(new Error('Network failure'))
+
+      const baileys = new Baileys(licensee, dependencies)
+      await expect(baileys.fetchGroups()).rejects.toThrow('Network failure')
+
+      expect(mockSocketEnd).toHaveBeenCalled()
+    })
+  })
+
+  describe('#sendMessage — group JID routing', () => {
+    const GROUP_WA_ID = '120363000000000001@g.us'
+
+    beforeEach(() => {
+      jest.useFakeTimers()
+    })
+
+    afterEach(() => {
+      jest.useRealTimers()
+    })
+
+    async function createGroupContactAndMessage(overrides = {}) {
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
+        contactFactory.build({
+          name: 'Sales Team',
+          number: '120363000000000001',
+          type: '@g.us',
+          waId: GROUP_WA_ID,
+          talkingWithChatBot: false,
+          licensee,
+        }),
+      )
+      const messageRepository = new MessageRepositoryDatabase()
+      const message = await messageRepository.create(
+        messageFactory.build({
+          text: 'Hello group',
+          kind: 'text',
+          sended: false,
+          contact,
+          licensee,
+          destination: 'to-messenger',
+          ...overrides,
+        }),
+      )
+      return { contact, message, messageRepository }
+    }
+
+    it('sends directly to the group JID without calling onWhatsApp', async () => {
+      const { message, messageRepository } = await createGroupContactAndMessage()
+
+      mockSocketSendMessage.mockResolvedValueOnce({ key: { id: 'GROUP-MSG-WA-ID' } })
+
+      const baileys = new Baileys(licensee, dependencies)
+      const sendPromise = baileys.sendMessage(message._id)
+      await jest.runAllTimersAsync()
+      await sendPromise
+
+      expect(mockSocketOnWhatsApp).not.toHaveBeenCalled()
+      expect(mockSocketSendMessage).toHaveBeenCalledWith(GROUP_WA_ID, { text: 'Hello group' })
+
+      const updatedMessage = await messageRepository.findFirst({ _id: message._id }, ['contact'])
+      expect(updatedMessage.sended).toEqual(true)
+      expect(updatedMessage.messageWaId).toEqual('GROUP-MSG-WA-ID')
+    })
+
+    it('persists error and keeps sended false when group send throws', async () => {
+      const { message, messageRepository } = await createGroupContactAndMessage()
+
+      mockSocketSendMessage.mockRejectedValueOnce(new Error('Group send failed'))
+
+      const baileys = new Baileys(licensee, dependencies)
+      await baileys.sendMessage(message._id)
+
+      const updatedMessage = await messageRepository.findFirst({ _id: message._id }, ['contact'])
+      expect(updatedMessage.sended).toEqual(false)
+      expect(updatedMessage.error).toEqual('Group send failed')
     })
   })
 
