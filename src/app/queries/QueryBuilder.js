@@ -37,6 +37,10 @@ class QueryBuilder {
     this.filterByLessThanClause = { field, end }
   }
 
+  filterByGreaterThan(field, start) {
+    this.filterByGreaterThanClause = { field, start }
+  }
+
   getQuery() {
     this.query = this.query.find({})
 
@@ -90,6 +94,10 @@ class QueryBuilder {
 
     if (this.filterByLessThanClause) {
       this.query.where(this.filterByLessThanClause.field).lt(this.filterByLessThanClause.end)
+    }
+
+    if (this.filterByGreaterThanClause) {
+      this.query.where(this.filterByGreaterThanClause.field).gt(this.filterByGreaterThanClause.start)
     }
 
     return this.query

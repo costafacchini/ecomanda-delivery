@@ -145,3 +145,23 @@ describe('GET endpoints — no requireSuper required', () => {
     expect(res.status).not.toBe(403)
   })
 })
+
+describe('POST /licensees/:id/baileys-sync', () => {
+  it('returns 401 when no token is provided', async () => {
+    const res = await request(app).post('/resources/licensees/some-id/baileys-sync')
+
+    expect(res.status).toBe(401)
+    expect(res.body).toMatchObject({ auth: false })
+  })
+
+  it('is accessible to authenticated users and reaches the controller', async () => {
+    userRepository.findFirst.mockResolvedValue({ _id: 'uid-6', isSuper: false })
+    deps.licenseeRepository.findFirst.mockResolvedValue(null)
+    const token = signToken({ id: 'uid-6' })
+
+    const res = await request(app).post('/resources/licensees/some-id/baileys-sync').set('x-access-token', token)
+
+    expect(res.status).not.toBe(401)
+    expect(res.status).not.toBe(403)
+  })
+})
