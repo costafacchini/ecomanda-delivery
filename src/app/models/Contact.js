@@ -31,6 +31,10 @@ const contactSchema = new Schema(
       required: [true, 'Licensee: Você deve preencher o campo'],
     },
     waId: String,
+    isGroup: {
+      type: Boolean,
+      default: false,
+    },
     landbotId: String,
     chatwootId: String,
     chatwootSourceId: String,

@@ -69,6 +69,7 @@ const licenseesController = new LicenseesController({
   signPedidos10OrderWebhook: new SignPedidos10OrderWebhook({ licenseeRepository, createPedidos10 }),
   createMessengerPlugin,
   whatsappSessionRepository,
+  contactRepository,
 })
 const contactsController = new ContactsController({
   contactRepository,
@@ -160,6 +161,7 @@ router.post('/templates/:id/importation', templatesController.importation)
 router.post('/licensees/:id/dialogwebhook', licenseesController.setDialogWebhook)
 router.get('/licensees/:id/baileys-status', licenseesController.getBaileysStatus)
 router.post('/licensees/:id/baileys-qr', (req, res) => licenseesController.getBaileysQr(req, res))
+router.post('/licensees/:id/baileys-sync', licenseesController.baileysSync)
 router.post('/licensees/:id/sign-order-webhook', licenseesController.signOrderWebhook)
 router.post('/licensees/:id/integration/pagarme', licenseesController.sendToPagarMe)
 

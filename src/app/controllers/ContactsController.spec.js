@@ -25,6 +25,9 @@ function buildController() {
     filterByTalkingWithChatbot: jest.fn(),
     filterByLicensee: jest.fn(),
     filterByExpression: jest.fn(),
+    filterByIsGroup: jest.fn(),
+    filterByUpdatedAtStart: jest.fn(),
+    filterByUpdatedAtEnd: jest.fn(),
     all: jest.fn(),
   }
   const createContactsQuery = jest.fn().mockReturnValue(contactsQueryInstance)
@@ -258,5 +261,54 @@ describe('ContactsController delegation', () => {
     expect(contactsQueryInstance.filterByExpression).toHaveBeenCalledWith('Doe')
     expect(res.status).toHaveBeenCalledWith(200)
     expect(res.send).toHaveBeenCalledWith(contacts)
+  })
+
+  it('forwards isGroup=true to filterByIsGroup as boolean true', async () => {
+    const { controller, contactsQueryInstance } = buildController()
+    contactsQueryInstance.all.mockResolvedValue([])
+
+    const req = { query: { isGroup: 'true' } }
+    const res = buildResponse()
+
+    await controller.index(req, res)
+
+    expect(contactsQueryInstance.filterByIsGroup).toHaveBeenCalledWith(true)
+  })
+
+  it('forwards isGroup=false to filterByIsGroup as boolean false', async () => {
+    const { controller, contactsQueryInstance } = buildController()
+    contactsQueryInstance.all.mockResolvedValue([])
+
+    const req = { query: { isGroup: 'false' } }
+    const res = buildResponse()
+
+    await controller.index(req, res)
+
+    expect(contactsQueryInstance.filterByIsGroup).toHaveBeenCalledWith(false)
+  })
+
+  it('does not call filterByIsGroup when isGroup param is absent', async () => {
+    const { controller, contactsQueryInstance } = buildController()
+    contactsQueryInstance.all.mockResolvedValue([])
+
+    const req = { query: {} }
+    const res = buildResponse()
+
+    await controller.index(req, res)
+
+    expect(contactsQueryInstance.filterByIsGroup).not.toHaveBeenCalled()
+  })
+
+  it('forwards updatedAtStart and updatedAtEnd as Date objects', async () => {
+    const { controller, contactsQueryInstance } = buildController()
+    contactsQueryInstance.all.mockResolvedValue([])
+
+    const req = { query: { updatedAtStart: '2024-01-01T00:00:00.000Z', updatedAtEnd: '2024-01-31T23:59:59.000Z' } }
+    const res = buildResponse()
+
+    await controller.index(req, res)
+
+    expect(contactsQueryInstance.filterByUpdatedAtStart).toHaveBeenCalledWith(new Date('2024-01-01T00:00:00.000Z'))
+    expect(contactsQueryInstance.filterByUpdatedAtEnd).toHaveBeenCalledWith(new Date('2024-01-31T23:59:59.000Z'))
   })
 })

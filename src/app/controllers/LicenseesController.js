@@ -2,6 +2,7 @@ import { check, validationResult } from 'express-validator'
 import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
 import { GetBaileysQr } from '../usecases/licensees/GetBaileysQr.js'
 import { GetBaileysStatus } from '../usecases/licensees/GetBaileysStatus.js'
+import { SyncBaileysDirectory } from '../usecases/licensees/SyncBaileysDirectory.js'
 
 class LicenseesController {
   constructor({
@@ -14,6 +15,7 @@ class LicenseesController {
     signPedidos10OrderWebhook,
     createMessengerPlugin,
     whatsappSessionRepository,
+    contactRepository,
   } = {}) {
     this.licenseeRepository = licenseeRepository
     this.createLicenseesQuery = createLicenseesQuery
@@ -24,6 +26,11 @@ class LicenseesController {
     this.signPedidos10OrderWebhook = signPedidos10OrderWebhook
     this.getBaileysQrUseCase = new GetBaileysQr({ licenseeRepository, createMessengerPlugin })
     this.getBaileysStatusUseCase = new GetBaileysStatus({ licenseeRepository, whatsappSessionRepository })
+    this.syncBaileysDirectoryUseCase = new SyncBaileysDirectory({
+      licenseeRepository,
+      contactRepository,
+      createMessengerPlugin,
+    })
 
     this.create = this.create.bind(this)
     this.update = this.update.bind(this)
@@ -34,6 +41,7 @@ class LicenseesController {
     this.signOrderWebhook = this.signOrderWebhook.bind(this)
     this.getBaileysQr = this.getBaileysQr.bind(this)
     this.getBaileysStatus = this.getBaileysStatus.bind(this)
+    this.baileysSync = this.baileysSync.bind(this)
   }
 
   validations() {
@@ -183,6 +191,16 @@ class LicenseesController {
   async getBaileysStatus(req, res) {
     try {
       const response = await this.getBaileysStatusUseCase.execute(req.params.id)
+
+      return res.status(200).send(response)
+    } catch (err) {
+      return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
+    }
+  }
+
+  async baileysSync(req, res) {
+    try {
+      const response = await this.syncBaileysDirectoryUseCase.execute(req.params.id)
 
       return res.status(200).send(response)
     } catch (err) {
