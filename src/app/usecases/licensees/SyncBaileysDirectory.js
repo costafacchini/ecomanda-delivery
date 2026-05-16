@@ -16,6 +16,9 @@ class SyncBaileysDirectory {
     }
 
     const plugin = this.createMessengerPlugin(licensee)
+
+    await this.contactRepository.deactivateGroupsForLicensee(licensee._id)
+
     const { groups } = await plugin.fetchGroups()
 
     let importedGroups = 0
@@ -45,6 +48,7 @@ class SyncBaileysDirectory {
         talkingWithChatBot: false,
         licensee: licensee._id,
         isGroup: true,
+        active: true,
       }
 
       if (existing) {

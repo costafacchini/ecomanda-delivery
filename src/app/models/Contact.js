@@ -35,6 +35,10 @@ const contactSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    active: {
+      type: Boolean,
+      default: true,
+    },
     landbotId: String,
     chatwootId: String,
     chatwootSourceId: String,

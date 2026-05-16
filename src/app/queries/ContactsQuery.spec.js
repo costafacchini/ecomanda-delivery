@@ -21,6 +21,22 @@ describe('ContactsQuery', () => {
     await mongoServer.disconnect()
   })
 
+  it('returns only active contacts', async () => {
+    const contactRepository = new ContactRepositoryDatabase()
+    const active = await contactRepository.create(
+      contactFactory.build({ licensee, active: true, createdAt: new Date(2021, 6, 3, 0, 0, 0) }),
+    )
+    await contactRepository.create(
+      contactFactory.build({ number: '551183847642', licensee, active: false, createdAt: new Date(2021, 6, 3, 0, 0, 1) }),
+    )
+
+    const contactsQuery = buildContactsQuery()
+    const records = await contactsQuery.all()
+
+    expect(records.length).toEqual(1)
+    expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: active._id })]))
+  })
+
   it('returns all contacts ordered by createdAt asc', async () => {
     const contactRepository = new ContactRepositoryDatabase()
     const contact1 = await contactRepository.create(
