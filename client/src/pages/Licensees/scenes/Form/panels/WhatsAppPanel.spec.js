@@ -5,14 +5,16 @@ import WhatsAppPanel from './WhatsAppPanel'
 vi.mock('../../../../../services/licensee', () => ({
   setLicenseeWebhook: vi.fn(),
   getBaileysQr: vi.fn(),
+  getBaileysStatus: vi.fn(),
   importLicenseeTemplate: vi.fn(),
+  syncBaileysDirectory: vi.fn(),
 }))
 
 vi.mock('qrcode.react', () => ({
   QRCodeSVG: ({ value }) => <div data-testid="qr-code">{value}</div>,
 }))
 
-import { getBaileysQr } from '../../../../../services/licensee'
+import { getBaileysQr, getBaileysStatus, syncBaileysDirectory } from '../../../../../services/licensee'
 
 const noop = () => {}
 
@@ -24,7 +26,7 @@ const defaultValues = {
   apiToken: '',
 }
 
-function mount(overrides = {}) {
+function mount(overrides = {}, panelProps = {}) {
   const values = { ...defaultValues, ...overrides }
   render(
     <Formik initialValues={values} onSubmit={noop}>
@@ -34,6 +36,7 @@ function mount(overrides = {}) {
         touched={{}}
         handleChange={noop}
         handleBlur={noop}
+        {...panelProps}
       />
     </Formik>
   )
@@ -120,6 +123,51 @@ describe('<WhatsAppPanel />', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Sessão ativa')).toBeInTheDocument()
+    })
+  })
+
+  describe('Sync Groups button', () => {
+    it('shows "Sincronizar Grupos" button when Baileys is connected and licensee is persisted', async () => {
+      getBaileysStatus.mockResolvedValue({ data: { connected: true } })
+      mount({ whatsappDefault: 'baileys', id: 'abc123' }, { isActive: true })
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Sincronizar Grupos' })).toBeInTheDocument()
+      })
+    })
+
+    it('does NOT show "Sincronizar Grupos" when licensee is not persisted', async () => {
+      getBaileysStatus.mockResolvedValue({ data: { connected: true } })
+      mount({ whatsappDefault: 'baileys' }, { isActive: true })
+
+      await waitFor(() => {
+        expect(screen.queryByRole('button', { name: 'Sincronizar Grupos' })).not.toBeInTheDocument()
+      })
+    })
+
+    it('displays sync counts after successful sync', async () => {
+      getBaileysStatus.mockResolvedValue({ data: { connected: true } })
+      syncBaileysDirectory.mockResolvedValue({ data: { importedGroups: 3, updatedGroups: 1 } })
+      mount({ whatsappDefault: 'baileys', id: 'abc123' }, { isActive: true })
+
+      fireEvent.click(await screen.findByRole('button', { name: 'Sincronizar Grupos' }))
+
+      await waitFor(() => {
+        expect(screen.getByText(/Grupos importados: 3/)).toBeInTheDocument()
+        expect(screen.getByText(/Grupos atualizados: 1/)).toBeInTheDocument()
+      })
+    })
+
+    it('displays error message when sync fails', async () => {
+      getBaileysStatus.mockResolvedValue({ data: { connected: true } })
+      syncBaileysDirectory.mockRejectedValue(new Error('Network error'))
+      mount({ whatsappDefault: 'baileys', id: 'abc123' }, { isActive: true })
+
+      fireEvent.click(await screen.findByRole('button', { name: 'Sincronizar Grupos' }))
+
+      await waitFor(() => {
+        expect(screen.getByText('Erro ao sincronizar grupos')).toBeInTheDocument()
+      })
     })
   })
 })

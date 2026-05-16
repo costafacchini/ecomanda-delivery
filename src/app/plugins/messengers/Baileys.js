@@ -4,6 +4,9 @@ import { logger } from '../../helpers/logger.js'
 import { requireDependency } from '../../helpers/RequireDependency.js'
 import { isPhoto, isVideo } from '../../helpers/Files.js'
 
+const JID_GROUP_SUFFIX = '@g.us'
+const JID_WA_NET_SUFFIX = '@s.whatsapp.net'
+
 class Baileys extends MessengersBase {
   constructor(licensee, { whatsappSessionRepository, ...dependencies } = {}) {
     super(licensee, dependencies)
@@ -58,13 +61,15 @@ class Baileys extends MessengersBase {
     }
 
     const remoteJid = body.key.remoteJid
-    const phone = remoteJid.replace(/@s\.whatsapp\.net$/, '').replace(/@g\.us$/, '')
+    const phone = remoteJid
+      .replace(new RegExp(`${JID_WA_NET_SUFFIX}$`), '')
+      .replace(new RegExp(`${JID_GROUP_SUFFIX}$`), '')
     const normalizePhone = new NormalizePhone(phone)
 
     this.contactData = {
       number: normalizePhone.number,
       type: normalizePhone.type,
-      waId: remoteJid.replace(/@s\.whatsapp\.net$/, '').replace(/@g\.us$/, ''),
+      waId: remoteJid.replace(new RegExp(`${JID_WA_NET_SUFFIX}$`), '').replace(new RegExp(`${JID_GROUP_SUFFIX}$`), ''),
       name: body.pushName || normalizePhone.number,
       wa_start_chat: new Date(),
     }
@@ -128,14 +133,41 @@ class Baileys extends MessengersBase {
     }
   }
 
+  // Shared socket bootstrap — opens a connected Baileys socket and registers creds persistence.
+  // Callers are responsible for socket lifecycle (socket.end()).
+  async _openSocket(session, state, rawKeys, BufferJSON) {
+    const { default: makeWASocket, Browsers, fetchLatestBaileysVersion } = await import('@whiskeysockets/baileys')
+    const { version } = await fetchLatestBaileysVersion()
+
+    const socket = makeWASocket({
+      version,
+      auth: state,
+      printQRInTerminal: false,
+      browser: Browsers.ubuntu('Chrome'),
+    })
+
+    socket.ev.on('creds.update', () => {
+      this.saveSession(session, state.creds, rawKeys, BufferJSON).catch((err) => {
+        logger.error(`Baileys: erro ao salvar sessão: ${err.message ?? err}`)
+      })
+    })
+
+    return socket
+  }
+
+  // Waits for the socket to reach the 'open' connection state.
+  // Rejects if the connection closes before opening.
+  _waitForConnection(socket) {
+    return new Promise((resolve, reject) => {
+      socket.ev.on('connection.update', ({ connection, lastDisconnect }) => {
+        if (connection === 'open') resolve()
+        if (connection === 'close') reject(lastDisconnect?.error ?? new Error('Connection Closed'))
+      })
+    })
+  }
+
   async sendMessage(messageId) {
-    const {
-      default: makeWASocket,
-      initAuthCreds,
-      BufferJSON,
-      Browsers,
-      fetchLatestBaileysVersion,
-    } = await import('@whiskeysockets/baileys')
+    const { initAuthCreds, BufferJSON } = await import('@whiskeysockets/baileys')
 
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
 
@@ -151,37 +183,28 @@ class Baileys extends MessengersBase {
 
     const session = await this.loadOrCreateSession()
     const { state, rawKeys } = this.buildAuthState(session, initAuthCreds, BufferJSON)
-    const { version } = await fetchLatestBaileysVersion()
 
     let socket
     try {
-      socket = makeWASocket({
-        version,
-        auth: state,
-        printQRInTerminal: false,
-        browser: Browsers.ubuntu('Chrome'),
-      })
+      socket = await this._openSocket(session, state, rawKeys, BufferJSON)
 
-      socket.ev.on('creds.update', () => {
-        this.saveSession(session, state.creds, rawKeys, BufferJSON).catch((err) => {
-          logger.error(`Baileys: erro ao salvar sessão: ${err.message ?? err}`)
-        })
-      })
+      await this._waitForConnection(socket)
 
-      await new Promise((resolve, reject) => {
-        socket.ev.on('connection.update', ({ connection, lastDisconnect }) => {
-          if (connection === 'open') resolve()
-          if (connection === 'close') reject(lastDisconnect?.error ?? new Error('Connection Closed'))
-        })
-      })
+      const rawId = messageToSend.contact.waId || messageToSend.contact.number
+      let jid
 
-      const rawNumber = messageToSend.contact.waId || messageToSend.contact.number
-      const [registeredAccount] = await socket.onWhatsApp(rawNumber)
-      if (!registeredAccount?.exists) {
-        throw new Error(`Número ${rawNumber} não encontrado no WhatsApp`)
+      if (rawId.endsWith(JID_GROUP_SUFFIX)) {
+        // Group JIDs are stored verbatim — bypass person-number resolution.
+        jid = rawId
+        logger.info(`Baileys: enviando mensagem ${messageId} para grupo JID: ${jid}`)
+      } else {
+        const [registeredAccount] = await socket.onWhatsApp(rawId)
+        if (!registeredAccount?.exists) {
+          throw new Error(`Número ${rawId} não encontrado no WhatsApp`)
+        }
+        jid = registeredAccount.jid
+        logger.info(`Baileys: enviando mensagem ${messageId} para JID resolvido: ${jid}`)
       }
-      const jid = registeredAccount.jid
-      logger.info(`Baileys: enviando mensagem ${messageId} para JID resolvido: ${jid}`)
 
       let messageContent
       if (messageToSend.kind === 'file') {
@@ -226,22 +249,44 @@ class Baileys extends MessengersBase {
     }
   }
 
-  async _reconnectAfterPairing(session, state, rawKeys, BufferJSON) {
-    const { default: makeWASocket, Browsers, fetchLatestBaileysVersion } = await import('@whiskeysockets/baileys')
-    const { version } = await fetchLatestBaileysVersion()
+  // Fetches all WhatsApp groups the connected account is a member of.
+  // Returns a normalized payload: { groups: [{ waId, name, number, type }] }
+  // Does NOT enable or consume chat/message history.
+  async fetchGroups() {
+    const { initAuthCreds, BufferJSON } = await import('@whiskeysockets/baileys')
 
-    const socket = makeWASocket({
-      version,
-      auth: state,
-      printQRInTerminal: false,
-      browser: Browsers.ubuntu('Chrome'),
-    })
+    const session = await this.loadOrCreateSession()
+    const { state, rawKeys } = this.buildAuthState(session, initAuthCreds, BufferJSON)
 
-    socket.ev.on('creds.update', () => {
-      this.saveSession(session, state.creds, rawKeys, BufferJSON).catch((err) => {
-        logger.error(`Baileys: erro ao salvar sessão no reconect: ${err.message ?? err}`)
+    let socket
+    try {
+      socket = await this._openSocket(session, state, rawKeys, BufferJSON)
+      await this._waitForConnection(socket)
+
+      const groupMap = await socket.groupFetchAllParticipating()
+
+      const groups = Object.values(groupMap).map((group) => {
+        const waId = group.id
+        const number = waId.replace(new RegExp(`${JID_GROUP_SUFFIX}$`), '')
+        return {
+          waId,
+          name: group.subject ?? waId,
+          number,
+          type: JID_GROUP_SUFFIX,
+        }
       })
-    })
+
+      logger.info(`Baileys: ${groups.length} grupos obtidos para licensee ${this.licensee._id}`)
+      return { groups }
+    } finally {
+      if (socket) {
+        socket.end()
+      }
+    }
+  }
+
+  async _reconnectAfterPairing(session, state, rawKeys, BufferJSON) {
+    const socket = await this._openSocket(session, state, rawKeys, BufferJSON)
 
     return new Promise((resolve) => {
       const timeout = setTimeout(() => {
@@ -270,17 +315,15 @@ class Baileys extends MessengersBase {
           }, timeoutMs)
 
           import('@whiskeysockets/baileys')
-            .then(({ default: makeWASocket, initAuthCreds, BufferJSON, Browsers, fetchLatestBaileysVersion }) => {
+            .then(({ initAuthCreds, BufferJSON, fetchLatestBaileysVersion }) => {
               const { state, rawKeys } = this.buildAuthState(session, initAuthCreds, BufferJSON)
 
               fetchLatestBaileysVersion()
-                .then(({ version }) => {
-                  socket = makeWASocket({
-                    version,
-                    auth: state,
-                    printQRInTerminal: false,
-                    browser: Browsers.ubuntu('Chrome'),
-                  })
+                .then(() => {
+                  return this._openSocket(session, state, rawKeys, BufferJSON)
+                })
+                .then((openedSocket) => {
+                  socket = openedSocket
 
                   socket.ev.on('connection.update', (update) => {
                     const { qr, connection } = update
@@ -319,12 +362,6 @@ class Baileys extends MessengersBase {
                         reject(new Error('Conexão encerrada antes de receber o QR'))
                       }
                     }
-                  })
-
-                  socket.ev.on('creds.update', () => {
-                    this.saveSession(session, state.creds, rawKeys, BufferJSON).catch((err) => {
-                      logger.error(`Baileys: erro ao salvar sessão: ${err.message ?? err}`)
-                    })
                   })
                 })
                 .catch((err) => {

@@ -350,4 +350,42 @@ describe('LicenseesController delegation', () => {
       errors: { message: 'Erro interno do servidor: some error' },
     })
   })
+
+  it('delegates baileysSync to the syncBaileysDirectoryUseCase and returns status 200', async () => {
+    const syncBaileysDirectoryUseCase = { execute: jest.fn() }
+    const licenseeRepository = new LicenseeRepositoryMemory()
+    const controller = new LicenseesController({ licenseeRepository })
+    controller.syncBaileysDirectoryUseCase = syncBaileysDirectoryUseCase
+
+    const req = { params: { id: 'licensee-id' } }
+    const res = buildResponse()
+    const syncResult = { importedContacts: 0, updatedContacts: 0, importedGroups: 3, updatedGroups: 1, skipped: 0 }
+
+    syncBaileysDirectoryUseCase.execute.mockResolvedValue(syncResult)
+
+    await controller.baileysSync(req, res)
+
+    expect(syncBaileysDirectoryUseCase.execute).toHaveBeenCalledWith('licensee-id')
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.send).toHaveBeenCalledWith(syncResult)
+  })
+
+  it('returns status 500 when baileysSync use case throws an error', async () => {
+    const syncBaileysDirectoryUseCase = { execute: jest.fn() }
+    const licenseeRepository = new LicenseeRepositoryMemory()
+    const controller = new LicenseesController({ licenseeRepository })
+    controller.syncBaileysDirectoryUseCase = syncBaileysDirectoryUseCase
+
+    const req = { params: { id: 'licensee-id' } }
+    const res = buildResponse()
+
+    syncBaileysDirectoryUseCase.execute.mockRejectedValue(new Error('sync failed'))
+
+    await controller.baileysSync(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.send).toHaveBeenCalledWith({
+      errors: { message: 'Erro interno do servidor: sync failed' },
+    })
+  })
 })

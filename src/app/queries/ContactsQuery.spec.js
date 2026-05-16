@@ -21,6 +21,22 @@ describe('ContactsQuery', () => {
     await mongoServer.disconnect()
   })
 
+  it('returns only active contacts', async () => {
+    const contactRepository = new ContactRepositoryDatabase()
+    const active = await contactRepository.create(
+      contactFactory.build({ licensee, active: true, createdAt: new Date(2021, 6, 3, 0, 0, 0) }),
+    )
+    await contactRepository.create(
+      contactFactory.build({ number: '551183847642', licensee, active: false, createdAt: new Date(2021, 6, 3, 0, 0, 1) }),
+    )
+
+    const contactsQuery = buildContactsQuery()
+    const records = await contactsQuery.all()
+
+    expect(records.length).toEqual(1)
+    expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: active._id })]))
+  })
+
   it('returns all contacts ordered by createdAt asc', async () => {
     const contactRepository = new ContactRepositoryDatabase()
     const contact1 = await contactRepository.create(
@@ -311,6 +327,137 @@ describe('ContactsQuery', () => {
       let records = await contactsQuery.all()
 
       expect(records.length).toEqual(1)
+      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact1._id })]))
+      expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact2._id })]))
+    })
+  })
+
+  describe('filterByIsGroup', () => {
+    it('returns only group contacts when isGroup is true', async () => {
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact1 = await contactRepository.create(
+        contactFactory.build({
+          licensee,
+          isGroup: true,
+          createdAt: new Date(2021, 6, 3, 0, 0, 0),
+        }),
+      )
+      const contact2 = await contactRepository.create(
+        contactFactory.build({
+          number: '551183847642',
+          licensee,
+          isGroup: false,
+          createdAt: new Date(2021, 6, 3, 0, 0, 1),
+        }),
+      )
+
+      const contactsQuery = buildContactsQuery()
+      contactsQuery.filterByIsGroup(true)
+      const records = await contactsQuery.all()
+
+      expect(records.length).toEqual(1)
+      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact1._id })]))
+      expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact2._id })]))
+    })
+
+    it('returns only non-group contacts when isGroup is false', async () => {
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact1 = await contactRepository.create(
+        contactFactory.build({
+          licensee,
+          isGroup: true,
+          createdAt: new Date(2021, 6, 3, 0, 0, 0),
+        }),
+      )
+      const contact2 = await contactRepository.create(
+        contactFactory.build({
+          number: '551183847642',
+          licensee,
+          isGroup: false,
+          createdAt: new Date(2021, 6, 3, 0, 0, 1),
+        }),
+      )
+
+      const contactsQuery = buildContactsQuery()
+      contactsQuery.filterByIsGroup(false)
+      const records = await contactsQuery.all()
+
+      expect(records.length).toEqual(1)
+      expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact1._id })]))
+      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact2._id })]))
+    })
+  })
+
+  describe('filterByUpdatedAtStart and filterByUpdatedAtEnd', () => {
+    it('returns contacts updated within the interval when both bounds are provided', async () => {
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact1 = await contactRepository.create(
+        contactFactory.build({
+          licensee,
+          createdAt: new Date(2021, 6, 1, 0, 0, 0),
+        }),
+      )
+      const contact2 = await contactRepository.create(
+        contactFactory.build({
+          number: '551183847642',
+          licensee,
+          createdAt: new Date(2021, 6, 10, 0, 0, 0),
+        }),
+      )
+
+      const contactsQuery = buildContactsQuery()
+      contactsQuery.filterByUpdatedAtStart(new Date(2021, 6, 5, 0, 0, 0))
+      contactsQuery.filterByUpdatedAtEnd(new Date(2021, 6, 15, 0, 0, 0))
+      const records = await contactsQuery.all()
+
+      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact2._id })]))
+      expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact1._id })]))
+    })
+
+    it('returns contacts updated after start when only updatedAtStart is provided', async () => {
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact1 = await contactRepository.create(
+        contactFactory.build({
+          licensee,
+          createdAt: new Date(2021, 6, 1, 0, 0, 0),
+        }),
+      )
+      const contact2 = await contactRepository.create(
+        contactFactory.build({
+          number: '551183847642',
+          licensee,
+          createdAt: new Date(2021, 6, 10, 0, 0, 0),
+        }),
+      )
+
+      const contactsQuery = buildContactsQuery()
+      contactsQuery.filterByUpdatedAtStart(new Date(2021, 6, 5, 0, 0, 0))
+      const records = await contactsQuery.all()
+
+      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact2._id })]))
+      expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact1._id })]))
+    })
+
+    it('returns contacts updated before end when only updatedAtEnd is provided', async () => {
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact1 = await contactRepository.create(
+        contactFactory.build({
+          licensee,
+          createdAt: new Date(2021, 6, 1, 0, 0, 0),
+        }),
+      )
+      const contact2 = await contactRepository.create(
+        contactFactory.build({
+          number: '551183847642',
+          licensee,
+          createdAt: new Date(2021, 6, 10, 0, 0, 0),
+        }),
+      )
+
+      const contactsQuery = buildContactsQuery()
+      contactsQuery.filterByUpdatedAtEnd(new Date(2021, 6, 5, 0, 0, 0))
+      const records = await contactsQuery.all()
+
       expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact1._id })]))
       expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: contact2._id })]))
     })

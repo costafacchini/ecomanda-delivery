@@ -69,6 +69,10 @@ class ContactRepositoryDatabase extends Repository {
       type: normalizedPhone.type,
     })
   }
+
+  async deactivateGroupsForLicensee(licenseeId) {
+    return await this.updateMany({ licensee: licenseeId, isGroup: true }, { active: false })
+  }
 }
 
 class ContactRepositoryMemory extends RepositoryMemory {
@@ -105,6 +109,10 @@ class ContactRepositoryMemory extends RepositoryMemory {
       licensee: licenseeId,
       type: normalizedPhone.type,
     })
+  }
+
+  async deactivateGroupsForLicensee(licenseeId) {
+    return await this.updateMany({ licensee: licenseeId, isGroup: true }, { active: false })
   }
 
   async save(document) {

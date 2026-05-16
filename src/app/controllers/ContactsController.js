@@ -96,6 +96,18 @@ class ContactsController {
         contactsQuery.filterByExpression(req.query.expression)
       }
 
+      if (req.query.isGroup !== undefined) {
+        contactsQuery.filterByIsGroup(req.query.isGroup === 'true')
+      }
+
+      if (req.query.updatedAtStart) {
+        contactsQuery.filterByUpdatedAtStart(new Date(req.query.updatedAtStart))
+      }
+
+      if (req.query.updatedAtEnd) {
+        contactsQuery.filterByUpdatedAtEnd(new Date(req.query.updatedAtEnd))
+      }
+
       const contacts = await contactsQuery.all()
 
       res.status(200).send(contacts)

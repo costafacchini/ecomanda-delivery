@@ -56,6 +56,12 @@ function ContactsIndex({ currentUser }) {
     onFilter(newFilters)
   }
 
+  function toggleGroupFilter() {
+    const isGroup = filters?.isGroup ? undefined : true
+    const newFilters = { ...filters, isGroup, page: 1 }
+    onFilter(newFilters)
+  }
+
   return (
     <>
       <div className='row'>
@@ -92,6 +98,13 @@ function ContactsIndex({ currentUser }) {
       <div className='row'>
         <div className='d-flex justify-content-between pb-2'>
           <div className=''>
+            <button
+              type='button'
+              className={`btn btn-sm ${filters?.isGroup ? 'btn-primary' : 'btn-outline-secondary'}`}
+              onClick={toggleGroupFilter}
+            >
+              {filters?.isGroup ? 'Apenas Grupos' : 'Todos os Contatos'}
+            </button>
           </div>
           <div className=''>
             <div className='input-group'>

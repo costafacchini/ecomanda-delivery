@@ -38,9 +38,22 @@ class ContactsQuery {
     this.endDateClause = endDate
   }
 
+  filterByIsGroup(value) {
+    this.isGroupClause = value
+  }
+
+  filterByUpdatedAtStart(value) {
+    this.updatedAtStartClause = value
+  }
+
+  filterByUpdatedAtEnd(value) {
+    this.updatedAtEndClause = value
+  }
+
   async all() {
     const query = new QueryBuilder(this.contactRepository.model())
     query.sortBy('createdAt', 1)
+    query.filterNotEqual('active', false)
 
     if (this.pageClause) query.page(this.pageClause, this.limitClause)
 
@@ -57,6 +70,17 @@ class ContactsQuery {
       query.filterByInterval('wa_start_chat', this.startDateClause, this.endDateClause)
 
     if (!this.startDateClause && this.endDateClause) query.filterByLessThan('wa_start_chat', this.endDateClause)
+
+    if (this.isGroupClause !== undefined) query.filterBy('isGroup', this.isGroupClause)
+
+    if (this.updatedAtStartClause && this.updatedAtEndClause)
+      query.filterByInterval('updatedAt', this.updatedAtStartClause, this.updatedAtEndClause)
+
+    if (this.updatedAtStartClause && !this.updatedAtEndClause)
+      query.filterByGreaterThan('updatedAt', this.updatedAtStartClause)
+
+    if (!this.updatedAtStartClause && this.updatedAtEndClause)
+      query.filterByLessThan('updatedAt', this.updatedAtEndClause)
 
     return await query.getQuery().exec()
   }

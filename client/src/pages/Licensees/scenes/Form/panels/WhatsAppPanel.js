@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { FieldWithError } from '../../../../../components/form'
-import { setLicenseeWebhook, getBaileysQr, getBaileysStatus, importLicenseeTemplate } from '../../../../../services/licensee'
+import { setLicenseeWebhook, getBaileysQr, getBaileysStatus, importLicenseeTemplate, syncBaileysDirectory } from '../../../../../services/licensee'
 
 function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isActive }) {
   const [baileysQr, setBaileysQr] = useState(null)
   const [baileysStatus, setBaileysStatus] = useState(null)
   const [baileysConnected, setBaileysConnected] = useState(null)
   const [baileysChecking, setBaileysChecking] = useState(false)
+  const [syncLoading, setSyncLoading] = useState(false)
+  const [syncResult, setSyncResult] = useState(null)
+  const [syncError, setSyncError] = useState(null)
 
   useEffect(() => {
     if (!isActive || values.whatsappDefault !== 'baileys' || !values.id) return
@@ -158,6 +161,42 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                 >
                   Reconectar
                 </button>
+                {values.id && (
+                  <button
+                    onClick={async (event) => {
+                      event.preventDefault()
+                      setSyncResult(null)
+                      setSyncError(null)
+                      setSyncLoading(true)
+                      try {
+                        const response = await syncBaileysDirectory(values)
+                        setSyncResult(response.data)
+                      } catch {
+                        setSyncError('Erro ao sincronizar grupos')
+                      } finally {
+                        setSyncLoading(false)
+                      }
+                    }}
+                    className='btn btn-outline-primary btn-sm'
+                    disabled={syncLoading}
+                  >
+                    {syncLoading ? 'Sincronizando...' : 'Sincronizar Grupos'}
+                  </button>
+                )}
+              </div>
+            )}
+
+            {syncResult && (
+              <div className='form-group col-12 mt-2'>
+                <span className='text-muted small'>
+                  Grupos importados: {syncResult.importedGroups} | Grupos atualizados: {syncResult.updatedGroups}
+                </span>
+              </div>
+            )}
+
+            {syncError && (
+              <div className='form-group col-12 mt-2'>
+                <span className='text-danger small'>{syncError}</span>
               </div>
             )}
 
