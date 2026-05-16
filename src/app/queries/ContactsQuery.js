@@ -53,7 +53,7 @@ class ContactsQuery {
   async all() {
     const query = new QueryBuilder(this.contactRepository.model())
     query.sortBy('createdAt', 1)
-    query.filterBy('active', true)
+    query.filterNotEqual('active', false)
 
     if (this.pageClause) query.page(this.pageClause, this.limitClause)
 
