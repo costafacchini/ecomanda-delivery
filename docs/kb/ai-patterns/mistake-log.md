@@ -1,6 +1,6 @@
 # Mistake Log
 
-**Last Updated**: 2026-04-23
+**Last Updated**: 2026-05-16
 **Context**: Read at session start to avoid repeating known error patterns.
 
 When the AI is corrected, `log-mistake` appends an entry here.
@@ -74,4 +74,28 @@ not yet represented by the task list.
 **Correct**: Before reporting lint as clean, run the same ESLint command the branch/CI actually uses for the touched area and verify that the exit status is free of errors, not just that a helper command produced no output.
 **Area**: Validation workflow, ESLint, test-spec migrations
 **Prevention**: When a wave changes many files or rewrites test setup, always rerun the canonical lint command for the affected directories after the final edit pass, even if a narrower pre-commit scan looked clean earlier.
+**Count**: 1
+
+## [2026-05-16] Keep explicit no-history constraints visible in new plans
+
+**Wrong**: Wrote the Baileys group/contact plan in a way that still relied on history-derived contact reads after the user clarified that reading chat history is out of scope.
+**Correct**: When a requirement excludes a data source or workflow, mark that exclusion explicitly in scope, out-of-scope, kill criteria, and task instructions, and treat any history-dependent capability as a validation risk or fallback.
+**Area**: Create-plan scoping, requirements translation
+**Prevention**: During plan review, scan the overview and early task files for accidental dependencies on prohibited flows such as chat history, background imports, or additional models.
+**Count**: 1
+
+## [2026-05-16] Prefer the primary user outcome over optional directory features in plans
+
+**Wrong**: Kept WhatsApp contact discovery as part of the planned deliverable after the user clarified that the real requirement is only knowing which groups the account belongs to and messaging those groups.
+**Correct**: When the user distinguishes between required and optional capabilities, center the plan on the required outcome and move optional capabilities out of scope or into explicit non-blocking follow-up notes.
+**Area**: Create-plan scoping, requirements prioritization
+**Prevention**: Before finalizing a plan, restate the one indispensable user outcome and remove any secondary capability that is not needed to deliver it.
+**Count**: 1
+
+## [2026-05-16] When the user adds schema or index-filter requirements, reflect them explicitly in the plan
+
+**Wrong**: Narrowed the Baileys plan to group discovery/send but did not immediately add the user-requested `Contact` group field and contacts index filter work to the plan structure.
+**Correct**: When the user adds concrete schema or endpoint requirements, update the plan's scope, key files, task ownership, and success criteria so those technical changes are visible as first-class deliverables.
+**Area**: Create-plan scoping, API/data-model requirements
+**Prevention**: After any plan correction, scan for implied model, query, controller, and spec changes rather than only updating the headline objective.
 **Count**: 1
