@@ -194,6 +194,68 @@ A API do Ecomanda Delivery é um sistema de integração entre plataformas de Ch
 
 **Headers**: `x-access-token: <JWT_TOKEN>`
 
+#### GET `/resources/licensees/:id/baileys-status`
+**Descrição**: Retorna o status da conexão Baileys do licenciado
+
+**Headers**: `x-access-token: <JWT_TOKEN>`
+
+**Response** (200):
+```json
+{ "connected": true }
+```
+
+#### POST `/resources/licensees/:id/baileys-qr`
+**Descrição**: Gera o QR code de autenticação Baileys para o licenciado
+
+**Headers**: `x-access-token: <JWT_TOKEN>`
+
+**Response** (200 — QR gerado):
+```json
+{ "qr": "<qr-string>" }
+```
+
+**Response** (200 — já autenticado):
+```json
+{ "message": "Já conectado" }
+```
+
+**Response** (408 — timeout):
+```json
+{ "errors": { "message": "Timeout ao gerar QR Code" } }
+```
+
+#### POST `/resources/licensees/:id/baileys-sync`
+**Descrição**: Sincroniza os grupos WhatsApp do licenciado nos registros de `Contact`. Requer sessão Baileys ativa.
+
+**Headers**: `x-access-token: <JWT_TOKEN>`
+
+**Response** (200):
+```json
+{
+  "importedContacts": 0,
+  "updatedContacts": 0,
+  "importedGroups": 3,
+  "updatedGroups": 1,
+  "skipped": 0
+}
+```
+
+- `importedGroups`: novos registros de Contact do tipo grupo criados
+- `updatedGroups`: registros de grupo existentes atualizados
+- `importedContacts` / `updatedContacts` / `skipped`: sempre `0` (sincronização de contatos individuais não implementada)
+
+**Response** (200 — licenciado não usa Baileys):
+```json
+{ "message": "Licensee não usa Baileys" }
+```
+
+**Response** (500 — erro de socket ou sessão desconectada):
+```json
+{ "errors": { "message": "Erro interno do servidor: <detalhe>" } }
+```
+
+> A sincronização usa `groupFetchAllParticipating()` do SDK Baileys e não lê, importa nem persiste histórico de mensagens.
+
 ---
 
 ### 1.4 Contatos
@@ -210,6 +272,17 @@ A API do Ecomanda Delivery é um sistema de integração entre plataformas de Ch
 - `talkingWithChatbot` (boolean): Filtro por contatos conversando com chatbot
 - `licensee` (string): Filtro por licenciado
 - `expression` (string): Filtro por expressão
+- `isGroup` (boolean `"true"` / `"false"`): Filtra somente grupos (`true`) ou somente contatos individuais (`false`). Omitir retorna todos.
+- `updatedAtStart` (ISO 8601 datetime): Retorna contatos atualizados a partir desta data (inclusive)
+- `updatedAtEnd` (ISO 8601 datetime): Retorna contatos atualizados até esta data (inclusive)
+
+**Exemplos**:
+```
+GET /resources/contacts?isGroup=true
+GET /resources/contacts?isGroup=true&licensee=<id>
+GET /resources/contacts?updatedAtStart=2026-05-01T00:00:00.000Z&updatedAtEnd=2026-05-31T23:59:59.999Z
+GET /resources/contacts?isGroup=true&updatedAtStart=2026-05-16T00:00:00.000Z
+```
 
 #### GET `/resources/contacts/:id`
 **Descrição**: Busca contato por ID

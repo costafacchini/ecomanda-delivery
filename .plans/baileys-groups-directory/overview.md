@@ -1,6 +1,6 @@
 # Plan: Baileys Group Messaging & Directory Sync
 
-**Status**: not-started
+**Status**: complete
 **Created**: 2026-05-16
 **Last Updated**: 2026-05-16
 **Estimated Demo Date**: 2026-05-23
@@ -51,10 +51,10 @@ Extend the existing Baileys integration so a connected WhatsApp account can disc
 
 | Task Path | Title | Phase | Status | Depends On |
 |-----------|-------|-------|--------|------------|
-| task-01-plugin-core | Baileys Group/Directory Core | 1 | not-started | — |
+| task-01-plugin-core | Baileys Group/Directory Core | 1 | complete | — |
 | task-02-directory-sync-api | Contact Group Field, Filters, and Sync API | 2 | complete | task-01-plugin-core |
 | task-03-admin-sync-surface | Admin Sync Surface | 3 | complete | task-02-directory-sync-api |
-| task-04-docs-and-verification | Docs and Live Verification | 4 | not-started | task-02-directory-sync-api, task-03-admin-sync-surface |
+| task-04-docs-and-verification | Docs and Live Verification | 4 | complete | task-02-directory-sync-api, task-03-admin-sync-surface |
 
 ## Branch Convention
 
