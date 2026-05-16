@@ -9,13 +9,13 @@
 
 ## Objective
 
-Extend the Baileys messenger plugin so it can fetch group data, plus any directly available contact directory metadata, from a connected WhatsApp account without reading chat history, and send outbound messages directly to imported group JIDs.
+Extend the Baileys messenger plugin so it can fetch group membership data from a connected WhatsApp account without reading chat history, and send outbound messages directly to imported group JIDs.
 
 ## Context
 
 The repo already has a working Baileys session flow for QR pairing, status checks, inbound message parsing, and person-to-person sends. The missing capability is a reusable authenticated socket path that can serve three needs without duplicating connection logic:
 
-- directory sync primitives for groups and contacts
+- directory sync primitives for groups
 - type-aware outbound sends for `@g.us` contacts
 - shared session handling that still preserves the current QR/status behavior
 
@@ -30,7 +30,7 @@ Relevant files and docs:
 Important implementation constraint:
 - groups are directly supported by Baileys via `groupFetchAllParticipating()` and `sendMessage(groupJid, ...)`
 - this task must not enable or consume chat/message history as a source of contacts
-- contact import is less direct and appears to rely on contact/store events (`contacts.upsert`, `contacts.update`, bound store state) rather than a documented fetch-all directory endpoint
+- contact import is not a requirement for this plan; if the code happens to expose contact metadata directly, treat that as a non-blocking note rather than a deliverable
 
 ## Before You Start
 
@@ -71,18 +71,14 @@ Refactor the current `Baileys.js` connection bootstrap so QR generation, outboun
 
 Implement a plugin method that returns a normalized sync payload for:
 - groups from `groupFetchAllParticipating()`
-- contacts collected only from directly available contact/store metadata within a bounded wait window, without reading or importing chat/message history
 
 Define a stable internal result shape for task 2 to consume, for example:
 
 ```json
 {
-  "contacts": [{ "waId": "5511999999999", "name": "Jane", "number": "5511999999999", "type": "@c.us" }],
   "groups": [{ "waId": "1203630...@g.us", "name": "Sales Team", "number": "1203630...-...", "type": "@g.us" }]
 }
 ```
-
-If Baileys cannot expose a usable contacts list under the no-history constraint, return an empty `contacts` collection and a machine-readable limitation that task 2/task 4 can surface and document.
 
 ### Step 3: Make outbound sends group-aware
 
@@ -102,7 +98,7 @@ Update `sendMessage()` so:
 ## Documentation / KB Updates
 
 - [ ] No planned KB/doc updates in this task; `task-04-docs-and-verification` owns the user-facing docs
-- [ ] If the implementation requires a non-obvious Baileys contact/store workaround, run `document-solution`
+- [ ] If the implementation requires a non-obvious Baileys group metadata workaround, run `document-solution`
 - [ ] If KB files change unexpectedly, run `check-kb-index`
 
 ## Completion Criteria
@@ -110,7 +106,7 @@ Update `sendMessage()` so:
 - [ ] `Baileys.js` exposes a reusable directory-fetch path that task 2 can call
 - [ ] The directory-fetch path does not enable or consume chat/message history
 - [ ] Group sends use the stored group JID instead of person-number resolution
-- [ ] Plugin tests cover group sync and group send behavior
+- [ ] Plugin tests cover group discovery and group send behavior
 - [ ] Documentation / KB updates completed or explicitly marked not needed
 - [ ] Changes committed to `plan/baileys-groups-directory/task-01-plugin-core` branch
 - [ ] Status updated in `status.md`

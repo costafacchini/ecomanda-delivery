@@ -9,7 +9,7 @@
 
 ## Objective
 
-Add admin UI affordances so a Baileys-connected licensee can trigger directory sync, see the result immediately, and inspect imported groups through the existing Contacts view.
+Add admin UI affordances so a Baileys-connected licensee can trigger group sync, see the result immediately, and inspect imported groups through the existing Contacts view.
 
 ## Context
 
@@ -27,6 +27,7 @@ Expected UX:
 - when Baileys is connected, show a sync action in the WhatsApp panel
 - after sync, show counts returned by the backend
 - make it easy to filter/read `@g.us` records on the Contacts page
+- do not add new contact-search UI as part of this task
 
 ## Before You Start
 
@@ -75,7 +76,6 @@ Update `WhatsAppPanel` to:
 
 Use the existing Contacts page rather than adding a brand-new screen. Add a minimal filter/toggle so admins can switch among:
 - all contacts
-- WhatsApp contacts (`@c.us`)
 - WhatsApp groups (`@g.us`)
 
 ## Testing

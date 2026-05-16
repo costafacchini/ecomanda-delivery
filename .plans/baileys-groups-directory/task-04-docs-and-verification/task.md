@@ -19,7 +19,7 @@ This repo already has a Baileys KB guide, and it currently documents QR pairing 
 - how imported groups appear in the existing Contacts model/UI
 - how group sends work through the existing message-creation flow
 - the explicit no-history constraint for this feature
-- the caveat that Baileys contact data does not appear to come from a single documented fetch-all method
+- the fact that contact discovery is not required for this feature
 
 Relevant files and docs:
 - [docs/kb/features/baileys-whatsapp-guide.md](../../../docs/kb/features/baileys-whatsapp-guide.md)
@@ -58,9 +58,9 @@ Relevant files and docs:
 Extend `docs/kb/features/baileys-whatsapp-guide.md` with:
 - how to trigger the new sync
 - what gets imported into `Contact`
-- how to inspect groups/contacts afterward
+- how to inspect groups afterward
 - how to send to an imported group through the existing message flow
-- the known limitation/caveat around contact completeness under the no-history constraint
+- the known limitation/caveat that this feature does not depend on contact discovery
 
 ### Step 2: Update API documentation
 
@@ -71,7 +71,7 @@ Document the new admin endpoint, auth requirements, sample response, and expecte
 Validate with a real linked Baileys session:
 - QR/status still work
 - sync returns counts
-- imported `@c.us` and `@g.us` contacts appear in the Contacts screen
+- imported `@g.us` groups appear in the Contacts screen
 - a text message can be sent to an imported group
 - no chat/message history is read or persisted by the sync implementation
 

@@ -9,13 +9,13 @@
 
 ## Objective
 
-Extend the existing Baileys integration so a connected WhatsApp account can sync its groups, plus any directly available WhatsApp contact directory metadata, into the app's existing `Contact` model without reading chat history, and so outbound `to-messenger` messages can be sent directly to WhatsApp groups.
+Extend the existing Baileys integration so a connected WhatsApp account can discover which WhatsApp groups it belongs to, sync those groups into the app's existing `Contact` model without reading chat history, and send outbound `to-messenger` messages directly to those groups.
 
 ## Scope
 
 ### In Scope
 - Reuse the existing Baileys session/auth flow to open an authenticated socket for on-demand directory sync
-- Import WhatsApp groups, and any directly available WhatsApp contact directory metadata, into existing `Contact` records using `@c.us` / `@g.us` types
+- Import WhatsApp groups into existing `Contact` records using `type: '@g.us'`
 - Add an authenticated admin endpoint to trigger the sync and return import/update counts
 - Support outbound Baileys sends to group JIDs stored on imported contacts
 - Add admin UI controls to trigger sync and inspect imported groups through the existing Contacts surface
@@ -26,12 +26,13 @@ Extend the existing Baileys integration so a connected WhatsApp account can sync
 - Group creation, join/leave, participant management, or admin moderation actions — not requested
 - Media/template feature expansion beyond the current Baileys plugin scope — only group-target delivery is required
 - Reading, importing, or persisting WhatsApp chat/message history — explicitly excluded for this plan
+- Searching, importing, or syncing the full WhatsApp contact list — not required for this plan
 - Full bidirectional WhatsApp address-book editing — the repo needs read/import behavior, not contact mutation on WhatsApp
 - Reworking inbound group-routing behavior into chatbot/chat platforms — this plan focuses on sync/read and outbound group send
 
 ## Kill Criteria
 
-- If live validation on the repo's resolved `@whiskeysockets/baileys` `7.0.0-rc11` cannot produce a usable contact list without enabling or consuming chat history, stop and re-scope the feature to groups-only plus existing/manual contacts
+- If live validation on the repo's resolved `@whiskeysockets/baileys` `7.0.0-rc11` cannot produce a usable list of groups without enabling or consuming chat history, stop and escalate the Baileys limitation before implementation continues
 - If a connected Baileys session cannot deliver a simple text message to a known `@g.us` JID in local smoke validation, stop and capture the vendor/library limitation before further implementation
 - If on-demand directory sync cannot complete within a bounded 30-second request window for a typical linked account and no asynchronous fallback is acceptable, escalate before shipping
 
@@ -80,13 +81,13 @@ Base branch: `main`
 
 ## Risks
 
-- Baileys does not document a simple fetch-all contacts API; contact availability appears to come from contact/store events rather than a guaranteed directory endpoint — mitigate with a no-history capability check and preserve a groups-first fallback
+- Baileys group membership discovery must work without consuming message history — mitigate with `groupFetchAllParticipating()` validation before building the rest of the flow
 - The current outbound send path assumes a person JID resolved via `onWhatsApp()` — mitigate with type-aware routing that sends `@g.us` contacts directly by stored `waId`
 - Imported groups will reuse the legacy `Contact` model — mitigate with idempotent matching on `licensee + waId` and minimal mutation of unrelated contact fields
 
 ## Success Criteria
 
-- [ ] A connected Baileys licensee can trigger an admin sync that imports/updates WhatsApp groups and, when available without history reads, WhatsApp contact directory records
+- [ ] A connected Baileys licensee can trigger an admin sync that imports/updates WhatsApp groups
 - [ ] Imported groups are stored as `Contact` records with stable `waId` and `type: '@g.us'`
 - [ ] Existing contacts APIs/UI can distinguish contacts from groups without creating a new model or table
 - [ ] A `to-messenger` message targeting an imported group contact is delivered through Baileys using the group JID

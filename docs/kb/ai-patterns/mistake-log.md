@@ -83,3 +83,11 @@ not yet represented by the task list.
 **Area**: Create-plan scoping, requirements translation
 **Prevention**: During plan review, scan the overview and early task files for accidental dependencies on prohibited flows such as chat history, background imports, or additional models.
 **Count**: 1
+
+## [2026-05-16] Prefer the primary user outcome over optional directory features in plans
+
+**Wrong**: Kept WhatsApp contact discovery as part of the planned deliverable after the user clarified that the real requirement is only knowing which groups the account belongs to and messaging those groups.
+**Correct**: When the user distinguishes between required and optional capabilities, center the plan on the required outcome and move optional capabilities out of scope or into explicit non-blocking follow-up notes.
+**Area**: Create-plan scoping, requirements prioritization
+**Prevention**: Before finalizing a plan, restate the one indispensable user outcome and remove any secondary capability that is not needed to deliver it.
+**Count**: 1

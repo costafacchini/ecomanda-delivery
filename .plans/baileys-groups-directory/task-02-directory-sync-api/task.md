@@ -9,7 +9,7 @@
 
 ## Objective
 
-Add an authenticated admin endpoint that triggers Baileys directory sync, imports groups and any no-history contact directory metadata into existing `Contact` records, and returns a deterministic sync summary to the client.
+Add an authenticated admin endpoint that triggers Baileys group sync, imports those groups into existing `Contact` records, and returns a deterministic sync summary to the client.
 
 ## Context
 
@@ -18,6 +18,7 @@ The repo already stores WhatsApp-facing identities in `Contact` records with `nu
 Hard scope constraint:
 - this sync must not read, import, or persist chat/message history
 - groups must be imported as `Contact` records so they can be direct message destinations
+- contact discovery is optional and not required for this task
 
 Relevant files and docs:
 - [docs/kb/features/baileys-whatsapp-guide.md](../../../docs/kb/features/baileys-whatsapp-guide.md)
@@ -89,7 +90,7 @@ Add a dedicated use case that:
 - loads the licensee
 - verifies `whatsappDefault === 'baileys'`
 - calls the plugin directory-sync method from task 1
-- transforms returned groups, and any available no-history contacts, into `Contact` payloads
+- transforms returned groups into `Contact` payloads
 
 ### Step 2: Make imports idempotent
 
@@ -101,7 +102,6 @@ Only mutate WhatsApp-identity fields that task 1 owns confidently (`name`, `numb
 
 Treat groups as first-class import targets:
 - every imported group must become or update a `Contact` record with `type: '@g.us'`
-- individual contacts may be imported only when Baileys exposes them without requiring history reads
 
 ### Step 3: Expose the resource endpoint
 
@@ -126,7 +126,6 @@ Wire the use case through `LicenseesController` and `resources-routes.js`, keepi
 
 - [ ] An authenticated admin endpoint can trigger Baileys sync for a licensee
 - [ ] Groups are imported idempotently into `Contact` records and can be used as direct message destinations
-- [ ] Contacts are imported only from no-history directory metadata exposed by Baileys
 - [ ] The endpoint returns stable sync counts suitable for the UI
 - [ ] Automated tests cover use case, controller, and route behavior
 - [ ] Documentation / KB updates completed or explicitly marked not needed
