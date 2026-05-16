@@ -75,3 +75,11 @@ not yet represented by the task list.
 **Area**: Validation workflow, ESLint, test-spec migrations
 **Prevention**: When a wave changes many files or rewrites test setup, always rerun the canonical lint command for the affected directories after the final edit pass, even if a narrower pre-commit scan looked clean earlier.
 **Count**: 1
+
+## [2026-05-16] Keep explicit no-history constraints visible in new plans
+
+**Wrong**: Wrote the Baileys group/contact plan in a way that still relied on history-derived contact reads after the user clarified that reading chat history is out of scope.
+**Correct**: When a requirement excludes a data source or workflow, mark that exclusion explicitly in scope, out-of-scope, kill criteria, and task instructions, and treat any history-dependent capability as a validation risk or fallback.
+**Area**: Create-plan scoping, requirements translation
+**Prevention**: During plan review, scan the overview and early task files for accidental dependencies on prohibited flows such as chat history, background imports, or additional models.
+**Count**: 1
