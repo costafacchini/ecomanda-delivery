@@ -5,7 +5,8 @@
         "node": "22"
       },
       "modules": "commonjs"
-    }]
+    }],
+    "@babel/preset-typescript"
   ],
   "plugins": [
     "@babel/plugin-transform-modules-commonjs"
