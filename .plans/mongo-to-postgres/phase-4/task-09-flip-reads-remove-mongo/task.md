@@ -79,6 +79,93 @@ Architecture docs:
 
 ## Implementation Steps
 
+### Step 0: Test pre-audit (do this before touching any code)
+
+Run the following to produce the full list of files that will break when model files are deleted:
+
+```bash
+grep -rl "from.*@models/\|from.*models/" src --include="*.spec.js" | sort
+```
+
+Expected output falls into four categories — handle each differently:
+
+#### Category A — Model spec files (delete)
+`src/app/models/*.spec.js` — these test Mongoose pre-save hooks and validators directly. The equivalent behaviour is now covered by the `*.prisma.spec.js` files added in phases 2–3. **Delete each file.**
+
+```
+src/app/models/Licensee.spec.js
+src/app/models/Contact.spec.js
+src/app/models/Message.spec.js
+src/app/models/Room.spec.js
+src/app/models/Template.spec.js
+src/app/models/Trigger.spec.js
+src/app/models/User.spec.js
+src/app/models/Body.spec.js
+src/app/models/Trafficlight.spec.js
+```
+
+(Models removed by `remove-pdv` — `Backgroundjob.spec.js`, `Order.spec.js`, `Product.spec.js`, `Cart.spec.js`, `Integrationlog.spec.js` — should already be deleted by that plan.)
+
+#### Category B — Repository specs that test `DatabaseRepository` (delete)
+`src/app/repositories/*.spec.js` files that import a `*RepositoryDatabase` class and call `mongoServer.connect()`. These test the Mongoose-backed implementation, which is being removed. The `*.prisma.spec.js` counterparts added in phases 2–3 replace them.
+
+Check each file:
+```bash
+grep -l "mongoServer\|RepositoryDatabase" src/app/repositories/*.spec.js
+```
+
+Delete every file that matches. Repository specs that only use `RepositoryMemory` (e.g. `memory-core.spec.js`, `memory-lookup.spec.js`, `memory-secondary.spec.js`) are **safe — do not delete**.
+
+#### Category C — Service and plugin specs that call `Model.create()` / `Model.findById()` (update)
+These specs import `@models/Body`, `@models/Room`, `@models/Trigger` etc. and call Mongoose static methods to set up test state (e.g. `await Body.create(bodyFactory.build(...))`). They already use `installMemoryRepositories` for their primary repo wiring — the fix is to replace every Mongoose active-record call with the equivalent memory-repo call.
+
+**Pattern for the fix** (example: `ChatMessage.spec.js`):
+
+Before:
+```js
+import Body from '@models/Body'
+// ...
+const body = await Body.create(bodyFactory.build({ licensee: licensee }))
+// ...
+const bodyDeleted = await Body.findById(body._id)
+expect(bodyDeleted).toEqual(null)
+```
+
+After:
+```js
+// Remove the `import Body from '@models/Body'` line entirely
+// Access the in-memory repo installed by installMemoryRepositories
+const bodyRepo = dependencies.bodyRepository  // or however the repo is accessed
+const body = await bodyRepo.create(bodyFactory.build({ licensee: licensee }))
+// ...
+const bodyDeleted = await bodyRepo.findFirst({ where: { id: body.id } })
+expect(bodyDeleted).toBeNull()
+```
+
+Run the audit first, then fix each file. Typically 1–3 line changes per spec.
+
+Files expected to need this fix (verify with the audit command above):
+```
+src/app/services/ChatMessage.spec.js
+src/app/services/ChatbotMessage.spec.js
+src/app/services/ChatbotTransfer.spec.js
+src/app/plugins/chats/Chatwoot.spec.js
+src/app/plugins/chats/Crisp.spec.js
+src/app/plugins/chats/Cuboup.spec.js
+src/app/plugins/chats/Rocketchat.spec.js
+src/app/plugins/chatbots/Landbot.spec.js
+src/app/plugins/messengers/Dialog.spec.js
+src/app/plugins/importers/facebook_catalog/index.spec.js
+src/app/plugins/importers/template/index.spec.js
+```
+
+Note: `src/app/queries/*.spec.js` files that import from `@models/` also fall here — apply the same fix.
+
+#### Category D — Config/setup specs (update or delete)
+
+- `src/config/mongo.spec.js` — tests the Mongo connection class; **delete** (class is deleted in this task).
+- `src/setup/database.spec.js` — update to remove Mongo connect assertions; keep Postgres connect coverage.
+
 ### Step 1: Update dependencies.js — flip reads
 
 For each model, replace:
@@ -140,9 +227,14 @@ After confirming tests green and monitoring production for 48h:
 
 ## Testing
 
+- [ ] Step 0 pre-audit complete — every affected spec file categorised (A/B/C/D)
+- [ ] Category A model specs deleted (count should match number of Mongoose model files deleted)
+- [ ] Category B Mongoose repository specs deleted; `*.prisma.spec.js` counterparts from phases 2–3 cover the same paths
+- [ ] Category C service/plugin specs updated — `Model.create()` / `Model.findById()` replaced with memory-repo calls; no `@models/` imports remain in these files
+- [ ] Category D config specs updated or deleted
+- [ ] `grep -r "from.*@models/" src --include="*.spec.js"` returns zero results
 - [ ] `npx jest` exits 0 with all tests passing
 - [ ] No `mongoose` imports remain in `src/`
-- [ ] `grep -r "mongoose" src` returns zero results
 - [ ] App boots successfully with only `DATABASE_URL` set (no MONGODB_URI)
 - [ ] Smoke test all critical CRUD paths via the API (Licensee create/read, Contact create, Message create)
 - [ ] CI workflow passes end-to-end
@@ -161,7 +253,8 @@ After confirming tests green and monitoring production for 48h:
 - [ ] All Database*Repository classes deleted
 - [ ] mongoose removed from package.json and yarn.lock
 - [ ] `grep -r "mongoose" src` returns zero results
-- [ ] All 10 Prisma repos are the sole DB implementations
+- [ ] `grep -r "from.*@models/" src --include="*.spec.js"` returns zero results
+- [ ] All 9 Prisma repos (+ RedisTrafficlightRepository) are the sole DB implementations
 - [ ] `connectPostgres()` is the only DB connect call; fatal if missing DATABASE_URL
 - [ ] `npx jest` exits 0
 - [ ] CI passes
