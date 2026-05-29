@@ -27,7 +27,8 @@ Git-native Markdown plans for multi-step work.
 | 3 | [Security Hardening](./security-hardening/overview.md) | `security-hardening/` | not-started | Fix 10 security issues from OWASP audit: Helmet, CORS, rate limiting, Bull Board auth, error leakage, JWT fix, RBAC, logging PII, API token header, v1 input validation |
 | 4 | [MongoDB → PostgreSQL](./mongo-to-postgres/overview.md) | `mongo-to-postgres/` | not-started | Migrate all persistent data from MongoDB/Mongoose to PostgreSQL/Prisma using dual-write strategy; prerequisite: remove-pdv complete |
 | 5 | [Baileys Socket Monitor](./baileys-socket-monitor/overview.md) | `baileys-socket-monitor/` | not-started | Replace webhook-only inbound flow with a persistent Baileys socket per licensee; captures messages.upsert and messages.update natively |
-| 6 | [Setores](./setores/overview.md) | `setores/` | not-started | Multiple WhatsApp numbers per licensee via sectors; sector-scoped message routing and agent access filtering |
+| 6 | [Local Chat Infrastructure](./local-chat-infra/overview.md) | `local-chat-infra/` | not-started | User role system (agent/supervisor/admin/super), LocalChat plugin, super licensee flow, route authorization — prerequisite for setores |
+| 7 | [Setores](./setores/overview.md) | `setores/` | not-started | Multiple WhatsApp numbers per licensee via sectors; sector-scoped message routing and agent access filtering |
 
 ---
 
