@@ -26,6 +26,7 @@ Git-native Markdown plans for multi-step work.
 | 2 | [Remove PDV](./remove-pdv/overview.md) | `remove-pdv/` | not-started | Delete cart, payment (PagarMe), and order integration (Pedidos10) domain — strip PDV fields from Licensee and Contact |
 | 3 | [Security Hardening](./security-hardening/overview.md) | `security-hardening/` | not-started | Fix 10 security issues from OWASP audit: Helmet, CORS, rate limiting, Bull Board auth, error leakage, JWT fix, RBAC, logging PII, API token header, v1 input validation |
 | 4 | [MongoDB → PostgreSQL](./mongo-to-postgres/overview.md) | `mongo-to-postgres/` | not-started | Migrate all persistent data from MongoDB/Mongoose to PostgreSQL/Prisma using dual-write strategy; prerequisite: remove-pdv complete |
+| 5 | [Baileys Socket Monitor](./baileys-socket-monitor/overview.md) | `baileys-socket-monitor/` | not-started | Replace webhook-only inbound flow with a persistent Baileys socket per licensee; captures messages.upsert and messages.update natively |
 
 ---
 
