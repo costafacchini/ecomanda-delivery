@@ -48,7 +48,7 @@ Remove-pdv deletes Cart, Order, Product, Integrationlog, and Backgroundjob — m
 | 1 | Infrastructure | task-01, task-02 | Prerequisite: remove-pdv Phase 1 merged | Install Prisma, configure PG connection, establish dual-write pattern and base classes |
 | 2 | Pilot Migration — Licensee | task-03 | Phase 1 complete | Migrate the root entity (Licensee) as a live pilot to validate the full dual-write → sync → validate cycle |
 | 3 | Domain Table Migrations | task-04, task-05, task-06, task-07 | Phase 2 complete; remove-pdv fully complete | Parallel migration of all remaining 9 models using the established pattern |
-| 4 | Cutover & Cleanup | task-08, task-09, task-10 | Phase 3 complete | Bulk-sync production data, validate integrity, flip reads to Postgres, remove Mongoose, resync FKs to native PG IDs |
+| 4 | Cutover & Cleanup | task-08, task-09, task-10, task-11 | Phase 3 complete | Bulk-sync production data, validate integrity, flip reads to Postgres, remove Mongoose, normalize column names to snake_case, resync FKs to native PG IDs |
 
 ## Task Summary
 
@@ -63,7 +63,8 @@ Remove-pdv deletes Cart, Order, Product, Integrationlog, and Backgroundjob — m
 | phase-3/task-07-message-pg | Migrate Message to PostgreSQL | 3 | not-started | phase-2/task-03-licensee-pg |
 | phase-4/task-08-bulk-sync-validate | Bulk-sync all models Mongo→PG + integrity validation | 4 | not-started | phase-3/task-04-user-contact-pg, phase-3/task-05-room-template-trigger-pg, phase-3/task-06-whatsappsession-body-trafficlight-pg, phase-3/task-07-message-pg |
 | phase-4/task-09-flip-reads-remove-mongo | Flip reads to Postgres, remove Mongoose | 4 | not-started | phase-4/task-08-bulk-sync-validate |
-| phase-4/task-10-resync-native-ids | Resolve FK columns to native PG ids, drop mongo_id | 4 | not-started | phase-4/task-09-flip-reads-remove-mongo |
+| phase-4/task-10-normalize-column-names | Normalize column names to snake_case | 4 | not-started | phase-4/task-09-flip-reads-remove-mongo |
+| phase-4/task-11-resync-native-ids | Resolve FK columns to native PG ids, drop mongo_id | 4 | not-started | phase-4/task-10-normalize-column-names |
 
 ## Branch Convention
 
@@ -98,7 +99,7 @@ Every Postgres table gets a native **`id SERIAL PRIMARY KEY`** (auto-increment i
 
 During Phase 1–3 (dual-write), FK reference columns (e.g. `contacts.licensee`) are `VARCHAR(24)` and hold the Mongo ObjectId of the referenced document — no per-write FK lookup is required in the adapter.
 
-In Phase 4 **task-10** (final task), a resync script:
+In Phase 4 **task-11** (final task), a resync script:
 1. Resolves every FK `VARCHAR(24)` column to the corresponding Postgres integer `id` by joining on `mongo_id`
 2. Alters the FK column types from `VARCHAR(24)` to `INTEGER`
 3. Adds proper FK constraints pointing at the integer PKs
@@ -121,7 +122,7 @@ Licensee virtual URL fields (`urlChatWebhook`, `urlWhatsappWebhook`, etc.) are N
 Mongoose pre-save hooks encode business logic (phone normalization in Contact, whatsappUrl defaults in Licensee). These move into the PrismaRepository `create`/`update` method overrides for each model.
 
 ### FK Constraints During Migration
-No PostgreSQL FK constraints are enforced during Phase 1–3. All FK reference columns are `VARCHAR(24)` holding Mongo ObjectId strings — no constraint, no lookup overhead. Real integer FK constraints are added in **task-10** after all data is in Postgres and the resync converts FK columns to `INTEGER`.
+No PostgreSQL FK constraints are enforced during Phase 1–3. All FK reference columns are `VARCHAR(24)` holding Mongo ObjectId strings — no constraint, no lookup overhead. Real integer FK constraints are added in **task-11** after all data is in Postgres and the resync converts FK columns to `INTEGER`.
 
 ### Trafficlight TTL
 MongoDB uses a TTL index on `expiresAt`. PostgreSQL does not have TTL indexes. A cleanup strategy (scheduled job or pg_cron) is implemented in task-06. During the migration window, expired records may accumulate in Postgres; this is acceptable.

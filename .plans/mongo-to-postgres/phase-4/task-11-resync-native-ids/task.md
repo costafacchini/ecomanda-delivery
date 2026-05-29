@@ -2,9 +2,9 @@
 
 **Plan**: MongoDB → PostgreSQL Migration
 **Phase**: 4
-**Task ID (phase-local)**: task-10
-**Task Path**: phase-4/task-10-resync-native-ids
-**Depends On**: phase-4/task-09-flip-reads-remove-mongo
+**Task ID (phase-local)**: task-11
+**Task Path**: phase-4/task-11-resync-native-ids
+**Depends On**: phase-4/task-10-normalize-column-names
 **JIRA**: N/A
 
 ## Objective
@@ -38,7 +38,7 @@ FK dependency order for the migration:
 ## Before You Start
 
 - [ ] Switch to base branch and pull: `git switch main && git pull --rebase origin main`
-- [ ] Verify `phase-4/task-09-flip-reads-remove-mongo/status.md` is `complete`
+- [ ] Verify `phase-4/task-10-normalize-column-names/status.md` is `complete`
 - [ ] Verify all `mongo_id` columns exist in all 10 tables (run `\d+ tablename` in psql)
 - [ ] Run on a staging DB clone first — this migration is irreversible
 - [ ] Back up production DB before running in production
