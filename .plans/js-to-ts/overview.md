@@ -97,13 +97,27 @@ Base branch: `main`
 
 | Defect Task | Title | Found During | Blocks | Status |
 
+## Sequencing with Active Feature Plans
+
+Three feature plans (`setores`, `baileys-socket-monitor`, `local-chat-infra`) are in progress and will add new `.js` backend files (models, services, controllers, plugins). This creates two valid execution strategies:
+
+**Option A — js-to-ts after all feature plans** (recommended): Wait until all three feature plans are merged, then run js-to-ts. Phase 3 tasks will cover the full final file set in one pass. No merge conflicts with feature branches.
+
+**Option B — Phase 1 now, rest later**: Phases 1–2 (tooling, shared types) touch no feature-plan files and can start immediately in parallel with feature plan work. Pause at Phase 3 until feature plans are complete.
+
+Do NOT start Phase 3 or 4 while a feature branch that adds new `.js` files is open — that guarantees merge conflicts.
+
+## Parallelization Opportunities in Phase 3
+
+Tasks 12–16 (messenger, chat, chatbot, cart, integration/payment/storage plugins) all depend only on task-11 and are independent of each other — they can run in parallel across separate branches if desired.
+
 ## Risks
 
 - Mongoose model types are complex (dynamic validators, virtuals) — Use `mongoose` generic types (`Schema<ILicensee>`); keep validators untyped initially
 - 30+ plugin files with deep inheritance chains — Migrate Base class first, then subclasses in the same task
 - `allowJs` means no type-checking on unmigrated files — Acceptable; `tsc --noEmit` only errors on `.ts` files
 - Circular imports may surface as TS errors — Investigate with `madge` if errors appear
-- `_moduleAliases` vs `paths` divergence — Mirror exact aliases in `tsconfig.json` `paths` field
+- `_moduleAliases` vs `paths` divergence — tsconfig `paths` must include all aliases from `_moduleAliases` **and** jest `moduleNameMapper` (notably `@factories`, which is in jest but not in `_moduleAliases`)
 
 ## Success Criteria
 
