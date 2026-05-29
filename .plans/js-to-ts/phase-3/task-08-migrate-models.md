@@ -8,7 +8,7 @@
 
 ## Objective
 
-Rename all 14 Mongoose model files in `src/app/models/` from `.js` to `.ts`, type schema fields, and export typed `Document` interfaces using Mongoose generics.
+Rename all Mongoose model files in `src/app/models/` from `.js` to `.ts`, type schema fields, and export typed `Document` interfaces using Mongoose generics. Baseline count is 14 files; if the `setores`, `baileys-socket-monitor`, or `local-chat-infra` feature plans have been merged before this task runs, additional models (e.g. `Setor.js`) will be present — migrate all `.js` files found, regardless of count.
 
 ## Context
 
@@ -25,7 +25,7 @@ Each model file exports a Mongoose model. After renaming, add `Schema<IModelName
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/models/*.js` | rename to `.ts` + add types | 14 files |
+| `src/app/models/*.js` | rename to `.ts` + add types | 14+ files (count grows if feature plans merged first) |
 | `src/app/models/*.spec.js` | rename to `.spec.ts` | Matching test files |
 
 ## Implementation Steps
@@ -47,7 +47,7 @@ For each model: rename `.js` → `.ts`. Add `Schema<IModelName>` typing. Export 
 
 ## Completion Criteria
 
-- [ ] All 14 model files renamed to `.ts` with typed schemas
+- [ ] All model files renamed to `.ts` with typed schemas (14 baseline + any added by feature plans)
 - [ ] No remaining `.js` in `src/app/models/`
 - [ ] Changes committed to `plan/js-to-ts/phase-3/task-08-migrate-models` branch
 - [ ] Status updated in `status.md`
