@@ -47,7 +47,7 @@ Migrate the entire codebase (backend + client) from JavaScript to TypeScript inc
 | phase-0/task-00-verify-cra-to-vite-complete | Verify cra-to-vite prerequisite is complete | 0 | not-started | — |
 | phase-1/task-01-backend-ts-deps | Install backend TypeScript dependencies | 1 | not-started | — |
 | phase-1/task-02-tsconfig-root | Create root tsconfig.json | 1 | not-started | phase-1/task-01-backend-ts-deps |
-| phase-1/task-03-jest-babel-ts-transform | Configure Jest/Babel to process .ts files | 1 | not-started | phase-1/task-01-backend-ts-deps |
+| phase-1/task-03-jest-babel-ts-transform | Configure Jest/Babel to process .ts files | 1 | complete | phase-1/task-01-backend-ts-deps |
 | phase-1/task-04-typecheck-ci-script | Add typecheck script and verify zero TS errors | 1 | not-started | phase-1/task-02-tsconfig-root |
 | phase-2/task-05-domain-types | Create src/types/index.ts with domain enums and interfaces | 2 | not-started | phase-1/task-02-tsconfig-root |
 | phase-2/task-06-migrate-helpers | Migrate src/app/helpers/ to .ts | 2 | not-started | phase-2/task-05-domain-types |
