@@ -25,6 +25,7 @@ Git-native Markdown plans for multi-step work.
 | 1 | [JS → TypeScript](./js-to-ts/overview.md) | `js-to-ts/` | not-started | Incremental migration of all source files (backend + client) to TypeScript using `allowJs: true` throughout |
 | 2 | [Remove PDV](./remove-pdv/overview.md) | `remove-pdv/` | not-started | Delete cart, payment (PagarMe), and order integration (Pedidos10) domain — strip PDV fields from Licensee and Contact |
 | 3 | [Security Hardening](./security-hardening/overview.md) | `security-hardening/` | not-started | Fix 10 security issues from OWASP audit: Helmet, CORS, rate limiting, Bull Board auth, error leakage, JWT fix, RBAC, logging PII, API token header, v1 input validation |
+| 4 | [MongoDB → PostgreSQL](./mongo-to-postgres/overview.md) | `mongo-to-postgres/` | not-started | Migrate all persistent data from MongoDB/Mongoose to PostgreSQL/Prisma using dual-write strategy; prerequisite: remove-pdv complete |
 
 ---
 
