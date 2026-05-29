@@ -53,9 +53,12 @@ Existing repo: `src/app/repositories/message.js`
 
 ### Step 1: Add Message to schema.prisma
 
+All FK columns (`licensee`, `contact`, `room`, `trigger`) stay `VARCHAR(24)` during migration. They are resolved to integer FKs in task-10.
+
 ```prisma
 model Message {
-  id             String    @id @db.VarChar(24)
+  id             Int       @id @default(autoincrement())
+  mongo_id       String    @unique @db.VarChar(24)
   number         String
   fromMe         Boolean   @default(false)
   text           String?
@@ -98,10 +101,16 @@ npx prisma migrate dev --name add-message
 
 ### Step 3: Implement PrismaMessageDatabaseRepository
 
-Standard pattern. In `#toRecord()` (or equivalent), explicitly exclude the `cart` field:
+Standard pattern extending `PrismaRepository`. The base class handles `_id` → `mongo_id`. Override `save()` to strip the `cart` field before delegating to super:
+
 ```js
-const { _id, __v, cart, ...rest } = plain
-return { id: _id.toString(), ...rest }
+async save(document) {
+  const plain = document?.toObject
+    ? document.toObject({ depopulate: true, versionKey: false, virtuals: false })
+    : { ...document }
+  const { cart, ...rest } = plain
+  return await super.save(rest)
+}
 ```
 
 ### Step 4: Wire DualWriteRepository

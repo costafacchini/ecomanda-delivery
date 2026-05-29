@@ -54,63 +54,100 @@ Architecture doc: `docs/kb/architecture/dependency-injection-runtime-wiring.md`
 
 ### Step 1: Add PrismaRepository base class
 
+Each Postgres table has:
+- `id` — `SERIAL` primary key (auto-generated integer)
+- `mongo_id` — `VARCHAR(24) UNIQUE NOT NULL` — stores the Mongo `_id` for cross-reference
+
+The `PrismaRepository` base class uses `mongo_id` as the lookup key for upsert operations during the dual-write window (since Mongo is the source of truth and all incoming operations carry `_id`).
+
 Append to `src/app/repositories/repository.js`:
 
 ```js
 class PrismaRepository {
   /**
-   * @returns {import('@prisma/client').PrismaClient} the Prisma model delegate
-   * Subclasses must override and return e.g. getPrismaClient().licensee
+   * @returns the Prisma model delegate, e.g. getPrismaClient().licensee
    */
   delegate() {
     throw new Error('PrismaRepository.delegate() must be implemented by subclass')
   }
 
   async findFirst(params = {}) {
-    return await this.delegate().findFirst({ where: params ?? {} })
+    return await this.delegate().findFirst({ where: this.#toWhere(params) })
   }
 
   async create(fields = {}) {
-    return await this.delegate().create({ data: fields ?? {} })
+    return await this.delegate().create({ data: this.#toData(fields) })
   }
 
   async update(id, fields = {}) {
-    return await this.delegate().update({ where: { id }, data: fields ?? {} })
+    // id here is the Mongo _id; look up via mongo_id
+    return await this.delegate().updateMany({
+      where: { mongo_id: id.toString() },
+      data: fields ?? {},
+    })
   }
 
   async updateMany(params = {}, fields = {}) {
-    return await this.delegate().updateMany({ where: params ?? {}, data: fields ?? {} })
+    return await this.delegate().updateMany({
+      where: this.#toWhere(params),
+      data: fields ?? {},
+    })
   }
 
   async find(params = {}) {
-    return await this.delegate().findMany({ where: params ?? {} })
+    return await this.delegate().findMany({ where: this.#toWhere(params) })
   }
 
   async delete(params = {}) {
-    return await this.delegate().delete({ where: params ?? {} })
+    return await this.delegate().deleteMany({ where: this.#toWhere(params) })
   }
 
   async save(document) {
+    const mongoId = (document._id ?? document.mongo_id)?.toString()
+    const data = this.#toData(document)
     return await this.delegate().upsert({
-      where: { id: document.id },
-      create: document,
-      update: document,
+      where: { mongo_id: mongoId },
+      create: data,
+      update: data,
     })
+  }
+
+  // Translates Mongo _id references to mongo_id for Prisma queries
+  #toWhere(params = {}) {
+    if (!params || typeof params !== 'object') return params
+    const result = {}
+    for (const [key, value] of Object.entries(params)) {
+      if (key === '_id') {
+        result.mongo_id = value?.toString()
+      } else {
+        result[key] = value
+      }
+    }
+    return result
+  }
+
+  // Strips Mongoose internals and maps _id → mongo_id
+  #toData(fields = {}) {
+    const plain = fields?.toObject
+      ? fields.toObject({ depopulate: true, versionKey: false, virtuals: false })
+      : { ...(fields ?? {}) }
+    const { _id, __v, id, ...rest } = plain
+    return { mongo_id: (_id ?? fields.mongo_id)?.toString(), ...rest }
   }
 }
 ```
 
-Note: `id` is used (not `_id`) because Prisma conventionally uses `id`. The Prisma schema for each model will map the `VARCHAR(24)` column to the Prisma `id` field. Mongo documents use `_id`; the dual-write adapter translates between them.
+Note: `id` (the Postgres SERIAL) is never set by application code — Postgres generates it. All lookups during the dual-write window use `mongo_id`.
 
 ### Step 2: Add DualWriteRepository wrapper
 
 ```js
 class DualWriteRepository {
   /**
-   * @param {Repository} primary - Mongoose-backed repository (source of truth for reads)
-   * @param {PrismaRepository} secondary - Prisma-backed repository (async write target)
+   * @param {Repository} primary - Mongoose-backed repo (source of truth for reads)
+   * @param {PrismaRepository} secondary - Prisma-backed repo (write target)
    * @param {object} options
-   * @param {boolean} options.asyncSecondary - if true, secondary writes are fire-and-forget (default: true)
+   * @param {boolean} options.asyncSecondary - fire-and-forget secondary writes (default: true)
    */
   constructor(primary, secondary, { asyncSecondary = true } = {}) {
     this.primary = primary
@@ -136,13 +173,13 @@ class DualWriteRepository {
 
   async create(fields = {}) {
     const result = await this.primary.create(fields)
-    await this.#writeSecondary(() => this.secondary.create(this.#toSecondaryFields(result)))
+    await this.#writeSecondary(() => this.secondary.save(result))
     return result
   }
 
   async update(id, fields = {}) {
     const result = await this.primary.update(id, fields)
-    await this.#writeSecondary(() => this.secondary.update(id.toString(), fields))
+    await this.#writeSecondary(() => this.secondary.update(id, fields))
     return result
   }
 
@@ -160,22 +197,13 @@ class DualWriteRepository {
 
   async save(document) {
     const result = await this.primary.save(document)
-    await this.#writeSecondary(() => this.secondary.save(this.#toSecondaryFields(result)))
+    await this.#writeSecondary(() => this.secondary.save(result))
     return result
-  }
-
-  /**
-   * Translates a Mongoose document (with _id) to a Prisma record (with id).
-   * Subclasses or concrete repos can override if additional field mapping is needed.
-   */
-  #toSecondaryFields(doc) {
-    if (!doc) return doc
-    const plain = doc.toObject ? doc.toObject({ depopulate: true, versionKey: false, virtuals: false }) : { ...doc }
-    const { _id, __v, ...rest } = plain
-    return { id: _id?.toString() ?? rest.id, ...rest }
   }
 }
 ```
+
+`DualWriteRepository.create` and `save` pass the Mongoose result directly to `secondary.save()`. Because `PrismaRepository.save()` upserts on `mongo_id`, the Postgres side always stays in sync without needing a separate ID translation step here.
 
 ### Step 3: Export new classes
 

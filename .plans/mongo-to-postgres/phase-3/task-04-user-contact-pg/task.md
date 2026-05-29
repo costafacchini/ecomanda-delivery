@@ -59,9 +59,12 @@ Existing repos: `src/app/repositories/user.js`, `src/app/repositories/contact.js
 
 ### Step 1: Add User to schema.prisma
 
+`id` is SERIAL; `mongo_id` is the cross-reference. `licensee` stays `VARCHAR(24)` during the migration window (holds the Mongo ObjectId of the Licensee).
+
 ```prisma
 model User {
-  id        String   @id @db.VarChar(24)
+  id        Int      @id @default(autoincrement())
+  mongo_id  String   @unique @db.VarChar(24)
   name      String
   email     String   @unique
   password  String?
@@ -80,7 +83,8 @@ model User {
 
 ```prisma
 model Contact {
-  id                  String    @id @db.VarChar(24)
+  id                  Int       @id @default(autoincrement())
+  mongo_id            String    @unique @db.VarChar(24)
   name                String?
   number              String
   type                String?

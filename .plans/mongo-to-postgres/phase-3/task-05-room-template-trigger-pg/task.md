@@ -54,9 +54,12 @@ All FK columns (contact, licensee) are `VARCHAR(24)` with no constraint during P
 
 ### Step 1: Add Room to schema.prisma
 
+`id` is SERIAL; `mongo_id` for cross-reference; `contact` stays `VARCHAR(24)` during migration.
+
 ```prisma
 model Room {
-  id        String    @id @db.VarChar(24)
+  id        Int       @id @default(autoincrement())
+  mongo_id  String    @unique @db.VarChar(24)
   roomId    String?
   token     String?
   closed    Boolean   @default(false)
@@ -73,7 +76,8 @@ model Room {
 
 ```prisma
 model Template {
-  id           String   @id @db.VarChar(24)
+  id           Int      @id @default(autoincrement())
+  mongo_id     String   @unique @db.VarChar(24)
   name         String
   namespace    String?
   language     String?
@@ -93,23 +97,24 @@ model Template {
 
 ### Step 3: Add Trigger to schema.prisma
 
-Read `src/app/models/Trigger.js` in full before writing this model — it has more fields than shown in the context above. Add all fields as nullable Strings where Mongoose uses conditional required, since validation lives in the application layer.
+Read `src/app/models/Trigger.js` in full before writing this model. Add all fields as nullable Strings where Mongoose uses conditional required.
 
 ```prisma
 model Trigger {
-  id             String   @id @db.VarChar(24)
-  name           String?
-  triggerKind    String
-  expression     String
-  catalogId      String?
-  catalogMulti   String?
-  catalogSingle  String?
+  id              Int      @id @default(autoincrement())
+  mongo_id        String   @unique @db.VarChar(24)
+  name            String?
+  triggerKind     String
+  expression      String
+  catalogId       String?
+  catalogMulti    String?
+  catalogSingle   String?
   textReplyButton String?
-  messagesList   String?
-  licensee       String   @db.VarChar(24)
+  messagesList    String?
+  licensee        String   @db.VarChar(24)
   // ... add all remaining fields from Trigger.js
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@map("triggers")
 }

@@ -57,10 +57,14 @@ Body repo: check if `src/app/repositories/body.js` exists.
 ### Step 1: Add models to schema.prisma
 
 **WhatsappSession:**
+
+`licensee` stays `VARCHAR(24)` (Mongo ObjectId) during migration. The `@unique` on `licensee` is intentionally NOT added here — it will be enforced after task-10 converts it to an integer FK. During dual-write, uniqueness is guaranteed by Mongo.
+
 ```prisma
 model WhatsappSession {
-  id        String   @id @db.VarChar(24)
-  licensee  String   @unique @db.VarChar(24)
+  id        Int      @id @default(autoincrement())
+  mongo_id  String   @unique @db.VarChar(24)
+  licensee  String   @db.VarChar(24)
   creds     Json?
   keys      Json?
   createdAt DateTime @default(now())
@@ -73,7 +77,8 @@ model WhatsappSession {
 **Body:**
 ```prisma
 model Body {
-  id        String   @id @db.VarChar(24)
+  id        Int      @id @default(autoincrement())
+  mongo_id  String   @unique @db.VarChar(24)
   content   Json
   licensee  String   @db.VarChar(24)
   kind      String
@@ -88,7 +93,8 @@ model Body {
 **Trafficlight:**
 ```prisma
 model Trafficlight {
-  id        String   @id @db.VarChar(24)
+  id        Int      @id @default(autoincrement())
+  mongo_id  String   @unique @db.VarChar(24)
   key       String
   token     String
   expiresAt DateTime

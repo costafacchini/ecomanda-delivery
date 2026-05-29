@@ -22,6 +22,8 @@ The flip is done by replacing each `DualWriteRepository` with the Prisma repo di
 
 **This task is the point of no return for the Mongo primary write path.** Confirm with the assigned dev before deploying the read flip.
 
+Note: `mongo_id` columns and `VARCHAR(24)` FK columns are **NOT removed in this task** — they are still needed as the cross-reference for task-10. Do not drop them here.
+
 Architecture docs:
 - `docs/kb/architecture/dependency-injection-runtime-wiring.md`
 - `docs/kb/architecture/project-overview.md`

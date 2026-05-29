@@ -89,37 +89,17 @@ The agent executing this task should paste the validation output into this task'
 
 **Kill criterion**: if validation shows >0.1% drift on any model after 3 sync attempts, stop and escalate. Do not proceed to FK constraints or task-09.
 
-### Step 4: Add FK constraints migration (after validation passes)
+### Step 4: Verify mongo_id cross-reference integrity
 
-Create a new Prisma migration manually:
-```bash
-npx prisma migrate dev --name add-fk-constraints
-```
+At this stage FK columns still hold Mongo ObjectId strings — do NOT add integer FK constraints yet (that is task-10). Instead, validate that the string references are consistent:
 
-Edit the generated migration SQL to add FK constraints:
 ```sql
--- contacts.licensee → licensees.id
-ALTER TABLE "contacts" ADD CONSTRAINT "contacts_licensee_fkey"
-  FOREIGN KEY ("licensee") REFERENCES "licensees"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- users.licensee → licensees.id  
-ALTER TABLE "users" ADD CONSTRAINT "users_licensee_fkey"
-  FOREIGN KEY ("licensee") REFERENCES "licensees"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- rooms.contact → contacts.id
-ALTER TABLE "rooms" ADD CONSTRAINT "rooms_contact_fkey"
-  FOREIGN KEY ("contact") REFERENCES "contacts"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- templates.licensee, triggers.licensee, whatsapp_sessions.licensee, bodies.licensee → licensees.id
--- (add all FK constraints)
-
--- messages.licensee → licensees.id
--- messages.contact → contacts.id
--- messages.room → rooms.id (nullable)
--- messages.trigger → triggers.id (nullable)
+-- Example: messages whose licensee string does not match any licensee.mongo_id
+SELECT COUNT(*) FROM messages m
+WHERE NOT EXISTS (SELECT 1 FROM licensees l WHERE l.mongo_id = m.licensee);
 ```
 
-Run `npx prisma migrate deploy` against a staging environment first to validate the constraint additions don't fail on existing data.
+Run similar queries for all FK columns. Results should be 0 — if not, the bulk sync missed some records. Re-run the relevant sync script before proceeding.
 
 ### Step 5: Promote dual-write to synchronous
 
@@ -133,6 +113,8 @@ to:
 ```
 
 This ensures no further drift can occur between Mongo writes and Postgres writes.
+
+Note: at this point `mongo_id` columns still exist and FK columns are still `VARCHAR(24)`. That cleanup happens in task-10 after Mongoose is fully removed.
 
 ### Step 6: Deploy and monitor
 

@@ -57,9 +57,12 @@ Architecture docs:
 
 ### Step 1: Add Licensee to prisma/schema.prisma
 
+`id` is a native Postgres SERIAL. `mongo_id` stores the MongoDB `_id` for cross-reference and is used as the upsert key during the dual-write window.
+
 ```prisma
 model Licensee {
-  id                        String   @id @db.VarChar(24)
+  id                        Int      @id @default(autoincrement())
+  mongo_id                  String   @unique @db.VarChar(24)
   name                      String
   email                     String?
   phone                     String?
@@ -132,6 +135,8 @@ Commit the generated migration file.
 
 ### Step 3: Implement PrismaLicenseeDatabaseRepository
 
+The base `PrismaRepository.save()` handles `_id` → `mongo_id` mapping already. The subclass only needs to override `create()`/`update()` to apply the pre-save business logic that was previously in the Mongoose hook.
+
 Add to `src/app/repositories/licensee.js`:
 
 ```js
@@ -144,13 +149,11 @@ class PrismaLicenseeDatabaseRepository extends PrismaRepository {
   }
 
   async create(fields = {}) {
-    const prepared = this.#applyDefaults(fields)
-    return await this.delegate().create({ data: this.#toRecord(prepared) })
+    return await super.create(this.#applyDefaults(fields))
   }
 
   async update(id, fields = {}) {
-    const prepared = this.#applyDefaults(fields)
-    return await this.delegate().update({ where: { id: id.toString() }, data: prepared })
+    return await super.update(id, this.#applyDefaults(fields))
   }
 
   // Computed virtual URLs (mirrors Mongoose virtual fields)
@@ -172,12 +175,6 @@ class PrismaLicenseeDatabaseRepository extends PrismaRepository {
     if (data.whatsappDefault === 'dialog') data.whatsappUrl = 'https://waba.360dialog.io/'
     if (data.whatsappDefault === 'ycloud') data.whatsappUrl = 'https://api.ycloud.com/v2/'
     return data
-  }
-
-  // Maps Mongoose _id → Prisma id
-  #toRecord(fields) {
-    const { _id, __v, ...rest } = fields
-    return { id: (_id ?? rest.id)?.toString(), ...rest }
   }
 }
 
