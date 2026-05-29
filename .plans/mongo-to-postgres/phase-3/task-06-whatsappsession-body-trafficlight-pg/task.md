@@ -1,4 +1,4 @@
-# Task: Migrate WhatsappSession + Body + Trafficlight to PostgreSQL
+# Task: Migrate WhatsappSession + Body to PostgreSQL; Trafficlight to Redis
 
 **Plan**: MongoDB → PostgreSQL Migration
 **Phase**: 3
@@ -9,57 +9,54 @@
 
 ## Objective
 
-Add WhatsappSession, Body, and Trafficlight Prisma models to `schema.prisma`, implement their repositories, wire dual-write, and implement a Trafficlight TTL cleanup strategy (PostgreSQL has no native TTL index).
+Add WhatsappSession and Body Prisma models to `schema.prisma`, implement their repositories, and wire dual-write. Migrate Trafficlight to **Redis** (not PostgreSQL): Redis has native TTL (`EXPIREAT`) that directly replaces MongoDB's TTL index, is already available via BullMQ, and is faster for the ephemeral key/token lookups Trafficlight performs.
 
 ## Context
 
-**WhatsappSession** — Fields: id, licensee (unique FK → Licensee), creds (JSONB), keys (JSONB). The creds/keys objects hold Baileys session credentials; store as JSONB verbatim. `unique` constraint on licensee column (one session per licensee).
+**WhatsappSession** — Fields: id, licensee (unique FK → Licensee), creds (JSONB), keys (JSONB). The creds/keys objects hold Baileys session credentials; store as JSONB verbatim. `@unique` on `licensee` deferred to task-11 (enforced after FK column becomes an integer).
 
 **Body** — Fields: id, content (JSONB), licensee (FK → Licensee), kind (enum: normal | webhook | pedidos10), concluded. Content is the raw incoming webhook payload; always JSONB.
 
-**Trafficlight** — Fields: id, key, token, expiresAt. **No FK references.** MongoDB uses a TTL index (`expiresAt: 1, expireAfterSeconds: 0`) to auto-delete expired records. Postgres does NOT have TTL indexes. Mitigation: implement a scheduled cleanup job using `node-cron` that runs `DELETE FROM trafficlights WHERE expires_at < NOW()` on a short interval (e.g., every 60 seconds).
+**Trafficlight** — Fields: key, token, expiresAt. No FK references. MongoDB's TTL index auto-deletes on `expiresAt`. Redis replicates this natively with `EXPIREAT` — no cleanup job required. Because Trafficlight records are short-lived and ephemeral, there is **no dual-write window and no sync script** — the Mongoose-based repo is replaced directly with `RedisTrafficlightRepository`.
 
-Existing repos: `src/app/repositories/whatsappsession.js`, `src/app/repositories/trafficlight.js`
-Body repo: check if `src/app/repositories/body.js` exists.
+BullMQ already depends on `ioredis`, which is available in the project. Trafficlight will reuse the same Redis connection.
 
 ## Before You Start
 
 - [ ] Switch to base branch and pull: `git switch main && git pull --rebase origin main`
 - [ ] Verify `phase-2/task-03-licensee-pg/status.md` is `complete`
 - [ ] Read `src/app/models/WhatsappSession.js`, `src/app/models/Body.js`, `src/app/models/Trafficlight.js`
-- [ ] Read the corresponding repository files
-- [ ] Check if `node-cron` is already a dependency; if not, look up current version: `npm show node-cron version`
+- [ ] Read `src/app/repositories/whatsappsession.js`, `src/app/repositories/trafficlight.js`
+- [ ] Check if `src/config/redis.js` (or similar) already exports a shared Redis client; if so, reuse it
+- [ ] Confirm `REDIS_URL` env var is set (same one used by BullMQ)
 - [ ] Mark this task `in-progress` in `status.md`
 
 ## File Ownership
 
 | File | Action | Notes |
 |------|--------|-------|
-| `prisma/schema.prisma` | modify | Add WhatsappSession, Body, Trafficlight models |
-| `prisma/migrations/` | modify | New migration |
+| `prisma/schema.prisma` | modify | Add WhatsappSession and Body models only — Trafficlight is NOT added |
+| `prisma/migrations/` | modify | New migration for WhatsappSession + Body |
 | `src/app/repositories/whatsappsession.js` | modify | Add PrismaWhatsappSessionDatabaseRepository |
 | `src/app/repositories/body.js` | modify | Add PrismaBodyDatabaseRepository |
-| `src/app/repositories/trafficlight.js` | modify | Add PrismaTrafficlightDatabaseRepository |
+| `src/app/repositories/trafficlight.js` | modify | Add RedisTrafficlightRepository; keep DatabaseTrafficlightRepository for dual-write in dependencies.js until task-09 |
 | `src/app/repositories/index.js` | modify | Export new repos |
-| `src/runtime/dependencies.js` | modify | Wrap with DualWriteRepository |
-| `src/app/jobs/CleanExpiredTrafficlights.js` | create | Scheduled cleanup job (replaces MongoDB TTL) |
+| `src/runtime/dependencies.js` | modify | Wrap WhatsappSession + Body with DualWriteRepository; replace Trafficlight with RedisTrafficlightRepository directly |
+| `src/config/redis.js` | create (if absent) | Shared ioredis client singleton |
 | `src/scripts/sync-whatsappsession.js` | create | Bulk sync |
 | `src/scripts/sync-body.js` | create | Bulk sync |
-| `src/scripts/sync-trafficlight.js` | create | Bulk sync |
 
 ### Do NOT Modify
 
 - Files owned by task-04, task-05, task-07
 - `src/app/models/WhatsappSession.js`, `Body.js`, `Trafficlight.js`
+- No `CleanExpiredTrafficlights.js` job needed — Redis handles TTL natively
 
 ## Implementation Steps
 
-### Step 1: Add models to schema.prisma
+### Step 1: Add WhatsappSession and Body to schema.prisma
 
 **WhatsappSession:**
-
-`licensee` stays `VARCHAR(24)` (Mongo ObjectId) during migration. The `@unique` on `licensee` is intentionally NOT added here — it will be enforced after task-10 converts it to an integer FK. During dual-write, uniqueness is guaranteed by Mongo.
-
 ```prisma
 model WhatsappSession {
   id        Int      @id @default(autoincrement())
@@ -90,93 +87,139 @@ model Body {
 }
 ```
 
-**Trafficlight:**
-```prisma
-model Trafficlight {
-  id        Int      @id @default(autoincrement())
-  mongo_id  String   @unique @db.VarChar(24)
-  key       String
-  token     String
-  expiresAt DateTime
-
-  @@map("trafficlights")
-}
-```
-
-Note: Trafficlight has no `timestamps: true` in Mongoose, so no `createdAt`/`updatedAt` needed.
+Trafficlight gets **no Prisma model** — it lives in Redis.
 
 ### Step 2: Run migration
 
 ```bash
-npx prisma migrate dev --name add-whatsappsession-body-trafficlight
+npx prisma migrate dev --name add-whatsappsession-body
 ```
 
-### Step 3: Implement Prisma repos
+### Step 3: Implement Prisma repos for WhatsappSession and Body
 
-Standard pattern. No special pre-save logic for any of the three.
+Standard pattern extending `PrismaRepository`. No special pre-save logic.
 
-For `PrismaWhatsappSessionDatabaseRepository`, note the `unique` constraint on `licensee` — upsert by licensee is common; expose a `findByLicensee(licenseeId)` helper if the existing MongoDB repo has one.
+For `PrismaWhatsappSessionDatabaseRepository`, expose a `findByLicensee(licenseeMongoId)` helper if the existing Mongoose repo has one (pass `{ where: { licensee: licenseeMongoId } }` to `findFirst`).
 
-### Step 4: Implement Trafficlight cleanup job
+### Step 4: Create shared Redis client (if not already present)
 
-Install `node-cron` if not present (look up current version first):
-```bash
-npm show node-cron version
-yarn add node-cron
-```
+Check whether `src/config/redis.js` (or the BullMQ queue config) already exports an `ioredis` instance. If not, create it:
 
-Create `src/app/jobs/CleanExpiredTrafficlights.js`:
 ```js
-import cron from 'node-cron'
-import { getPrismaClient } from '../../config/postgres.js'
+import Redis from 'ioredis'
 
-function scheduleTrafficlightCleanup() {
-  // Run every 60 seconds — matches MongoDB TTL behavior
-  cron.schedule('* * * * *', async () => {
-    try {
-      const result = await getPrismaClient().trafficlight.deleteMany({
-        where: { expiresAt: { lt: new Date() } },
-      })
-      if (result.count > 0) {
-        console.log(`[TrafficlightCleanup] Deleted ${result.count} expired records`)
-      }
-    } catch (err) {
-      console.error('[TrafficlightCleanup] Error:', err.message)
-    }
-  })
+let client
+
+function getRedisClient() {
+  if (!client) {
+    client = new Redis(process.env.REDIS_URL, { lazyConnect: false })
+  }
+  return client
 }
 
-export { scheduleTrafficlightCleanup }
+export { getRedisClient }
 ```
 
-Wire `scheduleTrafficlightCleanup()` in the server startup (check `src/app.js` or server entry point — call after `connectPostgres()`).
+Use the same `REDIS_URL` that BullMQ uses. Do NOT create a second Redis connection if one is already wired.
 
-### Step 5: Wire DualWriteRepository and sync scripts
+### Step 5: Implement RedisTrafficlightRepository
 
-Follow the established pattern from task-03.
+Redis key schema: `trafficlight:{key}` → JSON blob `{ key, token, expiresAt }`.
+TTL is set with `EXAT` (Unix timestamp in seconds), which auto-deletes the key at `expiresAt` — exactly replicating the MongoDB TTL index.
+
+```js
+import { getRedisClient } from '../../config/redis.js'
+
+const PREFIX = 'trafficlight:'
+
+class RedisTrafficlightRepository {
+  #redis() { return getRedisClient() }
+  #redisKey(key) { return `${PREFIX}${key}` }
+
+  async findFirst({ where = {} } = {}) {
+    const raw = await this.#redis().get(this.#redisKey(where.key))
+    return raw ? JSON.parse(raw) : null
+  }
+
+  async save(document) {
+    const { key, token, expiresAt } = document
+    const expireAt = Math.ceil(new Date(expiresAt).getTime() / 1000)
+    await this.#redis().set(this.#redisKey(key), JSON.stringify({ key, token, expiresAt }), 'EXAT', expireAt)
+    return document
+  }
+
+  async delete({ where = {} } = {}) {
+    await this.#redis().del(this.#redisKey(where.key))
+  }
+
+  // find() used for bulk queries — Redis doesn't support range scans without SCAN;
+  // if the existing Mongoose repo exposes find() with filters beyond key, review usage.
+  async find({ where = {} } = {}) {
+    const result = await this.findFirst({ where })
+    return result ? [result] : []
+  }
+}
+
+export { RedisTrafficlightRepository }
+```
+
+### Step 6: Wire in dependencies.js
+
+WhatsappSession and Body follow the standard `DualWriteRepository` pattern. Trafficlight is wired **directly** (no dual-write, no Mongo fallback):
+
+```js
+// WhatsappSession and Body — dual-write
+const whatsappSessionRepo = new DualWriteRepository(
+  new DatabaseWhatsappSessionRepository(),
+  new PrismaWhatsappSessionDatabaseRepository(),
+  { asyncSecondary: true }
+)
+
+const bodyRepo = new DualWriteRepository(
+  new DatabaseBodyRepository(),
+  new PrismaBodyDatabaseRepository(),
+  { asyncSecondary: true }
+)
+
+// Trafficlight — direct Redis (no dual-write, ephemeral data)
+const trafficlightRepo = new RedisTrafficlightRepository()
+```
+
+### Step 7: Sync scripts for WhatsappSession and Body
+
+Follow the established pattern from task-03. No sync script for Trafficlight — records are ephemeral and any Mongo records will expire naturally.
 
 ## Testing
 
-- [ ] Existing specs for whatsappsession, body, trafficlight pass
-- [ ] New `*.prisma.spec.js` for each: create + read + assert (skip if no DATABASE_URL)
-- [ ] Trafficlight cleanup job test: mock `getPrismaClient()`, assert `deleteMany` is called with `expiresAt < now`
+- [ ] Existing specs for whatsappsession and body pass
+- [ ] New `whatsappsession.prisma.spec.js`: create + read + assert fields, skip if no DATABASE_URL
+- [ ] New `body.prisma.spec.js`: create + read + assert fields, skip if no DATABASE_URL
+- [ ] New `trafficlight.redis.spec.js`: save a record with a future `expiresAt`, assert `findFirst` returns it; advance time or use a past `expiresAt`, assert `findFirst` returns null (use `ioredis-mock` or a real Redis with a 1-second TTL)
 - [ ] `npx jest` exits 0
 - [ ] `pre-commit-check` passes
 
 ## Documentation / KB Updates
 
-- [ ] Add a note in `docs/kb/architecture/job-queue-system.md` (or a new doc) describing the Trafficlight TTL replacement strategy — it is non-obvious that the cleanup shifted from a DB index to a cron job
+- [ ] Add a note to `docs/kb/architecture/project-overview.md` (or a new doc) that Trafficlight uses Redis, not PostgreSQL — it is non-obvious that this one model sits outside the Prisma schema
 
 ## Completion Criteria
 
-- [ ] Three models in schema.prisma, migration committed
-- [ ] All three Prisma repos implemented and dual-write wired
-- [ ] Trafficlight cleanup job implemented and wired at startup
-- [ ] Sync scripts committed
+- [ ] WhatsappSession and Body in schema.prisma, migration committed
+- [ ] PrismaWhatsappSessionDatabaseRepository and PrismaBodyDatabaseRepository implemented and dual-write wired
+- [ ] RedisTrafficlightRepository implemented and wired directly in dependencies.js
+- [ ] Shared Redis client singleton created (or reusing existing one)
+- [ ] Sync scripts for WhatsappSession and Body committed (no Trafficlight sync script)
 - [ ] Tests pass
 - [ ] Branch `plan/mongo-to-postgres/phase-3/task-06-whatsappsession-body-trafficlight-pg` committed
 - [ ] Status updated in `status.md`
 
+## Impact on Downstream Tasks
+
+- **task-08 (bulk-sync-validate)**: Trafficlight is excluded from the sync + validation report. Note this explicitly when running `sync-all.js` — it syncs 9 models, not 10.
+- **task-09 (flip-reads-remove-mongo)**: Delete `DatabaseTrafficlightRepository` from `trafficlight.js` as part of the Mongoose cleanup. `RedisTrafficlightRepository` is already the live implementation by then.
+- **task-10 (normalize)**: Trafficlight has no Prisma model — no `@map()` directives needed.
+- **task-11 (resync-native-ids)**: Trafficlight has no Postgres table and no `mongo_id` column — excluded from all resync SQL.
+
 ## Conflict Avoidance Notes
 
-Same Phase 3 parallel conflict warning as task-04 and task-05 — `prisma/schema.prisma` and `dependencies.js` will have merge conflicts. Resolve by keeping all model blocks and all DualWriteRepository wiring.
+Same Phase 3 parallel conflict warning as task-04 and task-05 — `prisma/schema.prisma` and `dependencies.js` will have merge conflicts. Resolve by keeping all model blocks and all DualWriteRepository wiring. Note that Trafficlight is intentionally absent from `schema.prisma`.

@@ -21,7 +21,8 @@ Remove-pdv deletes Cart, Order, Product, Integrationlog, and Backgroundjob — m
 ### In Scope
 - Install Prisma ORM + PostgreSQL driver
 - Provision and wire PostgreSQL connection (dev + production env vars)
-- Migrate 10 models: Licensee, User, Contact, Message, Room, Template, Trigger, WhatsappSession, Trafficlight, Body
+- Migrate 9 models to PostgreSQL via Prisma: Licensee, User, Contact, Message, Room, Template, Trigger, WhatsappSession, Body
+- Migrate Trafficlight to **Redis** (native TTL via `EXPIREAT`; reuses existing BullMQ Redis connection)
 - Dual-write adapter at the repository layer (writes to Mongo + Postgres simultaneously; reads from Mongo during migration window)
 - Bulk data sync scripts per model (Mongo → Postgres)
 - Validation report: record counts, spot-check field integrity, FK consistency
@@ -124,8 +125,8 @@ Mongoose pre-save hooks encode business logic (phone normalization in Contact, w
 ### FK Constraints During Migration
 No PostgreSQL FK constraints are enforced during Phase 1–3. All FK reference columns are `VARCHAR(24)` holding Mongo ObjectId strings — no constraint, no lookup overhead. Real integer FK constraints are added in **task-11** after all data is in Postgres and the resync converts FK columns to `INTEGER`.
 
-### Trafficlight TTL
-MongoDB uses a TTL index on `expiresAt`. PostgreSQL does not have TTL indexes. A cleanup strategy (scheduled job or pg_cron) is implemented in task-06. During the migration window, expired records may accumulate in Postgres; this is acceptable.
+### Trafficlight — Redis, not PostgreSQL
+Trafficlight records are short-lived TTL tokens with no FK references. They are migrated to **Redis** in task-06 rather than PostgreSQL. Redis `EXPIREAT` directly replaces MongoDB's TTL index — no cleanup job needed. The BullMQ `ioredis` client is reused, so no new infrastructure is required. Trafficlight is excluded from the Prisma schema, bulk-sync scripts, column-normalization task, and FK-resync task.
 
 ## Risks
 
@@ -137,9 +138,9 @@ MongoDB uses a TTL index on `expiresAt`. PostgreSQL does not have TTL indexes. A
 
 ## Success Criteria
 
-- [ ] All 10 models have a Prisma schema definition and migration (`id SERIAL`, `mongo_id VARCHAR(24)`)
-- [ ] Dual-write is active for all 10 models in the production deploy
-- [ ] Bulk sync script runs without errors; counts match between Mongo and Postgres for every model
+- [ ] All 9 Prisma models have a schema definition and migration (`id SERIAL`, `mongo_id VARCHAR(24)`); Trafficlight is in Redis
+- [ ] Dual-write is active for all 9 Prisma models in the production deploy; Trafficlight wired directly to Redis
+- [ ] Bulk sync script runs without errors; counts match between Mongo and Postgres for the 9 Prisma models (Trafficlight excluded — ephemeral)
 - [ ] All reads have been flipped to Postgres with no regression in existing tests
 - [ ] Mongoose and mongoose package are fully removed from `package.json` and all source files
 - [ ] `npx jest` passes with 0 failures after Mongoose removal
