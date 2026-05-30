@@ -4,7 +4,7 @@ import { NormalizePhone } from '../../helpers/NormalizePhone'
 import { v4 as uuidv4 } from 'uuid'
 import request from '../../services/request.js'
 import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files'
-import Repository from '../../repositories/repository.js'
+import Repository from '../../repositories/repository'
 import { requireDependency } from '../../helpers/RequireDependency'
 
 const closeRoom = async (contact, roomRepository) => {

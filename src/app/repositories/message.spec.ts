@@ -10,7 +10,7 @@ import { ContactRepositoryDatabase } from '@repositories/contact'
 import { MessageRepositoryDatabase } from '@repositories/message'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
-import { createRuntimeDependencies } from '../runtime/dependencies.js'
+import { createRuntimeDependencies } from '../runtime/dependencies'
 
 const dependencies = createRuntimeDependencies()
 

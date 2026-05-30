@@ -1,12 +1,12 @@
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { order as orderFactory } from '@factories/order'
-import { RoomRepositoryMemory } from './room.js'
-import { CartRepositoryMemory } from './cart.js'
-import { OrderRepositoryMemory } from './order.js'
-import { ProductRepositoryMemory } from './product.js'
-import { LicenseeRepositoryMemory } from './licensee.js'
-import { ContactRepositoryMemory } from './contact.js'
+import { RoomRepositoryMemory } from './room'
+import { CartRepositoryMemory } from './cart'
+import { OrderRepositoryMemory } from './order'
+import { ProductRepositoryMemory } from './product'
+import { LicenseeRepositoryMemory } from './licensee'
+import { ContactRepositoryMemory } from './contact'
 
 describe('memory repositories - secondary entities', () => {
   it('saves rooms and finds them by contact id', async () => {

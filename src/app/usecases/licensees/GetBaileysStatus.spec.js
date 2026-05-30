@@ -1,7 +1,7 @@
 import { GetBaileysStatus } from './GetBaileysStatus.js'
-import { LicenseeRepositoryMemory } from '@repositories/licensee.js'
-import { WhatsappSessionRepositoryMemory } from '@repositories/whatsappsession.js'
-import { licenseeComplete as licenseeCompleteFactory } from '@factories/licensee.js'
+import { LicenseeRepositoryMemory } from '@repositories/licensee'
+import { WhatsappSessionRepositoryMemory } from '@repositories/whatsappsession'
+import { licenseeComplete as licenseeCompleteFactory } from '@factories/licensee'
 
 function buildUseCase() {
   const licenseeRepository = new LicenseeRepositoryMemory()

@@ -3,7 +3,7 @@ import { rateLimit } from 'express-rate-limit'
 import { RedisStore } from 'rate-limit-redis'
 import jwt from 'jsonwebtoken'
 import { LoginController } from '../controllers/LoginController.js'
-import { UserRepositoryDatabase } from '../repositories/user.js'
+import { UserRepositoryDatabase } from '../repositories/user'
 import { AuthenticateUser } from '../usecases/auth/AuthenticateUser.js'
 import { redisConnection } from '../../config/redis'
 

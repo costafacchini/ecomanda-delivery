@@ -1,6 +1,6 @@
 import moment from 'moment-timezone'
 import { v4 as uuidv4 } from 'uuid'
-import { sortRecords } from '../repositories/repository.js'
+import { sortRecords } from '../repositories/repository'
 
 const ONE_HOUR = 1
 const TO_MESSENGER = 'to-messenger'

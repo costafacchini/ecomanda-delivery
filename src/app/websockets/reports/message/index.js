@@ -1,7 +1,7 @@
 import { io } from '../../../../config/http'
 import { LicenseeMessagesByDayQuery } from '../../../../app/queries/LicenseeMessagesByDayQuery.js'
-import { LicenseeRepositoryDatabase } from '../../../../app/repositories/licensee.js'
-import { MessageRepositoryDatabase } from '../../../../app/repositories/message.js'
+import { LicenseeRepositoryDatabase } from '../../../../app/repositories/licensee'
+import { MessageRepositoryDatabase } from '../../../../app/repositories/message'
 
 const licenseeRepository = new LicenseeRepositoryDatabase()
 const messageRepository = new MessageRepositoryDatabase()

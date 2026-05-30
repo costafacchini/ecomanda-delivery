@@ -1,8 +1,8 @@
 import { CreateMessage } from './CreateMessage.js'
-import { MessageRepositoryMemory } from '@repositories/message.js'
-import { ContactRepositoryMemory } from '@repositories/contact.js'
-import { licensee as licenseeFactory } from '@factories/licensee.js'
-import { contact as contactFactory } from '@factories/contact.js'
+import { MessageRepositoryMemory } from '@repositories/message'
+import { ContactRepositoryMemory } from '@repositories/contact'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { contact as contactFactory } from '@factories/contact'
 
 const LICENSEE_ID = '60000000000000000000000a'
 

@@ -1,4 +1,4 @@
-import Repository from '../../repositories/repository.js'
+import Repository from '../../repositories/repository'
 import { replace } from '../../helpers/Emoji'
 import { v4 as uuidv4 } from 'uuid'
 import { requireDependency } from '../../helpers/RequireDependency'

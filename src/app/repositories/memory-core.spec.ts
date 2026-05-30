@@ -2,10 +2,10 @@ import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
 import { message as messageFactory } from '@factories/message'
 import { triggerText } from '@factories/trigger'
-import { LicenseeRepositoryMemory } from './licensee.js'
-import { ContactRepositoryMemory } from './contact.js'
-import { MessageRepositoryMemory } from './message.js'
-import { TriggerRepositoryMemory } from './trigger.js'
+import { LicenseeRepositoryMemory } from './licensee'
+import { ContactRepositoryMemory } from './contact'
+import { MessageRepositoryMemory } from './message'
+import { TriggerRepositoryMemory } from './trigger'
 
 jest.mock('uuid', () => ({ v4: () => 'memory-uuid' }))
 

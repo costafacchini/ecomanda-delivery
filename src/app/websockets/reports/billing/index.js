@@ -1,9 +1,9 @@
 import { io } from '../../../../config/http'
 import { BillingQuery } from '../../../../app/queries/BillingQuery.js'
 import { IntegrationlogsQuery } from '../../../../app/queries/IntegrationlogsQuery.js'
-import { LicenseeRepositoryDatabase } from '../../../../app/repositories/licensee.js'
-import { MessageRepositoryDatabase } from '../../../../app/repositories/message.js'
-import { IntegrationlogRepositoryDatabase } from '../../../../app/repositories/integrationlog.js'
+import { LicenseeRepositoryDatabase } from '../../../../app/repositories/licensee'
+import { MessageRepositoryDatabase } from '../../../../app/repositories/message'
+import { IntegrationlogRepositoryDatabase } from '../../../../app/repositories/integrationlog'
 
 const licenseeRepository = new LicenseeRepositoryDatabase()
 const messageRepository = new MessageRepositoryDatabase()

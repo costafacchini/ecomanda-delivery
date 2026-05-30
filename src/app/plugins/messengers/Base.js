@@ -1,4 +1,4 @@
-import Repository from '../../repositories/repository.js'
+import Repository from '../../repositories/repository'
 import { logger } from '../../helpers/logger'
 import { v4 as uuidv4 } from 'uuid'
 import { S3 } from '../storage/S3.js'

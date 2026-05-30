@@ -1,12 +1,12 @@
 import Trigger from '@models/Trigger'
 import Product from '@models/Product'
-import { FacebookCatalogImporter } from '@plugins/importers/facebook_catalog/index.js'
+import { FacebookCatalogImporter } from '@plugins/importers/facebook_catalog/index'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { triggerMultiProduct as triggerFactory } from '@factories/trigger'
 import { product as productFactory } from '@factories/product'
 import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
-import { createRuntimeDependencies } from '../../../runtime/dependencies.js'
+import { createRuntimeDependencies } from '../../../runtime/dependencies'
 
 let dependencies
 
