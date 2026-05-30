@@ -4,7 +4,7 @@ import { ChatsBase } from './Base'
 import { logger } from '../../helpers/logger'
 import { requireDependency } from '../../helpers/RequireDependency'
 
-const createVisitor = async (contact, token, url) => {
+const createVisitor = async (contact: any, token: any, url: any) => {
   const body = {
     visitor: {
       name: `${contact.name} - ${contact.number} - WhatsApp`,
@@ -22,7 +22,7 @@ const createVisitor = async (contact, token, url) => {
   return response.data.success === true
 }
 
-const createRoom = async (contact, token, url, roomRepository) => {
+const createRoom = async (contact: any, token: any, url: any, roomRepository: any) => {
   const response = await request.get(`${url}/api/v1/livechat/room?token=${token}`)
 
   if (response.data.success !== true) {
@@ -39,7 +39,7 @@ const createRoom = async (contact, token, url, roomRepository) => {
   return room
 }
 
-const transferToDepartament = async (department, room, url) => {
+const transferToDepartament = async (department: any, room: any, url: any) => {
   const body = {
     token: `${room.token}`,
     rid: room.roomId,
@@ -49,7 +49,7 @@ const transferToDepartament = async (department, room, url) => {
   await request.post(`${url}/api/v1/livechat/room.transfer`, { body })
 }
 
-const postMessage = async (contact, message, room, url) => {
+const postMessage = async (contact: any, message: any, room: any, url: any) => {
   const body = {
     token: `${room.token}`,
     rid: room.roomId,
@@ -59,7 +59,7 @@ const postMessage = async (contact, message, room, url) => {
   return await request.post(`${url}/api/v1/livechat/message`, { body })
 }
 
-const formatMessage = (message, contact) => {
+const formatMessage = (message: any, contact: any) => {
   let text = message.text
   if (message.kind === 'file') {
     text = message.url
@@ -71,7 +71,7 @@ const formatMessage = (message, contact) => {
 class Rocketchat extends ChatsBase {
   _roomRepository: any
 
-  constructor(licensee, { roomRepository, contactRepository, messageRepository, ...dependencies }: Record<string, any> = {}) {
+  constructor(licensee: any, { roomRepository, contactRepository, messageRepository, ...dependencies }: Record<string, any> = {}) {
     super(licensee, { contactRepository, messageRepository, ...dependencies })
     this._roomRepository = roomRepository
   }
@@ -80,11 +80,11 @@ class Rocketchat extends ChatsBase {
     return requireDependency(this._roomRepository, 'roomRepository', this.constructor.name)
   }
 
-  action(responseBody) {
+  action(responseBody: any) {
     if (responseBody.type === 'LivechatSession') {
       return 'close-chat'
     } else {
-      if (responseBody && responseBody.messages && responseBody.messages.find((message) => message.closingMessage)) {
+      if (responseBody && responseBody.messages && responseBody.messages.find((message: any) => message.closingMessage)) {
         return 'close-chat'
       } else {
         return 'send-message-to-messenger'
@@ -92,7 +92,7 @@ class Rocketchat extends ChatsBase {
     }
   }
 
-  async parseMessage(responseBody) {
+  async parseMessage(responseBody: any): Promise<any> {
     if (!responseBody._id) {
       this.messageParsed = null
       return []
@@ -127,7 +127,7 @@ class Rocketchat extends ChatsBase {
     }
   }
 
-  async transfer(messageId, url) {
+  async transfer(messageId: any, url: any) {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
     const contact = await this.contactRepository.findFirst({ _id: messageToSend.contact._id })
 
@@ -137,7 +137,7 @@ class Rocketchat extends ChatsBase {
     await this.sendMessage(messageId, url)
   }
 
-  async sendMessage(messageId, url) {
+  async sendMessage(messageId: any, url: any) {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
     const openRoom = await this.roomRepository.findFirst({ contact: messageToSend.contact, closed: false })
     let room = openRoom
@@ -189,7 +189,7 @@ class Rocketchat extends ChatsBase {
     return response.data.success === true
   }
 
-  async closeChat(messageId) {
+  async closeChat(messageId: any) {
     const message = await this.messageRepository.findFirst({ _id: messageId }, ['contact', 'licensee', 'room'])
     const licensee = message.licensee
 

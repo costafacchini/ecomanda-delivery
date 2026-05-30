@@ -1,5 +1,5 @@
 import Repository, { RepositoryMemory, sortRecords } from './repository'
-import _ from 'lodash'
+const _ = require("lodash") as any
 import Trigger from '../models/Trigger'
 import { requireDependency } from '../helpers/RequireDependency'
 
@@ -8,7 +8,7 @@ class TriggerRepositoryDatabase extends Repository {
     return Trigger
   }
 
-  async findFirst(params: Record<string, any> = {}, relations = []) {
+  async findFirst(params: Record<string, any> = {}, relations: any[] = []) {
     const onlyIdFilter = Object.keys(params ?? {}).length === 1 && '_id' in (params ?? {})
 
     if (onlyIdFilter && relations.length === 0) {
@@ -18,7 +18,7 @@ class TriggerRepositoryDatabase extends Repository {
     return await super.findFirst(params, relations)
   }
 
-  async create(fields = {}) {
+  async create(fields: any = {}) {
     const trigger = new Trigger({ ...(fields ?? {}) })
 
     return await this.save(trigger)
@@ -51,11 +51,11 @@ class TriggerRepositoryMemory extends RepositoryMemory {
   }
 }
 
-async function createTrigger(fields, { triggerRepository }: { triggerRepository?: any } = {}) {
+async function createTrigger(fields: any, { triggerRepository }: { triggerRepository?: any } = {}) {
   return await requireDependency(triggerRepository, 'triggerRepository', 'createTrigger').create(fields)
 }
 
-async function getAllTriggerBy(filters, order = {}, { triggerRepository }: { triggerRepository?: any } = {}) {
+async function getAllTriggerBy(filters: any, order: any = {}, { triggerRepository }: { triggerRepository?: any } = {}) {
   return await requireDependency(triggerRepository, 'triggerRepository', 'getAllTriggerBy').find(filters, order)
 }
 

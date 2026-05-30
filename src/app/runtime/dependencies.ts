@@ -55,17 +55,17 @@ function buildRuntimeDependencies({
   userRepository,
   whatsappSessionRepository,
 }: Record<string, any> = {}) {
-  const parseText = (text, contact) => parseTextHelper(text, contact, { cartRepository })
-  const parseCart = (cartId) => parseCartHelper(cartId, { cartRepository })
-  const createCartPlugin = (licensee) => createCartPluginFactory(licensee, { cartRepository })
-  const createChatPlugin = (licensee) =>
+  const parseText = (text: any, contact: any) => parseTextHelper(text, contact, { cartRepository })
+  const parseCart = (cartId: any) => parseCartHelper(cartId, { cartRepository })
+  const createCartPlugin = (licensee: any) => createCartPluginFactory(licensee, { cartRepository })
+  const createChatPlugin = (licensee: any) =>
     createChatPluginFactory(licensee, {
       contactRepository,
       messageRepository,
       roomRepository,
       triggerRepository,
     })
-  const createChatbotPlugin = (licensee) =>
+  const createChatbotPlugin = (licensee: any) =>
     createChatbotPluginFactory(licensee, {
       contactRepository,
       messageRepository,
@@ -73,7 +73,7 @@ function buildRuntimeDependencies({
       triggerRepository,
       createCartPlugin,
     })
-  const createMessengerPlugin = (licensee) =>
+  const createMessengerPlugin = (licensee: any) =>
     createMessengerPluginFactory(licensee, {
       contactRepository,
       cartRepository,
@@ -85,7 +85,7 @@ function buildRuntimeDependencies({
       createCartPlugin,
       whatsappSessionRepository,
     })
-  const createPagarMe = (licensee) =>
+  const createPagarMe = (licensee: any) =>
     new PagarMe(licensee, {
       recipient: new Recipient({ integrationlogRepository, licenseeRepository }),
       customer: new Customer({ integrationlogRepository, contactRepository }),
@@ -98,7 +98,7 @@ function buildRuntimeDependencies({
       parser: new PagarMeParser(),
       card: new Card({ integrationlogRepository, contactRepository }),
     })
-  const createPedidos10 = (licensee) =>
+  const createPedidos10 = (licensee: any) =>
     new Pedidos10(licensee, {
       orderModule: new Order(licensee, {
         orderRepository,
@@ -109,9 +109,9 @@ function buildRuntimeDependencies({
         orderStatusService: new OrderStatus(licensee, { integrationlogRepository }),
       }),
     })
-  const createFacebookCatalogImporter = (triggerId) =>
+  const createFacebookCatalogImporter = (triggerId: any) =>
     new FacebookCatalogImporter(triggerId, { triggerRepository, productRepository })
-  const createTemplatesImporter = (licenseeId) =>
+  const createTemplatesImporter = (licenseeId: any) =>
     new TemplatesImporter(licenseeId, {
       licenseeRepository,
       templateRepository,
@@ -151,7 +151,7 @@ function buildRuntimeDependencies({
 function createRuntimeDependencies(overrides: Record<string, any> = {}) {
   const cartRepository = overrides.cartRepository ?? new CartRepositoryDatabase()
   const triggerRepository = overrides.triggerRepository ?? new TriggerRepositoryDatabase()
-  const parseText = overrides.parseText ?? ((text, contact) => parseTextHelper(text, contact, { cartRepository }))
+  const parseText = overrides.parseText ?? ((text: any, contact: any) => parseTextHelper(text, contact, { cartRepository }))
   const messageRepository = overrides.messageRepository ?? new MessageRepositoryDatabase({ parseText })
   const contactRepository = overrides.contactRepository ?? new ContactRepositoryDatabase({ messageRepository })
 

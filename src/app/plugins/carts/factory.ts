@@ -2,7 +2,7 @@ import { Go2go } from './Go2go'
 import { Go2goV2 } from './Go2goV2'
 import { Alloy } from './Alloy'
 
-function createCartPlugin(licensee, dependencies = {}) {
+function createCartPlugin(licensee: any, dependencies = {}) {
   switch (licensee.cartDefault) {
     case 'go2go':
       return new Go2go(dependencies)

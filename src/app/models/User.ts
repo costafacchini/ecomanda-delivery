@@ -12,10 +12,10 @@ const userSchema = new Schema(
       type: String,
       required: [true, 'Nome: Você deve preencher o campo'],
       validate: {
-        validator: (value) => {
+        validator: (value: any) => {
           return value.length >= 4
         },
-        message: (props) => `Nome: Informe um valor com mais que 4 caracteres! Atual: ${props.value}`,
+        message: (props: any) => `Nome: Informe um valor com mais que 4 caracteres! Atual: ${props.value}`,
       },
     },
     email: {
@@ -26,7 +26,7 @@ const userSchema = new Schema(
     password: {
       type: String,
       validate: {
-        validator: (value) => {
+        validator: (value: any) => {
           return value.length >= 8
         },
         message: 'Senha: Informe um valor com mais que 8 caracteres!',
@@ -59,7 +59,7 @@ userSchema.pre('save', async function () {
   }
 })
 
-userSchema.methods.validPassword = async function (password) {
+userSchema.methods.validPassword = async function (password: any) {
   return await bcrypt.compare(password, this.password)
 }
 

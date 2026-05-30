@@ -10,7 +10,7 @@ class Customer {
     this.contactRepository = contactRepository
   }
 
-  async create(contact, token) {
+  async create(contact: any, token: any) {
     const body: Record<string, any> = {
       name: contact.name,
       email: contact.email,
@@ -64,7 +64,7 @@ class Customer {
     }
   }
 
-  async update(contact, token) {
+  async update(contact: any, token: any) {
     const body = {
       name: contact.name,
       email: contact.email,

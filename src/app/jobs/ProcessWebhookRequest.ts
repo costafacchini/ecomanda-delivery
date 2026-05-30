@@ -4,7 +4,7 @@ import { jobDependencies } from './dependencies'
 export default {
   key: 'process-webhook-request',
   workerEnabled: true,
-  async handle(data) {
+  async handle(data: any) {
     return await processWebhookRequest(data.body, jobDependencies)
   },
 }

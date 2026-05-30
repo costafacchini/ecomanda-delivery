@@ -1,7 +1,7 @@
 import { sanitizeModelErrors } from '../helpers/SanitizeErrors'
-import _ from 'lodash'
+const _ = require('lodash') as any
 
-function permit(fields) {
+function permit(fields: any) {
   const permitedFields = ['name', 'namespace', 'licensee']
 
   return _.pick(fields, permitedFields)
@@ -24,7 +24,7 @@ class TemplatesController {
     this.importation = this.importation.bind(this)
   }
 
-  async create(req, res) {
+  async create(req: any, res: any) {
     const { name, namespace, licensee } = req.body
 
     try {
@@ -39,7 +39,7 @@ class TemplatesController {
     }
   }
 
-  async update(req, res) {
+  async update(req: any, res: any) {
     const fields = permit(req.body)
     delete fields.licensee
 
@@ -58,7 +58,7 @@ class TemplatesController {
     }
   }
 
-  async show(req, res) {
+  async show(req: any, res: any) {
     try {
       const template = await this.templateRepository.findFirst({ _id: req.params.id }, ['licensee'])
 
@@ -72,7 +72,7 @@ class TemplatesController {
     }
   }
 
-  async index(req, res) {
+  async index(req: any, res: any) {
     try {
       const page = req.query.page || 1
       const limit = req.query.limit || 30
@@ -98,7 +98,7 @@ class TemplatesController {
     }
   }
 
-  async importation(req, res) {
+  async importation(req: any, res: any) {
     try {
       const templateImporter = this.createTemplatesImporter(req.params.id)
       await templateImporter.import()

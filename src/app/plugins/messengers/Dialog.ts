@@ -4,10 +4,10 @@ import { logger } from '../../helpers/logger'
 import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files'
 import { MessengersBase } from './Base'
 import { S3 } from '../storage/S3'
-import mime from 'mime-types'
+const mime = require('mime-types') as any
 import { requireDependency } from '../../helpers/RequireDependency'
 
-const getWaIdContact = async (number, url, token) => {
+const getWaIdContact = async (number: any, url: any, token: any) => {
   const headers = { 'D360-API-KEY': token }
 
   const body = {
@@ -25,7 +25,7 @@ const getWaIdContact = async (number, url, token) => {
   }
 }
 
-const getTemplates = async (url, token) => {
+const getTemplates = async (url: any, token: any) => {
   const headers = { 'D360-API-KEY': token }
 
   const response = await request.get(`${url}v1/configs/templates`, { headers })
@@ -33,10 +33,10 @@ const getTemplates = async (url, token) => {
   return response.data
 }
 
-const parseTemplates = (dialogTemplates, licenseeId) => {
-  const templates = []
+const parseTemplates = (dialogTemplates: any, licenseeId: any) => {
+  const templates: any[] = []
   for (const template of dialogTemplates.waba_templates) {
-    const templateValues = {
+    const templateValues: Record<string, any> = {
       name: template.name,
       namespace: template.namespace,
       licensee: licenseeId,
@@ -47,7 +47,7 @@ const parseTemplates = (dialogTemplates, licenseeId) => {
       bodyParams: [],
       footerParams: [],
     }
-    template.components.forEach((component) => {
+    template.components.forEach((component: any) => {
       const type = component.type.toLowerCase()
       if (component.format) {
         const format = component.format
@@ -56,7 +56,7 @@ const parseTemplates = (dialogTemplates, licenseeId) => {
         const regex = /\{\{([0-9]*)\}\}/g
         const matches = component.text.match(regex)
         if (matches) {
-          matches.forEach((match) => {
+          matches.forEach((match: any) => {
             const number = match.replace(/\D/g, '')
             templateValues[`${type}Params`].push({ number, format: 'text' })
           })
@@ -70,13 +70,13 @@ const parseTemplates = (dialogTemplates, licenseeId) => {
   return templates
 }
 
-const parseComponents = (template, parameters) => {
-  const components = []
+const parseComponents = (template: any, parameters: any) => {
+  const components: any[] = []
   let paramCounter = 1
 
   if (template.headerParams.length > 0) {
-    const header = []
-    template.headerParams.forEach((param, index) => {
+    const header: any[] = []
+    template.headerParams.forEach((param: any, index: any) => {
       header.push(parseComponentParam(param, parameters[index + paramCounter]))
     })
     components.push({
@@ -87,8 +87,8 @@ const parseComponents = (template, parameters) => {
   }
 
   if (template.bodyParams.length > 0) {
-    const body = []
-    template.bodyParams.forEach((param, index) => {
+    const body: any[] = []
+    template.bodyParams.forEach((param: any, index: any) => {
       body.push(parseComponentParam(param, parameters[index + paramCounter]))
     })
     components.push({
@@ -99,8 +99,8 @@ const parseComponents = (template, parameters) => {
   }
 
   if (template.footerParams.length > 0) {
-    const footer = []
-    template.footerParams.forEach((param, index) => {
+    const footer: any[] = []
+    template.footerParams.forEach((param: any, index: any) => {
       footer.push(parseComponentParam(param, parameters[index + paramCounter]))
     })
     components.push({
@@ -112,7 +112,7 @@ const parseComponents = (template, parameters) => {
   return components
 }
 
-const parseComponentParam = (param, value) => {
+const parseComponentParam = (param: any, value: any) => {
   if (param.format.toUpperCase() === 'IMAGE') {
     return {
       type: 'image',
@@ -129,7 +129,7 @@ const parseComponentParam = (param, value) => {
   }
 }
 
-const downloadMedia = async (mediaId, whatsappToken) => {
+const downloadMedia = async (mediaId: any, whatsappToken: any) => {
   const headers = { 'D360-API-KEY': whatsappToken }
   const response = await request.download(`https://waba.360dialog.io/v1/media/${mediaId}`, {
     headers,
@@ -138,7 +138,7 @@ const downloadMedia = async (mediaId, whatsappToken) => {
   return response
 }
 
-const uploadFile = (licensee, contact, fileName, fileBase64) => {
+const uploadFile = (licensee: any, contact: any, fileName: any, fileBase64: any) => {
   const s3 = new S3(licensee, contact, fileName, fileBase64)
   s3.uploadFile()
 
@@ -150,7 +150,7 @@ class Dialog extends MessengersBase {
   _parseText: any
   _createCartPlugin: any
 
-  constructor(licensee, { templateRepository, messageRepository, parseText, createCartPlugin, ...dependencies }: Record<string, any> = {}) {
+  constructor(licensee: any, { templateRepository, messageRepository, parseText, createCartPlugin, ...dependencies }: Record<string, any> = {}) {
     super(licensee, { messageRepository, ...dependencies })
     this._templateRepository = templateRepository
     this._parseText = parseText
@@ -169,7 +169,7 @@ class Dialog extends MessengersBase {
     return requireDependency(this._createCartPlugin, 'createCartPlugin', this.constructor.name)
   }
 
-  action(messageDestination) {
+  action(messageDestination: any) {
     if (messageDestination === 'to-chat') {
       return 'send-message-to-chat'
     } else if (messageDestination === 'to-messenger') {
@@ -179,11 +179,11 @@ class Dialog extends MessengersBase {
     }
   }
 
-  parseMessageStatus(responseBody) {
+  parseMessageStatus(responseBody: any) {
     this.messageStatus = responseBody.statuses ? responseBody.statuses[0] : null
   }
 
-  parseMessage(responseBody) {
+  parseMessage(responseBody: any) {
     if (
       !responseBody.messages ||
       responseBody.messages[0].type === 'sticker' ||
@@ -253,7 +253,7 @@ class Dialog extends MessengersBase {
     }
   }
 
-  parseContactData(responseBody) {
+  parseContactData(responseBody: any) {
     if (
       !responseBody.messages ||
       responseBody.messages[0].type === 'sticker' ||
@@ -274,18 +274,18 @@ class Dialog extends MessengersBase {
     }
   }
 
-  contactWithDifferentData(contact) {
+  contactWithDifferentData(contact: any) {
     return (
       (this.contactData.name && this.contactData.name !== contact.name) ||
       (this.contactData.waId && this.contactData.waId !== contact.waId)
     )
   }
 
-  shouldUpdateWaStartChat(contact) {
+  shouldUpdateWaStartChat(contact: any) {
     return !contact.wa_start_chat
   }
 
-  async sendMessage(messageId, url, token) {
+  async sendMessage(messageId: any, url: any, token: any) {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
 
     let waId = messageToSend.contact.waId
@@ -421,7 +421,7 @@ class Dialog extends MessengersBase {
     }
   }
 
-  async setWebhook(url, token) {
+  async setWebhook(url: any, token: any) {
     const headers = { 'D360-API-KEY': token }
 
     const body = {
@@ -433,14 +433,14 @@ class Dialog extends MessengersBase {
     return response.status === 200
   }
 
-  async searchTemplates(url, token) {
+  async searchTemplates(url: any, token: any) {
     const dialogTemplates = await getTemplates(url, token)
     const templates = parseTemplates(dialogTemplates, this.licensee._id)
 
     return templates
   }
 
-  async getMediaUrl(mediaId, _url, token, contact) {
+  async getMediaUrl(mediaId: any, _url: any, token: any, contact: any) {
     const response = await downloadMedia(mediaId, token)
     const extension = mime.extension(response.headers.get('content-type'))
     const fileName = `${mediaId}.${extension}`

@@ -31,7 +31,7 @@ import { createRuntimeDependencies } from '../../runtime/dependencies'
 
 const router = express.Router()
 
-function validate(req, res, next) {
+function validate(req: any, res: any, next: any) {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
@@ -90,10 +90,10 @@ const messengersController = new MessengersController({ ingestMessengerMessage }
 const backupsController = new BackupsController({ publishMessage })
 const adressesController = new AdressesController({
   contactRepository,
-  normalizePhone: (number) => new NormalizePhone(number),
+  normalizePhone: (number: any) => new NormalizePhone(number),
   updateContactAddress: new UpdateContactAddress({
     contactRepository,
-    normalizePhone: (number) => new NormalizePhone(number),
+    normalizePhone: (number: any) => new NormalizePhone(number),
   }),
 })
 const cartsController = new CartsController({
@@ -105,7 +105,7 @@ const cartsController = new CartsController({
   createCart: new CreateCart({
     contactRepository,
     cartRepository,
-    createNormalizePhone: (number) => new NormalizePhone(number),
+    createNormalizePhone: (number: any) => new NormalizePhone(number),
     createCartAdapter,
   }),
   updateCart: new UpdateCart({ contactRepository, cartRepository }),

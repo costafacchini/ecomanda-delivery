@@ -1,11 +1,12 @@
 import { isMidia } from '../../helpers/Files'
 import { logger } from '../../helpers/logger'
 import request from '../../services/request'
-import mime from 'mime-types'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const mime = require('mime-types') as any
 import { ChatsBase } from './Base'
 import { requireDependency } from '../../helpers/RequireDependency'
 
-const createSession = async (url, headers, contact, segments, roomRepository) => {
+const createSession = async (url: any, headers: any, contact: any, segments: any, roomRepository: any) => {
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })
 
   if (response.status !== 201) {
@@ -23,7 +24,7 @@ const createSession = async (url, headers, contact, segments, roomRepository) =>
   }
 }
 
-const updateContact = async (url, headers, contact, room, segments) => {
+const updateContact = async (url: any, headers: any, contact: any, room: any, segments: any) => {
   const body: Record<string, any> = {
     nickname: `${contact.name} - ${contact.number} - WhatsApp`,
     email: contact.email ? `${contact.email}` : `${contact.number}${contact.type}`,
@@ -40,7 +41,7 @@ const updateContact = async (url, headers, contact, room, segments) => {
   })
 }
 
-const updateSegments = async (url, headers, segments, room) => {
+const updateSegments = async (url: any, headers: any, segments: any, room: any) => {
   const body = {
     segments: segments.split(','),
   }
@@ -51,7 +52,7 @@ const updateSegments = async (url, headers, segments, room) => {
   })
 }
 
-const postMessage = async (url, headers, contact, message, room) => {
+const postMessage = async (url: any, headers: any, contact: any, message: any, room: any) => {
   const body: Record<string, any> = {
     from: 'user',
     origin: 'chat',
@@ -86,7 +87,7 @@ const postMessage = async (url, headers, contact, message, room) => {
   return response
 }
 
-const persistPostedMessage = async (messageRepository, message, response) => {
+const persistPostedMessage = async (messageRepository: any, message: any, response: any) => {
   if (response.data.error === false) {
     message.sended = true
     await messageRepository.save(message)
@@ -105,7 +106,7 @@ const persistPostedMessage = async (messageRepository, message, response) => {
   return response.data.success === true
 }
 
-const formatMessage = (message, contact) => {
+const formatMessage = (message: any, contact: any) => {
   const text = message.text
 
   return contact.type === '@c.us' ? text : `*${message.senderName}:*\n${text}`
@@ -114,7 +115,7 @@ const formatMessage = (message, contact) => {
 class Crisp extends ChatsBase {
   _roomRepository: any
 
-  constructor(licensee, { roomRepository, contactRepository, messageRepository, ...dependencies }: Record<string, any> = {}) {
+  constructor(licensee: any, { roomRepository, contactRepository, messageRepository, ...dependencies }: Record<string, any> = {}) {
     super(licensee, { contactRepository, messageRepository, ...dependencies })
     this._roomRepository = roomRepository
   }
@@ -123,7 +124,7 @@ class Crisp extends ChatsBase {
     return requireDependency(this._roomRepository, 'roomRepository', this.constructor.name)
   }
 
-  action(responseBody) {
+  action(responseBody: any) {
     if (
       responseBody.event === 'session:removed' ||
       (responseBody.event === 'message:received' && responseBody.data.content.namespace === 'state:resolved')
@@ -134,7 +135,7 @@ class Crisp extends ChatsBase {
     }
   }
 
-  async parseMessage(responseBody) {
+  async parseMessage(responseBody: any) {
     if (responseBody.event !== 'session:removed' && responseBody.event !== 'message:received') {
       this.messageParsed = null
       return
@@ -172,7 +173,7 @@ class Crisp extends ChatsBase {
     this.messageParsed.messages = [messageToSend]
   }
 
-  async transfer(messageId, url) {
+  async transfer(messageId: any, url: any) {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
     const contact = await this.contactRepository.findFirst({ _id: messageToSend.contact._id })
 
@@ -182,7 +183,7 @@ class Crisp extends ChatsBase {
     await this.sendMessage(messageId, url)
   }
 
-  async sendMessage(messageId, url) {
+  async sendMessage(messageId: any, url: any) {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
     const basicToken = Buffer.from(`${this.licensee.chatIdentifier}:${this.licensee.chatKey}`).toString('base64')
     const headers = { Authorization: `Basic ${basicToken}`, 'X-Crisp-Tier': 'plugin' }
@@ -204,7 +205,7 @@ class Crisp extends ChatsBase {
     await persistPostedMessage(this.messageRepository, messageToSend, response)
   }
 
-  static messageType(fileUrl) {
+  static messageType(fileUrl: any) {
     let type = 'file'
     if (isMidia(fileUrl)) {
       type = 'audio'
@@ -213,7 +214,7 @@ class Crisp extends ChatsBase {
     return type
   }
 
-  async closeChat(messageId) {
+  async closeChat(messageId: any) {
     const message = await this.messageRepository.findFirst({ _id: messageId }, ['contact', 'licensee', 'room'])
     const licensee = message.licensee
 

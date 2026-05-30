@@ -4,11 +4,11 @@ import { MessengersBase } from './Base'
 import { logger } from '../../helpers/logger'
 
 class Utalk extends MessengersBase {
-  constructor(licensee, { messageRepository, ...dependencies }: Record<string, any> = {}) {
+  constructor(licensee: any, { messageRepository, ...dependencies }: Record<string, any> = {}) {
     super(licensee, { messageRepository, ...dependencies })
   }
 
-  action(messageDestination) {
+  action(messageDestination: any) {
     if (messageDestination === 'to-chat') {
       return 'send-message-to-chat'
     } else {
@@ -20,7 +20,7 @@ class Utalk extends MessengersBase {
     this.messageStatus = null
   }
 
-  parseMessage(responseBody) {
+  parseMessage(responseBody: any) {
     if (!responseBody.event) {
       this.messageData = null
       return
@@ -88,7 +88,7 @@ class Utalk extends MessengersBase {
     }
   }
 
-  parseContactData(responseBody) {
+  parseContactData(responseBody: any) {
     if (!responseBody.event || !['chat', 'file'].includes(responseBody.event)) {
       this.contactData = null
       return
@@ -135,7 +135,7 @@ class Utalk extends MessengersBase {
     }
   }
 
-  contactWithDifferentData(contact) {
+  contactWithDifferentData(contact: any) {
     return (
       this.contactData &&
       this.contactData.name &&
@@ -145,11 +145,11 @@ class Utalk extends MessengersBase {
     )
   }
 
-  shouldUpdateWaStartChat(_) {
+  shouldUpdateWaStartChat(_: any) {
     return false
   }
 
-  async sendMessage(messageId, url, token) {
+  async sendMessage(messageId: any, url: any, token: any) {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
 
     const body: Record<string, any> = {

@@ -9,8 +9,8 @@ const ADDRESS_FIELDS = [
   'delivery_tax',
 ]
 
-function pickAddressFields(fields = {}) {
-  return ADDRESS_FIELDS.reduce((payload, key) => {
+function pickAddressFields(fields: Record<string, any> = {}) {
+  return ADDRESS_FIELDS.reduce((payload: Record<string, any>, key: string) => {
     if (Object.prototype.hasOwnProperty.call(fields, key)) {
       payload[key] = fields[key]
     }

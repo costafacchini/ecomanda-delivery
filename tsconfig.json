@@ -3,7 +3,7 @@
     "allowJs": true,
     "checkJs": false,
     "strict": false,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "esModuleInterop": true,
     "module": "CommonJS",
     "moduleResolution": "node10",
@@ -27,15 +27,14 @@
   },
   "include": [
     "src/**/*",
-    "server.js",
-    "worker.js"
+    "server.ts",
+    "worker.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "client",
     ".jest",
-    "**/*.spec.js",
     "**/*.spec.ts"
   ]
 }

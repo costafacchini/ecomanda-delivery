@@ -12,7 +12,7 @@ async function connect() {
     production: { uri: process.env.MONGODB_URI },
   }
 
-  const { username, password, host, db, uri } = config[process.env.NODE_ENV || 'development']
+  const { username, password, host, db, uri } = (config as any)[process.env.NODE_ENV || 'development']
 
   const mongoServer = new MongoServer(uri || `mongodb://${username}:${password}@${host}/${db}`)
   await mongoServer.connect()

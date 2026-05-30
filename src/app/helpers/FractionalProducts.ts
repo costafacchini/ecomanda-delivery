@@ -19,12 +19,12 @@ class FractionalProducts {
     return this.itemPartial.length == this.fractionTotal
   }
 
-  findProductNameByID(id) {
+  findProductNameByID(id: any) {
     if (!this.licensee.productFractionals) return ''
 
     try {
       const productFrationals = JSON.parse(this.licensee.productFractionals)
-      const productFractional = productFrationals.products.find((product) => product.id == id)
+      const productFractional = productFrationals.products.find((product: any) => product.id == id)
 
       return productFractional.name
     } catch {
@@ -32,7 +32,7 @@ class FractionalProducts {
     }
   }
 
-  createItemFull(productRetaileId) {
+  createItemFull(productRetaileId: any) {
     const name = this.findProductNameByID(productRetaileId)
 
     return {
@@ -42,11 +42,11 @@ class FractionalProducts {
       unit_price: 0,
       note: '',
       product_fb_id: '',
-      additionals: [],
+      additionals: [] as any[],
     }
   }
 
-  createItemAdditional(item) {
+  createItemAdditional(item: any) {
     return {
       name: item.name,
       quantity: item.quantity,
@@ -57,7 +57,7 @@ class FractionalProducts {
     }
   }
 
-  hasIdOnNote(item) {
+  hasIdOnNote(item: any) {
     const indexOfIdentifier = item.note && item.note.indexOf('#')
     if (!indexOfIdentifier || indexOfIdentifier < 0) return false
 
@@ -66,14 +66,14 @@ class FractionalProducts {
     return expression.replace(/[^0-9]/g, '') != ''
   }
 
-  getItemIdFromNote(note) {
+  getItemIdFromNote(note: any) {
     return note.replace(/[^0-9]/g, '')
   }
 
-  join(items) {
-    const itemsTransformed = []
+  join(items: any) {
+    const itemsTransformed: any[] = []
 
-    items.forEach((item) => {
+    items.forEach((item: any) => {
       if (item.name.includes('1/')) {
         if (this.hasSomePartialItem()) {
           this.itemPartial.push(item)

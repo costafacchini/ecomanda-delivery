@@ -20,8 +20,8 @@ const CREATE_CONTACT_FIELDS = [
 
 const SEND_CONTACT_TO_PAGARME_JOB = 'send-contact-to-pagarme'
 
-function pickFields(fields = {}, keys = []) {
-  return keys.reduce((payload, key) => {
+function pickFields(fields: Record<string, any> = {}, keys: any[] = []) {
+  return keys.reduce((payload: Record<string, any>, key: any) => {
     if (Object.prototype.hasOwnProperty.call(fields, key)) {
       payload[key] = fields[key]
     }

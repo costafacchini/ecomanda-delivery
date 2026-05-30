@@ -1,6 +1,6 @@
 import { Landbot } from './Landbot'
 
-function createChatbotPlugin(licensee, dependencies = {}) {
+function createChatbotPlugin(licensee: any, dependencies = {}) {
   switch (licensee.chatbotDefault) {
     case 'landbot':
       return new Landbot(licensee, dependencies)

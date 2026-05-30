@@ -2,7 +2,7 @@ import { Default } from './Default'
 import { Gallabox } from './Gallabox'
 import { Alloy } from './Alloy'
 
-function createCartAdapter(plugin) {
+function createCartAdapter(plugin: any) {
   if (plugin == 'gallabox') {
     return new Gallabox()
   } else if (plugin == 'alloy') {

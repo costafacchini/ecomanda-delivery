@@ -1,5 +1,5 @@
 class Parser {
-  parseOrderPaidEvent(body) {
+  parseOrderPaidEvent(body: any) {
     const event = {
       id: '',
       status: '',

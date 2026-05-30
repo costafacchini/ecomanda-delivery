@@ -3,19 +3,19 @@ import moment from 'moment-timezone'
 const WINDOW_HOURS = 24
 const WARNING_MINUTES = 10
 
-async function sendMessageToChat(licensee, messageToSend, { createChatPlugin }: Record<string, any> = {}) {
+async function sendMessageToChat(licensee: any, messageToSend: any, { createChatPlugin }: Record<string, any> = {}) {
   const chatPlugin = createChatPlugin(licensee)
 
   await chatPlugin.sendMessage(messageToSend._id, licensee.chatUrl)
 }
 
-async function clearWaStartChatOnContact(contact, { contactRepository }: Record<string, any> = {}) {
+async function clearWaStartChatOnContact(contact: any, { contactRepository }: Record<string, any> = {}) {
   await contactRepository.update(contact._id, { wa_start_chat: null })
 
   return
 }
 
-async function warningAboutChatsEnding(licensee, { contactRepository, messageRepository, createChatPlugin }: Record<string, any> = {}) {
+async function warningAboutChatsEnding(licensee: any, { contactRepository, messageRepository, createChatPlugin }: Record<string, any> = {}) {
   if (licensee.useWhatsappWindow !== true) return
 
   const warningWindowStart = moment().subtract(WINDOW_HOURS, 'hours')
@@ -37,7 +37,7 @@ async function warningAboutChatsEnding(licensee, { contactRepository, messageRep
   }
 }
 
-async function warningAboutChatsExpired(licensee, { contactRepository, messageRepository, createChatPlugin }: Record<string, any> = {}) {
+async function warningAboutChatsExpired(licensee: any, { contactRepository, messageRepository, createChatPlugin }: Record<string, any> = {}) {
   const contacts = await contactRepository.find({
     licensee: licensee._id,
     wa_start_chat: {

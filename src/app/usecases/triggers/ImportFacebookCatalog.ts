@@ -5,7 +5,7 @@ class ImportFacebookCatalog {
     this.createFacebookCatalogImporter = createFacebookCatalogImporter
   }
 
-  async execute(triggerId, data) {
+  async execute(triggerId: any, data: any) {
     const facebookCatalogImporter = this.createFacebookCatalogImporter(triggerId)
 
     await facebookCatalogImporter.importCatalog(data)

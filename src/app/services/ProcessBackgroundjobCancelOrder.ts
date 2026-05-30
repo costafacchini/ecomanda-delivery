@@ -1,4 +1,4 @@
-async function processBackgroundjobCancelOrder(data, { backgroundjobRepository, cartRepository, createPagarMe }: Record<string, any> = {}) {
+async function processBackgroundjobCancelOrder(data: any, { backgroundjobRepository, cartRepository, createPagarMe }: Record<string, any> = {}) {
   const { jobId, cart_id: cartId } = data
 
   const backgroundjob = await backgroundjobRepository.findFirst({ _id: jobId }, ['licensee'])

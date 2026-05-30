@@ -3,9 +3,9 @@ import { randomUUID } from 'crypto'
 const LOCK_TTL_MS = Number(process.env.JOB_LOCK_TTL_MS ?? 120000)
 const RETRY_DELAY_MS = Number(process.env.JOB_LOCK_RETRY_DELAY_MS ?? 100)
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+const sleep = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms))
 
-async function acquireLock(lockKey, token, trafficlightRepository) {
+async function acquireLock(lockKey: any, token: any, trafficlightRepository: any) {
   while (true) {
     try {
       const expiresAt = new Date(Date.now() + LOCK_TTL_MS)
@@ -21,7 +21,7 @@ async function acquireLock(lockKey, token, trafficlightRepository) {
   }
 }
 
-export function resolveTrafficlightKey(data) {
+export function resolveTrafficlightKey(data: any) {
   const contactId = data?.contactId ?? data?.body?.contactId
   if (contactId) {
     return `contact:${contactId}`
@@ -35,7 +35,7 @@ export function resolveTrafficlightKey(data) {
   return null
 }
 
-export async function withTrafficlight(lockKey, handler, { trafficlightRepository }: Record<string, any> = {}) {
+export async function withTrafficlight(lockKey: any, handler: any, { trafficlightRepository }: Record<string, any> = {}) {
   if (!lockKey) {
     return await handler()
   }

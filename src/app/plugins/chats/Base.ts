@@ -13,7 +13,7 @@ class ChatsBase {
   // Implemented by subclasses
   parseMessage(_responseBody: any): Promise<any> | any { return }
 
-  constructor(licensee, { contactRepository, messageRepository, triggerRepository }: Record<string, any> = {}) {
+  constructor(licensee: any, { contactRepository, messageRepository, triggerRepository }: Record<string, any> = {}) {
     this.licensee = licensee
     this._contactRepository = contactRepository
     this._messageRepository = messageRepository
@@ -40,11 +40,11 @@ class ChatsBase {
     return requireDependency(this._triggerRepository, 'triggerRepository', this.constructor.name)
   }
 
-  async findContact(filters) {
+  async findContact(filters: any) {
     return await this.contactRepository.findFirst(filters)
   }
 
-  async responseToMessages(responseBody) {
+  async responseToMessages(responseBody: any) {
     await this.parseMessage(responseBody)
     if (!this.messageParsed) return []
 

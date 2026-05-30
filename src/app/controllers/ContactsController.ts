@@ -28,7 +28,7 @@ class ContactsController {
     ]
   }
 
-  async create(req, res) {
+  async create(req: any, res: any) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(422).send({ errors: sanitizeExpressErrors(errors.array()) })
@@ -47,7 +47,7 @@ class ContactsController {
     }
   }
 
-  async update(req, res) {
+  async update(req: any, res: any) {
     try {
       const contact = await this.updateContact.execute(req.params.id, req.body)
 
@@ -61,7 +61,7 @@ class ContactsController {
     }
   }
 
-  async show(req, res) {
+  async show(req: any, res: any) {
     try {
       const contact = await this.contactRepository.findFirst({ _id: req.params.id }, ['licensee'])
 
@@ -75,7 +75,7 @@ class ContactsController {
     }
   }
 
-  async index(req, res) {
+  async index(req: any, res: any) {
     try {
       const page = req.query.page || 1
       const limit = req.query.limit || 30

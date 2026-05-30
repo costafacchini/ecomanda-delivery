@@ -21,7 +21,7 @@ class UsersController {
     return [check('email', 'Email deve ser preenchido com um valor válido').optional().isEmail()]
   }
 
-  async create(req, res) {
+  async create(req: any, res: any) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
@@ -41,7 +41,7 @@ class UsersController {
     }
   }
 
-  async update(req, res) {
+  async update(req: any, res: any) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
@@ -61,7 +61,7 @@ class UsersController {
     }
   }
 
-  async show(req, res) {
+  async show(req: any, res: any) {
     try {
       const user = req.params.id.includes('@')
         ? await this.userRepository.findFirst({ email: req.params.id })
@@ -77,7 +77,7 @@ class UsersController {
     }
   }
 
-  async index(req, res) {
+  async index(req: any, res: any) {
     try {
       res.status(200).send(await this.userRepository.find({}, { password: 0 }))
     } catch (err) {

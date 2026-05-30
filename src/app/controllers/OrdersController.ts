@@ -10,7 +10,7 @@ class OrdersController {
     this.changeStatus = this.changeStatus.bind(this)
   }
 
-  async create(req, res) {
+  async create(req: any, res: any) {
     const { MerchantExternalCode, order } = req.body
 
     const bodySaved = await this.receivePedidos10Order.execute({
@@ -22,7 +22,7 @@ class OrdersController {
     res.status(202).send({ id: bodySaved._id })
   }
 
-  async changeStatus(req, res) {
+  async changeStatus(req: any, res: any) {
     const { order, status } = req.body
 
     const bodySaved = await this.changePedidos10OrderStatus.execute({

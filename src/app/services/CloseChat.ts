@@ -1,4 +1,4 @@
-async function closeChat(data, { messageRepository, createChatPlugin }: Record<string, any> = {}) {
+async function closeChat(data: any, { messageRepository, createChatPlugin }: Record<string, any> = {}) {
   const { messageId } = data
   const message = await messageRepository.findFirst({ _id: messageId }, ['licensee'])
   const licensee = message.licensee

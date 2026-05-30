@@ -18,48 +18,48 @@ class ContactsQuery {
     this.contactRepository = contactRepository
   }
 
-  page(value) {
+  page(value: any) {
     this.pageClause = value
   }
 
-  limit(value) {
+  limit(value: any) {
     this.limitClause = value
   }
 
-  filterByType(value) {
+  filterByType(value: any) {
     this.typeClause = value
   }
 
-  filterByTalkingWithChatbot(value) {
+  filterByTalkingWithChatbot(value: any) {
     this.talkingWithChatbotClause = value
   }
 
-  filterByLicensee(value) {
+  filterByLicensee(value: any) {
     this.licenseeClause = value
   }
 
-  filterByExpression(value) {
+  filterByExpression(value: any) {
     this.expressionClause = value
   }
 
-  filterIntervalWaStartChat(startDate, endDate) {
+  filterIntervalWaStartChat(startDate: any, endDate: any) {
     this.startDateClause = startDate
     this.endDateClause = endDate
   }
 
-  filterWaStartChatLessThan(endDate) {
+  filterWaStartChatLessThan(endDate: any) {
     this.endDateClause = endDate
   }
 
-  filterByIsGroup(value) {
+  filterByIsGroup(value: any) {
     this.isGroupClause = value
   }
 
-  filterByUpdatedAtStart(value) {
+  filterByUpdatedAtStart(value: any) {
     this.updatedAtStartClause = value
   }
 
-  filterByUpdatedAtEnd(value) {
+  filterByUpdatedAtEnd(value: any) {
     this.updatedAtEndClause = value
   }
 

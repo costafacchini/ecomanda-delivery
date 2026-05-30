@@ -4,7 +4,7 @@ import { jobDependencies } from './dependencies'
 export default {
   key: 'process-backgroundjob-charge-credit-card',
   workerEnabled: true,
-  async handle(data) {
+  async handle(data: any) {
     return await processBackgroundjobChargeCreditCard(data.body, jobDependencies)
   },
 }

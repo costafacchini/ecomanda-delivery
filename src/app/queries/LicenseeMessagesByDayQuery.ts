@@ -7,14 +7,14 @@ class LicenseeMessagesByDayQuery {
   licenseeRepository: any
   licenseeClause: any
 
-  constructor(startDate, endDate, { messageRepository, licenseeRepository }: { messageRepository?: any; licenseeRepository?: any } = {}) {
+  constructor(startDate: any, endDate: any, { messageRepository, licenseeRepository }: { messageRepository?: any; licenseeRepository?: any } = {}) {
     this.startDate = startDate
     this.endDate = endDate
     this.messageRepository = messageRepository
     this.licenseeRepository = licenseeRepository
   }
 
-  filterByLicensee(value) {
+  filterByLicensee(value: any) {
     this.licenseeClause = value
   }
 
@@ -98,20 +98,20 @@ class LicenseeMessagesByDayQuery {
     const aggregation = this.buildAggregation()
     const rawCounts = await this.messageRepository.model().aggregate(aggregation)
 
-    const mapDays = rawCounts.reduce((acc, current) => {
+    const mapDays = rawCounts.reduce((acc: any, current: any) => {
       acc[current._id.toString()] = current.days
       return acc
     }, {})
 
     const licenseeFilter = this.licenseeClause ? { _id: this.licenseeClause } : {}
     const licensees = await this.licenseeRepository.find(licenseeFilter)
-    licensees.sort((left, right) => left.name.localeCompare(right.name))
+    licensees.sort((left: any, right: any) => left.name.localeCompare(right.name))
 
     const range = this.buildRange()
 
-    return licensees.map((licensee) => {
+    return licensees.map((licensee: any) => {
       const licenseeDays = mapDays[licensee._id.toString()] || []
-      const normalized = licenseeDays.reduce((acc, current) => {
+      const normalized = licenseeDays.reduce((acc: any, current: any) => {
         acc[current.date] = current.count
         return acc
       }, {})

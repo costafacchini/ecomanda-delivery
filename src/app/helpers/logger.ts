@@ -10,18 +10,18 @@ const CONSOLE_METHOD = Object.freeze({
   fatal: 'error',
 })
 
-const activeLevel = LEVELS[process.env.LOG_LEVEL] ?? LEVELS.info
+const activeLevel = (LEVELS as any)[process.env.LOG_LEVEL as any] ?? LEVELS.info
 
-function log(level, message, meta) {
-  if (LEVELS[level] < activeLevel) return
+function log(level: any, message: any, meta: any) {
+  if ((LEVELS as any)[level] < activeLevel) return
 
-  const method = CONSOLE_METHOD[level]
+  const method = (CONSOLE_METHOD as any)[level]
   const prefix = `[${level.toUpperCase()}]`
 
   if (activeLevel <= LEVELS.debug && meta !== undefined) {
-    console[method](prefix, message, meta) // eslint-disable-line no-console
+    (console as any)[method](prefix, message, meta) // eslint-disable-line no-console
   } else {
-    console[method](prefix, message) // eslint-disable-line no-console
+    (console as any)[method](prefix, message) // eslint-disable-line no-console
   }
 
   if (level === 'error' || level === 'fatal') {
@@ -33,11 +33,11 @@ function log(level, message, meta) {
 }
 
 const logger = {
-  debug: (message, meta?) => log('debug', message, meta),
-  info: (message, meta?) => log('info', message, meta),
-  warn: (message, meta?) => log('warn', message, meta),
-  error: (message, meta?) => log('error', message, meta),
-  fatal: (message, meta?) => log('fatal', message, meta),
+  debug: (message: any, meta?: any) => log('debug', message, meta),
+  info: (message: any, meta?: any) => log('info', message, meta),
+  warn: (message: any, meta?: any) => log('warn', message, meta),
+  error: (message: any, meta?: any) => log('error', message, meta),
+  fatal: (message: any, meta?: any) => log('fatal', message, meta),
 }
 
 export { logger }

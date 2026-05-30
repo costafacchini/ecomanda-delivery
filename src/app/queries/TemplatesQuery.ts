@@ -11,19 +11,19 @@ class TemplatesQuery {
     this.templateRepository = templateRepository
   }
 
-  page(value) {
+  page(value: any) {
     this.pageClause = value
   }
 
-  limit(value) {
+  limit(value: any) {
     this.limitClause = value
   }
 
-  filterByLicensee(value) {
+  filterByLicensee(value: any) {
     this.licenseeClause = value
   }
 
-  filterByExpression(value) {
+  filterByExpression(value: any) {
     this.expressionClause = value
   }
 

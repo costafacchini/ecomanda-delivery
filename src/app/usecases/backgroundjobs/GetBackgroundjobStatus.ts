@@ -27,7 +27,7 @@ class GetBackgroundjobStatus {
       return { message: backgroundjob.error }
     }
 
-    return { message: STATUS_MESSAGES[backgroundjob.status] }
+    return { message: (STATUS_MESSAGES as any)[backgroundjob.status] }
   }
 }
 

@@ -9,7 +9,7 @@ class SetDialogWebhook {
     this.createMessengerPlugin = createMessengerPlugin
   }
 
-  async execute(id) {
+  async execute(id: any) {
     const licensee = await this.licenseeRepository.findFirst({ _id: id })
 
     if (licensee.whatsappDefault === 'dialog') {

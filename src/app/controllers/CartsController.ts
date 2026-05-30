@@ -45,7 +45,7 @@ class CartsController {
     this.reset = this.reset.bind(this)
   }
 
-  async create(req, res) {
+  async create(req: any, res: any) {
     let { name } = req.body
     let { contact } = req.body
     if (!contact) contact = req.query.contact
@@ -65,7 +65,7 @@ class CartsController {
     }
   }
 
-  async update(req, res) {
+  async update(req: any, res: any) {
     try {
       const result = await this.updateCart.execute({
         contactNumber: req.params.contact,
@@ -87,7 +87,7 @@ class CartsController {
     }
   }
 
-  async show(req, res) {
+  async show(req: any, res: any) {
     try {
       const contact = await this.contactRepository.getContactByNumber(req.params.contact, req.licensee._id)
 
@@ -109,7 +109,7 @@ class CartsController {
     }
   }
 
-  async close(req, res) {
+  async close(req: any, res: any) {
     try {
       const contact = await this.contactRepository.getContactByNumber(req.params.contact, req.licensee._id)
 
@@ -133,7 +133,7 @@ class CartsController {
     }
   }
 
-  async addItem(req, res) {
+  async addItem(req: any, res: any) {
     try {
       const result = await this.addCartItem.execute({
         contactNumber: req.params.contact,
@@ -155,7 +155,7 @@ class CartsController {
     }
   }
 
-  async removeItem(req, res) {
+  async removeItem(req: any, res: any) {
     try {
       const contact = await this.contactRepository.getContactByNumber(req.params.contact, req.licensee._id)
 
@@ -180,7 +180,7 @@ class CartsController {
     }
   }
 
-  async send(req, res) {
+  async send(req: any, res: any) {
     try {
       const result = await this.sendCart.execute({
         contactNumber: req.params.contact,
@@ -203,7 +203,7 @@ class CartsController {
     }
   }
 
-  async getCart(req, res) {
+  async getCart(req: any, res: any) {
     try {
       const contact = await this.contactRepository.getContactByNumber(req.params.contact, req.licensee._id)
 
@@ -226,7 +226,7 @@ class CartsController {
     }
   }
 
-  async getPayment(req, res) {
+  async getPayment(req: any, res: any) {
     try {
       const contact = await this.contactRepository.getContactByNumber(req.params.contact, req.licensee._id)
 
@@ -248,7 +248,7 @@ class CartsController {
     }
   }
 
-  reset(_, res) {
+  reset(_: any, res: any) {
     logger.info('Agendando para resetar carts expirando')
 
     this.publishMessage({ key: 'reset-carts', body: {} })

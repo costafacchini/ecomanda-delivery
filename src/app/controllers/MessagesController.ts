@@ -19,7 +19,7 @@ class MessagesController {
     this.resend = this.resend.bind(this)
   }
 
-  async index(req, res) {
+  async index(req: any, res: any) {
     const page = req.query.page || 1
     const limit = req.query.limit || 30
 
@@ -57,7 +57,7 @@ class MessagesController {
     res.status(200).send(messages)
   }
 
-  async create(req, res) {
+  async create(req: any, res: any) {
     try {
       const message = await this.createMessage.execute(req.body)
       return res.status(201).send(message)
@@ -69,7 +69,7 @@ class MessagesController {
     }
   }
 
-  async resend(req, res) {
+  async resend(req: any, res: any) {
     try {
       const [user, message] = await Promise.all([
         this.userRepository.findFirst({ _id: req.userId }),

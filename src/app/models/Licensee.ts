@@ -11,10 +11,10 @@ const licenseeSchema = new Schema(
       type: String,
       required: [true, 'Nome: Você deve preencher o campo'],
       validate: {
-        validator: (value) => {
+        validator: (value: any) => {
           return value.length >= 4
         },
-        message: (props) => `Nome: Informe um valor com mais que 4 caracteres! Atual: ${props.value}`,
+        message: (props: any) => `Nome: Informe um valor com mais que 4 caracteres! Atual: ${props.value}`,
       },
     },
     email: String,
@@ -137,46 +137,46 @@ const licenseeSchema = new Schema(
     bank: {
       type: String,
       validate: {
-        validator: (value) => {
+        validator: (value: any) => {
           return value.length == 0 || value.length == 3
         },
-        message: (props) => `Banco: Informe um valor com 3 caracteres! Atual: ${props.value}`,
+        message: (props: any) => `Banco: Informe um valor com 3 caracteres! Atual: ${props.value}`,
       },
     },
     branch_number: {
       type: String,
       validate: {
-        validator: (value) => {
+        validator: (value: any) => {
           return value.length <= 4
         },
-        message: (props) => `Agência: Informe um valor com até 4 caracteres! Atual: ${props.value}`,
+        message: (props: any) => `Agência: Informe um valor com até 4 caracteres! Atual: ${props.value}`,
       },
     },
     branch_check_digit: {
       type: String,
       validate: {
-        validator: (value) => {
+        validator: (value: any) => {
           return value.length <= 1
         },
-        message: (props) => `Dígito Agência: Informe um valor com até 1 caracter! Atual: ${props.value}`,
+        message: (props: any) => `Dígito Agência: Informe um valor com até 1 caracter! Atual: ${props.value}`,
       },
     },
     account_number: {
       type: String,
       validate: {
-        validator: (value) => {
+        validator: (value: any) => {
           return value.length <= 13
         },
-        message: (props) => `Conta: Informe um valor com até 13 caracteres! Atual: ${props.value}`,
+        message: (props: any) => `Conta: Informe um valor com até 13 caracteres! Atual: ${props.value}`,
       },
     },
     account_check_digit: {
       type: String,
       validate: {
-        validator: (value) => {
+        validator: (value: any) => {
           return value.length <= 1
         },
-        message: (props) => `Dígito Conta: Informe um valor com até 1 caracter! Atual: ${props.value}`,
+        message: (props: any) => `Dígito Conta: Informe um valor com até 1 caracter! Atual: ${props.value}`,
       },
     },
     holder_kind: {

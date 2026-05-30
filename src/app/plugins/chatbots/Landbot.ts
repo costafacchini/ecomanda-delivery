@@ -7,7 +7,7 @@ import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files'
 import Repository from '../../repositories/repository'
 import { requireDependency } from '../../helpers/RequireDependency'
 
-const closeRoom = async (contact, roomRepository) => {
+const closeRoom = async (contact: any, roomRepository: any) => {
   const room = await roomRepository.findFirst({ contact: contact._id, closed: false })
   if (room) {
     room.closed = true
@@ -25,7 +25,7 @@ class Landbot {
   _createCartPlugin: any
 
   constructor(
-    licensee,
+    licensee: any,
     { contactRepository, messageRepository, roomRepository, triggerRepository, createCartPlugin }: Record<string, any> = {},
   ) {
     this.licensee = licensee
@@ -68,7 +68,7 @@ class Landbot {
     return requireDependency(this._createCartPlugin, 'createCartPlugin', this.constructor.name)
   }
 
-  async responseToMessages(responseBody) {
+  async responseToMessages(responseBody: any) {
     const { customer, messages } = responseBody
 
     if (!customer || !messages) return []
@@ -164,7 +164,7 @@ class Landbot {
     return processedMessages
   }
 
-  static kindToMessageKind(kind) {
+  static kindToMessageKind(kind: any) {
     switch (kind) {
       case 'text':
         return 'text'
@@ -179,7 +179,7 @@ class Landbot {
     }
   }
 
-  async responseTransferToMessage(responseBody) {
+  async responseTransferToMessage(responseBody: any) {
     const { name, email, number, observacao, id_departamento_rocketchat, iniciar_nova_conversa } = responseBody
 
     if (!number) return
@@ -224,7 +224,7 @@ class Landbot {
     })
   }
 
-  async sendMessage(messageId, url, token) {
+  async sendMessage(messageId: any, url: any, token: any) {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
 
     const customer = {
@@ -289,7 +289,7 @@ class Landbot {
     }
   }
 
-  async dropConversation(contactId) {
+  async dropConversation(contactId: any) {
     const contact = await this.contactRepository.findFirst({ _id: contactId })
 
     const headers = {

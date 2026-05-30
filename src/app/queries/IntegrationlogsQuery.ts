@@ -11,23 +11,23 @@ class IntegrationlogsQuery {
     this.integrationlogRepository = integrationlogRepository
   }
 
-  filterByCreatedAt(startDate, endDate) {
+  filterByCreatedAt(startDate: any, endDate: any) {
     this.startDateClause = startDate
     this.endDateClause = endDate
   }
 
-  filterByLicensee(value) {
+  filterByLicensee(value: any) {
     this.licenseeClause = value
   }
 
-  sortBy(field, order) {
+  sortBy(field: any, order: any) {
     this.sortByClause = {
       field,
       order,
     }
   }
 
-  applyFilters(query) {
+  applyFilters(query: any) {
     if (this.startDateClause && this.endDateClause)
       query.filterByInterval('createdAt', this.startDateClause, this.endDateClause)
 

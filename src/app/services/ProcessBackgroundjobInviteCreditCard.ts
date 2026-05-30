@@ -1,5 +1,5 @@
 async function processBackgroundjobInviteCreditCard(
-  data,
+  data: any,
   { backgroundjobRepository, contactRepository, cartRepository, createPagarMe }: Record<string, any> = {},
 ) {
   const { jobId, credit_card_data, cart_id: cartId } = data

@@ -1,4 +1,4 @@
-async function transformChatbotBody(data, { bodyRepository, createChatbotPlugin }: Record<string, any> = {}) {
+async function transformChatbotBody(data: any, { bodyRepository, createChatbotPlugin }: Record<string, any> = {}) {
   const { bodyId } = data
   const body = await bodyRepository.findFirst({ _id: bodyId }, ['licensee'])
   const licensee = body.licensee

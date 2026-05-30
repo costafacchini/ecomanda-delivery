@@ -8,7 +8,7 @@ class PagarMe {
   parser: any
   card: any
 
-  constructor(licensee, { recipient, customer, payment, parser, card }: Record<string, any> = {}) {
+  constructor(licensee: any, { recipient, customer, payment, parser, card }: Record<string, any> = {}) {
     this.licensee = licensee
     this.recipient = requireDependency(recipient, 'recipient', this.constructor.name)
     this.customer = requireDependency(customer, 'customer', this.constructor.name)

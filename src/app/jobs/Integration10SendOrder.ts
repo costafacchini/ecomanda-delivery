@@ -4,7 +4,7 @@ import { jobDependencies } from './dependencies'
 export default {
   key: 'integration-send-order',
   workerEnabled: true,
-  async handle(data) {
+  async handle(data: any) {
     return await sendOrder(data.body, jobDependencies)
   },
 }

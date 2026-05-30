@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 class Repository {
   model(): any {}
 
-  async findFirst(params = {}, relations = []) {
+  async findFirst(params: any = {}, relations: any[] = []) {
     const query = this.model().findOne(params ?? {})
 
     relations.forEach((relation) => query.populate(relation))
@@ -11,40 +11,40 @@ class Repository {
     return await query
   }
 
-  async create(fields = {}) {
+  async create(fields: any = {}) {
     return await this.model().create({ ...(fields ?? {}) })
   }
 
-  async update(id, fields = {}) {
+  async update(id: any, fields: any = {}) {
     return await this.model().updateOne({ _id: id }, { $set: fields ?? {} }, { runValidators: true })
   }
 
-  async updateMany(params = {}, fields = {}) {
+  async updateMany(params: any = {}, fields: any = {}) {
     return await this.model().updateMany(params ?? {}, { $set: fields ?? {} }, { runValidators: true })
   }
 
-  async find(params = {}) {
+  async find(params: any = {}) {
     return await this.model().find(params ?? {})
   }
 
-  async delete(params = {}) {
+  async delete(params: any = {}) {
     return await this.model().deleteOne(params ?? {})
   }
 
-  async save(document) {
+  async save(document: any) {
     return await document.save()
   }
 }
 
-function isObject(value) {
+function isObject(value: any) {
   return value !== null && typeof value === 'object' && !Array.isArray(value)
 }
 
-function isObjectIdLike(value) {
+function isObjectIdLike(value: any) {
   return value instanceof mongoose.Types.ObjectId || value?._bsontype === 'ObjectId'
 }
 
-function comparableValue(value) {
+function comparableValue(value: any): any {
   if (value instanceof Date) {
     return value.getTime()
   }
@@ -60,11 +60,11 @@ function comparableValue(value) {
   return value
 }
 
-function isOperatorObject(value) {
+function isOperatorObject(value: any) {
   return isObject(value) && Object.keys(value).some((key) => key.startsWith('$'))
 }
 
-function normalizeExpectedValue(actual, expected) {
+function normalizeExpectedValue(actual: any, expected: any) {
   if (typeof actual === 'boolean' && typeof expected === 'string') {
     const normalized = expected.toLowerCase()
 
@@ -80,7 +80,7 @@ function normalizeExpectedValue(actual, expected) {
   return expected
 }
 
-function matchOperator(actual, operator, expected) {
+function matchOperator(actual: any, operator: any, expected: any) {
   const comparableActual = comparableValue(actual)
   const normalizedExpected = normalizeExpectedValue(actual, expected)
 
@@ -100,15 +100,15 @@ function matchOperator(actual, operator, expected) {
     case '$lte':
       return comparableActual <= comparableValue(normalizedExpected)
     case '$in':
-      return (normalizedExpected ?? []).some((item) => comparableActual === comparableValue(item))
+      return (normalizedExpected ?? []).some((item: any) => comparableActual === comparableValue(item))
     case '$nin':
-      return !(normalizedExpected ?? []).some((item) => comparableActual === comparableValue(item))
+      return !(normalizedExpected ?? []).some((item: any) => comparableActual === comparableValue(item))
     default:
       return false
   }
 }
 
-function matchValue(actual, expected) {
+function matchValue(actual: any, expected: any): any {
   if (expected instanceof RegExp) {
     return expected.test(`${actual ?? ''}`)
   }
@@ -125,25 +125,25 @@ function matchValue(actual, expected) {
   return comparableValue(actual) === comparableValue(normalizedExpected)
 }
 
-function matchesFilter(record, params = {}) {
+function matchesFilter(record: any, params: any = {}): any {
   if (!isObject(params) || isObjectIdLike(params)) {
     return matchValue(record?._id, params)
   }
 
   return Object.entries(params ?? {}).every(([key, expected]) => {
     if (key === '$or') {
-      return (expected as any[] ?? []).some((filter) => matchesFilter(record, filter))
+      return (expected as any[] ?? []).some((filter: any) => matchesFilter(record, filter))
     }
 
     if (key === '$and') {
-      return (expected as any[] ?? []).every((filter) => matchesFilter(record, filter))
+      return (expected as any[] ?? []).every((filter: any) => matchesFilter(record, filter))
     }
 
     return matchValue(record?.[key], expected)
   })
 }
 
-function sortRecords(records = [], order = {}) {
+function sortRecords(records: any[] = [], order: any = {}) {
   const orderEntries = Object.entries(order ?? {})
 
   if (orderEntries.length === 0) {
@@ -190,14 +190,14 @@ class RepositoryMemory extends Repository {
   modelClass: any
   relationLoaders: Record<string, any>
 
-  constructor(items = []) {
+  constructor(items: any[] = []) {
     super()
     this.items = items
     this.modelClass = null
     this.relationLoaders = {}
   }
 
-  hydrate(record) {
+  hydrate(record: any) {
     if (!record || typeof record !== 'object') {
       return record
     }
@@ -212,18 +212,18 @@ class RepositoryMemory extends Repository {
     return record
   }
 
-  async findFirst(params = {}, relations = []) {
+  async findFirst(params: any = {}, relations: any[] = []) {
     return (await this.find(params, relations))[0] ?? null
   }
 
-  async create(fields = {}) {
+  async create(fields: any = {}) {
     const record = this.prepareRecord(fields)
     this.items.push(record)
 
     return await Promise.resolve(this.hydrate(record))
   }
 
-  async update(id, fields = {}) {
+  async update(id: any, fields: any = {}) {
     const record = this.items.find((item) => matchValue(item?._id, id))
 
     if (record) {
@@ -234,7 +234,7 @@ class RepositoryMemory extends Repository {
     return await Promise.resolve({ acknowledged: true })
   }
 
-  async updateMany(params = {}, fields = {}) {
+  async updateMany(params: any = {}, fields: any = {}) {
     this.items
       .filter((item) => matchesFilter(item, params ?? {}))
       .forEach((item) => {
@@ -245,7 +245,7 @@ class RepositoryMemory extends Repository {
     return await Promise.resolve({ acknowledged: true })
   }
 
-  async find(params = {}, relations = []) {
+  async find(params: any = {}, relations: any[] = []) {
     this.assertValidParams(params)
 
     const records = this.items.filter((item) => matchesFilter(item, params ?? {}))
@@ -254,7 +254,7 @@ class RepositoryMemory extends Repository {
     return await Promise.resolve(populatedRecords.map((item) => this.hydrate(item)))
   }
 
-  async delete(params = {}) {
+  async delete(params: any = {}) {
     const index = this.items.findIndex((item) => matchesFilter(item, params ?? {}))
 
     if (index >= 0) {
@@ -264,7 +264,7 @@ class RepositoryMemory extends Repository {
     return await Promise.resolve({ acknowledged: true })
   }
 
-  async save(document) {
+  async save(document: any) {
     const existingRecord = this.items.find((item) => matchValue(item?._id, document?._id))
     const storedRecord = this.prepareRecord(document, { existingRecord })
     const index = this.items.findIndex((item) => matchValue(item?._id, storedRecord._id))
@@ -278,7 +278,7 @@ class RepositoryMemory extends Repository {
     return await Promise.resolve(this.hydrate(storedRecord))
   }
 
-  prepareRecord(fields = {}, { existingRecord = null } = {}) {
+  prepareRecord(fields: any = {}, { existingRecord = null }: { existingRecord?: any } = {}) {
     if (!this.modelClass) {
       if (existingRecord) {
         return {
@@ -313,7 +313,7 @@ class RepositoryMemory extends Repository {
     return record
   }
 
-  serializeInput(value) {
+  serializeInput(value: any) {
     if (value?.toObject) {
       return value.toObject({ depopulate: true, versionKey: false, virtuals: false })
     }
@@ -321,7 +321,7 @@ class RepositoryMemory extends Repository {
     return { ...(value ?? {}) }
   }
 
-  async populateRecords(records = [], relations = []) {
+  async populateRecords(records: any[] = [], relations: any[] = []) {
     if (!relations || relations.length === 0) {
       return records
     }
@@ -341,7 +341,7 @@ class RepositoryMemory extends Repository {
     return populatedRecords
   }
 
-  async populateRelation(record, relation) {
+  async populateRelation(record: any, relation: any) {
     const relationLoader = this.relationLoaders?.[relation]
 
     if (!relationLoader) {
@@ -352,7 +352,7 @@ class RepositoryMemory extends Repository {
     await this.populateRelationPath(record, segments, relationLoader)
   }
 
-  async populateRelationPath(target, segments, relationLoader) {
+  async populateRelationPath(target: any, segments: any, relationLoader: any) {
     const [segment, ...rest] = segments
 
     if (!target || !(segment in target)) {
@@ -384,7 +384,7 @@ class RepositoryMemory extends Repository {
 
     Object.entries(params).forEach(([key, value]) => {
       if (key === '$or' || key === '$and') {
-        ;(value ?? []).forEach((filter) => this.assertValidParams(filter))
+        ;(value as any[] ?? []).forEach((filter: any) => this.assertValidParams(filter))
         return
       }
 
@@ -398,7 +398,7 @@ class RepositoryMemory extends Repository {
     })
   }
 
-  assertValidObjectIdValue(path, value) {
+  assertValidObjectIdValue(path: any, value: any) {
     if (value == null || value instanceof RegExp) {
       return
     }

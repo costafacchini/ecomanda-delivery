@@ -5,7 +5,7 @@ class Alloy {
     this.cartRepository = cartRepository
   }
 
-  async transformCart(_, cartId) {
+  async transformCart(_: any, cartId: any) {
     const resolvedCartId = cartId?._id ?? cartId
     const cart = await this.cartRepository.findFirst({ _id: resolvedCartId }, ['contact'])
 
@@ -58,8 +58,8 @@ class Alloy {
       },
     }
 
-    cartTransformed.order.dados.pedido.itens = cart.products.map((product) => {
-      const complementos = product.additionals.map((additional) => {
+    cartTransformed.order.dados.pedido.itens = cart.products.map((product: any) => {
+      const complementos = product.additionals.map((additional: any) => {
         return {
           quantidade: additional.quantity,
           valor: additional.unit_price,

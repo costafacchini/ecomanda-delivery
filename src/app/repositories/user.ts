@@ -9,7 +9,7 @@ class UserRepositoryDatabase extends Repository {
     return User
   }
 
-  async create(fields = {}) {
+  async create(fields: any = {}) {
     const user = new User({ ...(fields ?? {}) })
 
     return await this.save(user)
@@ -32,7 +32,7 @@ class UserRepositoryMemory extends RepositoryMemory {
     return this.attachValidPassword(record)
   }
 
-  async findFirst(params = {}, relations = []) {
+  async findFirst(params: any = {}, relations: any[] = []) {
     const record = await super.findFirst(params, relations)
     return record ? this.attachValidPassword(record) : null
   }
@@ -60,16 +60,16 @@ class UserRepositoryMemory extends RepositoryMemory {
       .filter(([, value]) => value === 1)
       .map(([field]) => field)
 
-    return records.map((record) => {
-      const projectedRecord = { _id: record._id }
-      includedFields.forEach((field) => {
+    return records.map((record: any) => {
+      const projectedRecord: Record<string, any> = { _id: record._id }
+      includedFields.forEach((field: any) => {
         projectedRecord[field] = record[field]
       })
       return projectedRecord
     })
   }
 
-  async save(document) {
+  async save(document: any) {
     const payload = document?.toObject ? document.toObject() : { ...(document ?? {}) }
 
     if (payload.password && !payload.password.startsWith('$2')) {
@@ -81,12 +81,12 @@ class UserRepositoryMemory extends RepositoryMemory {
     return this.attachValidPassword(saved)
   }
 
-  attachValidPassword(record) {
+  attachValidPassword(record: any) {
     if (record.validPassword) {
       return record
     }
 
-    record.validPassword = async function (password) {
+    record.validPassword = async function (password: any) {
       return await bcrypt.compare(password, this.password)
     }
 

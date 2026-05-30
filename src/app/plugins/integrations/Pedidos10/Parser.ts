@@ -1,5 +1,5 @@
 class Parser {
-  parseOrder(body) {
+  parseOrder(body: any) {
     const order = {
       merchant_external_code: '',
       order_external_id: '',
@@ -20,13 +20,13 @@ class Parser {
       payments: {
         pending: 0,
         prepaid: 0,
-        methods: [],
+        methods: [] as any[],
       },
       takeout: {
         mode: '',
         takeout_minutes: 0,
       },
-      items: [],
+      items: [] as any[],
     }
 
     order.merchant_external_code = body.MerchantExternalCode || ''
@@ -50,17 +50,17 @@ class Parser {
       order.takeout.mode = body.order.takeout.mode
       order.takeout.takeout_minutes = body.order.takeout.takeoutMinutes
 
-      body.order.payments.methods.forEach((method) => {
+      body.order.payments.methods.forEach((method: any) => {
         order.payments.methods.push({ value: method.value, type: method.type, method: method.method })
       })
 
-      body.order.items.forEach((item) => {
-        const option_groups = []
+      body.order.items.forEach((item: any) => {
+        const option_groups: any[] = []
         if (item.optionGroups) {
-          item.optionGroups.forEach((optionGroups) => {
-            const options = []
+          item.optionGroups.forEach((optionGroups: any) => {
+            const options: any[] = []
             if (optionGroups.options) {
-              optionGroups.options.forEach((option) => {
+              optionGroups.options.forEach((option: any) => {
                 options.push({
                   id: option.id,
                   option_id: option.optionGroupOptionId,

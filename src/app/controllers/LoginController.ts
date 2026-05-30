@@ -12,7 +12,7 @@ class LoginController {
     this.login = this.login.bind(this)
   }
 
-  async login(req, res) {
+  async login(req: any, res: any) {
     try {
       const token = await this.authenticateUser.execute(req.body)
 

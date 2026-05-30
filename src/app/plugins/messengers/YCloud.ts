@@ -33,7 +33,7 @@ import { requireDependency } from '../../helpers/RequireDependency'
 //   }
 // }
 
-const getTemplates = async (url, token) => {
+const getTemplates = async (url: any, token: any) => {
   const headers = {
     'X-Api-Key': `${token}`,
     accept: 'application/json',
@@ -49,11 +49,11 @@ const getTemplates = async (url, token) => {
   }
 }
 
-const parseTemplates = (ycloudTemplates, licenseeId) => {
-  const templates = []
+const parseTemplates = (ycloudTemplates: any, licenseeId: any) => {
+  const templates: any[] = []
 
   for (const template of ycloudTemplates.items || []) {
-    const templateValues = {
+    const templateValues: Record<string, any> = {
       name: template.name,
       // namespace: template.namespace,
       licensee: licenseeId,
@@ -68,7 +68,7 @@ const parseTemplates = (ycloudTemplates, licenseeId) => {
     }
 
     if (template.components) {
-      template.components.forEach((component) => {
+      template.components.forEach((component: any) => {
         const type = component.type.toLowerCase()
 
         if (component.format) {
@@ -77,7 +77,7 @@ const parseTemplates = (ycloudTemplates, licenseeId) => {
           const regex = /\{\{([0-9]*)\}\}/g
           const matches = component.text.match(regex)
           if (matches) {
-            matches.forEach((match) => {
+            matches.forEach((match: any) => {
               const number = match.replace(/\D/g, '')
               templateValues[`${type}Params`].push({ number, format: 'text' })
             })
@@ -92,13 +92,13 @@ const parseTemplates = (ycloudTemplates, licenseeId) => {
   return templates
 }
 
-const parseComponents = (template, parameters) => {
-  const components = []
+const parseComponents = (template: any, parameters: any) => {
+  const components: any[] = []
   let paramCounter = 1
 
   if (template.headerParams.length > 0) {
-    const header = []
-    template.headerParams.forEach((param, index) => {
+    const header: any[] = []
+    template.headerParams.forEach((param: any, index: any) => {
       header.push(parseComponentParam(param, parameters[index + paramCounter]))
     })
     components.push({
@@ -109,8 +109,8 @@ const parseComponents = (template, parameters) => {
   }
 
   if (template.bodyParams.length > 0) {
-    const body = []
-    template.bodyParams.forEach((param, index) => {
+    const body: any[] = []
+    template.bodyParams.forEach((param: any, index: any) => {
       body.push(parseComponentParam(param, parameters[index + paramCounter]))
     })
     components.push({
@@ -121,8 +121,8 @@ const parseComponents = (template, parameters) => {
   }
 
   if (template.footerParams.length > 0) {
-    const footer = []
-    template.footerParams.forEach((param, index) => {
+    const footer: any[] = []
+    template.footerParams.forEach((param: any, index: any) => {
       footer.push(parseComponentParam(param, parameters[index + paramCounter]))
     })
     components.push({
@@ -134,7 +134,7 @@ const parseComponents = (template, parameters) => {
   return components
 }
 
-const parseComponentParam = (param, value) => {
+const parseComponentParam = (param: any, value: any) => {
   if (param.format?.toUpperCase() === 'IMAGE') {
     return {
       type: 'image',
@@ -159,7 +159,7 @@ class YCloud extends MessengersBase {
   _templateRepository: any
   _parseText: any
 
-  constructor(licensee, { templateRepository, messageRepository, parseText, ...dependencies }: Record<string, any> = {}) {
+  constructor(licensee: any, { templateRepository, messageRepository, parseText, ...dependencies }: Record<string, any> = {}) {
     super(licensee, { messageRepository, ...dependencies })
     this._templateRepository = templateRepository
     this._parseText = parseText
@@ -173,7 +173,7 @@ class YCloud extends MessengersBase {
     return requireDependency(this._parseText, 'parseText', this.constructor.name)
   }
 
-  action(messageDestination) {
+  action(messageDestination: any) {
     if (messageDestination === 'to-chat') {
       return 'send-message-to-chat'
     } else if (messageDestination === 'to-messenger') {
@@ -183,11 +183,11 @@ class YCloud extends MessengersBase {
     }
   }
 
-  parseMessageStatus(_) {
+  parseMessageStatus(_: any) {
     this.messageStatus = null
   }
 
-  parseMessage(responseBody) {
+  parseMessage(responseBody: any) {
     if (
       !responseBody.whatsappInboundMessage &&
       !(responseBody.whatsappMessage && responseBody.type === 'whatsapp.smb.message.echoes')
@@ -302,7 +302,7 @@ class YCloud extends MessengersBase {
     }
   }
 
-  parseContactData(responseBody) {
+  parseContactData(responseBody: any) {
     if (
       !responseBody.whatsappInboundMessage &&
       !(responseBody.whatsappMessage && responseBody.type === 'whatsapp.smb.message.echoes')
@@ -330,18 +330,18 @@ class YCloud extends MessengersBase {
     }
   }
 
-  contactWithDifferentData(contact) {
+  contactWithDifferentData(contact: any) {
     return (
       (this.contactData.name && this.contactData.name !== contact.name) ||
       (this.contactData.waId && this.contactData.waId !== contact.waId)
     )
   }
 
-  shouldUpdateWaStartChat(contact) {
+  shouldUpdateWaStartChat(contact: any) {
     return !contact.wa_start_chat
   }
 
-  async sendMessage(messageId, url, token) {
+  async sendMessage(messageId: any, url: any, token: any) {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
 
     const headers = {
@@ -545,7 +545,7 @@ class YCloud extends MessengersBase {
     }
   }
 
-  async uploadFileToYCloud(fileUrl, url, token) {
+  async uploadFileToYCloud(fileUrl: any, url: any, token: any) {
     const fileResponse = await request.get(fileUrl, { responseType: 'arraybuffer' })
     const fileData = fileResponse.data
     const fileName = fileUrl.split('/').pop()
@@ -573,7 +573,7 @@ class YCloud extends MessengersBase {
     }
   }
 
-  async setWebhook(url, token) {
+  async setWebhook(url: any, token: any) {
     const headers = {
       'X-Api-Key': `${token}`,
       accept: 'application/json',
@@ -594,7 +594,7 @@ class YCloud extends MessengersBase {
     }
   }
 
-  async searchTemplates(url, token) {
+  async searchTemplates(url: any, token: any) {
     try {
       const ycloudTemplates = await getTemplates(url, token)
       const templates = parseTemplates(ycloudTemplates, this.licensee._id)

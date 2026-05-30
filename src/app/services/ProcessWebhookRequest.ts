@@ -1,4 +1,4 @@
-async function processWebhookRequest(data, { bodyRepository }: Record<string, any> = {}) {
+async function processWebhookRequest(data: any, { bodyRepository }: Record<string, any> = {}) {
   const { bodyId } = data
 
   const body = await bodyRepository.findFirst({ _id: bodyId })

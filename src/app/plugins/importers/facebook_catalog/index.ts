@@ -1,7 +1,8 @@
-import _ from 'lodash'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const _ = require('lodash') as any
 
-async function importProducts(products, licensee, productRepository) {
-  const importedProductsPromises = await products.map(async (product) => {
+async function importProducts(products: any, licensee: any, productRepository: any) {
+  const importedProductsPromises = await products.map(async (product: any) => {
     const productExists = await productRepository.findFirst({ product_retailer_id: product.id, licensee })
     if (productExists) return productExists
 
@@ -11,7 +12,7 @@ async function importProducts(products, licensee, productRepository) {
   return await Promise.all(importedProductsPromises)
 }
 
-function generateCatalog(catalogId, sections, products) {
+function generateCatalog(catalogId: any, sections: any, products: any) {
   return `
 {
   "type": "product_list",
@@ -32,12 +33,12 @@ function generateCatalog(catalogId, sections, products) {
 }`
 }
 
-function generateSections(sections, products) {
-  return `[${sections.map((section) => generateSection(section, products)).join(',')}]`
+function generateSections(sections: any, products: any) {
+  return `[${sections.map((section: any) => generateSection(section, products)).join(',')}]`
 }
 
-function generateSection(section, products) {
-  const productsOfSection = products.filter((product) => product.section === section)
+function generateSection(section: any, products: any) {
+  const productsOfSection = products.filter((product: any) => product.section === section)
   return `
       {
         "title": "${section}",
@@ -45,11 +46,11 @@ function generateSection(section, products) {
       }`
 }
 
-function generateProductItems(products) {
-  return `[${products.map((product) => generateProductItem(product.id)).join(',')}]`
+function generateProductItems(products: any) {
+  return `[${products.map((product: any) => generateProductItem(product.id)).join(',')}]`
 }
 
-function generateProductItem(productId) {
+function generateProductItem(productId: any) {
   return `
           {
             "product_retailer_id": "${productId}"
@@ -61,15 +62,15 @@ class FacebookCatalogImporter {
   triggerRepository: any
   productRepository: any
 
-  constructor(triggerId, { triggerRepository, productRepository }: { triggerRepository?: any; productRepository?: any } = {}) {
+  constructor(triggerId: any, { triggerRepository, productRepository }: { triggerRepository?: any; productRepository?: any } = {}) {
     this.triggerId = triggerId
     this.triggerRepository = triggerRepository
     this.productRepository = productRepository
   }
 
-  async importCatalog(data) {
+  async importCatalog(data: any) {
     const trigger = await this.triggerRepository.findFirst({ _id: this.triggerId })
-    const products = []
+    const products: any[] = []
 
     const lines = data.split('\n')
     const columns = lines[0].split('\t')
@@ -79,7 +80,7 @@ class FacebookCatalogImporter {
     const indexOfTitle = columns.indexOf('title')
 
     delete lines[0]
-    lines.forEach((line) => {
+    lines.forEach((line: any) => {
       const values = line.split('\t')
       products.push({
         id: values[indexOfId],
@@ -90,7 +91,7 @@ class FacebookCatalogImporter {
 
     await importProducts(products, trigger.licensee, this.productRepository)
 
-    const sections = _.uniqBy(products, 'section').map((product) => product.section)
+    const sections = _.uniqBy(products, 'section').map((product: any) => product.section)
 
     trigger.catalogMulti = generateCatalog(trigger.catalogId, sections, products)
     await this.triggerRepository.save(trigger)

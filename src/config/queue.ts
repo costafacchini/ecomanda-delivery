@@ -1,7 +1,8 @@
 import { Queue } from 'bullmq'
 import { redisConnection } from './redis'
 
-import jobs from '../app/jobs/index'
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const jobs: any[] = require('../app/jobs/index').default
 
 const queueOptions = {
   defaultJobOptions: {
@@ -16,15 +17,17 @@ const queueOptions = {
   connection: redisConnection,
 }
 
-function createQueue(name) {
+function createQueue(name: any) {
   return new Queue(name, queueOptions)
 }
+
+const jobList: any[] = jobs
 
 class QueueServer {
   queues: { bull: Queue; name: string; workerEnabled: boolean; handle: Function }[]
 
   constructor() {
-    this.queues = Object.values(jobs).map((job) => ({
+    this.queues = jobList.map((job: any) => ({
       bull: createQueue(job.key),
       name: job.key,
       workerEnabled: job.workerEnabled,
@@ -32,7 +35,7 @@ class QueueServer {
     }))
   }
 
-  async addJob(name, body) {
+  async addJob(name: any, body: any) {
     const queue = this.queues.find((queue) => queue.name === name)
 
     if (!queue) return null

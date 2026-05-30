@@ -7,22 +7,22 @@ import { frontendIndexFile } from './frontend-paths'
 
 const SECRET = process.env.SECRET
 
-function requireCookieAuth(req, res, next) {
+function requireCookieAuth(req: any, res: any, next: any) {
   const token = req.cookies?.access_token
   if (!token) return res.status(401).send('Não autorizado.')
 
-  jwt.verify(token, SECRET, (err) => {
+  jwt.verify(token, SECRET, (err: any) => {
     if (err) return res.status(401).send('Token inválido.')
     next()
   })
 }
 
-function routes(app) {
+function routes(app: any) {
   app.use('/resources', resourcesRoutes)
   app.use('/api', apiRoutes)
   app.use('/login', loginRoutes)
   app.use('/queue', requireCookieAuth, bullboardRoute)
-  app.get(/.*/, (req, res) => {
+  app.get(/.*/, (req: any, res: any) => {
     res.sendFile(frontendIndexFile)
   })
 }

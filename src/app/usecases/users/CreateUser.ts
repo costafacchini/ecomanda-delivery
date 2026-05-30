@@ -1,7 +1,7 @@
 const CREATE_USER_FIELDS = ['name', 'active', 'password', 'isAdmin', 'isSuper', 'email', 'licensee']
 
-function pickFields(fields = {}, keys = []) {
-  return keys.reduce((payload, key) => {
+function pickFields(fields: Record<string, any> = {}, keys: any[] = []) {
+  return keys.reduce((payload: Record<string, any>, key: any) => {
     if (Object.prototype.hasOwnProperty.call(fields, key)) {
       payload[key] = fields[key]
     }

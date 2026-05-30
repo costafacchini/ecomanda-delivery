@@ -11,7 +11,7 @@ class SendLicenseeToPagarMe {
     this.pagarMeToken = pagarMeToken
   }
 
-  async execute(id) {
+  async execute(id: any) {
     const licensee = await this.licenseeRepository.findFirst({ _id: id })
     const pagarMe = this.createPagarMe()
 

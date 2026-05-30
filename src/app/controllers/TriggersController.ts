@@ -21,7 +21,7 @@ class TriggersController {
     this.importation = this.importation.bind(this)
   }
 
-  async create(req, res) {
+  async create(req: any, res: any) {
     try {
       const trigger = await this.createTrigger.execute(req.body)
 
@@ -35,7 +35,7 @@ class TriggersController {
     }
   }
 
-  async update(req, res) {
+  async update(req: any, res: any) {
     try {
       const trigger = await this.updateTrigger.execute(req.params.id, req.body)
 
@@ -49,7 +49,7 @@ class TriggersController {
     }
   }
 
-  async show(req, res) {
+  async show(req: any, res: any) {
     try {
       const trigger = await this.triggerRepository.findFirst({ _id: req.params.id }, ['licensee'])
 
@@ -63,7 +63,7 @@ class TriggersController {
     }
   }
 
-  async index(req, res) {
+  async index(req: any, res: any) {
     try {
       const page = req.query.page || 1
       const limit = req.query.limit || 30
@@ -93,7 +93,7 @@ class TriggersController {
     }
   }
 
-  async importation(req, res) {
+  async importation(req: any, res: any) {
     try {
       await this.importFacebookCatalog.execute(req.params.id, req.body.text)
 

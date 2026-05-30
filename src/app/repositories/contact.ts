@@ -17,10 +17,10 @@ class ContactRepositoryDatabase extends Repository {
     return Contact
   }
 
-  async findFirst(params, relations?) {
+  async findFirst(params: any = {}, relations?: any[]) {
     if (relations) {
       const query = Contact.findOne(params)
-      relations.forEach((relation) => query.populate(relation))
+      relations.forEach((relation: any) => query.populate(relation))
 
       return await query
     } else {
@@ -28,19 +28,19 @@ class ContactRepositoryDatabase extends Repository {
     }
   }
 
-  async create(fields) {
+  async create(fields: any = {}) {
     return await Contact.create({ ...fields })
   }
 
-  async update(id, fields) {
+  async update(id: any, fields: any = {}) {
     return await Contact.updateOne({ _id: id }, { $set: fields }, { runValidators: true })
   }
 
-  async find(params) {
+  async find(params: any = {}) {
     return await Contact.find(params)
   }
 
-  async contactWithWhatsappWindowClosed(contactId) {
+  async contactWithWhatsappWindowClosed(contactId: any) {
     const messageRepository = requireDependency(
       this.messageRepository,
       'messageRepository',
@@ -63,7 +63,7 @@ class ContactRepositoryDatabase extends Repository {
     return diff >= twentyFourhoursInMinutes
   }
 
-  async getContactByNumber(number, licenseeId) {
+  async getContactByNumber(number: any, licenseeId: any) {
     const normalizedPhone = new NormalizePhone(number)
     return await this.findFirst({
       number: normalizedPhone.number,
@@ -72,7 +72,7 @@ class ContactRepositoryDatabase extends Repository {
     })
   }
 
-  async deactivateGroupsForLicensee(licenseeId) {
+  async deactivateGroupsForLicensee(licenseeId: any) {
     return await this.updateMany({ licensee: licenseeId, isGroup: true }, { active: false })
   }
 }
@@ -85,11 +85,11 @@ class ContactRepositoryMemory extends RepositoryMemory {
     this.messageRepository = messageRepository
   }
 
-  async create(fields = {}) {
+  async create(fields: any = {}) {
     return await super.create(this.normalizeContactFields(fields))
   }
 
-  async contactWithWhatsappWindowClosed(contactId) {
+  async contactWithWhatsappWindowClosed(contactId: any) {
     const messageRepository = requireDependency(this.messageRepository, 'messageRepository', 'ContactRepositoryMemory')
     const messages = sortRecords(await messageRepository.find({ destination: 'to-chat' }), {
       createdAt: 'desc',
@@ -106,7 +106,7 @@ class ContactRepositoryMemory extends RepositoryMemory {
     return diff >= twentyFourhoursInMinutes
   }
 
-  async getContactByNumber(number, licenseeId) {
+  async getContactByNumber(number: any, licenseeId: any) {
     const normalizedPhone = new NormalizePhone(number)
     return await this.findFirst({
       number: normalizedPhone.number,
@@ -115,11 +115,11 @@ class ContactRepositoryMemory extends RepositoryMemory {
     })
   }
 
-  async deactivateGroupsForLicensee(licenseeId) {
+  async deactivateGroupsForLicensee(licenseeId: any) {
     return await this.updateMany({ licensee: licenseeId, isGroup: true }, { active: false })
   }
 
-  async save(document) {
+  async save(document: any) {
     Object.assign(document, this.normalizeContactFields(document))
     return await super.save(document)
   }

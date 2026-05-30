@@ -4,7 +4,7 @@ import { YCloud } from './YCloud'
 import { Pabbly } from './Pabbly'
 import { Baileys } from './Baileys'
 
-function createMessengerPlugin(licensee, dependencies = {}) {
+function createMessengerPlugin(licensee: any, dependencies = {}) {
   switch (licensee.whatsappDefault) {
     case 'utalk':
       return new Utalk(licensee, dependencies)

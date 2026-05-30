@@ -7,19 +7,19 @@ class TemplateRepositoryDatabase extends Repository {
     return Template
   }
 
-  async create(fields = {}) {
+  async create(fields: any = {}) {
     const template = new Template({ ...(fields ?? {}) })
 
     return await this.save(template)
   }
 
-  async delete(params = {}) {
+  async delete(params: any = {}) {
     return await Template.deleteMany(params ?? {})
   }
 }
 
 class TemplateRepositoryMemory extends RepositoryMemory {
-  async delete(params = {}) {
+  async delete(params: any = {}) {
     const recordsToKeep = this.items.filter((item) => !matchesFilter(item, params ?? {}))
     this.items.splice(0, this.items.length, ...recordsToKeep)
 
@@ -31,7 +31,7 @@ async function destroyAllTemplates({ templateRepository }: { templateRepository?
   await requireDependency(templateRepository, 'templateRepository', 'destroyAllTemplates').delete({})
 }
 
-async function createTemplate(fields, { templateRepository }: { templateRepository?: any } = {}) {
+async function createTemplate(fields: any, { templateRepository }: { templateRepository?: any } = {}) {
   return await requireDependency(templateRepository, 'templateRepository', 'createTemplate').create(fields)
 }
 

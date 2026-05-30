@@ -12,7 +12,7 @@ class BackgroundjobsController {
     this.show = this.show.bind(this)
   }
 
-  async create(req, res) {
+  async create(req: any, res: any) {
     const { kind, payload } = req.body
 
     try {
@@ -36,7 +36,7 @@ class BackgroundjobsController {
     }
   }
 
-  async show(req, res) {
+  async show(req: any, res: any) {
     try {
       const result = await this.getBackgroundjobStatus.execute({
         jobId: req.params.id,

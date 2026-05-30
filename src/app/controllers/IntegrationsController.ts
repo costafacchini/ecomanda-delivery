@@ -9,7 +9,7 @@ class IntegrationsController {
     this.create = this.create.bind(this)
   }
 
-  async create(req, res) {
+  async create(req: any, res: any) {
     const { body, query } = req
 
     const bodySaved = await this.bodyRepository.create({

@@ -10,7 +10,7 @@ class BackupsController {
     this.clear = this.clear.bind(this)
   }
 
-  schedule(_, res) {
+  schedule(_: any, res: any) {
     logger.info('Agendando backup')
 
     this.publishMessage({ key: 'backup', body: {} })
@@ -18,7 +18,7 @@ class BackupsController {
     res.status(200).send({ body: 'Backup agendado' })
   }
 
-  clear(_, res) {
+  clear(_: any, res: any) {
     logger.info('Agendar limpeza de backups antigos')
 
     this.publishMessage({ key: 'clear-backups', body: {} })

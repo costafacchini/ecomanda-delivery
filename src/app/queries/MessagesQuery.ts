@@ -17,47 +17,47 @@ class MessagesQuery {
     this.messageRepository = messageRepository
   }
 
-  page(value) {
+  page(value: any) {
     this.pageClause = value
   }
 
-  limit(value) {
+  limit(value: any) {
     this.limitClause = value
   }
 
-  filterByCreatedAt(startDate, endDate) {
+  filterByCreatedAt(startDate: any, endDate: any) {
     this.startDateClause = startDate
     this.endDateClause = endDate
   }
 
-  filterByLicensee(value) {
+  filterByLicensee(value: any) {
     this.licenseeClause = value
   }
 
-  filterByContact(value) {
+  filterByContact(value: any) {
     this.contactClause = value
   }
 
-  filterByKind(value) {
+  filterByKind(value: any) {
     this.kindClause = value
   }
 
-  filterByDestination(value) {
+  filterByDestination(value: any) {
     this.destinationClause = value
   }
 
-  filterBySended(value) {
+  filterBySended(value: any) {
     this.sendedClause = value
   }
 
-  sortBy(field, order) {
+  sortBy(field: any, order: any) {
     this.sortByClause = {
       field,
       order,
     }
   }
 
-  applyFilters(query) {
+  applyFilters(query: any) {
     if (this.pageClause) query.page(this.pageClause, this.limitClause)
 
     if (this.startDateClause && this.endDateClause)

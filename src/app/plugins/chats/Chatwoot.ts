@@ -2,15 +2,16 @@ import request from '../../services/request'
 import { ChatsBase } from './Base'
 import { logger } from '../../helpers/logger'
 import path from 'path'
-import mime from 'mime-types'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const mime = require('mime-types') as any
 import { requireDependency } from '../../helpers/RequireDependency'
 
-const searchContact = async (url, headers, contact, licensee, contactRepository) => {
+const searchContact = async (url: any, headers: any, contact: any, licensee: any, contactRepository: any) => {
   const response = await request.get(`${url}contacts/search?q=+${contact.number}`, { headers })
 
   if (response.status == 200 && response.data && response.data.payload && response.data.payload.length > 0) {
     const contactInbox = response.data.payload[0].contact_inboxes.find(
-      (inbox) => inbox.inbox.id == licensee.chatIdentifier,
+      (inbox: any) => inbox.inbox.id == licensee.chatIdentifier,
     )
 
     if (!contactInbox) {
@@ -32,7 +33,7 @@ const searchContact = async (url, headers, contact, licensee, contactRepository)
   }
 }
 
-const createContact = async (url, headers, contact, licensee, contactRepository) => {
+const createContact = async (url: any, headers: any, contact: any, licensee: any, contactRepository: any) => {
   const body = {
     name: contact.name,
     inbox_id: licensee.chatIdentifier,
@@ -74,7 +75,7 @@ const createContact = async (url, headers, contact, licensee, contactRepository)
   }
 }
 
-const createConversation = async (url, headers, contact, inboxId, roomRepository) => {
+const createConversation = async (url: any, headers: any, contact: any, inboxId: any, roomRepository: any) => {
   const body: Record<string, any> = {
     contact_id: contact.chatwootId,
     status: 'open',
@@ -101,7 +102,7 @@ const createConversation = async (url, headers, contact, inboxId, roomRepository
   }
 }
 
-const formatMessage = (message, contact) => {
+const formatMessage = (message: any, contact: any) => {
   const text = message.text
 
   return contact.type === '@c.us' ? text : `*${message.senderName}:*\n${text}`
@@ -110,7 +111,7 @@ const formatMessage = (message, contact) => {
 class Chatwoot extends ChatsBase {
   _roomRepository: any
 
-  constructor(licensee, { roomRepository, contactRepository, messageRepository, ...dependencies }: Record<string, any> = {}) {
+  constructor(licensee: any, { roomRepository, contactRepository, messageRepository, ...dependencies }: Record<string, any> = {}) {
     super(licensee, { contactRepository, messageRepository, ...dependencies })
     this._roomRepository = roomRepository
   }
@@ -119,7 +120,7 @@ class Chatwoot extends ChatsBase {
     return requireDependency(this._roomRepository, 'roomRepository', this.constructor.name)
   }
 
-  action(responseBody) {
+  action(responseBody: any) {
     if (responseBody.event === 'conversation_status_changed' && responseBody.status === 'resolved') {
       return 'close-chat'
     } else {
@@ -127,7 +128,7 @@ class Chatwoot extends ChatsBase {
     }
   }
 
-  async parseMessage(responseBody) {
+  async parseMessage(responseBody: any) {
     if (responseBody.event === 'conversation_status_changed' && responseBody.status === 'resolved') {
       if (!responseBody.contact_inbox?.contact_id) {
         this.messageParsed = null
@@ -184,7 +185,7 @@ class Chatwoot extends ChatsBase {
     this.messageParsed.contact = contact
     this.messageParsed.action = this.action(responseBody)
 
-    const messagesToSend = []
+    const messagesToSend: any[] = []
 
     let senderName = null
     if (this.licensee.useSenderName) {
@@ -204,7 +205,7 @@ class Chatwoot extends ChatsBase {
       return
     }
 
-    responseBody.conversation.messages?.forEach((message) => {
+    responseBody.conversation.messages?.forEach((message: any) => {
       if (message.content) {
         const messageToSend: Record<string, any> = {}
         messageToSend.text = { body: message.content }
@@ -216,7 +217,7 @@ class Chatwoot extends ChatsBase {
       }
 
       if (message.attachments?.length > 0) {
-        message.attachments.forEach((attachment) => {
+        message.attachments.forEach((attachment: any) => {
           const messageToSend: Record<string, any> = {}
           messageToSend.kind = 'file'
           messageToSend.file = {
@@ -231,7 +232,7 @@ class Chatwoot extends ChatsBase {
     this.messageParsed.messages = messagesToSend
   }
 
-  async transfer(messageId, url) {
+  async transfer(messageId: any, url: any) {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
     const contact = await this.contactRepository.findFirst({ _id: messageToSend.contact._id })
 
@@ -241,7 +242,7 @@ class Chatwoot extends ChatsBase {
     await this.sendMessage(messageId, url)
   }
 
-  async sendMessage(messageId, url) {
+  async sendMessage(messageId: any, url: any) {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
     const headers = { api_access_token: this.licensee.chatKey, 'Content-Type': 'application/json' }
 
@@ -324,7 +325,7 @@ class Chatwoot extends ChatsBase {
     }
   }
 
-  async closeChat(messageId) {
+  async closeChat(messageId: any) {
     const message = await this.messageRepository.findFirst({ _id: messageId }, ['contact', 'licensee', 'room'])
     const licensee = message.licensee
 
@@ -356,7 +357,7 @@ class Chatwoot extends ChatsBase {
     return messages
   }
 
-  async postMessage(url, headers, contact, message, room) {
+  async postMessage(url: any, headers: any, contact: any, message: any, room: any) {
     const requestOptions: Record<string, any> = {
       headers: { ...headers },
     }

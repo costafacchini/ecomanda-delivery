@@ -52,8 +52,8 @@ const UPDATE_LICENSEE_FIELDS = [
 
 const DEFAULT_PEDIDOS10_INTEGRATION = '{}'
 
-function pickFields(fields = {}, keys = []) {
-  return keys.reduce((payload, key) => {
+function pickFields(fields: Record<string, any> = {}, keys: any[] = []) {
+  return keys.reduce((payload: Record<string, any>, key: any) => {
     if (Object.prototype.hasOwnProperty.call(fields, key)) {
       payload[key] = fields[key]
     }
@@ -69,7 +69,7 @@ class UpdateLicensee {
     this.licenseeRepository = licenseeRepository
   }
 
-  async execute(id, fields = {}) {
+  async execute(id: any, fields = {}) {
     const payload = pickFields(fields, UPDATE_LICENSEE_FIELDS)
     payload.pedidos10_integration = JSON.parse(payload.pedidos10_integration || DEFAULT_PEDIDOS10_INTEGRATION)
 

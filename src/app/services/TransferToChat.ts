@@ -1,4 +1,4 @@
-async function transferToChat(data, { messageRepository, createChatPlugin }: Record<string, any> = {}) {
+async function transferToChat(data: any, { messageRepository, createChatPlugin }: Record<string, any> = {}) {
   const { messageId, url } = data
   const message = await messageRepository.findFirst({ _id: messageId }, ['licensee'])
   const licensee = message.licensee

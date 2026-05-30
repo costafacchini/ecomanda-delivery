@@ -1,5 +1,5 @@
 async function processBackgroundjobGetCreditCard(
-  data,
+  data: any,
   { backgroundjobRepository, contactRepository, cartRepository, createPagarMe }: Record<string, any> = {},
 ) {
   const { jobId, cart_id: cartId } = data
@@ -13,7 +13,7 @@ async function processBackgroundjobGetCreditCard(
     const pagarMe = createPagarMe(backgroundjob.licensee)
 
     const cardList = await pagarMe.card.list(contact, process.env.PAGARME_TOKEN)
-    cardList.forEach((card) => {
+    cardList.forEach((card: any) => {
       contact.credit_cards.push({
         credit_card_id: card.id,
         first_six_digits: card.first_six_digits,
@@ -23,7 +23,7 @@ async function processBackgroundjobGetCreditCard(
     })
     await contactRepository.save(contact)
 
-    const cardData = cardList.map((card) => {
+    const cardData = cardList.map((card: any) => {
       const last_card_used = contact.credit_card_id && contact.credit_card_id == card.id
 
       return {

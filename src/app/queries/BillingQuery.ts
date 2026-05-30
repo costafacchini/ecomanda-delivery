@@ -1,7 +1,7 @@
 import { MessagesQuery } from './MessagesQuery'
 import moment from 'moment-timezone'
 
-async function getLicenseeFirstMessage(licensee, { messageRepository }) {
+async function getLicenseeFirstMessage(licensee: any, { messageRepository }: any) {
   const messagesQuery = new MessagesQuery({ messageRepository })
   messagesQuery.filterByLicensee(licensee._id)
   messagesQuery.filterBySended(true)
@@ -13,7 +13,7 @@ async function getLicenseeFirstMessage(licensee, { messageRepository }) {
   return records[0]
 }
 
-async function getLicenseeLastMessage(licensee, { messageRepository }) {
+async function getLicenseeLastMessage(licensee: any, { messageRepository }: any) {
   const messagesQuery = new MessagesQuery({ messageRepository })
   messagesQuery.filterByLicensee(licensee._id)
   messagesQuery.filterBySended(true)
@@ -24,7 +24,7 @@ async function getLicenseeLastMessage(licensee, { messageRepository }) {
   return records[0]
 }
 
-async function getMessagesSummary(licensee, reportDate, { messageRepository }) {
+async function getMessagesSummary(licensee: any, reportDate: any, { messageRepository }: any) {
   const messagesSummary = [
     {
       month: moment.tz(reportDate, 'UTC').subtract(2, 'months').format('MM'),
@@ -54,7 +54,7 @@ async function getMessagesSummary(licensee, reportDate, { messageRepository }) {
   return messagesSummary
 }
 
-async function getMessagesCountedByMonth(licensee, startDate, endDate, { messageRepository }) {
+async function getMessagesCountedByMonth(licensee: any, startDate: any, endDate: any, { messageRepository }: any) {
   const messagesQuery = new MessagesQuery({ messageRepository })
   messagesQuery.filterByLicensee(licensee._id)
   messagesQuery.filterByCreatedAt(startDate, endDate)
@@ -67,7 +67,7 @@ class BillingQuery {
   licenseeRepository: any
   messageRepository: any
 
-  constructor(reportDate, { licenseeRepository, messageRepository }: { licenseeRepository?: any; messageRepository?: any } = {}) {
+  constructor(reportDate: any, { licenseeRepository, messageRepository }: { licenseeRepository?: any; messageRepository?: any } = {}) {
     this.reportDate = reportDate
     this.licenseeRepository = licenseeRepository
     this.messageRepository = messageRepository

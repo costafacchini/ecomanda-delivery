@@ -5,7 +5,7 @@ class Go2go {
     this.cartRepository = cartRepository
   }
 
-  async transformCart(licensee, cartId) {
+  async transformCart(licensee: any, cartId: any) {
     const resolvedCartId = cartId?._id ?? cartId
     const cart = await this.cartRepository.findFirst({ _id: resolvedCartId }, ['contact'])
 
@@ -71,8 +71,8 @@ class Go2go {
       },
     }
 
-    cartTransformed.order.itens = cart.products.map((product) => {
-      const adicionalPedidoItems = product.additionals.map((additional) => {
+    cartTransformed.order.itens = cart.products.map((product: any) => {
+      const adicionalPedidoItems = product.additionals.map((additional: any) => {
         return {
           produtoId: additional.name,
           atributoValorId: additional.details[0].name,

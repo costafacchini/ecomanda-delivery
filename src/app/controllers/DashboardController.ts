@@ -31,11 +31,11 @@ class DashboardController {
     this.messagesPerDay = this.messagesPerDay.bind(this)
   }
 
-  async _resolveUser(req) {
+  async _resolveUser(req: any) {
     return await this.userRepository.findFirst({ _id: req.userId })
   }
 
-  async _cached(key, fn) {
+  async _cached(key: any, fn: any) {
     const cached = await this.redisConnection.get(key)
     if (cached) return JSON.parse(cached)
     const data = await fn()
@@ -43,7 +43,7 @@ class DashboardController {
     return data
   }
 
-  _parseDateRange(query) {
+  _parseDateRange(query: any) {
     const now = new Date()
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
     const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000)
@@ -53,7 +53,7 @@ class DashboardController {
     }
   }
 
-  async licensees(req, res) {
+  async licensees(req: any, res: any) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
@@ -77,7 +77,7 @@ class DashboardController {
     }
   }
 
-  async messageVolume(req, res) {
+  async messageVolume(req: any, res: any) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
@@ -111,7 +111,7 @@ class DashboardController {
             .countDocuments(),
         ])
 
-        const peakThroughput = perHour.length > 0 ? Math.max(...perHour.map((h) => h.count)) : 0
+        const peakThroughput = perHour.length > 0 ? Math.max(...perHour.map((h: any) => h.count)) : 0
         const hourSpan = (endDate.getTime() - startDate.getTime()) / 3_600_000
         const avgTransferRate = parseFloat(((sentCount + failedCount) / hourSpan).toFixed(2))
 
@@ -129,7 +129,7 @@ class DashboardController {
     }
   }
 
-  async deliveryRate(req, res) {
+  async deliveryRate(req: any, res: any) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
@@ -163,7 +163,7 @@ class DashboardController {
     }
   }
 
-  async queue(req, res) {
+  async queue(req: any, res: any) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
@@ -173,7 +173,7 @@ class DashboardController {
       const cacheKey = `dashboard:super:queue:${startDate.toISOString()}:${endDate.toISOString()}`
 
       const data = await this._cached(cacheKey, async () => {
-        const avgQueuePipeline = [
+        const avgQueuePipeline: any[] = [
           { $match: { sendedAt: { $exists: true }, createdAt: { $gte: startDate, $lt: endDate } } },
           { $group: { _id: null, avg: { $avg: { $divide: [{ $subtract: ['$sendedAt', '$createdAt'] }, 1000] } } } },
         ]
@@ -194,7 +194,7 @@ class DashboardController {
     }
   }
 
-  async conversations(req, res) {
+  async conversations(req: any, res: any) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
@@ -204,12 +204,12 @@ class DashboardController {
       const cacheKey = `dashboard:super:conversations:${startDate.toISOString()}:${endDate.toISOString()}`
 
       const data = await this._cached(cacheKey, async () => {
-        const avgMsgPerConvPipeline = [
+        const avgMsgPerConvPipeline: any[] = [
           { $match: { room: { $exists: true }, createdAt: { $gte: startDate, $lt: endDate } } },
           { $group: { _id: '$room', count: { $sum: 1 } } },
           { $group: { _id: null, avg: { $avg: '$count' } } },
         ]
-        const avgDurationPipeline = [
+        const avgDurationPipeline: any[] = [
           { $match: { closedAt: { $gte: startDate, $lt: endDate } } },
           { $group: { _id: null, avg: { $avg: { $divide: [{ $subtract: ['$closedAt', '$createdAt'] }, 1000] } } } },
         ]
@@ -246,7 +246,7 @@ class DashboardController {
     }
   }
 
-  async contacts(req, res) {
+  async contacts(req: any, res: any) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
@@ -268,7 +268,7 @@ class DashboardController {
     }
   }
 
-  async messagesToday(req, res) {
+  async messagesToday(req: any, res: any) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
@@ -302,7 +302,7 @@ class DashboardController {
     }
   }
 
-  async messagesPerDay(req, res) {
+  async messagesPerDay(req: any, res: any) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })

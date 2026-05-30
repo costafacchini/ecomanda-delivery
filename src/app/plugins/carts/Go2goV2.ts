@@ -5,7 +5,7 @@ class Go2goV2 {
     this.cartRepository = cartRepository
   }
 
-  getPaymentType(payment_method) {
+  getPaymentType(payment_method: any) {
     if (!payment_method || payment_method === '') return 'Outros'
 
     if ('dinheiro'.includes(payment_method.toLowerCase())) return 'Dinheiro'
@@ -17,7 +17,7 @@ class Go2goV2 {
     return 'Outros'
   }
 
-  async transformCart(licensee, cartId) {
+  async transformCart(licensee: any, cartId: any) {
     const resolvedCartId = cartId?._id ?? cartId
     const cart = await this.cartRepository.findFirst({ _id: resolvedCartId }, ['contact'])
 
@@ -84,8 +84,8 @@ class Go2goV2 {
       },
     }
 
-    cartTransformed.order.itens = cart.products.map((product) => {
-      const adicionalPedidoItems = product.additionals.map((additional) => {
+    cartTransformed.order.itens = cart.products.map((product: any) => {
+      const adicionalPedidoItems = product.additionals.map((additional: any) => {
         return {
           pedidoItemId: 0,
           atributoValorId: 0,

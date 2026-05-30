@@ -10,7 +10,7 @@ class QueryBuilder {
   pageClause: any
   limitClause: any
 
-  constructor(model) {
+  constructor(model: any) {
     this.query = model
     this.filterByClause = []
     this.filterDifferent = []
@@ -19,36 +19,36 @@ class QueryBuilder {
     this.filterByLessThanClause
   }
 
-  sortBy(field, direction) {
+  sortBy(field: any, direction: any) {
     this.sortByClause = { [field]: direction }
   }
 
-  page(page, limit) {
+  page(page: any, limit: any) {
     this.pageClause = page
     this.limitClause = limit
   }
 
-  filterBy(field, value) {
+  filterBy(field: any, value: any) {
     this.filterByClause.push({ field, value })
   }
 
-  filterNotEqual(field, value) {
+  filterNotEqual(field: any, value: any) {
     this.filterDifferent.push({ field, value })
   }
 
-  filterByInterval(field, start, end) {
+  filterByInterval(field: any, start: any, end: any) {
     this.filterByIntervalClause.push({ field, start, end })
   }
 
-  filterByExpression(fields, value) {
+  filterByExpression(fields: any, value: any) {
     this.filterByExpressionClause = { fields, value }
   }
 
-  filterByLessThan(field, end) {
+  filterByLessThan(field: any, end: any) {
     this.filterByLessThanClause = { field, end }
   }
 
-  filterByGreaterThan(field, start) {
+  filterByGreaterThan(field: any, start: any) {
     this.filterByGreaterThanClause = { field, start }
   }
 
@@ -84,7 +84,7 @@ class QueryBuilder {
     if (this.filterByExpressionClause) {
       const fields = []
       if (this.filterByExpressionClause.fields instanceof Array) {
-        this.filterByExpressionClause.fields.forEach((field) => fields.push(field))
+        this.filterByExpressionClause.fields.forEach((field: any) => fields.push(field))
       } else {
         fields.push(this.filterByExpressionClause.fields)
       }
@@ -93,9 +93,9 @@ class QueryBuilder {
       if (fields.length === 1 && values.length === 1) {
         this.query.where({ [fields[0]]: new RegExp(values[0], 'i') })
       } else {
-        const expressionClauses = []
-        fields.forEach((field) => {
-          values.forEach((value) => {
+        const expressionClauses: any[] = []
+        fields.forEach((field: any) => {
+          values.forEach((value: any) => {
             expressionClauses.push({ [field]: new RegExp(value, 'i') })
           })
         })

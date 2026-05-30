@@ -5,12 +5,12 @@ class OrderStatus {
   licensee: any
   integrationlogRepository: any
 
-  constructor(licensee, { integrationlogRepository }: Record<string, any> = {}) {
+  constructor(licensee: any, { integrationlogRepository }: Record<string, any> = {}) {
     this.licensee = licensee
     this.integrationlogRepository = integrationlogRepository
   }
 
-  async change(orderId, status) {
+  async change(orderId: any, status: any) {
     const body = {
       orderId: orderId,
       status: status,

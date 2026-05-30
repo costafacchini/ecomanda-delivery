@@ -17,10 +17,10 @@ class MessageRepositoryDatabase extends Repository {
     return Message
   }
 
-  async findFirst(params, relations) {
+  async findFirst(params: any = {}, relations: any[] = []) {
     if (relations) {
       const query = Message.findOne(params)
-      relations.forEach((relation) => query.populate(relation))
+      relations.forEach((relation: any) => query.populate(relation))
 
       return await query
     } else {
@@ -28,20 +28,20 @@ class MessageRepositoryDatabase extends Repository {
     }
   }
 
-  async create(fields) {
+  async create(fields: any = {}) {
     return await Message.create({ number: uuidv4(), ...fields })
   }
 
-  async update(id, fields) {
+  async update(id: any, fields: any = {}) {
     return await Message.updateOne({ _id: id }, { $set: fields }, { runValidators: true })
   }
 
-  async find(params) {
+  async find(params: any = {}) {
     return await Message.find(params)
   }
 
-  async createInteractiveMessages(fields) {
-    const messages = []
+  async createInteractiveMessages(fields: any) {
+    const messages: any[] = []
 
     const text = replace(fields.text)
 
@@ -70,7 +70,7 @@ class MessageRepositoryDatabase extends Repository {
     return messages
   }
 
-  async createTextMessageInsteadInteractive(fields) {
+  async createTextMessageInsteadInteractive(fields: any) {
     let { kind, text, contact } = fields
 
     if (kind === 'interactive') {
@@ -81,7 +81,7 @@ class MessageRepositoryDatabase extends Repository {
     return await this.create({ ...fields, kind, text, contact })
   }
 
-  async createMessageToWarnAboutWindowOfWhatsassHasExpired(contact, licensee) {
+  async createMessageToWarnAboutWindowOfWhatsassHasExpired(contact: any, licensee: any) {
     return await this.create({
       number: uuidv4(),
       kind: 'text',
@@ -92,7 +92,7 @@ class MessageRepositoryDatabase extends Repository {
     })
   }
 
-  async createMessageToWarnAboutWindowOfWhatsassIsEnding(contact, licensee) {
+  async createMessageToWarnAboutWindowOfWhatsassIsEnding(contact: any, licensee: any) {
     return await this.create({
       number: uuidv4(),
       kind: 'text',
@@ -114,13 +114,13 @@ class MessageRepositoryMemory extends RepositoryMemory {
     this.parseTextDependency = parseTextDependency
   }
 
-  async create(fields = {}) {
+  async create(fields: any = {}) {
     return await super.create({ number: uuidv4(), ...(fields ?? {}) })
   }
 
-  async createInteractiveMessages(fields) {
+  async createInteractiveMessages(fields: any) {
     const triggerRepository = requireDependency(this.triggerRepository, 'triggerRepository', 'MessageRepositoryMemory')
-    const messages = []
+    const messages: any[] = []
 
     const text = replace(fields.text)
     const triggers = await triggerRepository.find({ expression: text, licensee: fields.licensee }, { order: 'asc' })
@@ -149,7 +149,7 @@ class MessageRepositoryMemory extends RepositoryMemory {
     return messages
   }
 
-  async createTextMessageInsteadInteractive(fields) {
+  async createTextMessageInsteadInteractive(fields: any) {
     let { kind, text, contact } = fields
 
     if (kind === 'interactive') {
@@ -160,7 +160,7 @@ class MessageRepositoryMemory extends RepositoryMemory {
     return await this.create({ ...fields, kind, text, contact })
   }
 
-  async createMessageToWarnAboutWindowOfWhatsassHasExpired(contact, licensee) {
+  async createMessageToWarnAboutWindowOfWhatsassHasExpired(contact: any, licensee: any) {
     return await this.create({
       number: uuidv4(),
       kind: 'text',
@@ -171,7 +171,7 @@ class MessageRepositoryMemory extends RepositoryMemory {
     })
   }
 
-  async createMessageToWarnAboutWindowOfWhatsassIsEnding(contact, licensee) {
+  async createMessageToWarnAboutWindowOfWhatsassIsEnding(contact: any, licensee: any) {
     return await this.create({
       number: uuidv4(),
       kind: 'text',

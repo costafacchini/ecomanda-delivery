@@ -16,8 +16,8 @@ const CREATE_MESSAGE_FIELDS = [
 
 const SEND_MESSAGE_TO_MESSENGER_JOB = 'send-message-to-messenger'
 
-function pickFields(fields = {}, keys = []) {
-  return keys.reduce((payload, key) => {
+function pickFields(fields: Record<string, any> = {}, keys: any[] = []) {
+  return keys.reduce((payload: Record<string, any>, key: any) => {
     if (Object.prototype.hasOwnProperty.call(fields, key)) {
       payload[key] = fields[key]
     }

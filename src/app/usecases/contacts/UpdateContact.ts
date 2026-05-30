@@ -19,8 +19,8 @@ const UPDATE_CONTACT_FIELDS = [
 
 const SEND_CONTACT_TO_PAGARME_JOB = 'send-contact-to-pagarme'
 
-function pickFields(fields = {}, keys = []) {
-  return keys.reduce((payload, key) => {
+function pickFields(fields: Record<string, any> = {}, keys: any[] = []) {
+  return keys.reduce((payload: Record<string, any>, key: any) => {
     if (Object.prototype.hasOwnProperty.call(fields, key)) {
       payload[key] = fields[key]
     }
@@ -38,7 +38,7 @@ class UpdateContact {
     this.jobQueue = jobQueue
   }
 
-  async execute(id, fields = {}) {
+  async execute(id: any, fields = {}) {
     const payload = pickFields(fields, UPDATE_CONTACT_FIELDS)
 
     await this.contactRepository.update(id, payload)

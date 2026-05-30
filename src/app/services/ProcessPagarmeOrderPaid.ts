@@ -1,6 +1,6 @@
 import { logger } from '../helpers/logger'
 
-async function processPagarmeOrderPaid(body, { cartRepository, createPagarMe }: Record<string, any> = {}) {
+async function processPagarmeOrderPaid(body: any, { cartRepository, createPagarMe }: Record<string, any> = {}) {
   const pagarMe = createPagarMe()
   const event = pagarMe.parser.parseOrderPaidEvent(body)
 

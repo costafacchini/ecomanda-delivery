@@ -6,18 +6,18 @@ class CartRepositoryDatabase extends Repository {
     return Cart
   }
 
-  async create(fields) {
+  async create(fields: any = {}) {
     return await Cart.create({ ...fields })
   }
 
-  async update(id, fields) {
+  async update(id: any, fields: any = {}) {
     return await Cart.updateOne({ _id: id }, { $set: fields }, { runValidators: true })
   }
 
-  async findFirst(params, relations) {
+  async findFirst(params: any = {}, relations: any[] = []) {
     if (relations) {
       const query = Cart.findOne(params)
-      relations.forEach((relation) => query.populate(relation))
+      relations.forEach((relation: any) => query.populate(relation))
 
       return await query
     } else {
@@ -31,7 +31,7 @@ class CartRepositoryDatabase extends Repository {
 }
 
 class CartRepositoryMemory extends RepositoryMemory {
-  hydrate(record) {
+  hydrate(record: any) {
     const hydratedRecord = super.hydrate(record)
 
     if (!hydratedRecord) {
@@ -59,30 +59,30 @@ class CartRepositoryMemory extends RepositoryMemory {
     return hydratedRecord
   }
 
-  async create(fields = {}) {
+  async create(fields: any = {}) {
     return await super.create(this.normalizeCartFields(fields))
   }
 
-  async save(document) {
+  async save(document: any) {
     Object.assign(document, this.normalizeCartFields(document))
     return await super.save(document)
   }
 
-  async delete(params = {}) {
+  async delete(params: any = {}) {
     const recordsToKeep = this.items.filter((item) => !matchesFilter(item, params ?? {}))
     this.items.splice(0, this.items.length, ...recordsToKeep)
 
     return await Promise.resolve({ acknowledged: true })
   }
 
-  normalizeCartFields(fields = {}) {
+  normalizeCartFields(fields: any = {}) {
     const normalizedFields = {
-      products: [],
+      products: [] as any[],
       concluded: false,
       ...(fields ?? {}),
     }
 
-    normalizedFields.products = (normalizedFields.products ?? []).map((product) => ({
+    normalizedFields.products = (normalizedFields.products ?? []).map((product: any) => ({
       additionals: [],
       ...(product ?? {}),
     }))

@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { S3 } from '../storage/S3'
 import { requireDependency } from '../../helpers/RequireDependency'
 
-const uploadFile = (licensee, contact, fileName, fileBase64) => {
+const uploadFile = (licensee: any, contact: any, fileName: any, fileBase64: any) => {
   const s3 = new S3(licensee, contact, fileName, fileBase64)
   s3.uploadFile()
 
@@ -24,7 +24,7 @@ class MessengersBase {
   contactData: any
 
   constructor(
-    licensee,
+    licensee: any,
     { contactRepository, cartRepository, messageRepository, triggerRepository, productRepository }: Record<string, any> = {},
   ) {
     this.licensee = licensee
@@ -75,13 +75,13 @@ class MessengersBase {
   shouldUpdateWaStartChat(_contact: any): boolean { return false }
 
   // eslint-disable-next-line require-await
-  async getMediaUrl(_mediaId, _url, _token, _contact) {
+  async getMediaUrl(_mediaId: any, _url: any, _token: any, _contact: any): Promise<any> {
     // Método padrão que pode ser sobrescrito pelas classes filhas
     // Retorna null se não for implementado
     return null
   }
 
-  async findContact(number, type) {
+  async findContact(number: any, type: any) {
     return await this.contactRepository.findFirst({
       number: number,
       type: type,
@@ -89,7 +89,7 @@ class MessengersBase {
     })
   }
 
-  async responseToMessages(responseBody) {
+  async responseToMessages(responseBody: any) {
     this.parseMessageStatus(responseBody)
     if (this.messageStatus) {
       const message = await this.messageRepository.findFirst({

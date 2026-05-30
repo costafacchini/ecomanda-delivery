@@ -7,7 +7,7 @@ class GetBaileysStatus {
     this.whatsappSessionRepository = whatsappSessionRepository
   }
 
-  async execute(id) {
+  async execute(id: any) {
     const licensee = await this.licenseeRepository.findFirst({ _id: id })
 
     if (!licensee || licensee.whatsappDefault !== 'baileys') {

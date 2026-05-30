@@ -1,4 +1,4 @@
-async function sendOrder(data, { orderRepository, createIntegrator }: Record<string, any> = {}) {
+async function sendOrder(data: any, { orderRepository, createIntegrator }: Record<string, any> = {}) {
   const { orderId } = data
 
   const order = await orderRepository.findFirst({ _id: orderId }, ['licensee'])

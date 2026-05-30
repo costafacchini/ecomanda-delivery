@@ -1,10 +1,10 @@
 import request from '../../../services/request'
 import { logger } from '../../../helpers/logger'
 
-const buildBody = (cart, contact, buildPaymentBuilder) => {
+const buildBody = (cart: any, contact: any, buildPaymentBuilder: any) => {
   return {
     customer_id: contact.customer_id,
-    items: cart.products.map((product) => buildItem(product)),
+    items: cart.products.map((product: any) => buildItem(product)),
     shipping: {
       amount: Math.floor(cart.delivery_tax * 100),
       recipient_name: contact.name,
@@ -22,7 +22,7 @@ const buildBody = (cart, contact, buildPaymentBuilder) => {
   }
 }
 
-const buildItem = (product) => {
+const buildItem = (product: any) => {
   return {
     amount: Math.floor(product.unit_price * 100),
     description: product.name,
@@ -31,7 +31,7 @@ const buildItem = (product) => {
   }
 }
 
-const buildPaymentPIX = (licensee, cart) => {
+const buildPaymentPIX = (licensee: any, cart: any) => {
   return [
     {
       payment_method: 'pix',
@@ -50,7 +50,7 @@ const buildPaymentPIX = (licensee, cart) => {
   ]
 }
 
-const buildPaymentCreditCard = (licensee, cart, contact) => {
+const buildPaymentCreditCard = (licensee: any, cart: any, contact: any) => {
   return [
     {
       payment_method: 'credit_card',
@@ -66,7 +66,7 @@ const buildPaymentCreditCard = (licensee, cart, contact) => {
   ]
 }
 
-const doRequest = async (token, body) => {
+const doRequest = async (token: any, body: any) => {
   const headers = {
     Authorization: `Basic ${token}`,
   }
@@ -76,12 +76,12 @@ const doRequest = async (token, body) => {
   return response
 }
 
-const fillPixFields = (cart, last_transaction) => {
+const fillPixFields = (cart: any, last_transaction: any) => {
   cart.pix_qrcode = last_transaction.qr_code
   cart.pix_url = last_transaction.qr_code_url
 }
 
-const fillCreditCardFields = (cart, last_transaction) => {
+const fillCreditCardFields = (cart: any, last_transaction: any) => {
   cart.operation_key = last_transaction.operation_key
   cart.operation_id = last_transaction.id
   cart.gateway_id = last_transaction.gateway_id
@@ -101,7 +101,7 @@ class Payment {
     this.cartRepository = cartRepository
   }
 
-  async createPIX(cart, token) {
+  async createPIX(cart: any, token: any) {
     const licenseeId = cart.licensee?._id ?? cart.licensee
     const contactId = cart.contact?._id ?? cart.contact
     const licensee = await this.licenseeRepository.findFirst({ _id: licenseeId })
@@ -143,7 +143,7 @@ class Payment {
     }
   }
 
-  async createCreditCard(cart, token) {
+  async createCreditCard(cart: any, token: any) {
     const licenseeId = cart.licensee?._id ?? cart.licensee
     const contactId = cart.contact?._id ?? cart.contact
     const licensee = await this.licenseeRepository.findFirst({ _id: licenseeId })
@@ -185,7 +185,7 @@ class Payment {
     }
   }
 
-  async delete(cart, token) {
+  async delete(cart: any, token: any) {
     const headers = {
       Authorization: `Basic ${token}`,
     }

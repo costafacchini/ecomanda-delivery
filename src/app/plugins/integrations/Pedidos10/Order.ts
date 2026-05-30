@@ -10,7 +10,7 @@ class Order {
   authService: any
 
   constructor(
-    licensee,
+    licensee: any,
     { orderRepository, licenseeRepository, parser, authService, webhookService, orderStatusService }: Record<string, any> = {},
   ) {
     this.licensee = licensee
@@ -22,14 +22,14 @@ class Order {
     this.authService = requireDependency(authService, 'authService', this.constructor.name)
   }
 
-  syncLicensee(licensee) {
+  syncLicensee(licensee: any) {
     this.licensee = licensee
     this.webhookService.licensee = licensee
     this.orderStatusService.licensee = licensee
     this.authService.licensee = licensee
   }
 
-  async loadOrderFromDatabase(order) {
+  async loadOrderFromDatabase(order: any) {
     return await this.orderRepository.findFirst({
       licensee: this.licensee,
       merchant_external_code: order.merchant_external_code,
@@ -37,11 +37,11 @@ class Order {
     })
   }
 
-  alreadyExists(orderPersisted) {
+  alreadyExists(orderPersisted: any) {
     return !!orderPersisted
   }
 
-  async save(body) {
+  async save(body: any) {
     const order = this.orderBodyParser.parseOrder(body)
     const orderPersisted = await this.loadOrderFromDatabase(order)
 
@@ -94,7 +94,7 @@ class Order {
     if (isAutenticated) await this.webhookService.sign()
   }
 
-  async changeOrderStatus(orderId, status) {
+  async changeOrderStatus(orderId: any, status: any) {
     const isAutenticated = await this.checkAuth()
     if (isAutenticated) await this.orderStatusService.change(orderId, status)
   }

@@ -12,7 +12,7 @@ class AdressesController {
     this.show = this.show.bind(this)
   }
 
-  async update(req, res) {
+  async update(req: any, res: any) {
     try {
       const result = await this.updateContactAddress.execute({
         number: req.params.number,
@@ -28,7 +28,7 @@ class AdressesController {
     }
   }
 
-  async show(req, res) {
+  async show(req: any, res: any) {
     try {
       const normalizedPhone = this.normalizePhone(req.params.number)
       const licensee = req.licensee._id

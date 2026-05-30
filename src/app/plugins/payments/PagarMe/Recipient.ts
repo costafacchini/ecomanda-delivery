@@ -10,7 +10,7 @@ class Recipient {
     this.licenseeRepository = licenseeRepository
   }
 
-  async create(licensee, token) {
+  async create(licensee: any, token: any) {
     const body = {
       name: licensee.name,
       email: licensee.email,
@@ -56,7 +56,7 @@ class Recipient {
       )
     }
   }
-  async update(licensee, token) {
+  async update(licensee: any, token: any) {
     const body = {
       email: licensee.email,
       type: licensee.kind,

@@ -6,7 +6,7 @@ class Auth {
   integrationlogRepository: any
   licenseeRepository: any
 
-  constructor(licensee, { integrationlogRepository, licenseeRepository }: Record<string, any> = {}) {
+  constructor(licensee: any, { integrationlogRepository, licenseeRepository }: Record<string, any> = {}) {
     this.licensee = licensee
     this.integrationlogRepository = integrationlogRepository
     this.licenseeRepository = licenseeRepository

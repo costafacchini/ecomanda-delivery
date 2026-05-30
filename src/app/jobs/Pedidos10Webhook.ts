@@ -4,7 +4,7 @@ import { jobDependencies } from './dependencies'
 export default {
   key: 'pedidos10-webhook',
   workerEnabled: true,
-  async handle(data) {
+  async handle(data: any) {
     return await processWebhook(data.body, jobDependencies)
   },
 }

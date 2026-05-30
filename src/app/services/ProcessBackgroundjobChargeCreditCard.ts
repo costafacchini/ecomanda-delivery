@@ -1,5 +1,5 @@
 async function processBackgroundjobChargeCreditCard(
-  data,
+  data: any,
   { backgroundjobRepository, cartRepository, contactRepository, createPagarMe }: Record<string, any> = {},
 ) {
   const { jobId, credit_card_data, cart_id: cartId } = data
@@ -11,7 +11,7 @@ async function processBackgroundjobChargeCreditCard(
     const contact = await contactRepository.findFirst({ _id: cart.contact })
     const pagarMe = createPagarMe(backgroundjob.licensee)
     const card = contact.credit_cards.find(
-      (card) =>
+      (card: any) =>
         card.first_six_digits == credit_card_data.first_six_digits &&
         card.last_four_digits == credit_card_data.last_four_digits &&
         card.brand == credit_card_data.brand,

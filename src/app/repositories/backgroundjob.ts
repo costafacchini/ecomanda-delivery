@@ -6,7 +6,7 @@ class BackgroundjobRepositoryDatabase extends Repository {
     return Backgroundjob
   }
 
-  async create(fields = {}) {
+  async create(fields: any = {}) {
     const backgroundjob = new Backgroundjob({ ...(fields ?? {}) })
 
     return await this.save(backgroundjob)

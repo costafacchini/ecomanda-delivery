@@ -5,7 +5,7 @@ class Webhook {
   licensee: any
   integrationlogRepository: any
 
-  constructor(licensee, { integrationlogRepository }: Record<string, any> = {}) {
+  constructor(licensee: any, { integrationlogRepository }: Record<string, any> = {}) {
     this.licensee = licensee
     this.integrationlogRepository = integrationlogRepository
   }

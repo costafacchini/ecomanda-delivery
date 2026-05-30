@@ -16,8 +16,8 @@ class AddCartItem {
     const cart = await this.cartRepository.findFirst({ contact: contact._id, concluded: false })
     if (!cart) return CART_NOT_FOUND
 
-    products?.forEach((product) => {
-      const existing = cart.products.find((i) => i.product_retailer_id == product.product_retailer_id)
+    products?.forEach((product: any) => {
+      const existing = cart.products.find((i: any) => i.product_retailer_id == product.product_retailer_id)
       if (existing) {
         existing.quantity += product.quantity
       } else {

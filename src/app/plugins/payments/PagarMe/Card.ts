@@ -10,7 +10,7 @@ class Card {
     this.contactRepository = contactRepository
   }
 
-  async create(contact, creditCard, token) {
+  async create(contact: any, creditCard: any, token: any) {
     const body = {
       number: creditCard.number,
       holder_name: creditCard.holder_name,
@@ -59,7 +59,7 @@ class Card {
     }
   }
 
-  async list(contact, token) {
+  async list(contact: any, token: any) {
     const headers = {
       Authorization: `Basic ${token}`,
     }
@@ -85,7 +85,7 @@ class Card {
     }
   }
 
-  async getById(contact, token) {
+  async getById(contact: any, token: any) {
     const headers = {
       Authorization: `Basic ${token}`,
     }

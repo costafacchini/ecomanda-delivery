@@ -1,16 +1,16 @@
-import mime from 'mime-types'
+const mime = require("mime-types") as any
 import { logger } from '../../helpers/logger'
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
-const getBucketPath = (number) => {
+const getBucketPath = (number: any) => {
   const date = new Date()
   const folderDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
 
   return folderDate + '/' + number + '/'
 }
 
-const base64ToBuffer = (fileBase64) => {
+const base64ToBuffer = (fileBase64: any) => {
   let streamFileBase64 = fileBase64
 
   //O base64 da utalk tem umas informações do arquivo que deves ser removidas.
@@ -30,7 +30,7 @@ class S3 {
   aws: any
   bucketName: any
 
-  constructor(licensee, contact, fileName, fileBase64) {
+  constructor(licensee: any, contact: any, fileName: any, fileBase64: any) {
     this.licensee = licensee
     this.contact = contact
     this.fileName = fileName

@@ -1,4 +1,4 @@
-async function changeOrderStatus(data, { bodyRepository, createIntegrator, createPedidos10 }: Record<string, any> = {}) {
+async function changeOrderStatus(data: any, { bodyRepository, createIntegrator, createPedidos10 }: Record<string, any> = {}) {
   const { bodyId } = data
   const body = await bodyRepository.findFirst({ _id: bodyId }, ['licensee'])
   const { order, status } = body.content

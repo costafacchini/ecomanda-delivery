@@ -1,7 +1,8 @@
-import _ from 'lodash'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const _ = require('lodash') as any
 
 function sanitizeExpressErrors(errorsList: { msg: string }[]): { message: string }[] {
-  return _.uniqWith(errorsList, _.isEqual).map((item) => {
+  return _.uniqWith(errorsList, _.isEqual).map((item: any) => {
     return {
       message: item.msg,
     }

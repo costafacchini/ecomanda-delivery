@@ -1,4 +1,4 @@
-async function transformMessengerBody(data, { bodyRepository, createMessengerPlugin }: Record<string, any> = {}) {
+async function transformMessengerBody(data: any, { bodyRepository, createMessengerPlugin }: Record<string, any> = {}) {
   const { bodyId } = data
   const body = await bodyRepository.findFirst({ _id: bodyId }, ['licensee'])
   if (!body) {

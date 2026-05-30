@@ -12,23 +12,23 @@ class TriggersQuery {
     this.triggerRepository = triggerRepository
   }
 
-  page(value) {
+  page(value: any) {
     this.pageClause = value
   }
 
-  limit(value) {
+  limit(value: any) {
     this.limitClause = value
   }
 
-  filterByKind(value) {
+  filterByKind(value: any) {
     this.kindClause = value
   }
 
-  filterByLicensee(value) {
+  filterByLicensee(value: any) {
     this.licenseeClause = value
   }
 
-  filterByExpression(value) {
+  filterByExpression(value: any) {
     this.expressionClause = value
   }
 

@@ -4,7 +4,7 @@ import { jobDependencies } from './dependencies'
 export default {
   key: 'process-backgroundjob-invite-credit-card',
   workerEnabled: true,
-  async handle(data) {
+  async handle(data: any) {
     return await processBackgroundjobInviteCreditCard(data.body, jobDependencies)
   },
 }

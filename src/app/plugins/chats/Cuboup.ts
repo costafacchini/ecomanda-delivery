@@ -7,11 +7,11 @@ import request from '../../services/request'
 import { ChatsBase } from './Base'
 
 class Cuboup extends ChatsBase {
-  constructor(licensee, { contactRepository, messageRepository, ...dependencies }: Record<string, any> = {}) {
+  constructor(licensee: any, { contactRepository, messageRepository, ...dependencies }: Record<string, any> = {}) {
     super(licensee, { contactRepository, messageRepository, ...dependencies })
   }
 
-  action(responseBody) {
+  action(responseBody: any) {
     const { message } = responseBody
 
     if (message.text === 'Chat encerrado pelo agente' || message.text === 'Chat closed by agent') {
@@ -21,7 +21,7 @@ class Cuboup extends ChatsBase {
     }
   }
 
-  async parseMessage(responseBody) {
+  async parseMessage(responseBody: any): Promise<any> {
     const { recipient, message } = responseBody
 
     if (!message || !recipient) {
@@ -67,7 +67,7 @@ class Cuboup extends ChatsBase {
     this.messageParsed.messages = [messageToSend]
   }
 
-  static kindToMessageKind(kind) {
+  static kindToMessageKind(kind: any) {
     switch (kind) {
       case 'text':
         return 'text'
@@ -90,7 +90,7 @@ class Cuboup extends ChatsBase {
     }
   }
 
-  async transfer(messageId, url) {
+  async transfer(messageId: any, url: any) {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
     const contact = await this.contactRepository.findFirst({ _id: messageToSend.contact._id })
 
@@ -100,7 +100,7 @@ class Cuboup extends ChatsBase {
     await this.sendMessage(messageId, url)
   }
 
-  async sendMessage(messageId, url) {
+  async sendMessage(messageId: any, url: any) {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact', 'licensee'])
 
     const sender: Record<string, any> = {
@@ -162,7 +162,7 @@ class Cuboup extends ChatsBase {
     }
   }
 
-  static messageType(fileUrl) {
+  static messageType(fileUrl: any) {
     let type
     if (isPhoto(fileUrl)) {
       type = 'photo'
@@ -183,7 +183,7 @@ class Cuboup extends ChatsBase {
     return type
   }
 
-  async closeChat(messageId) {
+  async closeChat(messageId: any) {
     const message = await this.messageRepository.findFirst({ _id: messageId }, ['contact', 'licensee'])
     const licensee = message.licensee
 

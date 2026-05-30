@@ -1,8 +1,11 @@
 import amqp from 'amqplib/callback_api'
 const RABBIT_URL = process.env.CLOUDAMQP_URL
-import jobs from '../app/jobs/index'
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const jobs: any[] = require('../app/jobs/index').default
 
-function publishMessage(payload) {
+const jobList: any[] = jobs
+
+function publishMessage(payload: any) {
   amqp.connect(RABBIT_URL, function (errorOnConnect, connection) {
     if (errorOnConnect) throw errorOnConnect
 
@@ -36,7 +39,7 @@ function consumeChannel() {
         async function (payloadBuffer) {
           try {
             const payload = JSON.parse(payloadBuffer.content.toString())
-            const job = Object.values(jobs).find((job) => job.key === payload.key)
+            const job = jobList.find((job: any) => job.key === payload.key)
 
             const handleResult = await job.handle({ body: payload.body })
             if (handleResult) {

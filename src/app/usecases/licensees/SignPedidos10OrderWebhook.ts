@@ -1,7 +1,7 @@
 const WEBHOOK_SIGNED_MESSAGE = 'Webhook assinado!'
 const WEBHOOK_NOT_SIGNED_MESSAGE = 'Webhook não assinado pois não tem os dados para o login!'
 
-function hasPedidos10IntegrationData(licensee) {
+function hasPedidos10IntegrationData(licensee: any) {
   const integration = licensee?.pedidos10_integration
 
   return !!integration && Object.keys(integration).length > 0
@@ -16,7 +16,7 @@ class SignPedidos10OrderWebhook {
     this.createPedidos10 = createPedidos10
   }
 
-  async execute(id) {
+  async execute(id: any) {
     const licensee = await this.licenseeRepository.findFirst({ _id: id })
 
     if (!hasPedidos10IntegrationData(licensee)) {

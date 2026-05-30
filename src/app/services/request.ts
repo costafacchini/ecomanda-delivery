@@ -1,6 +1,6 @@
 import 'isomorphic-fetch'
 
-async function request(url, method, { headers, body, isDownload }: Record<string, any> = {}) {
+async function request(url: any, method: any, { headers, body, isDownload }: Record<string, any> = {}) {
   const requestOptions: Record<string, any> = {
     method: method,
     headers: {
@@ -41,27 +41,27 @@ async function request(url, method, { headers, body, isDownload }: Record<string
   return result
 }
 
-function isJSON(response) {
+function isJSON(response: any) {
   return response.headers.get('content-type') && response.headers.get('content-type').includes('application/json')
 }
 
 export default {
-  get(url, requestOpts = {}) {
+  get(url: any, requestOpts = {}) {
     return request(url, 'GET', requestOpts)
   },
-  post(url, requestOpts = {}) {
+  post(url: any, requestOpts = {}) {
     return request(url, 'POST', requestOpts)
   },
-  patch(url, requestOpts = {}) {
+  patch(url: any, requestOpts = {}) {
     return request(url, 'PATCH', requestOpts)
   },
-  put(url, requestOpts = {}) {
+  put(url: any, requestOpts = {}) {
     return request(url, 'PUT', requestOpts)
   },
-  download(url, requestOpts = {}) {
+  download(url: any, requestOpts = {}) {
     return request(url, 'GET', Object.assign(requestOpts, { isDownload: true }))
   },
-  delete(url, requestOpts = {}) {
+  delete(url: any, requestOpts = {}) {
     return request(url, 'DELETE', requestOpts)
   },
 }

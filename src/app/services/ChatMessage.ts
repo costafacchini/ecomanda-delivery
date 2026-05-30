@@ -1,5 +1,5 @@
 async function transformChatBody(
-  data,
+  data: any,
   { bodyRepository, contactRepository, messageRepository, createChatPlugin }: Record<string, any> = {},
 ) {
   const { bodyId } = data

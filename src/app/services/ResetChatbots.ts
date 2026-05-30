@@ -5,7 +5,7 @@ import { sortRecords } from '../repositories/repository'
 const ONE_HOUR = 1
 const TO_MESSENGER = 'to-messenger'
 
-async function getLastMessageOfContact(contactId, { messageRepository }: Record<string, any> = {}) {
+async function getLastMessageOfContact(contactId: any, { messageRepository }: Record<string, any> = {}) {
   const messages = sortRecords(
     await messageRepository.find({
       contact: contactId,
@@ -21,7 +21,7 @@ function getTimeLimit() {
   return moment().tz('UTC').subtract(ONE_HOUR, 'hour')
 }
 
-async function sendMessageToMessegner(licensee, contactId, text, { messageRepository, createMessengerPlugin }: Record<string, any> = {}) {
+async function sendMessageToMessegner(licensee: any, contactId: any, text: any, { messageRepository, createMessengerPlugin }: Record<string, any> = {}) {
   const messageToSend = await messageRepository.create({
     number: uuidv4(),
     text: text,
@@ -50,7 +50,7 @@ async function resetChatbots({
         licensee: licensee._id,
         talkingWithChatBot: true,
       })
-    ).filter((contact) => contact.landbotId != null)
+    ).filter((contact: any) => contact.landbotId != null)
 
     for (const contact of contacts) {
       const message = await getLastMessageOfContact(contact._id, { messageRepository })

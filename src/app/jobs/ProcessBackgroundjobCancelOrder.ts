@@ -4,7 +4,7 @@ import { jobDependencies } from './dependencies'
 export default {
   key: 'process-backgroundjob-cancel-order',
   workerEnabled: true,
-  async handle(data) {
+  async handle(data: any) {
     return await processBackgroundjobCancelOrder(data.body, jobDependencies)
   },
 }

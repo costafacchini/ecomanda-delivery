@@ -64,7 +64,7 @@ class LicenseesController {
     ]
   }
 
-  async create(req, res) {
+  async create(req: any, res: any) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
@@ -83,7 +83,7 @@ class LicenseesController {
     }
   }
 
-  async update(req, res) {
+  async update(req: any, res: any) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
@@ -102,7 +102,7 @@ class LicenseesController {
     }
   }
 
-  async show(req, res) {
+  async show(req: any, res: any) {
     try {
       const licensee = await this.licenseeRepository.findFirst({ _id: req.params.id })
       licensee.pedidos10_integration = JSON.stringify(licensee.pedidos10_integration)
@@ -117,7 +117,7 @@ class LicenseesController {
     }
   }
 
-  async index(req, res) {
+  async index(req: any, res: any) {
     try {
       const page = req.query.page || 1
       const limit = req.query.limit || 30
@@ -159,7 +159,7 @@ class LicenseesController {
     }
   }
 
-  async setDialogWebhook(req, res) {
+  async setDialogWebhook(req: any, res: any) {
     try {
       const response = await this.setDialogWebhookUseCase.execute(req.params.id)
 
@@ -169,7 +169,7 @@ class LicenseesController {
     }
   }
 
-  async sendToPagarMe(req, res) {
+  async sendToPagarMe(req: any, res: any) {
     try {
       const response = await this.sendLicenseeToPagarMe.execute(req.params.id)
 
@@ -179,7 +179,7 @@ class LicenseesController {
     }
   }
 
-  async signOrderWebhook(req, res) {
+  async signOrderWebhook(req: any, res: any) {
     try {
       const response = await this.signPedidos10OrderWebhook.execute(req.params.id)
 
@@ -189,7 +189,7 @@ class LicenseesController {
     }
   }
 
-  async getBaileysQr(req, res) {
+  async getBaileysQr(req: any, res: any) {
     try {
       const response = await this.getBaileysQrUseCase.execute(req.params.id)
 
@@ -199,7 +199,7 @@ class LicenseesController {
     }
   }
 
-  async getBaileysStatus(req, res) {
+  async getBaileysStatus(req: any, res: any) {
     try {
       const response = await this.getBaileysStatusUseCase.execute(req.params.id)
 
@@ -209,7 +209,7 @@ class LicenseesController {
     }
   }
 
-  async baileysSync(req, res) {
+  async baileysSync(req: any, res: any) {
     try {
       const response = await this.syncBaileysDirectoryUseCase.execute(req.params.id)
 

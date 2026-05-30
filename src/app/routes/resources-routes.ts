@@ -105,11 +105,11 @@ const templatesController = new TemplatesController({
   createTemplatesImporter,
 })
 
-function authenticate(req, res, next) {
+function authenticate(req: any, res: any, next: any) {
   const token = req.headers['x-access-token']
   if (!token) return res.status(401).json({ auth: false, message: 'Token não informado.' })
 
-  jwt.verify(token, SECRET, function (err, decoded) {
+  jwt.verify(token, SECRET, function (err: any, decoded: any) {
     if (err) return res.status(401).json({ auth: false, message: 'Falha na autenticação com token.' })
 
     req.userId = decoded.id
@@ -117,7 +117,7 @@ function authenticate(req, res, next) {
   })
 }
 
-async function requireSuper(req, res, next) {
+async function requireSuper(req: any, res: any, next: any) {
   try {
     const user = await userRepository.findFirst({ _id: req.userId })
     if (!user || !user.isSuper) {

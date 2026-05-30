@@ -5,8 +5,8 @@ import { LicenseeRepositoryDatabase } from '../repositories/licensee'
 const router = express.Router()
 const licenseeRepository = new LicenseeRepositoryDatabase()
 
-function buildAuthenticateLicensee({ licenseeRepository }) {
-  return async function authenticateLicensee(req, res, next) {
+function buildAuthenticateLicensee({ licenseeRepository }: any) {
+  return async function authenticateLicensee(req: any, res: any, next: any) {
     if (req.query.token) {
       const licensee = await licenseeRepository.findFirst({ apiToken: req.query.token })
       if (licensee) {

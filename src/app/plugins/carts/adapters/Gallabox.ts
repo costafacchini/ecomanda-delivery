@@ -1,7 +1,7 @@
 import { FractionalProducts } from '../../../helpers/FractionalProducts'
 
 class Gallabox {
-  parseCart(licensee, contact, cart) {
+  parseCart(licensee: any, contact: any, cart: any) {
     const cartParsed = {
       delivery_tax: 0,
       discount: 0,
@@ -21,7 +21,7 @@ class Gallabox {
       partner_key: '',
       payment_method: '',
       points: false,
-      products: [],
+      products: [] as any[],
     }
 
     for (const item of cart.order.product_items) {

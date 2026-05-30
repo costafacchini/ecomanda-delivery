@@ -15,27 +15,27 @@ class LicenseesQuery {
     this.licenseeRepository = licenseeRepository
   }
 
-  page(value) {
+  page(value: any) {
     this.pageClause = value
   }
 
-  limit(value) {
+  limit(value: any) {
     this.limitClause = value
   }
 
-  filterByChatDefault(value) {
+  filterByChatDefault(value: any) {
     this.chatClause = value
   }
 
-  filterByChatbotDefault(value) {
+  filterByChatbotDefault(value: any) {
     this.chatbotClause = value
   }
 
-  filterByWhatsappDefault(value) {
+  filterByWhatsappDefault(value: any) {
     this.whatsappClause = value
   }
 
-  filterByExpression(value) {
+  filterByExpression(value: any) {
     this.expressionClause = value
   }
 
@@ -43,7 +43,7 @@ class LicenseesQuery {
     this.expressionActive = true
   }
 
-  filterByPedidos10Active(value) {
+  filterByPedidos10Active(value: any) {
     if (value === true || value === 'true') {
       this.expressionPedidos10Active = undefined
     } else {

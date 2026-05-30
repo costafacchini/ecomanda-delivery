@@ -155,12 +155,12 @@ cartSchema.set('toJSON', {
 cartSchema.methods.calculateTotal = function () {
   const cart = this
 
-  return cart.products?.reduce((summaryProducts, product) => {
+  return cart.products?.reduce((summaryProducts: any, product: any) => {
     return summaryProducts + product.unit_price * product.quantity
   }, cart.delivery_tax || 0)
 }
 
-cartSchema.methods.calculateTotalItem = function (item) {
+cartSchema.methods.calculateTotalItem = function (item: any) {
   return item.unit_price * item.quantity
 }
 

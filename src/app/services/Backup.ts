@@ -4,8 +4,8 @@ import os from 'os'
 import path from 'path'
 import { spawn } from 'child_process'
 import { Writable } from 'stream'
-import { ZipArchive } from 'archiver'
-import mime from 'mime-types'
+const { ZipArchive } = require('archiver') as any
+const mime = require('mime-types') as any
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 
 async function backup() {
@@ -27,10 +27,10 @@ async function backup() {
   }
 }
 
-function zipBackup(file) {
+function zipBackup(file: any) {
   return new Promise((resolve, reject) => {
     const archive = new ZipArchive({})
-    const chunks = []
+    const chunks: any[] = []
     const output = new Writable({
       write(chunk, _encoding, callback) {
         chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk))
@@ -50,7 +50,7 @@ function zipBackup(file) {
   })
 }
 
-function doBackup(mongoURI) {
+function doBackup(mongoURI: any) {
   return new Promise(function (resolve, reject) {
     var fileName = 'ecomanda-delivery'
     var output = path.join(os.tmpdir(), fileName)
@@ -76,7 +76,7 @@ function doBackup(mongoURI) {
   })
 }
 
-async function upload(content, fileName) {
+async function upload(content: any, fileName: any) {
   const backupAccessKeyId = process.env.AWS_ACCESS_KEY_ID
   const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
   const bucketName = process.env.AWS_BUCKET_NAME

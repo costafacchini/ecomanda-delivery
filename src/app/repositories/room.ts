@@ -12,7 +12,7 @@ class RoomRepositoryDatabase extends Repository {
 }
 
 class RoomRepositoryMemory extends RepositoryMemory {
-  async create(fields = {}) {
+  async create(fields: any = {}) {
     return await super.create({
       closed: false,
       ...(fields ?? {}),

@@ -1,11 +1,12 @@
 import 'dotenv/config'
 import './instrument'
-import debug from 'debug'
+const debug = require('debug') as any
 import { server } from './src/config/http'
 import('./src/app/websockets/index')
 
 if (process.env.NODE_ENV === 'production') {
-  import('newrelic')
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  require('newrelic')
 }
 
 const errorDebug = debug('ecomanda-delivery:server')
@@ -17,7 +18,7 @@ server.on('error', onError)
 
 server.on('listening', onListening)
 
-function onError(error) {
+function onError(error: any) {
   if (error.syscall !== 'listen') {
     throw error
   }
@@ -40,6 +41,6 @@ function onError(error) {
 
 function onListening() {
   const addr = server.address()
-  const bind = typeof addr === 'string' ? 'pipe ' + addr : 'PORT ' + addr.PORT
+  const bind = typeof addr === 'string' ? 'pipe ' + addr : 'PORT ' + (addr as any).port
   errorDebug('Listening on ' + bind)
 }

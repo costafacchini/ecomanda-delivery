@@ -4,7 +4,7 @@ import { jobDependencies } from './dependencies'
 export default {
   key: 'pedidos10-change-order-status',
   workerEnabled: true,
-  async handle(data) {
+  async handle(data: any) {
     return await changeOrderStatus(data.body, jobDependencies)
   },
 }

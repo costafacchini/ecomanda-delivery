@@ -30,16 +30,16 @@ import { WhatsappSessionRepositoryDatabase, WhatsappSessionRepositoryMemory } fr
 import { RepositoryMemory, matchesFilter, sortRecords, comparableValue } from './repository'
 import { parseText as parseTextHelper } from '../helpers/ParseTriggerText'
 
-let activeRestore = null
+let activeRestore: any = null
 
-function serializeRelations(record, relations = []) {
+function serializeRelations(record: any, relations: any[] = []) {
   if (!record) {
     return record
   }
 
   const clone = { ...record }
 
-  relations.forEach((relation) => {
+  relations.forEach((relation: any) => {
     if (clone[relation] && typeof clone[relation] === 'object') {
       clone[relation] = clone[relation]._id ?? clone[relation]
     }
@@ -48,7 +48,7 @@ function serializeRelations(record, relations = []) {
   return clone
 }
 
-function attachCartMethods(cart) {
+function attachCartMethods(cart: any) {
   if (!cart) {
     return cart
   }
@@ -64,7 +64,7 @@ function attachCartMethods(cart) {
   return cart
 }
 
-function serializeCart(cart, relations = []) {
+function serializeCart(cart: any, relations: any[] = []) {
   if (!cart) {
     return cart
   }
@@ -80,7 +80,7 @@ function serializeCart(cart, relations = []) {
   }
 
   if (Array.isArray(clone.products)) {
-    clone.products = clone.products.map((product) => {
+    clone.products = clone.products.map((product: any) => {
       const productClone = { ...product }
 
       if (!relations.includes('products.product') && productClone.product && typeof productClone.product === 'object') {
@@ -95,27 +95,27 @@ function serializeCart(cart, relations = []) {
 }
 
 function createMemoryRepositories() {
-  const state = {
-    backgroundjobs: [],
-    bodies: [],
-    carts: [],
-    contacts: [],
-    integrationlogs: [],
-    licensees: [],
-    messages: [],
-    orders: [],
-    products: [],
-    rooms: [],
-    templates: [],
-    trafficlights: [],
-    triggers: [],
-    users: [],
-    whatsappSessions: [],
+  const state: Record<string, any[]> = {
+    backgroundjobs: [] as any[],
+    bodies: [] as any[],
+    carts: [] as any[],
+    contacts: [] as any[],
+    integrationlogs: [] as any[],
+    licensees: [] as any[],
+    messages: [] as any[],
+    orders: [] as any[],
+    products: [] as any[],
+    rooms: [] as any[],
+    templates: [] as any[],
+    trafficlights: [] as any[],
+    triggers: [] as any[],
+    users: [] as any[],
+    whatsappSessions: [] as any[],
   }
 
   const cartRepository = new CartRepositoryMemory(state.carts)
   const triggerRepository = new TriggerRepositoryMemory(state.triggers)
-  const parseText = (text, contact) => parseTextHelper(text, contact, { cartRepository })
+  const parseText = (text: any, contact: any) => parseTextHelper(text, contact, { cartRepository })
   const messageRepository = new MessageRepositoryMemory({
     items: state.messages,
     triggerRepository,
@@ -157,7 +157,7 @@ class MemoryQuery {
   currentField: any
   relations: any[]
 
-  constructor(repository, params = {}, { single = false } = {}) {
+  constructor(repository: any, params: any = {}, { single = false } = {}) {
     this.repository = repository
     this.params = params
     this.single = single
@@ -179,63 +179,63 @@ class MemoryQuery {
     return this
   }
 
-  limit(value) {
+  limit(value: any) {
     this.limitCount = value
     return this
   }
 
-  where(fieldOrFilter = {}) {
+  where(fieldOrFilter: any = {}) {
     if (typeof fieldOrFilter === 'string') {
       this.currentField = fieldOrFilter
       return this
     }
 
-    this.predicates.push((record) => matchesFilter(record, fieldOrFilter))
+    this.predicates.push((record: any) => matchesFilter(record, fieldOrFilter))
     return this
   }
 
-  equals(value) {
+  equals(value: any) {
     const field = this.currentField
-    this.predicates.push((record) => matchesFilter(record, { [field]: value }))
+    this.predicates.push((record: any) => matchesFilter(record, { [field]: value }))
     return this
   }
 
-  ne(value) {
+  ne(value: any) {
     const field = this.currentField
-    this.predicates.push((record) => matchesFilter(record, { [field]: { $ne: value } }))
+    this.predicates.push((record: any) => matchesFilter(record, { [field]: { $ne: value } }))
     return this
   }
 
-  gt(value) {
+  gt(value: any) {
     const field = this.currentField
-    this.predicates.push((record) => matchesFilter(record, { [field]: { $gt: value } }))
+    this.predicates.push((record: any) => matchesFilter(record, { [field]: { $gt: value } }))
     return this
   }
 
-  gte(value) {
+  gte(value: any) {
     const field = this.currentField
-    this.predicates.push((record) => matchesFilter(record, { [field]: { $gte: value } }))
+    this.predicates.push((record: any) => matchesFilter(record, { [field]: { $gte: value } }))
     return this
   }
 
-  lt(value) {
+  lt(value: any) {
     const field = this.currentField
-    this.predicates.push((record) => matchesFilter(record, { [field]: { $lt: value } }))
+    this.predicates.push((record: any) => matchesFilter(record, { [field]: { $lt: value } }))
     return this
   }
 
-  lte(value) {
+  lte(value: any) {
     const field = this.currentField
-    this.predicates.push((record) => matchesFilter(record, { [field]: { $lte: value } }))
+    this.predicates.push((record: any) => matchesFilter(record, { [field]: { $lte: value } }))
     return this
   }
 
-  or(filters = []) {
-    this.predicates.push((record) => filters.some((filter) => matchesFilter(record, filter)))
+  or(filters: any[] = []) {
+    this.predicates.push((record: any) => filters.some((filter: any) => matchesFilter(record, filter)))
     return this
   }
 
-  populate(relation) {
+  populate(relation: any) {
     this.relations.push(relation)
     return this
   }
@@ -249,14 +249,14 @@ class MemoryQuery {
     return this.single ? (records[0] ?? null) : records
   }
 
-  then(resolve, reject) {
+  then(resolve: any, reject: any) {
     return this.exec().then(resolve, reject)
   }
 
   async resolve() {
     let records = await this.repository.find(this.params)
 
-    records = records.filter((record) => this.predicates.every((predicate) => predicate(record)))
+    records = records.filter((record: any) => this.predicates.every((predicate: any) => predicate(record)))
 
     if (this.sortClause) {
       records = sortRecords(records, this.sortClause)
@@ -278,12 +278,12 @@ class MemoryQuery {
   }
 }
 
-function aggregateMessageCounts(repository, pipeline = []) {
+function aggregateMessageCounts(repository: any, pipeline: any[] = []) {
   const matchStage = pipeline.find((stage) => stage?.$match)?.$match ?? {}
-  const records = repository.items.filter((record) => matchesFilter(record, matchStage))
+  const records = repository.items.filter((record: any) => matchesFilter(record, matchStage))
   const grouped = new Map()
 
-  records.forEach((record) => {
+  records.forEach((record: any) => {
     const licenseeId = comparableValue(record.licensee)
     const day = new Date(record.createdAt).toISOString().slice(0, 10)
     const key = `${licenseeId}:${day}`
@@ -305,7 +305,7 @@ function aggregateMessageCounts(repository, pipeline = []) {
 
       return left._id.day > right._id.day ? 1 : -1
     })
-    .forEach((entry) => {
+    .forEach((entry: any) => {
       const licenseeKey = comparableValue(entry._id.licensee)
       const current = groupedByLicensee.get(licenseeKey) ?? {
         _id: entry._id.licensee,
@@ -319,19 +319,19 @@ function aggregateMessageCounts(repository, pipeline = []) {
   return Array.from(groupedByLicensee.values())
 }
 
-function createMemoryModelAdapter(repository, { aggregate }: { aggregate?: any } = {}) {
+function createMemoryModelAdapter(repository: any, { aggregate }: { aggregate?: any } = {}) {
   return {
     create: async (fields = {}) => await repository.create(fields),
     find: (params = {}) => new MemoryQuery(repository, params),
     findOne: (params = {}) => new MemoryQuery(repository, params, { single: true }),
-    findById: (id) => new MemoryQuery(repository, { _id: id?._id ?? id }, { single: true }),
+    findById: (id: any) => new MemoryQuery(repository, { _id: id?._id ?? id }, { single: true }),
     deleteMany: async (params = {}) => await repository.delete(params),
     where: (params = {}) => new MemoryQuery(repository).where(params),
-    aggregate: async (pipeline = []) => (aggregate ? await aggregate(repository, pipeline) : []),
+    aggregate: async (pipeline: any[] = []) => (aggregate ? await aggregate(repository, pipeline) : []),
   }
 }
 
-function bindModelToRepository(model, repository, restores) {
+function bindModelToRepository(model: any, repository: any, restores: any) {
   const adapter = createMemoryModelAdapter(repository)
 
   patchMember(model, 'create', adapter.create, restores)
@@ -342,7 +342,7 @@ function bindModelToRepository(model, repository, restores) {
   patchMember(model, 'where', adapter.where, restores)
 }
 
-function bindRepositoryPrototype(prototype, repository, restores) {
+function bindRepositoryPrototype(prototype: any, repository: any, restores: any) {
   // Stable base CRUD API — explicitly listed to avoid patching Repository internals like model().
   const baseMethods = ['findFirst', 'create', 'update', 'updateMany', 'find', 'delete', 'save']
 
@@ -362,7 +362,7 @@ function bindRepositoryPrototype(prototype, repository, restores) {
   })
 }
 
-function patchMember(target, key, replacement, restores) {
+function patchMember(target: any, key: any, replacement: any, restores: any) {
   const hasOwnProperty = Object.prototype.hasOwnProperty.call(target, key)
   const original = target[key]
 
@@ -382,8 +382,8 @@ function installMemoryRepositories() {
   resetMemoryRepositories()
 
   const repositories = createMemoryRepositories()
-  const restores = []
-  const loadRelation = (repository) => async (value) => {
+  const restores: any[] = []
+  const loadRelation = (repository: any) => async (value: any) => {
     const identifier = value?._id ?? value
 
     if (identifier == null) {
@@ -404,7 +404,7 @@ function installMemoryRepositories() {
   }
 
   repositories.cartRepository.find = async (params = {}) => {
-    return (await originalCartFind(params)).map((cart) => attachCartMethods(serializeCart(cart)))
+    return (await originalCartFind(params)).map((cart: any) => attachCartMethods(serializeCart(cart)))
   }
 
   repositories.cartRepository.findFirst = async (params = {}, relations = []) => {
@@ -435,7 +435,7 @@ function installMemoryRepositories() {
   }
 
   repositories.messageRepository.find = async (params = {}) => {
-    return (await originalMessageFind(params)).map((message) =>
+    return (await originalMessageFind(params)).map((message: any) =>
       serializeRelations(message, ['contact', 'licensee', 'room', 'trigger', 'cart']),
     )
   }
@@ -456,7 +456,7 @@ function installMemoryRepositories() {
   }
 
   repositories.roomRepository.find = async (params = {}) => {
-    return (await originalRoomFind(params)).map((room) => serializeRelations(room, ['contact']))
+    return (await originalRoomFind(params)).map((room: any) => serializeRelations(room, ["contact"]))
   }
 
   repositories.roomRepository.findFirst = async (params = {}, relations = ['contact']) => {
@@ -650,7 +650,7 @@ function installMemoryRepositories() {
   patchMember(
     Room,
     'findById',
-    async (id) =>
+    async (id: any) =>
       serializeRelations(await repositories.roomRepository.findFirst({ _id: id?._id ?? id }, []), ['contact']),
     restores,
   )

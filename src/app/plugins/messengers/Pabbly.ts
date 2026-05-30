@@ -5,7 +5,7 @@ import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files'
 import { MessengersBase } from './Base'
 import { requireDependency } from '../../helpers/RequireDependency'
 
-const getTemplates = async (url, token) => {
+const getTemplates = async (url: any, token: any) => {
   const headers = {
     Authorization: `Bearer ${token}`,
     'Content-Type': 'application/json',
@@ -20,11 +20,11 @@ const getTemplates = async (url, token) => {
   }
 }
 
-const parseTemplates = (pabblyTemplates, licenseeId) => {
-  const templates = []
+const parseTemplates = (pabblyTemplates: any, licenseeId: any) => {
+  const templates: any[] = []
 
   for (const template of pabblyTemplates || []) {
-    const templateValues = {
+    const templateValues: Record<string, any> = {
       name: template.name,
       // namespace: template.namespace,
       licensee: licenseeId,
@@ -39,7 +39,7 @@ const parseTemplates = (pabblyTemplates, licenseeId) => {
     }
 
     if (template.components) {
-      template.components.forEach((component) => {
+      template.components.forEach((component: any) => {
         const type = component.type.toLowerCase()
 
         if (component.format) {
@@ -48,7 +48,7 @@ const parseTemplates = (pabblyTemplates, licenseeId) => {
           const regex = /\{\{([0-9]*)\}\}/g
           const matches = component.text.match(regex)
           if (matches) {
-            matches.forEach((match) => {
+            matches.forEach((match: any) => {
               const number = match.replace(/\D/g, '')
               templateValues[`${type}Params`].push({ number, format: 'text' })
             })
@@ -63,13 +63,13 @@ const parseTemplates = (pabblyTemplates, licenseeId) => {
   return templates
 }
 
-const parseComponents = (template, parameters) => {
-  const components = []
+const parseComponents = (template: any, parameters: any) => {
+  const components: any[] = []
   let paramCounter = 1
 
   if (template.headerParams.length > 0) {
-    const header = []
-    template.headerParams.forEach((param, index) => {
+    const header: any[] = []
+    template.headerParams.forEach((param: any, index: any) => {
       header.push(parseComponentParam(param, parameters[index + paramCounter]))
     })
     components.push({
@@ -80,8 +80,8 @@ const parseComponents = (template, parameters) => {
   }
 
   if (template.bodyParams.length > 0) {
-    const body = []
-    template.bodyParams.forEach((param, index) => {
+    const body: any[] = []
+    template.bodyParams.forEach((param: any, index: any) => {
       body.push(parseComponentParam(param, parameters[index + paramCounter]))
     })
     components.push({
@@ -92,8 +92,8 @@ const parseComponents = (template, parameters) => {
   }
 
   if (template.footerParams.length > 0) {
-    const footer = []
-    template.footerParams.forEach((param, index) => {
+    const footer: any[] = []
+    template.footerParams.forEach((param: any, index: any) => {
       footer.push(parseComponentParam(param, parameters[index + paramCounter]))
     })
     components.push({
@@ -105,7 +105,7 @@ const parseComponents = (template, parameters) => {
   return components
 }
 
-const parseComponentParam = (param, value) => {
+const parseComponentParam = (param: any, value: any) => {
   if (param.format?.toUpperCase() === 'IMAGE') {
     return {
       type: 'image',
@@ -130,7 +130,7 @@ class Pabbly extends MessengersBase {
   _templateRepository: any
   _parseText: any
 
-  constructor(licensee, { templateRepository, messageRepository, parseText, ...dependencies }: Record<string, any> = {}) {
+  constructor(licensee: any, { templateRepository, messageRepository, parseText, ...dependencies }: Record<string, any> = {}) {
     super(licensee, { messageRepository, ...dependencies })
     this._templateRepository = templateRepository
     this._parseText = parseText
@@ -144,7 +144,7 @@ class Pabbly extends MessengersBase {
     return requireDependency(this._parseText, 'parseText', this.constructor.name)
   }
 
-  action(messageDestination) {
+  action(messageDestination: any) {
     if (messageDestination === 'to-chat') {
       return 'send-message-to-chat'
     } else if (messageDestination === 'to-messenger') {
@@ -154,11 +154,11 @@ class Pabbly extends MessengersBase {
     }
   }
 
-  parseMessageStatus(_) {
+  parseMessageStatus(_: any) {
     this.messageStatus = null
   }
 
-  parseMessage(responseBody) {
+  parseMessage(responseBody: any) {
     if (!responseBody.data || !['smb_message_echoes', 'message_received'].includes(responseBody.data.name)) {
       this.messageData = null
       return
@@ -261,7 +261,7 @@ class Pabbly extends MessengersBase {
     }
   }
 
-  parseContactData(responseBody) {
+  parseContactData(responseBody: any) {
     if (
       !responseBody.data ||
       !['message_received', 'contact_created', 'smb_message_echoes'].includes(responseBody.data.name)
@@ -288,15 +288,15 @@ class Pabbly extends MessengersBase {
     }
   }
 
-  contactWithDifferentData(_) {
+  contactWithDifferentData(_: any) {
     return false
   }
 
-  shouldUpdateWaStartChat(contact) {
+  shouldUpdateWaStartChat(contact: any) {
     return !contact.wa_start_chat
   }
 
-  async sendMessage(messageId, url, token) {
+  async sendMessage(messageId: any, url: any, token: any) {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
 
     const headers = {
@@ -428,7 +428,7 @@ class Pabbly extends MessengersBase {
     }
   }
 
-  async searchTemplates(url, token) {
+  async searchTemplates(url: any, token: any) {
     try {
       const pabblyTemplates = await getTemplates(url, token)
       const templates = parseTemplates(pabblyTemplates, this.licensee._id)
@@ -439,7 +439,7 @@ class Pabbly extends MessengersBase {
     }
   }
 
-  async getMediaUrl(mediaId, url, token, _contact) {
+  async getMediaUrl(mediaId: any, url: any, token: any, _contact: any) {
     const headers = {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',

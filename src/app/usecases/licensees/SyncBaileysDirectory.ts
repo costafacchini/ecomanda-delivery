@@ -12,7 +12,7 @@ class SyncBaileysDirectory {
     this.createMessengerPlugin = createMessengerPlugin
   }
 
-  async execute(id) {
+  async execute(id: any) {
     const licensee = await this.licenseeRepository.findFirst({ _id: id })
 
     if (!licensee || licensee.whatsappDefault !== WHATSAPP_DEFAULT_BAILEYS) {

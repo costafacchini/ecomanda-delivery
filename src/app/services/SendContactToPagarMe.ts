@@ -1,4 +1,4 @@
-async function sendContactToPagarMe(data, { contactRepository, createPagarMe }: Record<string, any> = {}) {
+async function sendContactToPagarMe(data: any, { contactRepository, createPagarMe }: Record<string, any> = {}) {
   const { contactId } = data
 
   const contact = await contactRepository.findFirst({ _id: contactId }, ['licensee'])

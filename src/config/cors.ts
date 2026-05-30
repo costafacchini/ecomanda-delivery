@@ -1,8 +1,8 @@
 import cors from 'cors'
 import { redisConnection } from './redis'
 
-function enableCors(app) {
-  app.use((req, _res, next) => {
+function enableCors(app: any) {
+  app.use((req: any, _res: any, next: any) => {
     const origin = req.headers['origin']
     if (origin) {
       redisConnection.sadd('cors:observed-origins', origin).catch(() => {})

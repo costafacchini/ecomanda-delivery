@@ -3,7 +3,7 @@ import { Crisp } from './Crisp'
 import { Cuboup } from './Cuboup'
 import { Chatwoot } from './Chatwoot'
 
-function createChatPlugin(licensee, dependencies = {}) {
+function createChatPlugin(licensee: any, dependencies = {}) {
   switch (licensee.chatDefault) {
     case 'rocketchat':
       return new Rocketchat(licensee, dependencies)

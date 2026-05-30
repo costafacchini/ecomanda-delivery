@@ -4,7 +4,7 @@ class MessagesFailedQuery {
   licenseeId: any
   messageRepository: any
 
-  constructor(startDate, endDate, licenseeId, { messageRepository }: { messageRepository?: any } = {}) {
+  constructor(startDate: any, endDate: any, licenseeId: any, { messageRepository }: { messageRepository?: any } = {}) {
     this.startDate = startDate
     this.endDate = endDate
     this.licenseeId = licenseeId

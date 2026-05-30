@@ -1,10 +1,10 @@
 class Alloy {
-  parseCart(licensee, contact, cart) {
+  parseCart(licensee: any, contact: any, cart: any) {
     const { itens } = cart
 
     const cartParsed = {
       delivery_tax: 0,
-      products: [],
+      products: [] as any[],
       contact: contact._id,
       licensee: licensee._id,
       concluded: false,
@@ -36,7 +36,7 @@ class Alloy {
         unit_price: item.valor,
         note: '',
         product_fb_id: '',
-        additionals: [],
+        additionals: [] as any[],
       }
 
       if (item.complementos) {

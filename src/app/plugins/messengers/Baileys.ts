@@ -10,7 +10,7 @@ const JID_WA_NET_SUFFIX = '@s.whatsapp.net'
 class Baileys extends MessengersBase {
   _whatsappSessionRepository: any
 
-  constructor(licensee, { whatsappSessionRepository, ...dependencies }: Record<string, any> = {}) {
+  constructor(licensee: any, { whatsappSessionRepository, ...dependencies }: Record<string, any> = {}) {
     super(licensee, dependencies)
     this._whatsappSessionRepository = whatsappSessionRepository
   }
@@ -19,7 +19,7 @@ class Baileys extends MessengersBase {
     return requireDependency(this._whatsappSessionRepository, 'whatsappSessionRepository', this.constructor.name)
   }
 
-  action(messageDestination) {
+  action(messageDestination: any) {
     if (messageDestination === 'to-chat') {
       return 'send-message-to-chat'
     } else if (messageDestination === 'to-messenger') {
@@ -29,13 +29,13 @@ class Baileys extends MessengersBase {
     }
   }
 
-  parseMessageStatus(_body) {
+  parseMessageStatus(_body: any) {
     // Baileys delivery receipts are not received via HTTP webhook body in the same shape.
     // For now, no status parsing is needed from incoming HTTP payloads.
     this.messageStatus = null
   }
 
-  parseMessage(body) {
+  parseMessage(body: any) {
     if (!body || !body.key) {
       this.messageData = null
       return
@@ -56,7 +56,7 @@ class Baileys extends MessengersBase {
     }
   }
 
-  parseContactData(body) {
+  parseContactData(body: any) {
     if (!body || !body.key) {
       this.contactData = null
       return
@@ -77,14 +77,14 @@ class Baileys extends MessengersBase {
     }
   }
 
-  contactWithDifferentData(contact) {
+  contactWithDifferentData(contact: any) {
     return (
       (this.contactData.name && this.contactData.name !== contact.name) ||
       (this.contactData.waId && this.contactData.waId !== contact.waId)
     )
   }
 
-  shouldUpdateWaStartChat(contact) {
+  shouldUpdateWaStartChat(contact: any) {
     return !contact.wa_start_chat
   }
 
@@ -96,14 +96,14 @@ class Baileys extends MessengersBase {
     return session
   }
 
-  async saveSession(session, creds, keys, BufferJSON) {
+  async saveSession(session: any, creds: any, keys: any, BufferJSON: any) {
     // Serialize Buffers to { type: 'Buffer', data: '<base64>' } before storing in MongoDB,
     // so BufferJSON.reviver can restore them correctly on the next load.
     const serialized = JSON.parse(JSON.stringify({ creds, keys }, BufferJSON.replacer))
     await this.whatsappSessionRepository.update(session._id, serialized)
   }
 
-  buildAuthState(session, initAuthCreds, BufferJSON) {
+  buildAuthState(session: any, initAuthCreds: any, BufferJSON: any) {
     // Deserialize creds and keys from MongoDB — plain objects must become real Buffer instances
     // so Baileys crypto operations receive the correct types.
     const creds =
@@ -117,14 +117,14 @@ class Baileys extends MessengersBase {
       state: {
         creds,
         keys: {
-          get: (type, ids) => {
+          get: (type: any, ids: any) => {
             const keyMap = keys[type] ?? {}
-            return ids.reduce((acc, id) => {
+            return ids.reduce((acc: any, id: any) => {
               if (keyMap[id] !== undefined) acc[id] = keyMap[id]
               return acc
             }, {})
           },
-          set: (data) => {
+          set: (data: any) => {
             for (const category of Object.keys(data)) {
               keys[category] = { ...(keys[category] ?? {}), ...data[category] }
             }
@@ -137,7 +137,7 @@ class Baileys extends MessengersBase {
 
   // Shared socket bootstrap — opens a connected Baileys socket and registers creds persistence.
   // Callers are responsible for socket lifecycle (socket.end()).
-  async _openSocket(session, state, rawKeys, BufferJSON) {
+  async _openSocket(session: any, state: any, rawKeys: any, BufferJSON: any) {
     const { default: makeWASocket, Browsers, fetchLatestBaileysVersion } = await import('@whiskeysockets/baileys')
     const { version } = await fetchLatestBaileysVersion()
 
@@ -159,16 +159,16 @@ class Baileys extends MessengersBase {
 
   // Waits for the socket to reach the 'open' connection state.
   // Rejects if the connection closes before opening.
-  _waitForConnection(socket) {
+  _waitForConnection(socket: any) {
     return new Promise<void>((resolve, reject) => {
-      socket.ev.on('connection.update', ({ connection, lastDisconnect }) => {
+      socket.ev.on('connection.update', ({ connection, lastDisconnect }: any) => {
         if (connection === 'open') resolve()
         if (connection === 'close') reject(lastDisconnect?.error ?? new Error('Connection Closed'))
       })
     })
   }
 
-  async sendMessage(messageId) {
+  async sendMessage(messageId: any) {
     const { initAuthCreds, BufferJSON } = await import('@whiskeysockets/baileys')
 
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
@@ -186,7 +186,7 @@ class Baileys extends MessengersBase {
     const session = await this.loadOrCreateSession()
     const { state, rawKeys } = this.buildAuthState(session, initAuthCreds, BufferJSON)
 
-    let socket
+    let socket: any
     try {
       socket = await this._openSocket(session, state, rawKeys, BufferJSON)
 
@@ -225,7 +225,7 @@ class Baileys extends MessengersBase {
         messageContent = { text: messageToSend.text }
       }
 
-      const result = await socket.sendMessage(jid, messageContent)
+      const result = await socket.sendMessage(jid, messageContent as any)
 
       // Wait for Baileys to flush the message over the WebSocket before closing.
       // sendMessage() resolves when the message is queued, not yet transmitted.
@@ -260,7 +260,7 @@ class Baileys extends MessengersBase {
     const session = await this.loadOrCreateSession()
     const { state, rawKeys } = this.buildAuthState(session, initAuthCreds, BufferJSON)
 
-    let socket
+    let socket: any
     try {
       socket = await this._openSocket(session, state, rawKeys, BufferJSON)
       await this._waitForConnection(socket)
@@ -287,7 +287,7 @@ class Baileys extends MessengersBase {
     }
   }
 
-  async _reconnectAfterPairing(session, state, rawKeys, BufferJSON) {
+  async _reconnectAfterPairing(session: any, state: any, rawKeys: any, BufferJSON: any) {
     const socket: any = await this._openSocket(session, state, rawKeys, BufferJSON)
 
     return new Promise<void>((resolve) => {
@@ -296,7 +296,7 @@ class Baileys extends MessengersBase {
         resolve()
       }, 15000)
 
-      socket.ev.on('connection.update', ({ connection }) => {
+      socket.ev.on('connection.update', ({ connection }: any) => {
         if (connection === 'open' || connection === 'close') {
           clearTimeout(timeout)
           socket.end()
@@ -310,7 +310,7 @@ class Baileys extends MessengersBase {
     return new Promise((resolve, reject) => {
       this.loadOrCreateSession()
         .then((session) => {
-          let socket
+          let socket: any
           const timer = setTimeout(() => {
             if (socket) socket.end()
             reject(new Error('Timeout ao gerar QR Code'))
@@ -327,7 +327,7 @@ class Baileys extends MessengersBase {
                 .then((openedSocket) => {
                   socket = openedSocket
 
-                  socket.ev.on('connection.update', (update) => {
+                  socket.ev.on('connection.update', (update: any) => {
                     const { qr, connection } = update
 
                     if (qr) {
@@ -343,7 +343,7 @@ class Baileys extends MessengersBase {
 
                     if (connection === 'close') {
                       clearTimeout(timer)
-                      const statusCode = update.lastDisconnect?.error?.output?.statusCode
+                      const statusCode = (update.lastDisconnect?.error as any)?.output?.statusCode
                       if (statusCode === 515) {
                         // 515 = Restart Required — WhatsApp closes the stream after QR pairing and
                         // expects the client to reconnect with the fresh credentials to complete

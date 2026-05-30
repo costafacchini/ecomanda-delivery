@@ -1,5 +1,5 @@
 class Default {
-  parseCart(licensee, contact, cart) {
+  parseCart(licensee: any, contact: any, cart: any) {
     const {
       delivery_tax,
       products,

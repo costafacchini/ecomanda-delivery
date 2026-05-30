@@ -3,7 +3,7 @@ import('../app/repositories/index')
 import createError from 'http-errors'
 import express from 'express'
 import helmet from 'helmet'
-import cookieParser from 'cookie-parser'
+const cookieParser = require('cookie-parser') as any
 import logger from 'morgan'
 import { logger as appLogger } from '../app/helpers/logger'
 import { connect } from './database'
@@ -46,7 +46,7 @@ if (process.env.ROLLBAR_ACCESS_TOKEN) {
 
   app.use(rollbar.errorHandler())
 } else {
-  app.use(function (err, req, res, _next) {
+  app.use(function (err: any, req: any, res: any, _next: any) {
     const status = err.status || 500
     appLogger.error('Unhandled error', err)
     res.status(status).json({ message: status < 500 ? err.message : 'Erro interno do servidor.' })

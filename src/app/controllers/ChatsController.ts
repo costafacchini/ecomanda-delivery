@@ -12,13 +12,13 @@ class ChatsController {
     this.reset = this.reset.bind(this)
   }
 
-  async message(req, res) {
+  async message(req: any, res: any) {
     await this.ingestChatMessage.execute({ body: req.body, licenseeId: req.licensee._id })
 
     res.status(200).send({ body: 'Solicitação de mensagem para a plataforma de chat agendado' })
   }
 
-  reset(_, res) {
+  reset(_: any, res: any) {
     logger.info('Agendando para resetar chats expirando')
 
     this.publishMessage({ key: 'reset-chats', body: {} })

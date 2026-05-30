@@ -8,7 +8,7 @@ async function parseText(text: string, contact: any, { cartRepository }: { cartR
     .replace(/\$last_cart_resume/g, await parseLastCart(contact, { cartRepository }))
 }
 
-function parseAddressComplete(contact) {
+function parseAddressComplete(contact: any) {
   const address_complete = []
   address_complete.push(`${contact.address || ''}, ${contact.address_number || ''}`)
   address_complete.push(`${contact.address_complement || ''}`)
@@ -28,7 +28,7 @@ async function parseLastCart(contact: any, { cartRepository }: { cartRepository?
   return last_cart ? cartDescription(last_cart) : ''
 }
 
-function cartDescription(cart) {
+function cartDescription(cart: any) {
   const description = []
   const title = cart.partner_key
     ? `*${cart.licensee.name.toUpperCase()} - PEDIDO ${cart.partner_key}*`
@@ -86,8 +86,8 @@ function cartDescription(cart) {
   return description.join('\n')
 }
 
-function productsDescription(products, description) {
-  return products.map((item) => {
+function productsDescription(products: any, description: any) {
+  return products.map((item: any) => {
     const productName = item.name || item.product?.name
     description.push(`${item.quantity}x ${productName} - ${formatNumber(item.unit_price)}`)
     if (item.additionals.length > 0) {
@@ -99,11 +99,11 @@ function productsDescription(products, description) {
   })
 }
 
-function formatNumber(value, decimal = 2) {
+function formatNumber(value: any, decimal = 2) {
   return 'R$ ' + value.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 
-function phoneWithoutCountryCode(phone) {
+function phoneWithoutCountryCode(phone: any) {
   return phone.length === 13 ? phone.substr(2, 11) : phone
 }
 

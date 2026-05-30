@@ -6,29 +6,29 @@ class LicenseeRepositoryDatabase extends Repository {
     return Licensee
   }
 
-  async findFirst(params) {
+  async findFirst(params: any = {}) {
     return await Licensee.findOne(params)
   }
 
-  async create(fields) {
+  async create(fields: any = {}) {
     return await Licensee.create({ ...fields })
   }
 
-  async update(id, fields) {
+  async update(id: any, fields: any = {}) {
     return await Licensee.updateOne({ _id: id }, { $set: fields }, { runValidators: true })
   }
 
-  async find(params) {
+  async find(params: any = {}) {
     return await Licensee.find(params)
   }
 }
 
 class LicenseeRepositoryMemory extends RepositoryMemory {
-  async create(fields = {}) {
+  async create(fields: any = {}) {
     return await super.create(this.normalizeLicenseeFields(fields))
   }
 
-  async save(document) {
+  async save(document: any) {
     Object.assign(document, this.normalizeLicenseeFields(document))
     return await super.save(document)
   }

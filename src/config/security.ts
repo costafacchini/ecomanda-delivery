@@ -18,7 +18,7 @@ export function helmetConfig() {
         'form-action': ["'self'"],
         'frame-ancestors': ["'none'"],
         // null disables this directive in dev — Safari upgrades http://localhost to https:// otherwise
-        'upgrade-insecure-requests': isDev ? null : [],
+        'upgrade-insecure-requests': isDev ? null : ([] as any[]),
       },
     },
     strictTransportSecurity: isDev ? false : { maxAge: 31536000, includeSubDomains: true },
