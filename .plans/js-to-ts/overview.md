@@ -65,7 +65,7 @@ Migrate the entire codebase (backend + client) from JavaScript to TypeScript inc
 | phase-3/task-18-migrate-controllers | Migrate controllers to .ts | 3 | not-started | phase-3/task-11-migrate-services |
 | phase-3/task-19-migrate-jobs | Migrate jobs to .ts | 3 | not-started | phase-3/task-11-migrate-services, phase-3/task-12-migrate-messenger-plugins, phase-3/task-13-migrate-chat-plugins |
 | phase-3/task-20-migrate-routes-websockets-entry | Migrate routes, websockets, and server entry to .ts | 3 | not-started | phase-3/task-18-migrate-controllers |
-| phase-4/task-21-client-ts-setup | Add client TS deps and create client/tsconfig.json | 4 | not-started | phase-0/task-00-verify-cra-to-vite-complete, phase-1/task-01-backend-ts-deps |
+| phase-4/task-21-client-ts-setup | Add client TS deps and create client/tsconfig.json | 4 | complete | phase-0/task-00-verify-cra-to-vite-complete, phase-1/task-01-backend-ts-deps |
 | phase-4/task-22-migrate-client-services | Migrate client/src/services/ to .ts | 4 | not-started | phase-4/task-21-client-ts-setup |
 | phase-4/task-23-migrate-client-contexts | Migrate client/src/contexts/ to .tsx | 4 | not-started | phase-4/task-21-client-ts-setup |
 | phase-4/task-24-migrate-client-components | Migrate client/src/components/ to .tsx | 4 | not-started | phase-4/task-23-migrate-client-contexts |
