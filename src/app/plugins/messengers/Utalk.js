@@ -1,7 +1,7 @@
-import { NormalizePhone } from '../../helpers/NormalizePhone.js'
+import { NormalizePhone } from '../../helpers/NormalizePhone'
 import request from '../../services/request.js'
 import { MessengersBase } from './Base.js'
-import { logger } from '../../helpers/logger.js'
+import { logger } from '../../helpers/logger'
 
 class Utalk extends MessengersBase {
   constructor(licensee, { messageRepository, ...dependencies } = {}) {

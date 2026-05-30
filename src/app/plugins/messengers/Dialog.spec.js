@@ -26,11 +26,11 @@ import request from '../../services/request.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 jest.mock('../../services/request')
-jest.mock('../../helpers/logger.js', () => ({
+jest.mock('../../helpers/logger', () => ({
   logger: { debug: jest.fn(), info: jest.fn(), warn: jest.fn(), error: jest.fn(), fatal: jest.fn() },
 }))
 import { createRuntimeDependencies } from '../../runtime/dependencies.js'
-import { logger } from '../../helpers/logger.js'
+import { logger } from '../../helpers/logger'
 
 let dependencies
 

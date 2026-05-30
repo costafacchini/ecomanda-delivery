@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-function sanitizeExpressErrors(errorsList) {
+function sanitizeExpressErrors(errorsList: { msg: string }[]): { message: string }[] {
   return _.uniqWith(errorsList, _.isEqual).map((item) => {
     return {
       message: item.msg,
@@ -8,7 +8,7 @@ function sanitizeExpressErrors(errorsList) {
   })
 }
 
-function sanitizeModelErrors(errors) {
+function sanitizeModelErrors(errors: Record<string, { message: string }>): { message: string }[] {
   return Object.keys(errors).map((key) => {
     return { message: errors[key].message }
   })

@@ -7,10 +7,10 @@ import request from '../../../../services/request.js'
 import { createRuntimeDependencies } from '../../../../runtime/dependencies.js'
 
 jest.mock('../../../../services/request')
-jest.mock('../../../../helpers/logger.js', () => ({
+jest.mock('../../../../helpers/logger', () => ({
   logger: { debug: jest.fn(), info: jest.fn(), warn: jest.fn(), error: jest.fn(), fatal: jest.fn() },
 }))
-import { logger } from '../../../../helpers/logger.js'
+import { logger } from '../../../../helpers/logger'
 
 describe('Pedidos10/Webhook plugin', () => {
   let licensee

@@ -1,5 +1,10 @@
 class FractionalProducts {
-  constructor(licensee) {
+  licensee: any
+  fractionTotal: number
+  fractionProductRetailerId: number
+  itemPartial: any[]
+
+  constructor(licensee: any) {
     this.licensee = licensee
     this.fractionTotal = 0
     this.fractionProductRetailerId = 0

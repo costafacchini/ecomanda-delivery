@@ -1,8 +1,8 @@
 import Repository from '../../repositories/repository.js'
-import { logger } from '../../helpers/logger.js'
+import { logger } from '../../helpers/logger'
 import { v4 as uuidv4 } from 'uuid'
 import { S3 } from '../storage/S3.js'
-import { requireDependency } from '../../helpers/RequireDependency.js'
+import { requireDependency } from '../../helpers/RequireDependency'
 
 const uploadFile = (licensee, contact, fileName, fileBase64) => {
   const s3 = new S3(licensee, contact, fileName, fileBase64)

@@ -1,7 +1,7 @@
 import Repository from '../../repositories/repository.js'
-import { replace } from '../../helpers/Emoji.js'
+import { replace } from '../../helpers/Emoji'
 import { v4 as uuidv4 } from 'uuid'
-import { requireDependency } from '../../helpers/RequireDependency.js'
+import { requireDependency } from '../../helpers/RequireDependency'
 
 class ChatsBase {
   constructor(licensee, { contactRepository, messageRepository, triggerRepository } = {}) {

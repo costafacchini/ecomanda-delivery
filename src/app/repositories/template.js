@@ -1,6 +1,6 @@
 import Repository, { RepositoryMemory, matchesFilter } from './repository.js'
 import Template from '../models/Template.js'
-import { requireDependency } from '../helpers/RequireDependency.js'
+import { requireDependency } from '../helpers/RequireDependency'
 
 class TemplateRepositoryDatabase extends Repository {
   model() {

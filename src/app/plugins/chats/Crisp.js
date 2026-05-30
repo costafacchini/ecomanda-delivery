@@ -1,9 +1,9 @@
-import { isMidia } from '../../helpers/Files.js'
-import { logger } from '../../helpers/logger.js'
+import { isMidia } from '../../helpers/Files'
+import { logger } from '../../helpers/logger'
 import request from '../../services/request.js'
 import mime from 'mime-types'
 import { ChatsBase } from './Base.js'
-import { requireDependency } from '../../helpers/RequireDependency.js'
+import { requireDependency } from '../../helpers/RequireDependency'
 
 const createSession = async (url, headers, contact, segments, roomRepository) => {
   const response = await request.post(`https://api.crisp.chat/v1/website/${url}/conversation`, { headers })

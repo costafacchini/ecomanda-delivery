@@ -1,5 +1,5 @@
 import { ContactRepositoryMemory } from '@repositories/contact'
-import { NormalizePhone } from '../../helpers/NormalizePhone.js'
+import { NormalizePhone } from '../../helpers/NormalizePhone'
 import { UpdateContactAddress } from './UpdateContactAddress.js'
 
 function buildUseCase() {

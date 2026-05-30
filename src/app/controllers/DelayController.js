@@ -1,4 +1,4 @@
-import { logger } from '../helpers/logger.js'
+import { logger } from '../helpers/logger'
 
 const delay = (ms) => new Promise((res) => setTimeout(res, ms))
 

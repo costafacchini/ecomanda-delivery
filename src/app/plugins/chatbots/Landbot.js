@@ -1,11 +1,11 @@
-import { replace } from '../../helpers/Emoji.js'
-import { logger } from '../../helpers/logger.js'
-import { NormalizePhone } from '../../helpers/NormalizePhone.js'
+import { replace } from '../../helpers/Emoji'
+import { logger } from '../../helpers/logger'
+import { NormalizePhone } from '../../helpers/NormalizePhone'
 import { v4 as uuidv4 } from 'uuid'
 import request from '../../services/request.js'
-import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files.js'
+import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files'
 import Repository from '../../repositories/repository.js'
-import { requireDependency } from '../../helpers/RequireDependency.js'
+import { requireDependency } from '../../helpers/RequireDependency'
 
 const closeRoom = async (contact, roomRepository) => {
   const room = await roomRepository.findFirst({ contact: contact._id, closed: false })

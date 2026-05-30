@@ -1,8 +1,8 @@
-import { NormalizePhone } from '../../helpers/NormalizePhone.js'
+import { NormalizePhone } from '../../helpers/NormalizePhone'
 import { MessengersBase } from './Base.js'
-import { logger } from '../../helpers/logger.js'
-import { requireDependency } from '../../helpers/RequireDependency.js'
-import { isPhoto, isVideo } from '../../helpers/Files.js'
+import { logger } from '../../helpers/logger'
+import { requireDependency } from '../../helpers/RequireDependency'
+import { isPhoto, isVideo } from '../../helpers/Files'
 
 const JID_GROUP_SUFFIX = '@g.us'
 const JID_WA_NET_SUFFIX = '@s.whatsapp.net'

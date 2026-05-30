@@ -1,5 +1,5 @@
 import { check, validationResult } from 'express-validator'
-import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
+import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors'
 
 class UsersController {
   constructor({ userRepository, createUser, updateUser } = {}) {

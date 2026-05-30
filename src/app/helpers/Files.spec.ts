@@ -1,4 +1,4 @@
-import { isPhoto, isVideo, isMidia, isVoice } from './Files.js'
+import { isPhoto, isVideo, isMidia, isVoice } from './Files'
 
 const photoExtensions = ['jpg', 'jpeg', 'png', 'gif']
 const videoExtensions = ['avi', 'mp4', 'm4v', 'mov', 'mpg', 'mpeg', 'wmv']

@@ -1,4 +1,4 @@
-import { sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
+import { sanitizeModelErrors } from '../helpers/SanitizeErrors'
 import _ from 'lodash'
 
 function permit(fields) {

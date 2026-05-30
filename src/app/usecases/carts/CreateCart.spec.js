@@ -1,6 +1,6 @@
 import { ContactRepositoryMemory } from '@repositories/contact'
 import { CartRepositoryMemory } from '@repositories/cart'
-import { NormalizePhone } from '../../helpers/NormalizePhone.js'
+import { NormalizePhone } from '../../helpers/NormalizePhone'
 import { CreateCart } from './CreateCart.js'
 
 function buildParsedCart(overrides = {}) {

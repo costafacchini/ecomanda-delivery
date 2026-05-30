@@ -3,7 +3,7 @@ import { CartRepositoryMemory } from '@repositories/cart'
 import { CartsController } from './CartsController.js'
 import { CART_NOT_FOUND } from '../usecases/carts/cartErrors.js'
 
-jest.mock('../helpers/logger.js', () => ({
+jest.mock('../helpers/logger', () => ({
   logger: {
     debug: jest.fn(),
     info: jest.fn(),

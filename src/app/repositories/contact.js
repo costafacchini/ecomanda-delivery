@@ -2,8 +2,8 @@ import Repository, { RepositoryMemory, comparableValue, sortRecords } from './re
 import Contact from '../models/Contact.js'
 import { MessagesQuery } from '../queries/MessagesQuery.js'
 import moment from 'moment-timezone'
-import { NormalizePhone } from '../helpers/NormalizePhone.js'
-import { requireDependency } from '../helpers/RequireDependency.js'
+import { NormalizePhone } from '../helpers/NormalizePhone'
+import { requireDependency } from '../helpers/RequireDependency'
 
 class ContactRepositoryDatabase extends Repository {
   constructor({ messageRepository } = {}) {

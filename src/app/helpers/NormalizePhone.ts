@@ -1,4 +1,4 @@
-const normalize = (number) => {
+const normalize = (number: string): string => {
   let result = number
 
   if (result[result.length - 1] === '.') {
@@ -24,7 +24,10 @@ const normalize = (number) => {
 }
 
 class NormalizePhone {
-  constructor(number) {
+  type: string
+  number: string
+
+  constructor(number: string) {
     this.type = number.includes('@g.us') || number.replace(/[^0-9]/g, '').length > 13 ? '@g.us' : '@c.us'
     this.number = normalize(number.replace(/[^0-9.-]/g, ''))
   }

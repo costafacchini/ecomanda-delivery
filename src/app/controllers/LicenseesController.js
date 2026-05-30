@@ -1,5 +1,5 @@
 import { check, validationResult } from 'express-validator'
-import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
+import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors'
 import { GetBaileysQr } from '../usecases/licensees/GetBaileysQr.js'
 import { GetBaileysStatus } from '../usecases/licensees/GetBaileysStatus.js'
 import { SyncBaileysDirectory } from '../usecases/licensees/SyncBaileysDirectory.js'

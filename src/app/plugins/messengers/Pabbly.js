@@ -1,9 +1,9 @@
-import { NormalizePhone } from '../../helpers/NormalizePhone.js'
+import { NormalizePhone } from '../../helpers/NormalizePhone'
 import request from '../../services/request.js'
-import { logger } from '../../helpers/logger.js'
-import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files.js'
+import { logger } from '../../helpers/logger'
+import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files'
 import { MessengersBase } from './Base.js'
-import { requireDependency } from '../../helpers/RequireDependency.js'
+import { requireDependency } from '../../helpers/RequireDependency'
 
 const getTemplates = async (url, token) => {
   const headers = {

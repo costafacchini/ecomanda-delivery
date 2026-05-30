@@ -1,4 +1,4 @@
-import { logger } from '../helpers/logger.js'
+import { logger } from '../helpers/logger'
 
 async function processPagarmeOrderPaid(body, { cartRepository, createPagarMe } = {}) {
   const pagarMe = createPagarMe()

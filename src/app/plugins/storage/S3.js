@@ -1,5 +1,5 @@
 import mime from 'mime-types'
-import { logger } from '../../helpers/logger.js'
+import { logger } from '../../helpers/logger'
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 

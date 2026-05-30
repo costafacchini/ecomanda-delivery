@@ -9,7 +9,7 @@ import { MessageRepositoryDatabase } from '@repositories/message'
 import request from '../services/request.js'
 
 jest.mock('../services/request')
-jest.mock('../helpers/logger.js', () => ({
+jest.mock('../helpers/logger', () => ({
   logger: { debug: jest.fn(), info: jest.fn(), warn: jest.fn(), error: jest.fn(), fatal: jest.fn() },
 }))
 import { createRuntimeDependencies } from '../runtime/dependencies.js'

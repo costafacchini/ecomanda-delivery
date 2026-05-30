@@ -7,7 +7,7 @@ jest.mock('@helpers/NormalizePhone')
 jest.mock('@helpers/ParseTriggerText')
 
 import request from '../../services/request'
-import { isPhoto, isVideo, isMidia, isVoice } from '@helpers/Files.js'
+import { isPhoto, isVideo, isMidia, isVoice } from '@helpers/Files'
 import { createRuntimeDependencies } from '../../runtime/dependencies.js'
 
 const dependencies = createRuntimeDependencies()

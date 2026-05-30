@@ -1,5 +1,5 @@
 import { Pabbly } from './Pabbly.js'
-import { NormalizePhone } from '../../helpers/NormalizePhone.js'
+import { NormalizePhone } from '../../helpers/NormalizePhone'
 
 jest.mock('../../services/request')
 jest.mock('../../helpers/Files')
@@ -7,7 +7,7 @@ jest.mock('../../helpers/NormalizePhone')
 jest.mock('../../helpers/ParseTriggerText')
 
 import request from '../../services/request.js'
-import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files.js'
+import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files'
 import { createRuntimeDependencies } from '../../runtime/dependencies.js'
 
 const dependencies = createRuntimeDependencies()

@@ -1,7 +1,7 @@
 import { BodyRepositoryMemory } from '@repositories/body'
 import { ChatbotsController } from './ChatbotsController.js'
 
-jest.mock('../helpers/logger.js', () => ({
+jest.mock('../helpers/logger', () => ({
   logger: {
     debug: jest.fn(),
     info: jest.fn(),

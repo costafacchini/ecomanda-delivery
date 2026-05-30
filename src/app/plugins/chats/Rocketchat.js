@@ -1,8 +1,8 @@
-import { replace } from '../../helpers/Emoji.js'
+import { replace } from '../../helpers/Emoji'
 import request from '../../services/request.js'
 import { ChatsBase } from './Base.js'
-import { logger } from '../../helpers/logger.js'
-import { requireDependency } from '../../helpers/RequireDependency.js'
+import { logger } from '../../helpers/logger'
+import { requireDependency } from '../../helpers/RequireDependency'
 
 const createVisitor = async (contact, token, url) => {
   const body = {

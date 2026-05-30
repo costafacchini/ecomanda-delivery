@@ -1,5 +1,5 @@
 import { ContactRepositoryMemory } from '@repositories/contact'
-import { NormalizePhone } from '../../helpers/NormalizePhone.js'
+import { NormalizePhone } from '../../helpers/NormalizePhone'
 import { AdressesController } from './AdressesController.js'
 
 function buildResponse() {

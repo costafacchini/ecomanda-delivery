@@ -1,6 +1,6 @@
-import { emojiList } from './EmojiList.js'
+import { emojiList } from './EmojiList'
 
-export const replace = (message) => {
+export const replace = (message: string): string => {
   const regex = /(:[^:]*:)/gm
   const rocketEmojis = []
 

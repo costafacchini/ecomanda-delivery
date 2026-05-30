@@ -1,6 +1,6 @@
 import { BackupsController } from './BackupsController.js'
 
-jest.mock('../helpers/logger.js', () => ({
+jest.mock('../helpers/logger', () => ({
   logger: {
     debug: jest.fn(),
     info: jest.fn(),

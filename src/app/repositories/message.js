@@ -2,8 +2,8 @@ import { v4 as uuidv4 } from 'uuid'
 import Repository, { RepositoryMemory } from './repository.js'
 import Message from '../models/Message.js'
 import Trigger from '../models/Trigger.js'
-import { replace } from '../helpers/Emoji.js'
-import { requireDependency } from '../helpers/RequireDependency.js'
+import { replace } from '../helpers/Emoji'
+import { requireDependency } from '../helpers/RequireDependency'
 
 class MessageRepositoryDatabase extends Repository {
   constructor({ parseText: parseTextDependency } = {}) {

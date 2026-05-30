@@ -1,9 +1,9 @@
 import request from '../../services/request.js'
 import { ChatsBase } from './Base.js'
-import { logger } from '../../helpers/logger.js'
+import { logger } from '../../helpers/logger'
 import path from 'path'
 import mime from 'mime-types'
-import { requireDependency } from '../../helpers/RequireDependency.js'
+import { requireDependency } from '../../helpers/RequireDependency'
 
 const searchContact = async (url, headers, contact, licensee, contactRepository) => {
   const response = await request.get(`${url}contacts/search?q=+${contact.number}`, { headers })

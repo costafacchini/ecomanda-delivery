@@ -1,4 +1,4 @@
-import { sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
+import { sanitizeModelErrors } from '../helpers/SanitizeErrors'
 
 class MessagesController {
   constructor({ createMessagesQuery, userRepository, messageRepository, queueServer, createMessage } = {}) {

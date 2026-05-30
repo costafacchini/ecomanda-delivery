@@ -10,10 +10,10 @@ import { WhatsappSessionRepositoryDatabase } from '@repositories/whatsappsession
 import { createRuntimeDependencies } from '../../runtime/dependencies.js'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
-jest.mock('../../helpers/logger.js', () => ({
+jest.mock('../../helpers/logger', () => ({
   logger: { debug: jest.fn(), info: jest.fn(), warn: jest.fn(), error: jest.fn(), fatal: jest.fn() },
 }))
-import { logger } from '../../helpers/logger.js'
+import { logger } from '../../helpers/logger'
 
 const mockSocketSendMessage = jest.fn()
 const mockSocketEnd = jest.fn()

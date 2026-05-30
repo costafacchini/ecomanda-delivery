@@ -1,5 +1,5 @@
 import { CART_NOT_FOUND } from '../usecases/carts/cartErrors.js'
-import { logger } from '../helpers/logger.js'
+import { logger } from '../helpers/logger'
 
 class CartsController {
   constructor({

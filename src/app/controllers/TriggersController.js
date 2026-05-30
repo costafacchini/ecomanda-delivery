@@ -1,4 +1,4 @@
-import { sanitizeModelErrors } from '../helpers/SanitizeErrors.js'
+import { sanitizeModelErrors } from '../helpers/SanitizeErrors'
 
 class TriggersController {
   constructor({ triggerRepository, createTriggersQuery, createTrigger, updateTrigger, importFacebookCatalog } = {}) {

@@ -28,7 +28,7 @@ import { UserRepositoryDatabase, UserRepositoryMemory } from './user.js'
 import WhatsappSession from '../models/WhatsappSession.js'
 import { WhatsappSessionRepositoryDatabase, WhatsappSessionRepositoryMemory } from './whatsappsession.js'
 import { RepositoryMemory, matchesFilter, sortRecords, comparableValue } from './repository.js'
-import { parseText as parseTextHelper } from '../helpers/ParseTriggerText.js'
+import { parseText as parseTextHelper } from '../helpers/ParseTriggerText'
 
 let activeRestore = null
 

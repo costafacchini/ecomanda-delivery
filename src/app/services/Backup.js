@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { logger } from '../helpers/logger.js'
+import { logger } from '../helpers/logger'
 import os from 'os'
 import path from 'path'
 import spawn from 'child_process'

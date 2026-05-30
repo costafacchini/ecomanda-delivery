@@ -1,4 +1,4 @@
-import { requireDependency } from '../../helpers/RequireDependency.js'
+import { requireDependency } from '../../helpers/RequireDependency'
 
 class Pedidos10 {
   constructor(licensee, { orderModule } = {}) {
