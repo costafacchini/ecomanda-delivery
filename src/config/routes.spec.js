@@ -7,7 +7,7 @@ jest.mock('../app/routes/resources-routes.js', () => jest.fn())
 jest.mock('../app/routes/api-routes.js', () => jest.fn())
 jest.mock('../app/routes/bull-board-route.js', () => jest.fn())
 
-import { routes } from './routes.js'
+import { routes } from './routes'
 
 describe('routes config', () => {
   it('serves the Vite index file for unmatched routes', () => {

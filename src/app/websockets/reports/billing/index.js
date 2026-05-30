@@ -1,4 +1,4 @@
-import { io } from '../../../../config/http.js'
+import { io } from '../../../../config/http'
 import { BillingQuery } from '../../../../app/queries/BillingQuery.js'
 import { IntegrationlogsQuery } from '../../../../app/queries/IntegrationlogsQuery.js'
 import { LicenseeRepositoryDatabase } from '../../../../app/repositories/licensee.js'

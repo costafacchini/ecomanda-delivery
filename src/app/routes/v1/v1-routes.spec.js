@@ -1,9 +1,9 @@
 import request from 'supertest'
 import express from 'express'
 
-jest.mock('../../../config/queue.js', () => ({ queueServer: {} }))
-jest.mock('../../../config/redis.js', () => ({ redisConnection: {} }))
-jest.mock('../../../config/rabbitmq.js', () => ({ publishMessage: jest.fn() }))
+jest.mock('../../../config/queue', () => ({ queueServer: {} }))
+jest.mock('../../../config/redis', () => ({ redisConnection: {} }))
+jest.mock('../../../config/rabbitmq', () => ({ publishMessage: jest.fn() }))
 
 // Stub all repositories and use-case factories so the module can be imported
 // without a live database connection.

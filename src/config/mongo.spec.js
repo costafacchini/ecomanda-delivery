@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import User from '@models/User'
-import { MongoServer } from './mongo.js'
+import { MongoServer } from './mongo'
 
 describe('mongo config', () => {
   let mongoMemoryServer

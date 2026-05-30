@@ -1,5 +1,5 @@
 import cors from 'cors'
-import { redisConnection } from './redis.js'
+import { redisConnection } from './redis'
 
 function enableCors(app) {
   app.use((req, _res, next) => {

@@ -1,4 +1,4 @@
-import { MongoServer } from './mongo.js'
+import { MongoServer } from './mongo'
 
 async function connect() {
   const config = {

@@ -1,7 +1,7 @@
 import { Queue } from 'bullmq'
-import { redisConnection } from './redis.js'
+import { redisConnection } from './redis'
 
-import jobs from '../app/jobs/index.js'
+import jobs from '../app/jobs/index'
 
 const queueOptions = {
   defaultJobOptions: {
@@ -21,6 +21,8 @@ function createQueue(name) {
 }
 
 class QueueServer {
+  queues: { bull: Queue; name: string; workerEnabled: boolean; handle: Function }[]
+
   constructor() {
     this.queues = Object.values(jobs).map((job) => ({
       bull: createQueue(job.key),

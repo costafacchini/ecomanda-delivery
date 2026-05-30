@@ -1,4 +1,4 @@
-import { UserRepositoryDatabase } from '../app/repositories/user.js'
+import { UserRepositoryDatabase } from '../app/repositories/user'
 
 const DEFAULT_USER = process.env.DEFAULT_USER
 const DEFAULT_PASSWORD = process.env.DEFAULT_PASSWORD

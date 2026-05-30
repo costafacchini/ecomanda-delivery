@@ -1,19 +1,19 @@
-import('../app/repositories/index.js')
+import('../app/repositories/index')
 
 import createError from 'http-errors'
 import express from 'express'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import logger from 'morgan'
-import { logger as appLogger } from '../app/helpers/logger.js'
-import { connect } from './database.js'
-import { enableCors } from './cors.js'
-import { routes } from './routes.js'
-import { helmetConfig } from './security.js'
+import { logger as appLogger } from '../app/helpers/logger'
+import { connect } from './database'
+import { enableCors } from './cors'
+import { routes } from './routes'
+import { helmetConfig } from './security'
 import http from 'http'
 import { Server } from 'socket.io'
 import Rollbar from 'rollbar'
-import { frontendDistDir } from './frontend-paths.js'
+import { frontendDistDir } from './frontend-paths'
 
 const app = express()
 

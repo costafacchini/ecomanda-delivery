@@ -2,8 +2,8 @@ import request from 'supertest'
 import express from 'express'
 import jwt from 'jsonwebtoken'
 
-jest.mock('../../config/queue.js', () => ({ queueServer: {} }))
-jest.mock('../../config/redis.js', () => ({ redisConnection: {} }))
+jest.mock('../../config/queue', () => ({ queueServer: {} }))
+jest.mock('../../config/redis', () => ({ redisConnection: {} }))
 
 // All stubs are defined inside the factory so they exist before the route module is imported.
 // The userRepository object is shared by reference — tests mutate findFirst/find per case.

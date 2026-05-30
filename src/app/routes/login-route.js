@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 import { LoginController } from '../controllers/LoginController.js'
 import { UserRepositoryDatabase } from '../repositories/user.js'
 import { AuthenticateUser } from '../usecases/auth/AuthenticateUser.js'
-import { redisConnection } from '../../config/redis.js'
+import { redisConnection } from '../../config/redis'
 
 const router = express.Router()
 

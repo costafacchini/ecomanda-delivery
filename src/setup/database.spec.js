@@ -1,6 +1,6 @@
 import mongoServer from '../../.jest/utils.js'
 import User from '@models/User.js'
-import { createDefaultUser } from './database.js'
+import { createDefaultUser } from './database'
 import { userSuper as userSuperFactory } from '../app/factories/user.js'
 
 describe('#createDefaultUser', () => {

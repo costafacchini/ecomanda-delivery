@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken'
-import { router as loginRoutes } from '../app/routes/login-route.js'
-import resourcesRoutes from '../app/routes/resources-routes.js'
-import apiRoutes from '../app/routes/api-routes.js'
-import bullboardRoute from '../app/routes/bull-board-route.js'
-import { frontendIndexFile } from './frontend-paths.js'
+import { router as loginRoutes } from '../app/routes/login-route'
+import resourcesRoutes from '../app/routes/resources-routes'
+import apiRoutes from '../app/routes/api-routes'
+import bullboardRoute from '../app/routes/bull-board-route'
+import { frontendIndexFile } from './frontend-paths'
 
 const SECRET = process.env.SECRET
 

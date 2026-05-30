@@ -1,10 +1,12 @@
 import mongoose from 'mongoose'
-import { createDefaultUser } from '../setup/database.js'
+import { createDefaultUser } from '../setup/database'
 
 const mongoConnectionOpts = {}
 
 class MongoServer {
-  constructor(uri) {
+  private mongoUri: string
+
+  constructor(uri: string) {
     this.mongoUri = uri
   }
 

@@ -1,4 +1,4 @@
-import { io } from '../../../../config/http.js'
+import { io } from '../../../../config/http'
 import { LicenseeMessagesByDayQuery } from '../../../../app/queries/LicenseeMessagesByDayQuery.js'
 import { LicenseeRepositoryDatabase } from '../../../../app/repositories/licensee.js'
 import { MessageRepositoryDatabase } from '../../../../app/repositories/message.js'
