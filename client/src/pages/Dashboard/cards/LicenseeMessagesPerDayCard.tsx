@@ -28,7 +28,7 @@ export default function LicenseeMessagesPerDayCard() {
             </tr>
           </thead>
           <tbody>
-            {(data.per_day || []).map((row) => (
+            {(data.per_day || []).map((row: any) => (
               <tr key={row.date}>
                 <td>{row.date}</td>
                 <td>{row.count}</td>

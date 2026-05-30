@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import Navbar from '../Navbar'
 import { AppContext } from '../../contexts/App'
 
-export default function BaseLayout({ children }) {
+export default function BaseLayout({ children }: any) {
   const { currentUser } = useContext(AppContext)
 
   return (

@@ -7,8 +7,8 @@ import styles from './styles.module.scss'
 import moment from 'moment-timezone'
 import isEmpty from 'lodash/isEmpty'
 
-function MessagesIndex({ currentUser}) {
-  const [filters, setFilters] = useState({
+function MessagesIndex({ currentUser }: any) {
+  const [filters, setFilters] = useState<any>({
     startDate: moment().subtract(3, 'hours').format('YYYY-MM-DDTHH:mm'),
     endDate: moment().format('YYYY-MM-DDTHH:mm'),
     licensee: '',
@@ -23,7 +23,7 @@ function MessagesIndex({ currentUser}) {
   const [lastPage, setLastPage] = useState(false)
 
   const addPage = useCallback(
-    (records, filters) => {
+    (records: any, filters: any) => {
       if (filters?.page === 1) {
         setRecords(records)
       } else {
@@ -36,7 +36,7 @@ function MessagesIndex({ currentUser}) {
   )
 
   const onFilter = useCallback(
-    async (changedFilters) => {
+    async (changedFilters: any) => {
       const newFilters = { ...filters, ...changedFilters }
       setFilters(newFilters)
 
@@ -58,11 +58,11 @@ function MessagesIndex({ currentUser}) {
     }
   }, [currentUser, filters, setFilters])
 
-  function handleChange({ target }) {
+  function handleChange({ target }: any) {
     setFilters({ ...filters, [target.name]: target.value, page: 1 })
   }
 
-  function handleChangeOnlyErrors({ target }) {
+  function handleChangeOnlyErrors({ target }: any) {
     let newFilters
 
     if (target.checked === true) {
@@ -75,7 +75,7 @@ function MessagesIndex({ currentUser}) {
     setFilters({ ...newFilters, onlyErrors: target.checked })
   }
 
-  function handleSubmitSearch(e) {
+  function handleSubmitSearch(e: any) {
     e.preventDefault()
 
     let abortController = new AbortController()
@@ -171,7 +171,7 @@ function MessagesIndex({ currentUser}) {
                 name='licensee'
                 aria-labelledby='licensee'
                 selectedItem={filters.licensee}
-                onChange={(e) => {
+                onChange={(e: any) => {
                   const inputValue = e && e.value ? e.value : ''
                   const newFilters = { ...filters, licensee: inputValue, page: 1 }
                   setFilters(newFilters)
@@ -190,7 +190,7 @@ function MessagesIndex({ currentUser}) {
               name='contact'
               aria-labelledby='contact'
               selectedItem={filters.contact}
-              onChange={(e) => {
+              onChange={(e: any) => {
                 const inputValue = e && e.value ? e.value : ''
                 const newFilters = { ...filters, contact: inputValue, page: 1 }
                 setFilters(newFilters)

@@ -1,6 +1,6 @@
 import { FieldWithError } from '../../../../../components/form'
 
-function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }) {
+function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }: any) {
   return (
     <>
       <div className='row'>
@@ -69,7 +69,6 @@ function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }) {
             rows={4}
             id='messageOnResetChatbot'
             name='messageOnResetChatbot'
-            type='text'
             onChange={handleChange}
             onBlur={handleBlur}
             value={values.messageOnResetChatbot}
@@ -85,7 +84,6 @@ function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }) {
             rows={4}
             id='messageOnCloseChat'
             name='messageOnCloseChat'
-            type='text'
             onChange={handleChange}
             onBlur={handleBlur}
             value={values.messageOnCloseChat}

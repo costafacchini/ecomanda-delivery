@@ -1,6 +1,6 @@
 import { FieldWithError } from '../../../../../components/form'
 
-function CartPanel({ values, errors, touched, handleChange, handleBlur }) {
+function CartPanel({ values, errors, touched, handleChange, handleBlur }: any) {
   return (
     <fieldset className='pb-4'>
       <div className='row'>

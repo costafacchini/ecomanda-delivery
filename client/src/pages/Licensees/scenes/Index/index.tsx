@@ -4,13 +4,13 @@ import { getLicensees } from '../../../../services/licensee'
 import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'
 import isEmpty from 'lodash/isEmpty'
 
-function LicenseesIndex({ currentUser }) {
+function LicenseesIndex({ currentUser }: any) {
   const { filters, setFilters, cache } = useContext(SimpleCrudContext)
   const { addPage } = cache
   const [expression, setExpression] = useState(filters?.expression || '')
 
   const onFilter = useCallback(
-    async (changedFilters) => {
+    async (changedFilters: any) => {
       const newFilters = { ...filters, ...changedFilters }
       setFilters(newFilters)
       const { data: licensees } = await getLicensees(newFilters)
@@ -37,7 +37,7 @@ function LicenseesIndex({ currentUser }) {
     }
   }, [filters, onFilter])
 
-  function changeExpression(event) {
+  function changeExpression(event: any) {
     setExpression(event.target.value)
   }
 
@@ -102,7 +102,7 @@ function LicenseesIndex({ currentUser }) {
             </tr>
           </thead>
           <tbody>
-            {cache.records.map((licensee) => (
+            {cache.records.map((licensee: any) => (
               <tr key={licensee.id}>
                 <td>{licensee.name}</td>
                 <td>{licensee.email}</td>

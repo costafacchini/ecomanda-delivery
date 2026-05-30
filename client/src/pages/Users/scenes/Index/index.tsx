@@ -5,13 +5,13 @@ import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWit
 import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'
 import isEmpty from 'lodash/isEmpty'
 
-function UsersIndex({ currentUser }) {
+function UsersIndex({ currentUser }: any) {
   const { filters, setFilters, cache } = useContext(SimpleCrudContext)
   const { addPage } = cache
   const [expression, setExpression] = useState(filters?.expression || '')
 
   const onFilter = useCallback(
-    async (changedFilters) => {
+    async (changedFilters: any) => {
       const newFilters = { ...filters, ...changedFilters }
       setFilters(newFilters)
       const { data: users } = await getUsers(newFilters)
@@ -47,7 +47,7 @@ function UsersIndex({ currentUser }) {
     }
   }, [currentUser, filters, onFilter])
 
-  function changeExpression(event) {
+  function changeExpression(event: any) {
     setExpression(event.target.value)
   }
 
@@ -78,7 +78,7 @@ function UsersIndex({ currentUser }) {
                   name='licensee'
                   aria-labelledby='licensee'
                   selectedItem={filters?.licensee}
-                  onChange={(e) => {
+                  onChange={(e: any) => {
                     const inputValue = e && e.value ? e.value : ''
                     const newFilters = { ...filters, licensee: inputValue, page: 1 }
                     onFilter(newFilters)
@@ -126,7 +126,7 @@ function UsersIndex({ currentUser }) {
             </tr>
           </thead>
           <tbody>
-            {cache.records.map((user) => (
+            {cache.records.map((user: any) => (
               <tr key={user.id}>
                 <td>{user.name}</td>
                 <td>{user.email}</td>

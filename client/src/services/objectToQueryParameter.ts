@@ -1,8 +1,8 @@
-export default function parseUrl(url, urlParams) {
+export default function parseUrl(url: any, urlParams: any) {
   return urlParams && objectToQueryParameter(urlParams) !== '' ? `${url}?${objectToQueryParameter(urlParams)}` : url
 }
 
-function objectToQueryParameter(object) {
+function objectToQueryParameter(object: any) {
   return Object.keys(object)
     .map((key) => {
       if (object[key] == null) return ''
@@ -13,7 +13,7 @@ function objectToQueryParameter(object) {
     .join('&')
 }
 
-function encodeValueToUrl(value) {
+function encodeValueToUrl(value: any): any {
   if (isDate(value)) {
     return new Date(value).toISOString()
   } else if (value instanceof Array) {
@@ -23,7 +23,7 @@ function encodeValueToUrl(value) {
   }
 }
 
-function isDate(value) {
+function isDate(value: any) {
   if (value instanceof Date) {
     return true
   }
@@ -35,13 +35,13 @@ function isDate(value) {
   return false
 }
 
-function encodeArrayToUrl(objectWithArray, key) {
+function encodeArrayToUrl(objectWithArray: any, key: any) {
   const array = objectWithArray[key]
-  const isArrayOfObjects = array.find((value) => typeof value === 'object' && !(value instanceof Date))
+  const isArrayOfObjects = array.find((value: any) => typeof value === 'object' && !(value instanceof Date))
 
   if (isArrayOfObjects) {
-    const queryParameters = []
-    array.forEach((value) => {
+    const queryParameters: any[] = []
+    array.forEach((value: any) => {
       Object.keys(value).forEach((prop) => {
         queryParameters.push(`${key}[][${prop}]=${encodeValueToUrl(value[prop])}`)
       })

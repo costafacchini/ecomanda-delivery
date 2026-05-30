@@ -14,7 +14,7 @@ function LicenseesRoutes() {
       <Routes>
         <Route path='/new' element={<LicenseeNew currentUser={currentUser} />} />
         <Route path=':id' element={<LicenseeEdit currentUser={currentUser} />} />
-        <Route exact path='/' element={<LicenseesIndex currentUser={currentUser} />} />
+        <Route path='/' element={<LicenseesIndex currentUser={currentUser} />} />
       </Routes>
     </SimpleCrudContextProvider>
   )

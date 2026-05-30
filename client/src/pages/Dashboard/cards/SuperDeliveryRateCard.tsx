@@ -16,7 +16,7 @@ export default function SuperDeliveryRateCard() {
   }, [])
 
   function handleResendSuccess() {
-    setData((prev) => ({
+    setData((prev: any) => ({
       ...prev,
       failed_today: Math.max(0, (prev.failed_today || 0) - 1),
     }))

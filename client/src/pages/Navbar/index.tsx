@@ -1,7 +1,7 @@
 import React from 'react'
 import { logout } from '../../services/auth'
 
-export default function Navbar({ currentUser }) {
+export default function Navbar({ currentUser }: any) {
   return (
       <nav className='navbar navbar-expand-lg navbar-dark bg-primary'>
         <div className='container-fluid'>

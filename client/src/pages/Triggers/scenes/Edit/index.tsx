@@ -5,7 +5,7 @@ import { getTrigger, updateTrigger } from '../../../../services/trigger'
 import { useNavigate, useParams } from 'react-router'
 import { useEffect } from 'react'
 
-function TriggerEdit({ currentUser }) {
+function TriggerEdit({ currentUser }: any) {
   const navigate = useNavigate()
   let { id } = useParams()
   const [errors, setErrors] = useState(null)
@@ -43,7 +43,7 @@ function TriggerEdit({ currentUser }) {
           initialValues={trigger}
           currentUser={currentUser}
           errors={errors}
-          onSubmit={async (values) => {
+          onSubmit={async (values: any) => {
             const response = await updateTrigger(values)
 
             if (response.status === 200) {

@@ -65,7 +65,8 @@ const licenseeInitialValues = {
   useFileIDYcloud: false,
 }
 
-function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
+function LicenseeForm(props: any) {
+  const { onSubmit, errors, initialValues, currentUser } = props
   let navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('principal')
   const [useChat, setUseChat] = useState(true)
@@ -83,11 +84,11 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
       <Form
         validationSchema={SignupSchema}
         initialValues={{ ...licenseeInitialValues, ...initialValues }}
-        onSubmit={(values) => {
+        onSubmit={(values: any) => {
           onSubmit(values)
         }}
       >
-        {(props) => (
+        {(props: any) => (
           <form onSubmit={props.handleSubmit}>
             <ul className="nav nav-tabs mb-3">
               <li className="nav-item">
@@ -228,7 +229,7 @@ function LicenseeForm({ onSubmit, errors, initialValues, currentUser }) {
             {errors && (
               <div className='alert alert-danger'>
                 <ul>
-                  {errors.map((error) => (
+                  {errors.map((error: any) => (
                     <li key={error.message}>{error.message}</li>
                   ))}
                 </ul>

@@ -3,28 +3,28 @@ import isEmpty from 'lodash/isEmpty'
 
 const SimpleCrudContext = createContext(null)
 
-const SimpleCrudContextProvider = ({ children }) => {
+const SimpleCrudContextProvider = ({ children }: any) => {
   const [records, setRecords] = useState([])
   const [filters, setFilters] = useState()
   const [lastPage, setLastPage] = useState(false)
 
-  function addRecord(record) {
+  function addRecord(record: any) {
     const newRecords = [record, ...records]
     setRecords(newRecords)
   }
 
-  function updateRecord(record) {
+  function updateRecord(record: any) {
     const newRecords = records.map((cachedRecord) => (cachedRecord.id === record.id ? record : cachedRecord))
     setRecords(newRecords)
   }
 
-  function removeRecord(record) {
+  function removeRecord(record: any) {
     const newRecords = records.filter((cachedRecord) => cachedRecord.id !== record.id)
     setRecords(newRecords)
   }
 
   const addPage = useCallback(
-    (records, filters) => {
+    (records: any, filters: any) => {
       if (filters?.page === 1) {
         setRecords(records)
       } else {

@@ -14,7 +14,7 @@ function UsersRoutes() {
       <Routes>
         <Route path="/new" element={<UserNew currentUser={currentUser} />} />
         <Route path=":id" element={<UserEdit currentUser={currentUser} />} />
-        <Route exact path="/" element={<UsersIndex currentUser={currentUser} />} />
+        <Route path="/" element={<UsersIndex currentUser={currentUser} />} />
       </Routes>
     </SimpleCrudContextProvider>
   )

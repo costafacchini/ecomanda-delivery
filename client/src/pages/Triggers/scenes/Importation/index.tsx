@@ -30,7 +30,7 @@ function TriggerImportation() {
           <Form
             validationSchema={SignupSchema}
             initialValues={{ ...triggerInitialValues }}
-            onSubmit={async (values) => {
+            onSubmit={async (values: any) => {
               const response = await importTriggerMultiProduct(triggerId, values)
 
               if (response.status === 201) {
@@ -43,7 +43,7 @@ function TriggerImportation() {
               }
             }}
           >
-            {props => (
+            {(props: any) => (
               <form onSubmit={props.handleSubmit}>
                 <fieldset className='pb-4'>
                   <div className='row'>
@@ -67,7 +67,7 @@ function TriggerImportation() {
                 {errors && (
                   <div className='alert alert-danger'>
                     <ul>
-                      {errors.map((error) => (<li key={error.message}>{error.message}</li>))}
+                      {errors.map((error: any) => (<li key={error.message}>{error.message}</li>))}
                     </ul>
                   </div>
                 )}

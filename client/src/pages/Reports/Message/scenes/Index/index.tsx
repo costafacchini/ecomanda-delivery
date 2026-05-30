@@ -3,33 +3,33 @@ import styles from './styles.module.scss'
 import { io } from 'socket.io-client'
 import moment from 'moment'
 
-function totalMessages(licensees) {
-  return licensees.reduce((total, licensee) => {
-    const licenseeTotal = licensee.days.reduce((sum, day) => sum + day.count, 0)
+function totalMessages(licensees: any) {
+  return licensees.reduce((total: any, licensee: any) => {
+    const licenseeTotal = licensee.days.reduce((sum: any, day: any) => sum + day.count, 0)
     return total + licenseeTotal
   }, 0)
 }
 
-function MessageIndex() {
+function MessageIndex(_props?: any) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [records, setRecords] = useState([])
   const [filters, setFilters] = useState({ initialDate: '', endDate: '' })
 
   useEffect(() => {
     const socket = io()
-    socket.on('send_licensees_messages_by_day', (data) => {
+    socket.on('send_licensees_messages_by_day', (data: any) => {
       setRecords(data.data)
       setIsSubmitting(false)
     })
 
-    return () => socket.disconnect()
+    return () => { socket.disconnect() }
   }, [setRecords])
 
-  function handleChange({ target }) {
+  function handleChange({ target }: any) {
     setFilters({ ...filters, [target.name]: target.value })
   }
 
-  function handleSubmitSearch(e) {
+  function handleSubmitSearch(e: any) {
     e.preventDefault()
 
     const socket = io()
@@ -87,7 +87,7 @@ function MessageIndex() {
           <thead>
             <tr>
               <th scope='col'>Licenciado</th>
-              {records.length > 0 && records[0].days.map((day) => (
+              {records.length > 0 && records[0].days.map((day: any) => (
                 <th key={day.date} scope='col'>
                   {moment(day.date).format('DD/MM')}
                 </th>
@@ -98,7 +98,7 @@ function MessageIndex() {
             {records.map((licensee) => (
               <tr key={licensee._id.toString()}>
                 <td>{licensee.name}</td>
-                {licensee.days.map((day) => (
+                {licensee.days.map((day: any) => (
                   <td key={day.date}>{day.count}</td>
                 ))}
               </tr>

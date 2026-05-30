@@ -4,20 +4,20 @@ import parseUrl from './objectToQueryParameter'
 
 const headers = () => ({ 'x-access-token': getToken() })
 
-function createContact(values) {
+function createContact(values: any) {
   return api().post('resources/contacts/', { body: values, headers: headers() })
 }
 
-function getContacts(queryParams) {
+function getContacts(queryParams: any) {
   const url = parseUrl('resources/contacts/', queryParams)
   return api().get(url, { headers: headers() })
 }
 
-function getContact(id) {
+function getContact(id: any) {
   return api().get(`resources/contacts/${id}`, { headers: headers() })
 }
 
-function updateContact(contact) {
+function updateContact(contact: any) {
   return api().post(`resources/contacts/${contact.id}`, { headers: headers(), body: contact })
 }
 

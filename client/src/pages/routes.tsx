@@ -29,7 +29,6 @@ function RootRoutes() {
     <HashRouter>
       <Routes>
         <Route
-          exact
           path='/'
           element={
             <PrivateRoute redirectTo='/signin'>
@@ -37,7 +36,7 @@ function RootRoutes() {
             </PrivateRoute>
           }
         />
-        <Route exact path='/signin' element={<SignIn />} />
+        <Route path='/signin' element={<SignIn />} />
         <Route
           path='/licensees/*'
           element={

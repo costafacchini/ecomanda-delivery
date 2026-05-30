@@ -4,24 +4,24 @@ import parseUrl from './objectToQueryParameter'
 
 const headers = () => ({ 'x-access-token': getToken() })
 
-function createTemplate(values) {
+function createTemplate(values: any) {
   return api().post('resources/templates/', { body: values, headers: headers() })
 }
 
-function getTemplates(queryParams) {
+function getTemplates(queryParams: any) {
   const url = parseUrl('resources/templates/', queryParams)
   return api().get(url, { headers: headers() })
 }
 
-function getTemplate(id) {
+function getTemplate(id: any) {
   return api().get(`resources/templates/${id}`, { headers: headers() })
 }
 
-function updateTemplate(trigger) {
+function updateTemplate(trigger: any) {
   return api().post(`resources/templates/${trigger.id}`, { headers: headers(), body: trigger })
 }
 
-function importTemplates(triggerId, values) {
+function importTemplates(triggerId: any, values: any) {
   return api().post(`resources/templates/${triggerId}/importation/`, { headers: headers(), body: values })
 }
 

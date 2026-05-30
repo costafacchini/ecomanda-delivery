@@ -4,7 +4,7 @@ import { getTemplate } from '../../../../services/template'
 import { useParams } from 'react-router'
 import { useEffect } from 'react'
 
-function TemplateShow({ currentUser }) {
+function TemplateShow({ currentUser }: any) {
   let { id } = useParams()
   const [template, setTemplate] = useState(null)
 

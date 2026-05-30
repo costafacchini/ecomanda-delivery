@@ -7,7 +7,7 @@ function MainPanel({
   handleChange,
   handleBlur,
   currentUser,
-}) {
+}: any) {
   return (
     <>
       <div className='row'>

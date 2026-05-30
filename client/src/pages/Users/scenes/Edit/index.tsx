@@ -5,7 +5,7 @@ import { getUser, updateUser } from '../../../../services/user'
 import { useNavigate, useParams } from 'react-router'
 import { useEffect } from 'react'
 
-function UserEdit({ currentUser }) {
+function UserEdit({ currentUser }: any) {
   const navigate = useNavigate()
   let { id } = useParams()
   const [errors, setErrors] = useState(null)
@@ -43,7 +43,7 @@ function UserEdit({ currentUser }) {
           initialValues={user}
           currentUser={currentUser}
           errors={errors}
-          onSubmit={async (values) => {
+          onSubmit={async (values: any) => {
             const response = await updateUser(values)
 
             if (response.status === 200) {

@@ -1,6 +1,6 @@
 import { signOrderWebhook } from '../../../../../services/licensee'
 
-function Pedidos10Panel({ values, errors, touched, handleChange, handleBlur, wizardMode = false }) {
+function Pedidos10Panel({ values, errors, touched, handleChange, handleBlur, wizardMode = false }: any) {
   return (
     <fieldset>
       <div className='row'>

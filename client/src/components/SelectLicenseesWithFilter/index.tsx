@@ -3,21 +3,21 @@ import Select, { createFilter } from 'react-select'
 import debounce from 'lodash/debounce'
 import { getLicensees } from '../../services/licensee'
 
-export default function SelectLicenseesWithFilter({ isDisabled, onChange, selectedItem, ...props }) {
+export default function SelectLicenseesWithFilter({ isDisabled, onChange, selectedItem, ...props }: any) {
   const [defaultValue, setDefaultValue] = useState(null)
   const [selectedOption, setSelectedOption] = useState(null)
   const [options, setOptions] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [optionsLoaded, setOptionsLoaded] = useState(false)
 
-  const filterConfig = {
+  const filterConfig: any = {
     ignoreCase: true,
     ignoreAccents: true,
     trim: true,
     matchFrom: true
   }
 
-  function handleOnChange(value) {
+  function handleOnChange(value: any) {
     if (value !== selectedOption) {
       setSelectedOption(value)
 
@@ -25,15 +25,15 @@ export default function SelectLicenseesWithFilter({ isDisabled, onChange, select
     }
   }
 
-  function transformData(values) {
-    return values.map(value => ({ value: value._id, label: value.name }))
+  function transformData(values: any) {
+    return values.map((value: any) => ({ value: value._id, label: value.name }))
   }
 
-  function handleSetSearchInput(value) {
+  function handleSetSearchInput(value: any) {
     if (value.length > 2) handleFetch(value)
   }
 
-  async function onFetch(value) {
+  async function onFetch(value?: any) {
     try {
       setIsLoading(true)
       const { data: licensees } = await getLicensees({ expression: value, active: true })

@@ -3,7 +3,7 @@ import Select, { createFilter } from 'react-select'
 import debounce from 'lodash/debounce'
 import { getContacts } from '../../services/contact'
 
-export default function SelectContactsWithFilter({ isDisabled, onChange, selectedItem, licensee, ...props }) {
+export default function SelectContactsWithFilter({ isDisabled, onChange, selectedItem, licensee, ...props }: any) {
   const [defaultValue, setDefaultValue] = useState(null)
   const [selectedOption, setSelectedOption] = useState(null)
   const [options, setOptions] = useState([])
@@ -15,14 +15,14 @@ export default function SelectContactsWithFilter({ isDisabled, onChange, selecte
     setSelectedLicensee(licensee)
   }, [licensee])
 
-  const filterConfig = {
+  const filterConfig: any = {
     ignoreCase: true,
     ignoreAccents: true,
     trim: true,
     matchFrom: true
   }
 
-  function handleOnChange(value) {
+  function handleOnChange(value: any) {
     if (value !== selectedOption) {
       setSelectedOption(value)
 
@@ -30,18 +30,18 @@ export default function SelectContactsWithFilter({ isDisabled, onChange, selecte
     }
   }
 
-  function transformData(values) {
-    return values.map(value => ({ value: value._id, label: `${value.name}  |  ${value.number}` }))
+  function transformData(values: any) {
+    return values.map((value: any) => ({ value: value._id, label: `${value.name}  |  ${value.number}` }))
   }
 
-  function handleSetSearchInput(value) {
+  function handleSetSearchInput(value: any) {
     if (value.length > 2) handleFetch(value)
   }
 
-  async function onFetch(value) {
+  async function onFetch(value?: any) {
     try {
       setIsLoading(true)
-      const filters = { expression: value, active: true }
+      const filters: any = { expression: value, active: true }
       if (selectedLicensee) {
         filters.licensee = selectedLicensee
       }

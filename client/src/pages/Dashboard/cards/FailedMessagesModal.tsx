@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { getMessages, resendMessage } from '../../../services/message'
 
-export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess }) {
+export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess }: any) {
   const [messages, setMessages] = useState([])
   const [loading, setLoading] = useState(false)
   const [fetchError, setFetchError] = useState(null)
-  const [rowErrors, setRowErrors] = useState({})
+  const [rowErrors, setRowErrors] = useState<any>({})
 
   useEffect(() => {
     if (!isOpen) return
@@ -20,11 +20,11 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess }
       .finally(() => setLoading(false))
   }, [isOpen])
 
-  function handleResend(id) {
+  function handleResend(id: any) {
     resendMessage(id)
       .then(() => {
-        setMessages((prev) => prev.filter((m) => m._id !== id))
-        setRowErrors((prev) => {
+        setMessages((prev: any) => prev.filter((m: any) => m._id !== id))
+        setRowErrors((prev: any) => {
           const next = { ...prev }
           delete next[id]
           return next
@@ -32,7 +32,7 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess }
         onResendSuccess()
       })
       .catch(() => {
-        setRowErrors((prev) => ({ ...prev, [id]: 'Erro ao reenviar.' }))
+        setRowErrors((prev: any) => ({ ...prev, [id]: 'Erro ao reenviar.' }))
       })
   }
 
@@ -41,7 +41,7 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess }
   return (
     <div
       className="modal fade show d-block"
-      tabIndex="-1"
+      tabIndex={-1}
       role="dialog"
       style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}

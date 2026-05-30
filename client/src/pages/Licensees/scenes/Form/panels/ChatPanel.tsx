@@ -1,6 +1,6 @@
 import { FieldWithError } from '../../../../../components/form'
 
-function ChatPanel({ values, errors, touched, handleChange, handleBlur }) {
+function ChatPanel({ values, errors, touched, handleChange, handleBlur }: any) {
   return (
     <>
       <div className='row'>

@@ -4,48 +4,48 @@ import parseUrl from './objectToQueryParameter'
 
 const headers = () => ({ 'x-access-token': getToken() })
 
-function createLicensee(values) {
+function createLicensee(values: any) {
   return api().post('resources/licensees/', { body: values, headers: headers() })
 }
 
-function getLicensees(queryParams) {
+function getLicensees(queryParams: any) {
   const url = parseUrl('resources/licensees/', queryParams)
   return api().get(url, { headers: headers() })
 }
 
-function getLicensee(id) {
+function getLicensee(id: any) {
   return api().get(`resources/licensees/${id}`, { headers: headers() })
 }
 
-function updateLicensee(licensee) {
+function updateLicensee(licensee: any) {
   return api().post(`resources/licensees/${licensee.id}`, { headers: headers(), body: licensee })
 }
 
-function setLicenseeWebhook(licensee) {
+function setLicenseeWebhook(licensee: any) {
   return api().post(`resources/licensees/${licensee.id}/dialogwebhook`, { headers: headers(), body: licensee })
 }
 
-function getBaileysQr(licensee) {
+function getBaileysQr(licensee: any) {
   return api().post(`resources/licensees/${licensee.id}/baileys-qr`, { headers: headers() })
 }
 
-function getBaileysStatus(licensee) {
+function getBaileysStatus(licensee: any) {
   return api().get(`resources/licensees/${licensee.id}/baileys-status`, { headers: headers() })
 }
 
-function sendLicenseePagarMe(licensee) {
+function sendLicenseePagarMe(licensee: any) {
   return api().post(`resources/licensees/${licensee.id}/integration/pagarme`, { headers: headers(), body: licensee })
 }
 
-function importLicenseeTemplate(licensee) {
+function importLicenseeTemplate(licensee: any) {
   return api().post(`resources/templates/${licensee.id}/importation/`, { headers: headers() })
 }
 
-function signOrderWebhook(licensee) {
+function signOrderWebhook(licensee: any) {
   return api().post(`resources/licensees/${licensee.id}/sign-order-webhook`, { headers: headers(), body: licensee })
 }
 
-function syncBaileysDirectory(licensee) {
+function syncBaileysDirectory(licensee: any) {
   return api().post(`resources/licensees/${licensee.id}/baileys-sync`, { headers: headers() })
 }
 

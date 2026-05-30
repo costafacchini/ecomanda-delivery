@@ -3,7 +3,7 @@ import { QRCodeSVG } from 'qrcode.react'
 import { FieldWithError } from '../../../../../components/form'
 import { setLicenseeWebhook, getBaileysQr, getBaileysStatus, importLicenseeTemplate, syncBaileysDirectory } from '../../../../../services/licensee'
 
-function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isActive }) {
+function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isActive }: any) {
   const [baileysQr, setBaileysQr] = useState(null)
   const [baileysStatus, setBaileysStatus] = useState(null)
   const [baileysConnected, setBaileysConnected] = useState(null)

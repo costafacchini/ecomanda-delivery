@@ -1,5 +1,5 @@
 export default function api() {
-  async function request(url, method, { headers, body }) {
+  async function request(url: any, method: any, { headers, body }: any) {
     const requestOptions = {
       method: method,
       headers: {
@@ -31,15 +31,15 @@ export default function api() {
     return result
   }
 
-  function isJSON(response) {
+  function isJSON(response: any) {
     return response.headers.get('content-type')?.includes('application/json')
   }
 
   return {
-    post: function (url, requestOpts = {}) {
+    post: function (url: any, requestOpts: any = {}) {
       return request(url, 'post', requestOpts)
     },
-    get: function (url, requestOpts = {}) {
+    get: function (url: any, requestOpts: any = {}) {
       return request(url, 'get', requestOpts)
     }
   }

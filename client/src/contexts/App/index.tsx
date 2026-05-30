@@ -2,7 +2,7 @@ import { createContext, useCallback, useState } from 'react'
 
 const AppContext = createContext(null)
 
-const AppContextProvider = ({ children }) => {
+const AppContextProvider = ({ children }: any) => {
   const [currentUser, setCurrentUser] = useState()
 
   return (
@@ -10,7 +10,7 @@ const AppContextProvider = ({ children }) => {
       value={{
         currentUser,
         setCurrentUser: useCallback(
-          (user) => {
+          (user: any) => {
             setCurrentUser(user)
           },
           []

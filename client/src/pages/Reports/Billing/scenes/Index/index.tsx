@@ -3,8 +3,8 @@ import styles from './styles.module.scss'
 import { io } from 'socket.io-client'
 import moment from 'moment'
 
-function totalBilling(licensees) {
-  return licensees.reduce((sum, licensee) => licensee.billing ? sum + 40 : sum, 0)
+function totalBilling(licensees: any) {
+  return licensees.reduce((sum: any, licensee: any) => licensee.billing ? sum + 40 : sum, 0)
 }
 
 function BillingIndex() {
@@ -14,19 +14,19 @@ function BillingIndex() {
 
   useEffect(() => {
     const socket = io()
-    socket.on('send_billing_report', data => {
+    socket.on('send_billing_report', (data: any) => {
       setRecords(data.data)
       setIsSubmitting(false)
     })
 
-    return () => socket.disconnect()
+    return () => { socket.disconnect() }
   }, [setRecords])
 
-  function handleChange({ target }) {
+  function handleChange({ target }: any) {
     setFilters({ ...filters, [target.name]: target.value })
   }
 
-  function handleSubmitSearch(e) {
+  function handleSubmitSearch(e: any) {
     e.preventDefault()
 
     const socket = io()

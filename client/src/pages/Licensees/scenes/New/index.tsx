@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { createLicensee } from '../../../../services/licensee'
 import { useNavigate } from 'react-router'
 
-function LicenseeNew({ currentUser }) {
+function LicenseeNew({ currentUser }: any) {
   let navigate = useNavigate()
   const [errors, setErrors] = useState(null)
 
@@ -14,7 +14,7 @@ function LicenseeNew({ currentUser }) {
         <LicenseeWizard
           currentUser={currentUser}
           errors={errors}
-          onSubmit={async (values) => {
+          onSubmit={async (values: any) => {
             const response = await createLicensee(values)
 
             if (response.status === 201) {

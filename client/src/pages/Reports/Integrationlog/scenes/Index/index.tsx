@@ -5,7 +5,7 @@ import moment from 'moment'
 import SelectLicenseesWithFilter from '../../../../../components/SelectLicenseesWithFilter'
 import JsonFormatter from 'react-json-formatter'
 
-function IntegrationlogIndex({ currentUser }) {
+function IntegrationlogIndex({ currentUser }: any) {
   const jsonStyle = {
     falseStyle: { color: 'red' },
     trueStyle: { color: 'green' },
@@ -26,19 +26,19 @@ function IntegrationlogIndex({ currentUser }) {
 
   useEffect(() => {
     const socket = io()
-    socket.on('send_integrationlog', data => {
+    socket.on('send_integrationlog', (data: any) => {
       setRecords(data.data)
       setIsSubmitting(false)
     })
 
-    return () => socket.disconnect()
+    return () => { socket.disconnect() }
   }, [setRecords])
 
-  function handleChange({ target }) {
+  function handleChange({ target }: any) {
     setFilters({ ...filters, [target.name]: target.value })
   }
 
-  function handleSubmitSearch(e) {
+  function handleSubmitSearch(e: any) {
     e.preventDefault()
 
     const socket = io()
@@ -77,7 +77,7 @@ function IntegrationlogIndex({ currentUser }) {
                 name='licensee'
                 aria-labelledby='licensee'
                 selectedItem={filters.licensee}
-                onChange={(e) => {
+                onChange={(e: any) => {
                   const inputValue = e && e.value ? e.value : ''
                   const newFilters = { ...filters, licensee: inputValue }
                   setFilters(newFilters)

@@ -1,18 +1,18 @@
 import styles from './styles.module.scss'
 
-function concludedDescription(concluded) {
+function concludedDescription(concluded: any) {
   return concluded ? 'Sim' : 'Não'
 }
 
-function formatNumber(value, decimal = 2) {
+function formatNumber(value: any, decimal = 2) {
   return '$' + value.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 
-function productsDescription(products) {
-  return products.map((item) => <li key={item.product_retailer_id}><p>{`${item.quantity} - ${item.product_retailer_id} - ${formatNumber(item.unit_price)}`}</p></li>)
+function productsDescription(products: any) {
+  return products.map((item: any) => <li key={item.product_retailer_id}><p>{`${item.quantity} - ${item.product_retailer_id} - ${formatNumber(item.unit_price)}`}</p></li>)
 }
 
-function CartDescription({ cart }) {
+function CartDescription({ cart }: any) {
   return (
     <div className={`${styles.cartDescription}`}>
       {cart.products.length > 0 && (

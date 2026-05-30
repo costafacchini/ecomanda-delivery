@@ -15,7 +15,7 @@ export function getEmail() {
   return localStorage.getItem(EMAIL_KEY)
 }
 
-export function login(email, token) {
+export function login(email: any, token: any) {
   localStorage.setItem(EMAIL_KEY, email)
   return localStorage.setItem(TOKEN_KEY, token)
 }

@@ -1,0 +1,6 @@
+declare module '*.scss'
+declare module '*.css'
+declare module '*.module.scss'
+declare module '*.module.css'
+declare module 'lodash/isEmpty'
+declare module 'lodash/debounce'

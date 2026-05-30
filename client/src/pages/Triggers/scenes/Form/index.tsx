@@ -21,7 +21,8 @@ const triggerInitialValues = {
   order: 1,
 }
 
-function TriggerForm({ onSubmit, errors, initialValues, currentUser }) {
+function TriggerForm(props: any) {
+  const { onSubmit, errors, initialValues, currentUser } = props
   let navigate = useNavigate()
 
   return (
@@ -29,11 +30,11 @@ function TriggerForm({ onSubmit, errors, initialValues, currentUser }) {
       <Form
         validationSchema={SignupSchema}
         initialValues={{...triggerInitialValues, ...initialValues}}
-        onSubmit={(values) => {
+        onSubmit={(values: any) => {
           onSubmit(values)
         }}
       >
-        {props => (
+        {(props: any) => (
           <form onSubmit={props.handleSubmit}>
             <fieldset className='pb-4'>
               <div className='row'>
@@ -80,7 +81,7 @@ function TriggerForm({ onSubmit, errors, initialValues, currentUser }) {
                 <div className='row'>
                   <div className='form-group col-5'>
                     <label htmlFor='licensee'>Licenciado</label>
-                    <SelectLicenseesWithFilter selectedItem={props.values.licensee} onChange={(e) => (
+                    <SelectLicenseesWithFilter selectedItem={props.values.licensee} onChange={(e: any) => (
                       props.setFieldValue('licensee', e.value, false)
                     )} />
                   </div>
@@ -230,7 +231,7 @@ function TriggerForm({ onSubmit, errors, initialValues, currentUser }) {
             {errors && (
               <div className='alert alert-danger'>
                 <ul>
-                  {errors.map((error) => (<li key={error.message}>{error.message}</li>))}
+                  {errors.map((error: any) => (<li key={error.message}>{error.message}</li>))}
                 </ul>
               </div>
             )}

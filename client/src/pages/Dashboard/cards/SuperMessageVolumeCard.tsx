@@ -42,7 +42,7 @@ export default function SuperMessageVolumeCard() {
                 </tr>
               </thead>
               <tbody>
-                {(data.per_day || []).map((row) => (
+                {(data.per_day || []).map((row: any) => (
                   <tr key={row.date}>
                     <td>{row.date}</td>
                     <td>{row.count}</td>
@@ -61,7 +61,7 @@ export default function SuperMessageVolumeCard() {
                 </tr>
               </thead>
               <tbody>
-                {(data.per_hour || []).map((row) => (
+                {(data.per_hour || []).map((row: any) => (
                   <tr key={row.hour}>
                     <td>{row.hour}h</td>
                     <td>{row.count}</td>

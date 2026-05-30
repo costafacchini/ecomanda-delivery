@@ -12,7 +12,7 @@ function SignIn() {
   let navigate = useNavigate()
   const { setCurrentUser } = useContext(AppContext)
 
-  async function handleSignIn(e) {
+  async function handleSignIn(e: any) {
     e.preventDefault()
 
     if (!email || !password) {
@@ -70,7 +70,6 @@ function SignIn() {
                       type='password'
                       className="form-control"
                       id="password"
-                      rows="3"
                       onChange={e => setPassword(e.target.value)}
                     />
                   </div>

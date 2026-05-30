@@ -1,7 +1,7 @@
 import { FieldWithError } from '../../../../../components/form'
 import { sendLicenseePagarMe } from '../../../../../services/licensee'
 
-function PagarMePanel({ values, errors, touched, handleChange, handleBlur, wizardMode = false }) {
+function PagarMePanel({ values, errors, touched, handleChange, handleBlur, wizardMode = false }: any) {
   return (
     <fieldset className='pb-4'>
       <div className='row'>
