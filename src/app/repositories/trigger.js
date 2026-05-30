@@ -1,6 +1,6 @@
-import Repository, { RepositoryMemory, sortRecords } from './repository.js'
+import Repository, { RepositoryMemory, sortRecords } from './repository'
 import _ from 'lodash'
-import Trigger from '../models/Trigger.js'
+import Trigger from '../models/Trigger'
 import { requireDependency } from '../helpers/RequireDependency'
 
 class TriggerRepositoryDatabase extends Repository {

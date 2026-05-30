@@ -52,7 +52,7 @@ Migrate the entire codebase (backend + client) from JavaScript to TypeScript inc
 | phase-2/task-05-domain-types | Create src/types/index.ts with domain enums and interfaces | 2 | complete | phase-1/task-02-tsconfig-root |
 | phase-2/task-06-migrate-helpers | Migrate src/app/helpers/ to .ts | 2 | complete | phase-2/task-05-domain-types |
 | phase-2/task-07-migrate-config-setup | Migrate src/config/ and src/setup/ to .ts | 2 | complete | phase-1/task-02-tsconfig-root |
-| phase-3/task-08-migrate-models | Migrate Mongoose models to .ts | 3 | not-started | phase-2/task-05-domain-types |
+| phase-3/task-08-migrate-models | Migrate Mongoose models to .ts | 3 | complete | phase-2/task-05-domain-types |
 | phase-3/task-09-migrate-repositories | Migrate repositories to .ts | 3 | not-started | phase-3/task-08-migrate-models |
 | phase-3/task-10-migrate-queries | Migrate queries layer to .ts | 3 | not-started | phase-3/task-09-migrate-repositories |
 | phase-3/task-11-migrate-services | Migrate services layer to .ts | 3 | not-started | phase-3/task-09-migrate-repositories |

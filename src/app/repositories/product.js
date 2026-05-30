@@ -1,5 +1,5 @@
-import Repository, { RepositoryMemory } from './repository.js'
-import Product from '../models/Product.js'
+import Repository, { RepositoryMemory } from './repository'
+import Product from '../models/Product'
 import { requireDependency } from '../helpers/RequireDependency'
 
 class ProductRepositoryDatabase extends Repository {

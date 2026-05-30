@@ -1,5 +1,5 @@
-import Repository, { RepositoryMemory, matchesFilter } from './repository.js'
-import Cart from '../models/Cart.js'
+import Repository, { RepositoryMemory, matchesFilter } from './repository'
+import Cart from '../models/Cart'
 
 class CartRepositoryDatabase extends Repository {
   model() {

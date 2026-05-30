@@ -1,5 +1,5 @@
-import Repository, { RepositoryMemory } from './repository.js'
-import Integrationlog from '../models/Integrationlog.js'
+import Repository, { RepositoryMemory } from './repository'
+import Integrationlog from '../models/Integrationlog'
 
 class IntegrationlogRepositoryDatabase extends Repository {
   model() {

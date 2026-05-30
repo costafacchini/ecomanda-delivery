@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import Contact from './Contact.js'
+import Contact from './Contact'
 
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
@@ -107,13 +107,13 @@ cartSchema.pre('save', function () {
     cart._id = new mongoose.Types.ObjectId()
   }
 
-  cart.total = cart.calculateTotal()
+  ;(cart as any).total = (cart as any).calculateTotal()
 })
 
-cartSchema.post('save', async function (cart) {
+cartSchema.post('save', async function (cart: any) {
   // TODO: essa lógica deveria estar em um serviço sendo chamada antes de salvar e não aqui
   const contact = await Contact.findById(cart.contact)
-  const fieldsToUpdate = {}
+  const fieldsToUpdate: Record<string, string> = {}
 
   if (cart.address && cart.address !== '' && contact.address !== cart.address) {
     fieldsToUpdate.address = cart.address

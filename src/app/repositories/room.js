@@ -1,5 +1,5 @@
-import Repository, { RepositoryMemory } from './repository.js'
-import Room from '../models/Room.js'
+import Repository, { RepositoryMemory } from './repository'
+import Room from '../models/Room'
 
 class RoomRepositoryDatabase extends Repository {
   model() {

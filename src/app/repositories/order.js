@@ -1,5 +1,5 @@
-import Repository, { RepositoryMemory } from './repository.js'
-import Order from '../models/Order.js'
+import Repository, { RepositoryMemory } from './repository'
+import Order from '../models/Order'
 
 class OrderRepositoryDatabase extends Repository {
   model() {

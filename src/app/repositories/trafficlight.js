@@ -1,5 +1,5 @@
-import Repository, { RepositoryMemory } from './repository.js'
-import Trafficlight from '../models/Trafficlight.js'
+import Repository, { RepositoryMemory } from './repository'
+import Trafficlight from '../models/Trafficlight'
 
 class TrafficlightRepositoryDatabase extends Repository {
   model() {

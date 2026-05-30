@@ -1,5 +1,5 @@
-import Repository, { RepositoryMemory } from './repository.js'
-import Body from '../models/Body.js'
+import Repository, { RepositoryMemory } from './repository'
+import Body from '../models/Body'
 
 class BodyRepositoryDatabase extends Repository {
   model() {

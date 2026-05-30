@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
-import Repository, { RepositoryMemory } from './repository.js'
-import User from '../models/User.js'
+import Repository, { RepositoryMemory } from './repository'
+import User from '../models/User'
 
 const saltRounds = 14
 

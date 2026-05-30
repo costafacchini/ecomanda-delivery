@@ -1,5 +1,5 @@
-import Repository, { RepositoryMemory } from './repository.js'
-import Backgroundjob from '../models/Backgroundjob.js'
+import Repository, { RepositoryMemory } from './repository'
+import Backgroundjob from '../models/Backgroundjob'
 
 class BackgroundjobRepositoryDatabase extends Repository {
   model() {

@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
-import Repository, { RepositoryMemory } from './repository.js'
-import Message from '../models/Message.js'
-import Trigger from '../models/Trigger.js'
+import Repository, { RepositoryMemory } from './repository'
+import Message from '../models/Message'
+import Trigger from '../models/Trigger'
 import { replace } from '../helpers/Emoji'
 import { requireDependency } from '../helpers/RequireDependency'
 

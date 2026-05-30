@@ -1,5 +1,5 @@
-import Repository, { RepositoryMemory } from './repository.js'
-import WhatsappSession from '../models/WhatsappSession.js'
+import Repository, { RepositoryMemory } from './repository'
+import WhatsappSession from '../models/WhatsappSession'
 
 class WhatsappSessionRepositoryDatabase extends Repository {
   model() {

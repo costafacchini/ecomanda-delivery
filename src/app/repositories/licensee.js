@@ -1,5 +1,5 @@
-import Repository, { RepositoryMemory } from './repository.js'
-import Licensee from '../models/Licensee.js'
+import Repository, { RepositoryMemory } from './repository'
+import Licensee from '../models/Licensee'
 
 class LicenseeRepositoryDatabase extends Repository {
   model() {
