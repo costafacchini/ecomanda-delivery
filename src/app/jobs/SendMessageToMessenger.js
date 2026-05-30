@@ -1,4 +1,4 @@
-import { sendMessageToMessenger } from '../services/SendMessageToMessenger.js'
+import { sendMessageToMessenger } from '../services/SendMessageToMessenger'
 import { jobDependencies } from './dependencies.js'
 
 export default {

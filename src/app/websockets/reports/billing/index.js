@@ -1,6 +1,6 @@
 import { io } from '../../../../config/http'
-import { BillingQuery } from '../../../../app/queries/BillingQuery.js'
-import { IntegrationlogsQuery } from '../../../../app/queries/IntegrationlogsQuery.js'
+import { BillingQuery } from '../../../../app/queries/BillingQuery'
+import { IntegrationlogsQuery } from '../../../../app/queries/IntegrationlogsQuery'
 import { LicenseeRepositoryDatabase } from '../../../../app/repositories/licensee'
 import { MessageRepositoryDatabase } from '../../../../app/repositories/message'
 import { IntegrationlogRepositoryDatabase } from '../../../../app/repositories/integrationlog'

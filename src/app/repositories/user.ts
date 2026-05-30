@@ -21,7 +21,7 @@ class UserRepositoryDatabase extends Repository {
 }
 
 class UserRepositoryMemory extends RepositoryMemory {
-  async create(fields = {}) {
+  async create(fields: Record<string, any> = {}) {
     this.validateUserFields(fields)
 
     const record = await super.create({

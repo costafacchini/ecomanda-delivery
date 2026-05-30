@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 class Repository {
-  model() {}
+  model(): any {}
 
   async findFirst(params = {}, relations = []) {
     const query = this.model().findOne(params ?? {})
@@ -132,11 +132,11 @@ function matchesFilter(record, params = {}) {
 
   return Object.entries(params ?? {}).every(([key, expected]) => {
     if (key === '$or') {
-      return (expected ?? []).some((filter) => matchesFilter(record, filter))
+      return (expected as any[] ?? []).some((filter) => matchesFilter(record, filter))
     }
 
     if (key === '$and') {
-      return (expected ?? []).every((filter) => matchesFilter(record, filter))
+      return (expected as any[] ?? []).every((filter) => matchesFilter(record, filter))
     }
 
     return matchValue(record?.[key], expected)
@@ -167,9 +167,9 @@ function sortRecords(records = [], order = {}) {
   })
 }
 
-function buildMemoryRecord(fields = {}) {
+function buildMemoryRecord(fields: Record<string, any> = {}) {
   const now = new Date()
-  const record = {
+  const record: Record<string, any> = {
     _id: fields?._id ?? new mongoose.Types.ObjectId(),
     ...(fields ?? {}),
   }
@@ -186,6 +186,10 @@ function buildMemoryRecord(fields = {}) {
 }
 
 class RepositoryMemory extends Repository {
+  items: any[]
+  modelClass: any
+  relationLoaders: Record<string, any>
+
   constructor(items = []) {
     super()
     this.items = items

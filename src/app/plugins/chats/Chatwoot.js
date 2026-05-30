@@ -1,4 +1,4 @@
-import request from '../../services/request.js'
+import request from '../../services/request'
 import { ChatsBase } from './Base.js'
 import { logger } from '../../helpers/logger'
 import path from 'path'

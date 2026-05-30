@@ -3,7 +3,7 @@ import { logger } from '../../helpers/logger'
 import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files'
 import { NormalizePhone } from '../../helpers/NormalizePhone'
 import { v4 as uuidv4 } from 'uuid'
-import request from '../../services/request.js'
+import request from '../../services/request'
 import { ChatsBase } from './Base.js'
 
 class Cuboup extends ChatsBase {

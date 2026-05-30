@@ -1,4 +1,4 @@
-import { processBackgroundjob } from '../services/ProcessBackgroundjob.js'
+import { processBackgroundjob } from '../services/ProcessBackgroundjob'
 import { jobDependencies } from './dependencies.js'
 
 export default {

@@ -1,4 +1,4 @@
-import { processBackgroundjobGetPix } from '../services/ProcessBackgroundjobGetPix.js'
+import { processBackgroundjobGetPix } from '../services/ProcessBackgroundjobGetPix'
 import { jobDependencies } from './dependencies.js'
 
 export default {

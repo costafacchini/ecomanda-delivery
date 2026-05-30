@@ -1,5 +1,5 @@
 import { NormalizePhone } from '../../helpers/NormalizePhone'
-import request from '../../services/request.js'
+import request from '../../services/request'
 import { logger } from '../../helpers/logger'
 import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files'
 import { MessengersBase } from './Base.js'

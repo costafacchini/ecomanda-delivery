@@ -13,7 +13,7 @@ import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
 import { MessageRepositoryDatabase } from '@repositories/message'
-import request from '../../services/request.js'
+import request from '../../services/request'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 jest.mock('../../services/request')

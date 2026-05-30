@@ -1,4 +1,4 @@
-import { processWebhook } from '../services/Pedidos10Webhook.js'
+import { processWebhook } from '../services/Pedidos10Webhook'
 import { jobDependencies } from './dependencies.js'
 
 export default {

@@ -1,4 +1,4 @@
-import { sendContactToPagarMe } from '../services/SendContactToPagarMe.js'
+import { sendContactToPagarMe } from '../services/SendContactToPagarMe'
 import { jobDependencies } from './dependencies.js'
 
 export default {

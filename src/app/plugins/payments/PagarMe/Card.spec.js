@@ -4,7 +4,7 @@ import { licenseeIntegrationPagarMe as licenseeFactory } from '@factories/licens
 import { contact as contactFactory } from '@factories/contact'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
-import request from '../../../services/request.js'
+import request from '../../../services/request'
 import { createRuntimeDependencies } from '../../../runtime/dependencies.js'
 
 jest.mock('../../../services/request')

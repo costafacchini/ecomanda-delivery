@@ -1,4 +1,4 @@
-import { processBackgroundjobChargeCreditCard } from '../services/ProcessBackgroundjobChargeCreditCard.js'
+import { processBackgroundjobChargeCreditCard } from '../services/ProcessBackgroundjobChargeCreditCard'
 import { jobDependencies } from './dependencies.js'
 
 export default {

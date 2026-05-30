@@ -57,7 +57,11 @@ function generateProductItem(productId) {
 }
 
 class FacebookCatalogImporter {
-  constructor(triggerId, { triggerRepository, productRepository } = {}) {
+  triggerId: any
+  triggerRepository: any
+  productRepository: any
+
+  constructor(triggerId, { triggerRepository, productRepository }: { triggerRepository?: any; productRepository?: any } = {}) {
     this.triggerId = triggerId
     this.triggerRepository = triggerRepository
     this.productRepository = productRepository

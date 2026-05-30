@@ -1,6 +1,6 @@
 import { isMidia } from '../../helpers/Files'
 import { logger } from '../../helpers/logger'
-import request from '../../services/request.js'
+import request from '../../services/request'
 import mime from 'mime-types'
 import { ChatsBase } from './Base.js'
 import { requireDependency } from '../../helpers/RequireDependency'

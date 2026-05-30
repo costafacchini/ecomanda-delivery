@@ -1,4 +1,4 @@
-import { sendOrder } from '../services/IntegrationSendOrder.js'
+import { sendOrder } from '../services/IntegrationSendOrder'
 import { jobDependencies } from './dependencies.js'
 
 export default {

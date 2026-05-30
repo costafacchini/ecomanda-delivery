@@ -8,7 +8,7 @@ class TriggerRepositoryDatabase extends Repository {
     return Trigger
   }
 
-  async findFirst(params = {}, relations = []) {
+  async findFirst(params: Record<string, any> = {}, relations = []) {
     const onlyIdFilter = Object.keys(params ?? {}).length === 1 && '_id' in (params ?? {})
 
     if (onlyIdFilter && relations.length === 0) {
@@ -51,11 +51,11 @@ class TriggerRepositoryMemory extends RepositoryMemory {
   }
 }
 
-async function createTrigger(fields, { triggerRepository } = {}) {
+async function createTrigger(fields, { triggerRepository }: { triggerRepository?: any } = {}) {
   return await requireDependency(triggerRepository, 'triggerRepository', 'createTrigger').create(fields)
 }
 
-async function getAllTriggerBy(filters, order = {}, { triggerRepository } = {}) {
+async function getAllTriggerBy(filters, order = {}, { triggerRepository }: { triggerRepository?: any } = {}) {
   return await requireDependency(triggerRepository, 'triggerRepository', 'getAllTriggerBy').find(filters, order)
 }
 

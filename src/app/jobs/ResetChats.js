@@ -1,4 +1,4 @@
-import { resetChats } from '../services/ResetChats.js'
+import { resetChats } from '../services/ResetChats'
 import { jobDependencies } from './dependencies.js'
 
 export default {

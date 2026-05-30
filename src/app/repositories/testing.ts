@@ -147,6 +147,16 @@ function createMemoryRepositories() {
 }
 
 class MemoryQuery {
+  repository: any
+  params: any
+  single: boolean
+  predicates: any[]
+  skipCount: number
+  limitCount: number | null
+  sortClause: any
+  currentField: any
+  relations: any[]
+
   constructor(repository, params = {}, { single = false } = {}) {
     this.repository = repository
     this.params = params
@@ -309,7 +319,7 @@ function aggregateMessageCounts(repository, pipeline = []) {
   return Array.from(groupedByLicensee.values())
 }
 
-function createMemoryModelAdapter(repository, { aggregate } = {}) {
+function createMemoryModelAdapter(repository, { aggregate }: { aggregate?: any } = {}) {
   return {
     create: async (fields = {}) => await repository.create(fields),
     find: (params = {}) => new MemoryQuery(repository, params),

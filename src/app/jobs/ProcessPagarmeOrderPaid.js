@@ -1,4 +1,4 @@
-import { processPagarmeOrderPaid } from '../services/ProcessPagarmeOrderPaid.js'
+import { processPagarmeOrderPaid } from '../services/ProcessPagarmeOrderPaid'
 import { jobDependencies } from './dependencies.js'
 
 export default {

@@ -6,7 +6,7 @@ jest.mock('../../helpers/Files')
 jest.mock('../../helpers/NormalizePhone')
 jest.mock('../../helpers/ParseTriggerText')
 
-import request from '../../services/request.js'
+import request from '../../services/request'
 import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files'
 import { createRuntimeDependencies } from '../../runtime/dependencies.js'
 

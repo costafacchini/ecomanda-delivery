@@ -6,7 +6,9 @@ import { NormalizePhone } from '../helpers/NormalizePhone'
 import { requireDependency } from '../helpers/RequireDependency'
 
 class ContactRepositoryDatabase extends Repository {
-  constructor({ messageRepository } = {}) {
+  messageRepository: any
+
+  constructor({ messageRepository }: { messageRepository?: any } = {}) {
     super()
     this.messageRepository = messageRepository
   }
@@ -15,7 +17,7 @@ class ContactRepositoryDatabase extends Repository {
     return Contact
   }
 
-  async findFirst(params, relations) {
+  async findFirst(params, relations?) {
     if (relations) {
       const query = Contact.findOne(params)
       relations.forEach((relation) => query.populate(relation))
@@ -76,7 +78,9 @@ class ContactRepositoryDatabase extends Repository {
 }
 
 class ContactRepositoryMemory extends RepositoryMemory {
-  constructor({ items = [], messageRepository } = {}) {
+  messageRepository: any
+
+  constructor({ items = [], messageRepository }: { items?: any[]; messageRepository?: any } = {}) {
     super(items)
     this.messageRepository = messageRepository
   }
@@ -120,8 +124,8 @@ class ContactRepositoryMemory extends RepositoryMemory {
     return await super.save(document)
   }
 
-  normalizeContactFields(fields = {}) {
-    const normalizedFields = { ...(fields ?? {}) }
+  normalizeContactFields(fields: Record<string, any> = {}) {
+    const normalizedFields: Record<string, any> = { ...(fields ?? {}) }
     const stringFields = [
       'landbotId',
       'chatwootId',

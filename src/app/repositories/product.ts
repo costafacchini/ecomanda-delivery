@@ -10,11 +10,11 @@ class ProductRepositoryDatabase extends Repository {
 
 class ProductRepositoryMemory extends RepositoryMemory {}
 
-async function createProduct(fields, { productRepository } = {}) {
+async function createProduct(fields, { productRepository }: { productRepository?: any } = {}) {
   return await requireDependency(productRepository, 'productRepository', 'createProduct').create(fields)
 }
 
-async function getProductBy(filter, { productRepository } = {}) {
+async function getProductBy(filter, { productRepository }: { productRepository?: any } = {}) {
   return await requireDependency(productRepository, 'productRepository', 'getProductBy').findFirst(filter)
 }
 

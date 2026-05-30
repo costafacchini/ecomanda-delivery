@@ -1,4 +1,4 @@
-import { processBackgroundjobCancelOrder } from '../services/ProcessBackgroundjobCancelOrder.js'
+import { processBackgroundjobCancelOrder } from '../services/ProcessBackgroundjobCancelOrder'
 import { jobDependencies } from './dependencies.js'
 
 export default {

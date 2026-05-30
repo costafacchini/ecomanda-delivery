@@ -1,4 +1,4 @@
-import request from '../../../../services/request.js'
+import request from '../../../../services/request'
 import { logger } from '../../../../helpers/logger'
 
 class Webhook {

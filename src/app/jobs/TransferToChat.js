@@ -1,4 +1,4 @@
-import { transferToChat } from '../services/TransferToChat.js'
+import { transferToChat } from '../services/TransferToChat'
 import { jobDependencies } from './dependencies.js'
 
 export default {

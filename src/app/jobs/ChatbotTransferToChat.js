@@ -1,4 +1,4 @@
-import { transformChatbotTransferBody } from '../services/ChatbotTransfer.js'
+import { transformChatbotTransferBody } from '../services/ChatbotTransfer'
 import { jobDependencies } from './dependencies.js'
 
 export default {

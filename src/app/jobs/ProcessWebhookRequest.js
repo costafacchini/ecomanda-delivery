@@ -1,4 +1,4 @@
-import { processWebhookRequest } from '../services/ProcessWebhookRequest.js'
+import { processWebhookRequest } from '../services/ProcessWebhookRequest'
 import { jobDependencies } from './dependencies.js'
 
 export default {

@@ -6,7 +6,7 @@ import { cart as cartFactory } from '@factories/cart'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
-import request from '../../../services/request.js'
+import request from '../../../services/request'
 import { createRuntimeDependencies } from '../../../runtime/dependencies.js'
 
 jest.mock('../../../services/request')

@@ -1,4 +1,4 @@
-import { transformChatBody } from '../services/ChatMessage.js'
+import { transformChatBody } from '../services/ChatMessage'
 import { jobDependencies } from './dependencies.js'
 
 export default {

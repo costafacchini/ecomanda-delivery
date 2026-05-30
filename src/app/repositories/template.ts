@@ -27,11 +27,11 @@ class TemplateRepositoryMemory extends RepositoryMemory {
   }
 }
 
-async function destroyAllTemplates({ templateRepository } = {}) {
+async function destroyAllTemplates({ templateRepository }: { templateRepository?: any } = {}) {
   await requireDependency(templateRepository, 'templateRepository', 'destroyAllTemplates').delete({})
 }
 
-async function createTemplate(fields, { templateRepository } = {}) {
+async function createTemplate(fields, { templateRepository }: { templateRepository?: any } = {}) {
   return await requireDependency(templateRepository, 'templateRepository', 'createTemplate').create(fields)
 }
 

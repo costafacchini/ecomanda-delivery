@@ -1,5 +1,10 @@
 class TemplatesImporter {
-  constructor(licenseeId, { licenseeRepository, templateRepository, createMessengerPlugin } = {}) {
+  licenseeId: any
+  licenseeRepository: any
+  templateRepository: any
+  createMessengerPlugin: any
+
+  constructor(licenseeId, { licenseeRepository, templateRepository, createMessengerPlugin }: { licenseeRepository?: any; templateRepository?: any; createMessengerPlugin?: any } = {}) {
     this.licenseeId = licenseeId
     this.licenseeRepository = licenseeRepository
     this.templateRepository = templateRepository

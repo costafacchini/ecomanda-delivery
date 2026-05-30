@@ -2,7 +2,7 @@ import Integrationlog from '@models/Integrationlog'
 import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licenseeIntegrationPagarMe as licenseeFactory } from '@factories/licensee'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
-import request from '../../../services/request.js'
+import request from '../../../services/request'
 import { createRuntimeDependencies } from '../../../runtime/dependencies.js'
 
 jest.mock('../../../services/request')

@@ -1,4 +1,4 @@
-import { sendMessageToChat } from '../services/SendMessageToChat.js'
+import { sendMessageToChat } from '../services/SendMessageToChat'
 import { jobDependencies } from './dependencies.js'
 
 export default {

@@ -6,7 +6,9 @@ import { replace } from '../helpers/Emoji'
 import { requireDependency } from '../helpers/RequireDependency'
 
 class MessageRepositoryDatabase extends Repository {
-  constructor({ parseText: parseTextDependency } = {}) {
+  parseTextDependency: any
+
+  constructor({ parseText: parseTextDependency }: { parseText?: any } = {}) {
     super()
     this.parseTextDependency = parseTextDependency
   }
@@ -103,7 +105,10 @@ class MessageRepositoryDatabase extends Repository {
 }
 
 class MessageRepositoryMemory extends RepositoryMemory {
-  constructor({ items = [], triggerRepository, parseText: parseTextDependency } = {}) {
+  triggerRepository: any
+  parseTextDependency: any
+
+  constructor({ items = [], triggerRepository, parseText: parseTextDependency }: { items?: any[]; triggerRepository?: any; parseText?: any } = {}) {
     super(items)
     this.triggerRepository = triggerRepository
     this.parseTextDependency = parseTextDependency

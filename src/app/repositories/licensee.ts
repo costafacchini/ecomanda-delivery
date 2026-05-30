@@ -33,8 +33,8 @@ class LicenseeRepositoryMemory extends RepositoryMemory {
     return await super.save(document)
   }
 
-  normalizeLicenseeFields(fields = {}) {
-    const normalizedFields = { ...(fields ?? {}) }
+  normalizeLicenseeFields(fields: Record<string, any> = {}) {
+    const normalizedFields: Record<string, any> = { ...(fields ?? {}) }
     const stringFields = ['apiToken', 'recipient_id']
 
     stringFields.forEach((field) => {

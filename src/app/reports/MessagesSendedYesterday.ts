@@ -3,7 +3,12 @@ import { MessagesFailedQuery } from '@queries/MessagesFailed'
 import moment from 'moment'
 
 class MessagesSendedYesterday {
-  constructor({ licenseeRepository, messageRepository } = {}) {
+  startDate: any
+  endDate: any
+  licenseeRepository: any
+  messageRepository: any
+
+  constructor({ licenseeRepository, messageRepository }: { licenseeRepository?: any; messageRepository?: any } = {}) {
     const yesterday = moment().subtract(1, 'days')
     this.startDate = moment(yesterday).startOf('day')
     this.endDate = moment(yesterday).endOf('day')

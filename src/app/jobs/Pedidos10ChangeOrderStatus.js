@@ -1,4 +1,4 @@
-import { changeOrderStatus } from '../services/Pedidos10ChangeOrderStatus.js'
+import { changeOrderStatus } from '../services/Pedidos10ChangeOrderStatus'
 import { jobDependencies } from './dependencies.js'
 
 export default {
