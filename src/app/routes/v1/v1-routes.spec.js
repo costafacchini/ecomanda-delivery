@@ -63,7 +63,7 @@ jest.mock('../../usecases/orders/ReceivePedidos10Order.js', () => ({
 jest.mock('../../usecases/orders/ChangePedidos10OrderStatus.js', () => ({
   ChangePedidos10OrderStatus: jest.fn().mockImplementation(() => ({ execute: jest.fn() })),
 }))
-jest.mock('../../plugins/carts/adapters/factory.js', () => ({ createCartAdapter: jest.fn() }))
+jest.mock('../../plugins/carts/adapters/factory', () => ({ createCartAdapter: jest.fn() }))
 jest.mock('../../repositories/messenger', () => ({ scheduleSendMessageToMessenger: jest.fn() }))
 jest.mock('../../controllers/DelayController.js', () => ({
   DelayController: jest.fn().mockImplementation(() => ({

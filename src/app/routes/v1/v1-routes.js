@@ -25,7 +25,7 @@ import { IngestMessengerMessage } from '../../usecases/webhooks/IngestMessengerM
 import { queueServer } from '../../../config/queue'
 import { publishMessage } from '../../../config/rabbitmq'
 import { NormalizePhone } from '../../helpers/NormalizePhone'
-import { createCartAdapter } from '../../plugins/carts/adapters/factory.js'
+import { createCartAdapter } from '../../plugins/carts/adapters/factory'
 import { scheduleSendMessageToMessenger } from '../../repositories/messenger'
 import { createRuntimeDependencies } from '../../runtime/dependencies.js'
 
