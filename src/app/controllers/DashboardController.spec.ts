@@ -1,0 +1,498 @@
+import { DashboardController } from './DashboardController'
+
+function buildResponse() {
+  return {
+    json: jest.fn(),
+    status: jest.fn().mockReturnThis(),
+  }
+}
+
+function buildModelAdapter({ countResult = 0, aggregateResult = [] } = {}) {
+  const queryChain = {
+    countDocuments: jest.fn().mockResolvedValue(countResult),
+  }
+  return {
+    where: jest.fn().mockReturnValue(queryChain),
+    aggregate: jest.fn().mockResolvedValue(aggregateResult),
+    _queryChain: queryChain,
+  }
+}
+
+function buildRedis({ cachedValue = null } = {}) {
+  return {
+    get: jest.fn().mockResolvedValue(cachedValue),
+    setex: jest.fn().mockResolvedValue('OK'),
+  }
+}
+
+function buildController({
+  user = null,
+  licenseeModelAdapter = null,
+  messageModelAdapter = null,
+  contactModelAdapter = null,
+  roomModelAdapter = null,
+  redisConnection = null,
+} = {}) {
+  const userRepository = {
+    findFirst: jest.fn().mockResolvedValue(user),
+  }
+  const licenseeRepository = {
+    model: jest.fn().mockReturnValue(licenseeModelAdapter ?? buildModelAdapter()),
+  }
+  const contactRepository = {
+    model: jest.fn().mockReturnValue(contactModelAdapter ?? buildModelAdapter()),
+  }
+  const messageRepository = {
+    model: jest.fn().mockReturnValue(messageModelAdapter ?? buildModelAdapter()),
+    findFirst: jest.fn().mockResolvedValue(null),
+    save: jest.fn(),
+  }
+  const roomRepository = {
+    model: jest.fn().mockReturnValue(roomModelAdapter ?? buildModelAdapter()),
+  }
+  const redis = redisConnection ?? buildRedis()
+
+  const controller = new DashboardController({
+    userRepository,
+    licenseeRepository,
+    contactRepository,
+    messageRepository,
+    roomRepository,
+    redisConnection: redis,
+  })
+
+  return {
+    controller,
+    userRepository,
+    licenseeRepository,
+    contactRepository,
+    messageRepository,
+    roomRepository,
+    redisConnection: redis,
+  }
+}
+
+const SUPER_USER = { _id: 'user-id', isSuper: true }
+const LICENSEE_USER = { _id: 'user-id', isSuper: false, licensee: 'licensee-id' }
+
+describe('DashboardController', () => {
+  describe('licensees', () => {
+    it('returns 403 when user is not super', async () => {
+      const { controller } = buildController({ user: LICENSEE_USER })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.licensees(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(403)
+    })
+
+    it('returns 404 when user not found', async () => {
+      const { controller } = buildController({ user: null })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.licensees(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(404)
+    })
+
+    it('serves from cache on cache hit', async () => {
+      const cached = { total: 5, active: 3, by_kind: { demo: 1, free: 2, paid: 2 } }
+      const redis = buildRedis({ cachedValue: JSON.stringify(cached) })
+      const { controller, licenseeRepository } = buildController({ user: SUPER_USER, redisConnection: redis })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.licensees(req, res)
+
+      expect(redis.get).toHaveBeenCalledWith('dashboard:super:licensees')
+      expect(licenseeRepository.model).not.toHaveBeenCalled()
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.json).toHaveBeenCalledWith(cached)
+    })
+
+    it('queries DB on cache miss and stores result in redis', async () => {
+      const redis = buildRedis({ cachedValue: null })
+      const modelAdapter = buildModelAdapter({ countResult: 10 })
+      const { controller } = buildController({
+        user: SUPER_USER,
+        licenseeModelAdapter: modelAdapter,
+        redisConnection: redis,
+      })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.licensees(req, res)
+
+      expect(redis.setex).toHaveBeenCalledWith('dashboard:super:licensees', 600, expect.any(String))
+      expect(res.status).toHaveBeenCalledWith(200)
+      const result = res.json.mock.calls[0][0]
+      expect(result).toHaveProperty('total')
+      expect(result).toHaveProperty('by_kind')
+    })
+
+    it('returns 500 on repository error', async () => {
+      const redis = buildRedis({ cachedValue: null })
+      const { controller, licenseeRepository } = buildController({ user: SUPER_USER, redisConnection: redis })
+      licenseeRepository.model.mockImplementation(() => {
+        throw new Error('DB error')
+      })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.licensees(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(500)
+    })
+  })
+
+  describe('messageVolume', () => {
+    it('returns 403 when user is not super', async () => {
+      const { controller } = buildController({ user: LICENSEE_USER })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.messageVolume(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(403)
+    })
+
+    it('serves from cache on cache hit', async () => {
+      const cached = { per_day: [], per_hour: [], peak_throughput: 0, avg_transfer_rate: 0 }
+      const startDate = new Date('2026-05-07T00:00:00.000Z')
+      const endDate = new Date('2026-05-07T01:00:00.000Z')
+      const redis = buildRedis({ cachedValue: JSON.stringify(cached) })
+      const { controller, messageRepository } = buildController({ user: SUPER_USER, redisConnection: redis })
+      const req = { userId: 'user-id', query: { startDate: startDate.toISOString(), endDate: endDate.toISOString() } }
+      const res = buildResponse()
+
+      await controller.messageVolume(req, res)
+
+      expect(messageRepository.model).not.toHaveBeenCalled()
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.json).toHaveBeenCalledWith(cached)
+    })
+
+    it('queries DB and returns volume data on cache miss', async () => {
+      const redis = buildRedis({ cachedValue: null })
+      const modelAdapter = buildModelAdapter({ countResult: 5, aggregateResult: [{ _id: '2026-05-07', count: 5 }] })
+      const { controller } = buildController({
+        user: SUPER_USER,
+        messageModelAdapter: modelAdapter,
+        redisConnection: redis,
+      })
+      const req = {
+        userId: 'user-id',
+        query: { startDate: '2026-05-07T00:00:00.000Z', endDate: '2026-05-07T24:00:00.000Z' },
+      }
+      const res = buildResponse()
+
+      await controller.messageVolume(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      const result = res.json.mock.calls[0][0]
+      expect(result).toHaveProperty('per_day')
+      expect(result).toHaveProperty('per_hour')
+      expect(result).toHaveProperty('peak_throughput')
+      expect(result).toHaveProperty('avg_transfer_rate')
+    })
+  })
+
+  describe('deliveryRate', () => {
+    it('returns 403 when user is not super', async () => {
+      const { controller } = buildController({ user: LICENSEE_USER })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.deliveryRate(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(403)
+    })
+
+    it('returns correct percentages on cache miss', async () => {
+      const redis = buildRedis({ cachedValue: null })
+      const modelAdapter = buildModelAdapter({ countResult: 0 })
+      modelAdapter._queryChain.countDocuments.mockResolvedValueOnce(80).mockResolvedValueOnce(20)
+      const { controller } = buildController({
+        user: SUPER_USER,
+        messageModelAdapter: modelAdapter,
+        redisConnection: redis,
+      })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.deliveryRate(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      const result = res.json.mock.calls[0][0]
+      expect(result.sent_today).toBe(80)
+      expect(result.failed_today).toBe(20)
+      expect(result.sent_pct).toBe(80)
+      expect(result.failed_pct).toBe(20)
+    })
+
+    it('returns zero percentages when no messages', async () => {
+      const redis = buildRedis({ cachedValue: null })
+      const modelAdapter = buildModelAdapter({ countResult: 0 })
+      const { controller } = buildController({
+        user: SUPER_USER,
+        messageModelAdapter: modelAdapter,
+        redisConnection: redis,
+      })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.deliveryRate(req, res)
+
+      const result = res.json.mock.calls[0][0]
+      expect(result.sent_pct).toBe(0)
+      expect(result.failed_pct).toBe(0)
+    })
+  })
+
+  describe('queue', () => {
+    it('returns 403 when user is not super', async () => {
+      const { controller } = buildController({ user: LICENSEE_USER })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.queue(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(403)
+    })
+
+    it('returns queue stats on cache miss', async () => {
+      const redis = buildRedis({ cachedValue: null })
+      const modelAdapter = buildModelAdapter({ countResult: 5, aggregateResult: [{ _id: null, avg: 30 }] })
+      const { controller } = buildController({
+        user: SUPER_USER,
+        messageModelAdapter: modelAdapter,
+        redisConnection: redis,
+      })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.queue(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      const result = res.json.mock.calls[0][0]
+      expect(result).toHaveProperty('pending_messages')
+      expect(result).toHaveProperty('avg_time_in_queue_seconds')
+    })
+
+    it('returns 0 avg when no aggregate results', async () => {
+      const redis = buildRedis({ cachedValue: null })
+      const modelAdapter = buildModelAdapter({ countResult: 3, aggregateResult: [] })
+      const { controller } = buildController({
+        user: SUPER_USER,
+        messageModelAdapter: modelAdapter,
+        redisConnection: redis,
+      })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.queue(req, res)
+
+      const result = res.json.mock.calls[0][0]
+      expect(result.avg_time_in_queue_seconds).toBe(0)
+    })
+  })
+
+  describe('conversations', () => {
+    it('returns 403 when user is not super', async () => {
+      const { controller } = buildController({ user: LICENSEE_USER })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.conversations(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(403)
+    })
+
+    it('returns conversation stats on cache miss', async () => {
+      const redis = buildRedis({ cachedValue: null })
+      const roomModelAdapter = buildModelAdapter({ countResult: 5, aggregateResult: [{ _id: null, avg: 120 }] })
+      const messageModelAdapter = buildModelAdapter({ aggregateResult: [{ _id: null, avg: 4.5 }] })
+      const { controller } = buildController({
+        user: SUPER_USER,
+        roomModelAdapter,
+        messageModelAdapter,
+        redisConnection: redis,
+      })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.conversations(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      const result = res.json.mock.calls[0][0]
+      expect(result).toHaveProperty('started_today')
+      expect(result).toHaveProperty('ended_today')
+      expect(result).toHaveProperty('avg_messages_per_conversation')
+      expect(result).toHaveProperty('avg_duration_seconds')
+    })
+
+    it('returns 0 averages when no aggregate results', async () => {
+      const redis = buildRedis({ cachedValue: null })
+      const roomModelAdapter = buildModelAdapter({ countResult: 0, aggregateResult: [] })
+      const messageModelAdapter = buildModelAdapter({ aggregateResult: [] })
+      const { controller } = buildController({
+        user: SUPER_USER,
+        roomModelAdapter,
+        messageModelAdapter,
+        redisConnection: redis,
+      })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.conversations(req, res)
+
+      const result = res.json.mock.calls[0][0]
+      expect(result.avg_messages_per_conversation).toBe(0)
+      expect(result.avg_duration_seconds).toBe(0)
+    })
+  })
+
+  describe('contacts', () => {
+    it('returns 403 when user is super', async () => {
+      const { controller } = buildController({ user: SUPER_USER })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.contacts(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(403)
+    })
+
+    it('returns 404 when user not found', async () => {
+      const { controller } = buildController({ user: null })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.contacts(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(404)
+    })
+
+    it('serves from cache on cache hit', async () => {
+      const cached = { total: 10, in_chatbot: 3 }
+      const redis = buildRedis({ cachedValue: JSON.stringify(cached) })
+      const { controller, contactRepository } = buildController({ user: LICENSEE_USER, redisConnection: redis })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.contacts(req, res)
+
+      expect(redis.get).toHaveBeenCalledWith(`dashboard:licensee:${LICENSEE_USER.licensee}:contacts`)
+      expect(contactRepository.model).not.toHaveBeenCalled()
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.json).toHaveBeenCalledWith(cached)
+    })
+
+    it('queries DB on cache miss', async () => {
+      const redis = buildRedis({ cachedValue: null })
+      const modelAdapter = buildModelAdapter({ countResult: 0 })
+      modelAdapter._queryChain.countDocuments.mockResolvedValueOnce(15).mockResolvedValueOnce(4)
+      const { controller } = buildController({
+        user: LICENSEE_USER,
+        contactModelAdapter: modelAdapter,
+        redisConnection: redis,
+      })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.contacts(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      const result = res.json.mock.calls[0][0]
+      expect(result.total).toBe(15)
+      expect(result.in_chatbot).toBe(4)
+    })
+  })
+
+  describe('messagesToday', () => {
+    it('returns 403 when user is super', async () => {
+      const { controller } = buildController({ user: SUPER_USER })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.messagesToday(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(403)
+    })
+
+    it('returns licensee message counts on cache miss', async () => {
+      const redis = buildRedis({ cachedValue: null })
+      const modelAdapter = buildModelAdapter({ countResult: 0 })
+      modelAdapter._queryChain.countDocuments.mockResolvedValueOnce(50).mockResolvedValueOnce(5)
+      const { controller } = buildController({
+        user: LICENSEE_USER,
+        messageModelAdapter: modelAdapter,
+        redisConnection: redis,
+      })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.messagesToday(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      const result = res.json.mock.calls[0][0]
+      expect(result.sent_today).toBe(50)
+      expect(result.failed_today).toBe(5)
+    })
+  })
+
+  describe('messagesPerDay', () => {
+    it('returns 403 when user is super', async () => {
+      const { controller } = buildController({ user: SUPER_USER })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.messagesPerDay(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(403)
+    })
+
+    it('returns per_day data on cache miss', async () => {
+      const redis = buildRedis({ cachedValue: null })
+      const modelAdapter = buildModelAdapter({ aggregateResult: [{ _id: '2026-05-07', count: 10 }] })
+      const { controller } = buildController({
+        user: LICENSEE_USER,
+        messageModelAdapter: modelAdapter,
+        redisConnection: redis,
+      })
+      const req = { userId: 'user-id', query: {} }
+      const res = buildResponse()
+
+      await controller.messagesPerDay(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      const result = res.json.mock.calls[0][0]
+      expect(result).toHaveProperty('per_day')
+      expect(result.per_day).toHaveLength(1)
+      expect(result.per_day[0]).toEqual({ _id: '2026-05-07', count: 10 })
+    })
+  })
+
+  describe('_parseDateRange', () => {
+    it('defaults to today when no query params', () => {
+      const { controller } = buildController()
+      const now = new Date()
+      const { startDate, endDate } = controller._parseDateRange({})
+
+      expect(startDate.getDate()).toBe(now.getDate())
+      expect(endDate.getTime() - startDate.getTime()).toBe(24 * 60 * 60 * 1000)
+    })
+
+    it('parses ISO date strings from query', () => {
+      const { controller } = buildController()
+      const start = '2026-01-01T00:00:00.000Z'
+      const end = '2026-01-02T00:00:00.000Z'
+      const { startDate, endDate } = controller._parseDateRange({ startDate: start, endDate: end })
+
+      expect(startDate).toEqual(new Date(start))
+      expect(endDate).toEqual(new Date(end))
+    })
+  })
+})
