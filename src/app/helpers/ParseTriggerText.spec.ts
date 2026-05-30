@@ -8,7 +8,7 @@ import { product as productFactory } from '@factories/product'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { CartRepositoryDatabase } from '@repositories/cart'
-import { createRuntimeDependencies } from '../runtime/dependencies.js'
+import { createRuntimeDependencies } from '../runtime/dependencies'
 
 const dependencies = createRuntimeDependencies()
 const renderText = (text, contact) => parseText(text, contact, dependencies)
