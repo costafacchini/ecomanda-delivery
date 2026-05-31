@@ -11,7 +11,14 @@ class Order {
 
   constructor(
     licensee: any,
-    { orderRepository, licenseeRepository, parser, authService, webhookService, orderStatusService }: Record<string, any> = {},
+    {
+      orderRepository,
+      licenseeRepository,
+      parser,
+      authService,
+      webhookService,
+      orderStatusService,
+    }: Record<string, any> = {},
   ) {
     this.licensee = licensee
     this.orderBodyParser = requireDependency(parser, 'parser', this.constructor.name)

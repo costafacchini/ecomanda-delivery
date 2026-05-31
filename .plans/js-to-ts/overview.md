@@ -1,8 +1,8 @@
 # Plan: JS to TypeScript Migration
 
-**Status**: not-started
+**Status**: complete
 **Created**: 2026-04-02
-**Last Updated**: 2026-04-28
+**Last Updated**: 2026-05-31
 **Assigned Dev**: Alan
 **Master Plan**: None
 
@@ -74,7 +74,7 @@ Migrate the entire codebase (backend + client) from JavaScript to TypeScript inc
 | phase-5/task-27-enable-noimplicitany-backend | Enable noImplicitAny on backend tsconfig | 5 | complete | phase-3/task-20-migrate-routes-websockets-entry |
 | phase-5/task-28-enable-noimplicitany-client | Enable noImplicitAny on client tsconfig | 5 | complete | phase-4/task-26-migrate-client-root |
 | phase-5/task-29-enable-strict-mode | Enable strict: true in both tsconfigs | 5 | complete | phase-5/task-27-enable-noimplicitany-backend, phase-5/task-28-enable-noimplicitany-client |
-| phase-5/task-30-eslint-ts-rules | Enable @typescript-eslint/recommended rules in ESLint | 5 | not-started | phase-5/task-29-enable-strict-mode |
+| phase-5/task-30-eslint-ts-rules | Enable @typescript-eslint/recommended rules in ESLint | 5 | complete | phase-5/task-29-enable-strict-mode |
 
 ## Branch Convention
 

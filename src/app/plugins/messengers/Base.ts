@@ -25,7 +25,13 @@ class MessengersBase {
 
   constructor(
     licensee: any,
-    { contactRepository, cartRepository, messageRepository, triggerRepository, productRepository }: Record<string, any> = {},
+    {
+      contactRepository,
+      cartRepository,
+      messageRepository,
+      triggerRepository,
+      productRepository,
+    }: Record<string, any> = {},
   ) {
     this.licensee = licensee
     this._contactRepository = contactRepository
@@ -68,11 +74,21 @@ class MessengersBase {
   }
 
   // These methods are implemented by subclasses
-  parseMessageStatus(_responseBody: any): void { return }
-  parseMessage(_responseBody: any): void { return }
-  parseContactData(_responseBody: any): void { return }
-  contactWithDifferentData(_contact: any): boolean { return false }
-  shouldUpdateWaStartChat(_contact: any): boolean { return false }
+  parseMessageStatus(_responseBody: any): void {
+    return
+  }
+  parseMessage(_responseBody: any): void {
+    return
+  }
+  parseContactData(_responseBody: any): void {
+    return
+  }
+  contactWithDifferentData(_contact: any): boolean {
+    return false
+  }
+  shouldUpdateWaStartChat(_contact: any): boolean {
+    return false
+  }
 
   // eslint-disable-next-line require-await
   async getMediaUrl(_mediaId: any, _url: any, _token: any, _contact: any): Promise<any> {

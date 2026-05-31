@@ -94,7 +94,12 @@ class Payment {
   contactRepository: any
   cartRepository: any
 
-  constructor({ integrationlogRepository, licenseeRepository, contactRepository, cartRepository }: Record<string, any> = {}) {
+  constructor({
+    integrationlogRepository,
+    licenseeRepository,
+    contactRepository,
+    cartRepository,
+  }: Record<string, any> = {}) {
     this.integrationlogRepository = integrationlogRepository
     this.licenseeRepository = licenseeRepository
     this.contactRepository = contactRepository

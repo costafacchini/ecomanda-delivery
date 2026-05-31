@@ -27,7 +27,12 @@ describe('ContactsQuery', () => {
       contactFactory.build({ licensee, active: true, createdAt: new Date(2021, 6, 3, 0, 0, 0) }),
     )
     await contactRepository.create(
-      contactFactory.build({ number: '551183847642', licensee, active: false, createdAt: new Date(2021, 6, 3, 0, 0, 1) }),
+      contactFactory.build({
+        number: '551183847642',
+        licensee,
+        active: false,
+        createdAt: new Date(2021, 6, 3, 0, 0, 1),
+      }),
     )
 
     const contactsQuery = buildContactsQuery()

@@ -4,7 +4,12 @@ class CreateCart {
   createNormalizePhone: any
   createCartAdapter: any
 
-  constructor({ contactRepository, cartRepository, createNormalizePhone, createCartAdapter }: Record<string, any> = {}) {
+  constructor({
+    contactRepository,
+    cartRepository,
+    createNormalizePhone,
+    createCartAdapter,
+  }: Record<string, any> = {}) {
     this.contactRepository = contactRepository
     this.cartRepository = cartRepository
     this.createNormalizePhone = createNormalizePhone

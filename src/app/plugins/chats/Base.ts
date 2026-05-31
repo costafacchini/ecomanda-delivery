@@ -11,7 +11,9 @@ class ChatsBase {
   messageParsed: any
 
   // Implemented by subclasses
-  parseMessage(_responseBody: any): Promise<any> | any { return }
+  parseMessage(_responseBody: any): Promise<any> | any {
+    return
+  }
 
   constructor(licensee: any, { contactRepository, messageRepository, triggerRepository }: Record<string, any> = {}) {
     this.licensee = licensee

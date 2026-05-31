@@ -26,7 +26,13 @@ class Landbot {
 
   constructor(
     licensee: any,
-    { contactRepository, messageRepository, roomRepository, triggerRepository, createCartPlugin }: Record<string, any> = {},
+    {
+      contactRepository,
+      messageRepository,
+      roomRepository,
+      triggerRepository,
+      createCartPlugin,
+    }: Record<string, any> = {},
   ) {
     this.licensee = licensee
     this._contactRepository = contactRepository

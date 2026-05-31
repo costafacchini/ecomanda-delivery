@@ -150,7 +150,10 @@ class Dialog extends MessengersBase {
   _parseText: any
   _createCartPlugin: any
 
-  constructor(licensee: any, { templateRepository, messageRepository, parseText, createCartPlugin, ...dependencies }: Record<string, any> = {}) {
+  constructor(
+    licensee: any,
+    { templateRepository, messageRepository, parseText, createCartPlugin, ...dependencies }: Record<string, any> = {},
+  ) {
     super(licensee, { messageRepository, ...dependencies })
     this._templateRepository = templateRepository
     this._parseText = parseText

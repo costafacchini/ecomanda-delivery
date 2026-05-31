@@ -15,8 +15,6 @@ class QueryBuilder {
     this.filterByClause = []
     this.filterDifferent = []
     this.filterByIntervalClause = []
-    this.filterByExpressionClause
-    this.filterByLessThanClause
   }
 
   sortBy(field: any, direction: any) {

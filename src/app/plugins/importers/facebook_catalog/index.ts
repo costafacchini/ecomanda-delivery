@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const _ = require('lodash') as any
 
 async function importProducts(products: any, licensee: any, productRepository: any) {
@@ -62,7 +61,10 @@ class FacebookCatalogImporter {
   triggerRepository: any
   productRepository: any
 
-  constructor(triggerId: any, { triggerRepository, productRepository }: { triggerRepository?: any; productRepository?: any } = {}) {
+  constructor(
+    triggerId: any,
+    { triggerRepository, productRepository }: { triggerRepository?: any; productRepository?: any } = {},
+  ) {
     this.triggerId = triggerId
     this.triggerRepository = triggerRepository
     this.productRepository = productRepository

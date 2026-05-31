@@ -7,7 +7,13 @@ class MessagesController {
   queueServer: any
   createMessage: any
 
-  constructor({ createMessagesQuery, userRepository, messageRepository, queueServer, createMessage }: Record<string, any> = {}) {
+  constructor({
+    createMessagesQuery,
+    userRepository,
+    messageRepository,
+    queueServer,
+    createMessage,
+  }: Record<string, any> = {}) {
     this.createMessagesQuery = createMessagesQuery
     this.userRepository = userRepository
     this.messageRepository = messageRepository

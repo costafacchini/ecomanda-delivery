@@ -15,7 +15,10 @@ async function clearWaStartChatOnContact(contact: any, { contactRepository }: Re
   return
 }
 
-async function warningAboutChatsEnding(licensee: any, { contactRepository, messageRepository, createChatPlugin }: Record<string, any> = {}) {
+async function warningAboutChatsEnding(
+  licensee: any,
+  { contactRepository, messageRepository, createChatPlugin }: Record<string, any> = {},
+) {
   if (licensee.useWhatsappWindow !== true) return
 
   const warningWindowStart = moment().subtract(WINDOW_HOURS, 'hours')
@@ -37,7 +40,10 @@ async function warningAboutChatsEnding(licensee: any, { contactRepository, messa
   }
 }
 
-async function warningAboutChatsExpired(licensee: any, { contactRepository, messageRepository, createChatPlugin }: Record<string, any> = {}) {
+async function warningAboutChatsExpired(
+  licensee: any,
+  { contactRepository, messageRepository, createChatPlugin }: Record<string, any> = {},
+) {
   const contacts = await contactRepository.find({
     licensee: licensee._id,
     wa_start_chat: {
@@ -60,7 +66,12 @@ async function warningAboutChatsExpired(licensee: any, { contactRepository, mess
   }
 }
 
-async function resetChats({ licenseeRepository, contactRepository, messageRepository, createChatPlugin }: Record<string, any> = {}) {
+async function resetChats({
+  licenseeRepository,
+  contactRepository,
+  messageRepository,
+  createChatPlugin,
+}: Record<string, any> = {}) {
   const licensees = await licenseeRepository.find({ active: true, whatsappDefault: 'dialog', useWhatsappWindow: true })
   for (const licensee of licensees) {
     await warningAboutChatsEnding(licensee, { contactRepository, messageRepository, createChatPlugin })

@@ -4,7 +4,7 @@ import { jobDependencies } from './dependencies'
 export default {
   key: 'reset-chatbots',
   workerEnabled: true,
-  async handle(data: any) {
+  async handle(_data: any) {
     return await resetChatbots(jobDependencies)
   },
 }

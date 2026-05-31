@@ -1,4 +1,7 @@
-async function processBackgroundjobGetPix(data: any, { backgroundjobRepository, cartRepository, createPagarMe }: Record<string, any> = {}) {
+async function processBackgroundjobGetPix(
+  data: any,
+  { backgroundjobRepository, cartRepository, createPagarMe }: Record<string, any> = {},
+) {
   const { jobId, cart_id: cartId } = data
 
   const backgroundjob = await backgroundjobRepository.findFirst({ _id: jobId }, ['licensee'])

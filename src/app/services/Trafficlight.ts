@@ -35,7 +35,11 @@ export function resolveTrafficlightKey(data: any) {
   return null
 }
 
-export async function withTrafficlight(lockKey: any, handler: any, { trafficlightRepository }: Record<string, any> = {}) {
+export async function withTrafficlight(
+  lockKey: any,
+  handler: any,
+  { trafficlightRepository }: Record<string, any> = {},
+) {
   if (!lockKey) {
     return await handler()
   }

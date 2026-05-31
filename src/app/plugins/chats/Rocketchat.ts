@@ -71,7 +71,10 @@ const formatMessage = (message: any, contact: any) => {
 class Rocketchat extends ChatsBase {
   _roomRepository: any
 
-  constructor(licensee: any, { roomRepository, contactRepository, messageRepository, ...dependencies }: Record<string, any> = {}) {
+  constructor(
+    licensee: any,
+    { roomRepository, contactRepository, messageRepository, ...dependencies }: Record<string, any> = {},
+  ) {
     super(licensee, { contactRepository, messageRepository, ...dependencies })
     this._roomRepository = roomRepository
   }
@@ -84,7 +87,11 @@ class Rocketchat extends ChatsBase {
     if (responseBody.type === 'LivechatSession') {
       return 'close-chat'
     } else {
-      if (responseBody && responseBody.messages && responseBody.messages.find((message: any) => message.closingMessage)) {
+      if (
+        responseBody &&
+        responseBody.messages &&
+        responseBody.messages.find((message: any) => message.closingMessage)
+      ) {
         return 'close-chat'
       } else {
         return 'send-message-to-messenger'

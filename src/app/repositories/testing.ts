@@ -456,7 +456,7 @@ function installMemoryRepositories() {
   }
 
   repositories.roomRepository.find = async (params = {}) => {
-    return (await originalRoomFind(params)).map((room: any) => serializeRelations(room, ["contact"]))
+    return (await originalRoomFind(params)).map((room: any) => serializeRelations(room, ['contact']))
   }
 
   repositories.roomRepository.findFirst = async (params = {}, relations = ['contact']) => {

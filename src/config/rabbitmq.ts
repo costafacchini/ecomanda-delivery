@@ -1,6 +1,6 @@
 import amqp from 'amqplib/callback_api'
 const RABBIT_URL = process.env.CLOUDAMQP_URL as string
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+
 const jobs: any[] = require('../app/jobs/index').default
 
 const jobList: any[] = jobs

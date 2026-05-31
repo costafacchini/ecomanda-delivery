@@ -19,9 +19,9 @@ function log(level: any, message: any, meta: any) {
   const prefix = `[${level.toUpperCase()}]`
 
   if (activeLevel <= LEVELS.debug && meta !== undefined) {
-    (console as any)[method](prefix, message, meta) // eslint-disable-line no-console
+    ;(console as any)[method](prefix, message, meta)
   } else {
-    (console as any)[method](prefix, message) // eslint-disable-line no-console
+    ;(console as any)[method](prefix, message)
   }
 
   if (level === 'error' || level === 'fatal') {

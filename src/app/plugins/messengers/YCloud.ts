@@ -159,7 +159,10 @@ class YCloud extends MessengersBase {
   _templateRepository: any
   _parseText: any
 
-  constructor(licensee: any, { templateRepository, messageRepository, parseText, ...dependencies }: Record<string, any> = {}) {
+  constructor(
+    licensee: any,
+    { templateRepository, messageRepository, parseText, ...dependencies }: Record<string, any> = {},
+  ) {
     super(licensee, { messageRepository, ...dependencies })
     this._templateRepository = templateRepository
     this._parseText = parseText

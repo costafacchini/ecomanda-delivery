@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const _ = require('lodash') as any
 
 function sanitizeExpressErrors(errorsList: { msg: string }[]): { message: string }[] {

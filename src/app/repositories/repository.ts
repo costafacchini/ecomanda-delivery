@@ -132,11 +132,11 @@ function matchesFilter(record: any, params: any = {}): any {
 
   return Object.entries(params ?? {}).every(([key, expected]) => {
     if (key === '$or') {
-      return (expected as any[] ?? []).some((filter: any) => matchesFilter(record, filter))
+      return ((expected as any[]) ?? []).some((filter: any) => matchesFilter(record, filter))
     }
 
     if (key === '$and') {
-      return (expected as any[] ?? []).every((filter: any) => matchesFilter(record, filter))
+      return ((expected as any[]) ?? []).every((filter: any) => matchesFilter(record, filter))
     }
 
     return matchValue(record?.[key], expected)
@@ -384,7 +384,7 @@ class RepositoryMemory extends Repository {
 
     Object.entries(params).forEach(([key, value]) => {
       if (key === '$or' || key === '$and') {
-        ;(value as any[] ?? []).forEach((filter: any) => this.assertValidParams(filter))
+        ;((value as any[]) ?? []).forEach((filter: any) => this.assertValidParams(filter))
         return
       }
 

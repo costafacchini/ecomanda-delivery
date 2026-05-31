@@ -7,7 +7,11 @@ class LicenseeMessagesByDayQuery {
   licenseeRepository: any
   licenseeClause: any
 
-  constructor(startDate: any, endDate: any, { messageRepository, licenseeRepository }: { messageRepository?: any; licenseeRepository?: any } = {}) {
+  constructor(
+    startDate: any,
+    endDate: any,
+    { messageRepository, licenseeRepository }: { messageRepository?: any; licenseeRepository?: any } = {},
+  ) {
     this.startDate = startDate
     this.endDate = endDate
     this.messageRepository = messageRepository

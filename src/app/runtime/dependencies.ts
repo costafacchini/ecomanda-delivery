@@ -151,7 +151,8 @@ function buildRuntimeDependencies({
 function createRuntimeDependencies(overrides: Record<string, any> = {}) {
   const cartRepository = overrides.cartRepository ?? new CartRepositoryDatabase()
   const triggerRepository = overrides.triggerRepository ?? new TriggerRepositoryDatabase()
-  const parseText = overrides.parseText ?? ((text: any, contact: any) => parseTextHelper(text, contact, { cartRepository }))
+  const parseText =
+    overrides.parseText ?? ((text: any, contact: any) => parseTextHelper(text, contact, { cartRepository }))
   const messageRepository = overrides.messageRepository ?? new MessageRepositoryDatabase({ parseText })
   const contactRepository = overrides.contactRepository ?? new ContactRepositoryDatabase({ messageRepository })
 

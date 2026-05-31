@@ -4,7 +4,7 @@ import { jobDependencies } from './dependencies'
 export default {
   key: 'reset-chats',
   workerEnabled: true,
-  async handle(data: any) {
+  async handle(_data: any) {
     return await resetChats(jobDependencies)
   },
 }

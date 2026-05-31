@@ -5,7 +5,6 @@ import { server } from './src/config/http'
 import('./src/app/websockets/index')
 
 if (process.env.NODE_ENV === 'production') {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
   require('newrelic')
 }
 

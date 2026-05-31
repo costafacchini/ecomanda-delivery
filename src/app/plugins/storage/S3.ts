@@ -1,4 +1,4 @@
-const mime = require("mime-types") as any
+const mime = require('mime-types') as any
 import { logger } from '../../helpers/logger'
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'

@@ -1,4 +1,7 @@
-async function processBackgroundjob(data: any, { backgroundjobRepository, contactRepository, cartRepository }: Record<string, any> = {}) {
+async function processBackgroundjob(
+  data: any,
+  { backgroundjobRepository, contactRepository, cartRepository }: Record<string, any> = {},
+) {
   const { jobId } = data
   const backgroundjob = await backgroundjobRepository.findFirst({ _id: jobId }, ['licensee'])
 

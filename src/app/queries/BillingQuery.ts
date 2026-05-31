@@ -67,7 +67,10 @@ class BillingQuery {
   licenseeRepository: any
   messageRepository: any
 
-  constructor(reportDate: any, { licenseeRepository, messageRepository }: { licenseeRepository?: any; messageRepository?: any } = {}) {
+  constructor(
+    reportDate: any,
+    { licenseeRepository, messageRepository }: { licenseeRepository?: any; messageRepository?: any } = {},
+  ) {
     this.reportDate = reportDate
     this.licenseeRepository = licenseeRepository
     this.messageRepository = messageRepository

@@ -1,5 +1,5 @@
 import Repository, { RepositoryMemory, sortRecords } from './repository'
-const _ = require("lodash") as any
+const _ = require('lodash') as any
 import Trigger from '../models/Trigger'
 import { requireDependency } from '../helpers/RequireDependency'
 

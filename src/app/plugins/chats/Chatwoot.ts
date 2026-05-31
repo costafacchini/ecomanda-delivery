@@ -2,7 +2,7 @@ import request from '../../services/request'
 import { ChatsBase } from './Base'
 import { logger } from '../../helpers/logger'
 import path from 'path'
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const mime = require('mime-types') as any
 import { requireDependency } from '../../helpers/RequireDependency'
 
@@ -111,7 +111,10 @@ const formatMessage = (message: any, contact: any) => {
 class Chatwoot extends ChatsBase {
   _roomRepository: any
 
-  constructor(licensee: any, { roomRepository, contactRepository, messageRepository, ...dependencies }: Record<string, any> = {}) {
+  constructor(
+    licensee: any,
+    { roomRepository, contactRepository, messageRepository, ...dependencies }: Record<string, any> = {},
+  ) {
     super(licensee, { contactRepository, messageRepository, ...dependencies })
     this._roomRepository = roomRepository
   }

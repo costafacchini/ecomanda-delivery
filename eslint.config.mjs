@@ -4,6 +4,8 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import js from '@eslint/js'
 import { FlatCompat } from '@eslint/eslintrc'
+import tsPlugin from '@typescript-eslint/eslint-plugin'
+import tsParser from '@typescript-eslint/parser'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -57,17 +59,48 @@ export default [
       ],
     },
   },
+  {
+    files: ['src/**/*.ts', 'src/**/*.tsx', 'server.ts', 'worker.ts'],
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+    },
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: 12,
+        sourceType: 'module',
+      },
+      globals: {
+        ...globals.commonjs,
+        ...globals.node,
+      },
+    },
+    rules: {
+      ...tsPlugin.configs.recommended.rules,
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/no-this-alias': 'off',
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          args: 'after-used',
+          argsIgnorePattern: '^_',
+        },
+      ],
+    },
+  },
   ...compat.extends('plugin:jest-dom/recommended', 'plugin:jest/recommended').map((config) => ({
     ...config,
 
-    files: ['src/app/**/*.spec.js', 'src/config/**/*.spec.js', 'src/setup/**/*.spec.js'],
+    files: ['src/app/**/*.spec.ts', 'src/config/**/*.spec.ts', 'src/setup/**/*.spec.ts'],
   })),
   {
-    files: ['src/app/**/*.spec.js', 'src/config/**/*.spec.js', 'src/setup/**/*.spec.js'],
+    files: ['src/app/**/*.spec.ts', 'src/config/**/*.spec.ts', 'src/setup/**/*.spec.ts'],
 
     rules: {
       'jest/no-standalone-expect': 'off',
-      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
     },
   },
 ]

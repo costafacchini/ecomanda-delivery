@@ -108,7 +108,11 @@ class MessageRepositoryMemory extends RepositoryMemory {
   triggerRepository: any
   parseTextDependency: any
 
-  constructor({ items = [], triggerRepository, parseText: parseTextDependency }: { items?: any[]; triggerRepository?: any; parseText?: any } = {}) {
+  constructor({
+    items = [],
+    triggerRepository,
+    parseText: parseTextDependency,
+  }: { items?: any[]; triggerRepository?: any; parseText?: any } = {}) {
     super(items)
     this.triggerRepository = triggerRepository
     this.parseTextDependency = parseTextDependency

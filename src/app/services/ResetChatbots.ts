@@ -21,7 +21,12 @@ function getTimeLimit() {
   return moment().tz('UTC').subtract(ONE_HOUR, 'hour')
 }
 
-async function sendMessageToMessegner(licensee: any, contactId: any, text: any, { messageRepository, createMessengerPlugin }: Record<string, any> = {}) {
+async function sendMessageToMessegner(
+  licensee: any,
+  contactId: any,
+  text: any,
+  { messageRepository, createMessengerPlugin }: Record<string, any> = {},
+) {
   const messageToSend = await messageRepository.create({
     number: uuidv4(),
     text: text,

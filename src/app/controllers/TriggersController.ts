@@ -7,7 +7,13 @@ class TriggersController {
   updateTrigger: any
   importFacebookCatalog: any
 
-  constructor({ triggerRepository, createTriggersQuery, createTrigger, updateTrigger, importFacebookCatalog }: Record<string, any> = {}) {
+  constructor({
+    triggerRepository,
+    createTriggersQuery,
+    createTrigger,
+    updateTrigger,
+    importFacebookCatalog,
+  }: Record<string, any> = {}) {
     this.triggerRepository = triggerRepository
     this.createTriggersQuery = createTriggersQuery
     this.createTrigger = createTrigger
