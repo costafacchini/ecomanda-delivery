@@ -3,7 +3,7 @@ import { ChatsBase } from './Base'
 import { logger } from '../../helpers/logger'
 import path from 'path'
 
-const mime = require('mime-types') as any
+import mime from 'mime-types'
 import { requireDependency } from '../../helpers/RequireDependency'
 
 const searchContact = async (url: any, headers: any, contact: any, licensee: any, contactRepository: any) => {

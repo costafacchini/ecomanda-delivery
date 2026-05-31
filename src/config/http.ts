@@ -3,7 +3,7 @@ import('../app/repositories/index')
 import createError from 'http-errors'
 import express from 'express'
 import helmet from 'helmet'
-const cookieParser = require('cookie-parser') as any
+import cookieParser from 'cookie-parser'
 import logger from 'morgan'
 import { logger as appLogger } from '../app/helpers/logger'
 import { connect } from './database'

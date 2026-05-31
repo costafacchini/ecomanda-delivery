@@ -4,8 +4,9 @@ import os from 'os'
 import path from 'path'
 import { spawn } from 'child_process'
 import { Writable } from 'stream'
-const { ZipArchive } = require('archiver') as any
-const mime = require('mime-types') as any
+import * as archiver from 'archiver'
+import mime from 'mime-types'
+const { ZipArchive } = archiver as any
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 
 async function backup() {

@@ -1,4 +1,4 @@
-const _ = require('lodash') as any
+import _ from 'lodash'
 
 function sanitizeExpressErrors(errorsList: { msg: string }[]): { message: string }[] {
   return _.uniqWith(errorsList, _.isEqual).map((item: any) => {

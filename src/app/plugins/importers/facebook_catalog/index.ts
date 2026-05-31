@@ -1,4 +1,4 @@
-const _ = require('lodash') as any
+import _ from 'lodash'
 
 async function importProducts(products: any, licensee: any, productRepository: any) {
   const importedProductsPromises = await products.map(async (product: any) => {

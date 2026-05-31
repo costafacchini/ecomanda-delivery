@@ -4,7 +4,7 @@ import { logger } from '../../helpers/logger'
 import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files'
 import { MessengersBase } from './Base'
 import { S3 } from '../storage/S3'
-const mime = require('mime-types') as any
+import mime from 'mime-types'
 import { requireDependency } from '../../helpers/RequireDependency'
 
 const getWaIdContact = async (number: any, url: any, token: any) => {

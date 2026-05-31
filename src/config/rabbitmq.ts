@@ -1,7 +1,7 @@
 import amqp from 'amqplib/callback_api'
 const RABBIT_URL = process.env.CLOUDAMQP_URL as string
 
-const jobs: any[] = require('../app/jobs/index').default
+import jobs from '../app/jobs/index'
 
 const jobList: any[] = jobs
 

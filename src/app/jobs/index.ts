@@ -49,7 +49,7 @@ const chatJobs = [chatMessage, closeChat, sendMessageToChat]
 
 const messengerJobs = [messengerMessage, sendMessageToMessenger]
 
-const jobs = []
+const jobs: any[] = []
 
 if (process.env.INTEGRATE_PEDIDOS10 === 'true') {
   jobs.push(...pedidos10Jobs)

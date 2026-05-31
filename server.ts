@@ -1,11 +1,11 @@
 import 'dotenv/config'
 import './instrument'
-const debug = require('debug') as any
+import debug from 'debug'
 import { server } from './src/config/http'
 import('./src/app/websockets/index')
 
 if (process.env.NODE_ENV === 'production') {
-  require('newrelic')
+  import('newrelic')
 }
 
 const errorDebug = debug('ecomanda-delivery:server')

@@ -1,5 +1,5 @@
 import { sanitizeModelErrors } from '../helpers/SanitizeErrors'
-const _ = require('lodash') as any
+import _ from 'lodash'
 
 function permit(fields: any) {
   const permitedFields = ['name', 'namespace', 'licensee']

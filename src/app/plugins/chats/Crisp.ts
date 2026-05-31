@@ -2,7 +2,7 @@ import { isMidia } from '../../helpers/Files'
 import { logger } from '../../helpers/logger'
 import request from '../../services/request'
 
-const mime = require('mime-types') as any
+import mime from 'mime-types'
 import { ChatsBase } from './Base'
 import { requireDependency } from '../../helpers/RequireDependency'
 
