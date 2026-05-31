@@ -6,7 +6,7 @@ import { getLicensees } from '../../services/licensee'
 export default function SelectLicenseesWithFilter({ isDisabled, onChange, selectedItem, ...props }: any) {
   const [defaultValue, setDefaultValue] = useState(null)
   const [selectedOption, setSelectedOption] = useState(null)
-  const [options, setOptions] = useState([])
+  const [options, setOptions] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [optionsLoaded, setOptionsLoaded] = useState(false)
 

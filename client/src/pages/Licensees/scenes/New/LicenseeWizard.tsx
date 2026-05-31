@@ -229,7 +229,7 @@ function LicenseeWizard({ currentUser, onSubmit, errors: backendErrors }: any) {
   const navigate = useNavigate()
   const steps = STEPS.filter(s => !s.pedidos10Only || currentUser?.isPedidos10)
   const [currentStep, setCurrentStep] = useState(0)
-  const [stepErrors, setStepErrors] = useState(null)
+  const [stepErrors, setStepErrors] = useState<any>(null)
   const [useChat,      setUseChat]      = useState(null)
   const [useWhatsapp,  setUseWhatsapp]  = useState(null)
   const [useCart,      setUseCart]      = useState(null)
@@ -257,7 +257,7 @@ function LicenseeWizard({ currentUser, onSubmit, errors: backendErrors }: any) {
     try {
       await schema.validate(values, { abortEarly: false })
       return true
-    } catch (err) {
+    } catch (err: any) {
       setStepErrors(err.errors)
       return false
     }

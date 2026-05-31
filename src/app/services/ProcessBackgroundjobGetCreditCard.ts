@@ -41,7 +41,7 @@ async function processBackgroundjobGetCreditCard(
     backgroundjob.response = {
       credit_card_data: cardData,
     }
-  } catch (error) {
+  } catch (error: any) {
     backgroundjob.status = 'error'
     backgroundjob.error = error.toString()
   }

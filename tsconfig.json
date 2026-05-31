@@ -2,7 +2,7 @@
   "compilerOptions": {
     "allowJs": true,
     "checkJs": false,
-    "strict": false,
+    "strict": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
     "module": "CommonJS",

@@ -5,7 +5,7 @@ import apiRoutes from '../app/routes/api-routes'
 import bullboardRoute from '../app/routes/bull-board-route'
 import { frontendIndexFile } from './frontend-paths'
 
-const SECRET = process.env.SECRET
+const SECRET = process.env.SECRET as string
 
 function requireCookieAuth(req: any, res: any, next: any) {
   const token = req.cookies?.access_token

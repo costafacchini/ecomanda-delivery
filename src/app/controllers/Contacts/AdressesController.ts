@@ -23,7 +23,7 @@ class AdressesController {
       if (!result) return res.status(404).send({ errors: { message: `Contato ${req.params.number} não encontrado` } })
 
       res.status(200).send(result)
-    } catch (error) {
+    } catch (error: any) {
       return res.status(500).send({ errors: { message: `Erro interno do servidor: ${error.message}` } })
     }
   }
@@ -47,7 +47,7 @@ class AdressesController {
       }
 
       res.status(200).send(contact)
-    } catch (error) {
+    } catch (error: any) {
       return res.status(500).send({ errors: { message: `Erro interno do servidor: ${error.message}` } })
     }
   }

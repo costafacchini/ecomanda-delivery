@@ -4,13 +4,13 @@ import { FieldWithError } from '../../../../../components/form'
 import { setLicenseeWebhook, getBaileysQr, getBaileysStatus, importLicenseeTemplate, syncBaileysDirectory } from '../../../../../services/licensee'
 
 function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isActive }: any) {
-  const [baileysQr, setBaileysQr] = useState(null)
-  const [baileysStatus, setBaileysStatus] = useState(null)
-  const [baileysConnected, setBaileysConnected] = useState(null)
+  const [baileysQr, setBaileysQr] = useState<any>(null)
+  const [baileysStatus, setBaileysStatus] = useState<any>(null)
+  const [baileysConnected, setBaileysConnected] = useState<boolean | null>(null)
   const [baileysChecking, setBaileysChecking] = useState(false)
   const [syncLoading, setSyncLoading] = useState(false)
-  const [syncResult, setSyncResult] = useState(null)
-  const [syncError, setSyncError] = useState(null)
+  const [syncResult, setSyncResult] = useState<any>(null)
+  const [syncError, setSyncError] = useState<any>(null)
 
   useEffect(() => {
     if (!isActive || values.whatsappDefault !== 'baileys' || !values.id) return

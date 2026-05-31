@@ -22,7 +22,7 @@ async function backup() {
     await upload(buf, filename)
 
     logger.info('Backup efetuado com sucesso!')
-  } catch (err) {
+  } catch (err: any) {
     logger.error(`Erro ao tentar efetuar o backup ${err.toString()}`)
   }
 }
@@ -84,8 +84,8 @@ async function upload(content: any, fileName: any) {
   const s3 = new S3Client({
     region: 'us-east-1',
     credentials: {
-      accessKeyId: backupAccessKeyId,
-      secretAccessKey: secretAccessKey,
+      accessKeyId: backupAccessKeyId as string,
+      secretAccessKey: secretAccessKey as string,
     },
   })
 

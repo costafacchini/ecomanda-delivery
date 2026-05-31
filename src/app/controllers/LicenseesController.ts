@@ -74,7 +74,7 @@ class LicenseesController {
       const licensee = await this.createLicensee.execute(req.body)
 
       return res.status(201).send(licensee)
-    } catch (err) {
+    } catch (err: any) {
       if (err?.errors) {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
       }
@@ -93,7 +93,7 @@ class LicenseesController {
       const licensee = await this.updateLicensee.execute(req.params.id, req.body)
 
       return res.status(200).send(licensee)
-    } catch (err) {
+    } catch (err: any) {
       if (err?.errors) {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
       }
@@ -108,7 +108,7 @@ class LicenseesController {
       licensee.pedidos10_integration = JSON.stringify(licensee.pedidos10_integration)
 
       res.status(200).send(licensee)
-    } catch (err) {
+    } catch (err: any) {
       if (err.name === 'CastError' && err.kind === 'ObjectId') {
         return res.status(404).send({ errors: { message: 'Licenciado 12312 não encontrado' } })
       } else {
@@ -154,7 +154,7 @@ class LicenseesController {
       const licensees = await licenseesQuery.all()
 
       res.status(200).send(licensees)
-    } catch (err) {
+    } catch (err: any) {
       res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
@@ -164,7 +164,7 @@ class LicenseesController {
       const response = await this.setDialogWebhookUseCase.execute(req.params.id)
 
       return res.status(200).send(response)
-    } catch (err) {
+    } catch (err: any) {
       return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
@@ -174,7 +174,7 @@ class LicenseesController {
       const response = await this.sendLicenseeToPagarMe.execute(req.params.id)
 
       return res.status(200).send(response)
-    } catch (err) {
+    } catch (err: any) {
       return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
@@ -184,7 +184,7 @@ class LicenseesController {
       const response = await this.signPedidos10OrderWebhook.execute(req.params.id)
 
       return res.status(200).send(response)
-    } catch (err) {
+    } catch (err: any) {
       return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
@@ -194,7 +194,7 @@ class LicenseesController {
       const response = await this.getBaileysQrUseCase.execute(req.params.id)
 
       return res.status(200).send(response)
-    } catch (err) {
+    } catch (err: any) {
       return res.status(408).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
@@ -204,7 +204,7 @@ class LicenseesController {
       const response = await this.getBaileysStatusUseCase.execute(req.params.id)
 
       return res.status(200).send(response)
-    } catch (err) {
+    } catch (err: any) {
       return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
@@ -214,7 +214,7 @@ class LicenseesController {
       const response = await this.syncBaileysDirectoryUseCase.execute(req.params.id)
 
       return res.status(200).send(response)
-    } catch (err) {
+    } catch (err: any) {
       return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }

@@ -26,7 +26,7 @@ class TriggersController {
       const trigger = await this.createTrigger.execute(req.body)
 
       return res.status(201).send(trigger)
-    } catch (err) {
+    } catch (err: any) {
       if ('errors' in err) {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
       }
@@ -40,7 +40,7 @@ class TriggersController {
       const trigger = await this.updateTrigger.execute(req.params.id, req.body)
 
       return res.status(200).send(trigger)
-    } catch (err) {
+    } catch (err: any) {
       if ('errors' in err) {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
       }
@@ -54,7 +54,7 @@ class TriggersController {
       const trigger = await this.triggerRepository.findFirst({ _id: req.params.id }, ['licensee'])
 
       res.status(200).send(trigger)
-    } catch (err) {
+    } catch (err: any) {
       if (err.name === 'CastError' && err.kind === 'ObjectId') {
         return res.status(404).send({ errors: { message: `Trigger ${req.params.id} não encontrada` } })
       } else {
@@ -88,7 +88,7 @@ class TriggersController {
       const triggers = await triggersQuery.all()
 
       res.status(200).send(triggers)
-    } catch (err) {
+    } catch (err: any) {
       res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
@@ -98,7 +98,7 @@ class TriggersController {
       await this.importFacebookCatalog.execute(req.params.id, req.body.text)
 
       return res.status(201).send({ body: 'OK' })
-    } catch (err) {
+    } catch (err: any) {
       return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }

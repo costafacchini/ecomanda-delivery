@@ -39,7 +39,7 @@ const userSchema = new Schema(
       type: ObjectId,
       ref: 'Licensee',
       required: [
-        function () {
+        function (this: any) {
           return !this.isSuper
         },
         'Licensee: Você deve preencher o campo',
@@ -49,13 +49,13 @@ const userSchema = new Schema(
   { timestamps: true },
 )
 
-userSchema.pre('save', async function () {
+userSchema.pre('save', async function (this: any) {
   if (!this._id) {
     this._id = new mongoose.Types.ObjectId()
   }
 
   if (this.isModified('password')) {
-    this.password = await bcrypt.hash(this.password, saltRounds)
+    this.password = await bcrypt.hash(this.password as string, saltRounds)
   }
 })
 

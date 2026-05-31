@@ -3,9 +3,9 @@ import { getDashboardDeliveryRate } from '../../../services/dashboard'
 import FailedMessagesModal from './FailedMessagesModal'
 
 export default function SuperDeliveryRateCard() {
-  const [data, setData] = useState(null)
+  const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<any>(null)
   const [modalOpen, setModalOpen] = useState(false)
 
   useEffect(() => {

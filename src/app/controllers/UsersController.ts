@@ -33,7 +33,7 @@ class UsersController {
       const user = await this.createUser.execute({ name, email, password, active, licensee, isAdmin, isSuper })
 
       res.status(201).send({ _id: user._id, name, email, active, isAdmin, isSuper, licensee })
-    } catch (err) {
+    } catch (err: any) {
       if ('errors' in err) {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
       }
@@ -52,7 +52,7 @@ class UsersController {
       const { _id, name, email, active } = user
 
       res.status(200).send({ _id, name, email, active })
-    } catch (err) {
+    } catch (err: any) {
       if ('errors' in err) {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
       }
@@ -68,7 +68,7 @@ class UsersController {
         : await this.userRepository.findFirst({ _id: req.params.id })
 
       res.status(200).send(user)
-    } catch (err) {
+    } catch (err: any) {
       if (err.name === 'CastError' && err.kind === 'ObjectId') {
         return res.status(404).send({ errors: { message: 'Usuário não encontrado' } })
       } else {
@@ -80,7 +80,7 @@ class UsersController {
   async index(req: any, res: any) {
     try {
       res.status(200).send(await this.userRepository.find({}, { password: 0 }))
-    } catch (err) {
+    } catch (err: any) {
       res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }

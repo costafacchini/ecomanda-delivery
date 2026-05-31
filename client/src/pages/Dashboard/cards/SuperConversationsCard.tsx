@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react'
 import { getDashboardConversations } from '../../../services/dashboard'
 
 export default function SuperConversationsCard() {
-  const [data, setData] = useState(null)
+  const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<any>(null)
 
   useEffect(() => {
     getDashboardConversations()

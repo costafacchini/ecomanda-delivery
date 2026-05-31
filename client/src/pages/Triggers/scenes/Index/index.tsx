@@ -27,7 +27,7 @@ function TriggersIndex({ currentUser }: any) {
       if (!isEmpty(filters)) return
 
       onFilter({ page: 1 })
-    } catch (error) {
+    } catch (error: any) {
       if (error.name === 'AbortError') {
         // Handling error thrown by aborting request
       }

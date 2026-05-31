@@ -538,7 +538,7 @@ class YCloud extends MessengersBase {
           `YCloud - erro: Mensagem ${messageId} não enviada para YCloud. ${JSON.stringify(messageResponse.data)}`,
         )
       }
-    } catch (error) {
+    } catch (error: any) {
       messageToSend.error = JSON.stringify(error.response?.data || error.message)
       await this.messageRepository.save(messageToSend)
       logger.error(`YCloud - erro: Erro ao enviar mensagem ${messageId} para YCloud`, error)

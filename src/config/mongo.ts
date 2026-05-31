@@ -14,7 +14,7 @@ class MongoServer {
     try {
       await mongoose.connect(this.mongoUri, mongoConnectionOpts)
       await createDefaultUser()
-    } catch (err) {
+    } catch (err: any) {
       throw new Error(err.message, { cause: err })
     }
   }

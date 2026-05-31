@@ -20,7 +20,7 @@ async function processBackgroundjobInviteCreditCard(
     backgroundjob.response = {
       status: 'done',
     }
-  } catch (error) {
+  } catch (error: any) {
     backgroundjob.status = 'error'
     backgroundjob.error = error.toString()
   }

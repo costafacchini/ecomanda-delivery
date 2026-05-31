@@ -1,5 +1,5 @@
 import amqp from 'amqplib/callback_api'
-const RABBIT_URL = process.env.CLOUDAMQP_URL
+const RABBIT_URL = process.env.CLOUDAMQP_URL as string
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const jobs: any[] = require('../app/jobs/index').default
 
@@ -36,7 +36,8 @@ function consumeChannel() {
 
       channel.consume(
         'main',
-        async function (payloadBuffer) {
+        async function (payloadBuffer: any) {
+          if (!payloadBuffer) return
           try {
             const payload = JSON.parse(payloadBuffer.content.toString())
             const job = jobList.find((job: any) => job.key === payload.key)

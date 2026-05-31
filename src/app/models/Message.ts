@@ -14,7 +14,7 @@ const messageSchema = new Schema(
     text: {
       type: String,
       required: [
-        function () {
+        function (this: any) {
           return this.kind === 'text'
         },
         'Texto: deve ser preenchido quando o tipo de mensahem é texto',
@@ -23,7 +23,7 @@ const messageSchema = new Schema(
     url: {
       type: String,
       required: [
-        function () {
+        function (this: any) {
           return this.kind === 'file'
         },
         'URL do arquivo: deve ser preenchido quando o tipo de mensagem é arquivo',
@@ -32,7 +32,7 @@ const messageSchema = new Schema(
     fileName: {
       type: String,
       required: [
-        function () {
+        function (this: any) {
           return this.kind === 'file'
         },
         'Nome do arquivo: deve ser preenchido quando o tipo de mensagem é arquivo',

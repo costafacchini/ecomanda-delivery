@@ -26,7 +26,7 @@ function LicenseesIndex({ currentUser }: any) {
       if (!isEmpty(filters)) return
 
       onFilter({ page: 1, pedidos10_active: false })
-    } catch (error) {
+    } catch (error: any) {
       if (error.name === 'AbortError') {
         // Handling error thrown by aborting request
       }

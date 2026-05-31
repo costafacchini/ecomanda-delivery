@@ -14,7 +14,7 @@ function IntegrationlogIndex({ currentUser }: any) {
   }
 
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [records, setRecords] = useState([])
+  const [records, setRecords] = useState<any[]>([])
 
   const yesterday = moment().subtract(1, 'days').toISOString()
   const end = moment().endOf('day').toISOString()

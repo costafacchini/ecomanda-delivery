@@ -19,14 +19,14 @@ async function createDefaultUser() {
         isAdmin: true,
         isSuper: true,
       })
-    } catch (err) {
+    } catch (err: any) {
       if (err?.code === 11000) {
         return await userRepository.findFirst({ email: DEFAULT_USER })
       }
 
       throw err
     }
-  } catch (err) {
+  } catch (err: any) {
     throw new Error(`Não foi possível criar o usuário padrão. Erro: ${err}`, { cause: err })
   }
 }

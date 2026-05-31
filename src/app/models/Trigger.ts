@@ -19,7 +19,7 @@ const triggerSchema = new Schema(
     catalogId: {
       type: String,
       required: [
-        function () {
+        function (this: any) {
           return this.triggerKind === 'multi_product'
         },
         'Id Catalogo: deve ser preenchido quando o gatilho é do tipo vários produtos',
@@ -28,7 +28,7 @@ const triggerSchema = new Schema(
     catalogMulti: {
       type: String,
       required: [
-        function () {
+        function (this: any) {
           return this.triggerKind === 'multi_product'
         },
         'Catalogo: deve ser preenchido quando o gatilho é do tipo vários produtos',
@@ -37,7 +37,7 @@ const triggerSchema = new Schema(
     catalogSingle: {
       type: String,
       required: [
-        function () {
+        function (this: any) {
           return this.triggerKind === 'single_product'
         },
         'Catalogo: deve ser preenchido quando o gatilho é do tipo produto único',
@@ -46,7 +46,7 @@ const triggerSchema = new Schema(
     textReplyButton: {
       type: String,
       required: [
-        function () {
+        function (this: any) {
           return this.triggerKind === 'reply_button'
         },
         'Script: deve ser preenchido quando o gatilho é do tipo botões de resposta',
@@ -55,7 +55,7 @@ const triggerSchema = new Schema(
     messagesList: {
       type: String,
       required: [
-        function () {
+        function (this: any) {
           return this.triggerKind === 'list_message'
         },
         'Mensagens: deve ser preenchido quando o gatilho é do tipo lista de mensagens',
@@ -64,7 +64,7 @@ const triggerSchema = new Schema(
     text: {
       type: String,
       required: [
-        function () {
+        function (this: any) {
           return this.triggerKind === 'text'
         },
         'Texto: deve ser preenchido quando o gatilho é do tipo texto',

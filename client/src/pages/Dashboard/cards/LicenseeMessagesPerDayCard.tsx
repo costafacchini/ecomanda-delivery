@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react'
 import { getDashboardMessagesPerDay } from '../../../services/dashboard'
 
 export default function LicenseeMessagesPerDayCard() {
-  const [data, setData] = useState(null)
+  const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<any>(null)
 
   useEffect(() => {
     getDashboardMessagesPerDay()

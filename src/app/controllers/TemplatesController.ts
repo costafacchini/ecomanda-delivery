@@ -31,7 +31,7 @@ class TemplatesController {
       const template = await this.templateRepository.create({ name, namespace, licensee })
 
       res.status(201).send(template)
-    } catch (err) {
+    } catch (err: any) {
       if ('errors' in err) {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
       }
@@ -45,7 +45,7 @@ class TemplatesController {
 
     try {
       await this.templateRepository.update(req.params.id, { ...fields })
-    } catch (err) {
+    } catch (err: any) {
       return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
     }
 
@@ -53,7 +53,7 @@ class TemplatesController {
       const template = await this.templateRepository.findFirst({ _id: req.params.id })
 
       res.status(200).send(template)
-    } catch (err) {
+    } catch (err: any) {
       res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
@@ -63,7 +63,7 @@ class TemplatesController {
       const template = await this.templateRepository.findFirst({ _id: req.params.id }, ['licensee'])
 
       res.status(200).send(template)
-    } catch (err) {
+    } catch (err: any) {
       if (err.name === 'CastError' && err.kind === 'ObjectId') {
         return res.status(404).send({ errors: { message: `Template ${req.params.id} não encontrado` } })
       } else {
@@ -93,7 +93,7 @@ class TemplatesController {
       const templates = await templatesQuery.all()
 
       res.status(200).send(templates)
-    } catch (err) {
+    } catch (err: any) {
       res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
@@ -104,7 +104,7 @@ class TemplatesController {
       await templateImporter.import()
 
       res.status(201).send({ body: 'OK' })
-    } catch (err) {
+    } catch (err: any) {
       res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }

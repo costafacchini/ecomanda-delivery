@@ -6,7 +6,7 @@ import { getContacts } from '../../services/contact'
 export default function SelectContactsWithFilter({ isDisabled, onChange, selectedItem, licensee, ...props }: any) {
   const [defaultValue, setDefaultValue] = useState(null)
   const [selectedOption, setSelectedOption] = useState(null)
-  const [options, setOptions] = useState([])
+  const [options, setOptions] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [optionsLoaded, setOptionsLoaded] = useState(false)
   const [selectedLicensee, setSelectedLicensee] = useState(licensee)

@@ -12,8 +12,8 @@ async function clearBackups() {
   const pluginAWS = new S3Client({
     region: 'us-east-1',
     credentials: {
-      accessKeyId,
-      secretAccessKey,
+      accessKeyId: accessKeyId as string,
+      secretAccessKey: secretAccessKey as string,
     },
   })
 

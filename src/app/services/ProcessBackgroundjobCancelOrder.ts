@@ -15,7 +15,7 @@ async function processBackgroundjobCancelOrder(data: any, { backgroundjobReposit
     backgroundjob.response = {
       payment_status: cartUpdated.payment_status,
     }
-  } catch (error) {
+  } catch (error: any) {
     backgroundjob.status = 'error'
     backgroundjob.error = error.toString()
   }

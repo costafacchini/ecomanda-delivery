@@ -30,7 +30,7 @@ import { CreateMessage } from '../usecases/messages/CreateMessage'
 import { createRuntimeDependencies } from '../runtime/dependencies'
 
 const router = express.Router()
-const SECRET = process.env.SECRET
+const SECRET = process.env.SECRET as string
 
 // Composition root for resource routes. Each route module creates its own dependency set;
 // repos are stateless so separate instances across route files are safe.

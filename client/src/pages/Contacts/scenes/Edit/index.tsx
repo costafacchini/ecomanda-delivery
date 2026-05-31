@@ -20,7 +20,7 @@ function ContactEdit({ currentUser }: any) {
       try {
         const { data: licensee } = await getContact(contactId)
         setContact(licensee)
-      } catch (error) {
+      } catch (error: any) {
         if (error.name === 'AbortError') {
           // Handling error thrown by aborting request
         }

@@ -9,7 +9,7 @@ function totalBilling(licensees: any) {
 
 function BillingIndex() {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [records, setRecords] = useState([])
+  const [records, setRecords] = useState<any[]>([])
   const [filters, setFilters] = useState({ reportDate: '' })
 
   useEffect(() => {

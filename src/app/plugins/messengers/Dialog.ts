@@ -442,7 +442,7 @@ class Dialog extends MessengersBase {
 
   async getMediaUrl(mediaId: any, _url: any, token: any, contact: any) {
     const response = await downloadMedia(mediaId, token)
-    const extension = mime.extension(response.headers.get('content-type'))
+    const extension = mime.extension(response.headers?.get('content-type'))
     const fileName = `${mediaId}.${extension}`
     const fileBase64 = Buffer.from(response.data).toString('base64')
 

@@ -1,6 +1,6 @@
 import Redis from 'ioredis'
 
-const REDIS_URL = process.env.REDIS_TLS_URL || process.env.REDIS_URL
+const REDIS_URL = (process.env.REDIS_TLS_URL || process.env.REDIS_URL) as string
 
 const createRedis = function () {
   if (REDIS_URL.includes('rediss')) {
@@ -10,12 +10,12 @@ const createRedis = function () {
       },
       enableReadyCheck: false,
       maxRetriesPerRequest: null,
-    })
+    } as any)
   } else {
     return new Redis(REDIS_URL, {
       enableReadyCheck: false,
       maxRetriesPerRequest: null,
-    })
+    } as any)
   }
 }
 

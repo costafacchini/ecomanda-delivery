@@ -30,14 +30,14 @@ const licenseeSchema = new Schema(
     chatbotDefault: {
       type: String,
       enum: ['landbot', ''],
-      required: function () {
+      required: function (this: any) {
         return this.useChatbot === true
       },
     },
     chatbotUrl: {
       type: String,
       required: [
-        function () {
+        function (this: any) {
           return this.useChatbot === true
         },
         'URL do Chatbot: deve ser preenchido quando utiliza Chatbot',
@@ -49,7 +49,7 @@ const licenseeSchema = new Schema(
     chatbotAuthorizationToken: {
       type: String,
       required: [
-        function () {
+        function (this: any) {
           return this.useChatbot === true
         },
         'Token de Autorização do Chatbot: deve ser preenchido quando utiliza Chatbot',
@@ -62,7 +62,7 @@ const licenseeSchema = new Schema(
     whatsappToken: {
       type: String,
       required: [
-        function () {
+        function (this: any) {
           return !!this.whatsappDefault && this.whatsappDefault !== 'baileys'
         },
         'Token de Whatsapp: deve ser preenchido quando tiver um plugin configurado',
@@ -71,7 +71,7 @@ const licenseeSchema = new Schema(
     whatsappUrl: {
       type: String,
       required: [
-        function () {
+        function (this: any) {
           return !!this.whatsappDefault && this.whatsappDefault !== 'baileys'
         },
         'URL de Whatsapp: deve ser preenchido quando tiver um plugin configurado',
@@ -84,7 +84,7 @@ const licenseeSchema = new Schema(
     chatUrl: {
       type: String,
       required: [
-        function () {
+        function (this: any) {
           return !!this.chatDefault
         },
         'URL do Chat: deve ser preenchido quando tiver um plugin configurado',
@@ -93,7 +93,7 @@ const licenseeSchema = new Schema(
     chatKey: {
       type: String,
       required: [
-        function () {
+        function (this: any) {
           return ['crisp', 'chatwoot'].includes(this.chatDefault)
         },
         'API Key do Chat: deve ser preenchido quando o plugin de chat for crisp ou chatwoot',
@@ -102,7 +102,7 @@ const licenseeSchema = new Schema(
     chatIdentifier: {
       type: String,
       required: [
-        function () {
+        function (this: any) {
           return ['crisp', 'chatwoot'].includes(this.chatDefault)
         },
         'Identifier (Conta) do Chat: deve ser preenchido quando o plugin de chat for crisp ou chatwoot',

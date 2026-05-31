@@ -11,7 +11,7 @@ async function acquireLock(lockKey: any, token: any, trafficlightRepository: any
       const expiresAt = new Date(Date.now() + LOCK_TTL_MS)
       await trafficlightRepository.create({ key: lockKey, token, expiresAt })
       return
-    } catch (error) {
+    } catch (error: any) {
       if (error?.code !== 11000) {
         throw error
       }

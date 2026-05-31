@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react'
 import { getMessages, resendMessage } from '../../../services/message'
 
 export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess }: any) {
-  const [messages, setMessages] = useState([])
+  const [messages, setMessages] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
-  const [fetchError, setFetchError] = useState(null)
+  const [fetchError, setFetchError] = useState<any>(null)
   const [rowErrors, setRowErrors] = useState<any>({})
 
   useEffect(() => {

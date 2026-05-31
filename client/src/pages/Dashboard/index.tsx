@@ -10,7 +10,7 @@ import LicenseeMessagesTodayCard from './cards/LicenseeMessagesTodayCard'
 import LicenseeMessagesPerDayCard from './cards/LicenseeMessagesPerDayCard'
 
 export default function Dashboard() {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState<any>(null)
   const [loadingUser, setLoadingUser] = useState(true)
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import { createContext, useCallback, useState } from 'react'
 
-const AppContext = createContext(null)
+const AppContext = createContext<any>(null)
 
 const AppContextProvider = ({ children }: any) => {
   const [currentUser, setCurrentUser] = useState()

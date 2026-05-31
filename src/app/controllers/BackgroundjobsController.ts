@@ -28,7 +28,7 @@ class BackgroundjobsController {
           job_id: backgroundjob._id,
         },
       })
-    } catch (err) {
+    } catch (err: any) {
       if ('errors' in err) {
         return res.status(422).send({ errors: sanitizeModelErrors(err.errors) })
       }
@@ -46,7 +46,7 @@ class BackgroundjobsController {
       if (!result) return res.status(404).send({ errors: { message: `Backgroundjob ${req.params.id} não encontrado` } })
 
       res.status(200).send(result)
-    } catch (err) {
+    } catch (err: any) {
       if (err.name === 'CastError' && err.kind === 'ObjectId') {
         return res.status(404).send({ errors: { message: `Backgroundjob ${req.params.id} não encontrado` } })
       }

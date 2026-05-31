@@ -12,7 +12,7 @@ function totalMessages(licensees: any) {
 
 function MessageIndex(_props?: any) {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [records, setRecords] = useState([])
+  const [records, setRecords] = useState<any[]>([])
   const [filters, setFilters] = useState({ initialDate: '', endDate: '' })
 
   useEffect(() => {

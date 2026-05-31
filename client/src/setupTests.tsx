@@ -8,7 +8,7 @@ import '@testing-library/jest-dom'
 import { TextEncoder, TextDecoder } from 'util'
 
 global.TextEncoder = TextEncoder
-global.TextDecoder = TextDecoder
+global.TextDecoder = TextDecoder as any
 
 // Node 24's bundled undici validates AbortSignal via instanceof against its own
 // internal class (captured at startup), which differs from globalThis.AbortSignal.

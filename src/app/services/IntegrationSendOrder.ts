@@ -7,7 +7,7 @@ async function sendOrder(data: any, { orderRepository, createIntegrator }: Recor
   try {
     await integrator.sendOrder(order)
     order.integration_status = 'done'
-  } catch (err) {
+  } catch (err: any) {
     order.integration_status = 'error'
     order.integration_error = err.message || 'Erro desconhecido'
   }

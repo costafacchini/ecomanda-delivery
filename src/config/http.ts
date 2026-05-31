@@ -19,7 +19,7 @@ const app = express()
 
 app.set('trust proxy', 1)
 
-app.use(helmet(helmetConfig()))
+app.use(helmet(helmetConfig() as any))
 
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ limit: '50mb', extended: false }))

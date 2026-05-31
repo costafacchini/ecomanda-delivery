@@ -17,7 +17,7 @@ function TemplateShow({ currentUser }: any) {
       try {
         const { data: licensee } = await getTemplate(templateId)
         setTemplate(licensee)
-      } catch (error) {
+      } catch (error: any) {
         if (error.name === 'AbortError') {
           // Handling error thrown by aborting request
         }

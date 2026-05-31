@@ -20,7 +20,7 @@ function UserEdit({ currentUser }: any) {
       try {
         const { data: user } = await getUser(userId)
         setUser(user)
-      } catch (error) {
+      } catch (error: any) {
         if (error.name === 'AbortError') {
           // Handling error thrown by aborting request
         }

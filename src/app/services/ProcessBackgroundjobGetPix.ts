@@ -16,7 +16,7 @@ async function processBackgroundjobGetPix(data: any, { backgroundjobRepository, 
       qrcode: cartUpdated.pix_qrcode,
       qrcode_img_url: cartUpdated.pix_url,
     }
-  } catch (error) {
+  } catch (error: any) {
     backgroundjob.status = 'error'
     backgroundjob.error = error.toString()
   }

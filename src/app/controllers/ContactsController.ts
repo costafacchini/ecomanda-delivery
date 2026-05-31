@@ -38,7 +38,7 @@ class ContactsController {
       const contact = await this.createContact.execute(req.body)
 
       return res.status(201).send(contact)
-    } catch (err) {
+    } catch (err: any) {
       if (err?.errors) {
         return res.status(422).send({ errors: sanitizeModelErrors(err.errors) })
       }
@@ -52,7 +52,7 @@ class ContactsController {
       const contact = await this.updateContact.execute(req.params.id, req.body)
 
       return res.status(200).send(contact)
-    } catch (err) {
+    } catch (err: any) {
       if (err?.errors) {
         return res.status(422).send({ errors: sanitizeModelErrors(err.errors) })
       }
@@ -66,7 +66,7 @@ class ContactsController {
       const contact = await this.contactRepository.findFirst({ _id: req.params.id }, ['licensee'])
 
       res.status(200).send(contact)
-    } catch (err) {
+    } catch (err: any) {
       if (err.name === 'CastError' && err.kind === 'ObjectId') {
         return res.status(404).send({ errors: { message: `Contato ${req.params.id} não encontrado` } })
       } else {
@@ -116,7 +116,7 @@ class ContactsController {
       const contacts = await contactsQuery.all()
 
       res.status(200).send(contacts)
-    } catch (err) {
+    } catch (err: any) {
       res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }

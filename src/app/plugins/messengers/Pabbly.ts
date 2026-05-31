@@ -421,7 +421,7 @@ class Pabbly extends MessengersBase {
         await this.messageRepository.save(messageToSend)
         logger.error(`Pabbly - erro: Mensagem ${messageId} não enviada para Pabbly.`)
       }
-    } catch (error) {
+    } catch (error: any) {
       messageToSend.error = JSON.stringify(error.response?.data || error.message)
       await this.messageRepository.save(messageToSend)
       logger.error(`Pabbly - erro: Erro ao enviar mensagem ${messageId} para Pabbly`, error)

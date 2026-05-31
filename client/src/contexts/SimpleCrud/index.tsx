@@ -1,10 +1,10 @@
 import { createContext, useCallback, useState } from 'react'
 import isEmpty from 'lodash/isEmpty'
 
-const SimpleCrudContext = createContext(null)
+const SimpleCrudContext = createContext<any>(null)
 
 const SimpleCrudContextProvider = ({ children }: any) => {
-  const [records, setRecords] = useState([])
+  const [records, setRecords] = useState<any[]>([])
   const [filters, setFilters] = useState()
   const [lastPage, setLastPage] = useState(false)
 

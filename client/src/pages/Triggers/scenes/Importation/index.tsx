@@ -16,7 +16,7 @@ const triggerInitialValues = {
 function TriggerImportation() {
   let navigate = useNavigate()
   let { id } = useParams()
-  const [errors, setErrors] = useState(null)
+  const [errors, setErrors] = useState<any>(null)
 
   const triggerId = id
 

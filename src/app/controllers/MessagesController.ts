@@ -61,7 +61,7 @@ class MessagesController {
     try {
       const message = await this.createMessage.execute(req.body)
       return res.status(201).send(message)
-    } catch (err) {
+    } catch (err: any) {
       if (err?.errors) {
         return res.status(422).send({ errors: sanitizeModelErrors(err.errors) })
       }
@@ -99,7 +99,7 @@ class MessagesController {
       await this.queueServer.addJob('send-message-to-messenger', { messageId: message._id })
 
       return res.status(200).json(message)
-    } catch (err) {
+    } catch (err: any) {
       return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }

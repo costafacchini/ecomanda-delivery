@@ -20,7 +20,7 @@ function TriggerEdit({ currentUser }: any) {
       try {
         const { data: licensee } = await getTrigger(triggerId)
         setTrigger(licensee)
-      } catch (error) {
+      } catch (error: any) {
         if (error.name === 'AbortError') {
           // Handling error thrown by aborting request
         }

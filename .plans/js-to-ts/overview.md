@@ -73,7 +73,7 @@ Migrate the entire codebase (backend + client) from JavaScript to TypeScript inc
 | phase-4/task-26-migrate-client-root | Migrate App.js, index.js, and root client files to .tsx | 4 | complete | phase-4/task-25-migrate-client-pages |
 | phase-5/task-27-enable-noimplicitany-backend | Enable noImplicitAny on backend tsconfig | 5 | complete | phase-3/task-20-migrate-routes-websockets-entry |
 | phase-5/task-28-enable-noimplicitany-client | Enable noImplicitAny on client tsconfig | 5 | complete | phase-4/task-26-migrate-client-root |
-| phase-5/task-29-enable-strict-mode | Enable strict: true in both tsconfigs | 5 | not-started | phase-5/task-27-enable-noimplicitany-backend, phase-5/task-28-enable-noimplicitany-client |
+| phase-5/task-29-enable-strict-mode | Enable strict: true in both tsconfigs | 5 | complete | phase-5/task-27-enable-noimplicitany-backend, phase-5/task-28-enable-noimplicitany-client |
 | phase-5/task-30-eslint-ts-rules | Enable @typescript-eslint/recommended rules in ESLint | 5 | not-started | phase-5/task-29-enable-strict-mode |
 
 ## Branch Convention

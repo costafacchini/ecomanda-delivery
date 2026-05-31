@@ -235,7 +235,7 @@ class Baileys extends MessengersBase {
       messageToSend.sended = true
       await this.messageRepository.save(messageToSend)
       logger.info(`Mensagem ${messageId} enviada via Baileys com sucesso!`)
-    } catch (error) {
+    } catch (error: any) {
       const statusCode = error?.output?.statusCode
       if (statusCode === 401) {
         // Session was logged out — clear stale creds so the next status check reflects disconnected.

@@ -19,7 +19,7 @@ function MessagesIndex({ currentUser }: any) {
     page: 1
   })
 
-  const [records, setRecords] = useState([])
+  const [records, setRecords] = useState<any[]>([])
   const [lastPage, setLastPage] = useState(false)
 
   const addPage = useCallback(
@@ -82,7 +82,7 @@ function MessagesIndex({ currentUser }: any) {
 
     try {
       onFilter(filters)
-    } catch (error) {
+    } catch (error: any) {
       if (error.name === 'AbortError') {
         // Handling error thrown by aborting request
       }

@@ -42,7 +42,7 @@ async function processBackgroundjobChargeCreditCard(
     backgroundjob.response = {
       status: cartUpdated.payment_status,
     }
-  } catch (error) {
+  } catch (error: any) {
     backgroundjob.status = 'error'
     backgroundjob.error = error.toString()
   }
