@@ -45,14 +45,14 @@ Fix security issues identified in the OWASP-aligned security review (2026-05-14)
 
 | Task Path | Title | Phase | Status | Depends On |
 |-----------|-------|-------|--------|------------|
-| phase-1/task-01-helmet-cors | Helmet Security Headers | 1 | not-started | — |
-| phase-1/task-02-rate-limiting | Rate Limiting on Login | 1 | not-started | — |
-| phase-1/task-10-centralized-logger | Centralized Logger | 1 | not-started | — |
-| phase-2/task-03-bull-board-auth | Bull Board Authentication (cookie) | 2 | not-started | phase-1/task-01-helmet-cors |
-| phase-2/task-05-error-response-hardening | Error Response Hardening | 2 | not-started | phase-1/task-01-helmet-cors |
-| phase-2/task-07-jwt-rbac | JWT 500→401 Fix + RBAC on Resources Routes | 2 | not-started | — |
-| phase-2/task-08-v1-input-validation | Input Validation on v1 API Routes | 2 | not-started | — |
-| phase-2/task-09-cors-observability | CORS Origin Observability → Restriction | 2 | not-started | — |
+| phase-1/task-01-helmet-cors | Helmet Security Headers | 1 | complete | — |
+| phase-1/task-02-rate-limiting | Rate Limiting on Login | 1 | complete | — |
+| phase-1/task-10-centralized-logger | Centralized Logger | 1 | complete | — |
+| phase-2/task-03-bull-board-auth | Bull Board Authentication (cookie) | 2 | complete | phase-1/task-01-helmet-cors |
+| phase-2/task-05-error-response-hardening | Error Response Hardening | 2 | complete | phase-1/task-01-helmet-cors |
+| phase-2/task-07-jwt-rbac | JWT 500→401 Fix + RBAC on Resources Routes | 2 | complete | — |
+| phase-2/task-08-v1-input-validation | Input Validation on v1 API Routes | 2 | complete | — |
+| phase-2/task-09-cors-observability | CORS Origin Observability → Restriction | 2 | complete | — |
 
 ## Branch Convention
 
