@@ -14,6 +14,7 @@ import http from 'http'
 import { Server } from 'socket.io'
 import Rollbar from 'rollbar'
 import { frontendDistDir } from './frontend-paths'
+import { expressErrorHandler } from '@appsignal/nodejs'
 
 const app = express()
 
@@ -35,6 +36,8 @@ routes(app)
 app.use(function (req, res, next) {
   next(createError(404))
 })
+
+app.use(expressErrorHandler())
 
 // error handler
 if (process.env.ROLLBAR_ACCESS_TOKEN) {

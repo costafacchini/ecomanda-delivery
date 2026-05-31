@@ -1,17 +1,17 @@
-web: tsx server.ts
+web: node --require source-map-support/register --require './appsignal.cjs' dist/server.js
 scaler: tsx scaler.ts
-worker: tsx worker.ts
-worker2: tsx worker.ts
-worker3: tsx worker.ts
-worker4: tsx worker.ts
-worker5: tsx worker.ts
-worker6: tsx worker.ts
-worker7: tsx worker.ts
-worker8: tsx worker.ts
-worker9: tsx worker.ts
-worker10: tsx worker.ts
-worker11: tsx worker.ts
-worker12: tsx worker.ts
-worker13: tsx worker.ts
-worker14: tsx worker.ts
-worker15: tsx worker.ts
+worker: node --require source-map-support/register --require './appsignal.cjs' dist/worker.js
+worker2: node --require source-map-support/register --require './appsignal.cjs' dist/worker.js
+worker3: node --require source-map-support/register --require './appsignal.cjs' dist/worker.js
+worker4: node --require source-map-support/register --require './appsignal.cjs' dist/worker.js
+worker5: node --require source-map-support/register --require './appsignal.cjs' dist/worker.js
+worker6: node --require source-map-support/register --require './appsignal.cjs' dist/worker.js
+worker7: node --require source-map-support/register --require './appsignal.cjs' dist/worker.js
+worker8: node --require source-map-support/register --require './appsignal.cjs' dist/worker.js
+worker9: node --require source-map-support/register --require './appsignal.cjs' dist/worker.js
+worker10: node --require source-map-support/register --require './appsignal.cjs' dist/worker.js
+worker11: node --require source-map-support/register --require './appsignal.cjs' dist/worker.js
+worker12: node --require source-map-support/register --require './appsignal.cjs' dist/worker.js
+worker13: node --require source-map-support/register --require './appsignal.cjs' dist/worker.js
+worker14: node --require source-map-support/register --require './appsignal.cjs' dist/worker.js
+worker15: node --require source-map-support/register --require './appsignal.cjs' dist/worker.js

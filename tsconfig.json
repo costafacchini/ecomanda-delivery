@@ -12,6 +12,7 @@
     "outDir": "dist",
     "rootDir": ".",
     "resolveJsonModule": true,
+    "sourceMap": true,
     "paths": {
       "@models/*": ["./src/app/models/*"],
       "@controllers/*": ["./src/app/controllers/*"],

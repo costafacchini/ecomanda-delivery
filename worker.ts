@@ -1,6 +1,8 @@
 import 'dotenv/config'
 import('./src/app/models/index')
 
+const { appsignal } = require('./appsignal.cjs')
+
 import { redisConnection } from './src/config/redis'
 import { queueServer } from './src/config/queue'
 import { Worker } from 'bullmq'
@@ -39,5 +41,8 @@ queuesWithWorkerEnabled.forEach((queue) => {
 
   worker.on('failed', (job, failedReason) => {
     console.error(`Fail process job ${JSON.stringify(job)} `, failedReason)
+    appsignal.tracer().sendError(failedReason, (span: any) => {
+      span.setName(`job/${queue.name}`)
+    })
   })
 })
