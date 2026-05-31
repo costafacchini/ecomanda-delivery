@@ -1,12 +1,12 @@
 import 'dotenv/config'
 import 'module-alias/register'
 import '@models/index'
-import MessagesSendedYesterday from '@reports/MessagesSendedYesterday'
+import { MessagesSendedYesterday } from '@reports/MessagesSendedYesterday'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { MessageRepositoryDatabase } from '@repositories/message'
 
 import request from './src/app/services/request'
-import connect from './src/config/database'
+import { connect } from './src/config/database'
 connect()
 
 async function schedule() {

@@ -6,7 +6,7 @@ import moment from 'moment'
 import request from './src/app/services/request'
 import Body from '@models/Body'
 import Room from '@models/Room'
-import connect from './src/config/database'
+import { connect } from './src/config/database'
 connect()
 
 async function schedule() {
@@ -17,7 +17,7 @@ async function schedule() {
     const start = moment().subtract(10, 'days')
     const end = moment(yesterday).endOf('day')
 
-    let res = await Body.deleteMany({ createdAt: { $gte: start, $lt: end }, kind: 'normal' })
+    let res = await Body.deleteMany({ createdAt: { $gte: start.toDate(), $lt: end.toDate() }, kind: 'normal' })
     console.log(`Bodies concluded destroyed: ${res.deletedCount}`)
 
     res = await Room.deleteMany({ closed: true })

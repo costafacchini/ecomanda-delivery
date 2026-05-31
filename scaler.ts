@@ -52,7 +52,7 @@ const EXTERNAL_QUEUES = ['send-message-to-chat', 'send-message-to-messenger']
 // const ALL_QUEUES = [...TRANSFORM_QUEUES, ...EXTERNAL_QUEUES]
 
 // ---------- BullMQ backlog ----------
-async function getQueueBacklog(queue) {
+async function getQueueBacklog(queue: any) {
   // Backlog = jobs que ainda NÃO estão em execução (waiting/delayed etc.)
   const counts = await queue.getJobCounts('wait', 'delayed', 'prioritized', 'paused')
 
@@ -68,7 +68,7 @@ async function getAllBacklogs() {
 }
 
 // Score ponderado: external queues “valem mais”
-function computeScore(backlogs) {
+function computeScore(backlogs: Record<string, number>) {
   const transform = TRANSFORM_QUEUES.reduce((sum, q) => sum + (backlogs[q] ?? 0), 0)
   const external = EXTERNAL_QUEUES.reduce((sum, q) => sum + (backlogs[q] ?? 0), 0)
 
@@ -91,7 +91,7 @@ function getCurrentWorkerMin() {
 }
 
 // 1 + floor(score / BACKLOG_STEP), limitado entre [workerMin .. WORKER_MAX]
-function desiredWorkers(score, workerMin) {
+function desiredWorkers(score: number, workerMin: number) {
   const extra = Math.floor(score / BACKLOG_STEP)
   const desired = workerMin + extra
   return Math.max(workerMin, Math.min(WORKER_MAX, desired))
@@ -99,7 +99,7 @@ function desiredWorkers(score, workerMin) {
 
 // ---------- Heroku API (Formation) ----------
 const HEROKU_HEADERS = {
-  Authorization: `Bearer ${HEROKU_TOKEN}`,
+  Authorization: `Bearer ${HEROKU_TOKEN as string}`,
   Accept: 'application/vnd.heroku+json; version=3',
   'Content-Type': 'application/json',
 }
@@ -135,12 +135,12 @@ const HEROKU_HEADERS = {
 // }
 
 async function getCurrentWorkersDistribution() {
-  const byType = {}
+  const byType: Record<string, number> = {}
   let total = 0
 
   for (const type of WORKER_TYPES_LIST) {
     const url = `https://api.heroku.com/apps/${encodeURIComponent(
-      HEROKU_APP_NAME,
+      HEROKU_APP_NAME as string,
     )}/formation/${encodeURIComponent(type)}`
 
     const res = await fetch(url, { method: 'GET', headers: HEROKU_HEADERS })
@@ -160,7 +160,7 @@ async function getCurrentWorkersDistribution() {
 }
 
 // Liga os primeiros N process types, desliga o resto (Basic = 0 ou 1 por tipo)
-async function setTotalWorkers(targetTotal) {
+async function setTotalWorkers(targetTotal: number) {
   const updates = []
 
   for (let i = 0; i < WORKER_TYPES_LIST.length; i++) {
@@ -168,7 +168,7 @@ async function setTotalWorkers(targetTotal) {
     const quantity = i < targetTotal ? 1 : 0
 
     const url = `https://api.heroku.com/apps/${encodeURIComponent(
-      HEROKU_APP_NAME,
+      HEROKU_APP_NAME as string,
     )}/formation/${encodeURIComponent(type)}`
 
     updates.push(
@@ -193,7 +193,7 @@ async function setTotalWorkers(targetTotal) {
 // ---------- Cooldown + step-down ----------
 let lastScaleAt = 0
 
-function canScale(now, current, next) {
+function canScale(now: number, current: number, next: number) {
   if (next === current) return false
 
   const isUp = next > current
@@ -202,7 +202,7 @@ function canScale(now, current, next) {
   return now - lastScaleAt >= cooldown
 }
 
-function applyStepDown(current, desired) {
+function applyStepDown(current: number, desired: number) {
   if (desired < current) return current - 1 // desce 1 por ciclo
   return desired
 }

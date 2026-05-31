@@ -28,7 +28,10 @@
   "include": [
     "src/**/*",
     "server.ts",
-    "worker.ts"
+    "worker.ts",
+    "instrument.ts",
+    "scaler.ts",
+    "schedule-*.ts"
   ],
   "exclude": [
     "node_modules",
