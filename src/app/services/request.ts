@@ -1,0 +1,67 @@
+import 'isomorphic-fetch'
+
+async function request(url: any, method: any, { headers, body, isDownload }: Record<string, any> = {}) {
+  const requestOptions: Record<string, any> = {
+    method: method,
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers,
+    },
+  }
+
+  if (body instanceof FormData) {
+    requestOptions.body = body
+    delete requestOptions.headers['Content-Type']
+  } else if (headers && headers['Content-Type'] && headers['Content-Type'].includes('multipart/form-data')) {
+    requestOptions.body = body
+  } else {
+    requestOptions.body = JSON.stringify(body)
+  }
+
+  let result
+
+  try {
+    const response = await fetch(url, requestOptions)
+    const data = isDownload ? await response.arrayBuffer() : await response.text()
+
+    result = {
+      status: response.status,
+      headers: response.headers,
+      data: (data as any).length > 0 && isJSON(response) && !isDownload ? JSON.parse(data as string) : data,
+    }
+  } catch (e) {
+    result = {
+      status: 500,
+      data: `Ocorreu um erro ao tentar dar um ${method} na url ${url} com o body ${JSON.stringify(
+        body,
+      )} e resultou na mensagem ${e}`,
+    }
+  }
+
+  return result
+}
+
+function isJSON(response: any) {
+  return response.headers.get('content-type') && response.headers.get('content-type').includes('application/json')
+}
+
+export default {
+  get(url: any, requestOpts = {}) {
+    return request(url, 'GET', requestOpts)
+  },
+  post(url: any, requestOpts = {}) {
+    return request(url, 'POST', requestOpts)
+  },
+  patch(url: any, requestOpts = {}) {
+    return request(url, 'PATCH', requestOpts)
+  },
+  put(url: any, requestOpts = {}) {
+    return request(url, 'PUT', requestOpts)
+  },
+  download(url: any, requestOpts = {}) {
+    return request(url, 'GET', Object.assign(requestOpts, { isDownload: true }))
+  },
+  delete(url: any, requestOpts = {}) {
+    return request(url, 'DELETE', requestOpts)
+  },
+}

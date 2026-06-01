@@ -1,8 +1,8 @@
 # Plan: JS to TypeScript Migration
 
-**Status**: not-started
+**Status**: complete
 **Created**: 2026-04-02
-**Last Updated**: 2026-04-28
+**Last Updated**: 2026-05-31
 **Assigned Dev**: Alan
 **Master Plan**: None
 
@@ -44,37 +44,37 @@ Migrate the entire codebase (backend + client) from JavaScript to TypeScript inc
 
 | Task Path | Title | Phase | Status | Depends On |
 |-----------|-------|-------|--------|------------|
-| phase-0/task-00-verify-cra-to-vite-complete | Verify cra-to-vite prerequisite is complete | 0 | not-started | — |
-| phase-1/task-01-backend-ts-deps | Install backend TypeScript dependencies | 1 | not-started | — |
-| phase-1/task-02-tsconfig-root | Create root tsconfig.json | 1 | not-started | phase-1/task-01-backend-ts-deps |
-| phase-1/task-03-jest-babel-ts-transform | Configure Jest/Babel to process .ts files | 1 | not-started | phase-1/task-01-backend-ts-deps |
-| phase-1/task-04-typecheck-ci-script | Add typecheck script and verify zero TS errors | 1 | not-started | phase-1/task-02-tsconfig-root |
-| phase-2/task-05-domain-types | Create src/types/index.ts with domain enums and interfaces | 2 | not-started | phase-1/task-02-tsconfig-root |
-| phase-2/task-06-migrate-helpers | Migrate src/app/helpers/ to .ts | 2 | not-started | phase-2/task-05-domain-types |
-| phase-2/task-07-migrate-config-setup | Migrate src/config/ and src/setup/ to .ts | 2 | not-started | phase-1/task-02-tsconfig-root |
-| phase-3/task-08-migrate-models | Migrate Mongoose models to .ts | 3 | not-started | phase-2/task-05-domain-types |
-| phase-3/task-09-migrate-repositories | Migrate repositories to .ts | 3 | not-started | phase-3/task-08-migrate-models |
-| phase-3/task-10-migrate-queries | Migrate queries layer to .ts | 3 | not-started | phase-3/task-09-migrate-repositories |
-| phase-3/task-11-migrate-services | Migrate services layer to .ts | 3 | not-started | phase-3/task-09-migrate-repositories |
-| phase-3/task-12-migrate-messenger-plugins | Migrate plugins/messengers to .ts | 3 | not-started | phase-3/task-11-migrate-services |
-| phase-3/task-13-migrate-chat-plugins | Migrate plugins/chats to .ts | 3 | not-started | phase-3/task-11-migrate-services |
-| phase-3/task-14-migrate-chatbot-plugins | Migrate plugins/chatbots to .ts | 3 | not-started | phase-3/task-11-migrate-services |
-| phase-3/task-15-migrate-cart-plugins | Migrate plugins/carts to .ts | 3 | not-started | phase-3/task-11-migrate-services |
-| phase-3/task-16-migrate-integration-payment-storage-plugins | Migrate plugins/integrations, payments, and storage to .ts | 3 | not-started | phase-3/task-11-migrate-services |
-| phase-3/task-17-migrate-importers-factories-reports | Migrate importers, factories, and reports to .ts | 3 | not-started | phase-3/task-08-migrate-models |
-| phase-3/task-18-migrate-controllers | Migrate controllers to .ts | 3 | not-started | phase-3/task-11-migrate-services |
-| phase-3/task-19-migrate-jobs | Migrate jobs to .ts | 3 | not-started | phase-3/task-11-migrate-services, phase-3/task-12-migrate-messenger-plugins, phase-3/task-13-migrate-chat-plugins |
-| phase-3/task-20-migrate-routes-websockets-entry | Migrate routes, websockets, and server entry to .ts | 3 | not-started | phase-3/task-18-migrate-controllers |
-| phase-4/task-21-client-ts-setup | Add client TS deps and create client/tsconfig.json | 4 | not-started | phase-0/task-00-verify-cra-to-vite-complete, phase-1/task-01-backend-ts-deps |
-| phase-4/task-22-migrate-client-services | Migrate client/src/services/ to .ts | 4 | not-started | phase-4/task-21-client-ts-setup |
-| phase-4/task-23-migrate-client-contexts | Migrate client/src/contexts/ to .tsx | 4 | not-started | phase-4/task-21-client-ts-setup |
-| phase-4/task-24-migrate-client-components | Migrate client/src/components/ to .tsx | 4 | not-started | phase-4/task-23-migrate-client-contexts |
-| phase-4/task-25-migrate-client-pages | Migrate client/src/pages/ to .tsx | 4 | not-started | phase-4/task-24-migrate-client-components |
-| phase-4/task-26-migrate-client-root | Migrate App.js, index.js, and root client files to .tsx | 4 | not-started | phase-4/task-25-migrate-client-pages |
-| phase-5/task-27-enable-noimplicitany-backend | Enable noImplicitAny on backend tsconfig | 5 | not-started | phase-3/task-20-migrate-routes-websockets-entry |
-| phase-5/task-28-enable-noimplicitany-client | Enable noImplicitAny on client tsconfig | 5 | not-started | phase-4/task-26-migrate-client-root |
-| phase-5/task-29-enable-strict-mode | Enable strict: true in both tsconfigs | 5 | not-started | phase-5/task-27-enable-noimplicitany-backend, phase-5/task-28-enable-noimplicitany-client |
-| phase-5/task-30-eslint-ts-rules | Enable @typescript-eslint/recommended rules in ESLint | 5 | not-started | phase-5/task-29-enable-strict-mode |
+| phase-0/task-00-verify-cra-to-vite-complete | Verify cra-to-vite prerequisite is complete | 0 | complete | — |
+| phase-1/task-01-backend-ts-deps | Install backend TypeScript dependencies | 1 | complete | — |
+| phase-1/task-02-tsconfig-root | Create root tsconfig.json | 1 | complete | phase-1/task-01-backend-ts-deps |
+| phase-1/task-03-jest-babel-ts-transform | Configure Jest/Babel to process .ts files | 1 | complete | phase-1/task-01-backend-ts-deps |
+| phase-1/task-04-typecheck-ci-script | Add typecheck script and verify zero TS errors | 1 | complete | phase-1/task-02-tsconfig-root |
+| phase-2/task-05-domain-types | Create src/types/index.ts with domain enums and interfaces | 2 | complete | phase-1/task-02-tsconfig-root |
+| phase-2/task-06-migrate-helpers | Migrate src/app/helpers/ to .ts | 2 | complete | phase-2/task-05-domain-types |
+| phase-2/task-07-migrate-config-setup | Migrate src/config/ and src/setup/ to .ts | 2 | complete | phase-1/task-02-tsconfig-root |
+| phase-3/task-08-migrate-models | Migrate Mongoose models to .ts | 3 | complete | phase-2/task-05-domain-types |
+| phase-3/task-09-migrate-repositories | Migrate repositories to .ts | 3 | complete | phase-3/task-08-migrate-models |
+| phase-3/task-10-migrate-queries | Migrate queries layer to .ts | 3 | complete | phase-3/task-09-migrate-repositories |
+| phase-3/task-11-migrate-services | Migrate services layer to .ts | 3 | complete | phase-3/task-09-migrate-repositories |
+| phase-3/task-12-migrate-messenger-plugins | Migrate plugins/messengers to .ts | 3 | complete | phase-3/task-11-migrate-services |
+| phase-3/task-13-migrate-chat-plugins | Migrate plugins/chats to .ts | 3 | complete | phase-3/task-11-migrate-services |
+| phase-3/task-14-migrate-chatbot-plugins | Migrate plugins/chatbots to .ts | 3 | complete | phase-3/task-11-migrate-services |
+| phase-3/task-15-migrate-cart-plugins | Migrate plugins/carts to .ts | 3 | complete | phase-3/task-11-migrate-services |
+| phase-3/task-16-migrate-integration-payment-storage-plugins | Migrate plugins/integrations, payments, and storage to .ts | 3 | complete | phase-3/task-11-migrate-services |
+| phase-3/task-17-migrate-importers-factories-reports | Migrate importers, factories, and reports to .ts | 3 | complete | phase-3/task-08-migrate-models |
+| phase-3/task-18-migrate-controllers | Migrate controllers to .ts | 3 | complete | phase-3/task-11-migrate-services |
+| phase-3/task-19-migrate-jobs | Migrate jobs to .ts | 3 | complete | phase-3/task-11-migrate-services, phase-3/task-12-migrate-messenger-plugins, phase-3/task-13-migrate-chat-plugins |
+| phase-3/task-20-migrate-routes-websockets-entry | Migrate routes, websockets, and server entry to .ts | 3 | complete | phase-3/task-18-migrate-controllers |
+| phase-4/task-21-client-ts-setup | Add client TS deps and create client/tsconfig.json | 4 | complete | phase-0/task-00-verify-cra-to-vite-complete, phase-1/task-01-backend-ts-deps |
+| phase-4/task-22-migrate-client-services | Migrate client/src/services/ to .ts | 4 | complete | phase-4/task-21-client-ts-setup |
+| phase-4/task-23-migrate-client-contexts | Migrate client/src/contexts/ to .tsx | 4 | complete | phase-4/task-21-client-ts-setup |
+| phase-4/task-24-migrate-client-components | Migrate client/src/components/ to .tsx | 4 | complete | phase-4/task-23-migrate-client-contexts |
+| phase-4/task-25-migrate-client-pages | Migrate client/src/pages/ to .tsx | 4 | complete | phase-4/task-24-migrate-client-components |
+| phase-4/task-26-migrate-client-root | Migrate App.js, index.js, and root client files to .tsx | 4 | complete | phase-4/task-25-migrate-client-pages |
+| phase-5/task-27-enable-noimplicitany-backend | Enable noImplicitAny on backend tsconfig | 5 | complete | phase-3/task-20-migrate-routes-websockets-entry |
+| phase-5/task-28-enable-noimplicitany-client | Enable noImplicitAny on client tsconfig | 5 | complete | phase-4/task-26-migrate-client-root |
+| phase-5/task-29-enable-strict-mode | Enable strict: true in both tsconfigs | 5 | complete | phase-5/task-27-enable-noimplicitany-backend, phase-5/task-28-enable-noimplicitany-client |
+| phase-5/task-30-eslint-ts-rules | Enable @typescript-eslint/recommended rules in ESLint | 5 | complete | phase-5/task-29-enable-strict-mode |
 
 ## Branch Convention
 

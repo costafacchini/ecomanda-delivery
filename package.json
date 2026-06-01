@@ -8,11 +8,11 @@
     "node": "24.x"
   },
   "scripts": {
-    "start": "node server.js",
-    "build": "cd client && yarn install --production=false && yarn run build",
+    "start": "node --require source-map-support/register --require './appsignal.cjs' dist/server.js",
+    "build": "tsc && echo '{\"type\":\"commonjs\"}' > dist/package.json && cp appsignal.cjs dist/appsignal.cjs && cd client && yarn install --production=false && yarn run build",
     "dev": "npm-run-all -p dev:*",
-    "dev:server": "bash -c 'docker compose up -d && trap \"docker compose stop\" SIGINT && nodemon server.js'",
-    "dev:worker": "nodemon worker.js",
+    "dev:server": "nodemon --exec tsx server.ts",
+    "dev:worker": "nodemon --exec tsx worker.ts",
     "smoke:start": "node src/scripts/smoke/start.mjs",
     "smoke:check": "node src/scripts/smoke/check.mjs",
     "smoke:stop": "node src/scripts/smoke/stop.mjs",
@@ -20,15 +20,24 @@
     "test:ci": "NODE_ENV=test jest --config=jest.config.mjs",
     "test:coverage": "NODE_ENV=test jest --config=jest.config.mjs --maxWorkers=50%",
     "watch": "NODE_ENV=test jest --no-coverage --verbose --watch --runInBand --notify --notifyMode always",
-    "linter": "yarn eslint 'src/app/**/*.{js,ts,tsx}' 'src/config/**/*.{js,ts,tsx}' 'src/setup/**/*.{js,ts,tsx}'"
+    "linter": "yarn eslint 'src/app/**/*.{js,ts,tsx}' 'src/config/**/*.{js,ts,tsx}' 'src/setup/**/*.{js,ts,tsx}'",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@babel/core": "^7.28.4",
     "@babel/plugin-transform-modules-commonjs": "^7.27.1",
     "@babel/preset-env": "^7.28.3",
+    "@babel/preset-typescript": "7.29.7",
     "@eslint-community/eslint-plugin-eslint-comments": "^4.7.1",
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
+    "@types/bcrypt": "6.0.0",
+    "@types/express": "5.0.6",
+    "@types/jsonwebtoken": "9.0.10",
+    "@types/morgan": "1.9.10",
+    "@types/node": "24.12.4",
+    "@typescript-eslint/eslint-plugin": "8.60.0",
+    "@typescript-eslint/parser": "8.60.0",
     "@typescript-eslint/utils": "^8.58.0",
     "babel-jest": "^30.2.0",
     "eslint": "10.4.0",
@@ -46,9 +55,11 @@
     "mongodb-memory-server-global": "11.1.0",
     "npm-run-all2": "8.0.4",
     "prettier": "3.8.3",
-    "supertest": "7.2.2"
+    "supertest": "7.2.2",
+    "typescript": "6.0.3"
   },
   "dependencies": {
+    "@appsignal/nodejs": "^3.8.0",
     "@aws-sdk/client-s3": "^3.32.0",
     "@aws-sdk/s3-request-presigner": "^3.32.0",
     "@bull-board/api": "^7.0.0",
@@ -86,6 +97,8 @@
     "rate-limit-redis": "5.0.0",
     "rollbar": "3.1.0",
     "socket.io": "4.8.3",
+    "source-map-support": "^0.5.21",
+    "tsx": "4.22.3",
     "uuid": "14.0.0",
     "yarn": "1.22.22"
   },

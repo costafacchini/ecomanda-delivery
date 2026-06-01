@@ -1,0 +1,30 @@
+import { logger } from '../helpers/logger'
+
+class BackupsController {
+  publishMessage: any
+
+  constructor({ publishMessage }: Record<string, any> = {}) {
+    this.publishMessage = publishMessage
+
+    this.schedule = this.schedule.bind(this)
+    this.clear = this.clear.bind(this)
+  }
+
+  schedule(_: any, res: any) {
+    logger.info('Agendando backup')
+
+    this.publishMessage({ key: 'backup', body: {} })
+
+    res.status(200).send({ body: 'Backup agendado' })
+  }
+
+  clear(_: any, res: any) {
+    logger.info('Agendar limpeza de backups antigos')
+
+    this.publishMessage({ key: 'clear-backups', body: {} })
+
+    res.status(200).send({ body: 'Limpeza de backups antigos agendados' })
+  }
+}
+
+export { BackupsController }

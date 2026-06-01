@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": false,
+    "strict": true,
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "module": "CommonJS",
+    "moduleResolution": "node10",
+    "ignoreDeprecations": "6.0",
+    "skipLibCheck": true,
+    "outDir": "dist",
+    "rootDir": ".",
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "paths": {
+      "@models/*": ["./src/app/models/*"],
+      "@controllers/*": ["./src/app/controllers/*"],
+      "@routes/*": ["./src/app/routes/*"],
+      "@config/*": ["./src/config/*"],
+      "@queries/*": ["./src/app/queries/*"],
+      "@reports/*": ["./src/app/reports/*"],
+      "@helpers/*": ["./src/app/helpers/*"],
+      "@plugins/*": ["./src/app/plugins/*"],
+      "@repositories/*": ["./src/app/repositories/*"],
+      "@factories/*": ["./src/app/factories/*"]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "server.ts",
+    "worker.ts",
+    "instrument.ts",
+    "scaler.ts",
+    "schedule-*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "client",
+    ".jest",
+    "**/*.spec.ts"
+  ]
+}
