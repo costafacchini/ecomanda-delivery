@@ -138,7 +138,10 @@ class Chatwoot extends ChatsBase {
         return
       }
 
-      const contact = await this.findContact({ chatwootId: responseBody.contact_inbox.contact_id })
+      const contact = await this.findContact({
+        licensee: this.licensee._id,
+        chatwootId: responseBody.contact_inbox.contact_id,
+      })
       if (!contact) {
         this.messageParsed = null
         return
@@ -171,7 +174,10 @@ class Chatwoot extends ChatsBase {
       return
     }
 
-    const contact = await this.findContact({ chatwootId: responseBody.conversation.contact_inbox.contact_id })
+    const contact = await this.findContact({
+      licensee: this.licensee._id,
+      chatwootId: responseBody.conversation.contact_inbox.contact_id,
+    })
     if (!contact) {
       this.messageParsed = null
       return
