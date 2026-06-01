@@ -9,22 +9,10 @@ jest.mock('../../../config/rabbitmq', () => ({ publishMessage: jest.fn() }))
 // without a live database connection.
 jest.mock('../../runtime/dependencies', () => {
   const contactRepository = { findFirst: jest.fn(), find: jest.fn() }
-  const cartRepository = {
-    findFirst: jest.fn(),
-    find: jest.fn(),
-    create: jest.fn(),
-    save: jest.fn(),
-    update: jest.fn(),
-  }
   const deps = {
     bodyRepository: { findFirst: jest.fn(), find: jest.fn(), create: jest.fn(), save: jest.fn() },
     contactRepository,
-    cartRepository,
-    messageRepository: { findFirst: jest.fn(), find: jest.fn() },
     backgroundjobRepository: { findFirst: jest.fn(), find: jest.fn(), create: jest.fn() },
-    integrationlogRepository: { findFirst: jest.fn(), find: jest.fn(), create: jest.fn() },
-    parseCart: jest.fn(),
-    createCartPlugin: jest.fn(),
   }
   return { createRuntimeDependencies: jest.fn(() => deps) }
 })
@@ -36,18 +24,6 @@ jest.mock('../../usecases/webhooks/IngestChatMessage', () => ({
 jest.mock('../../usecases/webhooks/IngestMessengerMessage', () => ({
   IngestMessengerMessage: jest.fn().mockImplementation(() => ({})),
 }))
-jest.mock('../../usecases/carts/CreateCart', () => ({
-  CreateCart: jest.fn().mockImplementation(() => ({ execute: jest.fn() })),
-}))
-jest.mock('../../usecases/carts/UpdateCart', () => ({
-  UpdateCart: jest.fn().mockImplementation(() => ({ execute: jest.fn() })),
-}))
-jest.mock('../../usecases/carts/AddCartItem', () => ({
-  AddCartItem: jest.fn().mockImplementation(() => ({ execute: jest.fn() })),
-}))
-jest.mock('../../usecases/carts/SendCart', () => ({
-  SendCart: jest.fn().mockImplementation(() => ({ execute: jest.fn() })),
-}))
 jest.mock('../../usecases/contacts/UpdateContactAddress', () => ({
   UpdateContactAddress: jest.fn().mockImplementation(() => ({ execute: jest.fn() })),
 }))
@@ -57,14 +33,6 @@ jest.mock('../../usecases/backgroundjobs/ScheduleBackgroundjob', () => ({
 jest.mock('../../usecases/backgroundjobs/GetBackgroundjobStatus', () => ({
   GetBackgroundjobStatus: jest.fn().mockImplementation(() => ({ execute: jest.fn() })),
 }))
-jest.mock('../../usecases/orders/ReceivePedidos10Order', () => ({
-  ReceivePedidos10Order: jest.fn().mockImplementation(() => ({ execute: jest.fn() })),
-}))
-jest.mock('../../usecases/orders/ChangePedidos10OrderStatus', () => ({
-  ChangePedidos10OrderStatus: jest.fn().mockImplementation(() => ({ execute: jest.fn() })),
-}))
-jest.mock('../../plugins/carts/adapters/factory', () => ({ createCartAdapter: jest.fn() }))
-jest.mock('../../repositories/messenger', () => ({ scheduleSendMessageToMessenger: jest.fn() }))
 jest.mock('../../controllers/DelayController', () => ({
   DelayController: jest.fn().mockImplementation(() => ({
     time: jest.fn((_req, res) => res.sendStatus(200)),
@@ -84,85 +52,6 @@ app.use((req, _res, next) => {
   next()
 })
 app.use('/v1', v1Router)
-
-// ---------------------------------------------------------------------------
-// POST /v1/carts — cartsCreateValidations
-// ---------------------------------------------------------------------------
-describe('POST /v1/carts — input validation', () => {
-  it('accepts a request with a contact in body', async () => {
-    // Controller create will attempt to run; the use-case is a jest.fn()
-    // that resolves to undefined — the controller catches and returns 500.
-    // What matters is NOT 422.
-    const res = await request(app).post('/v1/carts').send({ contact: '5511999990000' })
-    expect(res.status).not.toBe(422)
-  })
-
-  it('accepts a request with no body (contact is optional for POST /carts)', async () => {
-    const res = await request(app).post('/v1/carts').send({})
-    expect(res.status).not.toBe(422)
-  })
-
-  it('accepts a request with contact as query param', async () => {
-    const res = await request(app).post('/v1/carts?contact=5511999990000').send({})
-    expect(res.status).not.toBe(422)
-  })
-})
-
-// ---------------------------------------------------------------------------
-// POST /v1/carts/:contact/item — cartsAddItemValidations
-// ---------------------------------------------------------------------------
-describe('POST /v1/carts/:contact/item — input validation', () => {
-  it('returns 422 when products is missing', async () => {
-    const res = await request(app).post('/v1/carts/5511999990000/item').send({})
-    expect(res.status).toBe(422)
-    expect(res.body).toMatchObject({ errors: expect.arrayContaining([{ message: expect.any(String) }]) })
-  })
-
-  it('returns 422 when products is an empty array', async () => {
-    const res = await request(app).post('/v1/carts/5511999990000/item').send({ products: [] })
-    expect(res.status).toBe(422)
-    expect(res.body.errors[0].message).toMatch(/products/)
-  })
-
-  it('accepts a valid request with products array', async () => {
-    const res = await request(app)
-      .post('/v1/carts/5511999990000/item')
-      .send({ products: [{ id: 'product-1', quantity: 1 }] })
-    expect(res.status).not.toBe(422)
-  })
-})
-
-// ---------------------------------------------------------------------------
-// POST /v1/orders — ordersCreateValidations
-// ---------------------------------------------------------------------------
-describe('POST /v1/orders — input validation', () => {
-  it('returns 422 when MerchantExternalCode is missing', async () => {
-    const res = await request(app)
-      .post('/v1/orders')
-      .send({ order: { id: 'ord-1' } })
-    expect(res.status).toBe(422)
-    expect(res.body.errors[0].message).toMatch(/MerchantExternalCode/)
-  })
-
-  it('returns 422 when order is missing', async () => {
-    const res = await request(app).post('/v1/orders').send({ MerchantExternalCode: 'MC-001' })
-    expect(res.status).toBe(422)
-    expect(res.body.errors[0].message).toMatch(/order/)
-  })
-
-  it('returns 422 when both required fields are missing', async () => {
-    const res = await request(app).post('/v1/orders').send({})
-    expect(res.status).toBe(422)
-    expect(res.body.errors.length).toBeGreaterThanOrEqual(2)
-  })
-
-  it('accepts a valid request with all required fields', async () => {
-    const res = await request(app)
-      .post('/v1/orders')
-      .send({ MerchantExternalCode: 'MC-001', order: { id: 'ord-1' } })
-    expect(res.status).not.toBe(422)
-  })
-})
 
 // ---------------------------------------------------------------------------
 // GET /v1/delay/:time — delayValidations
