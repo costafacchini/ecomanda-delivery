@@ -7470,6 +7470,24 @@ mongodb-memory-server-core@11.1.0:
     tslib "^2.8.1"
     yauzl "^3.3.0"
 
+mongodb-memory-server-core@11.2.0:
+  version "11.2.0"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-11.2.0.tgz#d9ae32dd8c10e239fc91386b2c7ff87da3b9a30d"
+  integrity sha512-vOoDtn0JiLrHvZY81Rp/UtKXXK0rtJHZGZFVnccvJwYitPLNspO0Ty0grqFQOe7iAET8+GI4zAQcphg+R3vxQg==
+  dependencies:
+    async-mutex "^0.5.0"
+    camelcase "^6.3.0"
+    debug "^4.4.3"
+    find-cache-dir "^3.3.2"
+    follow-redirects "^1.16.0"
+    https-proxy-agent "^7.0.6"
+    mongodb "^7.2.0"
+    new-find-package-json "^2.0.0"
+    semver "^7.7.3"
+    tar-stream "^3.1.8"
+    tslib "^2.8.1"
+    yauzl "^3.3.1"
+
 mongodb-memory-server-global@11.1.0:
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/mongodb-memory-server-global/-/mongodb-memory-server-global-11.1.0.tgz#99932eb35eef69ec546d0186b3d0771c288c2769"
@@ -7478,12 +7496,12 @@ mongodb-memory-server-global@11.1.0:
     mongodb-memory-server-core "11.1.0"
     tslib "^2.8.1"
 
-mongodb-memory-server@11.1.0:
-  version "11.1.0"
-  resolved "https://registry.yarnpkg.com/mongodb-memory-server/-/mongodb-memory-server-11.1.0.tgz#3c5e223bf78150b2ad96943acfe5cd25d3850f80"
-  integrity sha512-x9psV1KXRgG5t14AmsrfcWCqlNXvPOzcyroMSeRU5vkAm8jxEF5WiLGdGCONLOgeCNjRnpg6igyDum/eTwiooA==
+mongodb-memory-server@11.2.0:
+  version "11.2.0"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server/-/mongodb-memory-server-11.2.0.tgz#d1b15bceb3781a133d0bddaaf60aa47d3721246f"
+  integrity sha512-506AD8qvClVx8Raw/WhAUUWBgIXPyi856iC01aa5vAzHmn6WOXC6ulvudkTF7oTMzJxkyA0A84VpD4BpyfqJ9w==
   dependencies:
-    mongodb-memory-server-core "11.1.0"
+    mongodb-memory-server-core "11.2.0"
     tslib "^2.8.1"
 
 mongodb@7.2.0, mongodb@^7.2.0, mongodb@~7.2:
@@ -9971,6 +9989,13 @@ yauzl@^3.3.0:
   integrity sha512-PtGEvEP30p7sbIBJKUBjUnqgTVOyMURc4dLo9iNyAJnNIEz9pm88cCXF21w94Kg3k6RXkeZh5DHOGS0qEONvNQ==
   dependencies:
     buffer-crc32 "~0.2.3"
+    pend "~1.2.0"
+
+yauzl@^3.3.1:
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/yauzl/-/yauzl-3.3.2.tgz#ec30f276da0380406527796a6fb4b2c5461b3929"
+  integrity sha512-Md9ankxxN23wncAN8s7+Tn3Co52zLUPMtnrLAbVCnfG5d2tKBFfmygYSgXlqFgXObtzIgqkx7aNgDBpso9+4qA==
+  dependencies:
     pend "~1.2.0"
 
 yocto-queue@^0.1.0:
