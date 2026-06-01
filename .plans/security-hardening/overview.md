@@ -2,7 +2,7 @@
 
 **Status**: complete
 **Created**: 2026-05-14
-**Last Updated**: 2026-05-14
+**Last Updated**: 2026-06-01
 **Estimated Demo Date**: N/A
 **Assigned Dev**: Alan Costa Facchini
 **Assigned QA**: unassigned
@@ -85,20 +85,20 @@ Base branch: `main`
 
 ## Success Criteria
 
-- [ ] `/queue` requires valid JWT to access
-- [ ] Login endpoint returns 429 after configured threshold
-- [ ] No stack traces or raw error objects returned to API callers
-- [ ] JWT verification failure returns 401, not 500
-- [ ] Helmet headers present on all responses
-- [ ] All `console.*` calls replaced with centralized `logger`
-- [ ] At `LOG_LEVEL=info` (default): no `req.body` or response payloads in logs
-- [ ] At `LOG_LEVEL=debug`: full meta visible for investigation
-- [ ] Sentry receives `error`/`fatal` exceptions when `SENTRY_DSN` is set
-- [ ] `/resources/users` and `/resources/licensees` write operations restricted to super users
-- [ ] v1 routes validate required inputs and return 422 on bad input
-- [ ] CORS origin list is known and restriction is in place (Phase B of task-09)
-- [ ] All existing tests pass
-- [ ] No regressions in existing functionality
+- [x] `/queue` requires valid JWT to access
+- [x] Login endpoint returns 429 after configured threshold
+- [x] No stack traces or raw error objects returned to API callers
+- [x] JWT verification failure returns 401, not 500
+- [x] Helmet headers present on all responses
+- [x] All `console.*` calls replaced with centralized `logger`
+- [x] At `LOG_LEVEL=info` (default): no `req.body` or response payloads in logs
+- [x] At `LOG_LEVEL=debug`: full meta visible for investigation
+- [x] Sentry receives `error`/`fatal` exceptions when `SENTRY_DSN` is set
+- [x] `/resources/users` and `/resources/licensees` write operations restricted to super users
+- [x] v1 routes validate required inputs and return 422 on bad input
+- [x] CORS origin list is known and restriction is in place (Phase B of task-09)
+- [x] All existing tests pass
+- [x] No regressions in existing functionality
 
 ## References
 

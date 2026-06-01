@@ -23,13 +23,12 @@ Git-native Markdown plans for multi-step work.
 | # | Plan | Folder | Status | Description |
 |---|------|--------|--------|-------------|
 | 1 | [Remove PDV](./remove-pdv/overview.md) | `remove-pdv/` | not-started | Delete cart, payment (PagarMe), and order integration (Pedidos10) domain — strip PDV fields from Licensee and Contact |
-| 2 | [Security Hardening](./security-hardening/overview.md) | `security-hardening/` | not-started | Fix 10 security issues from OWASP audit: Helmet, CORS, rate limiting, Bull Board auth, error leakage, JWT fix, RBAC, logging PII, API token header, v1 input validation |
-| 3 | [MongoDB → PostgreSQL](./mongo-to-postgres/overview.md) | `mongo-to-postgres/` | not-started | Migrate all persistent data from MongoDB/Mongoose to PostgreSQL/Prisma using dual-write strategy; prerequisite: remove-pdv complete |
-| 4 | [Baileys Socket Monitor](./baileys-socket-monitor/overview.md) | `baileys-socket-monitor/` | not-started | Replace webhook-only inbound flow with a persistent Baileys socket per licensee; captures messages.upsert and messages.update natively |
-| 5 | [Local Chat Infrastructure](./local-chat-infra/overview.md) | `local-chat-infra/` | not-started | User role system (agent/supervisor/admin/super), LocalChat plugin, super licensee flow, route authorization — prerequisite for setores |
-| 6 | [Setores](./setores/overview.md) | `setores/` | not-started | Multiple WhatsApp numbers per licensee via sectors; sector-scoped message routing and agent access filtering |
-| 7 | [Backend Type Narrowing](./type-backend/overview.md) | `type-backend/` | not-started | Replace `any` with interfaces across models, repositories, use cases, controllers, and plugins — 3 phases, 11 tasks |
-| 8 | [Client Type Narrowing](./type-client/overview.md) | `type-client/` | not-started | Replace `any` with interfaces across React services, contexts, pages, and components — 2 phases, 6 tasks |
+| 2 | [MongoDB → PostgreSQL](./mongo-to-postgres/overview.md) | `mongo-to-postgres/` | not-started | Migrate all persistent data from MongoDB/Mongoose to PostgreSQL/Prisma using dual-write strategy; prerequisite: remove-pdv complete |
+| 3 | [Baileys Socket Monitor](./baileys-socket-monitor/overview.md) | `baileys-socket-monitor/` | not-started | Replace webhook-only inbound flow with a persistent Baileys socket per licensee; captures messages.upsert and messages.update natively |
+| 4 | [Local Chat Infrastructure](./local-chat-infra/overview.md) | `local-chat-infra/` | not-started | User role system (agent/supervisor/admin/super), LocalChat plugin, super licensee flow, route authorization — prerequisite for setores |
+| 5 | [Setores](./setores/overview.md) | `setores/` | not-started | Multiple WhatsApp numbers per licensee via sectors; sector-scoped message routing and agent access filtering |
+| 6 | [Backend Type Narrowing](./type-backend/overview.md) | `type-backend/` | not-started | Replace `any` with interfaces across models, repositories, use cases, controllers, and plugins — 3 phases, 11 tasks |
+| 7 | [Client Type Narrowing](./type-client/overview.md) | `type-client/` | not-started | Replace `any` with interfaces across React services, contexts, pages, and components — 2 phases, 6 tasks |
 
 ---
 
@@ -38,7 +37,8 @@ Git-native Markdown plans for multi-step work.
 | # | Plan | Folder | Completed | Description |
 |---|------|--------|-----------|-------------|
 | 1 | [Use Cases](./use-cases/overview.md) | `use-cases/` | 2026-04-29 | Extract business logic from controllers into dedicated use case classes; controllers become thin (validate → execute → respond) |
-| 7 | [JS → TypeScript](./js-to-ts/overview.md) | `js-to-ts/` | 2026-05-31 | Incremental migration of all source files (backend + client) to TypeScript; strict: true; @typescript-eslint/recommended |
+| 2 | [JS → TypeScript](./js-to-ts/overview.md) | `js-to-ts/` | 2026-05-31 | Incremental migration of all source files (backend + client) to TypeScript; strict: true; @typescript-eslint/recommended |
+| 3 | [Security Hardening](./security-hardening/overview.md) | `security-hardening/` | 2026-06-01 | Helmet, CORS, rate limiting, Bull Board auth, error hardening, JWT fix, RBAC, centralized logger, v1 input validation |
 | 2 | [Baileys WhatsApp Plugin](./baileys-plugin/overview.md) | `baileys-plugin/` | 2026-05-05 | Add Baileys-based WhatsApp messenger plugin with session persistence (WhatsappSession model), following the Dialog plugin architecture |
 | 3 | [Licensee Form Wizard](./licensee-form-wizard/overview.md) | `licensee-form-wizard/` | 2026-05-07 | Split the licensee form into Bootstrap 5 Nav Tabs with panels shown/hidden based on question checkboxes; removed per-licensee AWS fields |
 | 4 | [Licensee Create Wizard](./licensee-wizard/overview.md) | `licensee-wizard/` | 2026-05-07 | Multi-step wizard for New Licensee (7 steps, Yes/No gates); removed question checkboxes from Edit form |
