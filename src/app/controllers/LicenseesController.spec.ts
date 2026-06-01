@@ -1,8 +1,6 @@
 import { LicenseeRepositoryMemory } from '@repositories/licensee'
 import { LicenseesController } from './LicenseesController'
 import { WEBHOOK_CONFIGURED_MESSAGE } from '../usecases/licensees/SetDialogWebhook'
-import { LICENSEE_SENT_TO_PAGARME_MESSAGE } from '../usecases/licensees/SendLicenseeToPagarMe'
-import { WEBHOOK_NOT_SIGNED_MESSAGE, WEBHOOK_SIGNED_MESSAGE } from '../usecases/licensees/SignPedidos10OrderWebhook'
 
 function buildResponse() {
   return {
@@ -43,12 +41,6 @@ function buildController() {
   const setDialogWebhook = {
     execute: jest.fn(),
   }
-  const sendLicenseeToPagarMe = {
-    execute: jest.fn(),
-  }
-  const signPedidos10OrderWebhook = {
-    execute: jest.fn(),
-  }
 
   const controller = new LicenseesController({
     licenseeRepository,
@@ -56,8 +48,6 @@ function buildController() {
     createLicensee,
     updateLicensee,
     setDialogWebhook,
-    sendLicenseeToPagarMe,
-    signPedidos10OrderWebhook,
   })
 
   return {
@@ -68,8 +58,6 @@ function buildController() {
     createLicensee,
     updateLicensee,
     setDialogWebhook,
-    sendLicenseeToPagarMe,
-    signPedidos10OrderWebhook,
   }
 }
 
@@ -277,61 +265,6 @@ describe('LicenseesController delegation', () => {
     expect(setDialogWebhook.execute).toHaveBeenCalledWith('licensee-id')
     expect(res.status).toHaveBeenCalledWith(200)
     expect(res.send).toHaveBeenCalledWith({ message: WEBHOOK_CONFIGURED_MESSAGE })
-  })
-
-  it('delegates sendToPagarMe to the use case and returns status 200', async () => {
-    const { controller, sendLicenseeToPagarMe } = buildController()
-    const req = {
-      params: { id: 'licensee-id' },
-    }
-    const res = buildResponse()
-
-    sendLicenseeToPagarMe.execute.mockResolvedValue({
-      message: LICENSEE_SENT_TO_PAGARME_MESSAGE,
-    })
-
-    await controller.sendToPagarMe(req, res)
-
-    expect(sendLicenseeToPagarMe.execute).toHaveBeenCalledWith('licensee-id')
-    expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.send).toHaveBeenCalledWith({
-      message: LICENSEE_SENT_TO_PAGARME_MESSAGE,
-    })
-  })
-
-  it('delegates signOrderWebhook to the use case and returns status 200', async () => {
-    const { controller, signPedidos10OrderWebhook } = buildController()
-    const req = {
-      params: { id: 'licensee-id' },
-    }
-    const res = buildResponse()
-
-    signPedidos10OrderWebhook.execute.mockResolvedValue({ message: WEBHOOK_SIGNED_MESSAGE })
-
-    await controller.signOrderWebhook(req, res)
-
-    expect(signPedidos10OrderWebhook.execute).toHaveBeenCalledWith('licensee-id')
-    expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.send).toHaveBeenCalledWith({ message: WEBHOOK_SIGNED_MESSAGE })
-  })
-
-  it('returns the unsigned webhook message from the signOrderWebhook use case', async () => {
-    const { controller, signPedidos10OrderWebhook } = buildController()
-    const req = {
-      params: { id: 'licensee-id' },
-    }
-    const res = buildResponse()
-
-    signPedidos10OrderWebhook.execute.mockResolvedValue({
-      message: WEBHOOK_NOT_SIGNED_MESSAGE,
-    })
-
-    await controller.signOrderWebhook(req, res)
-
-    expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.send).toHaveBeenCalledWith({
-      message: WEBHOOK_NOT_SIGNED_MESSAGE,
-    })
   })
 
   it('returns status 500 when an external-action use case throws an unexpected error', async () => {
