@@ -8,7 +8,7 @@
 
 ## Objective
 
-Delete `src/app/controllers/IntegrationsController.js` and `IntegrationsController.spec.js`.
+Delete `src/app/controllers/IntegrationsController.ts` and `IntegrationsController.spec.ts`.
 
 ## Context
 
@@ -25,8 +25,8 @@ The `/v1/integrations` route was removed in task-01. `IntegrationsController` ha
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/controllers/IntegrationsController.js` | delete | |
-| `src/app/controllers/IntegrationsController.spec.js` | delete | |
+| `src/app/controllers/IntegrationsController.ts` | delete | |
+| `src/app/controllers/IntegrationsController.spec.ts` | delete | |
 
 ## Implementation Steps
 
@@ -41,7 +41,7 @@ The `/v1/integrations` route was removed in task-01. `IntegrationsController` ha
 
 ## Completion Criteria
 
-- [ ] `IntegrationsController.js` and spec deleted
+- [ ] `IntegrationsController.ts` and spec deleted
 - [ ] No remaining imports
 - [ ] Changes committed to `plan/remove-pdv/phase-2/task-06-delete-integrations-controller` branch
 - [ ] Status updated in `status.md`

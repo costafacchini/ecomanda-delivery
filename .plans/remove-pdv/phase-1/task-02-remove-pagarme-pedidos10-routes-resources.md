@@ -1,4 +1,4 @@
-# Task: Remove PagarMe and Pedidos10 routes from resources-routes.js
+# Task: Remove PagarMe and Pedidos10 routes from resources-routes.ts
 
 **Plan**: Remove PDV Domain
 **Phase**: 1
@@ -8,7 +8,7 @@
 
 ## Objective
 
-Remove `POST /licensees/:id/integration/pagarme` and `POST /licensees/:id/sign-order-webhook` from `src/app/routes/resources-routes.js`.
+Remove `POST /licensees/:id/integration/pagarme` and `POST /licensees/:id/sign-order-webhook` from `src/app/routes/resources-routes.ts`.
 
 ## Context
 
@@ -25,11 +25,11 @@ These two routes expose PagarMe recipient creation and Pedidos10 order webhook s
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/routes/resources-routes.js` | modify | Remove the two PDV licensee routes |
+| `src/app/routes/resources-routes.ts` | modify | Remove the two PDV licensee routes |
 
 ## Implementation Steps
 
-### Step 1: Read resources-routes.js
+### Step 1: Read resources-routes.ts
 Locate the two route registrations.
 
 ### Step 2: Remove both route registrations
@@ -44,7 +44,7 @@ Delete the `router.post` calls for `integration/pagarme` and `sign-order-webhook
 
 ## Completion Criteria
 
-- [ ] `resources-routes.js` has no pagarme or sign-order-webhook route for licensees
+- [ ] `resources-routes.ts` has no pagarme or sign-order-webhook route for licensees
 - [ ] All tests pass
 - [ ] Changes committed to `plan/remove-pdv/phase-1/task-02-remove-pagarme-pedidos10-routes-resources` branch
 - [ ] Status updated in `status.md`

@@ -13,11 +13,11 @@ Delete all 12 PDV-specific job files from `src/app/jobs/`.
 ## Context
 
 Files to delete:
-`jobs/Integration10SendOrder.js`, `jobs/Pedidos10ChangeOrderStatus.js`, `jobs/Pedidos10Webhook.js`,
-`jobs/ProcessBackgroundjob.js`, `jobs/ProcessBackgroundjobCancelOrder.js`,
+`jobs/Integration10SendOrder.ts`, `jobs/Pedidos10ChangeOrderStatus.ts`, `jobs/Pedidos10Webhook.ts`,
+`jobs/ProcessBackgroundjob.ts`, `jobs/ProcessBackgroundjobCancelOrder.js`,
 `jobs/ProcessBackgroundjobChargeCreditCard.js`, `jobs/ProcessBackgroundjobGetCreditCard.js`,
 `jobs/ProcessBackgroundjobGetPix.js`, `jobs/ProcessBackgroundjobInviteCreditCard.js`,
-`jobs/ProcessPagarmeOrderPaid.js`, `jobs/ResetCarts.js`, `jobs/SendContactToPagarMe.js`
+`jobs/ProcessPagarmeOrderPaid.ts`, `jobs/ResetCarts.ts`, `jobs/SendContactToPagarMe.ts`
 
 Their service dependencies were deleted in Phase 3. Grep for remaining imports before deleting.
 
@@ -32,14 +32,14 @@ Their service dependencies were deleted in Phase 3. Grep for remaining imports b
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/jobs/Integration10SendOrder.js` | delete | |
-| `src/app/jobs/Pedidos10ChangeOrderStatus.js` | delete | |
-| `src/app/jobs/Pedidos10Webhook.js` | delete | |
-| `src/app/jobs/ProcessBackgroundjob.js` | delete | |
-| `src/app/jobs/ProcessBackgroundjob{CancelOrder,ChargeCreditCard,GetCreditCard,GetPix,InviteCreditCard}.js` | delete | |
-| `src/app/jobs/ProcessPagarmeOrderPaid.js` | delete | |
-| `src/app/jobs/ResetCarts.js` | delete | |
-| `src/app/jobs/SendContactToPagarMe.js` | delete | |
+| `src/app/jobs/Integration10SendOrder.ts` | delete | |
+| `src/app/jobs/Pedidos10ChangeOrderStatus.ts` | delete | |
+| `src/app/jobs/Pedidos10Webhook.ts` | delete | |
+| `src/app/jobs/ProcessBackgroundjob.ts` | delete | |
+| `src/app/jobs/ProcessBackgroundjob{CancelOrder,ChargeCreditCard,GetCreditCard,GetPix,InviteCreditCard}.ts` | delete | |
+| `src/app/jobs/ProcessPagarmeOrderPaid.ts` | delete | |
+| `src/app/jobs/ResetCarts.ts` | delete | |
+| `src/app/jobs/SendContactToPagarMe.ts` | delete | |
 
 ## Implementation Steps
 

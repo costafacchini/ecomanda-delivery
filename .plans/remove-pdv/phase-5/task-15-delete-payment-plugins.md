@@ -13,8 +13,8 @@ Delete the entire `src/app/plugins/payments/` directory including PagarMe plugin
 ## Context
 
 Files in scope:
-- `plugins/payments/PagarMe.js` (+ spec)
-- `plugins/payments/PagarMe/Card.js`, `Customer.js`, `Payment.js`, `Parser.js`, `Recipient.js` (+ specs)
+- `plugins/payments/PagarMe.ts` (+ spec)
+- `plugins/payments/PagarMe/Card.ts`, `Customer.ts`, `Payment.ts`, `Parser.ts`, `Recipient.ts` (+ specs)
 
 All were consumed by PagarMe services (deleted in Phase 3) and `LicenseesController.sendToPagarMe` (deleted in Phase 1). Grep before deleting.
 

@@ -8,11 +8,11 @@
 
 ## Objective
 
-Delete `src/app/services/ProcessWebhookRequest.js` and its spec.
+Delete `src/app/services/ProcessWebhookRequest.ts` and its spec.
 
 ## Context
 
-`ProcessWebhookRequest.js` dispatches incoming webhooks with Pedidos10-specific routing logic. It was only called from `IntegrationsController` (now deleted). Before deleting, confirm via grep that no other callers exist.
+`ProcessWebhookRequest.ts` dispatches incoming webhooks with Pedidos10-specific routing logic. It was only called from `IntegrationsController` (now deleted). Before deleting, confirm via grep that no other callers exist.
 
 > Risk: if this service was somehow wired to a non-Pedidos10 webhook path, removing it could silently drop webhooks. Grep for all usages before proceeding.
 
@@ -27,7 +27,7 @@ Delete `src/app/services/ProcessWebhookRequest.js` and its spec.
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/services/ProcessWebhookRequest.js` | delete | + spec |
+| `src/app/services/ProcessWebhookRequest.ts` | delete | + spec |
 
 ## Implementation Steps
 
@@ -44,7 +44,7 @@ Delete `src/app/services/ProcessWebhookRequest.js` and its spec.
 
 ## Completion Criteria
 
-- [ ] `ProcessWebhookRequest.js` and spec deleted
+- [ ] `ProcessWebhookRequest.ts` and spec deleted
 - [ ] No remaining imports
 - [ ] Changes committed to `plan/remove-pdv/phase-3/task-11-delete-process-webhook-request-service` branch
 - [ ] Status updated in `status.md`

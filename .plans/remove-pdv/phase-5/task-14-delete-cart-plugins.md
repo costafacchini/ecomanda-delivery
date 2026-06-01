@@ -13,8 +13,8 @@ Delete the entire `src/app/plugins/carts/` directory including all cart plugin f
 ## Context
 
 Files in scope:
-- `plugins/carts/Alloy.js`, `Go2go.js`, `Go2goV2.js`, `factory.js` (+ specs)
-- `plugins/carts/adapters/Alloy.js`, `Default.js`, `Gallabox.js`, `factory.js` (+ specs)
+- `plugins/carts/Alloy.ts`, `Go2go.ts`, `Go2goV2.ts`, `factory.ts` (+ specs)
+- `plugins/carts/adapters/Alloy.ts`, `Default.ts`, `Gallabox.ts`, `factory.ts` (+ specs)
 
 These were consumed by `ResetCarts` service (deleted) and `CartsController` (deleted). Grep before deleting.
 

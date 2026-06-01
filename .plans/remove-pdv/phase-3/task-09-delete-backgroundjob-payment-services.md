@@ -13,11 +13,11 @@ Delete the five `ProcessBackgroundjob*.js` payment-related service files and the
 ## Context
 
 Files to delete:
-- `services/ProcessBackgroundjobCancelOrder.js`
-- `services/ProcessBackgroundjobChargeCreditCard.js`
-- `services/ProcessBackgroundjobGetCreditCard.js`
-- `services/ProcessBackgroundjobGetPix.js`
-- `services/ProcessBackgroundjobInviteCreditCard.js`
+- `services/ProcessBackgroundjobCancelOrder.ts`
+- `services/ProcessBackgroundjobChargeCreditCard.ts`
+- `services/ProcessBackgroundjobGetCreditCard.ts`
+- `services/ProcessBackgroundjobGetPix.ts`
+- `services/ProcessBackgroundjobInviteCreditCard.ts`
 
 All five are consumed only by PDV background job files (being deleted in Phase 4).
 

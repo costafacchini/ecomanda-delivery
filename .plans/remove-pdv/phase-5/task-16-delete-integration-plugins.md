@@ -13,8 +13,8 @@ Delete the entire `src/app/plugins/integrations/` directory including Pedidos10 
 ## Context
 
 Files in scope:
-- `plugins/integrations/IntegratorBase.js`, `Pedidos10.js`, `factory.js` (+ specs)
-- `plugins/integrations/Pedidos10/Order.js`, `Parser.js` (+ specs)
+- `plugins/integrations/IntegratorBase.ts`, `Pedidos10.ts`, `factory.ts` (+ specs)
+- `plugins/integrations/Pedidos10/Order.ts`, `Parser.ts` (+ specs)
 
 All were consumed by Pedidos10 services (deleted in Phase 3). Grep before deleting.
 

@@ -2,7 +2,7 @@
 
 **Status**: not-started
 **Created**: 2026-04-02
-**Last Updated**: 2026-04-28
+**Last Updated**: 2026-06-01
 **Assigned Dev**: Alan
 **Master Plan**: None
 
@@ -40,7 +40,7 @@ Remove the PDV (Ponto de Venda / Point of Sale) layer entirely from the codebase
 |-------|------|-------|--------------|-------------|
 | 1 | Remove Routes and API Surface | task-01, task-02, task-03 | None | Remove PDV route registrations and PDV methods from LicenseesController |
 | 2 | Delete Controllers | task-04, task-05, task-06 | Phase 1 | Delete the three PDV controllers and their specs |
-| 3 | Delete Services | task-07, task-08, task-09, task-10, task-11 | Phase 2 | Delete all 12 PDV service files and their specs |
+| 3 | Delete Services | task-07, task-08, task-09, task-10, task-11, task-26 | Phase 2 | Delete all 12 PDV service files; strip WhatsApp order/cart handling from messenger plugins |
 | 4 | Delete Jobs | task-12, task-13 | Phase 3 | Delete PDV job files and clean up job registrations |
 | 5 | Delete Plugins | task-14, task-15, task-16, task-17 | Phase 3 | Delete cart, payment, integration plugins and facebook catalog importer |
 | 6 | Delete Models and Repositories | task-18, task-19 | Phase 5 | Delete PDV models, repositories, and queries |
@@ -62,6 +62,7 @@ Remove the PDV (Ponto de Venda / Point of Sale) layer entirely from the codebase
 | phase-3/task-09-delete-backgroundjob-payment-services | Delete all 5 ProcessBackgroundjob payment services | 3 | not-started | phase-2/task-04-delete-carts-controller, phase-2/task-05-delete-orders-controller, phase-2/task-06-delete-integrations-controller |
 | phase-3/task-10-delete-reset-carts-service | Delete ResetCarts service | 3 | not-started | phase-2/task-04-delete-carts-controller, phase-2/task-05-delete-orders-controller, phase-2/task-06-delete-integrations-controller |
 | phase-3/task-11-delete-process-webhook-request-service | Delete ProcessWebhookRequest service | 3 | not-started | phase-2/task-04-delete-carts-controller, phase-2/task-05-delete-orders-controller, phase-2/task-06-delete-integrations-controller |
+| phase-3/task-26-strip-whatsapp-order-cart-from-messenger-plugins | Strip WhatsApp order/cart handling from messenger plugins | 3 | not-started | phase-2/task-04-delete-carts-controller, phase-2/task-05-delete-orders-controller, phase-2/task-06-delete-integrations-controller |
 | phase-4/task-12-delete-pdv-jobs | Delete 12 PDV job files | 4 | not-started | phase-3/task-07-delete-pedidos10-services, phase-3/task-08-delete-pagarme-services, phase-3/task-09-delete-backgroundjob-payment-services, phase-3/task-10-delete-reset-carts-service, phase-3/task-11-delete-process-webhook-request-service |
 | phase-4/task-13-remove-pdv-job-registrations | Remove PDV job registrations from jobs/index.js | 4 | not-started | phase-4/task-12-delete-pdv-jobs |
 | phase-5/task-14-delete-cart-plugins | Delete plugins/carts/ directory | 5 | not-started | phase-3/task-07-delete-pedidos10-services, phase-3/task-08-delete-pagarme-services, phase-3/task-09-delete-backgroundjob-payment-services, phase-3/task-10-delete-reset-carts-service, phase-3/task-11-delete-process-webhook-request-service |
@@ -86,13 +87,17 @@ Base branch: `main`
 
 | File/Directory | Relevance |
 |----------------|-----------|
-| `src/app/routes/v1/v1-routes.js` | Primary PDV API surface (carts, orders, integrations routes) |
-| `src/app/routes/resources-routes.js` | Licensee PDV endpoints (pagarme, sign-order-webhook) |
+| `src/app/routes/v1/v1-routes.ts` | Primary PDV API surface (carts, orders, integrations routes) |
+| `src/app/routes/resources-routes.ts` | Licensee PDV endpoints (pagarme, sign-order-webhook) |
 | `src/app/controllers/` | Three full PDV controllers + PDV methods in LicenseesController |
 | `src/app/services/` | 12 PDV service files |
 | `src/app/jobs/` | 12 PDV job files |
 | `src/app/plugins/` | carts/, payments/, integrations/, importers/facebook_catalog/ |
 | `src/app/models/` | Cart, Order, Product, Integrationlog, Backgroundjob + Licensee/Contact PDV fields |
+| `src/app/plugins/messengers/Base.ts` | `cartRepository` dependency and order→cart conversion block |
+| `src/app/plugins/messengers/Dialog.ts` | `createCartPlugin` dependency, `order` message parsing, cart send path |
+| `src/app/plugins/messengers/YCloud.ts` | `order` case in message parsing |
+| `src/app/plugins/messengers/Pabbly.ts` | `order` type filter |
 
 ## Defects
 
@@ -110,9 +115,9 @@ Base branch: `main`
 ## Success Criteria
 
 - [ ] No PDV imports remain in the codebase (grep for Cart, Order, Product, Integrationlog, Backgroundjob, PagarMe, Pedidos10, Alloy, Go2go returns only non-PDV matches)
-- [ ] `routes/v1/v1-routes.js` has no cart/order/integration routes
-- [ ] `Licensee.js` schema has no `cartDefault`, `recipient_id`, `pedidos10_*` fields
-- [ ] `Contact.js` schema has no delivery/address fields
+- [ ] `routes/v1/v1-routes.ts` has no cart/order/integration routes
+- [ ] `Licensee.ts` schema has no `cartDefault`, `recipient_id`, `pedidos10_*` fields
+- [ ] `Contact.ts` schema has no delivery/address fields
 - [ ] All deleted files have no remaining importers in the codebase
 - [ ] All tests pass
 - [ ] No regressions in existing functionality

@@ -1,4 +1,4 @@
-# Task: Remove PDV routes from v1-routes.js
+# Task: Remove PDV routes from v1-routes.ts
 
 **Plan**: Remove PDV Domain
 **Phase**: 1
@@ -8,7 +8,7 @@
 
 ## Objective
 
-Remove all `/v1/carts/*` (10 routes), `/v1/orders/*` (2 routes), and `/v1/integrations` (1 route) from `src/app/routes/v1/v1-routes.js`, along with their controller imports.
+Remove all `/v1/carts/*` (10 routes), `/v1/orders/*` (2 routes), and `/v1/integrations` (1 route) from `src/app/routes/v1/v1-routes.ts`, along with their controller imports.
 
 ## Context
 
@@ -27,11 +27,11 @@ This is the safest first step: removing routes makes the API surface smaller and
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/routes/v1/v1-routes.js` | modify | Remove PDV route registrations and controller imports |
+| `src/app/routes/v1/v1-routes.ts` | modify | Remove PDV route registrations and controller imports |
 
 ## Implementation Steps
 
-### Step 1: Read v1-routes.js
+### Step 1: Read v1-routes.ts
 Identify all carts, orders, and integrations route registrations and their corresponding controller imports.
 
 ### Step 2: Remove route registrations
@@ -50,8 +50,8 @@ Delete the `import`/`require` lines for `CartsController`, `OrdersController`, `
 
 ## Completion Criteria
 
-- [ ] `v1-routes.js` has no carts, orders, or integrations route registrations
-- [ ] `v1-routes.js` has no imports of the three PDV controllers
+- [ ] `v1-routes.ts` has no carts, orders, or integrations route registrations
+- [ ] `v1-routes.ts` has no imports of the three PDV controllers
 - [ ] All tests pass
 - [ ] Changes committed to `plan/remove-pdv/phase-1/task-01-remove-pdv-routes-v1` branch
 - [ ] Status updated in `status.md`

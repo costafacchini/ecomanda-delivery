@@ -12,9 +12,9 @@ Delete the three Pedidos10-related service files and their specs.
 
 ## Context
 
-- `services/Pedidos10Webhook.js` — processes incoming Pedidos10 webhook
-- `services/Pedidos10ChangeOrderStatus.js` — pushes order status change to Pedidos10
-- `services/IntegrationSendOrder.js` — sends order to Pedidos10
+- `services/Pedidos10Webhook.ts` — processes incoming Pedidos10 webhook
+- `services/Pedidos10ChangeOrderStatus.ts` — pushes order status change to Pedidos10
+- `services/IntegrationSendOrder.ts` — sends order to Pedidos10
 
 All three were consumed by jobs and controllers that are now deleted. Grep for remaining imports before deleting.
 
@@ -29,9 +29,9 @@ All three were consumed by jobs and controllers that are now deleted. Grep for r
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/services/Pedidos10Webhook.js` | delete | + spec |
-| `src/app/services/Pedidos10ChangeOrderStatus.js` | delete | + spec |
-| `src/app/services/IntegrationSendOrder.js` | delete | + spec |
+| `src/app/services/Pedidos10Webhook.ts` | delete | + spec |
+| `src/app/services/Pedidos10ChangeOrderStatus.ts` | delete | + spec |
+| `src/app/services/IntegrationSendOrder.ts` | delete | + spec |
 
 ## Implementation Steps
 

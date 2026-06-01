@@ -8,11 +8,11 @@
 
 ## Objective
 
-Delete the `sendToPagarMe` and `signOrderWebhook` methods from `src/app/controllers/LicenseesController.js` and remove all PagarMe and Pedidos10 imports from that file.
+Delete the `sendToPagarMe` and `signOrderWebhook` methods from `src/app/controllers/LicenseesController.ts` and remove all PagarMe and Pedidos10 imports from that file.
 
 ## Context
 
-The routes calling these methods are being removed in task-02. This task removes the dead code from the controller class itself. Update `LicenseesController.spec.js` to remove the corresponding test cases.
+The routes calling these methods are being removed in task-02. This task removes the dead code from the controller class itself. Update `LicenseesController.spec.ts` to remove the corresponding test cases.
 
 ## Before You Start
 
@@ -25,12 +25,12 @@ The routes calling these methods are being removed in task-02. This task removes
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/controllers/LicenseesController.js` | modify | Delete two methods + imports |
-| `src/app/controllers/LicenseesController.spec.js` | modify | Remove tests for deleted methods |
+| `src/app/controllers/LicenseesController.ts` | modify | Delete two methods + imports |
+| `src/app/controllers/LicenseesController.spec.ts` | modify | Remove tests for deleted methods |
 
 ## Implementation Steps
 
-### Step 1: Read LicenseesController.js
+### Step 1: Read LicenseesController.ts
 Identify `sendToPagarMe`, `signOrderWebhook` method bodies and all PagarMe/Pedidos10 import lines.
 
 ### Step 2: Delete methods and imports
@@ -43,7 +43,7 @@ Remove test cases for `sendToPagarMe` and `signOrderWebhook`.
 
 ## Testing
 
-- [ ] `npx jest src/app/controllers/LicenseesController.spec.js` passes
+- [ ] `npx jest src/app/controllers/LicenseesController.spec.ts` passes
 - [ ] `npx jest` full suite passes
 - [ ] `pre-commit-check` passes
 

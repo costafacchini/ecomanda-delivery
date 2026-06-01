@@ -32,7 +32,7 @@ After all previous phases have deleted PDV routes, controllers, use cases, model
 ### Step 1: Grep for deleted PDV model names
 ```bash
 grep -r "Cart\|Order\|Product\|Integrationlog\|BackgroundJob\|Billing\b" src/ \
-  --include="*.js" --include="*.ts" -l
+  --include="*.ts" -l
 ```
 Review each match. Ignore legitimate non-PDV uses of generic names (e.g., `Order` in a different context). Focus on imports from deleted module paths.
 
