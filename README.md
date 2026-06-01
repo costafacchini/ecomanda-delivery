@@ -11,14 +11,15 @@ the repo now also includes a scripted smoke workflow for pre-deploy verification
 
 Main runtime pieces:
 
-- Express API in [server.js](server.js)
-- BullMQ worker in [worker.js](worker.js)
+- Express API in [server.ts](server.ts)
+- BullMQ worker in [worker.ts](worker.ts)
 - React + Vite frontend in [client](client)
 - MongoDB, Redis, and RabbitMQ for local/dev infrastructure
 
 ## Stack
 
 - Node.js `24.x` (`.tool-versions` currently pins `24.5.0`)
+- TypeScript `5.x` (`strict: true` on both backend and client)
 - Yarn `1.22.x`
 - Express `5`
 - Mongoose + MongoDB
@@ -142,15 +143,16 @@ for the full topology and troubleshooting notes.
 | Command | Purpose |
 |---------|---------|
 | `yarn start` | Start only the Express server |
-| `yarn build` | Install frontend deps and build the Vite app |
+| `yarn build` | Compile TypeScript (`tsc`), copy assets, install frontend deps, build Vite app |
 | `yarn dev` | Run backend server and worker in parallel |
 | `yarn dev:server` | Run only the backend server with Docker infra |
 | `yarn dev:worker` | Run only the worker |
+| `yarn typecheck` | Run `tsc --noEmit` on the backend tsconfig |
 | `yarn test` | Run backend Jest tests without coverage |
 | `yarn test:ci` | Run backend Jest tests with coverage collection |
 | `yarn test:coverage` | Run backend Jest coverage locally |
 | `yarn watch` | Run backend Jest in watch mode |
-| `yarn linter` | Lint backend files under `src/app`, `src/config`, and `src/setup` |
+| `yarn linter` | Lint backend `.ts` files under `src/app`, `src/config`, and `src/setup` |
 | `yarn smoke:start` | Start the smoke topology and seed demo data |
 | `yarn smoke:check` | Verify the smoke flows end to end |
 | `yarn smoke:stop` | Stop the smoke topology |
@@ -212,8 +214,8 @@ mongorestore --uri="{uri}" --gzip --drop "{path}"
 
 The main ongoing improvement areas in this repo are:
 
-- reducing MongoDB coupling
-- extracting use-case logic from controllers
+- reducing MongoDB coupling (target: migrate to PostgreSQL/Prisma)
+- removing the PDV domain (cart, PagarMe, Pedidos10) before the DB migration
 - tightening testability around queues and integrations
 - cleaning up legacy plugins and unused code paths
-- improving architecture boundaries before any larger migration to TypeScript
+- narrowing `any` types across backend and client (see `type-backend` / `type-client` plans)

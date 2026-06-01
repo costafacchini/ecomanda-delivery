@@ -22,15 +22,14 @@ Git-native Markdown plans for multi-step work.
 
 | # | Plan | Folder | Status | Description |
 |---|------|--------|--------|-------------|
-| 1 | [JS → TypeScript](./js-to-ts/overview.md) | `js-to-ts/` | complete | Incremental migration of all source files (backend + client) to TypeScript using `allowJs: true` throughout |
-| 2 | [Remove PDV](./remove-pdv/overview.md) | `remove-pdv/` | not-started | Delete cart, payment (PagarMe), and order integration (Pedidos10) domain — strip PDV fields from Licensee and Contact |
-| 3 | [Security Hardening](./security-hardening/overview.md) | `security-hardening/` | not-started | Fix 10 security issues from OWASP audit: Helmet, CORS, rate limiting, Bull Board auth, error leakage, JWT fix, RBAC, logging PII, API token header, v1 input validation |
-| 4 | [MongoDB → PostgreSQL](./mongo-to-postgres/overview.md) | `mongo-to-postgres/` | not-started | Migrate all persistent data from MongoDB/Mongoose to PostgreSQL/Prisma using dual-write strategy; prerequisite: remove-pdv complete |
-| 5 | [Baileys Socket Monitor](./baileys-socket-monitor/overview.md) | `baileys-socket-monitor/` | not-started | Replace webhook-only inbound flow with a persistent Baileys socket per licensee; captures messages.upsert and messages.update natively |
-| 6 | [Local Chat Infrastructure](./local-chat-infra/overview.md) | `local-chat-infra/` | not-started | User role system (agent/supervisor/admin/super), LocalChat plugin, super licensee flow, route authorization — prerequisite for setores |
-| 7 | [Setores](./setores/overview.md) | `setores/` | not-started | Multiple WhatsApp numbers per licensee via sectors; sector-scoped message routing and agent access filtering |
-| 8 | [Backend Type Narrowing](./type-backend/overview.md) | `type-backend/` | not-started | Replace `any` with interfaces across models, repositories, use cases, controllers, and plugins — 3 phases, 11 tasks |
-| 9 | [Client Type Narrowing](./type-client/overview.md) | `type-client/` | not-started | Replace `any` with interfaces across React services, contexts, pages, and components — 2 phases, 6 tasks |
+| 1 | [Remove PDV](./remove-pdv/overview.md) | `remove-pdv/` | not-started | Delete cart, payment (PagarMe), and order integration (Pedidos10) domain — strip PDV fields from Licensee and Contact |
+| 2 | [Security Hardening](./security-hardening/overview.md) | `security-hardening/` | not-started | Fix 10 security issues from OWASP audit: Helmet, CORS, rate limiting, Bull Board auth, error leakage, JWT fix, RBAC, logging PII, API token header, v1 input validation |
+| 3 | [MongoDB → PostgreSQL](./mongo-to-postgres/overview.md) | `mongo-to-postgres/` | not-started | Migrate all persistent data from MongoDB/Mongoose to PostgreSQL/Prisma using dual-write strategy; prerequisite: remove-pdv complete |
+| 4 | [Baileys Socket Monitor](./baileys-socket-monitor/overview.md) | `baileys-socket-monitor/` | not-started | Replace webhook-only inbound flow with a persistent Baileys socket per licensee; captures messages.upsert and messages.update natively |
+| 5 | [Local Chat Infrastructure](./local-chat-infra/overview.md) | `local-chat-infra/` | not-started | User role system (agent/supervisor/admin/super), LocalChat plugin, super licensee flow, route authorization — prerequisite for setores |
+| 6 | [Setores](./setores/overview.md) | `setores/` | not-started | Multiple WhatsApp numbers per licensee via sectors; sector-scoped message routing and agent access filtering |
+| 7 | [Backend Type Narrowing](./type-backend/overview.md) | `type-backend/` | not-started | Replace `any` with interfaces across models, repositories, use cases, controllers, and plugins — 3 phases, 11 tasks |
+| 8 | [Client Type Narrowing](./type-client/overview.md) | `type-client/` | not-started | Replace `any` with interfaces across React services, contexts, pages, and components — 2 phases, 6 tasks |
 
 ---
 
@@ -51,9 +50,10 @@ Git-native Markdown plans for multi-step work.
 ## Execution Order
 
 ```
-1. use-cases     ← requires dependency-injection (complete)
-        ↓
-2. js-to-ts      ← ideally after use-cases (stable structure to type)
+use-cases (complete) → js-to-ts (complete)
+                              ↓
+                       remove-pdv → mongo-to-postgres
 ```
 
-Plan 3 (remove-pdv) is **independent** — can run in parallel with use-cases, but should complete before js-to-ts to avoid typing code that will be deleted.
+`remove-pdv` should complete before `type-backend` / `type-client` to avoid typing code that will be deleted.
+`security-hardening`, `baileys-socket-monitor`, `local-chat-infra`, and `setores` are independent and can run in parallel.

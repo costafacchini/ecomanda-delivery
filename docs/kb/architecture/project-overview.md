@@ -1,6 +1,6 @@
 # Project Overview — Ecomanda Delivery
 
-**Last Updated**: 2026-04-01
+**Last Updated**: 2026-06-01
 **Context**: Read when working on any part of this codebase. Covers project purpose, folder layout, entry points, plugin architecture, API structure, and deployment.
 
 ---
@@ -22,9 +22,9 @@ It handles e-commerce flows: cart management, order processing, and payment inte
 
 | File | Purpose |
 |------|---------|
-| `server.js` | HTTP server (Express 5) — REST API + Bull Board queue UI |
-| `worker.js` | BullMQ worker — async jobs with Redis-based distributed locking (Trafficlight) |
-| `schedule-*.js` | Maintenance scripts — backups, cart/chat resets, cleanup |
+| `server.ts` | HTTP server (Express 5) — REST API + Bull Board queue UI |
+| `worker.ts` | BullMQ worker — async jobs with Redis-based distributed locking (Trafficlight) |
+| `schedule-*.ts` | Maintenance scripts — backups, cart/chat resets, cleanup |
 
 ---
 
@@ -62,7 +62,7 @@ Import via aliases configured in `package.json` (`_moduleAliases`) and `jest.con
 
 `@models`, `@controllers`, `@helpers`, `@config`, `@plugins`, `@repositories`, `@queries`, `@reports`
 
-Example: `import ChatMessage from '@models/ChatMessage.js'`
+Example: `import ChatMessage from '@models/ChatMessage'`
 
 ---
 
@@ -113,10 +113,11 @@ yarn dev:worker               # Worker only
 yarn test                     # Jest (uses mongodb-memory-server)
 yarn test:ci                  # CI mode with coverage
 yarn linter                   # ESLint + Prettier
+yarn typecheck                # tsc --noEmit (backend)
 
 # Frontend
 cd client
-yarn start                    # Dev server at localhost:3000 (proxies to :5001)
+yarn start                    # Vite dev server at localhost:5173 (proxies to :5001)
 yarn build
 ```
 
@@ -138,7 +139,7 @@ yarn build
 
 1. **Controller Bloat** — business logic mixed with routing, tightly coupled to Mongoose. Goal: extract use cases, introduce repositories consistently.
 2. **Database Coupling** — direct Mongoose calls throughout, hard to test. Goal: abstract data layer behind repository interfaces.
-3. **No TypeScript** — prone to runtime type errors. Goal: gradual TS migration.
+3. **Type Coverage** — full TypeScript migration complete (`strict: true`); next step is replacing `any` with proper interfaces (see `type-backend` / `type-client` plans).
 4. **Inconsistent Error Handling** — some routes throw, others return JSON errors.
 5. **PDV Module** — point-of-sale code mixed in, should be extracted.
 
