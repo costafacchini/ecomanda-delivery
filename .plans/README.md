@@ -29,6 +29,8 @@ Git-native Markdown plans for multi-step work.
 | 5 | [Baileys Socket Monitor](./baileys-socket-monitor/overview.md) | `baileys-socket-monitor/` | not-started | Replace webhook-only inbound flow with a persistent Baileys socket per licensee; captures messages.upsert and messages.update natively |
 | 6 | [Local Chat Infrastructure](./local-chat-infra/overview.md) | `local-chat-infra/` | not-started | User role system (agent/supervisor/admin/super), LocalChat plugin, super licensee flow, route authorization — prerequisite for setores |
 | 7 | [Setores](./setores/overview.md) | `setores/` | not-started | Multiple WhatsApp numbers per licensee via sectors; sector-scoped message routing and agent access filtering |
+| 8 | [Backend Type Narrowing](./type-backend/overview.md) | `type-backend/` | not-started | Replace `any` with interfaces across models, repositories, use cases, controllers, and plugins — 3 phases, 11 tasks |
+| 9 | [Client Type Narrowing](./type-client/overview.md) | `type-client/` | not-started | Replace `any` with interfaces across React services, contexts, pages, and components — 2 phases, 6 tasks |
 
 ---
 
