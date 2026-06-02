@@ -42,19 +42,11 @@ const contactSchema = new Schema(
     landbotId: String,
     chatwootId: String,
     chatwootSourceId: String,
-    address: String,
-    address_number: String,
-    address_complement: String,
-    neighborhood: String,
     city: String,
-    cep: String,
     uf: String,
-    delivery_tax: Number,
-    plugin_cart_id: String,
     wa_start_chat: Date,
     document: String,
     customer_id: String,
-    address_id: String,
     credit_card_id: String,
     credit_cards: [cardsSchema],
   },
@@ -74,9 +66,6 @@ contactSchema.pre('save', function () {
     contact.type = normalizedPhone.type
   }
 
-  if (contact.cep) {
-    contact.cep = contact.cep.replace(/[^0-9]/g, '')
-  }
 })
 
 contactSchema.set('toJSON', {
