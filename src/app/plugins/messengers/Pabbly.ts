@@ -177,7 +177,6 @@ class Pabbly extends MessengersBase {
       message.type === 'unsupported' ||
       message.type === 'system' ||
       message.type === 'button' ||
-      message.type === 'order' ||
       message.type === 'interactive'
     ) {
       this.messageData = null
