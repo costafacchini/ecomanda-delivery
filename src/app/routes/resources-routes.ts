@@ -62,8 +62,8 @@ const licenseesController = new LicenseesController({
 const contactsController = new ContactsController({
   contactRepository,
   createContactsQuery: () => new ContactsQuery({ contactRepository }),
-  createContact: new CreateContact({ contactRepository, jobQueue: queueServer }),
-  updateContact: new UpdateContact({ contactRepository, jobQueue: queueServer }),
+  createContact: new CreateContact({ contactRepository }),
+  updateContact: new UpdateContact({ contactRepository }),
 })
 const triggersController = new TriggersController({
   triggerRepository,

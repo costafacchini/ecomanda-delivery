@@ -1,23 +1,4 @@
-const UPDATE_CONTACT_FIELDS = [
-  'name',
-  'number',
-  'type',
-  'talkingWithChatBot',
-  'waId',
-  'landbotId',
-  'email',
-  'address',
-  'address_number',
-  'address_complement',
-  'neighborhood',
-  'city',
-  'cep',
-  'uf',
-  'delivery_tax',
-  'plugin_cart_id',
-]
-
-const SEND_CONTACT_TO_PAGARME_JOB = 'send-contact-to-pagarme'
+const UPDATE_CONTACT_FIELDS = ['name', 'number', 'type', 'talkingWithChatBot', 'waId', 'landbotId', 'email']
 
 function pickFields(fields: Record<string, any> = {}, keys: any[] = []) {
   return keys.reduce((payload: Record<string, any>, key: any) => {
@@ -31,11 +12,9 @@ function pickFields(fields: Record<string, any> = {}, keys: any[] = []) {
 
 class UpdateContact {
   contactRepository: any
-  jobQueue: any
 
-  constructor({ contactRepository, jobQueue }: Record<string, any> = {}) {
+  constructor({ contactRepository }: Record<string, any> = {}) {
     this.contactRepository = contactRepository
-    this.jobQueue = jobQueue
   }
 
   async execute(id: any, fields = {}) {
@@ -43,12 +22,8 @@ class UpdateContact {
 
     await this.contactRepository.update(id, payload)
 
-    const contact = await this.contactRepository.findFirst({ _id: id })
-
-    await this.jobQueue.addJob(SEND_CONTACT_TO_PAGARME_JOB, { contactId: contact._id.toString() })
-
-    return contact
+    return await this.contactRepository.findFirst({ _id: id })
   }
 }
 
-export { UpdateContact, SEND_CONTACT_TO_PAGARME_JOB, UPDATE_CONTACT_FIELDS }
+export { UpdateContact, UPDATE_CONTACT_FIELDS }

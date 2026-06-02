@@ -1,14 +1,11 @@
 import { contact as contactFactory } from '@factories/contact'
 import { ContactRepositoryMemory } from '@repositories/contact'
-import { CreateContact, SEND_CONTACT_TO_PAGARME_JOB } from './CreateContact'
+import { CreateContact } from './CreateContact'
 
 describe('CreateContact', () => {
-  it('creates a contact with permitted fields and enqueues the pagarme sync job', async () => {
+  it('creates a contact with permitted fields', async () => {
     const contactRepository = new ContactRepositoryMemory()
-    const jobQueue = {
-      addJob: jest.fn().mockResolvedValue(undefined),
-    }
-    const createContact = new CreateContact({ contactRepository, jobQueue })
+    const createContact = new CreateContact({ contactRepository })
 
     const contact = await createContact.execute({
       ...contactFactory.build({
@@ -18,7 +15,6 @@ describe('CreateContact', () => {
         licensee: 'licensee-id',
         waId: '12345',
         landbotId: '56477',
-        plugin_cart_id: 123,
       }),
       ignoredField: 'ignored',
     })
@@ -31,12 +27,8 @@ describe('CreateContact', () => {
         licensee: 'licensee-id',
         waId: '12345',
         landbotId: '56477',
-        plugin_cart_id: '123',
       }),
     )
     expect(contact.ignoredField).toBeUndefined()
-    expect(jobQueue.addJob).toHaveBeenCalledWith(SEND_CONTACT_TO_PAGARME_JOB, {
-      contactId: contact._id.toString(),
-    })
   })
 })
