@@ -65,7 +65,6 @@ contactSchema.pre('save', function () {
     contact.number = normalizedPhone.number
     contact.type = normalizedPhone.type
   }
-
 })
 
 contactSchema.set('toJSON', {

@@ -197,5 +197,4 @@ describe('TriggersController delegation', () => {
       errors: { message: 'Erro interno do servidor: some error' },
     })
   })
-
 })

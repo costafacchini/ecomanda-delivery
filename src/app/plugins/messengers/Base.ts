@@ -24,12 +24,7 @@ class MessengersBase {
 
   constructor(
     licensee: any,
-    {
-      contactRepository,
-      messageRepository,
-      triggerRepository,
-      productRepository,
-    }: Record<string, any> = {},
+    { contactRepository, messageRepository, triggerRepository, productRepository }: Record<string, any> = {},
   ) {
     this.licensee = licensee
     this._contactRepository = contactRepository

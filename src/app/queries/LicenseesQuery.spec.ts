@@ -222,5 +222,4 @@ describe('LicenseesQuery', () => {
       expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: licenseeInactive._id })]))
     })
   })
-
 })

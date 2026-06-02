@@ -24,12 +24,7 @@ class Landbot {
   _triggerRepository: any
   constructor(
     licensee: any,
-    {
-      contactRepository,
-      messageRepository,
-      roomRepository,
-      triggerRepository,
-    }: Record<string, any> = {},
+    { contactRepository, messageRepository, roomRepository, triggerRepository }: Record<string, any> = {},
   ) {
     this.licensee = licensee
     this._contactRepository = contactRepository
@@ -253,7 +248,6 @@ class Landbot {
       body.message.type = 'text'
       body.message.message = messageToSend.text
       body.message.payload = '$1'
-
     }
 
     const headers = {

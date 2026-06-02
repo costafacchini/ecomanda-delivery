@@ -5,12 +5,7 @@ class TriggersController {
   createTriggersQuery: any
   createTrigger: any
   updateTrigger: any
-  constructor({
-    triggerRepository,
-    createTriggersQuery,
-    createTrigger,
-    updateTrigger,
-  }: Record<string, any> = {}) {
+  constructor({ triggerRepository, createTriggersQuery, createTrigger, updateTrigger }: Record<string, any> = {}) {
     this.triggerRepository = triggerRepository
     this.createTriggersQuery = createTriggersQuery
     this.createTrigger = createTrigger
@@ -93,7 +88,6 @@ class TriggersController {
       res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
-
 }
 
 export { TriggersController }

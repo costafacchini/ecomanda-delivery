@@ -28,9 +28,7 @@ function delayValidations() {
 
 // Composition root for v1 routes. Separate instance from resources-routes intentionally;
 // each route module owns its own subset of dependencies.
-const {
-  bodyRepository,
-} = createRuntimeDependencies()
+const { bodyRepository } = createRuntimeDependencies()
 
 const ingestChatMessage = new IngestChatMessage({ chatRepository: bodyRepository, jobQueue: queueServer })
 const ingestMessengerMessage = new IngestMessengerMessage({
