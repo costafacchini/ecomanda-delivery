@@ -110,10 +110,4 @@ function phoneWithoutCountryCode(phone: any) {
   return phone.length === 13 ? phone.substr(2, 11) : phone
 }
 
-async function parseCart(cartId: any, { cartRepository }: { cartRepository?: any } = {}) {
-  const resolvedCartId = cartId?._id ?? cartId
-  const cart = await cartRepository.findFirst({ _id: resolvedCartId }, ['contact', 'licensee', 'products.product'])
-  return cart ? cartDescription(cart) : ''
-}
-
-export { parseText, parseCart }
+export { parseText }

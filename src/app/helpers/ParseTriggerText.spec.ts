@@ -1,6 +1,6 @@
 import Product from '@models/Product'
 import mongoServer from '../../../.jest/utils'
-import { parseText, parseCart } from './ParseTriggerText'
+import { parseText } from './ParseTriggerText'
 import { contact as contactFactory } from '@factories/contact'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { cart as cartFactory } from '@factories/cart'
@@ -12,7 +12,6 @@ import { createRuntimeDependencies } from '../runtime/dependencies'
 
 const dependencies = createRuntimeDependencies()
 const renderText = (text, contact) => parseText(text, contact, dependencies)
-const renderCart = (cartId) => parseCart(cartId, dependencies)
 
 describe('ParseTriggerText', () => {
   beforeEach(async () => {
@@ -472,116 +471,6 @@ describe('ParseTriggerText', () => {
             'São Paulo - SP',
         )
       })
-    })
-  })
-
-  describe('#parseCart', () => {
-    it('returns cart data', async () => {
-      const licenseeRepository = new LicenseeRepositoryDatabase()
-      const licensee = await licenseeRepository.create(licenseeFactory.build())
-
-      const contactRepository = new ContactRepositoryDatabase()
-      const contact = await contactRepository.create(contactFactory.build({ name: 'John Doe', licensee }))
-      const cartRepository = new CartRepositoryDatabase()
-
-      const product = await Product.create(productFactory.build({ name: 'Product 1', licensee }))
-      const cart = await cartRepository.create(
-        cartFactory.build({
-          licensee,
-          contact,
-          products: [
-            {
-              product_retailer_id: '0123',
-              name: 'Product',
-              quantity: 2,
-              unit_price: 7.8,
-              additionals: [{ name: 'Adicional 1', quantity: 1 }],
-              note: 'Without suggar',
-            },
-            {
-              product_retailer_id: '0456',
-              quantity: 1,
-              unit_price: 3.5,
-              product,
-            },
-          ],
-          delivery_tax: 0.5,
-          concluded: false,
-          address: 'Rua do Contato, 123',
-          address_number: '123',
-          address_complement: 'Apto. 123',
-          neighborhood: 'Centro',
-          city: 'São Paulo',
-          uf: 'SP',
-          cep: '01234567',
-          partner_key: '9164',
-          payment_method: 'Cartão de crédito - Master',
-          note: 'Deliver in hands',
-          points: true,
-        }),
-      )
-
-      expect(await renderCart(cart._id)).toEqual(
-        '*ALCATEIA LTDS - PEDIDO 9164*' +
-          '\n' +
-          'Data: 03/07/2021 00:00' +
-          '\n' +
-          ' ' +
-          '\n' +
-          '*Cliente:* John Doe' +
-          '\n' +
-          '*Telefone:* 11990283745' +
-          '\n' +
-          '*Entrega:* Rua do Contato, 123, 123 - Apto. 123' +
-          '\n' +
-          '         Centro - São Paulo/SP - 01234567' +
-          '\n' +
-          '______________' +
-          '\n' +
-          ' ' +
-          '\n' +
-          '*ITENS DO PEDIDO*' +
-          '\n' +
-          ' ' +
-          '\n' +
-          ' ' +
-          '\n' +
-          '2x Product - R$ 7.80' +
-          '\n' +
-          '   2x Adicional 1' +
-          '\n' +
-          '1x Product 1 - R$ 3.50' +
-          '\n' +
-          '______________' +
-          '\n' +
-          ' ' +
-          '\n' +
-          'Subtotal: R$ 19.10' +
-          '\n' +
-          'Taxa Entrega: R$ 0.50' +
-          '\n' +
-          'Desconto: R$ 0.00' +
-          '\n' +
-          '*TOTAL:* R$ 19.60' +
-          '\n' +
-          ' ' +
-          '\n' +
-          '*FORMA DE PAGAMENTO*' +
-          '\n' +
-          'Cartão de crédito - Master' +
-          '\n' +
-          ' ' +
-          '\n' +
-          '*TROCO PARA:* R$ 0.00' +
-          '\n' +
-          '______________' +
-          '\n' +
-          '*OBSERVACOES*' +
-          '\n' +
-          'Deliver in hands' +
-          '\n' +
-          'Pontos Ganhos Fidelidade: 19',
-      )
     })
   })
 })
