@@ -308,7 +308,10 @@ describe('ContactsController delegation', () => {
     const { controller, contactsQueryInstance } = buildController()
     contactsQueryInstance.all.mockResolvedValue([])
 
-    const req = { userId: 'user-id', query: { updatedAtStart: '2024-01-01T00:00:00.000Z', updatedAtEnd: '2024-01-31T23:59:59.000Z' } }
+    const req = {
+      userId: 'user-id',
+      query: { updatedAtStart: '2024-01-01T00:00:00.000Z', updatedAtEnd: '2024-01-31T23:59:59.000Z' },
+    }
     const res = buildResponse()
 
     await controller.index(req, res)
