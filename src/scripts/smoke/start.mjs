@@ -92,7 +92,7 @@ async function seedSmokeData(envFile) {
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     try {
-      await runCommand('docker', composeArgs(envFile, ['exec', '-T', 'app', 'node', 'src/scripts/smoke/seed.mjs']))
+      await runCommand('docker', composeArgs(envFile, ['exec', '-T', 'app', 'npx', 'tsx', 'src/scripts/smoke/seed.mjs']))
       return
     } catch (error) {
       if (attempt === maxAttempts) {

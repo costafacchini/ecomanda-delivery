@@ -35,8 +35,6 @@ async function main() {
           messages: payloads.messages.length,
           trigger: payloads.trigger.expression,
           template: payloads.template.name,
-          cart: payloads.cart._id.toString(),
-          backgroundjob: payloads.backgroundjob._id.toString(),
         },
       },
       null,
