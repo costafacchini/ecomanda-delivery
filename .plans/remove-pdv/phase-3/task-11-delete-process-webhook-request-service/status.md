@@ -1,6 +1,6 @@
 # Status: Delete ProcessWebhookRequest service
 
-**Current Status**: in-progress
+**Current Status**: complete
 **Last Updated**: 2026-06-02
 **Agent**: claude-sonnet-4-6
 **Branch**: main
@@ -14,6 +14,7 @@
 | 2026-06-02 | in-progress | claude-sonnet-4-6 | Starting execution |
 | 2026-06-02 | blocked | claude-sonnet-4-6 | Unexpected callers found — see Blockers |
 | 2026-06-02 | in-progress | claude-sonnet-4-6 | Blocker cleared: job consumer deleted in Phase 4 (task-12/13), safe to proceed |
+| 2026-06-02 | complete | claude-sonnet-4-6 | Service and spec deleted; 24 service test suites pass (63 tests) |
 
 ## Blockers
 
@@ -30,7 +31,9 @@ The task assumed the service was **only called from IntegrationsController** (no
 
 ## Artifacts
 
-None
+- Deleted: `src/app/services/ProcessWebhookRequest.ts`
+- Deleted: `src/app/services/ProcessWebhookRequest.spec.ts`
+- Test run: 24 suites, 63 tests — all passed
 
 ## Adaptations
 
