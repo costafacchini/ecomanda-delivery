@@ -1,6 +1,6 @@
 # Status: Delete Pedidos10Webhook, Pedidos10ChangeOrderStatus, IntegrationSendOrder services
 
-**Current Status**: in-progress
+**Current Status**: complete
 **Last Updated**: 2026-06-02
 **Agent**: claude-sonnet-4-6
 **Branch**: main
@@ -12,6 +12,7 @@
 |-----------|--------|-------|-------|
 | 2026-04-28 | not-started | — | Task created |
 | 2026-06-02 | in-progress | claude-sonnet-4-6 | Executing deletion of Pedidos10 services |
+| 2026-06-02 | complete | claude-sonnet-4-6 | All 6 files deleted, 22 service test suites pass |
 
 ## Blockers
 
