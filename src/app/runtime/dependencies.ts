@@ -25,12 +25,6 @@ import { Parser as Pedidos10Parser } from '../plugins/integrations/Pedidos10/Par
 import { Auth } from '../plugins/integrations/Pedidos10/services/Auth'
 import { OrderStatus } from '../plugins/integrations/Pedidos10/services/OrderStatus'
 import { Webhook } from '../plugins/integrations/Pedidos10/services/Webhook'
-import { PagarMe } from '../plugins/payments/PagarMe'
-import { Card } from '../plugins/payments/PagarMe/Card'
-import { Customer } from '../plugins/payments/PagarMe/Customer'
-import { Parser as PagarMeParser } from '../plugins/payments/PagarMe/Parser'
-import { Payment } from '../plugins/payments/PagarMe/Payment'
-import { Recipient } from '../plugins/payments/PagarMe/Recipient'
 import { FacebookCatalogImporter } from '../plugins/importers/facebook_catalog/index'
 import { TemplatesImporter } from '../plugins/importers/template/index'
 
@@ -85,19 +79,6 @@ function buildRuntimeDependencies({
       createCartPlugin,
       whatsappSessionRepository,
     })
-  const createPagarMe = (licensee: any) =>
-    new PagarMe(licensee, {
-      recipient: new Recipient({ integrationlogRepository, licenseeRepository }),
-      customer: new Customer({ integrationlogRepository, contactRepository }),
-      payment: new Payment({
-        integrationlogRepository,
-        licenseeRepository,
-        contactRepository,
-        cartRepository,
-      }),
-      parser: new PagarMeParser(),
-      card: new Card({ integrationlogRepository, contactRepository }),
-    })
   const createPedidos10 = (licensee: any) =>
     new Pedidos10(licensee, {
       orderModule: new Order(licensee, {
@@ -140,7 +121,6 @@ function buildRuntimeDependencies({
     createChatPlugin,
     createChatbotPlugin,
     createMessengerPlugin,
-    createPagarMe,
     createPedidos10,
     createFacebookCatalogImporter,
     createTemplatesImporter,
