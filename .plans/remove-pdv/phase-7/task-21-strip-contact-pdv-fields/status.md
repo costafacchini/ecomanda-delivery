@@ -1,6 +1,6 @@
 # Status: Remove PDV fields from Contact schema
 
-**Current Status**: in-progress
+**Current Status**: complete
 **Last Updated**: 2026-06-02
 **Agent**: claude-sonnet-4-6
 **Branch**: main
@@ -12,6 +12,7 @@
 |-----------|--------|-------|-------|
 | 2026-04-28 | not-started | — | Task created |
 | 2026-06-02 | in-progress | claude-sonnet-4-6 | Removing 8 PDV delivery/address fields from Contact schema |
+| 2026-06-02 | complete | claude-sonnet-4-6 | All changes applied, 8/8 tests passing |
 
 ## Blockers
 
