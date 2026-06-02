@@ -12,11 +12,11 @@ function buildController() {
   const ingestChatMessage = {
     execute: jest.fn(),
   }
-  const publishMessageMock = jest.fn()
+  const queueServer = { addJob: jest.fn().mockResolvedValue(undefined) }
 
-  const controller = new ChatsController({ ingestChatMessage, publishMessage: publishMessageMock })
+  const controller = new ChatsController({ ingestChatMessage, queueServer })
 
-  return { controller, ingestChatMessage, publishMessage: publishMessageMock }
+  return { controller, ingestChatMessage, queueServer }
 }
 
 describe('ChatsController delegation', () => {
@@ -37,14 +37,14 @@ describe('ChatsController delegation', () => {
     expect(res.send).toHaveBeenCalledWith({ body: 'Solicitação de mensagem para a plataforma de chat agendado' })
   })
 
-  it('publishes reset-chats message and returns status 200 on reset', () => {
-    const { controller, publishMessage: publishMessageMock } = buildController()
+  it('enqueues reset-chats job and returns status 200 on reset', async () => {
+    const { controller, queueServer } = buildController()
     const req = {}
     const res = buildResponse()
 
-    controller.reset(req, res)
+    await controller.reset(req, res)
 
-    expect(publishMessageMock).toHaveBeenCalledWith({ key: 'reset-chats', body: {} })
+    expect(queueServer.addJob).toHaveBeenCalledWith('reset-chats', {})
     expect(res.status).toHaveBeenCalledWith(200)
     expect(res.send).toHaveBeenCalledWith({
       body: 'Solicitação para avisar os chats com janela vencendo agendado com sucesso',

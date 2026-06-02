@@ -1,27 +1,27 @@
 import { logger } from '../helpers/logger'
 
 class BackupsController {
-  publishMessage: any
+  queueServer: any
 
-  constructor({ publishMessage }: Record<string, any> = {}) {
-    this.publishMessage = publishMessage
+  constructor({ queueServer }: Record<string, any> = {}) {
+    this.queueServer = queueServer
 
     this.schedule = this.schedule.bind(this)
     this.clear = this.clear.bind(this)
   }
 
-  schedule(_: any, res: any) {
+  async schedule(_: any, res: any) {
     logger.info('Agendando backup')
 
-    this.publishMessage({ key: 'backup', body: {} })
+    await this.queueServer.addJob('backup', {})
 
     res.status(200).send({ body: 'Backup agendado' })
   }
 
-  clear(_: any, res: any) {
+  async clear(_: any, res: any) {
     logger.info('Agendar limpeza de backups antigos')
 
-    this.publishMessage({ key: 'clear-backups', body: {} })
+    await this.queueServer.addJob('clear-backups', {})
 
     res.status(200).send({ body: 'Limpeza de backups antigos agendados' })
   }

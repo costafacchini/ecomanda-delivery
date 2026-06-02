@@ -18,36 +18,36 @@ function buildResponse() {
 }
 
 function buildController() {
-  const publishMessage = jest.fn()
+  const queueServer = { addJob: jest.fn().mockResolvedValue(undefined) }
 
-  const controller = new BackupsController({ publishMessage })
+  const controller = new BackupsController({ queueServer })
 
-  return { controller, publishMessage }
+  return { controller, queueServer }
 }
 
 describe('BackupsController delegation', () => {
   beforeEach(() => {})
 
-  it('publishes backup message and returns status 200 on schedule', () => {
-    const { controller, publishMessage } = buildController()
+  it('enqueues backup job and returns status 200 on schedule', async () => {
+    const { controller, queueServer } = buildController()
     const req = {}
     const res = buildResponse()
 
-    controller.schedule(req, res)
+    await controller.schedule(req, res)
 
-    expect(publishMessage).toHaveBeenCalledWith({ key: 'backup', body: {} })
+    expect(queueServer.addJob).toHaveBeenCalledWith('backup', {})
     expect(res.status).toHaveBeenCalledWith(200)
     expect(res.send).toHaveBeenCalledWith({ body: 'Backup agendado' })
   })
 
-  it('publishes clear-backups message and returns status 200 on clear', () => {
-    const { controller, publishMessage } = buildController()
+  it('enqueues clear-backups job and returns status 200 on clear', async () => {
+    const { controller, queueServer } = buildController()
     const req = {}
     const res = buildResponse()
 
-    controller.clear(req, res)
+    await controller.clear(req, res)
 
-    expect(publishMessage).toHaveBeenCalledWith({ key: 'clear-backups', body: {} })
+    expect(queueServer.addJob).toHaveBeenCalledWith('clear-backups', {})
     expect(res.status).toHaveBeenCalledWith(200)
     expect(res.send).toHaveBeenCalledWith({ body: 'Limpeza de backups antigos agendados' })
   })

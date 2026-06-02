@@ -9,7 +9,6 @@ import { DelayController } from '../../controllers/DelayController'
 import { IngestChatMessage } from '../../usecases/webhooks/IngestChatMessage'
 import { IngestMessengerMessage } from '../../usecases/webhooks/IngestMessengerMessage'
 import { queueServer } from '../../../config/queue'
-import { publishMessage } from '../../../config/rabbitmq'
 import { createRuntimeDependencies } from '../../runtime/dependencies'
 
 const router = express.Router()
@@ -36,10 +35,10 @@ const ingestMessengerMessage = new IngestMessengerMessage({
   jobQueue: queueServer,
 })
 
-const chatsController = new ChatsController({ ingestChatMessage, publishMessage })
-const chatbotsController = new ChatbotsController({ bodyRepository, queueServer, publishMessage })
+const chatsController = new ChatsController({ ingestChatMessage, queueServer })
+const chatbotsController = new ChatbotsController({ bodyRepository, queueServer })
 const messengersController = new MessengersController({ ingestMessengerMessage })
-const backupsController = new BackupsController({ publishMessage })
+const backupsController = new BackupsController({ queueServer })
 const delayController = new DelayController()
 
 router.post('/chat/message', chatsController.message)

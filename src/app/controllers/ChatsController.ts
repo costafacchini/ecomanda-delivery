@@ -2,11 +2,11 @@ import { logger } from '../helpers/logger'
 
 class ChatsController {
   ingestChatMessage: any
-  publishMessage: any
+  queueServer: any
 
-  constructor({ ingestChatMessage, publishMessage }: Record<string, any> = {}) {
+  constructor({ ingestChatMessage, queueServer }: Record<string, any> = {}) {
     this.ingestChatMessage = ingestChatMessage
-    this.publishMessage = publishMessage
+    this.queueServer = queueServer
 
     this.message = this.message.bind(this)
     this.reset = this.reset.bind(this)
@@ -18,10 +18,10 @@ class ChatsController {
     res.status(200).send({ body: 'Solicitação de mensagem para a plataforma de chat agendado' })
   }
 
-  reset(_: any, res: any) {
+  async reset(_: any, res: any) {
     logger.info('Agendando para resetar chats expirando')
 
-    this.publishMessage({ key: 'reset-chats', body: {} })
+    await this.queueServer.addJob('reset-chats', {})
 
     res.status(200).send({ body: 'Solicitação para avisar os chats com janela vencendo agendado com sucesso' })
   }
