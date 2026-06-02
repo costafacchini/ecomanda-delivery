@@ -1,4 +1,4 @@
 # Task 26 Status
 
-**Status**: in-progress
+**Status**: complete
 **Task**: Strip WhatsApp order/cart handling from messenger plugins
