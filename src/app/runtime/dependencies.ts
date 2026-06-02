@@ -31,7 +31,6 @@ import { Customer } from '../plugins/payments/PagarMe/Customer'
 import { Parser as PagarMeParser } from '../plugins/payments/PagarMe/Parser'
 import { Payment } from '../plugins/payments/PagarMe/Payment'
 import { Recipient } from '../plugins/payments/PagarMe/Recipient'
-import { FacebookCatalogImporter } from '../plugins/importers/facebook_catalog/index'
 import { TemplatesImporter } from '../plugins/importers/template/index'
 
 // Builds the full runtime dependency graph from caller-supplied repositories.
@@ -109,8 +108,6 @@ function buildRuntimeDependencies({
         orderStatusService: new OrderStatus(licensee, { integrationlogRepository }),
       }),
     })
-  const createFacebookCatalogImporter = (triggerId: any) =>
-    new FacebookCatalogImporter(triggerId, { triggerRepository, productRepository })
   const createTemplatesImporter = (licenseeId: any) =>
     new TemplatesImporter(licenseeId, {
       licenseeRepository,
@@ -142,7 +139,6 @@ function buildRuntimeDependencies({
     createMessengerPlugin,
     createPagarMe,
     createPedidos10,
-    createFacebookCatalogImporter,
     createTemplatesImporter,
     createIntegrator: createIntegratorFactory,
   }
