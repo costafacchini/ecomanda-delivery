@@ -18,13 +18,6 @@ import { createCartPlugin as createCartPluginFactory } from '../plugins/carts/fa
 import { createChatPlugin as createChatPluginFactory } from '../plugins/chats/factory'
 import { createChatbotPlugin as createChatbotPluginFactory } from '../plugins/chatbots/factory'
 import { createMessengerPlugin as createMessengerPluginFactory } from '../plugins/messengers/factory'
-import { createIntegrator as createIntegratorFactory } from '../plugins/integrations/factory'
-import { Pedidos10 } from '../plugins/integrations/Pedidos10'
-import { Order } from '../plugins/integrations/Pedidos10/Order'
-import { Parser as Pedidos10Parser } from '../plugins/integrations/Pedidos10/Parser'
-import { Auth } from '../plugins/integrations/Pedidos10/services/Auth'
-import { OrderStatus } from '../plugins/integrations/Pedidos10/services/OrderStatus'
-import { Webhook } from '../plugins/integrations/Pedidos10/services/Webhook'
 import { PagarMe } from '../plugins/payments/PagarMe'
 import { Card } from '../plugins/payments/PagarMe/Card'
 import { Customer } from '../plugins/payments/PagarMe/Customer'
@@ -98,17 +91,6 @@ function buildRuntimeDependencies({
       parser: new PagarMeParser(),
       card: new Card({ integrationlogRepository, contactRepository }),
     })
-  const createPedidos10 = (licensee: any) =>
-    new Pedidos10(licensee, {
-      orderModule: new Order(licensee, {
-        orderRepository,
-        licenseeRepository,
-        parser: new Pedidos10Parser(),
-        authService: new Auth(licensee, { integrationlogRepository, licenseeRepository }),
-        webhookService: new Webhook(licensee, { integrationlogRepository }),
-        orderStatusService: new OrderStatus(licensee, { integrationlogRepository }),
-      }),
-    })
   const createFacebookCatalogImporter = (triggerId: any) =>
     new FacebookCatalogImporter(triggerId, { triggerRepository, productRepository })
   const createTemplatesImporter = (licenseeId: any) =>
@@ -141,10 +123,8 @@ function buildRuntimeDependencies({
     createChatbotPlugin,
     createMessengerPlugin,
     createPagarMe,
-    createPedidos10,
     createFacebookCatalogImporter,
     createTemplatesImporter,
-    createIntegrator: createIntegratorFactory,
   }
 }
 
