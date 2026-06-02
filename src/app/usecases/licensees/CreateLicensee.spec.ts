@@ -3,13 +3,12 @@ import { LicenseeRepositoryMemory } from '@repositories/licensee'
 import { CreateLicensee } from './CreateLicensee'
 
 describe('CreateLicensee', () => {
-  it('creates a licensee with the mapped fields and parsed pedidos10 integration', async () => {
+  it('creates a licensee with the mapped fields and ignores unknown fields', async () => {
     const licenseeRepository = new LicenseeRepositoryMemory()
     const createLicensee = new CreateLicensee({ licenseeRepository })
 
     const licensee = await createLicensee.execute({
       ...licenseeCompleteFactory.build(),
-      pedidos10_integration: '{"store":"123"}',
       ignoredField: 'ignored',
     })
 
@@ -19,7 +18,6 @@ describe('CreateLicensee', () => {
         email: 'alcateia@alcateia.com',
         whatsappDefault: 'dialog',
         whatsappUrl: 'https://waba.360dialog.io/',
-        pedidos10_integration: { store: '123' },
       }),
     )
     expect(licensee.ignoredField).toBeUndefined()

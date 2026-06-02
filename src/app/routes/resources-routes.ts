@@ -20,7 +20,6 @@ import { SetDialogWebhook } from '../usecases/licensees/SetDialogWebhook'
 import { CreateContact } from '../usecases/contacts/CreateContact'
 import { UpdateContact } from '../usecases/contacts/UpdateContact'
 import { CreateTrigger } from '../usecases/triggers/CreateTrigger'
-import { ImportFacebookCatalog } from '../usecases/triggers/ImportFacebookCatalog'
 import { UpdateTrigger } from '../usecases/triggers/UpdateTrigger'
 import { CreateUser } from '../usecases/users/CreateUser'
 import { UpdateUser } from '../usecases/users/UpdateUser'
@@ -42,7 +41,6 @@ const {
   roomRepository,
   whatsappSessionRepository,
   createMessengerPlugin,
-  createFacebookCatalogImporter,
   createTemplatesImporter,
 } = createRuntimeDependencies()
 
@@ -72,7 +70,6 @@ const triggersController = new TriggersController({
   createTriggersQuery: () => new TriggersQuery({ triggerRepository }),
   createTrigger: new CreateTrigger({ triggerRepository }),
   updateTrigger: new UpdateTrigger({ triggerRepository }),
-  importFacebookCatalog: new ImportFacebookCatalog({ createFacebookCatalogImporter }),
 })
 const messagesController = new MessagesController({
   createMessagesQuery: () => new MessagesQuery({ messageRepository }),
@@ -140,7 +137,6 @@ router.post('/triggers', triggersController.create)
 router.post('/triggers/:id', triggersController.update)
 router.get('/triggers/:id', triggersController.show)
 router.get('/triggers', triggersController.index)
-router.post('/triggers/:id/importation', triggersController.importation)
 
 router.post('/templates', templatesController.create)
 router.post('/templates/:id', templatesController.update)

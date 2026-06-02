@@ -97,7 +97,6 @@ class LicenseesController {
   async show(req: any, res: any) {
     try {
       const licensee = await this.licenseeRepository.findFirst({ _id: req.params.id })
-      licensee.pedidos10_integration = JSON.stringify(licensee.pedidos10_integration)
 
       res.status(200).send(licensee)
     } catch (err: any) {
@@ -137,10 +136,6 @@ class LicenseesController {
 
       if (req.query.active) {
         licenseesQuery.filterByActive()
-      }
-
-      if (req.query.pedidos10_active) {
-        licenseesQuery.filterByPedidos10Active(req.query.pedidos10_active)
       }
 
       const licensees = await licenseesQuery.all()

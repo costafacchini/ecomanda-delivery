@@ -27,16 +27,12 @@ function buildController() {
   const updateTrigger = {
     execute: jest.fn(),
   }
-  const importFacebookCatalog = {
-    execute: jest.fn(),
-  }
 
   const controller = new TriggersController({
     triggerRepository,
     createTriggersQuery,
     createTrigger,
     updateTrigger,
-    importFacebookCatalog,
   })
 
   return {
@@ -46,7 +42,6 @@ function buildController() {
     triggersQueryInstance,
     createTrigger,
     updateTrigger,
-    importFacebookCatalog,
   }
 }
 
@@ -139,7 +134,6 @@ describe('TriggersController delegation', () => {
       createTriggersQuery: jest.fn().mockReturnValue(triggersQueryInstance),
       createTrigger: { execute: jest.fn() },
       updateTrigger: { execute: jest.fn() },
-      importFacebookCatalog: { execute: jest.fn() },
     })
 
     const req = { params: { id: 'bad' } }
@@ -190,7 +184,6 @@ describe('TriggersController delegation', () => {
   it.each([
     ['create', 'createTrigger', { body: triggerFactory.build({ licensee: 'licensee-id' }) }],
     ['update', 'updateTrigger', { params: { id: 'trigger-id' }, body: { name: 'Name modified' } }],
-    ['importation', 'importFacebookCatalog', { params: { id: 'trigger-id' }, body: { text: 'catalog-data' } }],
   ])('returns status 500 when %s use case throws an unexpected error', async (method, dependency, req) => {
     const dependencies = buildController()
     const res = buildResponse()
@@ -205,20 +198,4 @@ describe('TriggersController delegation', () => {
     })
   })
 
-  it('delegates importation to the importFacebookCatalog use case and returns status 201', async () => {
-    const { controller, importFacebookCatalog } = buildController()
-    const req = {
-      params: { id: 'trigger-id' },
-      body: { text: 'catalog-data' },
-    }
-    const res = buildResponse()
-
-    importFacebookCatalog.execute.mockResolvedValue(undefined)
-
-    await controller.importation(req, res)
-
-    expect(importFacebookCatalog.execute).toHaveBeenCalledWith('trigger-id', 'catalog-data')
-    expect(res.status).toHaveBeenCalledWith(201)
-    expect(res.send).toHaveBeenCalledWith({ body: 'OK' })
-  })
 })

@@ -28,7 +28,6 @@ function buildController() {
     filterByWhatsappDefault: jest.fn(),
     filterByExpression: jest.fn(),
     filterByActive: jest.fn(),
-    filterByPedidos10Active: jest.fn(),
     all: jest.fn(),
   }
   const createLicenseesQuery = jest.fn().mockReturnValue(licenseesQueryInstance)
@@ -68,7 +67,6 @@ describe('LicenseesController delegation', () => {
       body: {
         name: 'Alcateia Ltds',
         email: 'alcateia@alcateia.com',
-        pedidos10_integration: JSON.stringify({ username: 'alcateia' }),
       },
     }
     const res = buildResponse()
@@ -145,7 +143,6 @@ describe('LicenseesController delegation', () => {
       body: {
         name: 'Name modified',
         email: 'modified@alcateia.com',
-        pedidos10_integration: JSON.stringify({ username: 'modified' }),
       },
     }
     const res = buildResponse()
@@ -220,10 +217,7 @@ describe('LicenseesController delegation', () => {
 
   it('delegates show to licenseeRepository.findFirst and returns status 200', async () => {
     const { controller, licenseeRepository } = buildController()
-    const seeded = await licenseeRepository.create({
-      name: 'Alcateia',
-      pedidos10_integration: { username: 'alcateia' },
-    })
+    const seeded = await licenseeRepository.create({ name: 'Alcateia' })
 
     const req = { params: { id: seeded._id } }
     const res = buildResponse()
@@ -231,7 +225,7 @@ describe('LicenseesController delegation', () => {
     await controller.show(req, res)
 
     expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ pedidos10_integration: '{"username":"alcateia"}' }))
+    expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ _id: seeded._id, name: 'Alcateia' }))
   })
 
   it('delegates index to licenseesQuery and returns status 200', async () => {

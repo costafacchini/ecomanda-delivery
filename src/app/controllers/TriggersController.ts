@@ -5,26 +5,21 @@ class TriggersController {
   createTriggersQuery: any
   createTrigger: any
   updateTrigger: any
-  importFacebookCatalog: any
-
   constructor({
     triggerRepository,
     createTriggersQuery,
     createTrigger,
     updateTrigger,
-    importFacebookCatalog,
   }: Record<string, any> = {}) {
     this.triggerRepository = triggerRepository
     this.createTriggersQuery = createTriggersQuery
     this.createTrigger = createTrigger
     this.updateTrigger = updateTrigger
-    this.importFacebookCatalog = importFacebookCatalog
 
     this.create = this.create.bind(this)
     this.update = this.update.bind(this)
     this.show = this.show.bind(this)
     this.index = this.index.bind(this)
-    this.importation = this.importation.bind(this)
   }
 
   async create(req: any, res: any) {
@@ -99,15 +94,6 @@ class TriggersController {
     }
   }
 
-  async importation(req: any, res: any) {
-    try {
-      await this.importFacebookCatalog.execute(req.params.id, req.body.text)
-
-      return res.status(201).send({ body: 'OK' })
-    } catch (err: any) {
-      return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
-    }
-  }
 }
 
 export { TriggersController }
