@@ -8,56 +8,21 @@ import sendMessageToChatbot from './SendMessageToChatbot'
 import sendMessageToMessenger from './SendMessageToMessenger'
 import resetChatbots from './ResetChatbots'
 import resetChats from './ResetChats'
-import resetCarts from './ResetCarts'
 import transferToChat from './TransferToChat'
 import backup from './Backup'
 import clearBackups from './ClearBackups'
-import sendContactToPagarMe from './SendContactToPagarMe'
-import processBackgroundJob from './ProcessBackgroundjob'
-import processBackgroundjobGetPix from './ProcessBackgroundjobGetPix'
-import processBackgroundjobGetCreditCard from './ProcessBackgroundjobGetCreditCard'
-import processBackgroundjobChargeCreditCard from './ProcessBackgroundjobChargeCreditCard'
-import processBackgroundjobInviteCreditCard from './ProcessBackgroundjobInviteCreditCard'
-import processBackgroundjobCancelOrder from './ProcessBackgroundjobCancelOrder'
-import processWebhookRequest from './ProcessWebhookRequest'
-import processPagarmeOrderPaid from './ProcessPagarmeOrderPaid'
-import pedidos10Webhook from './Pedidos10Webhook'
-import IntegrationSendOrder from './Integration10SendOrder'
-import pedidos10ChangeOrderStatus from './Pedidos10ChangeOrderStatus'
-
-const pedidos10Jobs = [pedidos10Webhook, IntegrationSendOrder, pedidos10ChangeOrderStatus]
 
 const chatbotsJobs = [chatbotMessage, chatbotTransferToChat, sendMessageToChatbot, transferToChat]
 
-const resetJobs = [resetCarts, resetChatbots, resetChats]
+const resetJobs = [resetChatbots, resetChats]
 
 const backupJobs = [backup, clearBackups]
-
-const pagarMeJobs = [
-  sendContactToPagarMe,
-  processBackgroundJob,
-  processBackgroundjobGetPix,
-  processBackgroundjobGetCreditCard,
-  processBackgroundjobChargeCreditCard,
-  processBackgroundjobInviteCreditCard,
-  processWebhookRequest,
-  processPagarmeOrderPaid,
-  processBackgroundjobCancelOrder,
-]
 
 const chatJobs = [chatMessage, closeChat, sendMessageToChat]
 
 const messengerJobs = [messengerMessage, sendMessageToMessenger]
 
 const jobs: any[] = []
-
-if (process.env.INTEGRATE_PEDIDOS10 === 'true') {
-  jobs.push(...pedidos10Jobs)
-}
-
-if (process.env.INTEGRATE_PAGARME === 'true') {
-  jobs.push(...pagarMeJobs)
-}
 
 if (process.env.ENABLE_BACKUPS === 'true') {
   jobs.push(...backupJobs)
