@@ -1,15 +1,11 @@
 import { user as userFactory } from '@factories/user'
 import { body as bodyFactory } from '@factories/body'
-import { backgroundjob as backgroundjobFactory } from '@factories/backgroundjob'
-import { integrationlog as integrationlogFactory } from '@factories/integrationlog'
 import { triggerMultiProduct as triggerFactory } from '@factories/trigger'
 import { LicenseeRepositoryMemory } from './licensee'
 import { TemplateRepositoryMemory } from './template'
 import { TriggerRepositoryMemory } from './trigger'
 import { BodyRepositoryMemory } from './body'
-import { BackgroundjobRepositoryMemory } from './backgroundjob'
 import { UserRepositoryMemory } from './user'
-import { IntegrationlogRepositoryMemory } from './integrationlog'
 
 describe('memory repositories - lookup entities', () => {
   it('orders triggers in memory and deletes templates by filter', async () => {
@@ -33,32 +29,18 @@ describe('memory repositories - lookup entities', () => {
     expect(await templateRepository.find()).toEqual([expect.objectContaining({ name: 'keep' })])
   })
 
-  it('saves body, backgroundjob and integrationlog documents', async () => {
+  it('saves body documents', async () => {
     const licenseeRepository = new LicenseeRepositoryMemory()
     const bodyRepository = new BodyRepositoryMemory()
-    const backgroundjobRepository = new BackgroundjobRepositoryMemory()
-    const integrationlogRepository = new IntegrationlogRepositoryMemory()
 
     const licensee = await licenseeRepository.create({ name: 'Licensee', licenseKind: 'demo' })
     const body = await bodyRepository.create(bodyFactory.build({ licensee }))
-    const backgroundjob = await backgroundjobRepository.create(backgroundjobFactory.build({ licensee }))
-    const integrationlog = await integrationlogRepository.create(integrationlogFactory.build({ licensee }))
 
     body.concluded = true
-    backgroundjob.status = 'running'
-    integrationlog.log_description = 'Updated integration'
 
     await bodyRepository.save(body)
-    await backgroundjobRepository.save(backgroundjob)
-    await integrationlogRepository.save(integrationlog)
 
     expect(await bodyRepository.findFirst({ _id: body._id })).toEqual(expect.objectContaining({ concluded: true }))
-    expect(await backgroundjobRepository.findFirst({ _id: backgroundjob._id })).toEqual(
-      expect.objectContaining({ status: 'running' }),
-    )
-    expect(await integrationlogRepository.findFirst({ _id: integrationlog._id })).toEqual(
-      expect.objectContaining({ log_description: 'Updated integration' }),
-    )
   })
 
   it('hashes passwords and applies user projections in memory', async () => {

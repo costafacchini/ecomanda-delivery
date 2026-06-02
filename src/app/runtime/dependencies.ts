@@ -1,19 +1,14 @@
 import { WhatsappSessionRepositoryDatabase } from '../repositories/whatsappsession'
-import { BackgroundjobRepositoryDatabase } from '../repositories/backgroundjob'
 import { BodyRepositoryDatabase } from '../repositories/body'
-import { CartRepositoryDatabase } from '../repositories/cart'
 import { ContactRepositoryDatabase } from '../repositories/contact'
-import { IntegrationlogRepositoryDatabase } from '../repositories/integrationlog'
 import { LicenseeRepositoryDatabase } from '../repositories/licensee'
 import { MessageRepositoryDatabase } from '../repositories/message'
-import { OrderRepositoryDatabase } from '../repositories/order'
-import { ProductRepositoryDatabase } from '../repositories/product'
 import { RoomRepositoryDatabase } from '../repositories/room'
 import { TemplateRepositoryDatabase } from '../repositories/template'
 import { TrafficlightRepositoryDatabase } from '../repositories/trafficlight'
 import { TriggerRepositoryDatabase } from '../repositories/trigger'
 import { UserRepositoryDatabase } from '../repositories/user'
-import { parseText as parseTextHelper, parseCart as parseCartHelper } from '../helpers/ParseTriggerText'
+import { parseText as parseTextHelper } from '../helpers/ParseTriggerText'
 import { createCartPlugin as createCartPluginFactory } from '../plugins/carts/factory'
 import { createChatPlugin as createChatPluginFactory } from '../plugins/chats/factory'
 import { createChatbotPlugin as createChatbotPluginFactory } from '../plugins/chatbots/factory'
@@ -39,15 +34,10 @@ import { TemplatesImporter } from '../plugins/importers/template/index'
 // when the corresponding factory functions are first invoked. Use createRuntimeDependencies()
 // for production wiring — it supplies concrete Database instances for every repo.
 function buildRuntimeDependencies({
-  backgroundjobRepository,
   bodyRepository,
-  cartRepository,
   contactRepository,
-  integrationlogRepository,
   licenseeRepository,
   messageRepository,
-  orderRepository,
-  productRepository,
   roomRepository,
   templateRepository,
   trafficlightRepository,
@@ -55,9 +45,8 @@ function buildRuntimeDependencies({
   userRepository,
   whatsappSessionRepository,
 }: Record<string, any> = {}) {
-  const parseText = (text: any, contact: any) => parseTextHelper(text, contact, { cartRepository })
-  const parseCart = (cartId: any) => parseCartHelper(cartId, { cartRepository })
-  const createCartPlugin = (licensee: any) => createCartPluginFactory(licensee, { cartRepository })
+  const parseText = (text: any, contact: any) => parseTextHelper(text, contact, {})
+  const createCartPlugin = (licensee: any) => createCartPluginFactory(licensee, {})
   const createChatPlugin = (licensee: any) =>
     createChatPluginFactory(licensee, {
       contactRepository,
@@ -76,10 +65,8 @@ function buildRuntimeDependencies({
   const createMessengerPlugin = (licensee: any) =>
     createMessengerPluginFactory(licensee, {
       contactRepository,
-      cartRepository,
       messageRepository,
       triggerRepository,
-      productRepository,
       templateRepository,
       parseText,
       createCartPlugin,
@@ -87,30 +74,27 @@ function buildRuntimeDependencies({
     })
   const createPagarMe = (licensee: any) =>
     new PagarMe(licensee, {
-      recipient: new Recipient({ integrationlogRepository, licenseeRepository }),
-      customer: new Customer({ integrationlogRepository, contactRepository }),
+      recipient: new Recipient({ licenseeRepository }),
+      customer: new Customer({ contactRepository }),
       payment: new Payment({
-        integrationlogRepository,
         licenseeRepository,
         contactRepository,
-        cartRepository,
       }),
       parser: new PagarMeParser(),
-      card: new Card({ integrationlogRepository, contactRepository }),
+      card: new Card({ contactRepository }),
     })
   const createPedidos10 = (licensee: any) =>
     new Pedidos10(licensee, {
       orderModule: new Order(licensee, {
-        orderRepository,
         licenseeRepository,
         parser: new Pedidos10Parser(),
-        authService: new Auth(licensee, { integrationlogRepository, licenseeRepository }),
-        webhookService: new Webhook(licensee, { integrationlogRepository }),
-        orderStatusService: new OrderStatus(licensee, { integrationlogRepository }),
+        authService: new Auth(licensee, { licenseeRepository }),
+        webhookService: new Webhook(licensee, {}),
+        orderStatusService: new OrderStatus(licensee, {}),
       }),
     })
   const createFacebookCatalogImporter = (triggerId: any) =>
-    new FacebookCatalogImporter(triggerId, { triggerRepository, productRepository })
+    new FacebookCatalogImporter(triggerId, { triggerRepository })
   const createTemplatesImporter = (licenseeId: any) =>
     new TemplatesImporter(licenseeId, {
       licenseeRepository,
@@ -119,15 +103,10 @@ function buildRuntimeDependencies({
     })
 
   return {
-    backgroundjobRepository,
     bodyRepository,
-    cartRepository,
     contactRepository,
-    integrationlogRepository,
     licenseeRepository,
     messageRepository,
-    orderRepository,
-    productRepository,
     roomRepository,
     templateRepository,
     trafficlightRepository,
@@ -135,7 +114,6 @@ function buildRuntimeDependencies({
     userRepository,
     whatsappSessionRepository,
     parseText,
-    parseCart,
     createCartPlugin,
     createChatPlugin,
     createChatbotPlugin,
@@ -149,23 +127,16 @@ function buildRuntimeDependencies({
 }
 
 function createRuntimeDependencies(overrides: Record<string, any> = {}) {
-  const cartRepository = overrides.cartRepository ?? new CartRepositoryDatabase()
   const triggerRepository = overrides.triggerRepository ?? new TriggerRepositoryDatabase()
-  const parseText =
-    overrides.parseText ?? ((text: any, contact: any) => parseTextHelper(text, contact, { cartRepository }))
+  const parseText = overrides.parseText ?? ((text: any, contact: any) => parseTextHelper(text, contact, {}))
   const messageRepository = overrides.messageRepository ?? new MessageRepositoryDatabase({ parseText })
   const contactRepository = overrides.contactRepository ?? new ContactRepositoryDatabase({ messageRepository })
 
   return buildRuntimeDependencies({
-    backgroundjobRepository: overrides.backgroundjobRepository ?? new BackgroundjobRepositoryDatabase(),
     bodyRepository: overrides.bodyRepository ?? new BodyRepositoryDatabase(),
-    cartRepository,
     contactRepository,
-    integrationlogRepository: overrides.integrationlogRepository ?? new IntegrationlogRepositoryDatabase(),
     licenseeRepository: overrides.licenseeRepository ?? new LicenseeRepositoryDatabase(),
     messageRepository,
-    orderRepository: overrides.orderRepository ?? new OrderRepositoryDatabase(),
-    productRepository: overrides.productRepository ?? new ProductRepositoryDatabase(),
     roomRepository: overrides.roomRepository ?? new RoomRepositoryDatabase(),
     templateRepository: overrides.templateRepository ?? new TemplateRepositoryDatabase(),
     trafficlightRepository: overrides.trafficlightRepository ?? new TrafficlightRepositoryDatabase(),

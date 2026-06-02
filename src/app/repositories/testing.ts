@@ -1,25 +1,15 @@
 import Body from '../models/Body'
-import Backgroundjob from '../models/Backgroundjob'
-import Cart from '../models/Cart'
 import Contact from '../models/Contact'
-import Integrationlog from '../models/Integrationlog'
 import Licensee from '../models/Licensee'
 import Message from '../models/Message'
-import Order from '../models/Order'
-import Product from '../models/Product'
 import Room from '../models/Room'
 import Template from '../models/Template'
 import Trigger from '../models/Trigger'
 import User from '../models/User'
-import { BackgroundjobRepositoryDatabase, BackgroundjobRepositoryMemory } from './backgroundjob'
 import { BodyRepositoryDatabase, BodyRepositoryMemory } from './body'
-import { CartRepositoryDatabase, CartRepositoryMemory } from './cart'
 import { ContactRepositoryDatabase, ContactRepositoryMemory } from './contact'
-import { IntegrationlogRepositoryDatabase, IntegrationlogRepositoryMemory } from './integrationlog'
 import { LicenseeRepositoryDatabase, LicenseeRepositoryMemory } from './licensee'
 import { MessageRepositoryDatabase, MessageRepositoryMemory } from './message'
-import { OrderRepositoryDatabase, OrderRepositoryMemory } from './order'
-import { ProductRepositoryDatabase, ProductRepositoryMemory } from './product'
 import { RoomRepositoryDatabase, RoomRepositoryMemory } from './room'
 import { TemplateRepositoryDatabase, TemplateRepositoryMemory } from './template'
 import { TrafficlightRepositoryMemory } from './trafficlight'
@@ -48,63 +38,12 @@ function serializeRelations(record: any, relations: any[] = []) {
   return clone
 }
 
-function attachCartMethods(cart: any) {
-  if (!cart) {
-    return cart
-  }
-
-  if (typeof cart.calculateTotal !== 'function') {
-    cart.calculateTotal = Cart.prototype.calculateTotal
-  }
-
-  if (typeof cart.calculateTotalItem !== 'function') {
-    cart.calculateTotalItem = Cart.prototype.calculateTotalItem
-  }
-
-  return cart
-}
-
-function serializeCart(cart: any, relations: any[] = []) {
-  if (!cart) {
-    return cart
-  }
-
-  const clone = { ...cart }
-
-  if (!relations.includes('contact') && clone.contact && typeof clone.contact === 'object') {
-    clone.contact = clone.contact._id ?? clone.contact
-  }
-
-  if (!relations.includes('licensee') && clone.licensee && typeof clone.licensee === 'object') {
-    clone.licensee = clone.licensee._id ?? clone.licensee
-  }
-
-  if (Array.isArray(clone.products)) {
-    clone.products = clone.products.map((product: any) => {
-      const productClone = { ...product }
-
-      if (!relations.includes('products.product') && productClone.product && typeof productClone.product === 'object') {
-        productClone.product = productClone.product._id ?? productClone.product
-      }
-
-      return productClone
-    })
-  }
-
-  return clone
-}
-
 function createMemoryRepositories() {
   const state: Record<string, any[]> = {
-    backgroundjobs: [] as any[],
     bodies: [] as any[],
-    carts: [] as any[],
     contacts: [] as any[],
-    integrationlogs: [] as any[],
     licensees: [] as any[],
     messages: [] as any[],
-    orders: [] as any[],
-    products: [] as any[],
     rooms: [] as any[],
     templates: [] as any[],
     trafficlights: [] as any[],
@@ -113,9 +52,8 @@ function createMemoryRepositories() {
     whatsappSessions: [] as any[],
   }
 
-  const cartRepository = new CartRepositoryMemory(state.carts)
   const triggerRepository = new TriggerRepositoryMemory(state.triggers)
-  const parseText = (text: any, contact: any) => parseTextHelper(text, contact, { cartRepository })
+  const parseText = (text: any, contact: any) => parseTextHelper(text, contact, {})
   const messageRepository = new MessageRepositoryMemory({
     items: state.messages,
     triggerRepository,
@@ -128,15 +66,10 @@ function createMemoryRepositories() {
 
   return {
     state,
-    backgroundjobRepository: new BackgroundjobRepositoryMemory(state.backgroundjobs),
     bodyRepository: new BodyRepositoryMemory(state.bodies),
-    cartRepository,
     contactRepository,
-    integrationlogRepository: new IntegrationlogRepositoryMemory(state.integrationlogs),
     licenseeRepository: new LicenseeRepositoryMemory(state.licensees),
     messageRepository,
-    orderRepository: new OrderRepositoryMemory(state.orders),
-    productRepository: new ProductRepositoryMemory(state.products),
     roomRepository: new RoomRepositoryMemory(state.rooms),
     templateRepository: new TemplateRepositoryMemory(state.templates),
     trafficlightRepository: new TrafficlightRepositoryMemory(state.trafficlights),
@@ -392,39 +325,9 @@ function installMemoryRepositories() {
 
     return await repository.findFirst({ _id: identifier }, [])
   }
-  const originalCartCreate = repositories.cartRepository.create.bind(repositories.cartRepository)
-  const originalCartFind = repositories.cartRepository.find.bind(repositories.cartRepository)
-  const originalCartSave = repositories.cartRepository.save.bind(repositories.cartRepository)
   const originalMessageCreate = repositories.messageRepository.create.bind(repositories.messageRepository)
   const originalMessageFind = repositories.messageRepository.find.bind(repositories.messageRepository)
   const originalRoomFind = repositories.roomRepository.find.bind(repositories.roomRepository)
-
-  repositories.cartRepository.create = async (fields = {}) => {
-    return attachCartMethods(await originalCartCreate(fields))
-  }
-
-  repositories.cartRepository.find = async (params = {}) => {
-    return (await originalCartFind(params)).map((cart: any) => attachCartMethods(serializeCart(cart)))
-  }
-
-  repositories.cartRepository.findFirst = async (params = {}, relations = []) => {
-    const cart = (await originalCartFind(params))[0] ?? null
-
-    if (!cart) {
-      return null
-    }
-
-    if (!relations || relations.length === 0) {
-      return attachCartMethods(serializeCart(cart))
-    }
-
-    const [populatedCart] = await repositories.cartRepository.populateRecords([cart], relations)
-    return attachCartMethods(populatedCart)
-  }
-
-  repositories.cartRepository.save = async (document) => {
-    return attachCartMethods(serializeCart(await originalCartSave(document)))
-  }
 
   repositories.messageRepository.create = async (fields = {}) => {
     return await originalMessageCreate({
@@ -474,38 +377,23 @@ function installMemoryRepositories() {
     return populatedRoom
   }
 
-  repositories.backgroundjobRepository.modelClass = Backgroundjob
   repositories.bodyRepository.modelClass = Body
-  repositories.cartRepository.modelClass = Cart
   repositories.contactRepository.modelClass = Contact
-  repositories.integrationlogRepository.modelClass = Integrationlog
   repositories.licenseeRepository.modelClass = Licensee
   repositories.messageRepository.modelClass = Message
-  repositories.orderRepository.modelClass = Order
-  repositories.productRepository.modelClass = Product
   repositories.roomRepository.modelClass = Room
   repositories.templateRepository.modelClass = Template
   repositories.triggerRepository.modelClass = Trigger
   repositories.userRepository.modelClass = User
   repositories.whatsappSessionRepository.modelClass = WhatsappSession
 
-  repositories.backgroundjobRepository.relationLoaders = {
-    licensee: loadRelation(repositories.licenseeRepository),
-    body: loadRelation(repositories.bodyRepository),
-  }
   repositories.bodyRepository.relationLoaders = {
     licensee: loadRelation(repositories.licenseeRepository),
-  }
-  repositories.cartRepository.relationLoaders = {
-    contact: loadRelation(repositories.contactRepository),
-    licensee: loadRelation(repositories.licenseeRepository),
-    'products.product': loadRelation(repositories.productRepository),
   }
   repositories.contactRepository.relationLoaders = {
     licensee: loadRelation(repositories.licenseeRepository),
   }
   repositories.messageRepository.relationLoaders = {
-    cart: loadRelation(repositories.cartRepository),
     contact: loadRelation(repositories.contactRepository),
     licensee: loadRelation(repositories.licenseeRepository),
     room: loadRelation(repositories.roomRepository),
@@ -527,15 +415,10 @@ function installMemoryRepositories() {
     licensee: loadRelation(repositories.licenseeRepository),
   }
 
-  bindRepositoryPrototype(BackgroundjobRepositoryDatabase.prototype, repositories.backgroundjobRepository, restores)
   bindRepositoryPrototype(BodyRepositoryDatabase.prototype, repositories.bodyRepository, restores)
-  bindRepositoryPrototype(CartRepositoryDatabase.prototype, repositories.cartRepository, restores)
   bindRepositoryPrototype(ContactRepositoryDatabase.prototype, repositories.contactRepository, restores)
-  bindRepositoryPrototype(IntegrationlogRepositoryDatabase.prototype, repositories.integrationlogRepository, restores)
   bindRepositoryPrototype(LicenseeRepositoryDatabase.prototype, repositories.licenseeRepository, restores)
   bindRepositoryPrototype(MessageRepositoryDatabase.prototype, repositories.messageRepository, restores)
-  bindRepositoryPrototype(OrderRepositoryDatabase.prototype, repositories.orderRepository, restores)
-  bindRepositoryPrototype(ProductRepositoryDatabase.prototype, repositories.productRepository, restores)
   bindRepositoryPrototype(RoomRepositoryDatabase.prototype, repositories.roomRepository, restores)
   bindRepositoryPrototype(TemplateRepositoryDatabase.prototype, repositories.templateRepository, restores)
   bindRepositoryPrototype(TriggerRepositoryDatabase.prototype, repositories.triggerRepository, restores)
@@ -543,33 +426,15 @@ function installMemoryRepositories() {
   bindRepositoryPrototype(WhatsappSessionRepositoryDatabase.prototype, repositories.whatsappSessionRepository, restores)
 
   patchMember(
-    BackgroundjobRepositoryDatabase.prototype,
-    'model',
-    () => createMemoryModelAdapter(repositories.backgroundjobRepository),
-    restores,
-  )
-  patchMember(
     BodyRepositoryDatabase.prototype,
     'model',
     () => createMemoryModelAdapter(repositories.bodyRepository),
     restores,
   )
   patchMember(
-    CartRepositoryDatabase.prototype,
-    'model',
-    () => createMemoryModelAdapter(repositories.cartRepository),
-    restores,
-  )
-  patchMember(
     ContactRepositoryDatabase.prototype,
     'model',
     () => createMemoryModelAdapter(repositories.contactRepository),
-    restores,
-  )
-  patchMember(
-    IntegrationlogRepositoryDatabase.prototype,
-    'model',
-    () => createMemoryModelAdapter(repositories.integrationlogRepository),
     restores,
   )
   patchMember(
@@ -582,18 +447,6 @@ function installMemoryRepositories() {
     MessageRepositoryDatabase.prototype,
     'model',
     () => createMemoryModelAdapter(repositories.messageRepository, { aggregate: aggregateMessageCounts }),
-    restores,
-  )
-  patchMember(
-    OrderRepositoryDatabase.prototype,
-    'model',
-    () => createMemoryModelAdapter(repositories.orderRepository),
-    restores,
-  )
-  patchMember(
-    ProductRepositoryDatabase.prototype,
-    'model',
-    () => createMemoryModelAdapter(repositories.productRepository),
     restores,
   )
   patchMember(
@@ -627,26 +480,16 @@ function installMemoryRepositories() {
     restores,
   )
 
-  bindModelToRepository(Backgroundjob, repositories.backgroundjobRepository, restores)
   bindModelToRepository(Body, repositories.bodyRepository, restores)
   bindModelToRepository(Contact, repositories.contactRepository, restores)
-  bindModelToRepository(Integrationlog, repositories.integrationlogRepository, restores)
   bindModelToRepository(Licensee, repositories.licenseeRepository, restores)
   bindModelToRepository(Message, repositories.messageRepository, restores)
-  bindModelToRepository(Order, repositories.orderRepository, restores)
-  bindModelToRepository(Product, repositories.productRepository, restores)
   bindModelToRepository(Room, repositories.roomRepository, restores)
   bindModelToRepository(Template, repositories.templateRepository, restores)
   bindModelToRepository(Trigger, repositories.triggerRepository, restores)
   bindModelToRepository(User, repositories.userRepository, restores)
   bindModelToRepository(WhatsappSession, repositories.whatsappSessionRepository, restores)
 
-  patchMember(
-    IntegrationlogRepositoryDatabase.prototype,
-    'create',
-    async (fields = {}) => await Integrationlog.create(fields),
-    restores,
-  )
   patchMember(
     Room,
     'findById',
