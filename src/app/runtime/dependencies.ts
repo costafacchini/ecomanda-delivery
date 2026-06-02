@@ -14,7 +14,6 @@ import { TrafficlightRepositoryDatabase } from '../repositories/trafficlight'
 import { TriggerRepositoryDatabase } from '../repositories/trigger'
 import { UserRepositoryDatabase } from '../repositories/user'
 import { parseText as parseTextHelper, parseCart as parseCartHelper } from '../helpers/ParseTriggerText'
-import { createCartPlugin as createCartPluginFactory } from '../plugins/carts/factory'
 import { createChatPlugin as createChatPluginFactory } from '../plugins/chats/factory'
 import { createChatbotPlugin as createChatbotPluginFactory } from '../plugins/chatbots/factory'
 import { createMessengerPlugin as createMessengerPluginFactory } from '../plugins/messengers/factory'
@@ -43,7 +42,6 @@ function buildRuntimeDependencies({
 }: Record<string, any> = {}) {
   const parseText = (text: any, contact: any) => parseTextHelper(text, contact, { cartRepository })
   const parseCart = (cartId: any) => parseCartHelper(cartId, { cartRepository })
-  const createCartPlugin = (licensee: any) => createCartPluginFactory(licensee, { cartRepository })
   const createChatPlugin = (licensee: any) =>
     createChatPluginFactory(licensee, {
       contactRepository,
@@ -57,18 +55,15 @@ function buildRuntimeDependencies({
       messageRepository,
       roomRepository,
       triggerRepository,
-      createCartPlugin,
     })
   const createMessengerPlugin = (licensee: any) =>
     createMessengerPluginFactory(licensee, {
       contactRepository,
-      cartRepository,
       messageRepository,
       triggerRepository,
       productRepository,
       templateRepository,
       parseText,
-      createCartPlugin,
       whatsappSessionRepository,
     })
   const createTemplatesImporter = (licenseeId: any) =>
@@ -96,7 +91,6 @@ function buildRuntimeDependencies({
     whatsappSessionRepository,
     parseText,
     parseCart,
-    createCartPlugin,
     createChatPlugin,
     createChatbotPlugin,
     createMessengerPlugin,

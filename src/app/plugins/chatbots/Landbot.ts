@@ -22,8 +22,6 @@ class Landbot {
   _messageRepository: any
   _roomRepository: any
   _triggerRepository: any
-  _createCartPlugin: any
-
   constructor(
     licensee: any,
     {
@@ -31,7 +29,6 @@ class Landbot {
       messageRepository,
       roomRepository,
       triggerRepository,
-      createCartPlugin,
     }: Record<string, any> = {},
   ) {
     this.licensee = licensee
@@ -39,7 +36,6 @@ class Landbot {
     this._messageRepository = messageRepository
     this._roomRepository = roomRepository
     this._triggerRepository = triggerRepository
-    this._createCartPlugin = createCartPlugin
   }
 
   get contactRepository() {
@@ -68,10 +64,6 @@ class Landbot {
 
   get triggerRepository() {
     return requireDependency(this._triggerRepository, 'triggerRepository', this.constructor.name)
-  }
-
-  get createCartPlugin() {
-    return requireDependency(this._createCartPlugin, 'createCartPlugin', this.constructor.name)
   }
 
   async responseToMessages(responseBody: any) {
@@ -262,12 +254,6 @@ class Landbot {
       body.message.message = messageToSend.text
       body.message.payload = '$1'
 
-      if (messageToSend.kind === 'cart') {
-        const cartPlugin = this.createCartPlugin(this.licensee)
-        const cartTransformed = await cartPlugin.transformCart(this.licensee, messageToSend.cart)
-
-        body.message.message = JSON.stringify(cartTransformed)
-      }
     }
 
     const headers = {
