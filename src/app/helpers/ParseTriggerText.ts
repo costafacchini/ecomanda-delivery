@@ -20,6 +20,9 @@ function parseAddressComplete(contact: any) {
 }
 
 async function parseLastCart(contact: any, { cartRepository }: { cartRepository?: any } = {}) {
+  if (!cartRepository) {
+    return ''
+  }
   const last_cart = await cartRepository.findFirst({ contact: contact._id, concluded: false }, [
     'contact',
     'licensee',

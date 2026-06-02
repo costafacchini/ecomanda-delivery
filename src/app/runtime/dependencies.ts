@@ -1,19 +1,14 @@
 import { WhatsappSessionRepositoryDatabase } from '../repositories/whatsappsession'
-import { BackgroundjobRepositoryDatabase } from '../repositories/backgroundjob'
 import { BodyRepositoryDatabase } from '../repositories/body'
-import { CartRepositoryDatabase } from '../repositories/cart'
 import { ContactRepositoryDatabase } from '../repositories/contact'
-import { IntegrationlogRepositoryDatabase } from '../repositories/integrationlog'
 import { LicenseeRepositoryDatabase } from '../repositories/licensee'
 import { MessageRepositoryDatabase } from '../repositories/message'
-import { OrderRepositoryDatabase } from '../repositories/order'
-import { ProductRepositoryDatabase } from '../repositories/product'
 import { RoomRepositoryDatabase } from '../repositories/room'
 import { TemplateRepositoryDatabase } from '../repositories/template'
 import { TrafficlightRepositoryDatabase } from '../repositories/trafficlight'
 import { TriggerRepositoryDatabase } from '../repositories/trigger'
 import { UserRepositoryDatabase } from '../repositories/user'
-import { parseText as parseTextHelper, parseCart as parseCartHelper } from '../helpers/ParseTriggerText'
+import { parseText as parseTextHelper } from '../helpers/ParseTriggerText'
 import { createChatPlugin as createChatPluginFactory } from '../plugins/chats/factory'
 import { createChatbotPlugin as createChatbotPluginFactory } from '../plugins/chatbots/factory'
 import { createMessengerPlugin as createMessengerPluginFactory } from '../plugins/messengers/factory'
@@ -24,15 +19,10 @@ import { TemplatesImporter } from '../plugins/importers/template/index'
 // when the corresponding factory functions are first invoked. Use createRuntimeDependencies()
 // for production wiring — it supplies concrete Database instances for every repo.
 function buildRuntimeDependencies({
-  backgroundjobRepository,
   bodyRepository,
-  cartRepository,
   contactRepository,
-  integrationlogRepository,
   licenseeRepository,
   messageRepository,
-  orderRepository,
-  productRepository,
   roomRepository,
   templateRepository,
   trafficlightRepository,
@@ -40,8 +30,7 @@ function buildRuntimeDependencies({
   userRepository,
   whatsappSessionRepository,
 }: Record<string, any> = {}) {
-  const parseText = (text: any, contact: any) => parseTextHelper(text, contact, { cartRepository })
-  const parseCart = (cartId: any) => parseCartHelper(cartId, { cartRepository })
+  const parseText = (text: any, contact: any) => parseTextHelper(text, contact, {})
   const createChatPlugin = (licensee: any) =>
     createChatPluginFactory(licensee, {
       contactRepository,
@@ -61,7 +50,6 @@ function buildRuntimeDependencies({
       contactRepository,
       messageRepository,
       triggerRepository,
-      productRepository,
       templateRepository,
       parseText,
       whatsappSessionRepository,
@@ -74,15 +62,10 @@ function buildRuntimeDependencies({
     })
 
   return {
-    backgroundjobRepository,
     bodyRepository,
-    cartRepository,
     contactRepository,
-    integrationlogRepository,
     licenseeRepository,
     messageRepository,
-    orderRepository,
-    productRepository,
     roomRepository,
     templateRepository,
     trafficlightRepository,
@@ -90,7 +73,6 @@ function buildRuntimeDependencies({
     userRepository,
     whatsappSessionRepository,
     parseText,
-    parseCart,
     createChatPlugin,
     createChatbotPlugin,
     createMessengerPlugin,
@@ -99,23 +81,16 @@ function buildRuntimeDependencies({
 }
 
 function createRuntimeDependencies(overrides: Record<string, any> = {}) {
-  const cartRepository = overrides.cartRepository ?? new CartRepositoryDatabase()
   const triggerRepository = overrides.triggerRepository ?? new TriggerRepositoryDatabase()
-  const parseText =
-    overrides.parseText ?? ((text: any, contact: any) => parseTextHelper(text, contact, { cartRepository }))
+  const parseText = overrides.parseText ?? ((text: any, contact: any) => parseTextHelper(text, contact, {}))
   const messageRepository = overrides.messageRepository ?? new MessageRepositoryDatabase({ parseText })
   const contactRepository = overrides.contactRepository ?? new ContactRepositoryDatabase({ messageRepository })
 
   return buildRuntimeDependencies({
-    backgroundjobRepository: overrides.backgroundjobRepository ?? new BackgroundjobRepositoryDatabase(),
     bodyRepository: overrides.bodyRepository ?? new BodyRepositoryDatabase(),
-    cartRepository,
     contactRepository,
-    integrationlogRepository: overrides.integrationlogRepository ?? new IntegrationlogRepositoryDatabase(),
     licenseeRepository: overrides.licenseeRepository ?? new LicenseeRepositoryDatabase(),
     messageRepository,
-    orderRepository: overrides.orderRepository ?? new OrderRepositoryDatabase(),
-    productRepository: overrides.productRepository ?? new ProductRepositoryDatabase(),
     roomRepository: overrides.roomRepository ?? new RoomRepositoryDatabase(),
     templateRepository: overrides.templateRepository ?? new TemplateRepositoryDatabase(),
     trafficlightRepository: overrides.trafficlightRepository ?? new TrafficlightRepositoryDatabase(),
