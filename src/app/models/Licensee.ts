@@ -108,11 +108,6 @@ const licenseeSchema = new Schema(
         'Identifier (Conta) do Chat: deve ser preenchido quando o plugin de chat for crisp ou chatwoot',
       ],
     },
-    cartDefault: {
-      type: String,
-      enum: ['alloy', 'go2go', 'go2go_v2', ''],
-    },
-    useCartGallabox: { type: Boolean, default: false },
     unidadeId: String,
     statusId: String,
     useWhatsappWindow: { type: Boolean, default: false },
@@ -188,16 +183,7 @@ const licenseeSchema = new Schema(
       type: String,
       enum: ['checking', 'savings', ''],
     },
-    recipient_id: String,
     card_information_url: String,
-    pedidos10_active: { type: Boolean, default: false },
-    pedidos10_integration: {
-      type: Object,
-    },
-    pedidos10_integrator: {
-      type: String,
-      enum: [''],
-    },
     useSenderName: { type: Boolean, default: false },
     useFileIDYcloud: { type: Boolean, default: false },
   },

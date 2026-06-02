@@ -46,20 +46,4 @@ const licenseeIntegrationPagarMe = Factory.define(() => ({
   account_type: 'checking',
 }))
 
-const licenseePedidos10 = Factory.define(() => ({
-  name: 'Estabelecimento Pedidos10',
-  active: true,
-  licenseKind: 'demo',
-  useChatbot: false,
-  chatbotDefault: '',
-  pedidos10_integration: {
-    integration_token: 'integration_token',
-    username: 'username',
-    password: 'password',
-    access_token: '',
-    pedidos10_id: '358b9068-34cf-4f96-b883-0d8192bc12dd',
-  },
-  pedidos10_integrator: '',
-}))
-
-export { licensee, licenseeComplete, licenseeIntegrationPagarMe, licenseePedidos10 }
+export { licensee, licenseeComplete, licenseeIntegrationPagarMe }
