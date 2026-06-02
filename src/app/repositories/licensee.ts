@@ -35,7 +35,7 @@ class LicenseeRepositoryMemory extends RepositoryMemory {
 
   normalizeLicenseeFields(fields: Record<string, any> = {}) {
     const normalizedFields: Record<string, any> = { ...(fields ?? {}) }
-    const stringFields = ['apiToken', 'recipient_id']
+    const stringFields = ['apiToken']
 
     stringFields.forEach((field) => {
       if (normalizedFields[field] != null) {

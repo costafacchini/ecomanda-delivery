@@ -9,7 +9,6 @@ class LicenseesQuery {
   whatsappClause: any
   expressionClause: any
   expressionActive: any
-  expressionPedidos10Active: any
 
   constructor({ licenseeRepository }: { licenseeRepository?: any } = {}) {
     this.licenseeRepository = licenseeRepository
@@ -43,14 +42,6 @@ class LicenseesQuery {
     this.expressionActive = true
   }
 
-  filterByPedidos10Active(value: any) {
-    if (value === true || value === 'true') {
-      this.expressionPedidos10Active = undefined
-    } else {
-      this.expressionPedidos10Active = value || 'false'
-    }
-  }
-
   async all() {
     const query = new QueryBuilder(this.licenseeRepository.model())
     query.sortBy('createdAt', 1)
@@ -64,8 +55,6 @@ class LicenseesQuery {
     if (this.whatsappClause) query.filterBy('whatsappDefault', this.whatsappClause)
 
     if (this.expressionActive) query.filterBy('active', this.expressionActive)
-
-    if (this.expressionPedidos10Active) query.filterBy('pedidos10_active', this.expressionPedidos10Active)
 
     if (this.expressionClause) query.filterByExpression(['name', 'email', 'phone'], this.expressionClause)
 

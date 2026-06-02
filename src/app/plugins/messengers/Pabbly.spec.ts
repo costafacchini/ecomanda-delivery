@@ -292,7 +292,6 @@ describe('Pabbly Plugin', () => {
         'unsupported',
         'system',
         'button',
-        'order',
         'interactive',
       ]
 

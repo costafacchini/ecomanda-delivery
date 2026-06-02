@@ -17,23 +17,9 @@ const UPDATE_LICENSEE_FIELDS = [
   'chatUrl',
   'chatIdentifier',
   'chatKey',
-  'cartDefault',
   'unidadeId',
   'statusId',
   'messageOnCloseChat',
-  'useCartGallabox',
-  'productFractional2Name',
-  'productFractional2Id',
-  'productFractional3Name',
-  'productFractional3Id',
-  'productFractionalSize3Name',
-  'productFractionalSize3Id',
-  'productFractionalSize4Name',
-  'productFractionalSize4Id',
-  'productFractionals',
-  'pedidos10_active',
-  'pedidos10_integration',
-  'pedidos10_integrator',
   'document',
   'kind',
   'financial_player_fee',
@@ -49,8 +35,6 @@ const UPDATE_LICENSEE_FIELDS = [
   'useSenderName',
   'useFileIDYcloud',
 ]
-
-const DEFAULT_PEDIDOS10_INTEGRATION = '{}'
 
 function pickFields(fields: Record<string, any> = {}, keys: any[] = []) {
   return keys.reduce((payload: Record<string, any>, key: any) => {
@@ -71,17 +55,11 @@ class UpdateLicensee {
 
   async execute(id: any, fields = {}) {
     const payload = pickFields(fields, UPDATE_LICENSEE_FIELDS)
-    payload.pedidos10_integration = JSON.parse(payload.pedidos10_integration || DEFAULT_PEDIDOS10_INTEGRATION)
 
     await this.licenseeRepository.update(id, payload)
 
-    const licensee = await this.licenseeRepository.findFirst({ _id: id })
-
-    return {
-      ...licensee,
-      pedidos10_integration: JSON.stringify(licensee.pedidos10_integration),
-    }
+    return await this.licenseeRepository.findFirst({ _id: id })
   }
 }
 
-export { UpdateLicensee, DEFAULT_PEDIDOS10_INTEGRATION, UPDATE_LICENSEE_FIELDS }
+export { UpdateLicensee, UPDATE_LICENSEE_FIELDS }

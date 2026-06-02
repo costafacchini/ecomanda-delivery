@@ -8,7 +8,7 @@
 
 ## Objective
 
-Delete the five PDV-specific test factory files: `src/app/factories/cart.js`, `src/app/factories/order.js`, `src/app/factories/product.js`, `src/app/factories/integrationlog.js`, `src/app/factories/backgroundjob.js`. These factories backed models that have already been deleted.
+Delete the five PDV-specific test factory files: `src/app/factories/cart.ts`, `src/app/factories/order.ts`, `src/app/factories/product.ts`, `src/app/factories/integrationlog.ts`, `src/app/factories/backgroundjob.ts`. These factories backed models that have already been deleted.
 
 ## Context
 
@@ -28,11 +28,11 @@ Test factories are only used within test files. With the PDV models and their sp
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/factories/cart.js` | delete | PDV factory — model deleted |
-| `src/app/factories/order.js` | delete | PDV factory — model deleted |
-| `src/app/factories/product.js` | delete | PDV factory — model deleted |
-| `src/app/factories/integrationlog.js` | delete | PDV factory — model deleted |
-| `src/app/factories/backgroundjob.js` | delete | PDV factory — model deleted |
+| `src/app/factories/cart.ts` | delete | PDV factory — model deleted |
+| `src/app/factories/order.ts` | delete | PDV factory — model deleted |
+| `src/app/factories/product.ts` | delete | PDV factory — model deleted |
+| `src/app/factories/integrationlog.ts` | delete | PDV factory — model deleted |
+| `src/app/factories/backgroundjob.ts` | delete | PDV factory — model deleted |
 
 ## Implementation Steps
 

@@ -229,14 +229,6 @@ class YCloud extends MessengersBase {
         this.messageData.text = { body: message.button?.text || '' }
         break
 
-      case 'order':
-        this.messageData.order = {
-          catalogId: message.order?.catalog_id,
-          text: message.order?.text,
-          productItems: message.order?.product_items || [],
-        }
-        break
-
       case 'image':
         this.messageData.kind = 'file'
         this.messageData.file = {

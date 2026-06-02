@@ -3,12 +3,10 @@ import { logger } from '../helpers/logger'
 class ChatbotsController {
   bodyRepository: any
   queueServer: any
-  publishMessage: any
 
-  constructor({ bodyRepository, queueServer, publishMessage }: Record<string, any> = {}) {
+  constructor({ bodyRepository, queueServer }: Record<string, any> = {}) {
     this.bodyRepository = bodyRepository
     this.queueServer = queueServer
-    this.publishMessage = publishMessage
 
     this.message = this.message.bind(this)
     this.transfer = this.transfer.bind(this)
@@ -33,10 +31,10 @@ class ChatbotsController {
     res.status(200).send({ body: 'Solicitação de transferência do chatbot para a plataforma de chat agendado' })
   }
 
-  reset(_: any, res: any) {
+  async reset(_: any, res: any) {
     logger.info('Agendando para resetar chatbots abandonados')
 
-    this.publishMessage({ key: 'reset-chatbots', body: {} })
+    await this.queueServer.addJob('reset-chatbots', {})
 
     res.status(200).send({ body: 'Solicitação para resetar os chatbots abandonados agendado' })
   }

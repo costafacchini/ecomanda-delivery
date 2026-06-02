@@ -1,25 +1,4 @@
-# Status: Remove PDV job registrations from jobs/index.js
+# Status: task-13-remove-pdv-job-registrations
 
-**Current Status**: not-started
-**Last Updated**: 2026-04-28
-**Agent**: —
-**Branch**: —
-**PR**: —
-
-## Status History
-
-| Timestamp | Status | Agent | Notes |
-|-----------|--------|-------|-------|
-| 2026-04-28 | not-started | — | Task created |
-
-## Blockers
-
-None
-
-## Artifacts
-
-None
-
-## Adaptations
-
-None
+**Status**: complete
+**Last Updated**: 2026-06-02

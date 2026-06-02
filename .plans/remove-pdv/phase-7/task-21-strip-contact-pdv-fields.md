@@ -8,7 +8,7 @@
 
 ## Objective
 
-Remove delivery/address PDV fields from the `Contact` Mongoose schema: `address`, `address_number`, `address_complement`, `neighborhood`, `cep`, `delivery_tax`, `plugin_cart_id`, `address_id`. Update `Contact.spec.js` and `factories/contact.js`.
+Remove delivery/address PDV fields from the `Contact` Mongoose schema: `address`, `address_number`, `address_complement`, `neighborhood`, `cep`, `delivery_tax`, `plugin_cart_id`, `address_id`. Update `Contact.spec.ts` and `factories/contact.ts`.
 
 ## Context
 
@@ -28,9 +28,9 @@ Remove delivery/address PDV fields from the `Contact` Mongoose schema: `address`
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/models/Contact.js` | modify | Remove 8 PDV fields from schema |
-| `src/app/models/Contact.spec.js` | modify | Remove test cases for deleted fields |
-| `src/app/factories/contact.js` | modify | Remove PDV field defaults |
+| `src/app/models/Contact.ts` | modify | Remove 8 PDV fields from schema |
+| `src/app/models/Contact.spec.ts` | modify | Remove test cases for deleted fields |
+| `src/app/factories/contact.ts` | modify | Remove PDV field defaults |
 
 ## Implementation Steps
 
@@ -39,13 +39,13 @@ If any usage is found outside of now-deleted PDV code, do not proceed — flag f
 
 ### Step 2: Remove the 8 PDV fields from the Contact schema
 
-### Step 3: Update Contact.spec.js and factories/contact.js
+### Step 3: Update Contact.spec.ts and factories/contact.ts
 
 ### Step 4: Run tests
 
 ## Testing
 
-- [ ] `npx jest src/app/models/Contact.spec.js` passes
+- [ ] `npx jest src/app/models/Contact.spec.ts` passes
 - [ ] `npx jest` full suite passes
 - [ ] `pre-commit-check` passes
 

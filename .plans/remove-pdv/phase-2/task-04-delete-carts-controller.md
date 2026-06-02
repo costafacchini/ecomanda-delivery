@@ -8,7 +8,7 @@
 
 ## Objective
 
-Delete `src/app/controllers/CartsController.js` and `CartsController.spec.js` from the codebase.
+Delete `src/app/controllers/CartsController.ts` and `CartsController.spec.ts` from the codebase.
 
 ## Context
 
@@ -25,8 +25,8 @@ The routes for CartsController were removed in task-01. The file is now dead cod
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/controllers/CartsController.js` | delete | |
-| `src/app/controllers/CartsController.spec.js` | delete | |
+| `src/app/controllers/CartsController.ts` | delete | |
+| `src/app/controllers/CartsController.spec.ts` | delete | |
 
 ## Implementation Steps
 
@@ -44,7 +44,7 @@ The routes for CartsController were removed in task-01. The file is now dead cod
 
 ## Completion Criteria
 
-- [ ] `CartsController.js` and `CartsController.spec.js` deleted
+- [ ] `CartsController.ts` and `CartsController.spec.ts` deleted
 - [ ] No remaining imports in codebase
 - [ ] All tests pass
 - [ ] Changes committed to `plan/remove-pdv/phase-2/task-04-delete-carts-controller` branch

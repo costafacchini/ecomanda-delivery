@@ -20,18 +20,16 @@ function buildResponse() {
 
 function buildController() {
   const bodyRepository = new BodyRepositoryMemory()
-  const queueServer = { addJob: jest.fn() }
-  const publishMessage = jest.fn()
+  const queueServer = { addJob: jest.fn().mockResolvedValue(undefined) }
 
-  const controller = new ChatbotsController({ bodyRepository, queueServer, publishMessage })
+  const controller = new ChatbotsController({ bodyRepository, queueServer })
 
-  return { controller, bodyRepository, queueServer, publishMessage }
+  return { controller, bodyRepository, queueServer }
 }
 
 describe('ChatbotsController delegation', () => {
   it('creates body, enqueues chatbot-message job and returns status 200 on message', async () => {
     const { controller, bodyRepository, queueServer } = buildController()
-    queueServer.addJob.mockResolvedValue()
 
     const req = { body: { field: 'test' }, licensee: { _id: 'licensee-id' } }
     const res = buildResponse()
@@ -51,7 +49,6 @@ describe('ChatbotsController delegation', () => {
 
   it('creates body, enqueues chatbot-transfer-to-chat job and returns status 200 on transfer', async () => {
     const { controller, bodyRepository, queueServer } = buildController()
-    queueServer.addJob.mockResolvedValue()
 
     const req = { body: { field: 'alter' }, licensee: { _id: 'licensee-id' } }
     const res = buildResponse()
@@ -71,14 +68,14 @@ describe('ChatbotsController delegation', () => {
     })
   })
 
-  it('publishes reset-chatbots and returns status 200 on reset', () => {
-    const { controller, publishMessage } = buildController()
+  it('enqueues reset-chatbots job and returns status 200 on reset', async () => {
+    const { controller, queueServer } = buildController()
     const req = {}
     const res = buildResponse()
 
-    controller.reset(req, res)
+    await controller.reset(req, res)
 
-    expect(publishMessage).toHaveBeenCalledWith({ key: 'reset-chatbots', body: {} })
+    expect(queueServer.addJob).toHaveBeenCalledWith('reset-chatbots', {})
     expect(res.status).toHaveBeenCalledWith(200)
     expect(res.send).toHaveBeenCalledWith({ body: 'Solicitação para resetar os chatbots abandonados agendado' })
   })

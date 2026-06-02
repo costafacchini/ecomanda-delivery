@@ -14,7 +14,6 @@ const uploadFile = (licensee: any, contact: any, fileName: any, fileBase64: any)
 class MessengersBase {
   licensee: any
   _contactRepository: any
-  _cartRepository: any
   _messageRepository: any
   _triggerRepository: any
   _productRepository: any
@@ -25,17 +24,10 @@ class MessengersBase {
 
   constructor(
     licensee: any,
-    {
-      contactRepository,
-      cartRepository,
-      messageRepository,
-      triggerRepository,
-      productRepository,
-    }: Record<string, any> = {},
+    { contactRepository, messageRepository, triggerRepository, productRepository }: Record<string, any> = {},
   ) {
     this.licensee = licensee
     this._contactRepository = contactRepository
-    this._cartRepository = cartRepository
     this._messageRepository = messageRepository
     this._triggerRepository = triggerRepository
     this._productRepository = productRepository
@@ -43,14 +35,6 @@ class MessengersBase {
 
   get contactRepository() {
     const repository = requireDependency(this._contactRepository, 'contactRepository', this.constructor.name)
-    if (typeof repository.save !== 'function') {
-      repository.save = Repository.prototype.save.bind(repository)
-    }
-    return repository
-  }
-
-  get cartRepository() {
-    const repository = requireDependency(this._cartRepository, 'cartRepository', this.constructor.name)
     if (typeof repository.save !== 'function') {
       repository.save = Repository.prototype.save.bind(repository)
     }
@@ -203,42 +187,6 @@ class MessengersBase {
 
       if (messageToSend.kind === 'text') {
         messageToSend.text = this.messageData.text.body
-      } else if (messageToSend.kind === 'order') {
-        messageToSend.kind = 'cart'
-        messageToSend.destination = 'to-chatbot'
-
-        let cart = await this.cartRepository.findFirst({ contact, concluded: false })
-        if (!cart) {
-          cart = {
-            licensee: this.licensee._id,
-            contact: contact._id,
-          }
-
-          cart = await this.cartRepository.create(cart)
-        }
-
-        const products = []
-        for (const item of this.messageData.order.productItems) {
-          const product = await this.productRepository.findFirst({
-            product_retailer_id: item.product_retailer_id,
-            licensee: this.licensee._id,
-          })
-
-          products.push({
-            unit_price: item.item_price,
-            name: product?.name,
-            product_retailer_id: item.product_retailer_id,
-            quantity: item.quantity,
-            product,
-          })
-        }
-
-        cart.delivery_tax = 0
-        cart.catalog = this.messageData.order.catalogId
-        cart.note = this.messageData.order.text
-        cart.products = products
-
-        messageToSend.cart = await this.cartRepository.save(cart)
       } else if (messageToSend.kind === 'location') {
         messageToSend.latitude = this.messageData.latitude
         messageToSend.longitude = this.messageData.longitude

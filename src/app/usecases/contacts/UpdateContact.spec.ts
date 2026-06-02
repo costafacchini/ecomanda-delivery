@@ -1,14 +1,11 @@
 import { contact as contactFactory } from '@factories/contact'
 import { ContactRepositoryMemory } from '@repositories/contact'
-import { UpdateContact, SEND_CONTACT_TO_PAGARME_JOB } from './UpdateContact'
+import { UpdateContact } from './UpdateContact'
 
 describe('UpdateContact', () => {
-  it('updates a contact without changing licensee and enqueues the pagarme sync job', async () => {
+  it('updates a contact without changing licensee', async () => {
     const contactRepository = new ContactRepositoryMemory()
-    const jobQueue = {
-      addJob: jest.fn().mockResolvedValue(undefined),
-    }
-    const updateContact = new UpdateContact({ contactRepository, jobQueue })
+    const updateContact = new UpdateContact({ contactRepository })
     const contact = await contactRepository.create(
       contactFactory.build({
         name: 'John Doe',
@@ -29,7 +26,6 @@ describe('UpdateContact', () => {
       licensee: 'new-licensee-id',
       waId: '54321',
       landbotId: '9876',
-      plugin_cart_id: 456,
     })
 
     expect(updatedContact).toEqual(
@@ -42,12 +38,8 @@ describe('UpdateContact', () => {
         licensee: 'original-licensee-id',
         waId: '54321',
         landbotId: '9876',
-        plugin_cart_id: 456,
       }),
     )
-    expect(jobQueue.addJob).toHaveBeenCalledWith(SEND_CONTACT_TO_PAGARME_JOB, {
-      contactId: contact._id.toString(),
-    })
 
     const storedContact = await contactRepository.findFirst({ _id: contact._id })
     expect(storedContact.licensee).toEqual('original-licensee-id')

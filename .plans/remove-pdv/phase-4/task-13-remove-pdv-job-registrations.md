@@ -1,4 +1,4 @@
-# Task: Remove PDV job registrations from jobs/index.js
+# Task: Remove PDV job registrations from jobs/index.ts
 
 **Plan**: Remove PDV Domain
 **Phase**: 4
@@ -8,7 +8,7 @@
 
 ## Objective
 
-Remove all PDV job registrations and imports from `src/app/jobs/index.js` (or equivalent job registration file).
+Remove all PDV job registrations and imports from `src/app/jobs/index.ts` (or equivalent job registration file).
 
 ## Context
 
@@ -25,11 +25,11 @@ After deleting the 12 job files in task-12, the job registration file still refe
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/jobs/index.js` | modify | Remove PDV job imports and registrations |
+| `src/app/jobs/index.ts` | modify | Remove PDV job imports and registrations |
 
 ## Implementation Steps
 
-### Step 1: Read jobs/index.js
+### Step 1: Read jobs/index.ts
 Identify all imports and registrations for the 12 deleted job files.
 
 ### Step 2: Remove each deleted job's import and registration line
@@ -43,6 +43,6 @@ Identify all imports and registrations for the 12 deleted job files.
 
 ## Completion Criteria
 
-- [ ] `jobs/index.js` has no references to the 12 deleted PDV jobs
+- [ ] `jobs/index.ts` has no references to the 12 deleted PDV jobs
 - [ ] Changes committed to `plan/remove-pdv/phase-4/task-13-remove-pdv-job-registrations` branch
 - [ ] Status updated in `status.md`

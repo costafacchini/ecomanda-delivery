@@ -8,12 +8,12 @@
 
 ## Objective
 
-Delete `services/ProcessPagarmeOrderPaid.js` and `services/SendContactToPagarMe.js` plus their specs.
+Delete `services/ProcessPagarmeOrderPaid.ts` and `services/SendContactToPagarMe.ts` plus their specs.
 
 ## Context
 
-- `ProcessPagarmeOrderPaid.js` — handles PagarMe paid webhook event
-- `SendContactToPagarMe.js` — registers a contact as a PagarMe customer
+- `ProcessPagarmeOrderPaid.ts` — handles PagarMe paid webhook event
+- `SendContactToPagarMe.ts` — registers a contact as a PagarMe customer
 
 Both were consumed by jobs that are being deleted in Phase 4. Note: `ContactsController.create` and `.update` call `SendContactToPagarMe` indirectly via a job queue — confirm the job enqueue calls are also removed in Phase 4.
 
@@ -28,8 +28,8 @@ Both were consumed by jobs that are being deleted in Phase 4. Note: `ContactsCon
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/services/ProcessPagarmeOrderPaid.js` | delete | + spec |
-| `src/app/services/SendContactToPagarMe.js` | delete | + spec |
+| `src/app/services/ProcessPagarmeOrderPaid.ts` | delete | + spec |
+| `src/app/services/SendContactToPagarMe.ts` | delete | + spec |
 
 ## Implementation Steps
 

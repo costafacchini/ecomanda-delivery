@@ -15,16 +15,12 @@ services:
     volumes:
       - smoke_redis_data:/var/lib/redis/data
 
-  rabbitmq:
-    restart: always
-    image: rabbitmq:3-management
-
   app:
     build:
       context: .
       dockerfile: Dockerfile.smoke
     working_dir: /app
-    command: node server.js
+    command: node dist/server.js
     environment:
       NODE_ENV: development
       PORT: 5000
@@ -37,7 +33,6 @@ services:
       DONT_SEND_MESSAGE_TO_MESSENGER: ${DONT_SEND_MESSAGE_TO_MESSENGER:-false}
       MONGODB_URI: ${MONGODB_URI}
       REDIS_URL: ${REDIS_URL}
-      CLOUDAMQP_URL: ${CLOUDAMQP_URL}
       API_PROXY_TARGET: ${API_PROXY_TARGET}
       SMOKE_LICENSEE_NAME: ${SMOKE_LICENSEE_NAME}
       SMOKE_LICENSEE_API_TOKEN: ${SMOKE_LICENSEE_API_TOKEN}
@@ -54,7 +49,6 @@ services:
     depends_on:
       - mongo
       - redis
-      - rabbitmq
       - smoke-mocks
     ports:
       - '${PORT:-5001}:5000'
@@ -64,7 +58,7 @@ services:
       context: .
       dockerfile: Dockerfile.smoke
     working_dir: /app
-    command: node worker.js
+    command: node dist/worker.js
     environment:
       NODE_ENV: development
       DEFAULT_USER: ${DEFAULT_USER}
@@ -76,7 +70,6 @@ services:
       DONT_SEND_MESSAGE_TO_MESSENGER: ${DONT_SEND_MESSAGE_TO_MESSENGER:-false}
       MONGODB_URI: ${MONGODB_URI}
       REDIS_URL: ${REDIS_URL}
-      CLOUDAMQP_URL: ${CLOUDAMQP_URL}
       SMOKE_LICENSEE_NAME: ${SMOKE_LICENSEE_NAME}
       SMOKE_LICENSEE_API_TOKEN: ${SMOKE_LICENSEE_API_TOKEN}
       SMOKE_CHAT_PROVIDER: ${SMOKE_CHAT_PROVIDER}
@@ -92,7 +85,6 @@ services:
     depends_on:
       - mongo
       - redis
-      - rabbitmq
       - smoke-mocks
 
   smoke-mocks:

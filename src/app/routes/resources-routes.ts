@@ -17,12 +17,9 @@ import { MessagesQuery } from '../queries/MessagesQuery'
 import { CreateLicensee } from '../usecases/licensees/CreateLicensee'
 import { UpdateLicensee } from '../usecases/licensees/UpdateLicensee'
 import { SetDialogWebhook } from '../usecases/licensees/SetDialogWebhook'
-import { SendLicenseeToPagarMe } from '../usecases/licensees/SendLicenseeToPagarMe'
-import { SignPedidos10OrderWebhook } from '../usecases/licensees/SignPedidos10OrderWebhook'
 import { CreateContact } from '../usecases/contacts/CreateContact'
 import { UpdateContact } from '../usecases/contacts/UpdateContact'
 import { CreateTrigger } from '../usecases/triggers/CreateTrigger'
-import { ImportFacebookCatalog } from '../usecases/triggers/ImportFacebookCatalog'
 import { UpdateTrigger } from '../usecases/triggers/UpdateTrigger'
 import { CreateUser } from '../usecases/users/CreateUser'
 import { UpdateUser } from '../usecases/users/UpdateUser'
@@ -44,9 +41,6 @@ const {
   roomRepository,
   whatsappSessionRepository,
   createMessengerPlugin,
-  createPagarMe,
-  createPedidos10,
-  createFacebookCatalogImporter,
   createTemplatesImporter,
 } = createRuntimeDependencies()
 
@@ -61,12 +55,6 @@ const licenseesController = new LicenseesController({
   createLicensee: new CreateLicensee({ licenseeRepository }),
   updateLicensee: new UpdateLicensee({ licenseeRepository }),
   setDialogWebhook: new SetDialogWebhook({ licenseeRepository, createMessengerPlugin }),
-  sendLicenseeToPagarMe: new SendLicenseeToPagarMe({
-    licenseeRepository,
-    createPagarMe,
-    pagarMeToken: process.env.PAGARME_TOKEN,
-  }),
-  signPedidos10OrderWebhook: new SignPedidos10OrderWebhook({ licenseeRepository, createPedidos10 }),
   createMessengerPlugin,
   whatsappSessionRepository,
   contactRepository,
@@ -74,15 +62,14 @@ const licenseesController = new LicenseesController({
 const contactsController = new ContactsController({
   contactRepository,
   createContactsQuery: () => new ContactsQuery({ contactRepository }),
-  createContact: new CreateContact({ contactRepository, jobQueue: queueServer }),
-  updateContact: new UpdateContact({ contactRepository, jobQueue: queueServer }),
+  createContact: new CreateContact({ contactRepository }),
+  updateContact: new UpdateContact({ contactRepository }),
 })
 const triggersController = new TriggersController({
   triggerRepository,
   createTriggersQuery: () => new TriggersQuery({ triggerRepository }),
   createTrigger: new CreateTrigger({ triggerRepository }),
   updateTrigger: new UpdateTrigger({ triggerRepository }),
-  importFacebookCatalog: new ImportFacebookCatalog({ createFacebookCatalogImporter }),
 })
 const messagesController = new MessagesController({
   createMessagesQuery: () => new MessagesQuery({ messageRepository }),
@@ -150,7 +137,6 @@ router.post('/triggers', triggersController.create)
 router.post('/triggers/:id', triggersController.update)
 router.get('/triggers/:id', triggersController.show)
 router.get('/triggers', triggersController.index)
-router.post('/triggers/:id/importation', triggersController.importation)
 
 router.post('/templates', templatesController.create)
 router.post('/templates/:id', templatesController.update)
@@ -162,8 +148,6 @@ router.post('/licensees/:id/dialogwebhook', licenseesController.setDialogWebhook
 router.get('/licensees/:id/baileys-status', licenseesController.getBaileysStatus)
 router.post('/licensees/:id/baileys-qr', (req, res) => licenseesController.getBaileysQr(req, res))
 router.post('/licensees/:id/baileys-sync', licenseesController.baileysSync)
-router.post('/licensees/:id/sign-order-webhook', licenseesController.signOrderWebhook)
-router.post('/licensees/:id/integration/pagarme', licenseesController.sendToPagarMe)
 
 router.get('/messages', messagesController.index)
 router.post('/messages', messagesController.create)

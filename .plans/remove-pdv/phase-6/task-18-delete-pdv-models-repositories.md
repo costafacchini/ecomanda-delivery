@@ -14,7 +14,7 @@ Delete the 5 PDV Mongoose model files and their corresponding repositories, plus
 
 > WARNING: Confirm that MongoDB collections (carts, orders, products, integrationlogs, backgroundjobs) contain no active production data before proceeding. Provide an archive script if data exists.
 
-Models to delete: `Cart.js`, `Order.js`, `Product.js`, `Integrationlog.js`, `Backgroundjob.js`.
+Models to delete: `Cart.ts`, `Order.ts`, `Product.ts`, `Integrationlog.ts`, `Backgroundjob.ts`.
 Repositories to delete: `cart.js`, `order.js`, `product.js`, and `integrationlog.js`/`backgroundjob.js` if they were created by the decouple-mongo plan.
 
 ## Before You Start
@@ -28,16 +28,16 @@ Repositories to delete: `cart.js`, `order.js`, `product.js`, and `integrationlog
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/models/Cart.js` | delete | + spec |
-| `src/app/models/Order.js` | delete | + spec |
-| `src/app/models/Product.js` | delete | + spec |
-| `src/app/models/Integrationlog.js` | delete | + spec |
-| `src/app/models/Backgroundjob.js` | delete | + spec |
-| `src/app/repositories/cart.js` | delete | + spec if exists |
-| `src/app/repositories/order.js` | delete | + spec if exists |
-| `src/app/repositories/product.js` | delete | + spec if exists |
-| `src/app/repositories/integrationlog.js` | delete | if exists |
-| `src/app/repositories/backgroundjob.js` | delete | if exists |
+| `src/app/models/Cart.ts` | delete | + spec |
+| `src/app/models/Order.ts` | delete | + spec |
+| `src/app/models/Product.ts` | delete | + spec |
+| `src/app/models/Integrationlog.ts` | delete | + spec |
+| `src/app/models/Backgroundjob.ts` | delete | + spec |
+| `src/app/repositories/cart.ts` | delete | + spec if exists |
+| `src/app/repositories/order.ts` | delete | + spec if exists |
+| `src/app/repositories/product.ts` | delete | + spec if exists |
+| `src/app/repositories/integrationlog.ts` | delete | if exists |
+| `src/app/repositories/backgroundjob.ts` | delete | if exists |
 
 ## Implementation Steps
 

@@ -7,4 +7,6 @@ RUN yarn install --frozen-lockfile
 
 COPY . .
 
+RUN npx tsc && echo '{"type":"commonjs"}' > dist/package.json
+
 EXPOSE 5000 3101 3102 3103

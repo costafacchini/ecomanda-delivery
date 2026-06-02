@@ -8,7 +8,7 @@
 
 ## Objective
 
-Delete `src/app/controllers/OrdersController.js` and `OrdersController.spec.js`.
+Delete `src/app/controllers/OrdersController.ts` and `OrdersController.spec.ts`.
 
 ## Context
 
@@ -25,8 +25,8 @@ The `/v1/orders/*` routes were removed in task-01. `OrdersController` handled Pe
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/controllers/OrdersController.js` | delete | |
-| `src/app/controllers/OrdersController.spec.js` | delete | |
+| `src/app/controllers/OrdersController.ts` | delete | |
+| `src/app/controllers/OrdersController.spec.ts` | delete | |
 
 ## Implementation Steps
 
@@ -43,7 +43,7 @@ The `/v1/orders/*` routes were removed in task-01. `OrdersController` handled Pe
 
 ## Completion Criteria
 
-- [ ] `OrdersController.js` and spec deleted
+- [ ] `OrdersController.ts` and spec deleted
 - [ ] No remaining imports
 - [ ] Changes committed to `plan/remove-pdv/phase-2/task-05-delete-orders-controller` branch
 - [ ] Status updated in `status.md`

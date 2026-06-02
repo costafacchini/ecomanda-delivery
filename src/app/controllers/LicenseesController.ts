@@ -10,8 +10,6 @@ class LicenseesController {
   createLicensee: any
   updateLicensee: any
   setDialogWebhookUseCase: any
-  sendLicenseeToPagarMe: any
-  signPedidos10OrderWebhook: any
   getBaileysQrUseCase: any
   getBaileysStatusUseCase: any
   syncBaileysDirectoryUseCase: any
@@ -22,8 +20,6 @@ class LicenseesController {
     createLicensee,
     updateLicensee,
     setDialogWebhook,
-    sendLicenseeToPagarMe,
-    signPedidos10OrderWebhook,
     createMessengerPlugin,
     whatsappSessionRepository,
     contactRepository,
@@ -33,8 +29,6 @@ class LicenseesController {
     this.createLicensee = createLicensee
     this.updateLicensee = updateLicensee
     this.setDialogWebhookUseCase = setDialogWebhook
-    this.sendLicenseeToPagarMe = sendLicenseeToPagarMe
-    this.signPedidos10OrderWebhook = signPedidos10OrderWebhook
     this.getBaileysQrUseCase = new GetBaileysQr({ licenseeRepository, createMessengerPlugin })
     this.getBaileysStatusUseCase = new GetBaileysStatus({ licenseeRepository, whatsappSessionRepository })
     this.syncBaileysDirectoryUseCase = new SyncBaileysDirectory({
@@ -48,8 +42,6 @@ class LicenseesController {
     this.show = this.show.bind(this)
     this.index = this.index.bind(this)
     this.setDialogWebhook = this.setDialogWebhook.bind(this)
-    this.sendToPagarMe = this.sendToPagarMe.bind(this)
-    this.signOrderWebhook = this.signOrderWebhook.bind(this)
     this.getBaileysQr = this.getBaileysQr.bind(this)
     this.getBaileysStatus = this.getBaileysStatus.bind(this)
     this.baileysSync = this.baileysSync.bind(this)
@@ -105,7 +97,6 @@ class LicenseesController {
   async show(req: any, res: any) {
     try {
       const licensee = await this.licenseeRepository.findFirst({ _id: req.params.id })
-      licensee.pedidos10_integration = JSON.stringify(licensee.pedidos10_integration)
 
       res.status(200).send(licensee)
     } catch (err: any) {
@@ -147,10 +138,6 @@ class LicenseesController {
         licenseesQuery.filterByActive()
       }
 
-      if (req.query.pedidos10_active) {
-        licenseesQuery.filterByPedidos10Active(req.query.pedidos10_active)
-      }
-
       const licensees = await licenseesQuery.all()
 
       res.status(200).send(licensees)
@@ -162,26 +149,6 @@ class LicenseesController {
   async setDialogWebhook(req: any, res: any) {
     try {
       const response = await this.setDialogWebhookUseCase.execute(req.params.id)
-
-      return res.status(200).send(response)
-    } catch (err: any) {
-      return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
-    }
-  }
-
-  async sendToPagarMe(req: any, res: any) {
-    try {
-      const response = await this.sendLicenseeToPagarMe.execute(req.params.id)
-
-      return res.status(200).send(response)
-    } catch (err: any) {
-      return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
-    }
-  }
-
-  async signOrderWebhook(req: any, res: any) {
-    try {
-      const response = await this.signPedidos10OrderWebhook.execute(req.params.id)
 
       return res.status(200).send(response)
     } catch (err: any) {

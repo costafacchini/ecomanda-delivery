@@ -8,7 +8,7 @@
 
 ## Objective
 
-Remove PDV-specific fields from the `Licensee` Mongoose schema: `cartDefault`, `useCartGallabox`, `recipient_id`, `pedidos10_active`, `pedidos10_integration`, `pedidos10_integrator`. Update `Licensee.spec.js` and `factories/licensee.js`.
+Remove PDV-specific fields from the `Licensee` Mongoose schema: `cartDefault`, `useCartGallabox`, `recipient_id`, `pedidos10_active`, `pedidos10_integration`, `pedidos10_integrator`. Update `Licensee.spec.ts` and `factories/licensee.ts`.
 
 ## Context
 
@@ -26,29 +26,29 @@ Remove PDV-specific fields from the `Licensee` Mongoose schema: `cartDefault`, `
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/models/Licensee.js` | modify | Remove 6 PDV fields from schema |
-| `src/app/models/Licensee.spec.js` | modify | Remove test cases for deleted fields |
-| `src/app/factories/licensee.js` | modify | Remove PDV field defaults from factory |
+| `src/app/models/Licensee.ts` | modify | Remove 6 PDV fields from schema |
+| `src/app/models/Licensee.spec.ts` | modify | Remove test cases for deleted fields |
+| `src/app/factories/licensee.ts` | modify | Remove PDV field defaults from factory |
 
 ## Implementation Steps
 
-### Step 1: Read Licensee.js schema
+### Step 1: Read Licensee.ts schema
 Identify each PDV field definition.
 
 ### Step 2: Remove the 6 PDV fields from the schema object
 Fields: `cartDefault`, `useCartGallabox`, `recipient_id`, `pedidos10_active`, `pedidos10_integration`, `pedidos10_integrator`.
 
-### Step 3: Update Licensee.spec.js
+### Step 3: Update Licensee.spec.ts
 Remove test cases that reference any of the deleted fields.
 
-### Step 4: Update factories/licensee.js
+### Step 4: Update factories/licensee.ts
 Remove the PDV field defaults.
 
 ### Step 5: Run tests
 
 ## Testing
 
-- [ ] `npx jest src/app/models/Licensee.spec.js` passes
+- [ ] `npx jest src/app/models/Licensee.spec.ts` passes
 - [ ] `npx jest` full suite passes
 - [ ] `pre-commit-check` passes
 

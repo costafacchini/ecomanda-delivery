@@ -30,19 +30,11 @@ export enum ChatDefault {
   None = '',
 }
 
-export enum CartDefault {
-  Alloy = 'alloy',
-  Go2go = 'go2go',
-  Go2goV2 = 'go2go_v2',
-  None = '',
-}
-
 export enum MessageKind {
   Text = 'text',
   File = 'file',
   Location = 'location',
   Interactive = 'interactive',
-  Cart = 'cart',
   Template = 'template',
 }
 
@@ -85,8 +77,6 @@ export interface ILicensee {
   chatUrl?: string
   chatKey?: string
   chatIdentifier?: string
-  cartDefault?: CartDefault
-  useCartGallabox: boolean
   unidadeId?: string
   statusId?: string
   useWhatsappWindow: boolean
@@ -111,7 +101,6 @@ export interface IContact {
   landbotId?: string
   chatwootId?: string
   chatwootSourceId?: string
-  address?: string
   document?: string
   customer_id?: string
   createdAt: Date

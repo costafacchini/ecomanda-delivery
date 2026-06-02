@@ -126,15 +126,7 @@ class ContactRepositoryMemory extends RepositoryMemory {
 
   normalizeContactFields(fields: Record<string, any> = {}) {
     const normalizedFields: Record<string, any> = { ...(fields ?? {}) }
-    const stringFields = [
-      'landbotId',
-      'chatwootId',
-      'chatwootSourceId',
-      'plugin_cart_id',
-      'customer_id',
-      'address_id',
-      'credit_card_id',
-    ]
+    const stringFields = ['landbotId', 'chatwootId', 'chatwootSourceId', 'customer_id', 'credit_card_id']
 
     if (!Array.isArray(normalizedFields.credit_cards)) {
       normalizedFields.credit_cards = []
@@ -150,10 +142,6 @@ class ContactRepositoryMemory extends RepositoryMemory {
       const normalizedPhone = new NormalizePhone(normalizedFields.number)
       normalizedFields.number = normalizedPhone.number
       normalizedFields.type = normalizedPhone.type
-    }
-
-    if (normalizedFields.cep) {
-      normalizedFields.cep = normalizedFields.cep.replace(/[^0-9]/g, '')
     }
 
     return normalizedFields

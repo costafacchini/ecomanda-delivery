@@ -8,7 +8,7 @@
 
 ## Objective
 
-Delete `src/app/queries/BillingQuery.js` and `src/app/queries/IntegrationlogsQuery.js` plus their specs.
+Delete `src/app/queries/BillingQuery.ts` and `src/app/queries/IntegrationlogsQuery.ts` plus their specs.
 
 ## Context
 
@@ -25,8 +25,8 @@ Both query files depend on models deleted in task-18. `BillingQuery` operates on
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/queries/BillingQuery.js` | delete | + spec |
-| `src/app/queries/IntegrationlogsQuery.js` | delete | + spec |
+| `src/app/queries/BillingQuery.ts` | delete | + spec |
+| `src/app/queries/IntegrationlogsQuery.ts` | delete | + spec |
 
 ## Implementation Steps
 
