@@ -1,6 +1,6 @@
 # Status: Delete ProcessWebhookRequest service
 
-**Current Status**: blocked
+**Current Status**: in-progress
 **Last Updated**: 2026-06-02
 **Agent**: claude-sonnet-4-6
 **Branch**: main
@@ -13,6 +13,7 @@
 | 2026-04-28 | not-started | — | Task created |
 | 2026-06-02 | in-progress | claude-sonnet-4-6 | Starting execution |
 | 2026-06-02 | blocked | claude-sonnet-4-6 | Unexpected callers found — see Blockers |
+| 2026-06-02 | in-progress | claude-sonnet-4-6 | Blocker cleared: job consumer deleted in Phase 4 (task-12/13), safe to proceed |
 
 ## Blockers
 
