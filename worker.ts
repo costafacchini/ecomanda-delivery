@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import('./src/app/models/index')
 
-const { appsignal } = require('./appsignal.cjs')
+import { appsignal } from './appsignal.cjs'
 
 import { redisConnection } from './src/config/redis'
 import { queueServer } from './src/config/queue'

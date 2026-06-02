@@ -58,8 +58,6 @@ export default function Navbar({ currentUser }: any) {
                     Relatórios
                   </button>
                   <div className='dropdown-menu' aria-labelledby='reports-menu'>
-                    <a className='dropdown-item' href='/#/reports/billing'>Faturamento</a>
-                    <a className='dropdown-item' href='/#/reports/integrationlog'>Logs de Integração</a>
                     <a className='dropdown-item' href='/#/reports/message'>Mensagens</a>
                   </div>
                 </li>
