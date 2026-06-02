@@ -8,11 +8,8 @@ jest.mock('../../../config/rabbitmq', () => ({ publishMessage: jest.fn() }))
 // Stub all repositories and use-case factories so the module can be imported
 // without a live database connection.
 jest.mock('../../runtime/dependencies', () => {
-  const contactRepository = { findFirst: jest.fn(), find: jest.fn() }
   const deps = {
     bodyRepository: { findFirst: jest.fn(), find: jest.fn(), create: jest.fn(), save: jest.fn() },
-    contactRepository,
-    backgroundjobRepository: { findFirst: jest.fn(), find: jest.fn(), create: jest.fn() },
   }
   return { createRuntimeDependencies: jest.fn(() => deps) }
 })
@@ -23,15 +20,6 @@ jest.mock('../../usecases/webhooks/IngestChatMessage', () => ({
 }))
 jest.mock('../../usecases/webhooks/IngestMessengerMessage', () => ({
   IngestMessengerMessage: jest.fn().mockImplementation(() => ({})),
-}))
-jest.mock('../../usecases/contacts/UpdateContactAddress', () => ({
-  UpdateContactAddress: jest.fn().mockImplementation(() => ({ execute: jest.fn() })),
-}))
-jest.mock('../../usecases/backgroundjobs/ScheduleBackgroundjob', () => ({
-  ScheduleBackgroundjob: jest.fn().mockImplementation(() => ({ execute: jest.fn() })),
-}))
-jest.mock('../../usecases/backgroundjobs/GetBackgroundjobStatus', () => ({
-  GetBackgroundjobStatus: jest.fn().mockImplementation(() => ({ execute: jest.fn() })),
 }))
 jest.mock('../../controllers/DelayController', () => ({
   DelayController: jest.fn().mockImplementation(() => ({
