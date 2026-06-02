@@ -148,16 +148,14 @@ const uploadFile = (licensee: any, contact: any, fileName: any, fileBase64: any)
 class Dialog extends MessengersBase {
   _templateRepository: any
   _parseText: any
-  _createCartPlugin: any
 
   constructor(
     licensee: any,
-    { templateRepository, messageRepository, parseText, createCartPlugin, ...dependencies }: Record<string, any> = {},
+    { templateRepository, messageRepository, parseText, ...dependencies }: Record<string, any> = {},
   ) {
     super(licensee, { messageRepository, ...dependencies })
     this._templateRepository = templateRepository
     this._parseText = parseText
-    this._createCartPlugin = createCartPlugin
   }
 
   get templateRepository() {
@@ -166,10 +164,6 @@ class Dialog extends MessengersBase {
 
   get parseText() {
     return requireDependency(this._parseText, 'parseText', this.constructor.name)
-  }
-
-  get createCartPlugin() {
-    return requireDependency(this._createCartPlugin, 'createCartPlugin', this.constructor.name)
   }
 
   action(messageDestination: any) {
@@ -212,12 +206,6 @@ class Dialog extends MessengersBase {
     } else if (this.messageData.kind === 'button') {
       this.messageData.kind = 'text'
       this.messageData.text = { body: responseBody.messages[0].button.text }
-    } else if (responseBody.messages[0].type === 'order') {
-      this.messageData.order = {
-        catalogId: responseBody.messages[0].order.catalog_id,
-        text: responseBody.messages[0].order.text,
-        productItems: responseBody.messages[0].order.product_items,
-      }
     } else if (responseBody.messages[0].type === 'image') {
       this.messageData.kind = 'file'
       this.messageData.file = {
@@ -398,16 +386,6 @@ class Dialog extends MessengersBase {
       messageBody.location = {
         longitude: messageToSend.longitude,
         latitude: messageToSend.latitude,
-      }
-    }
-
-    if (messageToSend.kind === 'cart') {
-      const cartPlugin = this.createCartPlugin(this.licensee)
-      const cartTransformed = await cartPlugin.transformCart(this.licensee, messageToSend.cart)
-
-      messageBody.type = 'text'
-      messageBody.text = {
-        body: JSON.stringify(cartTransformed),
       }
     }
 

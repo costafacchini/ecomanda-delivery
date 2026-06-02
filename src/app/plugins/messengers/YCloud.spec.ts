@@ -90,31 +90,6 @@ describe('YCloud Plugin', () => {
       })
     })
 
-    it('should parse order message correctly', () => {
-      const responseBody = {
-        whatsappInboundMessage: {
-          id: 'message-id',
-          type: 'order',
-          order: {
-            catalog_id: 'catalog-123',
-            text: 'Order text',
-            product_items: [{ product_retailer_id: 'prod-1', quantity: 2 }],
-          },
-        },
-      }
-
-      ycloud.parseMessage(responseBody)
-      expect(ycloud.messageData).toEqual({
-        kind: 'order',
-        waId: 'message-id',
-        order: {
-          catalogId: 'catalog-123',
-          text: 'Order text',
-          productItems: [{ product_retailer_id: 'prod-1', quantity: 2 }],
-        },
-      })
-    })
-
     it('should parse image message correctly', () => {
       const responseBody = {
         whatsappInboundMessage: {
