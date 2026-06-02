@@ -64,8 +64,8 @@ class UsersController {
   async show(req: any, res: any) {
     try {
       const user = req.params.id.includes('@')
-        ? await this.userRepository.findFirst({ email: req.params.id })
-        : await this.userRepository.findFirst({ _id: req.params.id })
+        ? await this.userRepository.findFirst({ email: req.params.id }, ['licensee'])
+        : await this.userRepository.findFirst({ _id: req.params.id }, ['licensee'])
 
       res.status(200).send(user)
     } catch (err: any) {

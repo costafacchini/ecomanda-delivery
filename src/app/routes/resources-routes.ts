@@ -61,6 +61,7 @@ const licenseesController = new LicenseesController({
 })
 const contactsController = new ContactsController({
   contactRepository,
+  userRepository,
   createContactsQuery: () => new ContactsQuery({ contactRepository }),
   createContact: new CreateContact({ contactRepository }),
   updateContact: new UpdateContact({ contactRepository }),

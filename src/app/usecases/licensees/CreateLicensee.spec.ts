@@ -22,4 +22,16 @@ describe('CreateLicensee', () => {
     )
     expect(licensee.ignoredField).toBeUndefined()
   })
+
+  it('always sets active to true regardless of what is passed', async () => {
+    const licenseeRepository = new LicenseeRepositoryMemory()
+    const createLicensee = new CreateLicensee({ licenseeRepository })
+
+    const licensee = await createLicensee.execute({
+      ...licenseeCompleteFactory.build(),
+      active: false,
+    })
+
+    expect(licensee.active).toBe(true)
+  })
 })

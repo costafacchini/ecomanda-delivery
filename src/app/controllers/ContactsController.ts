@@ -3,12 +3,20 @@ import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeE
 
 class ContactsController {
   contactRepository: any
+  userRepository: any
   createContactsQuery: any
   createContact: any
   updateContact: any
 
-  constructor({ contactRepository, createContactsQuery, createContact, updateContact }: Record<string, any> = {}) {
+  constructor({
+    contactRepository,
+    userRepository,
+    createContactsQuery,
+    createContact,
+    updateContact,
+  }: Record<string, any> = {}) {
     this.contactRepository = contactRepository
+    this.userRepository = userRepository
     this.createContactsQuery = createContactsQuery
     this.createContact = createContact
     this.updateContact = updateContact
@@ -85,16 +93,20 @@ class ContactsController {
       contactsQuery.page(page)
       contactsQuery.limit(limit)
 
+      const user = await this.userRepository.findFirst({ _id: req.userId })
+
+      if (!user?.isSuper) {
+        contactsQuery.filterByLicensee(user?.licensee)
+      } else if (req.query.licensee) {
+        contactsQuery.filterByLicensee(req.query.licensee)
+      }
+
       if (req.query.type) {
         contactsQuery.filterByType(req.query.type)
       }
 
       if (req.query.talkingWithChatbot) {
         contactsQuery.filterByTalkingWithChatbot(req.query.talkingWithChatbot)
-      }
-
-      if (req.query.licensee) {
-        contactsQuery.filterByLicensee(req.query.licensee)
       }
 
       if (req.query.expression) {

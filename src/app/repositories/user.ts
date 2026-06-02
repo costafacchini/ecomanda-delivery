@@ -33,7 +33,10 @@ class UserRepositoryMemory extends RepositoryMemory {
   }
 
   async findFirst(params: any = {}, relations: any[] = []) {
-    const record = await super.findFirst(params, relations)
+    // Call RepositoryMemory.prototype.find directly to avoid the projection
+    // collision in UserRepositoryMemory.find whose second param is `projection`, not `relations`.
+    const records = await RepositoryMemory.prototype.find.call(this, params, relations)
+    const record = (records[0] as any) ?? null
     return record ? this.attachValidPassword(record) : null
   }
 

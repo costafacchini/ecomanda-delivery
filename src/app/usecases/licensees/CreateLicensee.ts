@@ -2,7 +2,6 @@ const CREATE_LICENSEE_FIELDS = [
   'name',
   'email',
   'phone',
-  'active',
   'licenseKind',
   'useChatbot',
   'chatbotDefault',
@@ -54,7 +53,7 @@ class CreateLicensee {
   }
 
   async execute(fields = {}) {
-    const payload = pickFields(fields, CREATE_LICENSEE_FIELDS)
+    const payload = { ...pickFields(fields, CREATE_LICENSEE_FIELDS), active: true }
 
     return await this.licenseeRepository.create(payload)
   }
