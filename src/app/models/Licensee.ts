@@ -111,17 +111,6 @@ const licenseeSchema = new Schema(
     unidadeId: String,
     statusId: String,
     useWhatsappWindow: { type: Boolean, default: false },
-    productFractional2Name: String,
-    productFractional2Id: String,
-    productFractional3Name: String,
-    productFractional3Id: String,
-    productFractionalSize3Name: String,
-    productFractionalSize3Id: String,
-    productFractionalSize4Name: String,
-    productFractionalSize4Id: String,
-    productFractionals: {
-      type: Object,
-    },
     document: String,
     kind: {
       type: String,

@@ -22,9 +22,6 @@ jest.mock('../runtime/dependencies', () => {
     roomRepository: { findFirst: jest.fn(), find: jest.fn() },
     whatsappSessionRepository: { findFirst: jest.fn() },
     createMessengerPlugin: jest.fn(),
-    createPagarMe: jest.fn(),
-    createPedidos10: jest.fn(),
-    createFacebookCatalogImporter: jest.fn(),
     createTemplatesImporter: jest.fn(),
   }
   return {
