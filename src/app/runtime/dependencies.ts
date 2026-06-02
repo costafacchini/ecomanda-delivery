@@ -18,7 +18,6 @@ import { createCartPlugin as createCartPluginFactory } from '../plugins/carts/fa
 import { createChatPlugin as createChatPluginFactory } from '../plugins/chats/factory'
 import { createChatbotPlugin as createChatbotPluginFactory } from '../plugins/chatbots/factory'
 import { createMessengerPlugin as createMessengerPluginFactory } from '../plugins/messengers/factory'
-import { FacebookCatalogImporter } from '../plugins/importers/facebook_catalog/index'
 import { TemplatesImporter } from '../plugins/importers/template/index'
 
 // Builds the full runtime dependency graph from caller-supplied repositories.
@@ -72,8 +71,6 @@ function buildRuntimeDependencies({
       createCartPlugin,
       whatsappSessionRepository,
     })
-  const createFacebookCatalogImporter = (triggerId: any) =>
-    new FacebookCatalogImporter(triggerId, { triggerRepository, productRepository })
   const createTemplatesImporter = (licenseeId: any) =>
     new TemplatesImporter(licenseeId, {
       licenseeRepository,
@@ -103,7 +100,6 @@ function buildRuntimeDependencies({
     createChatPlugin,
     createChatbotPlugin,
     createMessengerPlugin,
-    createFacebookCatalogImporter,
     createTemplatesImporter,
   }
 }
