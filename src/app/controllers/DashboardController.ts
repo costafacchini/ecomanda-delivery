@@ -349,51 +349,33 @@ class DashboardController {
         roomFilter.contact = { $in: contactIds }
       }
 
-      const pipeline: any[] = [
-        { $match: roomFilter },
-        {
-          $lookup: {
-            from: 'messages',
-            let: { roomId: '$_id' },
-            pipeline: [
-              {
-                $match: {
-                  $expr: { $eq: ['$room', '$$roomId'] },
-                  $nor: [{ kind: 'text', text: 'Chat encerrado pelo agente' }],
-                },
-              },
-              { $sort: { createdAt: -1 } },
-              { $limit: 1 },
-              { $project: { text: 1, createdAt: 1 } },
-            ],
-            as: 'lastMessageArr',
-          },
-        },
-        {
-          $lookup: {
-            from: 'contacts',
-            localField: 'contact',
-            foreignField: '_id',
-            as: 'contactData',
-          },
-        },
-        {
-          $addFields: {
-            lastMessage: { $arrayElemAt: ['$lastMessageArr', 0] },
-            contact: { $arrayElemAt: ['$contactData', 0] },
-          },
-        },
+      const roomResults = await this.roomRepository.model()
+        .find(roomFilter)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit + 1)
+        .populate('contact', 'name number')
+        .lean()
+
+      const hasMore = roomResults.length > limit
+      const rooms: any[] = hasMore ? roomResults.slice(0, limit) : roomResults
+
+      const roomIds = rooms.map((r: any) => r._id)
+      const lastMessages = await this.messageRepository.model().aggregate([
+        { $match: { room: { $in: roomIds }, ...EXCLUDE_SYSTEM_CLOSE } },
         { $sort: { createdAt: -1 } },
-        { $skip: (page - 1) * limit },
-        { $limit: limit + 1 },
-        { $project: { lastMessageArr: 0, contactData: 0, agent: 0, token: 0, roomId: 0 } },
-      ]
+        { $group: { _id: '$room', text: { $first: '$text' }, createdAt: { $first: '$createdAt' } } },
+      ])
 
-      const results = await this.roomRepository.model().aggregate(pipeline)
-      const hasMore = results.length > limit
-      const rooms = hasMore ? results.slice(0, limit) : results
+      const lastMsgMap: Record<string, any> = {}
+      for (const m of lastMessages) lastMsgMap[m._id.toString()] = m
 
-      return res.status(200).json({ rooms, hasMore })
+      const roomsWithMessages = rooms.map((r: any) => ({
+        ...r,
+        lastMessage: lastMsgMap[r._id.toString()] || null,
+      }))
+
+      return res.status(200).json({ rooms: roomsWithMessages, hasMore })
     } catch (err: any) {
       return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
