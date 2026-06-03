@@ -370,10 +370,9 @@ class DashboardController {
       const lastMsgMap: Record<string, any> = {}
       for (const m of lastMessages) lastMsgMap[m._id.toString()] = m
 
-      const roomsWithMessages = rooms.map((r: any) => ({
-        ...r,
-        lastMessage: lastMsgMap[r._id.toString()] || null,
-      }))
+      const roomsWithMessages = rooms
+        .map((r: any) => ({ ...r, lastMessage: lastMsgMap[r._id.toString()] || null }))
+        .filter((r: any) => r.lastMessage !== null)
 
       return res.status(200).json({ rooms: roomsWithMessages, hasMore })
     } catch (err: any) {
