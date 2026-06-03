@@ -31,7 +31,7 @@ export default function Dashboard() {
           <div className="col-12 col-md-6"><SuperMessageVolumeCard /></div>
           <div className="col-12 col-md-6"><SuperDeliveryRateCard /></div>
           <div className="col-12 col-md-6"><SuperQueueCard /></div>
-          <div className="col-12"><SuperConversationsCard /></div>
+          <div className="col-12 col-md-6"><SuperConversationsCard /></div>
         </div>
       </>
     )
@@ -45,7 +45,7 @@ export default function Dashboard() {
           <div className="col-12 col-md-6"><SuperMessageVolumeCard licensee={licenseeId} /></div>
           <div className="col-12 col-md-6"><SuperDeliveryRateCard licensee={licenseeId} /></div>
           <div className="col-12 col-md-6"><SuperQueueCard licensee={licenseeId} /></div>
-          <div className="col-12"><SuperConversationsCard licensee={licenseeId} /></div>
+          <div className="col-12 col-md-6"><SuperConversationsCard licensee={licenseeId} /></div>
         </div>
       </>
     )
