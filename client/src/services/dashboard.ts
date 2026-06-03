@@ -31,3 +31,9 @@ export function getDashboardMessagesToday(params = {}) {
 export function getDashboardMessagesPerDay(params = {}) {
   return api().get(parseUrl('resources/dashboard/messages-per-day', params), { headers: headers() })
 }
+export function getDashboardOpenRooms(params = {}) {
+  return api().get(parseUrl('resources/dashboard/open-rooms', params), { headers: headers() })
+}
+export function closeDashboardRoom(roomId: string) {
+  return api().post(`resources/dashboard/rooms/${roomId}/close`, {}, { headers: headers() })
+}

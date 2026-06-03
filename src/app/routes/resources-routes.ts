@@ -167,5 +167,7 @@ router.get('/dashboard/conversations', dashboardController.conversations)
 router.get('/dashboard/contacts', dashboardController.contacts)
 router.get('/dashboard/messages-today', dashboardController.messagesToday)
 router.get('/dashboard/messages-per-day', dashboardController.messagesPerDay)
+router.get('/dashboard/open-rooms', dashboardController.openRooms)
+router.post('/dashboard/rooms/:roomId/close', dashboardController.closeRoom)
 
 export default router

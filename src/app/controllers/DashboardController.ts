@@ -33,6 +33,8 @@ class DashboardController {
     this.contacts = this.contacts.bind(this)
     this.messagesToday = this.messagesToday.bind(this)
     this.messagesPerDay = this.messagesPerDay.bind(this)
+    this.openRooms = this.openRooms.bind(this)
+    this.closeRoom = this.closeRoom.bind(this)
   }
 
   async _resolveUser(req: any) {
@@ -326,6 +328,91 @@ class DashboardController {
       })
 
       return res.status(200).json(data)
+    } catch (err: any) {
+      return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
+    }
+  }
+  async openRooms(req: any, res: any) {
+    try {
+      const user = await this._resolveUser(req)
+      if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
+      if (!['super', 'admin'].includes(user.role)) return res.status(403).json({ errors: { message: 'Forbidden' } })
+
+      const licensee = req.query.licensee || null
+      const page = Math.max(1, parseInt(req.query.page as string) || 1)
+      const limit = 10
+
+      let roomFilter: any = { closed: false }
+      if (licensee) {
+        const contacts = await this.contactRepository.model().find({ licensee }).select('_id').lean()
+        const contactIds = contacts.map((c: any) => c._id)
+        roomFilter.contact = { $in: contactIds }
+      }
+
+      const pipeline: any[] = [
+        { $match: roomFilter },
+        {
+          $lookup: {
+            from: 'messages',
+            let: { roomId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$room', '$$roomId'] },
+                  $nor: [{ kind: 'text', text: 'Chat encerrado pelo agente' }],
+                },
+              },
+              { $sort: { createdAt: -1 } },
+              { $limit: 1 },
+              { $project: { text: 1, createdAt: 1 } },
+            ],
+            as: 'lastMessageArr',
+          },
+        },
+        {
+          $lookup: {
+            from: 'contacts',
+            localField: 'contact',
+            foreignField: '_id',
+            as: 'contactData',
+          },
+        },
+        {
+          $addFields: {
+            lastMessage: { $arrayElemAt: ['$lastMessageArr', 0] },
+            contact: { $arrayElemAt: ['$contactData', 0] },
+          },
+        },
+        { $sort: { 'lastMessage.createdAt': -1, createdAt: -1 } },
+        { $skip: (page - 1) * limit },
+        { $limit: limit + 1 },
+        { $project: { lastMessageArr: 0, contactData: 0, agent: 0, token: 0, roomId: 0 } },
+      ]
+
+      const results = await this.roomRepository.model().aggregate(pipeline)
+      const hasMore = results.length > limit
+      const rooms = hasMore ? results.slice(0, limit) : results
+
+      return res.status(200).json({ rooms, hasMore })
+    } catch (err: any) {
+      return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
+    }
+  }
+
+  async closeRoom(req: any, res: any) {
+    try {
+      const user = await this._resolveUser(req)
+      if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
+      if (!['super', 'admin'].includes(user.role)) return res.status(403).json({ errors: { message: 'Forbidden' } })
+
+      const room = await this.roomRepository.model().findById(req.params.roomId)
+      if (!room) return res.status(404).json({ errors: { message: 'Room not found' } })
+      if (room.closed) return res.status(200).json({ message: 'Already closed' })
+
+      room.status = 'closed'
+      await room.save()
+
+      return res.status(200).json({ message: 'Room closed' })
     } catch (err: any) {
       return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }

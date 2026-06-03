@@ -6,6 +6,7 @@ import SuperMessageVolumeCard from './cards/SuperMessageVolumeCard'
 import SuperDeliveryRateCard from './cards/SuperDeliveryRateCard'
 import SuperQueueCard from './cards/SuperQueueCard'
 import SuperConversationsCard from './cards/SuperConversationsCard'
+import SuperOpenRoomsCard from './cards/SuperOpenRoomsCard'
 import LicenseeContactsCard from './cards/LicenseeContactsCard'
 import LicenseeMessagesTodayCard from './cards/LicenseeMessagesTodayCard'
 import LicenseeMessagesPerDayCard from './cards/LicenseeMessagesPerDayCard'
@@ -32,6 +33,7 @@ export default function Dashboard() {
           <div className="col-12 col-md-6"><SuperDeliveryRateCard /></div>
           <div className="col-12 col-md-6"><SuperQueueCard /></div>
           <div className="col-12 col-md-6"><SuperConversationsCard /></div>
+          <div className="col-12"><SuperOpenRoomsCard /></div>
         </div>
       </>
     )
@@ -46,6 +48,7 @@ export default function Dashboard() {
           <div className="col-12 col-md-6"><SuperDeliveryRateCard licensee={licenseeId} /></div>
           <div className="col-12 col-md-6"><SuperQueueCard licensee={licenseeId} /></div>
           <div className="col-12 col-md-6"><SuperConversationsCard licensee={licenseeId} /></div>
+          <div className="col-12"><SuperOpenRoomsCard licensee={licenseeId} /></div>
         </div>
       </>
     )
