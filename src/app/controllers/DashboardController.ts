@@ -1,5 +1,7 @@
 import mongoose from 'mongoose'
 
+const EXCLUDE_SYSTEM_CLOSE = { $nor: [{ kind: 'text', text: 'Chat encerrado pelo agente' }] }
+
 class DashboardController {
   userRepository: any
   licenseeRepository: any
@@ -92,12 +94,12 @@ class DashboardController {
 
       const data = await this._cached(cacheKey, async () => {
         const perDayPipeline = [
-          { $match: { ...msgFilter, createdAt: { $gte: startDate, $lt: endDate } } },
+          { $match: { ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, createdAt: { $gte: startDate, $lt: endDate } } },
           { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, count: { $sum: 1 } } },
           { $sort: { _id: 1 } },
         ]
         const perHourPipeline = [
-          { $match: { ...msgFilter, createdAt: { $gte: startDate, $lt: endDate } } },
+          { $match: { ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, createdAt: { $gte: startDate, $lt: endDate } } },
           { $group: { _id: { $dateToString: { format: '%Y-%m-%dT%H', date: '$createdAt' } }, count: { $sum: 1 } } },
           { $sort: { _id: 1 } },
         ]
@@ -105,8 +107,8 @@ class DashboardController {
         const [perDay, perHour, sentCount, failedCount] = await Promise.all([
           this.messageRepository.model().aggregate(perDayPipeline),
           this.messageRepository.model().aggregate(perHourPipeline),
-          this.messageRepository.model().where({ ...msgFilter, sended: true, createdAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
-          this.messageRepository.model().where({ ...msgFilter, sended: false, createdAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
+          this.messageRepository.model().where({ ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sended: true, createdAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
+          this.messageRepository.model().where({ ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sended: false, createdAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
         ])
 
         const peakThroughput = perHour.length > 0 ? Math.max(...perHour.map((h: any) => h.count)) : 0
@@ -140,9 +142,9 @@ class DashboardController {
 
       const data = await this._cached(cacheKey, async () => {
         const [sentCount, failedCount, failedTotal] = await Promise.all([
-          this.messageRepository.model().where({ ...msgFilter, sended: true, createdAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
-          this.messageRepository.model().where({ ...msgFilter, sended: false, createdAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
-          this.messageRepository.model().where({ ...msgFilter, sended: false }).countDocuments(),
+          this.messageRepository.model().where({ ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sended: true, createdAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
+          this.messageRepository.model().where({ ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sended: false, createdAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
+          this.messageRepository.model().where({ ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sended: false }).countDocuments(),
         ])
 
         const total = sentCount + failedCount
@@ -169,16 +171,14 @@ class DashboardController {
       const cacheKey = `dashboard:super:queue:${startDate.toISOString()}:${endDate.toISOString()}:${licensee || 'all'}`
       const msgFilter = licensee ? { licensee: new mongoose.Types.ObjectId(licensee as string) } : {}
 
-      const excludeSystemClose = { $nor: [{ kind: 'text', text: 'Chat encerrado pelo agente' }] }
-
       const data = await this._cached(cacheKey, async () => {
         const avgQueuePipeline: any[] = [
-          { $match: { ...msgFilter, ...excludeSystemClose, sendedAt: { $exists: true }, createdAt: { $gte: startDate, $lt: endDate } } },
+          { $match: { ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sendedAt: { $exists: true }, createdAt: { $gte: startDate, $lt: endDate } } },
           { $group: { _id: null, avg: { $avg: { $divide: [{ $subtract: ['$sendedAt', '$createdAt'] }, 1000] } } } },
         ]
 
         const [pendingMessages, avgResult] = await Promise.all([
-          this.messageRepository.model().where({ ...msgFilter, ...excludeSystemClose, sended: false, destination: 'to-messenger' }).countDocuments(),
+          this.messageRepository.model().where({ ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sended: false, destination: 'to-messenger' }).countDocuments(),
           this.messageRepository.model().aggregate(avgQueuePipeline),
         ])
 
@@ -213,7 +213,7 @@ class DashboardController {
         }
 
         const avgMsgPerConvPipeline: any[] = [
-          { $match: { ...msgFilter, room: { $exists: true }, createdAt: { $gte: startDate, $lt: endDate } } },
+          { $match: { ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, room: { $exists: true }, createdAt: { $gte: startDate, $lt: endDate } } },
           { $group: { _id: '$room', count: { $sum: 1 } } },
           { $group: { _id: null, avg: { $avg: '$count' } } },
         ]
@@ -283,11 +283,11 @@ class DashboardController {
         const [sentCount, failedCount] = await Promise.all([
           this.messageRepository
             .model()
-            .where({ licensee: user.licensee, sended: true, createdAt: { $gte: startDate, $lt: endDate } })
+            .where({ licensee: user.licensee, ...EXCLUDE_SYSTEM_CLOSE, sended: true, createdAt: { $gte: startDate, $lt: endDate } })
             .countDocuments(),
           this.messageRepository
             .model()
-            .where({ licensee: user.licensee, sended: false, createdAt: { $gte: startDate, $lt: endDate } })
+            .where({ licensee: user.licensee, ...EXCLUDE_SYSTEM_CLOSE, sended: false, createdAt: { $gte: startDate, $lt: endDate } })
             .countDocuments(),
         ])
 
@@ -316,7 +316,7 @@ class DashboardController {
       const data = await this._cached(cacheKey, async () => {
         const sevenDaysAgo = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000)
         const perDayPipeline = [
-          { $match: { createdAt: { $gte: sevenDaysAgo, $lt: endDate }, licensee: user.licensee } },
+          { $match: { createdAt: { $gte: sevenDaysAgo, $lt: endDate }, licensee: user.licensee, ...EXCLUDE_SYSTEM_CLOSE } },
           { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, count: { $sum: 1 } } },
           { $sort: { _id: 1 } },
         ]
