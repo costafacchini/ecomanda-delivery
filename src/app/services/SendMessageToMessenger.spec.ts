@@ -59,4 +59,25 @@ describe('sendMessageToMessenger', () => {
 
     expect(dialogSendMessageSpy).toHaveBeenCalledWith(message._id, 'https://www.dialog.com', 'k4d5h8fyt')
   })
+
+  it('falls back to licensee whatsappUrl and whatsappToken when url and token are absent from data', async () => {
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    // dialog normalizes whatsappUrl to 'https://waba.360dialog.io/' on save
+    const licensee = await licenseeRepository.create(
+      licenseeFactory.build({
+        whatsappDefault: 'dialog',
+        whatsappToken: 'licensee-token',
+      }),
+    )
+
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact = await contactRepository.create(contactFactory.build({ licensee }))
+
+    const messageRepository = new MessageRepositoryDatabase()
+    const message = await messageRepository.create(messageFactory.build({ contact, licensee }))
+
+    await sendMessageToMessenger({ messageId: message._id }, dependencies)
+
+    expect(dialogSendMessageSpy).toHaveBeenCalledWith(message._id, 'https://waba.360dialog.io/', 'licensee-token')
+  })
 })
