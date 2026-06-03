@@ -29,7 +29,11 @@ export default function SuperOpenRoomsCard({ licensee }: { licensee?: string }) 
       setLoading(true)
       getDashboardOpenRooms({ ...(licensee ? { licensee } : {}), page: pageNum, limit: LIMIT })
         .then((res) => {
-          const { rooms: newRooms, hasMore: more } = res.data
+          if (res.status !== 200) {
+            setError('Erro ao carregar conversas.')
+            return
+          }
+          const { rooms: newRooms = [], hasMore: more = false } = res.data || {}
           setRooms((prev) => (reset ? newRooms : [...prev, ...newRooms]))
           hasMoreRef.current = more
           setHasMore(more)
