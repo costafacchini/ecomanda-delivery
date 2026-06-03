@@ -18,41 +18,46 @@ function ChatPanel({ values, errors, touched, handleChange, handleBlur }: any) {
             <option value='crisp'>Crisp</option>
             <option value='cuboup'>CuboUp</option>
             <option value='chatwoot'>Chatwoot</option>
+            <option value='local'>Local</option>
           </select>
         </div>
       </div>
 
-      <div className='row'>
-        <div className='form-group col-5'>
-          <label htmlFor='chatUrl'>Url do chat</label>
-          <FieldWithError
-            id='chatUrl'
-            name='chatUrl'
-            type='text'
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={values.chatUrl}
-          />
-        </div>
-      </div>
-
-      <div className='row pb-2'>
-        <div className='col-3'>
-          <div className='form-check'>
-            <input
-              type='checkbox'
-              className='form-check-input'
-              id='useSenderName'
-              onChange={handleChange}
-              onBlur={handleBlur}
-              checked={values.useSenderName}
-            />
-            <label className='form-check-label' htmlFor='useSenderName'>
-              Usa o remetente no nome do chat?
-            </label>
+      {['rocketchat', 'crisp', 'chatwoot', 'cuboup'].includes(values.chatDefault) && (
+        <>
+          <div className='row'>
+            <div className='form-group col-5'>
+              <label htmlFor='chatUrl'>Url do chat</label>
+              <FieldWithError
+                id='chatUrl'
+                name='chatUrl'
+                type='text'
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.chatUrl}
+              />
+            </div>
           </div>
-        </div>
-      </div>
+
+          <div className='row pb-2'>
+            <div className='col-3'>
+              <div className='form-check'>
+                <input
+                  type='checkbox'
+                  className='form-check-input'
+                  id='useSenderName'
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  checked={values.useSenderName}
+                />
+                <label className='form-check-label' htmlFor='useSenderName'>
+                  Usa o remetente no nome do chat?
+                </label>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       {['crisp', 'chatwoot'].includes(values.chatDefault) && (
         <>

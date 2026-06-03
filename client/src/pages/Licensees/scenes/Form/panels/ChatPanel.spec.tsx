@@ -32,8 +32,6 @@ describe('<ChatPanel />', () => {
     mount()
 
     expect(screen.getByLabelText('Chat padrão')).toBeInTheDocument()
-    expect(screen.getByLabelText('Url do chat')).toBeInTheDocument()
-    expect(screen.getByLabelText('Usa o remetente no nome do chat?')).toBeInTheDocument()
   })
 
   it('shows chatIdentifier and chatKey fields when chatDefault is crisp', () => {
@@ -41,6 +39,8 @@ describe('<ChatPanel />', () => {
 
     expect(screen.getByLabelText('Identifier')).toBeInTheDocument()
     expect(screen.getByLabelText('Key')).toBeInTheDocument()
+    expect(screen.getByLabelText('Url do chat')).toBeInTheDocument()
+    expect(screen.getByLabelText('Usa o remetente no nome do chat?')).toBeInTheDocument()
   })
 
   it('shows chatIdentifier and chatKey fields when chatDefault is chatwoot', () => {
@@ -48,6 +48,8 @@ describe('<ChatPanel />', () => {
 
     expect(screen.getByLabelText('Identifier')).toBeInTheDocument()
     expect(screen.getByLabelText('Key')).toBeInTheDocument()
+    expect(screen.getByLabelText('Url do chat')).toBeInTheDocument()
+    expect(screen.getByLabelText('Usa o remetente no nome do chat?')).toBeInTheDocument()
   })
 
   it('does NOT show chatIdentifier/chatKey when chatDefault is rocketchat', () => {
@@ -57,10 +59,21 @@ describe('<ChatPanel />', () => {
     expect(screen.queryByLabelText('Key')).not.toBeInTheDocument()
   })
 
-  it('does NOT show chatIdentifier/chatKey when chatDefault is empty', () => {
+  it('does NOT show chatIdentifier/chatKey/chatUrl/useSenderName when chatDefault is local', () => {
+    mount({ chatDefault: 'local' })
+
+    expect(screen.queryByLabelText('Identifier')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Key')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Url do chat')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Usa o remetente no nome do chat?')).not.toBeInTheDocument()
+  })
+
+  it('does NOT show chatIdentifier/chatKey/chatUrl/useSenderName when chatDefault is empty', () => {
     mount({ chatDefault: '' })
 
     expect(screen.queryByLabelText('Identifier')).not.toBeInTheDocument()
     expect(screen.queryByLabelText('Key')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Url do chat')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Usa o remetente no nome do chat?')).not.toBeInTheDocument()
   })
 })
