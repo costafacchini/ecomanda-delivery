@@ -13,12 +13,14 @@ const LIMIT = 10
 
 export default function SuperOpenRoomsCard({ licensee }: { licensee?: string }) {
   const [rooms, setRooms] = useState<any[]>([])
-  const [page, setPage] = useState(1)
-  const [hasMore, setHasMore] = useState(true)
+  const [hasMore, setHasMore] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const sentinelRef = useRef<HTMLDivElement>(null)
   const isFetchingRef = useRef(false)
+  const pageRef = useRef(1)
+  const hasMoreRef = useRef(false)
 
   const fetchRooms = useCallback(
     (pageNum: number, reset: boolean) => {
@@ -29,8 +31,9 @@ export default function SuperOpenRoomsCard({ licensee }: { licensee?: string }) 
         .then((res) => {
           const { rooms: newRooms, hasMore: more } = res.data
           setRooms((prev) => (reset ? newRooms : [...prev, ...newRooms]))
+          hasMoreRef.current = more
           setHasMore(more)
-          setPage(pageNum + 1)
+          pageRef.current = pageNum + 1
         })
         .catch(() => setError('Erro ao carregar conversas.'))
         .finally(() => {
@@ -41,25 +44,33 @@ export default function SuperOpenRoomsCard({ licensee }: { licensee?: string }) 
     [licensee],
   )
 
+  // Reset and initial load when licensee changes
   useEffect(() => {
+    pageRef.current = 1
+    hasMoreRef.current = false
     setRooms([])
-    setPage(1)
-    setHasMore(true)
+    setHasMore(false)
     setError(null)
     fetchRooms(1, true)
   }, [licensee]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Set up IntersectionObserver once per licensee change, scoped to the scrollable container
   useEffect(() => {
     const sentinel = sentinelRef.current
-    if (!sentinel) return
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && hasMore && !isFetchingRef.current) {
-        fetchRooms(page, false)
-      }
-    })
+    const container = containerRef.current
+    if (!sentinel || !container) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMoreRef.current && !isFetchingRef.current) {
+          fetchRooms(pageRef.current, false)
+        }
+      },
+      { root: container, threshold: 0.1 },
+    )
     observer.observe(sentinel)
     return () => observer.disconnect()
-  }, [hasMore, page, fetchRooms])
+  }, [fetchRooms])
 
   function handleClose(roomId: string) {
     closeDashboardRoom(roomId)
@@ -70,7 +81,7 @@ export default function SuperOpenRoomsCard({ licensee }: { licensee?: string }) 
   return (
     <div className="card">
       <div className="card-header">Conversas Abertas</div>
-      <div className="card-body p-0" style={{ maxHeight: 480, overflowY: 'auto' }}>
+      <div ref={containerRef} className="card-body p-0" style={{ maxHeight: 480, overflowY: 'auto' }}>
         {error && <p className="text-danger p-3 mb-0">{error}</p>}
         {rooms.length === 0 && !loading && !error && (
           <p className="text-muted p-3 mb-0">Nenhuma conversa aberta.</p>
