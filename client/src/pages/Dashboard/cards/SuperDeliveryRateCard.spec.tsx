@@ -38,7 +38,7 @@ describe('<SuperDeliveryRateCard />', () => {
     expect(await screen.findByText('950')).toBeInTheDocument()
     expect(screen.getByText('Enviadas (95%)')).toBeInTheDocument()
     expect(screen.getByText('50')).toBeInTheDocument()
-    expect(screen.getByText('Falhas (5%)')).toBeInTheDocument()
+    expect(screen.getByText('Falhas no período (5%)')).toBeInTheDocument()
     expect(screen.getByText('Taxa de Entrega')).toBeInTheDocument()
   })
 
@@ -50,7 +50,7 @@ describe('<SuperDeliveryRateCard />', () => {
 
     render(<SuperDeliveryRateCard />)
 
-    fireEvent.click(await screen.findByText('10'))
+    fireEvent.click(await screen.findByText('Mensagens Falhas (10)'))
 
     expect(await screen.findByText('Mensagens com Falha')).toBeInTheDocument()
   })

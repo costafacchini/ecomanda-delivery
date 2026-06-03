@@ -5,18 +5,24 @@ import { getLicensees } from '../../../../services/licensee'
 import { createRoutesStub } from 'react-router'
 import { contactFactory } from '../../../../factories/contact'
 import { SimpleCrudContextProvider } from '../../../../contexts/SimpleCrud'
+import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/contact')
 vi.mock('../../../../services/licensee')
 
 describe('<ContactsIndex />', () => {
   const currentUser = { role: 'super' }
+  const appContextValue = { activeLicensee: null, updateActiveLicensee: vi.fn() }
 
   function mount({ currentUser }) {
     const Stub = createRoutesStub([
       {
         path: '/contacts',
-        Component: () => <ContactsIndex currentUser={currentUser} />,
+        Component: () => (
+          <AppContext.Provider value={appContextValue}>
+            <ContactsIndex currentUser={currentUser} />
+          </AppContext.Provider>
+        ),
       },
     ])
     render(

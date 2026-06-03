@@ -2,15 +2,22 @@ import TemplateShow from '.'
 import { screen, render } from '@testing-library/react'
 import { getTemplate } from '../../../../services/template'
 import { createRoutesStub } from 'react-router'
+import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/template')
 
 describe('<TemplateShow />', () => {
+  const appContextValue = { activeLicensee: null, updateActiveLicensee: vi.fn() }
+
   function mount() {
     const Stub = createRoutesStub([
       {
         path: '/templates/:id',
-        Component: TemplateShow,
+        Component: () => (
+          <AppContext.Provider value={appContextValue}>
+            <TemplateShow />
+          </AppContext.Provider>
+        ),
       },
     ])
     render(<Stub initialEntries={['/templates/1']} />)

@@ -2,6 +2,7 @@ import TriggerNew from '.'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { createRoutesStub } from 'react-router'
 import { createTrigger } from '../../../../services/trigger'
+import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/trigger')
 
@@ -11,11 +12,17 @@ describe('<TriggerNew />', () => {
     licensee: 'id'
   }
 
+  const appContextValue = { activeLicensee: null, updateActiveLicensee: vi.fn() }
+
   function mount() {
     const Stub = createRoutesStub([
       {
         path: '/triggers/new',
-        Component: () => <TriggerNew currentUser={currentUser} />,
+        Component: () => (
+          <AppContext.Provider value={appContextValue}>
+            <TriggerNew currentUser={currentUser} />
+          </AppContext.Provider>
+        ),
       },
       {
         path: '/triggers',
