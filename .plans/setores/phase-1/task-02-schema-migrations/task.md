@@ -32,31 +32,31 @@ Adding `useSetores: { type: Boolean, default: false }`. Existing licensees defau
 - [ ] Switch to main and pull: `git switch main && git pull --rebase origin main`
 - [ ] Create task branch: `git switch -c plan/setores/phase-1/task-02-schema-migrations`
 - [ ] Verify this task's `status.md` shows `not-started`
-- [ ] Read `src/app/models/WhatsappSession.js` (full file)
-- [ ] Read `src/app/models/Room.js` (full file)
-- [ ] Read `src/app/models/Licensee.js` (scan for existing field patterns)
+- [ ] Read `src/app/models/WhatsappSession.ts` (full file)
+- [ ] Read `src/app/models/Room.ts` (full file)
+- [ ] Read `src/app/models/Licensee.ts` (scan for existing field patterns)
 - [ ] Mark this task `in-progress` in `status.md`
 
 ## File Ownership
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/models/WhatsappSession.js` | modify | Add `setor`, change unique index |
-| `src/app/models/WhatsappSession.spec.js` | modify | Add index and field tests |
-| `src/app/models/Room.js` | modify | Add `setor` field |
-| `src/app/models/Room.spec.js` | modify | Add field test |
-| `src/app/models/Licensee.js` | modify | Add `useSetores` flag |
-| `src/app/models/Licensee.spec.js` | modify | Add flag test |
+| `src/app/models/WhatsappSession.ts` | modify | Add `setor`, change unique index |
+| `src/app/models/WhatsappSession.spec.ts` | modify | Add index and field tests |
+| `src/app/models/Room.ts` | modify | Add `setor` field |
+| `src/app/models/Room.spec.ts` | modify | Add field test |
+| `src/app/models/Licensee.ts` | modify | Add `useSetores` flag |
+| `src/app/models/Licensee.spec.ts` | modify | Add flag test |
 
 ### Do NOT Modify
 
-- `src/app/models/Setor.js` — owned by phase-1/task-01-setor-model-api
-- `src/app/repositories/whatsappsession.js` — read-only (no changes needed to repository layer)
-- `src/app/services/BaileysSocketManager.js` — owned by phase-2/task-03
+- `src/app/models/Setor.ts` — owned by phase-1/task-01-setor-model-api
+- `src/app/repositories/whatsappsession.ts` — read-only (no changes needed to repository layer)
+- `src/app/services/BaileysSocketManager.ts` — owned by phase-2/task-03
 
 ## Implementation Steps
 
-### Step 1: Update `WhatsappSession.js`
+### Step 1: Update `WhatsappSession.ts`
 
 Replace:
 ```js
@@ -87,9 +87,9 @@ Remove the inline `unique: true` from the `licensee` field. Add a compound index
 whatsappSessionSchema.index({ licensee: 1, setor: 1 }, { unique: true })
 ```
 
-> MongoDB allows multiple documents with `null` values on a unique compound index field only when using a **sparse** index. Since we want exactly one null-sector session per licensee, enforce this at the application layer in `Baileys.loadOrCreateSession()` (ensure `findFirst({ licensee, setor: null })` before creating). The compound index prevents duplicate `(licensee, setor)` pairs for non-null sectors.
+> MongoDB allows multiple documents with `null` values on a unique compound index field only when using a **sparse** index. Since we want exactly one null-sector session per licensee, enforce this at the application layer in `Baileys.ts` `loadOrCreateSession()` (ensure `findFirst({ licensee, setor: null })` before creating). The compound index prevents duplicate `(licensee, setor)` pairs for non-null sectors.
 
-### Step 2: Update `Room.js`
+### Step 2: Update `Room.ts`
 
 Add after the `contact` field:
 ```js
@@ -100,7 +100,7 @@ setor: {
 },
 ```
 
-### Step 3: Update `Licensee.js`
+### Step 3: Update `Licensee.ts`
 
 Add `useSetores` with the other feature flags (near `useChatbot`, `useSenderName`):
 ```js
@@ -132,4 +132,4 @@ useSetores: { type: Boolean, default: false },
 
 ## Conflict Avoidance Notes
 
-- task-01 creates `Setor.js` but does not touch `WhatsappSession`, `Room`, or `Licensee`. No conflict.
+- task-01 creates `Setor.ts` but does not touch `WhatsappSession.ts`, `Room.ts`, or `Licensee.ts`. No conflict.

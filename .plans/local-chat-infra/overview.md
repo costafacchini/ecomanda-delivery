@@ -16,7 +16,7 @@ Replace the boolean `isAdmin`/`isSuper` flags on User with a proper `role` enum,
 ### In Scope
 - `User.role` field (`agent | supervisor | admin | super`) replacing `isAdmin`/`isSuper`
 - One-shot migration script: `costafacchini@gmail.com` → `super`, others with `isAdmin: true` → `admin`
-- `authorize(...roles)` middleware in `resources-routes.js` replacing the existing `requireSuper`
+- `authorize(...roles)` middleware in `resources-routes.ts` replacing the existing `requireSuper`
 - `Room` model: add `agent` (ref: User) and `status` (`pending | open | closed`) alongside existing `closed` boolean
 - `LocalChat` plugin — `sendMessage()` creates/finds Room, emits Socket.IO event to agents; `parseMessage()` parses agent reply body
 - `socketEmitter` singleton so LocalChat can emit events without circular imports
@@ -72,24 +72,24 @@ Base branch: `main`
 
 | File/Directory | Relevance |
 |----------------|-----------|
-| `src/app/models/User.js` | Add `role` field, deprecate `isAdmin`/`isSuper` |
-| `src/app/routes/resources-routes.js` | `authorize()` middleware; route guards |
+| `src/app/models/User.ts` | Add `role` field, deprecate `isAdmin`/`isSuper` |
+| `src/app/routes/resources-routes.ts` | `authorize()` middleware; route guards |
 | `scripts/migrate-user-roles.js` | NEW — one-shot DB migration (run manually) |
-| `src/app/models/Room.js` | Add `agent` + `status` fields |
-| `src/app/plugins/chats/LocalChat.js` | NEW — local chat plugin |
-| `src/app/plugins/chats/factory.js` | Add `'local'` case |
-| `src/app/services/socketEmitter.js` | NEW — Socket.IO singleton for plugins |
-| `src/config/http.js` | Wire `socketEmitter` after `io` creation |
-| `src/app/models/Licensee.js` | Add `'local'` to `chatDefault` enum |
-| `client/src/contexts/App/index.js` | Add `activeLicensee` state |
-| `client/src/components/SelectLicenseeModal/index.js` | NEW — licensee picker modal |
-| `client/src/pages/Navbar/index.js` | Replace "Sair" with user menu dropdown |
-| `client/src/pages/SignIn/index.js` | Trigger modal if super after login |
+| `src/app/models/Room.ts` | Add `agent` + `status` fields |
+| `src/app/plugins/chats/LocalChat.ts` | NEW — local chat plugin |
+| `src/app/plugins/chats/factory.ts` | Add `'local'` case |
+| `src/app/services/socketEmitter.ts` | NEW — Socket.IO singleton for plugins |
+| `src/config/http.ts` | Wire `socketEmitter` after `io` creation |
+| `src/app/models/Licensee.ts` | Add `'local'` to `chatDefault` enum |
+| `client/src/contexts/App/index.tsx` | Add `activeLicensee` state |
+| `client/src/components/SelectLicenseeModal/index.tsx` | NEW — licensee picker modal |
+| `client/src/pages/Navbar/index.tsx` | Replace "Sair" with user menu dropdown |
+| `client/src/pages/SignIn/index.tsx` | Trigger modal if super after login |
 
 ## Risks
 
 - **Auth regression** — changing `isAdmin`/`isSuper` to `role` affects both server-side guards and client-side conditionals. Mitigation: keep `isAdmin`/`isSuper` in the schema during migration (as deprecated aliases), remove only in a follow-up task after verifying role-based guards work end-to-end.
-- **Socket.IO circular import** — importing `io` directly in plugins would create a circular dependency. Mitigation: `socketEmitter.js` singleton breaks the cycle.
+- **Socket.IO circular import** — importing `io` directly in plugins would create a circular dependency. Mitigation: `socketEmitter.ts` singleton breaks the cycle.
 - **Super user locked out** — if the post-login modal is shown but the user has no licensees to select (empty DB), they cannot proceed. Mitigation: modal should allow dismissal for super users without any licensees; show a clear message.
 
 ## Success Criteria

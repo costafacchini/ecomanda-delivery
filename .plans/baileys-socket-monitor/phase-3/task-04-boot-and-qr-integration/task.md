@@ -17,9 +17,9 @@ After phase 2 we have a working `startBaileysSocket(licensee)` function in the r
 
 This task connects it to two trigger points:
 
-**1. App boot (`server.js`)**: After the DB connection is established, load all licensees with `whatsappDefault === 'baileys'` and a non-empty session (active credentials), then call `startBaileysSocket` for each. Fire-and-forget (don't block `server.listen`). Gate the entire boot routine behind `ENABLE_BAILEYS_SOCKET=true` to allow gradual rollout.
+**1. App boot (`server.ts`)**: After the DB connection is established, load all licensees with `whatsappDefault === 'baileys'` and a non-empty session (active credentials), then call `startBaileysSocket` for each. Fire-and-forget (don't block `server.listen`). Gate the entire boot routine behind `ENABLE_BAILEYS_SOCKET=true` to allow gradual rollout.
 
-**2. Post-QR pairing (`GetBaileysQr.js`)**: `getQrCode()` in `Baileys.js` currently resolves with `null` when the QR is scanned and the connection opens. After this task, `GetBaileysQr.execute()` calls `startBaileysSocket(licensee)` when `getQrCode()` returns `null` (already connected) or after the QR is resolved (connection opened). This ensures a persistent socket is started without requiring a restart.
+**2. Post-QR pairing (`GetBaileysQr.ts`)**: `getQrCode()` in `Baileys.ts` currently resolves with `null` when the QR is scanned and the connection opens. After this task, `GetBaileysQr.execute()` calls `startBaileysSocket(licensee)` when `getQrCode()` returns `null` (already connected) or after the QR is resolved (connection opened). This ensures a persistent socket is started without requiring a restart.
 
 Boot use case (`BootBaileysSocketSessions`): Encapsulates the "find all active Baileys licensees → start sockets" logic so it is testable independently from the server entry point.
 
@@ -35,38 +35,44 @@ The boot routine should log each start attempt and swallow per-licensee errors (
 - [ ] Create task branch: `git switch -c plan/baileys-socket-monitor/phase-3/task-04-boot-and-qr-integration`
 - [ ] Verify `phase-2/task-03-start-socket-usecase/status.md` shows `complete`
 - [ ] Verify this task's `status.md` shows `not-started`
-- [ ] Read `server.js` (top-level)
-- [ ] Read `src/config/http.js` and `src/config/mongo.js` to understand the boot sequence
-- [ ] Read `src/app/usecases/licensees/GetBaileysQr.js`
-- [ ] Read `src/app/runtime/dependencies.js` (understand what's now available after task-03)
+- [ ] Read `server.ts` (top-level)
+- [ ] Read `src/config/http.ts` and `src/config/mongo.ts` to understand the boot sequence
+- [ ] Read `src/app/usecases/licensees/GetBaileysQr.ts`
+- [ ] Read `src/app/runtime/dependencies.ts` (understand what's now available after task-03)
 - [ ] Mark this task `in-progress` in `status.md`
 
 ## File Ownership
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/usecases/licensees/BootBaileysSocketSessions.js` | create | Boot use case |
-| `src/app/usecases/licensees/BootBaileysSocketSessions.spec.js` | create | Unit tests |
-| `src/app/usecases/licensees/GetBaileysQr.js` | modify | Trigger socket after QR pairing |
-| `src/app/usecases/licensees/GetBaileysQr.spec.js` | modify | Add socket trigger test |
-| `src/app/runtime/dependencies.js` | modify | Wire `bootBaileysSocketSessions` |
-| `server.js` | modify | Call boot routine after DB connects |
+| `src/app/usecases/licensees/BootBaileysSocketSessions.ts` | create | Boot use case |
+| `src/app/usecases/licensees/BootBaileysSocketSessions.spec.ts` | create | Unit tests |
+| `src/app/usecases/licensees/GetBaileysQr.ts` | modify | Trigger socket after QR pairing |
+| `src/app/usecases/licensees/GetBaileysQr.spec.ts` | modify | Add socket trigger test |
+| `src/app/runtime/dependencies.ts` | modify | Wire `bootBaileysSocketSessions` |
+| `server.ts` | modify | Call boot routine after DB connects |
 | `docs/kb/features/baileys-whatsapp-guide.md` | modify | Document persistent socket section |
 
 ### Do NOT Modify
 
-- `src/app/services/BaileysSocketManager.js` — complete (phase 1)
-- `src/app/plugins/messengers/Baileys.js` — complete (phase 1)
-- `src/app/usecases/licensees/StartBaileysSocket.js` — complete (phase 2)
+- `src/app/services/BaileysSocketManager.ts` — complete (phase 1)
+- `src/app/plugins/messengers/Baileys.ts` — complete (phase 1)
+- `src/app/usecases/licensees/StartBaileysSocket.ts` — complete (phase 2)
 
 ## Implementation Steps
 
 ### Step 1: Create `BootBaileysSocketSessions` use case
 
-```js
-// src/app/usecases/licensees/BootBaileysSocketSessions.js
+```ts
+// src/app/usecases/licensees/BootBaileysSocketSessions.ts
+import { logger } from '../../helpers/logger'
+
 class BootBaileysSocketSessions {
-  constructor({ licenseeRepository, whatsappSessionRepository, startBaileysSocket } = {}) {
+  licenseeRepository: any
+  whatsappSessionRepository: any
+  startBaileysSocket: any
+
+  constructor({ licenseeRepository, whatsappSessionRepository, startBaileysSocket }: Record<string, any> = {}) {
     this.licenseeRepository = licenseeRepository
     this.whatsappSessionRepository = whatsappSessionRepository
     this.startBaileysSocket = startBaileysSocket
@@ -84,7 +90,7 @@ class BootBaileysSocketSessions {
         }
         logger.info(`Baileys boot: iniciando socket para licensee ${licensee._id}`)
         await this.startBaileysSocket(licensee)
-      } catch (err) {
+      } catch (err: any) {
         logger.error(`Baileys boot: falha ao iniciar socket para licensee ${licensee._id}: ${err.message ?? err}`)
       }
     }
@@ -94,7 +100,7 @@ class BootBaileysSocketSessions {
 export { BootBaileysSocketSessions }
 ```
 
-### Step 2: Wire `bootBaileysSocketSessions` in `dependencies.js`
+### Step 2: Wire `bootBaileysSocketSessions` in `dependencies.ts`
 
 1. Import `BootBaileysSocketSessions`.
 2. Inside `buildRuntimeDependencies`, after `startBaileysSocket`:
@@ -108,13 +114,13 @@ export { BootBaileysSocketSessions }
    ```
 3. Add to the returned object.
 
-### Step 3: Add boot hook to `server.js`
+### Step 3: Add boot hook to `server.ts`
 
 After `server.listen(PORT)`, add a fire-and-forget boot call gated by the env flag:
 
 ```js
 if (process.env.ENABLE_BAILEYS_SOCKET === 'true') {
-  import('./src/app/runtime/dependencies.js').then(({ createRuntimeDependencies }) => {
+  import('./src/app/runtime/dependencies').then(({ createRuntimeDependencies }) => {
     const { bootBaileysSocketSessions } = createRuntimeDependencies()
     bootBaileysSocketSessions().catch((err) => {
       console.error('Baileys boot: erro ao iniciar sockets', err)
@@ -125,19 +131,23 @@ if (process.env.ENABLE_BAILEYS_SOCKET === 'true') {
 
 Use a dynamic import to avoid the `createRuntimeDependencies` call from affecting non-Baileys server starts.
 
-### Step 4: Update `GetBaileysQr.js`
+### Step 4: Update `GetBaileysQr.ts`
 
 Add `startBaileysSocket` as a constructor dependency and call it after QR resolution:
 
-```js
+```ts
 class GetBaileysQr {
-  constructor({ licenseeRepository, createMessengerPlugin, startBaileysSocket } = {}) {
+  licenseeRepository: any
+  createMessengerPlugin: any
+  startBaileysSocket: any
+
+  constructor({ licenseeRepository, createMessengerPlugin, startBaileysSocket }: Record<string, any> = {}) {
     this.licenseeRepository = licenseeRepository
     this.createMessengerPlugin = createMessengerPlugin
     this.startBaileysSocket = startBaileysSocket
   }
 
-  async execute(id) {
+  async execute(id: any) {
     const licensee = await this.licenseeRepository.findFirst({ _id: id })
 
     if (licensee.whatsappDefault !== 'baileys') {
@@ -191,7 +201,7 @@ Add a new section **"Step 6 — Persistent Socket Monitor"** covering:
 - [ ] `GetBaileysQr.execute()` — calls `startBaileysSocket` when `ENABLE_BAILEYS_SOCKET === 'true'` and QR is generated
 - [ ] `GetBaileysQr.execute()` — calls `startBaileysSocket` when `ENABLE_BAILEYS_SOCKET === 'true'` and already connected
 - [ ] `GetBaileysQr.execute()` — does NOT call `startBaileysSocket` when `ENABLE_BAILEYS_SOCKET` is not set
-- [ ] All existing `GetBaileysQr.spec.js` tests still pass
+- [ ] All existing `GetBaileysQr.spec.ts` tests still pass
 - [ ] `pre-commit-check` passes
 
 ## Documentation / KB Updates
@@ -203,7 +213,7 @@ Add a new section **"Step 6 — Persistent Socket Monitor"** covering:
 
 - [ ] `BootBaileysSocketSessions` created and wired
 - [ ] `GetBaileysQr` triggers socket start after pairing
-- [ ] `server.js` boots all active sessions when `ENABLE_BAILEYS_SOCKET=true`
+- [ ] `server.ts` boots all active sessions when `ENABLE_BAILEYS_SOCKET=true`
 - [ ] All unit tests pass: `npx jest`
 - [ ] `npx eslint .` produces no new errors
 - [ ] `baileys-whatsapp-guide.md` updated with persistent socket section

@@ -24,29 +24,29 @@ Agent replies via `POST /v1/chat/rooms/:roomId/messages`. The controller formats
 
 **Socket.IO circular import problem:**
 
-`LocalChat` is instantiated in `runtime/dependencies.js`. Importing `io` from `src/config/http.js` there would create:
+`LocalChat` is instantiated in `runtime/dependencies.ts`. Importing `io` from `src/config/http.ts` there would create:
 ```
-http.js → routes.js → (no dep on dependencies.js) ✓
-dependencies.js → http.js ← this is new
+http.ts → routes.ts → (no dep on dependencies.ts) ✓
+dependencies.ts → http.ts ← this is new
 ```
-This is NOT circular today. But to keep the dependency clean and ensure the worker process (`worker.js`) doesn't accidentally load the HTTP server, create a `socketEmitter` singleton:
+This is NOT circular today. But to keep the dependency clean and ensure the worker process (`worker.ts`) doesn't accidentally load the HTTP server, create a `socketEmitter` singleton:
 
 ```
-// src/app/services/socketEmitter.js
-let _io = null
-export const setIo = (io) => { _io = io }
-export const emitToLicensee = (licenseeId, event, data) => {
+// src/app/services/socketEmitter.ts
+let _io: any = null
+export const setIo = (io: any) => { _io = io }
+export const emitToLicensee = (licenseeId: any, event: string, data: any) => {
   _io?.to(`licensee:${licenseeId}`).emit(event, data)
 }
 ```
 
-`http.js` calls `setIo(io)` after creating the Socket.IO server. LocalChat imports `emitToLicensee` directly — `_io` will be null in the worker process, which is fine (worker never calls LocalChat.sendMessage).
+`http.ts` calls `setIo(io)` after creating the Socket.IO server. LocalChat imports `emitToLicensee` directly — `_io` will be null in the worker process, which is fine (worker never calls LocalChat.sendMessage).
 
-**`Licensee.chatDefault` enum:** Add `'local'` to the enum in `Licensee.js`. The pre-save hook that sets `whatsappUrl` based on `whatsappDefault` should not be affected.
+**`Licensee.chatDefault` enum:** Add `'local'` to the enum in `Licensee.ts`. The pre-save hook that sets `whatsappUrl` based on `whatsappDefault` should not be affected.
 
 **Socket.IO rooms:** Agents join a Socket.IO room keyed by licensee: `socket.join('licensee:<licenseeId>')`. This wiring is deferred to the agent inbox UI plan. For now, `emitToLicensee` emits to the room — agents already in the room will receive it; agents not yet connected will not (acceptable for initial infrastructure).
 
-Read `src/app/plugins/chats/Chatwoot.js` for the full plugin pattern. Read `src/app/usecases/webhooks/IngestChatMessage.js` for the ingest pipeline.
+Read `src/app/plugins/chats/Chatwoot.ts` for the full plugin pattern. Read `src/app/usecases/webhooks/IngestChatMessage.ts` for the ingest pipeline.
 
 ## Before You Start
 
@@ -55,64 +55,64 @@ Read `src/app/plugins/chats/Chatwoot.js` for the full plugin pattern. Read `src/
 - [ ] Verify `phase-1/task-01-user-role-system/status.md` shows `complete`
 - [ ] Verify `phase-1/task-02-room-model/status.md` shows `complete`
 - [ ] Verify this task's `status.md` shows `not-started`
-- [ ] Read `src/app/plugins/chats/Chatwoot.js` (full file — understand `sendMessage`, `parseMessage`, `closeChat`)
-- [ ] Read `src/app/plugins/chats/factory.js`
-- [ ] Read `src/app/plugins/chats/Base.js` (full file — understand `responseToMessages`)
-- [ ] Read `src/app/usecases/webhooks/IngestChatMessage.js`
-- [ ] Read `src/config/http.js`
-- [ ] Read `src/app/models/Licensee.js` (find `chatDefault` enum)
+- [ ] Read `src/app/plugins/chats/Chatwoot.ts` (full file — understand `sendMessage`, `parseMessage`, `closeChat`)
+- [ ] Read `src/app/plugins/chats/factory.ts`
+- [ ] Read `src/app/plugins/chats/Base.ts` (full file — understand `responseToMessages`)
+- [ ] Read `src/app/usecases/webhooks/IngestChatMessage.ts`
+- [ ] Read `src/config/http.ts`
+- [ ] Read `src/app/models/Licensee.ts` (find `chatDefault` enum)
 - [ ] Mark this task `in-progress` in `status.md`
 
 ## File Ownership
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/services/socketEmitter.js` | create | Socket.IO singleton |
-| `src/config/http.js` | modify | Call `setIo(io)` after Socket.IO init |
-| `src/app/plugins/chats/LocalChat.js` | create | The plugin |
-| `src/app/plugins/chats/LocalChat.spec.js` | create | Unit tests |
-| `src/app/plugins/chats/factory.js` | modify | Add `'local'` case |
-| `src/app/models/Licensee.js` | modify | Add `'local'` to `chatDefault` enum |
-| `src/app/controllers/ChatRoomsController.js` | create | Agent reply endpoint handler |
-| `src/app/controllers/ChatRoomsController.spec.js` | create | Controller tests |
-| `src/app/routes/v1/v1-routes.js` | modify | Add agent reply route |
-| `src/app/runtime/dependencies.js` | modify | Pass `roomRepository` to createChatPlugin |
+| `src/app/services/socketEmitter.ts` | create | Socket.IO singleton |
+| `src/config/http.ts` | modify | Call `setIo(io)` after Socket.IO init |
+| `src/app/plugins/chats/LocalChat.ts` | create | The plugin |
+| `src/app/plugins/chats/LocalChat.spec.ts` | create | Unit tests |
+| `src/app/plugins/chats/factory.ts` | modify | Add `'local'` case |
+| `src/app/models/Licensee.ts` | modify | Add `'local'` to `chatDefault` enum |
+| `src/app/controllers/ChatRoomsController.ts` | create | Agent reply endpoint handler |
+| `src/app/controllers/ChatRoomsController.spec.ts` | create | Controller tests |
+| `src/app/routes/v1/v1-routes.ts` | modify | Add agent reply route |
+| `src/app/runtime/dependencies.ts` | modify | Pass `roomRepository` to createChatPlugin |
 
 ### Do NOT Modify
 
-- `src/app/models/Room.js` — complete (phase 1)
-- `src/app/models/User.js` — complete (phase 1)
-- `src/app/plugins/chats/Chatwoot.js` — read-only
+- `src/app/models/Room.ts` — complete (phase 1)
+- `src/app/models/User.ts` — complete (phase 1)
+- `src/app/plugins/chats/Chatwoot.ts` — read-only
 - `client/src/` — owned by phase-2/task-04-frontend-super-flow
 
 ## Implementation Steps
 
-### Step 1: Create `src/app/services/socketEmitter.js`
+### Step 1: Create `src/app/services/socketEmitter.ts`
 
-```js
-let _io = null
+```ts
+let _io: any = null
 
-const setIo = (io) => { _io = io }
+const setIo = (io: any) => { _io = io }
 
-const emitToLicensee = (licenseeId, event, data) => {
+const emitToLicensee = (licenseeId: any, event: string, data: any) => {
   _io?.to(`licensee:${licenseeId.toString()}`).emit(event, data)
 }
 
 export { setIo, emitToLicensee }
 ```
 
-### Step 2: Update `src/config/http.js`
+### Step 2: Update `src/config/http.ts`
 
 After `const io = new Server(server)`, add:
-```js
-import { setIo } from '../app/services/socketEmitter.js'
+```ts
+import { setIo } from '../app/services/socketEmitter'
 // ...
 setIo(io)
 ```
 
-### Step 3: Create `src/app/plugins/chats/LocalChat.js`
+### Step 3: Create `src/app/plugins/chats/LocalChat.ts`
 
-```js
+```ts
 class LocalChat extends ChatsBase {
   constructor(licensee, { roomRepository, ...dependencies } = {}) {
     super(licensee, dependencies)
@@ -184,7 +184,7 @@ class LocalChat extends ChatsBase {
 }
 ```
 
-Import `emitToLicensee` from `socketEmitter.js`.
+Import `emitToLicensee` from `socketEmitter`.
 
 ### Step 4: Add `'local'` to chat factory
 
@@ -195,7 +195,7 @@ case 'local':
 
 ### Step 5: Add `'local'` to `Licensee.chatDefault` enum
 
-Find the `chatDefault` field in `Licensee.js` and add `'local'` to the enum array.
+Find the `chatDefault` field in `Licensee.ts` and add `'local'` to the enum array.
 
 ### Step 6: Create `ChatRoomsController` and agent reply route
 
@@ -222,12 +222,12 @@ async replyToRoom(req, res) {
 }
 ```
 
-Add to `v1-routes.js`:
-```js
+Add to `v1-routes.ts`:
+```ts
 router.post('/chat/rooms/:roomId/messages', authenticate, chatRoomsController.replyToRoom)
 ```
 
-### Step 7: Wire `roomRepository` into `createChatPlugin` in `dependencies.js`
+### Step 7: Wire `roomRepository` into `createChatPlugin` in `dependencies.ts`
 
 The `LocalChat` constructor needs `roomRepository`. Ensure `roomRepository` is passed to `createChatPluginFactory` in `buildRuntimeDependencies`.
 
@@ -254,7 +254,7 @@ The `LocalChat` constructor needs `roomRepository`. Ensure `roomRepository` is p
 ## Completion Criteria
 
 - [ ] `LocalChat` plugin created and registered in factory
-- [ ] `socketEmitter` wired in `http.js`
+- [ ] `socketEmitter` wired in `http.ts`
 - [ ] Agent reply endpoint functional
 - [ ] `'local'` added to `Licensee.chatDefault` enum
 - [ ] All tests pass

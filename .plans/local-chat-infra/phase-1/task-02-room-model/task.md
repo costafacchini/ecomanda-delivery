@@ -34,31 +34,31 @@ The sync rules:
 
 Existing rooms without `agent` or `status` will have `agent: null` and `status: 'pending'` after the schema update (Mongoose default). This is acceptable — old rooms are effectively "pending" until the LocalChat plugin is active.
 
-Read `src/app/plugins/chats/Chatwoot.js` lines 325-355 (`closeChat`) and the `roomRepository` usage to understand all callsites before modifying.
+Read `src/app/plugins/chats/Chatwoot.ts` lines 325-355 (`closeChat`) and the `roomRepository` usage to understand all callsites before modifying.
 
 ## Before You Start
 
 - [ ] Switch to main and pull: `git switch main && git pull --rebase origin main`
 - [ ] Create task branch: `git switch -c plan/local-chat-infra/phase-1/task-02-room-model`
 - [ ] Verify this task's `status.md` shows `not-started`
-- [ ] Read `src/app/models/Room.js` (full file)
-- [ ] Read `src/app/plugins/chats/Chatwoot.js` lines 325–355 (`closeChat`)
-- [ ] Read `src/app/repositories/room.js` (full file)
+- [ ] Read `src/app/models/Room.ts` (full file)
+- [ ] Read `src/app/plugins/chats/Chatwoot.ts` lines 325–355 (`closeChat`)
+- [ ] Read `src/app/repositories/room.ts` (full file)
 - [ ] Mark this task `in-progress` in `status.md`
 
 ## File Ownership
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/models/Room.js` | modify | Add `agent`, `status`; sync hook |
-| `src/app/models/Room.spec.js` | modify | Add field and sync tests |
-| `src/app/repositories/room.js` | modify | Add `findOpenForContact(contactId)` helper |
+| `src/app/models/Room.ts` | modify | Add `agent`, `status`; sync hook |
+| `src/app/models/Room.spec.ts` | modify | Add field and sync tests |
+| `src/app/repositories/room.ts` | modify | Add `findOpenForContact(contactId)` helper |
 
 ### Do NOT Modify
 
-- `src/app/models/User.js` — owned by phase-1/task-01-user-role-system
-- `src/app/plugins/chats/Chatwoot.js` — read-only; backward compat is maintained via the sync hook
-- `src/app/plugins/chats/LocalChat.js` — owned by phase-2/task-03-local-chat-plugin (does not exist yet)
+- `src/app/models/User.ts` — owned by phase-1/task-01-user-role-system
+- `src/app/plugins/chats/Chatwoot.ts` — read-only; backward compat is maintained via the sync hook
+- `src/app/plugins/chats/LocalChat.ts` — owned by phase-2/task-03-local-chat-plugin (does not exist yet)
 
 ## Implementation Steps
 
@@ -125,7 +125,7 @@ This helper is used by `LocalChat.sendMessage()` (task-03) to find an existing o
 - [ ] Setting `closed = false` directly (legacy) syncs `status = 'open'`
 - [ ] Existing room with `closed: false` (no `status`) defaults to `status: 'pending'`
 - [ ] `findOpenForContact` returns the open room for a contact
-- [ ] All existing `Room.spec.js` tests still pass (Chatwoot `closeChat` path is unaffected)
+- [ ] All existing `Room.spec.ts` tests still pass (Chatwoot `closeChat` path is unaffected)
 - [ ] `pre-commit-check` passes
 
 ## Documentation / KB Updates
@@ -136,11 +136,11 @@ This helper is used by `LocalChat.sendMessage()` (task-03) to find an existing o
 
 - [ ] `agent` and `status` fields added with sync hook
 - [ ] `findOpenForContact` added to repository
-- [ ] All tests pass: `npx jest src/app/models/Room.spec.js`
-- [ ] `npx eslint src/app/models/Room.js src/app/repositories/room.js` passes
+- [ ] All tests pass: `npx jest src/app/models/Room.spec.ts`
+- [ ] `npx eslint src/app/models/Room.ts src/app/repositories/room.ts` passes
 - [ ] Changes committed to `plan/local-chat-infra/phase-1/task-02-room-model` branch
 - [ ] Status updated to `complete` in `status.md`
 
 ## Conflict Avoidance Notes
 
-- task-01 modifies `User.js` only. No overlap with this task.
+- task-01 modifies `User.ts` only. No overlap with this task.

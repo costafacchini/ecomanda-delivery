@@ -25,7 +25,7 @@ This task is the glue layer:
 
 `onLogout` callback → log a warning that the licensee's session was invalidated. No further action at this layer (the socket manager already cleared credentials).
 
-See `src/app/usecases/webhooks/IngestMessengerMessage.js` for the ingest use case signature and `src/app/runtime/dependencies.js` for how use cases and factories are assembled.
+See `src/app/usecases/webhooks/IngestMessengerMessage.ts` for the ingest use case signature and `src/app/runtime/dependencies.ts` for how use cases and factories are assembled.
 
 ## Before You Start
 
@@ -34,51 +34,57 @@ See `src/app/usecases/webhooks/IngestMessengerMessage.js` for the ingest use cas
 - [ ] Verify `phase-1/task-01-socket-manager/status.md` shows `complete`
 - [ ] Verify `phase-1/task-02-receipt-parsing/status.md` shows `complete`
 - [ ] Verify this task's `status.md` shows `not-started`
-- [ ] Read `src/app/usecases/webhooks/IngestMessengerMessage.js`
-- [ ] Read `src/app/runtime/dependencies.js` (full file — understand how use cases are wired)
-- [ ] Read `src/app/services/BaileysSocketManager.js` (created in task-01)
+- [ ] Read `src/app/usecases/webhooks/IngestMessengerMessage.ts`
+- [ ] Read `src/app/runtime/dependencies.ts` (full file — understand how use cases are wired)
+- [ ] Read `src/app/services/BaileysSocketManager.ts` (created in task-01)
 - [ ] Mark this task `in-progress` in `status.md`
 
 ## File Ownership
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/usecases/licensees/StartBaileysSocket.js` | create | Use case |
-| `src/app/usecases/licensees/StartBaileysSocket.spec.js` | create | Unit tests |
-| `src/app/runtime/dependencies.js` | modify | Wire `socketManager`, `startBaileysSocket` |
+| `src/app/usecases/licensees/StartBaileysSocket.ts` | create | Use case |
+| `src/app/usecases/licensees/StartBaileysSocket.spec.ts` | create | Unit tests |
+| `src/app/runtime/dependencies.ts` | modify | Wire `socketManager`, `startBaileysSocket` |
 
 ### Do NOT Modify
 
-- `src/app/services/BaileysSocketManager.js` — owned by phase-1/task-01-socket-manager (complete)
-- `src/app/plugins/messengers/Baileys.js` — owned by phase-1/task-02-receipt-parsing (complete)
-- `src/app/usecases/webhooks/IngestMessengerMessage.js` — read-only
-- `server.js` — owned by phase-3/task-04-boot-and-qr-integration
-- `src/app/usecases/licensees/GetBaileysQr.js` — owned by phase-3/task-04-boot-and-qr-integration
+- `src/app/services/BaileysSocketManager.ts` — owned by phase-1/task-01-socket-manager (complete)
+- `src/app/plugins/messengers/Baileys.ts` — owned by phase-1/task-02-receipt-parsing (complete)
+- `src/app/usecases/webhooks/IngestMessengerMessage.ts` — read-only
+- `server.ts` — owned by phase-3/task-04-boot-and-qr-integration
+- `src/app/usecases/licensees/GetBaileysQr.ts` — owned by phase-3/task-04-boot-and-qr-integration
 
 ## Implementation Steps
 
 ### Step 1: Create `StartBaileysSocket` use case
 
-```js
-// src/app/usecases/licensees/StartBaileysSocket.js
+```ts
+// src/app/usecases/licensees/StartBaileysSocket.ts
+import { logger } from '../../helpers/logger'
+
 class StartBaileysSocket {
-  constructor({ socketManager, createMessengerPlugin, ingestMessengerMessage } = {}) {
+  socketManager: any
+  createMessengerPlugin: any
+  ingestMessengerMessage: any
+
+  constructor({ socketManager, createMessengerPlugin, ingestMessengerMessage }: Record<string, any> = {}) {
     this.socketManager = socketManager
     this.createMessengerPlugin = createMessengerPlugin
     this.ingestMessengerMessage = ingestMessengerMessage
   }
 
-  async execute(licensee) {
+  async execute(licensee: any) {
     const plugin = this.createMessengerPlugin(licensee)
 
     await this.socketManager.start(licensee, {
-      onMessage: async (msg) => {
+      onMessage: async (msg: any) => {
         await this.ingestMessengerMessage.execute({
           body: msg,
           licenseeId: licensee._id,
         })
       },
-      onReceiptUpdate: async (update) => {
+      onReceiptUpdate: async (update: any) => {
         await plugin.responseToMessages(update)
       },
       onLogout: () => {
@@ -91,11 +97,9 @@ class StartBaileysSocket {
 export { StartBaileysSocket }
 ```
 
-Import `logger` from `../../helpers/logger.js`.
+### Step 2: Add `socketManager` singleton to `dependencies.ts`
 
-### Step 2: Add `socketManager` singleton to `dependencies.js`
-
-In `src/app/runtime/dependencies.js`:
+In `src/app/runtime/dependencies.ts`:
 
 1. Import `BaileysSocketManager` and `StartBaileysSocket`.
 2. Inside `buildRuntimeDependencies`, create the singleton:
@@ -116,13 +120,13 @@ In `src/app/runtime/dependencies.js`:
    ```
 4. Add `socketManager` and `startBaileysSocket` to the returned dependency object.
 
-> `queueServer` is already imported in `queue.js` — `dependencies.js` should import it from `../../config/queue.js` (already available via the existing pattern if it isn't already imported). Verify before adding a new import.
+> `queueServer` is already imported in `queue.ts` — `dependencies.ts` should import it from `../../config/queue` (already available via the existing pattern if it isn't already imported). Verify before adding a new import.
 
-### Step 3: Ensure `IngestMessengerMessage` is importable in `dependencies.js`
+### Step 3: Ensure `IngestMessengerMessage` is importable in `dependencies.ts`
 
 Check if it is already imported. If not, add:
-```js
-import { IngestMessengerMessage } from '../usecases/webhooks/IngestMessengerMessage.js'
+```ts
+import { IngestMessengerMessage } from '../usecases/webhooks/IngestMessengerMessage'
 ```
 
 ## Testing
@@ -140,8 +144,8 @@ import { IngestMessengerMessage } from '../usecases/webhooks/IngestMessengerMess
 
 ## Completion Criteria
 
-- [ ] `StartBaileysSocket` created and wired in `dependencies.js`
-- [ ] All unit tests pass: `npx jest src/app/usecases/licensees/StartBaileysSocket.spec.js`
+- [ ] `StartBaileysSocket` created and wired in `dependencies.ts`
+- [ ] All unit tests pass: `npx jest src/app/usecases/licensees/StartBaileysSocket.spec.ts`
 - [ ] `npx eslint src/app/usecases/licensees/ src/app/runtime/` passes
 - [ ] Changes committed to `plan/baileys-socket-monitor/phase-2/task-03-start-socket-usecase` branch
 - [ ] Status updated to `complete` in `status.md`

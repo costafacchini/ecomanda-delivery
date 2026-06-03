@@ -33,7 +33,7 @@ Add `activeLicensee` to AppContext (persisted in localStorage), show a licensee 
 
 **Default avatar:** A simple Bootstrap icon or a generic SVG — no upload, no external service. Use Bootstrap Icons `person-circle` or equivalent.
 
-Read `client/src/contexts/App/index.js`, `client/src/pages/Navbar/index.js`, `client/src/pages/BaseLayout/index.js`, and `client/src/services/auth.js` before implementing.
+Read `client/src/contexts/App/index.tsx`, `client/src/pages/Navbar/index.tsx`, `client/src/pages/BaseLayout/index.tsx`, and `client/src/services/auth.ts` before implementing.
 
 ## Before You Start
 
@@ -41,23 +41,23 @@ Read `client/src/contexts/App/index.js`, `client/src/pages/Navbar/index.js`, `cl
 - [ ] Create task branch: `git switch -c plan/local-chat-infra/phase-2/task-04-frontend-super-flow`
 - [ ] Verify `phase-1/task-01-user-role-system/status.md` shows `complete`
 - [ ] Verify this task's `status.md` shows `not-started`
-- [ ] Read `client/src/contexts/App/index.js` (full file)
-- [ ] Read `client/src/pages/Navbar/index.js` (full file)
-- [ ] Read `client/src/pages/BaseLayout/index.js` (full file)
-- [ ] Read `client/src/services/auth.js` (full file)
-- [ ] Read `client/src/pages/SignIn/index.js` (full file)
+- [ ] Read `client/src/contexts/App/index.tsx` (full file)
+- [ ] Read `client/src/pages/Navbar/index.tsx` (full file)
+- [ ] Read `client/src/pages/BaseLayout/index.tsx` (full file)
+- [ ] Read `client/src/services/auth.ts` (full file)
+- [ ] Read `client/src/pages/SignIn/index.tsx` (full file)
 - [ ] Mark this task `in-progress` in `status.md`
 
 ## File Ownership
 
 | File | Action | Notes |
 |------|--------|-------|
-| `client/src/contexts/App/index.js` | modify | Add `activeLicensee` + `setActiveLicensee` |
-| `client/src/services/auth.js` | modify | Add `activeLicensee` localStorage helpers |
-| `client/src/components/SelectLicenseeModal/index.js` | create | Licensee picker modal |
-| `client/src/pages/BaseLayout/index.js` | modify | Guard render for super without activeLicensee |
-| `client/src/pages/Navbar/index.js` | modify | User menu dropdown; role-based nav item visibility |
-| `client/src/pages/SignIn/index.js` | modify | Load `activeLicensee` from localStorage on login |
+| `client/src/contexts/App/index.tsx` | modify | Add `activeLicensee` + `setActiveLicensee` |
+| `client/src/services/auth.ts` | modify | Add `activeLicensee` localStorage helpers |
+| `client/src/components/SelectLicenseeModal/index.tsx` | create | Licensee picker modal |
+| `client/src/pages/BaseLayout/index.tsx` | modify | Guard render for super without activeLicensee |
+| `client/src/pages/Navbar/index.tsx` | modify | User menu dropdown; role-based nav item visibility |
+| `client/src/pages/SignIn/index.tsx` | modify | Load `activeLicensee` from localStorage on login |
 
 ### Do NOT Modify
 
@@ -66,7 +66,7 @@ Read `client/src/contexts/App/index.js`, `client/src/pages/Navbar/index.js`, `cl
 
 ## Implementation Steps
 
-### Step 1: Update `client/src/services/auth.js`
+### Step 1: Update `client/src/services/auth.ts`
 
 Add localStorage helpers for `activeLicensee`:
 
@@ -88,7 +88,7 @@ export const clearActiveLicensee = () =>
 
 Update `logout()` to also call `clearActiveLicensee()`.
 
-### Step 2: Update `client/src/contexts/App/index.js`
+### Step 2: Update `client/src/contexts/App/index.tsx`
 
 ```js
 const [currentUser, setCurrentUser] = useState()
@@ -102,13 +102,13 @@ const updateActiveLicensee = (licensee) => {
 // Expose: currentUser, setCurrentUser, activeLicensee, updateActiveLicensee
 ```
 
-### Step 3: Create `client/src/components/SelectLicenseeModal/index.js`
+### Step 3: Create `client/src/components/SelectLicenseeModal/index.tsx`
 
 A Bootstrap modal that wraps the existing `SelectLicenseesWithFilter` component. On confirm, calls `updateActiveLicensee(selected)` and closes. Cannot be dismissed without a selection (no X button, no backdrop click close).
 
 Edge case: if no licensees exist, show a message "Nenhum licenciado disponível" and a "Sair" link.
 
-### Step 4: Update `client/src/pages/BaseLayout/index.js`
+### Step 4: Update `client/src/pages/BaseLayout/index.tsx`
 
 After loading `currentUser`, check:
 ```js
@@ -119,7 +119,7 @@ if (currentUser?.role === 'super' && !activeLicensee) {
 
 This blocks all navigation until super selects a licensee.
 
-### Step 5: Update `client/src/pages/SignIn/index.js`
+### Step 5: Update `client/src/pages/SignIn/index.tsx`
 
 After `setCurrentUser(user)`, if `user.role === 'super'`:
 - Try to load `activeLicensee` from localStorage
@@ -127,7 +127,7 @@ After `setCurrentUser(user)`, if `user.role === 'super'`:
 
 If `user.role !== 'super'`, `activeLicensee` is irrelevant (their licensee comes from `currentUser.licensee`).
 
-### Step 6: Replace "Sair" with user menu in `client/src/pages/Navbar/index.js`
+### Step 6: Replace "Sair" with user menu in `client/src/pages/Navbar/index.tsx`
 
 Replace:
 ```jsx

@@ -14,14 +14,14 @@ Re-key `BaileysSocketManager` from `licenseeId` to `WhatsappSession._id` so mult
 ## Context
 
 **Current keying (from `baileys-socket-monitor` plan):**
-```js
+```ts
 this._sockets = new Map() // key: licenseeId.toString()
 ```
 
 **Problem:** With sectors, one licensee can have N+1 sessions (main + one per sector with a number). The map key must be unique per session, not per licensee.
 
 **New keying:**
-```js
+```ts
 this._sockets = new Map() // key: whatsappSession._id.toString()
 ```
 
@@ -44,7 +44,7 @@ Currently iterates licensees and starts one socket per licensee. Must now iterat
 
 These load the sector, get its licensee, and operate on the `WhatsappSession` for `{ licensee, setor }`.
 
-Read `src/app/usecases/licensees/GetBaileysQr.js`, `GetBaileysStatus.js`, and `SyncBaileysDirectory.js` before implementing — the sector variants are thin wrappers that pass `setor` context.
+Read `src/app/usecases/licensees/GetBaileysQr.ts`, `GetBaileysStatus.ts`, and `SyncBaileysDirectory.ts` before implementing — the sector variants are thin wrappers that pass `setor` context.
 
 ## Before You Start
 
@@ -53,31 +53,31 @@ Read `src/app/usecases/licensees/GetBaileysQr.js`, `GetBaileysStatus.js`, and `S
 - [ ] Verify `phase-1/task-01-setor-model-api/status.md` shows `complete`
 - [ ] Verify `phase-1/task-02-schema-migrations/status.md` shows `complete`
 - [ ] Verify this task's `status.md` shows `not-started`
-- [ ] Read `src/app/services/BaileysSocketManager.js` (full file)
-- [ ] Read `src/app/usecases/licensees/StartBaileysSocket.js`
-- [ ] Read `src/app/usecases/licensees/BootBaileysSocketSessions.js`
-- [ ] Read `src/app/usecases/licensees/GetBaileysQr.js`, `GetBaileysStatus.js`, `SyncBaileysDirectory.js`
+- [ ] Read `src/app/services/BaileysSocketManager.ts` (full file)
+- [ ] Read `src/app/usecases/licensees/StartBaileysSocket.ts`
+- [ ] Read `src/app/usecases/licensees/BootBaileysSocketSessions.ts`
+- [ ] Read `src/app/usecases/licensees/GetBaileysQr.ts`, `GetBaileysStatus.ts`, `SyncBaileysDirectory.ts`
 - [ ] Mark this task `in-progress` in `status.md`
 
 ## File Ownership
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/services/BaileysSocketManager.js` | modify | Re-key by session._id; add `isConnectedForLicensee` helper |
-| `src/app/usecases/licensees/StartBaileysSocket.js` | modify | Accept optional `setor` param; key socket by session._id |
-| `src/app/usecases/licensees/BootBaileysSocketSessions.js` | modify | Iterate all WhatsappSession records, not just licensees |
-| `src/app/usecases/licensees/GetBaileysQrForSetor.js` | create | Use case: QR for a sector session |
-| `src/app/usecases/licensees/GetBaileysStatusForSetor.js` | create | Use case: status for a sector session |
-| `src/app/usecases/licensees/SyncBaileysDirectoryForSetor.js` | create | Use case: group sync for a sector session |
-| `src/app/controllers/SetoresController.js` | modify | Add `getBaileysQr`, `getBaileysStatus`, `baileysSync` methods |
-| `src/app/routes/resources-routes.js` | modify | Add sector Baileys routes |
-| `src/app/runtime/dependencies.js` | modify | Wire new sector Baileys use cases |
+| `src/app/services/BaileysSocketManager.ts` | modify | Re-key by session._id; add `isConnectedForLicensee` helper |
+| `src/app/usecases/licensees/StartBaileysSocket.ts` | modify | Accept optional `setor` param; key socket by session._id |
+| `src/app/usecases/licensees/BootBaileysSocketSessions.ts` | modify | Iterate all WhatsappSession records, not just licensees |
+| `src/app/usecases/licensees/GetBaileysQrForSetor.ts` | create | Use case: QR for a sector session |
+| `src/app/usecases/licensees/GetBaileysStatusForSetor.ts` | create | Use case: status for a sector session |
+| `src/app/usecases/licensees/SyncBaileysDirectoryForSetor.ts` | create | Use case: group sync for a sector session |
+| `src/app/controllers/SetoresController.ts` | modify | Add `getBaileysQr`, `getBaileysStatus`, `baileysSync` methods |
+| `src/app/routes/resources-routes.ts` | modify | Add sector Baileys routes |
+| `src/app/runtime/dependencies.ts` | modify | Wire new sector Baileys use cases |
 
 ### Do NOT Modify
 
-- `src/app/models/WhatsappSession.js` — complete (phase 1)
-- `src/app/models/Setor.js` — complete (phase 1)
-- `src/app/plugins/messengers/Baileys.js` — read-only; `loadOrCreateSession` will be called with `setor` context from use cases
+- `src/app/models/WhatsappSession.ts` — complete (phase 1)
+- `src/app/models/Setor.ts` — complete (phase 1)
+- `src/app/plugins/messengers/Baileys.ts` — read-only; `loadOrCreateSession` will be called with `setor` context from use cases
 
 ## Implementation Steps
 
@@ -86,8 +86,8 @@ Read `src/app/usecases/licensees/GetBaileysQr.js`, `GetBaileysStatus.js`, and `S
 Change `start(licensee, callbacks)` signature to `start(session, licensee, callbacks)` where `session` is the `WhatsappSession` document. The socket key becomes `session._id.toString()`.
 
 Add helper:
-```js
-isConnectedForLicensee(licenseeId, setorId = null) {
+```ts
+isConnectedForLicensee(licenseeId: any, setorId: any = null): boolean {
   // Find session in _sockets where session.licensee === licenseeId && session.setor === setorId
   for (const [, { session }] of this._sockets) {
     if (session.licensee.toString() === licenseeId.toString() &&
@@ -100,22 +100,22 @@ isConnectedForLicensee(licenseeId, setorId = null) {
 ```
 
 Store the session document alongside the socket in the registry:
-```js
+```ts
 this._sockets.set(key, { socket, licensee, session })
 ```
 
 ### Step 2: Update `StartBaileysSocket`
 
-```js
-async execute(licensee, setor = null) {
+```ts
+async execute(licensee: any, setor: any = null) {
   const session = await loadOrFindSession(licensee._id, setor?._id ?? null)
   const plugin = this.createMessengerPlugin(licensee)
 
   await this.socketManager.start(session, licensee, {
-    onMessage: async (msg) => { ... },          // same as before
-    onReceiptUpdate: async (update) => { ... }, // same as before
-    onLogout: () => { ... },                    // same as before
-    setor,                                      // passed through to onMessage handler
+    onMessage: async (msg: any) => { ... },          // same as before
+    onReceiptUpdate: async (update: any) => { ... }, // same as before
+    onLogout: () => { ... },                         // same as before
+    setor,                                           // passed through to onMessage handler
   })
 }
 ```
@@ -125,7 +125,7 @@ The `onMessage` callback must receive `setor` in its closure so it can pass `set
 ### Step 3: Update `BootBaileysSocketSessions`
 
 Change from iterating licensees to iterating all WhatsappSession records with non-empty creds:
-```js
+```ts
 const sessions = await this.whatsappSessionRepository.find({})
 for (const session of sessions) {
   if (!session.creds || Object.keys(session.creds).length === 0) continue
@@ -145,8 +145,8 @@ for (const session of sessions) {
 
 Add `getBaileysQr`, `getBaileysStatus`, `baileysSync` methods to `SetoresController` mirroring the licensee controller methods but calling sector use cases.
 
-Add to `resources-routes.js`:
-```js
+Add to `resources-routes.ts`:
+```ts
 router.post('/setores/:id/baileys-qr', setoresController.getBaileysQr)
 router.get('/setores/:id/baileys-status', setoresController.getBaileysStatus)
 router.post('/setores/:id/baileys-sync', setoresController.baileysSync)

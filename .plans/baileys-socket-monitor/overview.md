@@ -19,9 +19,9 @@ Replace the external-webhook-only inbound flow with a persistent Baileys WebSock
 - `messages.update` → delivery receipt status updates (`sendedAt`, `deliveredAt`, `readAt`)
 - `StartBaileysSocket` use case wiring `IngestMessengerMessage` as the message callback
 - `BootBaileysSocketSessions` use case to start all active Baileys sessions at app boot
-- `server.js` startup hook gated by `ENABLE_BAILEYS_SOCKET=true`
-- `GetBaileysQr.js` integration — trigger persistent socket after successful QR pairing
-- `parseMessageStatus` implementation in `Baileys.js` (currently a stub returning null)
+- `server.ts` startup hook gated by `ENABLE_BAILEYS_SOCKET=true`
+- `GetBaileysQr.ts` integration — trigger persistent socket after successful QR pairing
+- `parseMessageStatus` implementation in `Baileys.ts` (currently a stub returning null)
 - Unit tests for all new code
 - KB update to `baileys-whatsapp-guide.md`
 
@@ -29,7 +29,7 @@ Replace the external-webhook-only inbound flow with a persistent Baileys WebSock
 - Replacing the existing HTTP webhook endpoint (`POST /v1/messenger/message`) — webhook remains as a fallback and for non-Baileys messengers
 - Routing outbound sends through the persistent socket (existing `sendMessage` ephemeral flow unchanged)
 - Image, audio, video, or sticker message parsing — text only, matching existing `parseMessage` scope
-- Worker process (`worker.js`) — persistent socket runs in the web process only
+- Worker process (`worker.ts`) — persistent socket runs in the web process only
 - Contact address-book sync — only group and individual message events, no directory import
 - Multi-instance / Redis socket coordination — single-dyno assumption; multi-dyno coordination is out of scope
 
@@ -72,14 +72,14 @@ Base branch: `main`
 
 | File/Directory | Relevance |
 |----------------|-----------|
-| `src/app/services/BaileysSocketManager.js` | NEW — core persistent socket lifecycle service |
-| `src/app/plugins/messengers/Baileys.js` | Modify `parseMessageStatus` stub; socket manager reuses `buildAuthState` / `saveSession` |
-| `src/app/usecases/licensees/StartBaileysSocket.js` | NEW — use case wiring ingest + receipt callbacks |
-| `src/app/usecases/licensees/BootBaileysSocketSessions.js` | NEW — use case to start all active sessions at boot |
-| `src/app/usecases/webhooks/IngestMessengerMessage.js` | Read-only — inbound handler called from socket manager |
-| `src/app/runtime/dependencies.js` | Add `socketManager`, `startBaileysSocket`, `bootBaileysSocketSessions` |
-| `src/app/usecases/licensees/GetBaileysQr.js` | Trigger persistent socket after successful QR pairing |
-| `server.js` | Boot hook: call `bootBaileysSocketSessions` after DB connect |
+| `src/app/services/BaileysSocketManager.ts` | NEW — core persistent socket lifecycle service |
+| `src/app/plugins/messengers/Baileys.ts` | Modify `parseMessageStatus` stub; socket manager reuses `buildAuthState` / `saveSession` |
+| `src/app/usecases/licensees/StartBaileysSocket.ts` | NEW — use case wiring ingest + receipt callbacks |
+| `src/app/usecases/licensees/BootBaileysSocketSessions.ts` | NEW — use case to start all active sessions at boot |
+| `src/app/usecases/webhooks/IngestMessengerMessage.ts` | Read-only — inbound handler called from socket manager |
+| `src/app/runtime/dependencies.ts` | Add `socketManager`, `startBaileysSocket`, `bootBaileysSocketSessions` |
+| `src/app/usecases/licensees/GetBaileysQr.ts` | Trigger persistent socket after successful QR pairing |
+| `server.ts` | Boot hook: call `bootBaileysSocketSessions` after DB connect |
 | `docs/kb/features/baileys-whatsapp-guide.md` | Document the persistent socket feature and env flag |
 
 ## Risks

@@ -14,7 +14,7 @@ Apply `authorize()` guards to all existing routes based on the required role, fi
 ## Context
 
 **Backend gaps found:**
-1. `resources-routes.js` currently only guards user/licensee creation with `requireSuper`. Contacts, messages, triggers, templates have no server-side authorization guard.
+1. `resources-routes.ts` currently only guards user/licensee creation with `requireSuper`. Contacts, messages, triggers, templates have no server-side authorization guard.
 2. `MessagesController.index()` applies no server-side licensee filter — a non-super user can query any licensee's messages by passing `?licensee=<anyId>`.
 3. `MessagesController.resend()` correctly checks licensee ownership — this is the pattern to follow for `index()`.
 
@@ -44,13 +44,13 @@ Apply the same pattern to `ContactsController.index()` and any other index contr
 
 **Frontend cleanup:**
 The remaining `isAdmin`/`isSuper` references after task-04 (which already updated Navbar). Other pages to check:
-- `client/src/pages/Messages/scenes/Index/index.js` — `!currentUser.isSuper` filter check
+- `client/src/pages/Messages/scenes/Index/index.tsx` — `!currentUser.isSuper` filter check
 - `client/src/pages/Reports/` — if admin/super check exists
-- `client/src/pages/routes.js` — if route guards check roles
+- `client/src/pages/routes.tsx` — if route guards check roles
 
 **`isAdmin` and `isSuper` removal:** After all references are migrated to `role`, remove `isAdmin` and `isSuper` from the `User` schema. This is the final cleanup.
 
-Read `src/app/routes/resources-routes.js` (full file) and `src/app/controllers/MessagesController.js` before implementing.
+Read `src/app/routes/resources-routes.ts` (full file) and `src/app/controllers/MessagesController.ts` before implementing.
 
 ## Before You Start
 
@@ -59,9 +59,9 @@ Read `src/app/routes/resources-routes.js` (full file) and `src/app/controllers/M
 - [ ] Verify `phase-2/task-03-local-chat-plugin/status.md` shows `complete`
 - [ ] Verify `phase-2/task-04-frontend-super-flow/status.md` shows `complete`
 - [ ] Verify this task's `status.md` shows `not-started`
-- [ ] Read `src/app/routes/resources-routes.js` (full file)
-- [ ] Read `src/app/routes/v1/v1-routes.js` (full file)
-- [ ] Read `src/app/controllers/MessagesController.js` (full file)
+- [ ] Read `src/app/routes/resources-routes.ts` (full file)
+- [ ] Read `src/app/routes/v1/v1-routes.ts` (full file)
+- [ ] Read `src/app/controllers/MessagesController.ts` (full file)
 - [ ] Grep for `isAdmin` and `isSuper` across `client/src/` to find all remaining references
 - [ ] Mark this task `in-progress` in `status.md`
 
@@ -69,26 +69,26 @@ Read `src/app/routes/resources-routes.js` (full file) and `src/app/controllers/M
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/routes/resources-routes.js` | modify | Apply `authorize()` to routes; server-side licensee filter fix |
-| `src/app/controllers/MessagesController.js` | modify | Enforce licensee filter for non-super |
-| `src/app/controllers/ContactsController.js` | modify | Enforce licensee filter for non-super |
-| `src/app/models/User.js` | modify | Remove deprecated `isAdmin` and `isSuper` fields |
-| `src/app/models/User.spec.js` | modify | Remove deprecated field tests |
-| `client/src/pages/Messages/scenes/Index/index.js` | modify | `!currentUser.isSuper` → role check |
+| `src/app/routes/resources-routes.ts` | modify | Apply `authorize()` to routes; server-side licensee filter fix |
+| `src/app/controllers/MessagesController.ts` | modify | Enforce licensee filter for non-super |
+| `src/app/controllers/ContactsController.ts` | modify | Enforce licensee filter for non-super |
+| `src/app/models/User.ts` | modify | Remove deprecated `isAdmin` and `isSuper` fields |
+| `src/app/models/User.spec.ts` | modify | Remove deprecated field tests |
+| `client/src/pages/Messages/scenes/Index/index.tsx` | modify | `!currentUser.isSuper` → role check |
 | Any other client page with `isAdmin`/`isSuper` checks | modify | Migrate to `currentUser.role` |
 
 ### Do NOT Modify
 
 - `src/app/plugins/chats/` — complete (phase 2)
-- `client/src/contexts/App/index.js` — complete (phase 2)
-- `client/src/pages/Navbar/index.js` — complete (phase 2)
+- `client/src/contexts/App/index.tsx` — complete (phase 2)
+- `client/src/pages/Navbar/index.tsx` — complete (phase 2)
 
 ## Implementation Steps
 
-### Step 1: Audit and apply `authorize()` to `resources-routes.js`
+### Step 1: Audit and apply `authorize()` to `resources-routes.ts`
 
 Read every route. Apply `authorize()` based on the matrix in Context. Example:
-```js
+```ts
 // Before:
 router.post('/users', requireSuper, usersController.create)
 
@@ -105,16 +105,16 @@ After `authorize()` runs and populates `req.user`, enforce the licensee constrai
 
 ### Step 3: Remove `isAdmin` and `isSuper` from User schema
 
-After verifying all backend references are migrated, remove the fields from `User.js`. Run a grep first:
+After verifying all backend references are migrated, remove the fields from `User.ts`. Run a grep first:
 ```bash
-grep -rn "isAdmin\|isSuper" src/ --include="*.js" | grep -v spec | grep -v node_modules
+grep -rn "isAdmin\|isSuper" src/ --include="*.ts" | grep -v spec | grep -v node_modules
 ```
 Only remove when all hits are confirmed migrated.
 
 ### Step 4: Migrate remaining frontend `isAdmin`/`isSuper` references
 
 ```bash
-grep -rn "isAdmin\|isSuper" client/src/ --include="*.js" --include="*.jsx"
+grep -rn "isAdmin\|isSuper" client/src/ --include="*.ts" --include="*.tsx"
 ```
 
 For each hit, replace with the appropriate `currentUser.role` check:
@@ -124,7 +124,7 @@ For each hit, replace with the appropriate `currentUser.role` check:
 
 ### Step 5: Update Messages page licensee filter
 
-In `client/src/pages/Messages/scenes/Index/index.js`:
+In `client/src/pages/Messages/scenes/Index/index.tsx`:
 ```js
 // Before:
 if (currentUser && !currentUser.isSuper && filters.licensee !== currentUser.licensee) {

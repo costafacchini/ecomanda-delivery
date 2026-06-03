@@ -38,7 +38,7 @@ When an agent (`role: 'agent'` or `'supervisor'`) queries rooms/messages, the re
 
 The filtering happens at the repository/use case level, not the controller level, to prevent accidental bypass.
 
-Read `src/app/usecases/webhooks/IngestMessengerMessage.js` and `src/app/services/MessengerMessage.js` (`transformMessengerBody`) before implementing.
+Read `src/app/usecases/webhooks/IngestMessengerMessage.ts` and `src/app/services/MessengerMessage.ts` (`transformMessengerBody`) before implementing.
 
 ## Before You Start
 
@@ -47,27 +47,27 @@ Read `src/app/usecases/webhooks/IngestMessengerMessage.js` and `src/app/services
 - [ ] Verify `phase-1/task-01-setor-model-api/status.md` shows `complete`
 - [ ] Verify `phase-1/task-02-schema-migrations/status.md` shows `complete`
 - [ ] Verify this task's `status.md` shows `not-started`
-- [ ] Read `src/app/usecases/webhooks/IngestMessengerMessage.js`
-- [ ] Read `src/app/services/MessengerMessage.js` (`transformMessengerBody`)
-- [ ] Read `src/app/plugins/chats/Base.js` (Room creation in `responseToMessages`)
-- [ ] Read `src/app/models/Body.js` if it exists (check schema for adding `setorId`)
+- [ ] Read `src/app/usecases/webhooks/IngestMessengerMessage.ts`
+- [ ] Read `src/app/services/MessengerMessage.ts` (`transformMessengerBody`)
+- [ ] Read `src/app/plugins/chats/Base.ts` (Room creation in `responseToMessages`)
+- [ ] Read `src/app/models/Body.ts` (check schema for adding `setorId`)
 - [ ] Mark this task `in-progress` in `status.md`
 
 ## File Ownership
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/usecases/webhooks/IngestMessengerMessage.js` | modify | Accept optional `setorId` in execute(); save to Body |
-| `src/app/services/MessengerMessage.js` | modify | Extract `setorId` from body; pass to responseToMessages |
-| `src/app/plugins/messengers/Base.js` | modify | Pass `setorId` through to Room creation |
-| `src/app/usecases/licensees/StartBaileysSocket.js` | modify | Pass `setor._id` in `onMessage` call to IngestMessengerMessage |
-| `src/app/repositories/room.js` | modify | Add `findByAgent` query supporting sector filter |
+| `src/app/usecases/webhooks/IngestMessengerMessage.ts` | modify | Accept optional `setorId` in execute(); save to Body |
+| `src/app/services/MessengerMessage.ts` | modify | Extract `setorId` from body; pass to responseToMessages |
+| `src/app/plugins/messengers/Base.ts` | modify | Pass `setorId` through to Room creation |
+| `src/app/usecases/licensees/StartBaileysSocket.ts` | modify | Pass `setor._id` in `onMessage` call to IngestMessengerMessage |
+| `src/app/repositories/room.ts` | modify | Add `findByAgent` query supporting sector filter |
 
 ### Do NOT Modify
 
-- `src/app/services/BaileysSocketManager.js` — owned by phase-2/task-03 (complete)
-- `src/app/models/Room.js` — complete (phase 1)
-- `src/app/models/Setor.js` — complete (phase 1)
+- `src/app/services/BaileysSocketManager.ts` — owned by phase-2/task-03 (complete)
+- `src/app/models/Room.ts` — complete (phase 1)
+- `src/app/models/Setor.ts` — complete (phase 1)
 
 ## Implementation Steps
 
@@ -75,8 +75,8 @@ Read `src/app/usecases/webhooks/IngestMessengerMessage.js` and `src/app/services
 
 Add optional `setorId` to the execute payload and include it when saving the Body:
 
-```js
-async execute({ body, licenseeId, setorId = null } = {}) {
+```ts
+async execute({ body, licenseeId, setorId = null }: { body: any; licenseeId: any; setorId?: any } = {} as any) {
   const bodySaved = await this.messengerRepository.create({
     content: body,
     licensee: licenseeId,
@@ -87,24 +87,24 @@ async execute({ body, licenseeId, setorId = null } = {}) {
 }
 ```
 
-Check `src/app/models/Body.js` — if `setor` field doesn't exist, add it as a nullable ObjectId.
+Check `src/app/models/Body.ts` — if `setor` field doesn't exist, add it as a nullable ObjectId.
 
-### Step 2: Update `transformMessengerBody` in `MessengerMessage.js`
+### Step 2: Update `transformMessengerBody` in `MessengerMessage.ts`
 
 Extract `body.setor` and pass to `responseToMessages`:
-```js
+```ts
 const setorId = body.setor ?? null
 const messages = await messengerPlugin.responseToMessages(body.content, { setorId })
 ```
 
-### Step 3: Update `MessengersBase.responseToMessages()` in `Base.js`
+### Step 3: Update `MessengersBase.responseToMessages()` in `Base.ts`
 
 Add `options = {}` parameter, extract `setorId`, and pass when creating the Room (in `LocalChat.sendMessage()` / or wherever Room is created — depends on `local-chat-infra` plan). For this task, at minimum pass `setorId` through so it's available when Room creation happens.
 
 ### Step 4: Update `StartBaileysSocket` to pass `setorId`
 
-```js
-onMessage: async (msg) => {
+```ts
+onMessage: async (msg: any) => {
   await this.ingestMessengerMessage.execute({
     body: msg,
     licenseeId: licensee._id,
@@ -113,10 +113,10 @@ onMessage: async (msg) => {
 },
 ```
 
-### Step 5: Agent access filtering in `room.js` repository
+### Step 5: Agent access filtering in `room.ts` repository
 
 Add a `findForAgent(userId, licenseeId, setorIds)` query:
-```js
+```ts
 // If setorIds is non-empty array: filter rooms where room.setor IN setorIds
 // If setorIds is null/empty: return all rooms for licensee (admin/super/sectors disabled)
 ```

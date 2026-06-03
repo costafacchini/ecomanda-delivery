@@ -9,11 +9,11 @@
 
 ## Objective
 
-Implement the `parseMessageStatus` stub in `Baileys.js` so that `messages.update` socket events can update `sendedAt`, `deliveredAt`, and `readAt` on existing `Message` records via the existing `Base.js` receipt path.
+Implement the `parseMessageStatus` stub in `Baileys.ts` so that `messages.update` socket events can update `sendedAt`, `deliveredAt`, and `readAt` on existing `Message` records via the existing `Base.ts` receipt path.
 
 ## Context
 
-`Baileys.js:30-34` has a stub:
+`Baileys.ts:30-34` has a stub:
 ```js
 parseMessageStatus(_body) {
   // Baileys delivery receipts are not received via HTTP webhook body in the same shape.
@@ -22,7 +22,7 @@ parseMessageStatus(_body) {
 }
 ```
 
-`Base.js:74-91` already handles `messageStatus` correctly when it's not null:
+`Base.ts:74-91` already handles `messageStatus` correctly when it's not null:
 ```js
 if (this.messageStatus) {
   const message = await this.messageRepository.findFirst({ licensee, messageWaId: this.messageStatus.id })
@@ -61,38 +61,38 @@ The `body` passed to `parseMessageStatus` from the socket manager will be a sing
 - [ ] Switch to main and pull: `git switch main && git pull --rebase origin main`
 - [ ] Create task branch: `git switch -c plan/baileys-socket-monitor/phase-1/task-02-receipt-parsing`
 - [ ] Verify this task's `status.md` shows `not-started`
-- [ ] Read `src/app/plugins/messengers/Baileys.js` in full
-- [ ] Read `src/app/plugins/messengers/Base.js:74-91` (receipt handling path)
-- [ ] Read existing `Baileys.spec.js` to understand test patterns
+- [ ] Read `src/app/plugins/messengers/Baileys.ts` in full
+- [ ] Read `src/app/plugins/messengers/Base.ts:74-91` (receipt handling path)
+- [ ] Read existing `Baileys.spec.ts` to understand test patterns
 - [ ] Mark this task `in-progress` in `status.md`
 
 ## File Ownership
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/plugins/messengers/Baileys.js` | modify | Implement `parseMessageStatus` |
-| `src/app/plugins/messengers/Baileys.spec.js` | modify | Add receipt parsing tests |
+| `src/app/plugins/messengers/Baileys.ts` | modify | Implement `parseMessageStatus` |
+| `src/app/plugins/messengers/Baileys.spec.ts` | modify | Add receipt parsing tests |
 
 ### Do NOT Modify
 
-- `src/app/services/BaileysSocketManager.js` — owned by phase-1/task-01-socket-manager
-- `src/app/plugins/messengers/Base.js` — shared, read-only
-- `src/app/runtime/dependencies.js` — owned by phase-2/task-03-start-socket-usecase
+- `src/app/services/BaileysSocketManager.ts` — owned by phase-1/task-01-socket-manager
+- `src/app/plugins/messengers/Base.ts` — shared, read-only
+- `src/app/runtime/dependencies.ts` — owned by phase-2/task-03-start-socket-usecase
 
 ## Implementation Steps
 
-### Step 1: Replace the `parseMessageStatus` stub in `Baileys.js`
+### Step 1: Replace the `parseMessageStatus` stub in `Baileys.ts`
 
-Replace the stub with an implementation that maps the Baileys update shape to the `messageStatus` object expected by `Base.js`:
+Replace the stub with an implementation that maps the Baileys update shape to the `messageStatus` object expected by `Base.ts`:
 
-```js
-parseMessageStatus(body) {
+```ts
+parseMessageStatus(body: any) {
   if (!body?.key?.id || !body?.key?.fromMe || body.update?.status == null) {
     this.messageStatus = null
     return
   }
 
-  const statusMap = {
+  const statusMap: Record<number, string> = {
     1: 'sent',       // SERVER_ACK
     2: 'delivered',  // DELIVERY_ACK
     3: 'read',       // READ
@@ -125,7 +125,7 @@ Remove the comment inside the stub that says "Baileys delivery receipts are not 
 - [ ] `parseMessageStatus` with `fromMe: false` sets `messageStatus = null` (not a receipt for our messages)
 - [ ] `parseMessageStatus` with null/missing body sets `messageStatus = null`
 - [ ] `parseMessageStatus` with unknown status code sets `messageStatus = null`
-- [ ] All existing `Baileys.spec.js` tests still pass
+- [ ] All existing `Baileys.spec.ts` tests still pass
 - [ ] `pre-commit-check` passes
 
 ## Documentation / KB Updates
@@ -135,11 +135,11 @@ Remove the comment inside the stub that says "Baileys delivery receipts are not 
 ## Completion Criteria
 
 - [ ] `parseMessageStatus` implemented as described
-- [ ] All new and existing tests pass: `npx jest src/app/plugins/messengers/Baileys.spec.js`
+- [ ] All new and existing tests pass: `npx jest src/app/plugins/messengers/Baileys.spec.ts`
 - [ ] `npx eslint src/app/plugins/messengers/` passes
 - [ ] Changes committed to `plan/baileys-socket-monitor/phase-1/task-02-receipt-parsing` branch
 - [ ] Status updated to `complete` in `status.md`
 
 ## Conflict Avoidance Notes
 
-- task-01 (socket-manager) creates a new file only — no conflict with `Baileys.js`.
+- task-01 (socket-manager) creates a new file only — no conflict with `Baileys.ts`.

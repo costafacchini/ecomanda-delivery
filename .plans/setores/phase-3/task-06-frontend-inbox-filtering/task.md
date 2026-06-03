@@ -28,7 +28,7 @@ With sectors enabled:
 
 **No manual sector selector** in the inbox for agents — the filtering is automatic based on their sector membership. Admin/supervisor could optionally filter by sector, but that is explicitly deferred (out of scope for this task).
 
-Read `client/src/pages/Messages/scenes/Index/index.js` to understand the current filter and rendering logic before making changes.
+Read `client/src/pages/Messages/scenes/Index/index.tsx` to understand the current filter and rendering logic before making changes.
 
 ## Before You Start
 
@@ -36,7 +36,7 @@ Read `client/src/pages/Messages/scenes/Index/index.js` to understand the current
 - [ ] Create task branch: `git switch -c plan/setores/phase-3/task-06-frontend-inbox-filtering`
 - [ ] Verify `phase-2/task-04-message-routing/status.md` shows `complete`
 - [ ] Verify this task's `status.md` shows `not-started`
-- [ ] Read `client/src/pages/Messages/scenes/Index/index.js` (full file)
+- [ ] Read `client/src/pages/Messages/scenes/Index/index.tsx` (full file)
 - [ ] Check what fields are returned by the rooms/messages list endpoint — confirm `setor.name` is populated
 - [ ] Mark this task `in-progress` in `status.md`
 
@@ -44,13 +44,13 @@ Read `client/src/pages/Messages/scenes/Index/index.js` to understand the current
 
 | File | Action | Notes |
 |------|--------|-------|
-| `client/src/pages/Messages/scenes/Index/index.js` | modify | Remove manual licensee filter for agents; render sector badge |
+| `client/src/pages/Messages/scenes/Index/index.tsx` | modify | Remove manual licensee filter for agents; render sector badge |
 | `client/src/pages/Messages/` | modify | Any sub-components used by the index scene |
 
 ### Do NOT Modify
 
 - `client/src/pages/Setores/` — owned by phase-3/task-05-frontend-setor-crud
-- `client/src/pages/Navbar/index.js` — owned by phase-3/task-05-frontend-setor-crud
+- `client/src/pages/Navbar/index.tsx` — owned by phase-3/task-05-frontend-setor-crud
 
 ## Implementation Steps
 
@@ -64,9 +64,9 @@ In the conversation list render, when `room.setor` is present, add a small badge
 
 ### Step 3: Agent auto-filter
 
-Current filter for non-super:
-```js
-if (currentUser && !currentUser.isSuper && filters.licensee !== currentUser.licensee) {
+Current filter for non-super (from `local-chat-infra` migration):
+```tsx
+if (currentUser && currentUser.role !== 'super' && filters.licensee !== currentUser.licensee) {
   setFilters({ ...filters, licensee: currentUser.licensee })
 }
 ```
@@ -105,4 +105,4 @@ An optional "Filter by sector" dropdown for admins is explicitly out of scope fo
 
 ## Conflict Avoidance Notes
 
-- task-05 modifies `Navbar` and `routes.js`. No overlap with this task.
+- task-05 modifies `Navbar/index.tsx` and `routes.tsx`. No overlap with this task.

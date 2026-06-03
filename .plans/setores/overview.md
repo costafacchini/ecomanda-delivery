@@ -83,16 +83,16 @@ Base branch: `main`
 
 | File/Directory | Relevance |
 |----------------|-----------|
-| `src/app/models/Setor.js` | NEW — sector model |
-| `src/app/repositories/setor.js` | NEW — sector repository |
-| `src/app/controllers/SetoresController.js` | NEW — CRUD + Baileys methods |
-| `src/app/models/WhatsappSession.js` | Modify — add `setor` field, change unique index |
-| `src/app/models/Room.js` | Modify — add `setor` field |
-| `src/app/models/Licensee.js` | Modify — add `useSetores` flag |
-| `src/app/services/BaileysSocketManager.js` | Modify — re-key by `session._id` |
-| `src/app/usecases/licensees/StartBaileysSocket.js` | Modify — accept optional `setor` param |
-| `src/app/routes/resources-routes.js` | Modify — add sector routes |
-| `src/app/runtime/dependencies.js` | Modify — add `setorRepository` |
+| `src/app/models/Setor.ts` | NEW — sector model |
+| `src/app/repositories/setor.ts` | NEW — sector repository |
+| `src/app/controllers/SetoresController.ts` | NEW — CRUD + Baileys methods |
+| `src/app/models/WhatsappSession.ts` | Modify — add `setor` field, change unique index |
+| `src/app/models/Room.ts` | Modify — add `setor` field |
+| `src/app/models/Licensee.ts` | Modify — add `useSetores` flag |
+| `src/app/services/BaileysSocketManager.ts` | Modify — re-key by `session._id` |
+| `src/app/usecases/licensees/StartBaileysSocket.ts` | Modify — accept optional `setor` param |
+| `src/app/routes/resources-routes.ts` | Modify — add sector routes |
+| `src/app/runtime/dependencies.ts` | Modify — add `setorRepository` |
 | `client/src/pages/Setores/` | NEW — sector management UI |
 | `client/src/pages/Messages/` | Modify — sector filtering for agents |
 

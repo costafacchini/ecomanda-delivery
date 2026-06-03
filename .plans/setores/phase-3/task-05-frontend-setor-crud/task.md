@@ -33,8 +33,8 @@ The Baileys connect flow within a sector reuses the same QR rendering logic alre
 - [ ] Verify this task's `status.md` shows `not-started`
 - [ ] Read `client/src/pages/Users/` (scan structure and form patterns)
 - [ ] Read `client/src/pages/Licensees/` (scan WhatsApp/Baileys panel)
-- [ ] Read `client/src/pages/Navbar/index.js` (nav item pattern)
-- [ ] Read `client/src/pages/routes.js` (route registration)
+- [ ] Read `client/src/pages/Navbar/index.tsx` (nav item pattern)
+- [ ] Read `client/src/pages/routes.tsx` (route registration)
 - [ ] Mark this task `in-progress` in `status.md`
 
 ## File Ownership
@@ -42,19 +42,19 @@ The Baileys connect flow within a sector reuses the same QR rendering logic alre
 | File | Action | Notes |
 |------|--------|-------|
 | `client/src/pages/Setores/` | create | Full CRUD pages (Index, New, Edit) |
-| `client/src/services/setor.js` | create | API client for sector endpoints |
-| `client/src/pages/Navbar/index.js` | modify | Add Setores nav item (role-gated) |
-| `client/src/pages/routes.js` | modify | Register Setor routes |
+| `client/src/services/setor.ts` | create | API client for sector endpoints |
+| `client/src/pages/Navbar/index.tsx` | modify | Add Setores nav item (role-gated) |
+| `client/src/pages/routes.tsx` | modify | Register Setor routes |
 | `client/src/pages/Licensees/` | modify | Add `useSetores` toggle to edit form |
 
 ### Do NOT Modify
 
 - `client/src/pages/Messages/` — owned by phase-3/task-06-frontend-inbox-filtering
-- `client/src/contexts/App/index.js` — owned by `local-chat-infra` plan
+- `client/src/contexts/App/index.tsx` — owned by `local-chat-infra` plan
 
 ## Implementation Steps
 
-### Step 1: Create `client/src/services/setor.js`
+### Step 1: Create `client/src/services/setor.ts`
 
 API client functions following the pattern of existing service files:
 - `getSetores(filters)` — `GET /resources/setores?licensee=...`
@@ -87,14 +87,14 @@ In the Licensee Edit form WhatsApp panel, add a checkbox/toggle for `useSetores`
 
 ### Step 4: Register routes and nav item
 
-Add routes in `client/src/pages/routes.js`:
-```js
+Add routes in `client/src/pages/routes.tsx`:
+```tsx
 /setores          → Setores Index
 /setores/new      → Setores New
 /setores/:id/edit → Setores Edit
 ```
 
-Add nav item in `Navbar/index.js` — visible only when `currentUser.role` is `admin` or `supervisor` AND `currentUser.licensee.useSetores` is `true` (or fetch from context).
+Add nav item in `Navbar/index.tsx` — visible only when `currentUser.role` is `admin` or `supervisor` AND `currentUser.licensee.useSetores` is `true` (or fetch from context).
 
 ## Testing
 
@@ -122,4 +122,4 @@ Add nav item in `Navbar/index.js` — visible only when `currentUser.role` is `a
 
 ## Conflict Avoidance Notes
 
-- task-06 modifies `client/src/pages/Messages/`. No overlap with this task.
+- task-06 modifies `client/src/pages/Messages/`. No overlap with this task (task-05 owns `Navbar/index.tsx` and `routes.tsx`).

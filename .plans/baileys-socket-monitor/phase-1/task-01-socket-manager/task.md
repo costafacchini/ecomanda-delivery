@@ -9,15 +9,15 @@
 
 ## Objective
 
-Create `src/app/services/BaileysSocketManager.js` — a per-licensee persistent Baileys WebSocket registry that opens a socket, keeps it alive with reconnect logic, and fires caller-supplied callbacks for inbound messages and delivery receipt events.
+Create `src/app/services/BaileysSocketManager.ts` — a per-licensee persistent Baileys WebSocket registry that opens a socket, keeps it alive with reconnect logic, and fires caller-supplied callbacks for inbound messages and delivery receipt events.
 
 ## Context
 
-The current `Baileys.js` plugin opens a socket on-demand and closes it after each operation (send, QR, fetchGroups). There is no long-lived socket, so incoming `messages.upsert` and `messages.update` events are never captured natively.
+The current `Baileys.ts` plugin opens a socket on-demand and closes it after each operation (send, QR, fetchGroups). There is no long-lived socket, so incoming `messages.upsert` and `messages.update` events are never captured natively.
 
 `BaileysSocketManager` is the low-level service responsible only for socket lifecycle. It does NOT know about the app's message pipeline — it accepts callbacks (`onMessage`, `onReceiptUpdate`) at start time so callers can inject their own routing logic without coupling this service to use cases.
 
-Key patterns to follow from `Baileys.js`:
+Key patterns to follow from `Baileys.ts`:
 - `_openSocket(session, state, rawKeys, BufferJSON)` — socket bootstrap including `creds.update` persistence. Reuse the auth state build pattern.
 - `buildAuthState(session, initAuthCreds, BufferJSON)` — deserialize MongoDB-stored creds/keys back to Buffers.
 - `saveSession(session, creds, keys, BufferJSON)` — persist updated credentials.
@@ -36,7 +36,7 @@ Read `docs/kb/architecture/job-queue-system.md` for context on how the job pipel
 - [ ] Switch to main and pull: `git switch main && git pull --rebase origin main`
 - [ ] Create task branch: `git switch -c plan/baileys-socket-monitor/phase-1/task-01-socket-manager`
 - [ ] Verify this task's `status.md` shows `not-started`
-- [ ] Read `src/app/plugins/messengers/Baileys.js` (full file — especially `_openSocket`, `buildAuthState`, `saveSession`, `_waitForConnection`)
+- [ ] Read `src/app/plugins/messengers/Baileys.ts` (full file — especially `_openSocket`, `buildAuthState`, `saveSession`, `_waitForConnection`)
 - [ ] Read `docs/kb/architecture/job-queue-system.md`
 - [ ] Mark this task `in-progress` in `status.md`
 
@@ -44,36 +44,41 @@ Read `docs/kb/architecture/job-queue-system.md` for context on how the job pipel
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/services/BaileysSocketManager.js` | create | Core service |
-| `src/app/services/BaileysSocketManager.spec.js` | create | Unit tests |
+| `src/app/services/BaileysSocketManager.ts` | create | Core service |
+| `src/app/services/BaileysSocketManager.spec.ts` | create | Unit tests |
 
 ### Do NOT Modify
 
-- `src/app/plugins/messengers/Baileys.js` — owned by phase-1/task-02-receipt-parsing
-- `src/app/runtime/dependencies.js` — owned by phase-2/task-03-start-socket-usecase
-- `src/app/usecases/licensees/GetBaileysQr.js` — owned by phase-3/task-04-boot-and-qr-integration
-- `server.js` — owned by phase-3/task-04-boot-and-qr-integration
+- `src/app/plugins/messengers/Baileys.ts` — owned by phase-1/task-02-receipt-parsing
+- `src/app/runtime/dependencies.ts` — owned by phase-2/task-03-start-socket-usecase
+- `src/app/usecases/licensees/GetBaileysQr.ts` — owned by phase-3/task-04-boot-and-qr-integration
+- `server.ts` — owned by phase-3/task-04-boot-and-qr-integration
 
 ## Implementation Steps
 
 ### Step 1: Create `BaileysSocketManager`
 
-```js
-// src/app/services/BaileysSocketManager.js
+```ts
+// src/app/services/BaileysSocketManager.ts
 class BaileysSocketManager {
-  constructor({ whatsappSessionRepository } = {}) {
+  private _whatsappSessionRepository: any
+  private _sockets: Map<string, { socket: any; licensee: any }>
+
+  constructor({ whatsappSessionRepository }: Record<string, any> = {}) {
     this._whatsappSessionRepository = whatsappSessionRepository
     this._sockets = new Map() // licenseeId (string) → { socket, licensee }
   }
 
-  isConnected(licenseeId) { ... }
+  isConnected(licenseeId: any): boolean { ... }
 
-  async start(licensee, { onMessage, onReceiptUpdate, onLogout } = {}) { ... }
+  async start(licensee: any, { onMessage, onReceiptUpdate, onLogout }: Record<string, any> = {}): Promise<void> { ... }
 
-  stop(licenseeId) { ... }
+  stop(licenseeId: any): void { ... }
 
-  _scheduleReconnect(licensee, callbacks, delayMs) { ... }
+  _scheduleReconnect(licensee: any, callbacks: any, delayMs: number): void { ... }
 }
+
+export { BaileysSocketManager }
 ```
 
 ### Step 2: Implement `start(licensee, callbacks)`
@@ -98,8 +103,8 @@ Call `socket.end()` and delete from `_sockets`. Guard against double-stop (socke
 
 ### Step 4: Implement reconnect with jitter
 
-```js
-_scheduleReconnect(licensee, callbacks, delayMs = 2000) {
+```ts
+_scheduleReconnect(licensee: any, callbacks: any, delayMs = 2000): void {
   const jitter = Math.random() * 1000
   const nextDelay = Math.min(delayMs * 2, 30000)
   setTimeout(() => {
@@ -112,7 +117,7 @@ Pass `reconnectDelay` through so `start` feeds it back to `_scheduleReconnect` o
 
 ### Step 5: Auth state helpers
 
-Inline the `buildAuthState` and `saveSession` logic from `Baileys.js` (copy, don't import from the plugin class — the service has no plugin dependency). This is a deliberate duplication to keep the service self-contained; if a shared utility is later extracted, that is a separate refactor.
+Inline the `buildAuthState` and `saveSession` logic from `Baileys.ts` (copy, don't import from the plugin class — the service has no plugin dependency). This is a deliberate duplication to keep the service self-contained; if a shared utility is later extracted, that is a separate refactor.
 
 ## Testing
 
@@ -132,12 +137,12 @@ Inline the `buildAuthState` and `saveSession` logic from `Baileys.js` (copy, don
 ## Completion Criteria
 
 - [ ] `BaileysSocketManager` created with `start`, `stop`, `isConnected`, reconnect logic
-- [ ] All unit tests pass with `npx jest src/app/services/BaileysSocketManager.spec.js`
+- [ ] All unit tests pass with `npx jest src/app/services/BaileysSocketManager.spec.ts`
 - [ ] `npx eslint src/app/services/` passes
 - [ ] Changes committed to `plan/baileys-socket-monitor/phase-1/task-01-socket-manager` branch
 - [ ] Status updated to `complete` in `status.md`
 
 ## Conflict Avoidance Notes
 
-- task-02 (receipt-parsing) modifies `Baileys.js`. This task does not touch that file.
+- task-02 (receipt-parsing) modifies `Baileys.ts`. This task does not touch that file.
 - Auth state logic is intentionally duplicated here rather than shared to avoid creating a cross-task file dependency in this phase.
