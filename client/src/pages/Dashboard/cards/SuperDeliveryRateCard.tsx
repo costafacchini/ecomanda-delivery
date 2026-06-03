@@ -28,7 +28,7 @@ export default function SuperDeliveryRateCard({ licensee }: { licensee?: string 
   function handleResendSuccess() {
     setData((prev: any) => ({
       ...prev,
-      failed_total: Math.max(0, (prev.failed_total || 0) - 1),
+      failed_today: Math.max(0, (prev.failed_today || 0) - 1),
     }))
   }
 
@@ -68,13 +68,13 @@ export default function SuperDeliveryRateCard({ licensee }: { licensee?: string 
                 <div className="fs-4 fw-bold text-danger">{data.failed_today}</div>
                 <div className="text-muted small">Falhas no período ({data.failed_pct}%)</div>
               </div>
-              {data.failed_total > 0 && (
+              {data.failed_today > 0 && (
                 <div className="ms-auto">
                   <button
                     className="btn btn-sm btn-outline-danger"
                     onClick={() => setModalOpen(true)}
                   >
-                    Reenviar falhas ({data.failed_total})
+                    Mensagens Falhas ({data.failed_today})
                   </button>
                 </div>
               )}
@@ -87,6 +87,8 @@ export default function SuperDeliveryRateCard({ licensee }: { licensee?: string 
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         onResendSuccess={handleResendSuccess}
+        startDate={startDate}
+        endDate={endDate}
       />
     </>
   )
