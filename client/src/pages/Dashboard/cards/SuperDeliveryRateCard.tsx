@@ -59,22 +59,25 @@ export default function SuperDeliveryRateCard({ licensee }: { licensee?: string 
           {loading && <p>Carregando...</p>}
           {error && <p className="text-danger">{error}</p>}
           {data && (
-            <div className="d-flex gap-4">
+            <div className="d-flex gap-4 align-items-end">
               <div>
                 <div className="fs-4 fw-bold text-success">{data.sent_today}</div>
                 <div className="text-muted small">Enviadas ({data.sent_pct}%)</div>
               </div>
               <div>
-                <div
-                  className="fs-4 fw-bold text-danger"
-                  role="button"
-                  style={{ cursor: 'pointer', textDecoration: 'underline' }}
-                  onClick={() => setModalOpen(true)}
-                >
-                  {data.failed_total ?? data.failed_today}
-                </div>
-                <div className="text-muted small">Falhas hoje ({data.failed_pct}%)</div>
+                <div className="fs-4 fw-bold text-danger">{data.failed_today}</div>
+                <div className="text-muted small">Falhas no período ({data.failed_pct}%)</div>
               </div>
+              {data.failed_total > 0 && (
+                <div className="ms-auto">
+                  <button
+                    className="btn btn-sm btn-outline-danger"
+                    onClick={() => setModalOpen(true)}
+                  >
+                    Reenviar falhas ({data.failed_total})
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
