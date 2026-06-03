@@ -43,8 +43,8 @@ export default function SuperMessageVolumeCard({ licensee }: { licensee?: string
               </thead>
               <tbody>
                 {(data.per_day || []).map((row: any) => (
-                  <tr key={row.date}>
-                    <td>{row.date}</td>
+                  <tr key={row._id}>
+                    <td>{row._id}</td>
                     <td>{row.count}</td>
                   </tr>
                 ))}
@@ -62,8 +62,8 @@ export default function SuperMessageVolumeCard({ licensee }: { licensee?: string
               </thead>
               <tbody>
                 {(data.per_hour || []).map((row: any) => (
-                  <tr key={row.hour}>
-                    <td>{row.hour}h</td>
+                  <tr key={row._id}>
+                    <td>{row._id?.split('T')[1]}h</td>
                     <td>{row.count}</td>
                   </tr>
                 ))}
