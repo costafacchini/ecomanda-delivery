@@ -109,8 +109,24 @@ class DashboardController {
         const [perDay, perHour, sentCount, failedCount] = await Promise.all([
           this.messageRepository.model().aggregate(perDayPipeline),
           this.messageRepository.model().aggregate(perHourPipeline),
-          this.messageRepository.model().where({ ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sended: true, createdAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
-          this.messageRepository.model().where({ ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sended: false, createdAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
+          this.messageRepository
+            .model()
+            .where({
+              ...msgFilter,
+              ...EXCLUDE_SYSTEM_CLOSE,
+              sended: true,
+              createdAt: { $gte: startDate, $lt: endDate },
+            })
+            .countDocuments(),
+          this.messageRepository
+            .model()
+            .where({
+              ...msgFilter,
+              ...EXCLUDE_SYSTEM_CLOSE,
+              sended: false,
+              createdAt: { $gte: startDate, $lt: endDate },
+            })
+            .countDocuments(),
         ])
 
         const peakThroughput = perHour.length > 0 ? Math.max(...perHour.map((h: any) => h.count)) : 0
@@ -144,16 +160,41 @@ class DashboardController {
 
       const data = await this._cached(cacheKey, async () => {
         const [sentCount, failedCount, failedTotal] = await Promise.all([
-          this.messageRepository.model().where({ ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sended: true, createdAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
-          this.messageRepository.model().where({ ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sended: false, createdAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
-          this.messageRepository.model().where({ ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sended: false }).countDocuments(),
+          this.messageRepository
+            .model()
+            .where({
+              ...msgFilter,
+              ...EXCLUDE_SYSTEM_CLOSE,
+              sended: true,
+              createdAt: { $gte: startDate, $lt: endDate },
+            })
+            .countDocuments(),
+          this.messageRepository
+            .model()
+            .where({
+              ...msgFilter,
+              ...EXCLUDE_SYSTEM_CLOSE,
+              sended: false,
+              createdAt: { $gte: startDate, $lt: endDate },
+            })
+            .countDocuments(),
+          this.messageRepository
+            .model()
+            .where({ ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sended: false })
+            .countDocuments(),
         ])
 
         const total = sentCount + failedCount
         const sentPct = total === 0 ? 0 : parseFloat(((sentCount / total) * 100).toFixed(2))
         const failedPct = total === 0 ? 0 : parseFloat(((failedCount / total) * 100).toFixed(2))
 
-        return { sent_today: sentCount, failed_today: failedCount, failed_total: failedTotal, sent_pct: sentPct, failed_pct: failedPct }
+        return {
+          sent_today: sentCount,
+          failed_today: failedCount,
+          failed_total: failedTotal,
+          sent_pct: sentPct,
+          failed_pct: failedPct,
+        }
       })
 
       return res.status(200).json(data)
@@ -175,12 +216,22 @@ class DashboardController {
 
       const data = await this._cached(cacheKey, async () => {
         const avgQueuePipeline: any[] = [
-          { $match: { ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sendedAt: { $exists: true }, createdAt: { $gte: startDate, $lt: endDate } } },
+          {
+            $match: {
+              ...msgFilter,
+              ...EXCLUDE_SYSTEM_CLOSE,
+              sendedAt: { $exists: true },
+              createdAt: { $gte: startDate, $lt: endDate },
+            },
+          },
           { $group: { _id: null, avg: { $avg: { $divide: [{ $subtract: ['$sendedAt', '$createdAt'] }, 1000] } } } },
         ]
 
         const [pendingMessages, avgResult] = await Promise.all([
-          this.messageRepository.model().where({ ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sended: false, destination: 'to-messenger' }).countDocuments(),
+          this.messageRepository
+            .model()
+            .where({ ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sended: false, destination: 'to-messenger' })
+            .countDocuments(),
           this.messageRepository.model().aggregate(avgQueuePipeline),
         ])
 
@@ -215,7 +266,14 @@ class DashboardController {
         }
 
         const avgMsgPerConvPipeline: any[] = [
-          { $match: { ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, room: { $exists: true }, createdAt: { $gte: startDate, $lt: endDate } } },
+          {
+            $match: {
+              ...msgFilter,
+              ...EXCLUDE_SYSTEM_CLOSE,
+              room: { $exists: true },
+              createdAt: { $gte: startDate, $lt: endDate },
+            },
+          },
           { $group: { _id: '$room', count: { $sum: 1 } } },
           { $group: { _id: null, avg: { $avg: '$count' } } },
         ]
@@ -225,8 +283,14 @@ class DashboardController {
         ]
 
         const [startedCount, endedCount, avgMsgResult, avgDurationResult] = await Promise.all([
-          this.roomRepository.model().where({ ...roomFilter, createdAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
-          this.roomRepository.model().where({ ...roomFilter, closedAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
+          this.roomRepository
+            .model()
+            .where({ ...roomFilter, createdAt: { $gte: startDate, $lt: endDate } })
+            .countDocuments(),
+          this.roomRepository
+            .model()
+            .where({ ...roomFilter, closedAt: { $gte: startDate, $lt: endDate } })
+            .countDocuments(),
           this.messageRepository.model().aggregate(avgMsgPerConvPipeline),
           this.roomRepository.model().aggregate(avgDurationPipeline),
         ])
@@ -285,11 +349,21 @@ class DashboardController {
         const [sentCount, failedCount] = await Promise.all([
           this.messageRepository
             .model()
-            .where({ licensee: user.licensee, ...EXCLUDE_SYSTEM_CLOSE, sended: true, createdAt: { $gte: startDate, $lt: endDate } })
+            .where({
+              licensee: user.licensee,
+              ...EXCLUDE_SYSTEM_CLOSE,
+              sended: true,
+              createdAt: { $gte: startDate, $lt: endDate },
+            })
             .countDocuments(),
           this.messageRepository
             .model()
-            .where({ licensee: user.licensee, ...EXCLUDE_SYSTEM_CLOSE, sended: false, createdAt: { $gte: startDate, $lt: endDate } })
+            .where({
+              licensee: user.licensee,
+              ...EXCLUDE_SYSTEM_CLOSE,
+              sended: false,
+              createdAt: { $gte: startDate, $lt: endDate },
+            })
             .countDocuments(),
         ])
 
@@ -318,7 +392,13 @@ class DashboardController {
       const data = await this._cached(cacheKey, async () => {
         const sevenDaysAgo = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000)
         const perDayPipeline = [
-          { $match: { createdAt: { $gte: sevenDaysAgo, $lt: endDate }, licensee: user.licensee, ...EXCLUDE_SYSTEM_CLOSE } },
+          {
+            $match: {
+              createdAt: { $gte: sevenDaysAgo, $lt: endDate },
+              licensee: user.licensee,
+              ...EXCLUDE_SYSTEM_CLOSE,
+            },
+          },
           { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, count: { $sum: 1 } } },
           { $sort: { _id: 1 } },
         ]
@@ -349,7 +429,8 @@ class DashboardController {
         roomFilter.contact = { $in: contactIds }
       }
 
-      const roomResults = await this.roomRepository.model()
+      const roomResults = await this.roomRepository
+        .model()
         .find(roomFilter)
         .sort({ createdAt: -1 })
         .skip((page - 1) * limit)
@@ -361,11 +442,13 @@ class DashboardController {
       const rooms: any[] = hasMore ? roomResults.slice(0, limit) : roomResults
 
       const roomIds = rooms.map((r: any) => r._id)
-      const lastMessages = await this.messageRepository.model().aggregate([
-        { $match: { room: { $in: roomIds }, ...EXCLUDE_SYSTEM_CLOSE } },
-        { $sort: { createdAt: -1 } },
-        { $group: { _id: '$room', text: { $first: '$text' }, createdAt: { $first: '$createdAt' } } },
-      ])
+      const lastMessages = await this.messageRepository
+        .model()
+        .aggregate([
+          { $match: { room: { $in: roomIds }, ...EXCLUDE_SYSTEM_CLOSE } },
+          { $sort: { createdAt: -1 } },
+          { $group: { _id: '$room', text: { $first: '$text' }, createdAt: { $first: '$createdAt' } } },
+        ])
 
       const lastMsgMap: Record<string, any> = {}
       for (const m of lastMessages) lastMsgMap[m._id.toString()] = m
