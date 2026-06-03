@@ -1,5 +1,13 @@
 import { useState, useEffect } from 'react'
+import moment from 'moment-timezone'
 import { getMessages, resendMessage } from '../../../services/message'
+
+const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+function formatDate(value: string | undefined): string {
+  if (!value) return '—'
+  return moment(value).tz(tz).format('DD/MM/YYYY HH:mm:ss')
+}
 
 export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess }: any) {
   const [messages, setMessages] = useState<any[]>([])
@@ -46,7 +54,7 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess }
       style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="modal-dialog modal-lg" role="document">
+      <div className="modal-dialog modal-xl" role="document">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Mensagens com Falha</h5>
@@ -63,6 +71,7 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess }
                 <thead>
                   <tr>
                     <th>Contato</th>
+                    <th>Data/Hora</th>
                     <th>Mensagem</th>
                     <th>Erro</th>
                     <th></th>
@@ -72,8 +81,9 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess }
                   {messages.map((msg) => (
                     <tr key={msg._id}>
                       <td>{msg.contact?.number || '—'}</td>
+                      <td className="text-nowrap">{formatDate(msg.createdAt)}</td>
                       <td>{msg.text ? msg.text.slice(0, 80) : '—'}</td>
-                      <td className="text-danger small">{msg.error || '—'}</td>
+                      <td className="text-danger small" style={{ wordBreak: 'break-word' }}>{msg.error || '—'}</td>
                       <td>
                         {rowErrors[msg._id] && (
                           <span className="text-danger small me-2">{rowErrors[msg._id]}</span>

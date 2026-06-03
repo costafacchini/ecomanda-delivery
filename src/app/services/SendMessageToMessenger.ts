@@ -8,7 +8,7 @@ async function sendMessageToMessenger(
 
   const messegnerPlugin = createMessengerPlugin(licensee)
 
-  await messegnerPlugin.sendMessage(messageId, url, token)
+  await messegnerPlugin.sendMessage(messageId, url ?? licensee.whatsappUrl, token ?? licensee.whatsappToken)
 }
 
 export { sendMessageToMessenger }
