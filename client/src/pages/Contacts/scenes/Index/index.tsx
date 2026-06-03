@@ -25,8 +25,14 @@ function ContactsIndex({ currentUser }: any) {
 
     try {
       if (!isEmpty(filters)) return
+      if (!currentUser) return
 
-      onFilter({ page: 1 })
+      const initialFilters: any = { page: 1 }
+      if (!currentUser.isSuper) {
+        initialFilters.licensee = currentUser.licensee
+      }
+
+      onFilter(initialFilters)
     } catch (error: any) {
       if (error.name === 'AbortError') {
         // Handling error thrown by aborting request
@@ -36,16 +42,7 @@ function ContactsIndex({ currentUser }: any) {
     return () => {
       abortController.abort()
     }
-  }, [filters, onFilter])
-
-  useEffect(() => {
-    if (isEmpty(filters)) return
-
-    if (currentUser && !currentUser.isSuper && filters?.licensee !== currentUser.licensee) {
-      const newFilters = { ...filters, licensee: currentUser.licensee, page: 1 }
-      onFilter(newFilters)
-    }
-  }, [currentUser, filters, onFilter])
+  }, [filters, onFilter, currentUser])
 
   function changeExpression(event: any) {
     setExpression(event.target.value)

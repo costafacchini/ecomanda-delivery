@@ -135,7 +135,7 @@ describe('<ContactsIndex />', () => {
     it('does not show the licensee if logged user is not super', async () => {
       getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'Contact' })] })
 
-      const currentUser = { isSuper: false }
+      const currentUser = { isSuper: false, licensee: 'licensee-abc' }
 
       mount({ currentUser })
 
@@ -144,6 +144,18 @@ describe('<ContactsIndex />', () => {
       await screen.findByText('Contact')
 
       expect(screen.queryByLabelText('Licenciado')).not.toBeInTheDocument()
+    })
+
+    it('includes the user licensee in the initial fetch for non-super users', async () => {
+      getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'Contact' })] })
+
+      const currentUser = { isSuper: false, licensee: 'licensee-abc' }
+
+      mount({ currentUser })
+
+      await screen.findByText('Contact')
+
+      expect(getContacts).toHaveBeenCalledWith(expect.objectContaining({ licensee: 'licensee-abc', page: 1 }))
     })
 
     it('changes the filters to get the contacts', async () => {

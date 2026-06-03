@@ -36,11 +36,11 @@ describe('UpdateUser', () => {
         email: 'bruno@mars.com',
         active: false,
         isAdmin: true,
-        licensee: originalLicensee._id,
+        licensee: nextLicensee._id,
       }),
     )
 
     const storedUser = await userRepository.findFirst({ _id: user._id })
-    expect(storedUser.licensee).toEqual(originalLicensee._id)
+    expect(storedUser.licensee).toEqual(nextLicensee._id)
   })
 })

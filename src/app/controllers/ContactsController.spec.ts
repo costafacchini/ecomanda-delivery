@@ -16,8 +16,11 @@ async function runValidations(controller, req) {
   }
 }
 
-function buildController() {
+function buildController({ userIsSuper = true } = {}) {
   const contactRepository = new ContactRepositoryMemory()
+  const userRepository = {
+    findFirst: jest.fn().mockResolvedValue({ isSuper: userIsSuper, licensee: 'user-licensee-id' }),
+  }
   const contactsQueryInstance = {
     page: jest.fn(),
     limit: jest.fn(),
@@ -40,6 +43,7 @@ function buildController() {
 
   const controller = new ContactsController({
     contactRepository,
+    userRepository,
     createContactsQuery,
     createContact,
     updateContact,
@@ -48,6 +52,7 @@ function buildController() {
   return {
     controller,
     contactRepository,
+    userRepository,
     createContactsQuery,
     contactsQueryInstance,
     createContact,
@@ -251,7 +256,7 @@ describe('ContactsController delegation', () => {
     const contacts = [{ _id: 'contact-id' }]
     contactsQueryInstance.all.mockResolvedValue(contacts)
 
-    const req = { query: { page: '1', limit: '3', expression: 'Doe' } }
+    const req = { userId: 'user-id', query: { page: '1', limit: '3', expression: 'Doe' } }
     const res = buildResponse()
 
     await controller.index(req, res)
@@ -267,7 +272,7 @@ describe('ContactsController delegation', () => {
     const { controller, contactsQueryInstance } = buildController()
     contactsQueryInstance.all.mockResolvedValue([])
 
-    const req = { query: { isGroup: 'true' } }
+    const req = { userId: 'user-id', query: { isGroup: 'true' } }
     const res = buildResponse()
 
     await controller.index(req, res)
@@ -279,7 +284,7 @@ describe('ContactsController delegation', () => {
     const { controller, contactsQueryInstance } = buildController()
     contactsQueryInstance.all.mockResolvedValue([])
 
-    const req = { query: { isGroup: 'false' } }
+    const req = { userId: 'user-id', query: { isGroup: 'false' } }
     const res = buildResponse()
 
     await controller.index(req, res)
@@ -291,7 +296,7 @@ describe('ContactsController delegation', () => {
     const { controller, contactsQueryInstance } = buildController()
     contactsQueryInstance.all.mockResolvedValue([])
 
-    const req = { query: {} }
+    const req = { userId: 'user-id', query: {} }
     const res = buildResponse()
 
     await controller.index(req, res)
@@ -303,12 +308,64 @@ describe('ContactsController delegation', () => {
     const { controller, contactsQueryInstance } = buildController()
     contactsQueryInstance.all.mockResolvedValue([])
 
-    const req = { query: { updatedAtStart: '2024-01-01T00:00:00.000Z', updatedAtEnd: '2024-01-31T23:59:59.000Z' } }
+    const req = {
+      userId: 'user-id',
+      query: { updatedAtStart: '2024-01-01T00:00:00.000Z', updatedAtEnd: '2024-01-31T23:59:59.000Z' },
+    }
     const res = buildResponse()
 
     await controller.index(req, res)
 
     expect(contactsQueryInstance.filterByUpdatedAtStart).toHaveBeenCalledWith(new Date('2024-01-01T00:00:00.000Z'))
     expect(contactsQueryInstance.filterByUpdatedAtEnd).toHaveBeenCalledWith(new Date('2024-01-31T23:59:59.000Z'))
+  })
+
+  it('forces the authenticated user licensee filter when user is not super', async () => {
+    const { controller, contactsQueryInstance } = buildController({ userIsSuper: false })
+    contactsQueryInstance.all.mockResolvedValue([])
+
+    const req = { userId: 'user-id', query: {} }
+    const res = buildResponse()
+
+    await controller.index(req, res)
+
+    expect(contactsQueryInstance.filterByLicensee).toHaveBeenCalledWith('user-licensee-id')
+  })
+
+  it('ignores query.licensee for non-super users and uses their own licensee', async () => {
+    const { controller, contactsQueryInstance } = buildController({ userIsSuper: false })
+    contactsQueryInstance.all.mockResolvedValue([])
+
+    const req = { userId: 'user-id', query: { licensee: 'another-licensee-id' } }
+    const res = buildResponse()
+
+    await controller.index(req, res)
+
+    expect(contactsQueryInstance.filterByLicensee).toHaveBeenCalledWith('user-licensee-id')
+    expect(contactsQueryInstance.filterByLicensee).not.toHaveBeenCalledWith('another-licensee-id')
+  })
+
+  it('applies query.licensee filter for super users when provided', async () => {
+    const { controller, contactsQueryInstance } = buildController()
+    contactsQueryInstance.all.mockResolvedValue([])
+
+    const req = { userId: 'user-id', query: { licensee: 'specific-licensee-id' } }
+    const res = buildResponse()
+
+    await controller.index(req, res)
+
+    expect(contactsQueryInstance.filterByLicensee).toHaveBeenCalledWith('specific-licensee-id')
+  })
+
+  it('does not call filterByLicensee for super users when no query.licensee', async () => {
+    const { controller, contactsQueryInstance } = buildController()
+    contactsQueryInstance.all.mockResolvedValue([])
+
+    const req = { userId: 'user-id', query: {} }
+    const res = buildResponse()
+
+    await controller.index(req, res)
+
+    expect(contactsQueryInstance.filterByLicensee).not.toHaveBeenCalled()
   })
 })
