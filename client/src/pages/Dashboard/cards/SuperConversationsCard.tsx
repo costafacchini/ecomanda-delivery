@@ -2,9 +2,13 @@ import { useState, useEffect } from 'react'
 import { getDashboardConversations } from '../../../services/dashboard'
 
 const today = () => new Date().toISOString().split('T')[0]
+const firstDayOfMonth = () => {
+  const d = new Date()
+  return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().split('T')[0]
+}
 
 export default function SuperConversationsCard({ licensee }: { licensee?: string }) {
-  const [startDate, setStartDate] = useState(today)
+  const [startDate, setStartDate] = useState(firstDayOfMonth)
   const [endDate, setEndDate] = useState(today)
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
