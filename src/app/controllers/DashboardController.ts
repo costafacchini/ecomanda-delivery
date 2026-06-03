@@ -169,14 +169,16 @@ class DashboardController {
       const cacheKey = `dashboard:super:queue:${startDate.toISOString()}:${endDate.toISOString()}:${licensee || 'all'}`
       const msgFilter = licensee ? { licensee: new mongoose.Types.ObjectId(licensee as string) } : {}
 
+      const excludeSystemClose = { $nor: [{ kind: 'text', text: 'Chat encerrado pelo agente' }] }
+
       const data = await this._cached(cacheKey, async () => {
         const avgQueuePipeline: any[] = [
-          { $match: { ...msgFilter, sendedAt: { $exists: true }, createdAt: { $gte: startDate, $lt: endDate } } },
+          { $match: { ...msgFilter, ...excludeSystemClose, sendedAt: { $exists: true }, createdAt: { $gte: startDate, $lt: endDate } } },
           { $group: { _id: null, avg: { $avg: { $divide: [{ $subtract: ['$sendedAt', '$createdAt'] }, 1000] } } } },
         ]
 
         const [pendingMessages, avgResult] = await Promise.all([
-          this.messageRepository.model().where({ ...msgFilter, sended: false, destination: 'to-messenger' }).countDocuments(),
+          this.messageRepository.model().where({ ...msgFilter, ...excludeSystemClose, sended: false, destination: 'to-messenger' }).countDocuments(),
           this.messageRepository.model().aggregate(avgQueuePipeline),
         ])
 
