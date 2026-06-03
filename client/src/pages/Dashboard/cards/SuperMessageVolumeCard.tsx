@@ -1,10 +1,23 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { getDashboardMessageVolume } from '../../../services/dashboard'
 
 const today = () => new Date().toISOString().split('T')[0]
 const firstDayOfMonth = () => {
   const d = new Date()
   return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().split('T')[0]
+}
+
+function buildHourAverages(perHour: any[]) {
+  const hourMap: Record<string, number[]> = {}
+  for (const row of perHour) {
+    const hour = row._id?.split('T')[1]
+    if (!hour) continue
+    if (!hourMap[hour]) hourMap[hour] = []
+    hourMap[hour].push(row.count)
+  }
+  return Object.entries(hourMap)
+    .map(([hour, counts]) => ({ hour, avg: Math.round(counts.reduce((a, b) => a + b, 0) / counts.length) }))
+    .sort((a, b) => a.hour.localeCompare(b.hour))
 }
 
 export default function SuperMessageVolumeCard({ licensee }: { licensee?: string }) {
@@ -22,6 +35,8 @@ export default function SuperMessageVolumeCard({ licensee }: { licensee?: string
       .catch(() => setError('Erro ao carregar dados.'))
       .finally(() => setLoading(false))
   }, [licensee, startDate, endDate])
+
+  const hourAverages = useMemo(() => buildHourAverages(data?.per_hour || []), [data])
 
   return (
     <div className="card">
@@ -87,20 +102,16 @@ export default function SuperMessageVolumeCard({ licensee }: { licensee?: string
                   <thead>
                     <tr>
                       <th>Hora</th>
-                      <th>Total</th>
+                      <th>Média</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {(data.per_hour || []).map((row: any) => {
-                      const [date, hour] = (row._id || '').split('T')
-                      const [, month, day] = date.split('-')
-                      return (
-                        <tr key={row._id}>
-                          <td>{`${day}/${month} ${hour}h`}</td>
-                          <td>{row.count}</td>
-                        </tr>
-                      )
-                    })}
+                    {hourAverages.map(({ hour, avg }) => (
+                      <tr key={hour}>
+                        <td>{hour}h</td>
+                        <td>{avg}</td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
