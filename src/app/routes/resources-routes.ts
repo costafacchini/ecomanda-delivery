@@ -122,34 +122,30 @@ function authorize(...roles: string[]) {
   }
 }
 
-function requireSuper(req: any, res: any, next: any) {
-  return authorize('super')(req, res, next)
-}
-
 router.use(authenticate)
 
-router.post('/users', requireSuper, usersController.validations(), usersController.create)
-router.post('/users/:id', requireSuper, usersController.validations(), usersController.update)
+router.post('/users', authorize('super'), usersController.validations(), usersController.create)
+router.post('/users/:id', authorize('super'), usersController.validations(), usersController.update)
 router.get('/users/:id', usersController.show)
-router.get('/users', usersController.index)
+router.get('/users', authorize('admin', 'super'), usersController.index)
 
-router.post('/licensees', requireSuper, licenseesController.validations(), licenseesController.create)
-router.post('/licensees/:id', requireSuper, licenseesController.validations(), licenseesController.update)
+router.post('/licensees', authorize('super'), licenseesController.validations(), licenseesController.create)
+router.post('/licensees/:id', authorize('super'), licenseesController.validations(), licenseesController.update)
 router.get('/licensees/:id', licenseesController.show)
-router.get('/licensees', licenseesController.index)
+router.get('/licensees', authorize('admin', 'super'), licenseesController.index)
 
-router.post('/contacts', contactsController.validations(), contactsController.create)
-router.post('/contacts/:id', contactsController.validations(), contactsController.update)
+router.post('/contacts', authorize('admin', 'super'), contactsController.validations(), contactsController.create)
+router.post('/contacts/:id', authorize('admin', 'super'), contactsController.validations(), contactsController.update)
 router.get('/contacts/:id', contactsController.show)
 router.get('/contacts', contactsController.index)
 
-router.post('/triggers', triggersController.create)
-router.post('/triggers/:id', triggersController.update)
+router.post('/triggers', authorize('admin', 'super'), triggersController.create)
+router.post('/triggers/:id', authorize('admin', 'super'), triggersController.update)
 router.get('/triggers/:id', triggersController.show)
 router.get('/triggers', triggersController.index)
 
-router.post('/templates', templatesController.create)
-router.post('/templates/:id', templatesController.update)
+router.post('/templates', authorize('admin', 'super'), templatesController.create)
+router.post('/templates/:id', authorize('admin', 'super'), templatesController.update)
 router.get('/templates/:id', templatesController.show)
 router.get('/templates', templatesController.index)
 router.post('/templates/:id/importation', templatesController.importation)

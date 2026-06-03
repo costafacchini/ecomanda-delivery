@@ -72,8 +72,8 @@ function buildController({
   }
 }
 
-const SUPER_USER = { _id: 'user-id', isSuper: true }
-const LICENSEE_USER = { _id: 'user-id', isSuper: false, licensee: 'licensee-id' }
+const SUPER_USER = { _id: 'user-id', role: 'super' }
+const LICENSEE_USER = { _id: 'user-id', role: 'agent', licensee: 'licensee-id' }
 
 describe('DashboardController', () => {
   describe('licensees', () => {

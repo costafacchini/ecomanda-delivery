@@ -1,6 +1,6 @@
 # Status: task-02-room-model
 
-**Current Status**: in-progress
+**Current Status**: complete
 **Last Updated**: 2026-06-02
 **Agent**: Claude
 **Branch**: plan/local-chat-infra/complete
@@ -12,6 +12,7 @@
 |-----------|--------|-------|-------|
 | 2026-05-29 | not-started | — | Task created |
 | 2026-06-02 | in-progress | Claude | Executing on integration branch |
+| 2026-06-02 | complete | Claude | Wave 1 committed on integration branch |
 
 ## Blockers
 

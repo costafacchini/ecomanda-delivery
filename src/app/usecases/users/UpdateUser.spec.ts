@@ -25,7 +25,7 @@ describe('UpdateUser', () => {
       email: 'bruno@mars.com',
       password: '87654321',
       active: false,
-      isAdmin: true,
+      role: 'admin',
       licensee: nextLicensee._id,
     })
 
@@ -35,7 +35,7 @@ describe('UpdateUser', () => {
         name: 'Bruno Mars',
         email: 'bruno@mars.com',
         active: false,
-        isAdmin: true,
+        role: 'admin',
         licensee: nextLicensee._id,
       }),
     )

@@ -21,7 +21,7 @@ export default function Dashboard() {
 
   if (loadingUser) return <p>Carregando...</p>
 
-  if (user?.isSuper) {
+  if (user?.role === 'super') {
     return (
       <>
         <div className="row g-3">

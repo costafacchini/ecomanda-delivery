@@ -12,19 +12,19 @@ describe('User', () => {
 
   describe('before save', () => {
     it('generates _id', async () => {
-      const user = await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678', isSuper: true })
+      const user = await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678', role: 'super' })
 
       expect(user._id).not.toEqual(null)
     })
 
     it('defaults role to agent', () => {
-      const user = new User({ name: 'John Doe', email: 'john@doe.com', password: '12345678', isSuper: true })
+      const user = new User({ name: 'John Doe', email: 'john@doe.com', password: '12345678' })
 
       expect(user.role).toEqual('agent')
     })
 
     it('does not changes _id if user is changed', async () => {
-      const user = await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678', isSuper: true })
+      const user = await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678', role: 'super' })
 
       user.name = 'Changed'
       const alteredUser = await user.save()
@@ -34,13 +34,13 @@ describe('User', () => {
     })
 
     it('encripts password if the password is modified', async () => {
-      const user = await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678', isSuper: true })
+      const user = await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678', role: 'super' })
 
       expect(user.password).not.toEqual('12345678')
     })
 
     it('does not encripts pasword if the password is not modified', async () => {
-      const user = await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678', isSuper: true })
+      const user = await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678', role: 'super' })
       const originalPassword = user.password
 
       user.name = 'John Doe Silva'
@@ -58,7 +58,7 @@ describe('User', () => {
 
   describe('#validPassword', () => {
     it('is true when password informed is equal user password', async () => {
-      const user = await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678', isSuper: true })
+      const user = await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678', role: 'super' })
 
       expect(user.password).not.toEqual('12345678')
       expect(await user.validPassword('12345678')).toEqual(true)
@@ -69,14 +69,14 @@ describe('User', () => {
     describe('role', () => {
       it('is valid with allowed values', () => {
         for (const role of ['agent', 'supervisor', 'admin', 'super']) {
-          const user = new User({ name: 'John Doe', email: 'john@doe.com', password: '12345678', isSuper: true, role })
+          const user = new User({ name: 'John Doe', email: 'john@doe.com', password: '12345678', role })
           const validation = user.validateSync()
           expect(validation?.errors['role']).toBeUndefined()
         }
       })
 
       it('is invalid with unknown value', () => {
-        const user = new User({ name: 'John Doe', email: 'john@doe.com', password: '12345678', isSuper: true, role: 'owner' })
+        const user = new User({ name: 'John Doe', email: 'john@doe.com', password: '12345678', role: 'owner' })
         const validation = user.validateSync()
 
         expect(validation.errors['role']).toBeDefined()
@@ -85,14 +85,14 @@ describe('User', () => {
 
     describe('name', () => {
       it('is required', () => {
-        const user = new User({ email: 'john@doe.com', password: '12345678', isSuper: true })
+        const user = new User({ email: 'john@doe.com', password: '12345678', role: 'super' })
         const validation = user.validateSync()
 
         expect(validation.errors['name'].message).toEqual('Nome: Você deve preencher o campo')
       })
 
       it('greater than 4 characters', () => {
-        const user = new User({ name: 'abc', email: 'john@doe.com', password: '12345678', isSuper: true })
+        const user = new User({ name: 'abc', email: 'john@doe.com', password: '12345678', role: 'super' })
         const validation = user.validateSync()
 
         expect(validation.errors['name'].message).toEqual(
@@ -103,7 +103,7 @@ describe('User', () => {
 
     describe('password', () => {
       it('greater than 8 characters', () => {
-        const user = new User({ name: 'John Doe', email: 'john@doe.com', password: '123456', isSuper: true })
+        const user = new User({ name: 'John Doe', email: 'john@doe.com', password: '123456', role: 'super' })
         const validation = user.validateSync()
 
         expect(validation.errors['password'].message).toEqual('Senha: Informe um valor com mais que 8 caracteres!')
@@ -112,17 +112,17 @@ describe('User', () => {
 
     describe('email', () => {
       it('is required', () => {
-        const user = new User({ name: 'John Doe', password: '12345678', isSuper: true })
+        const user = new User({ name: 'John Doe', password: '12345678', role: 'super' })
         const validation = user.validateSync()
 
         expect(validation.errors['email'].message).toEqual('Email: Você deve preencher o campo')
       })
 
       it('is unique', async () => {
-        await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678', isSuper: true })
+        await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678', role: 'super' })
 
         try {
-          await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678', isSuper: true })
+          await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678', role: 'super' })
         } catch (err) {
           // eslint-disable-next-line jest/no-conditional-expect
           expect(err.toString()).toMatch(/duplicate key error/)
@@ -132,7 +132,7 @@ describe('User', () => {
           name: 'Mary Jane',
           email: 'mary@doe.com',
           password: '12345678',
-          isSuper: true,
+          role: 'super',
         })
         try {
           user.email = 'john@doe.com'
@@ -145,15 +145,15 @@ describe('User', () => {
     })
 
     describe('licensee', () => {
-      it('is not required if user isSuper', () => {
-        const user = new User({ isSuper: true })
+      it('is not required if user role is super', () => {
+        const user = new User({ role: 'super' })
         const validation = user.validateSync()
 
         expect(validation.errors['licensee']).not.toBeDefined()
       })
 
-      it('is required if user not isSuper', () => {
-        const user = new User({ isSuper: false })
+      it('is required if user role is not super', () => {
+        const user = new User({ role: 'agent' })
         const validation = user.validateSync()
 
         expect(validation.errors['licensee'].message).toEqual('Licensee: Você deve preencher o campo')

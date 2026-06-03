@@ -15,8 +15,7 @@ const userInitialValues = {
   password: '',
   licensee: '',
   active: true,
-  isAdmin: false,
-  isSuper: false,
+  role: 'agent',
 }
 
 function UserForm(props: any) {
@@ -91,45 +90,28 @@ function UserForm(props: any) {
                 </div>
               </div>
 
-              {currentUser && (currentUser.isAdmin || currentUser.isSuper) && (
+              {currentUser && ['admin', 'super'].includes(currentUser.role) && (
                 <div className='row pb-2'>
-                  <div className='col-5'>
-                    <div className='form-check'>
-                      <input
-                        type='checkbox'
-                        className='form-check-input'
-                        id='isAdmin'
-                        onChange={props.handleChange}
-                        onBlur={props.handleBlur}
-                        checked={props.values.isAdmin}
-                      />
-                      <label className='form-check-label' htmlFor='isAdmin'>Tem diretos de administrador?</label>
-                      <p><b>Administradores podem gerenciar os usuários do licenciado</b></p>
-                    </div>
+                  <div className='form-group col-5'>
+                    <label htmlFor='role'>Perfil</label>
+                    <select
+                      className='form-select'
+                      id='role'
+                      name='role'
+                      onChange={props.handleChange}
+                      onBlur={props.handleBlur}
+                      value={props.values.role}
+                    >
+                      <option value='agent'>Agente</option>
+                      <option value='supervisor'>Supervisor</option>
+                      <option value='admin'>Administrador</option>
+                      {currentUser.role === 'super' && <option value='super'>Super</option>}
+                    </select>
                   </div>
                 </div>
               )}
 
-              {currentUser && currentUser.isSuper && (
-                <div className='row pb-2'>
-                  <div className='col-5'>
-                    <div className='form-check'>
-                      <input
-                        type='checkbox'
-                        className='form-check-input'
-                        id='isSuper'
-                        onChange={props.handleChange}
-                        onBlur={props.handleBlur}
-                        checked={props.values.isSuper}
-                      />
-                      <label className='form-check-label' htmlFor='isSuper'>Tem diretos de super usuário?</label>
-                      <p><b>Libera direitos de acesso a funcionar sem Licenciado e dá acesso a algumas rotinas especiais</b></p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {currentUser && currentUser.isSuper && (
+              {currentUser && currentUser.role === 'super' && (
                 <div className='row'>
                   <div className='form-group col-5'>
                     <label htmlFor='waId'>Licenciado</label>

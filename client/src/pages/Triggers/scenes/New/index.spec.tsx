@@ -6,8 +6,8 @@ import { createTrigger } from '../../../../services/trigger'
 vi.mock('../../../../services/trigger')
 
 describe('<TriggerNew />', () => {
-  let currentUser = {
-    isSuper: false,
+  let currentUser: any = {
+    role: 'agent',
     licensee: 'id'
   }
 
@@ -48,7 +48,7 @@ describe('<TriggerNew />', () => {
 
   it('creates a new trigger when the backend returns success and user is super', async () => {
     currentUser = {
-      isSuper: true,
+      role: 'super',
     }
     mount()
 

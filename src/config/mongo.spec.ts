@@ -28,8 +28,7 @@ describe('mongo config', () => {
     expect(defaultUser).toEqual(
       expect.objectContaining({
         email: process.env.DEFAULT_USER,
-        isAdmin: true,
-        isSuper: true,
+        role: 'super',
       }),
     )
     await expect(defaultUser.validPassword(process.env.DEFAULT_PASSWORD)).resolves.toEqual(true)

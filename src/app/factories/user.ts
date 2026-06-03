@@ -6,7 +6,7 @@ const userSuper = Factory.define(() => ({
   email: 'john@doe.com',
   password: '12345678',
   active: true,
-  isSuper: true,
+  role: 'super',
 }))
 
 const user = Factory.define(() => ({
@@ -14,7 +14,7 @@ const user = Factory.define(() => ({
   email: 'raymond@reddington.com',
   password: '12345678',
   active: true,
-  isSuper: false,
+  role: 'agent',
   licensee: licensee.build(),
 }))
 

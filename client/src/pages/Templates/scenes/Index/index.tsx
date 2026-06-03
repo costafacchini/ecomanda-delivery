@@ -41,7 +41,7 @@ function TemplatesIndex({ currentUser }: any) {
   useEffect(() => {
     if (isEmpty(filters)) return
 
-    if (currentUser && !currentUser.isSuper && filters?.licensee !== currentUser.licensee) {
+    if (currentUser && currentUser.role !== 'super' && filters?.licensee !== currentUser.licensee) {
       const newFilters = { ...filters, licensee: currentUser.licensee, page: 1 }
       onFilter(newFilters)
     }
@@ -68,7 +68,7 @@ function TemplatesIndex({ currentUser }: any) {
       <div className='row'>
         <div className='d-flex flex-row justify-content-end pb-2'>
           <div className='flex-column w-50'>
-            {currentUser && currentUser.isSuper && (
+            {currentUser && currentUser.role === 'super' && (
               <div className='form-group'>
                 <label htmlFor='licensee' id='licensee'>Licenciado</label>
                 <SelectLicenseesWithFilter

@@ -13,7 +13,7 @@ function ContactNew({ currentUser }: any) {
       <div className='col'>
         <h3>Contato criando</h3>
         <Form errors={errors} currentUser={currentUser} onSubmit={async (values: any) => {
-          if (values.licensee === '' && !currentUser.isSuper) {
+          if (values.licensee === '' && currentUser.role !== 'super') {
             values.licensee = currentUser.licensee
           }
           const response = await createContact(values)

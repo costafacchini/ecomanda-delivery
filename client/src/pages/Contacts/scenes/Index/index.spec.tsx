@@ -10,7 +10,7 @@ vi.mock('../../../../services/contact')
 vi.mock('../../../../services/licensee')
 
 describe('<ContactsIndex />', () => {
-  const currentUser = { isSuper: true }
+  const currentUser = { role: 'super' }
 
   function mount({ currentUser }) {
     const Stub = createRoutesStub([
@@ -135,7 +135,7 @@ describe('<ContactsIndex />', () => {
     it('does not show the licensee if logged user is not super', async () => {
       getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'Contact' })] })
 
-      const currentUser = { isSuper: false, licensee: 'licensee-abc' }
+      const currentUser = { role: 'agent', licensee: 'licensee-abc' }
 
       mount({ currentUser })
 
@@ -149,7 +149,7 @@ describe('<ContactsIndex />', () => {
     it('includes the user licensee in the initial fetch for non-super users', async () => {
       getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'Contact' })] })
 
-      const currentUser = { isSuper: false, licensee: 'licensee-abc' }
+      const currentUser = { role: 'agent', licensee: 'licensee-abc' }
 
       mount({ currentUser })
 

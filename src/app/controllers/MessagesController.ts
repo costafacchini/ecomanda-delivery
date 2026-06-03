@@ -29,6 +29,12 @@ class MessagesController {
     const page = req.query.page || 1
     const limit = req.query.limit || 30
 
+    const user = await this.userRepository.findFirst({ _id: req.userId })
+
+    if (user && user.role !== 'super') {
+      req.query.licensee = user.licensee?.toString()
+    }
+
     const messagesQuery = this.createMessagesQuery()
 
     messagesQuery.page(page)
@@ -86,7 +92,7 @@ class MessagesController {
 
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
 
-      if (!user.isSuper) {
+      if (user.role !== 'super') {
         if (message.licensee.toString() !== user.licensee.toString()) {
           return res.status(403).json({ errors: { message: 'Forbidden' } })
         }

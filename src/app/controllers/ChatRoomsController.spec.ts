@@ -35,10 +35,7 @@ describe('ChatRoomsController', () => {
       roomRepository.findFirst.mockResolvedValue(null)
       const res = buildResponse()
 
-      await controller.replyToRoom(
-        { params: { roomId: 'room-1' }, body: { text: 'Hi' }, userId: 'agent-1' },
-        res,
-      )
+      await controller.replyToRoom({ params: { roomId: 'room-1' }, body: { text: 'Hi' }, userId: 'agent-1' }, res)
 
       expect(res.status).toHaveBeenCalledWith(404)
       expect(res.json).toHaveBeenCalledWith({ message: 'Conversa não encontrada ou encerrada.' })
@@ -53,10 +50,7 @@ describe('ChatRoomsController', () => {
       })
       const res = buildResponse()
 
-      await controller.replyToRoom(
-        { params: { roomId: 'room-1' }, body: { text: 'Hi' }, userId: 'agent-1' },
-        res,
-      )
+      await controller.replyToRoom({ params: { roomId: 'room-1' }, body: { text: 'Hi' }, userId: 'agent-1' }, res)
 
       expect(res.status).toHaveBeenCalledWith(404)
     })
@@ -70,10 +64,7 @@ describe('ChatRoomsController', () => {
       })
       const res = buildResponse()
 
-      await controller.replyToRoom(
-        { params: { roomId: 'room-1' }, body: { text: 'Hello' }, userId: 'agent-1' },
-        res,
-      )
+      await controller.replyToRoom({ params: { roomId: 'room-1' }, body: { text: 'Hello' }, userId: 'agent-1' }, res)
 
       expect(ingestChatMessage.execute).toHaveBeenCalledWith(
         expect.objectContaining({

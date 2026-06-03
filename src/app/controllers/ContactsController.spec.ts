@@ -19,7 +19,7 @@ async function runValidations(controller, req) {
 function buildController({ userIsSuper = true } = {}) {
   const contactRepository = new ContactRepositoryMemory()
   const userRepository = {
-    findFirst: jest.fn().mockResolvedValue({ isSuper: userIsSuper, licensee: 'user-licensee-id' }),
+    findFirst: jest.fn().mockResolvedValue({ role: userIsSuper ? 'super' : 'agent', licensee: 'user-licensee-id' }),
   }
   const contactsQueryInstance = {
     page: jest.fn(),

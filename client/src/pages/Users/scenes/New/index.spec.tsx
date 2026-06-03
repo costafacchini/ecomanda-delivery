@@ -6,8 +6,8 @@ import { createUser } from '../../../../services/user'
 vi.mock('../../../../services/user')
 
 describe('<UserNew />', () => {
-  let currentUser = {
-    isSuper: false,
+  let currentUser: any = {
+    role: 'agent',
     licensee: 'id'
   }
 
@@ -37,15 +37,14 @@ describe('<UserNew />', () => {
       email: '',
       password: '',
       active: true,
-      isAdmin: false,
-      isSuper: false,
+      role: 'agent',
       licensee: 'id'
     }))
   })
 
   it('creates a new user when the backend returns success and user is super', async () => {
     currentUser = {
-      isSuper: true,
+      role: 'super',
     }
     mount()
 
@@ -58,8 +57,7 @@ describe('<UserNew />', () => {
       email: '',
       password: '',
       active: true,
-      isAdmin: false,
-      isSuper: false,
+      role: 'agent',
       licensee: ''
     }))
   })

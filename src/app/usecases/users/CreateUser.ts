@@ -1,4 +1,4 @@
-const CREATE_USER_FIELDS = ['name', 'active', 'password', 'isAdmin', 'isSuper', 'email', 'licensee']
+const CREATE_USER_FIELDS = ['name', 'active', 'password', 'role', 'email', 'licensee']
 
 function pickFields(fields: Record<string, any> = {}, keys: any[] = []) {
   return keys.reduce((payload: Record<string, any>, key: any) => {

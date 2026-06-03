@@ -1,9 +1,20 @@
 import { render, screen } from '@testing-library/react'
 import Navbar from './index'
+import { AppContext } from '../../contexts/App'
+
+const appContextValue = { updateActiveLicensee: vi.fn() }
+
+function renderWithContext(ui: React.ReactElement) {
+  return render(
+    <AppContext.Provider value={appContextValue}>
+      {ui}
+    </AppContext.Provider>
+  )
+}
 
 describe('<Navbar>', () => {
   it('renders the navbar options', () => {
-    render(<Navbar />)
+    renderWithContext(<Navbar />)
 
     expect(screen.getByText(/Dashboard/i)).toBeInTheDocument()
     expect(screen.getByText(/Contatos/i)).toBeInTheDocument()
@@ -16,15 +27,15 @@ describe('<Navbar>', () => {
   })
 
   it('renders the navbar options for admins', () => {
-    render(<Navbar currentUser={{ isAdmin: true }} />)
+    renderWithContext(<Navbar currentUser={{ role: 'admin' }} />)
 
     expect(screen.getByText(/Licenciados/i)).toBeInTheDocument()
     expect(screen.getByText(/Usuários/i)).toBeInTheDocument()
     expect(screen.queryByText(/Relatórios/i)).not.toBeInTheDocument()
   })
 
-  it('renders the navbar options for admins and super users', () => {
-    render(<Navbar currentUser={{ isAdmin: true, isSuper: true }} />)
+  it('renders the navbar options for super users', () => {
+    renderWithContext(<Navbar currentUser={{ role: 'super' }} />)
     expect(screen.getByText(/Relatórios/i)).toBeInTheDocument()
   })
 })

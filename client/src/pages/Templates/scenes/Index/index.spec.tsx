@@ -10,7 +10,7 @@ vi.mock('../../../../services/template')
 vi.mock('../../../../services/licensee')
 
 describe('<TemplatesIndex />', () => {
-  const currentUser = { isSuper: true }
+  const currentUser = { role: 'super' }
 
   function mount({ currentUser }) {
     const Stub = createRoutesStub([
@@ -78,7 +78,7 @@ describe('<TemplatesIndex />', () => {
     it('does not show the licensee if logged user is not super', async () => {
       getTemplates.mockResolvedValue({ status: 201, data: [templateFactory.build({ name: 'Template' })] })
 
-      const currentUser = { isSuper: false }
+      const currentUser = { role: 'agent' }
 
       mount({ currentUser })
 

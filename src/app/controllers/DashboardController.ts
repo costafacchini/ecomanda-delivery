@@ -57,7 +57,7 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (!user.isSuper) return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (user.role !== 'super') return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const cacheKey = 'dashboard:super:licensees'
       const data = await this._cached(cacheKey, async () => {
@@ -81,7 +81,7 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (!user.isSuper) return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (user.role !== 'super') return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const { startDate, endDate } = this._parseDateRange(req.query)
       const cacheKey = `dashboard:super:message-volume:${startDate.toISOString()}:${endDate.toISOString()}`
@@ -133,7 +133,7 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (!user.isSuper) return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (user.role !== 'super') return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const { startDate, endDate } = this._parseDateRange(req.query)
       const cacheKey = `dashboard:super:delivery-rate:${startDate.toISOString()}:${endDate.toISOString()}`
@@ -167,7 +167,7 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (!user.isSuper) return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (user.role !== 'super') return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const { startDate, endDate } = this._parseDateRange(req.query)
       const cacheKey = `dashboard:super:queue:${startDate.toISOString()}:${endDate.toISOString()}`
@@ -198,7 +198,7 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (!user.isSuper) return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (user.role !== 'super') return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const { startDate, endDate } = this._parseDateRange(req.query)
       const cacheKey = `dashboard:super:conversations:${startDate.toISOString()}:${endDate.toISOString()}`
@@ -250,7 +250,7 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (user.isSuper) return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (user.role === 'super') return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const cacheKey = `dashboard:licensee:${user.licensee}:contacts`
 
@@ -272,7 +272,7 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (user.isSuper) return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (user.role === 'super') return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const { startDate, endDate } = this._parseDateRange(req.query)
       const cacheKey = `dashboard:licensee:${user.licensee}:messages-today:${startDate.toISOString()}:${endDate.toISOString()}`
@@ -306,7 +306,7 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (user.isSuper) return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (user.role === 'super') return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const { startDate, endDate } = this._parseDateRange(req.query)
       const cacheKey = `dashboard:licensee:${user.licensee}:messages-per-day:${startDate.toISOString()}:${endDate.toISOString()}`

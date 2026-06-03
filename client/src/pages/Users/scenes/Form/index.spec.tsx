@@ -30,13 +30,11 @@ describe('<UserForm />', () => {
       active: false,
       email: 'email@gmail.com',
       password: '12345',
-      isAdmin: false,
-      isSuper: false,
+      role: 'agent',
     }
 
     const currentUser = {
-      isAdmin: true,
-      isSuper: true,
+      role: 'super',
     }
     mount({ initialValues: user, currentUser: currentUser })
 
@@ -44,60 +42,46 @@ describe('<UserForm />', () => {
     expect(screen.getByLabelText('Ativo')).not.toBeChecked()
     expect(screen.getByLabelText('E-email')).toHaveValue('email@gmail.com')
     expect(screen.getByLabelText('Senha')).toHaveValue('12345')
-    expect(screen.getByLabelText('Tem diretos de administrador?')).not.toBeChecked()
-    expect(screen.getByLabelText('Tem diretos de super usuário?')).not.toBeChecked()
+    expect(screen.getByLabelText('Perfil')).toHaveValue('agent')
   })
 
-  describe('isAdmin', () => {
-    it('is rendered when currentUser isAdmin', () => {
+  describe('role', () => {
+    it('is not rendered when currentUser has no role or is agent', () => {
       mount()
 
-      expect(screen.queryByLabelText('Tem diretos de administrador?')).not.toBeInTheDocument()
-      expect(screen.queryByLabelText('Tem diretos de super usuário?')).not.toBeInTheDocument()
+      expect(screen.queryByLabelText('Perfil')).not.toBeInTheDocument()
 
       cleanup()
 
-      const currentUser = {
-        isAdmin: true,
-      }
-      mount({ currentUser: currentUser })
+      mount({ currentUser: { role: 'agent' } })
 
-      expect(screen.getByLabelText('Tem diretos de administrador?')).toBeInTheDocument()
-      expect(screen.queryByLabelText('Tem diretos de super usuário?')).not.toBeInTheDocument()
+      expect(screen.queryByLabelText('Perfil')).not.toBeInTheDocument()
     })
-  })
 
-  describe('isSuper', () => {
-    it('is rendered when currentUser isSuper', () => {
-      mount()
+    it('is rendered when currentUser is admin', () => {
+      mount({ currentUser: { role: 'admin' } })
 
-      expect(screen.queryByLabelText('Tem diretos de administrador?')).not.toBeInTheDocument()
-      expect(screen.queryByLabelText('Tem diretos de super usuário?')).not.toBeInTheDocument()
+      expect(screen.getByLabelText('Perfil')).toBeInTheDocument()
+      expect(screen.queryByText('Super')).not.toBeInTheDocument()
+    })
 
-      cleanup()
+    it('shows super option when currentUser is super', () => {
+      mount({ currentUser: { role: 'super' } })
 
-      const currentUser = {
-        isSuper: true,
-      }
-      mount({ currentUser: currentUser })
-
-      expect(screen.getByLabelText('Tem diretos de administrador?')).toBeInTheDocument()
-      expect(screen.getByLabelText('Tem diretos de super usuário?')).toBeInTheDocument()
+      expect(screen.getByLabelText('Perfil')).toBeInTheDocument()
+      expect(screen.getByText('Super')).toBeInTheDocument()
     })
   })
 
   describe('licensee', () => {
-    it('is rendered when currentUser isSuper', () => {
+    it('is rendered when currentUser is super', () => {
       mount()
 
       expect(screen.queryByLabelText('Licenciado')).not.toBeInTheDocument()
 
       cleanup()
 
-      const currentUser = {
-        isSuper: true,
-      }
-      mount({ currentUser: currentUser })
+      mount({ currentUser: { role: 'super' } })
 
       expect(screen.getByText('Licenciado')).toBeInTheDocument()
     })
@@ -117,8 +101,7 @@ describe('<UserForm />', () => {
         name: '',
         active: true,
         email: '',
-        isAdmin: false,
-        isSuper: false,
+        role: 'agent',
         licensee: '',
         password: '',
       })

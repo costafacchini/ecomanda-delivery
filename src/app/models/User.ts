@@ -33,8 +33,6 @@ const userSchema = new Schema(
       },
     },
     active: { type: Boolean, default: true },
-    isAdmin: { type: Boolean, default: false },
-    isSuper: { type: Boolean, default: false },
     role: {
       type: String,
       enum: ['agent', 'supervisor', 'admin', 'super'],
@@ -45,7 +43,7 @@ const userSchema = new Schema(
       ref: 'Licensee',
       required: [
         function (this: any) {
-          return !this.isSuper
+          return this.role !== 'super'
         },
         'Licensee: Você deve preencher o campo',
       ],

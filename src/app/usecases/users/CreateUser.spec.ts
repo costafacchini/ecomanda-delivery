@@ -15,7 +15,7 @@ describe('CreateUser', () => {
       ...userFactory.build({
         name: 'Mary Jane',
         email: 'mary@jane.com',
-        isAdmin: true,
+        role: 'admin',
         licensee: licensee._id,
       }),
       ignoredField: 'ignored',
@@ -26,8 +26,7 @@ describe('CreateUser', () => {
         name: 'Mary Jane',
         email: 'mary@jane.com',
         active: true,
-        isAdmin: true,
-        isSuper: false,
+        role: 'admin',
         licensee: licensee._id,
       }),
     )

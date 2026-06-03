@@ -58,7 +58,7 @@ function TemplateForm(props: any) {
                 </div>
               </div>
 
-              {currentUser && currentUser.isSuper && (
+              {currentUser && currentUser.role === 'super' && (
                 <div className='row'>
                   <div className='form-group col-5'>
                     <label htmlFor='licensee'>Licenciado</label>

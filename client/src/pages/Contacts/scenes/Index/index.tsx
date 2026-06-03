@@ -28,7 +28,7 @@ function ContactsIndex({ currentUser }: any) {
       if (!currentUser) return
 
       const initialFilters: any = { page: 1 }
-      if (!currentUser.isSuper) {
+      if (currentUser.role !== 'super') {
         initialFilters.licensee = currentUser.licensee
       }
 
@@ -74,7 +74,7 @@ function ContactsIndex({ currentUser }: any) {
       <div className='row'>
         <div className='d-flex flex-row justify-content-end pb-2'>
           <div className='flex-column w-50'>
-            {currentUser && currentUser.isSuper && (
+            {currentUser && currentUser.role === 'super' && (
               <div className='form-group'>
                 <label htmlFor='licensee' id='licensee'>Licenciado</label>
                 <SelectLicenseesWithFilter

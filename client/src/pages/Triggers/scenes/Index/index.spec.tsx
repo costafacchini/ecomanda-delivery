@@ -10,7 +10,7 @@ vi.mock('../../../../services/trigger')
 vi.mock('../../../../services/licensee')
 
 describe('<TriggersIndex />', () => {
-  const currentUser = { isSuper: true }
+  const currentUser = { role: 'super' }
 
   function mount({ currentUser }) {
     const Stub = createRoutesStub([
@@ -101,7 +101,7 @@ describe('<TriggersIndex />', () => {
     it('does not show the licensee if logged user is not super', async () => {
       getTriggers.mockResolvedValue({ status: 201, data: [triggerFactory.build({ name: 'Trigger' })] })
 
-      const currentUser = { isSuper: false }
+      const currentUser = { role: 'agent' }
 
       mount({ currentUser })
 

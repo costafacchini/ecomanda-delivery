@@ -6,8 +6,8 @@ import { createContact } from '../../../../services/contact'
 vi.mock('../../../../services/contact')
 
 describe('<ContactNew />', () => {
-  let currentUser = {
-    isSuper: false,
+  let currentUser: any = {
+    role: 'agent',
     licensee: 'id'
   }
 
@@ -54,7 +54,7 @@ describe('<ContactNew />', () => {
 
   it('creates a new contact when the backend returns success and user is super', async () => {
     currentUser = {
-      isSuper: true,
+      role: 'super',
     }
     mount()
 

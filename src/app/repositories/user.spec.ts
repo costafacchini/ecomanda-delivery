@@ -36,7 +36,7 @@ describe('user repository database', () => {
           name: 'Raymond Reddington',
           email: 'raymond@reddington.com',
           active: true,
-          isSuper: false,
+          role: 'agent',
           licensee,
         }),
       )

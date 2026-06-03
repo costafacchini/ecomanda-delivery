@@ -49,9 +49,7 @@ describe('LocalChat plugin', () => {
 
   describe('#sendMessage', () => {
     it('creates a new room when no open room exists for the contact', async () => {
-      const message = await messageRepository.create(
-        messageFactory.build({ contact, licensee, sended: false }),
-      )
+      const message = await messageRepository.create(messageFactory.build({ contact, licensee, sended: false }))
 
       await plugin.sendMessage(message._id)
 
@@ -62,9 +60,7 @@ describe('LocalChat plugin', () => {
 
     it('reuses the existing open room', async () => {
       const existingRoom = await roomRepository.create({ contact: contact._id, status: 'pending' })
-      const message = await messageRepository.create(
-        messageFactory.build({ contact, licensee, sended: false }),
-      )
+      const message = await messageRepository.create(messageFactory.build({ contact, licensee, sended: false }))
 
       await plugin.sendMessage(message._id)
 
@@ -74,9 +70,7 @@ describe('LocalChat plugin', () => {
     })
 
     it('marks the message as sended', async () => {
-      const message = await messageRepository.create(
-        messageFactory.build({ contact, licensee, sended: false }),
-      )
+      const message = await messageRepository.create(messageFactory.build({ contact, licensee, sended: false }))
 
       await plugin.sendMessage(message._id)
 
@@ -85,9 +79,7 @@ describe('LocalChat plugin', () => {
     })
 
     it('emits new-room-message via socketEmitter', async () => {
-      const message = await messageRepository.create(
-        messageFactory.build({ contact, licensee, sended: false }),
-      )
+      const message = await messageRepository.create(messageFactory.build({ contact, licensee, sended: false }))
 
       await plugin.sendMessage(message._id)
 
@@ -137,9 +129,7 @@ describe('LocalChat plugin', () => {
   describe('#closeChat', () => {
     it('sets room status to closed', async () => {
       const room = await roomRepository.create({ contact: contact._id, status: 'open' })
-      const message = await messageRepository.create(
-        messageFactory.build({ contact, licensee, room }),
-      )
+      const message = await messageRepository.create(messageFactory.build({ contact, licensee, room }))
 
       await plugin.closeChat(message._id)
 

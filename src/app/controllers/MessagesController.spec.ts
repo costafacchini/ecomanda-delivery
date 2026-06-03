@@ -101,7 +101,7 @@ describe('MessagesController resend', () => {
   }
 
   it('resets message fields, enqueues, and returns 200 for super user', async () => {
-    const superUser = { _id: 'user-id', isSuper: true }
+    const superUser = { _id: 'user-id', role: 'super' }
     const message = buildMessage()
     const { controller, messageRepository, queueServer } = buildController({ user: superUser, message })
     const req = { userId: 'user-id', params: { id: 'msg-id' } }
@@ -118,7 +118,7 @@ describe('MessagesController resend', () => {
   })
 
   it('resets message and returns 200 for licensee user owning the message', async () => {
-    const licenseeUser = { _id: 'user-id', isSuper: false, licensee: { toString: () => LICENSEE_ID } }
+    const licenseeUser = { _id: 'user-id', role: 'agent', licensee: { toString: () => LICENSEE_ID } }
     const message = buildMessage(LICENSEE_ID)
     const { controller, queueServer } = buildController({ user: licenseeUser, message })
     const req = { userId: 'user-id', params: { id: 'msg-id' } }
@@ -131,7 +131,7 @@ describe('MessagesController resend', () => {
   })
 
   it('returns 403 when licensee user attempts cross-licensee resend', async () => {
-    const licenseeUser = { _id: 'user-id', isSuper: false, licensee: { toString: () => OTHER_LICENSEE_ID } }
+    const licenseeUser = { _id: 'user-id', role: 'agent', licensee: { toString: () => OTHER_LICENSEE_ID } }
     const message = buildMessage(LICENSEE_ID)
     const { controller, queueServer } = buildController({ user: licenseeUser, message })
     const req = { userId: 'user-id', params: { id: 'msg-id' } }
@@ -144,7 +144,7 @@ describe('MessagesController resend', () => {
   })
 
   it('returns 422 when message is already sended', async () => {
-    const superUser = { _id: 'user-id', isSuper: true }
+    const superUser = { _id: 'user-id', role: 'super' }
     const message = buildMessage(LICENSEE_ID, { sended: true })
     const { controller, queueServer } = buildController({ user: superUser, message })
     const req = { userId: 'user-id', params: { id: 'msg-id' } }
@@ -158,7 +158,7 @@ describe('MessagesController resend', () => {
   })
 
   it('returns 404 when message not found', async () => {
-    const superUser = { _id: 'user-id', isSuper: true }
+    const superUser = { _id: 'user-id', role: 'super' }
     const { controller, queueServer } = buildController({ user: superUser, message: null })
     const req = { userId: 'user-id', params: { id: 'nonexistent-id' } }
     const res = buildResponse()
