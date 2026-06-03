@@ -91,12 +91,16 @@ export default function SuperMessageVolumeCard({ licensee }: { licensee?: string
                     </tr>
                   </thead>
                   <tbody>
-                    {(data.per_hour || []).map((row: any) => (
-                      <tr key={row._id}>
-                        <td>{row._id?.split('T')[1]}h</td>
-                        <td>{row.count}</td>
-                      </tr>
-                    ))}
+                    {(data.per_hour || []).map((row: any) => {
+                      const [date, hour] = (row._id || '').split('T')
+                      const [, month, day] = date.split('-')
+                      return (
+                        <tr key={row._id}>
+                          <td>{`${day}/${month} ${hour}h`}</td>
+                          <td>{row.count}</td>
+                        </tr>
+                      )
+                    })}
                   </tbody>
                 </table>
               </div>
