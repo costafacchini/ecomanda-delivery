@@ -10,7 +10,7 @@ vi.mock('../../../../services/user')
 vi.mock('../../../../services/licensee')
 
 describe('<UsersIndex />', () => {
-  const currentUser = { isSuper: true }
+  const currentUser = { role: 'super' }
 
   function mount({ currentUser }) {
     const Stub = createRoutesStub([
@@ -74,7 +74,7 @@ describe('<UsersIndex />', () => {
     it('does not show the licensee if logged user is not super', async () => {
       getUsers.mockResolvedValue({ status: 201, data: [userFactory.build({ name: 'User' })] })
 
-      const currentUser = { isSuper: false }
+      const currentUser = { role: 'agent' }
 
       mount({ currentUser })
 

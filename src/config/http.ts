@@ -2,6 +2,7 @@ import('../app/repositories/index')
 
 import createError from 'http-errors'
 import express from 'express'
+import { setIo } from '../app/services/socketEmitter'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import logger from 'morgan'
@@ -60,5 +61,6 @@ const server = http.createServer(app)
 
 const io = new Server(server)
 io.on('connection', (_) => {})
+setIo(io)
 
 export { server, io }

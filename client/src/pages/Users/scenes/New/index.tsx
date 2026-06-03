@@ -13,7 +13,9 @@ function UserNew({ currentUser }: any) {
       <div className='col'>
         <h3>Usuário criando</h3>
         <Form errors={errors} currentUser={currentUser} onSubmit={async (values: any) => {
-          if (values.licensee === '' && !currentUser.isSuper) {
+          if (['admin', 'super'].includes(values.role)) {
+            delete values.licensee
+          } else if (currentUser.role !== 'super') {
             values.licensee = currentUser.licensee
           }
           const response = await createUser(values)

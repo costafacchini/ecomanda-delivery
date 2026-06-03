@@ -16,8 +16,7 @@ async function createDefaultUser() {
         name: 'Default user',
         email: DEFAULT_USER,
         password: DEFAULT_PASSWORD,
-        isAdmin: true,
-        isSuper: true,
+        role: 'super',
       })
     } catch (err: any) {
       if (err?.code === 11000) {

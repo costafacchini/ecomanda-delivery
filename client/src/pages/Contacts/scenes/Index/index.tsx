@@ -3,9 +3,11 @@ import { Link } from 'react-router'
 import { getContacts } from '../../../../services/contact'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'
+import { AppContext } from '../../../../contexts/App'
 import isEmpty from 'lodash/isEmpty'
 
 function ContactsIndex({ currentUser }: any) {
+  const { activeLicensee } = useContext(AppContext)
   const { filters, setFilters, cache } = useContext(SimpleCrudContext)
   const { addPage } = cache
   const [expression, setExpression] = useState(filters?.expression || '')
@@ -28,9 +30,8 @@ function ContactsIndex({ currentUser }: any) {
       if (!currentUser) return
 
       const initialFilters: any = { page: 1 }
-      if (!currentUser.isSuper) {
-        initialFilters.licensee = currentUser.licensee
-      }
+      const effectiveLicensee = activeLicensee?._id ?? currentUser.licensee
+      if (effectiveLicensee) initialFilters.licensee = effectiveLicensee
 
       onFilter(initialFilters)
     } catch (error: any) {
@@ -42,7 +43,7 @@ function ContactsIndex({ currentUser }: any) {
     return () => {
       abortController.abort()
     }
-  }, [filters, onFilter, currentUser])
+  }, [filters, onFilter, currentUser, activeLicensee])
 
   function changeExpression(event: any) {
     setExpression(event.target.value)
@@ -74,7 +75,7 @@ function ContactsIndex({ currentUser }: any) {
       <div className='row'>
         <div className='d-flex flex-row justify-content-end pb-2'>
           <div className='flex-column w-50'>
-            {currentUser && currentUser.isSuper && (
+            {currentUser && currentUser.role === 'super' && !activeLicensee && (
               <div className='form-group'>
                 <label htmlFor='licensee' id='licensee'>Licenciado</label>
                 <SelectLicenseesWithFilter

@@ -5,18 +5,24 @@ import { getLicensees } from '../../../../services/licensee'
 import { createRoutesStub } from 'react-router'
 import { contactFactory } from '../../../../factories/contact'
 import { SimpleCrudContextProvider } from '../../../../contexts/SimpleCrud'
+import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/contact')
 vi.mock('../../../../services/licensee')
 
 describe('<ContactsIndex />', () => {
-  const currentUser = { isSuper: true }
+  const currentUser = { role: 'super' }
+  const appContextValue = { activeLicensee: null, updateActiveLicensee: vi.fn() }
 
   function mount({ currentUser }) {
     const Stub = createRoutesStub([
       {
         path: '/contacts',
-        Component: () => <ContactsIndex currentUser={currentUser} />,
+        Component: () => (
+          <AppContext.Provider value={appContextValue}>
+            <ContactsIndex currentUser={currentUser} />
+          </AppContext.Provider>
+        ),
       },
     ])
     render(
@@ -135,7 +141,7 @@ describe('<ContactsIndex />', () => {
     it('does not show the licensee if logged user is not super', async () => {
       getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'Contact' })] })
 
-      const currentUser = { isSuper: false, licensee: 'licensee-abc' }
+      const currentUser = { role: 'agent', licensee: 'licensee-abc' }
 
       mount({ currentUser })
 
@@ -149,7 +155,7 @@ describe('<ContactsIndex />', () => {
     it('includes the user licensee in the initial fetch for non-super users', async () => {
       getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'Contact' })] })
 
-      const currentUser = { isSuper: false, licensee: 'licensee-abc' }
+      const currentUser = { role: 'agent', licensee: 'licensee-abc' }
 
       mount({ currentUser })
 

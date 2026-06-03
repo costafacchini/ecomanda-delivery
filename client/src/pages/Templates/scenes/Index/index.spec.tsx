@@ -5,18 +5,24 @@ import { getLicensees } from '../../../../services/licensee'
 import { createRoutesStub } from 'react-router'
 import { templateFactory } from '../../../../factories/template'
 import { SimpleCrudContextProvider } from '../../../../contexts/SimpleCrud'
+import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/template')
 vi.mock('../../../../services/licensee')
 
 describe('<TemplatesIndex />', () => {
-  const currentUser = { isSuper: true }
+  const currentUser = { role: 'super' }
+  const appContextValue = { activeLicensee: null, updateActiveLicensee: vi.fn() }
 
   function mount({ currentUser }) {
     const Stub = createRoutesStub([
       {
         path: '/templates',
-        Component: () => <TemplatesIndex currentUser={currentUser} />,
+        Component: () => (
+          <AppContext.Provider value={appContextValue}>
+            <TemplatesIndex currentUser={currentUser} />
+          </AppContext.Provider>
+        ),
       },
     ])
     render(
@@ -78,7 +84,7 @@ describe('<TemplatesIndex />', () => {
     it('does not show the licensee if logged user is not super', async () => {
       getTemplates.mockResolvedValue({ status: 201, data: [templateFactory.build({ name: 'Template' })] })
 
-      const currentUser = { isSuper: false }
+      const currentUser = { role: 'agent' }
 
       mount({ currentUser })
 

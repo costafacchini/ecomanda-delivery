@@ -95,7 +95,7 @@ class ContactsController {
 
       const user = await this.userRepository.findFirst({ _id: req.userId })
 
-      if (!user?.isSuper) {
+      if (user?.role !== 'super') {
         contactsQuery.filterByLicensee(user?.licensee)
       } else if (req.query.licensee) {
         contactsQuery.filterByLicensee(req.query.licensee)

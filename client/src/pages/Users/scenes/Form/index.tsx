@@ -1,13 +1,25 @@
+import { useMemo } from 'react'
 import { FieldWithError, Form } from '../../../../components/form'
+import { ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 
-const SignupSchema = Yup.object().shape({
-  name: Yup.string(),
-  email: Yup.string().email().max(60),
-  password: Yup.string()
-});
+const ROLES_WITHOUT_LICENSEE = ['admin', 'super']
+
+function buildSchema(isSuperUser: boolean) {
+  return Yup.object().shape({
+    name: Yup.string(),
+    email: Yup.string().email().max(60),
+    password: Yup.string(),
+    licensee: isSuperUser
+      ? Yup.string().when('role', {
+          is: (role: string) => !ROLES_WITHOUT_LICENSEE.includes(role),
+          then: (schema) => schema.required('Licenciado é obrigatório'),
+        })
+      : Yup.string(),
+  })
+}
 
 const userInitialValues = {
   name: '',
@@ -15,18 +27,20 @@ const userInitialValues = {
   password: '',
   licensee: '',
   active: true,
-  isAdmin: false,
-  isSuper: false,
+  role: 'agent',
 }
 
 function UserForm(props: any) {
   const { onSubmit, errors, initialValues, currentUser } = props
   let navigate = useNavigate()
 
+  const isSuperUser = currentUser?.role === 'super'
+  const schema = useMemo(() => buildSchema(isSuperUser), [isSuperUser])
+
   return (
     <div>
       <Form
-        validationSchema={SignupSchema}
+        validationSchema={schema}
         initialValues={{...userInitialValues, ...initialValues}}
         onSubmit={(values: any) => {
           onSubmit(values)
@@ -91,52 +105,36 @@ function UserForm(props: any) {
                 </div>
               </div>
 
-              {currentUser && (currentUser.isAdmin || currentUser.isSuper) && (
+              {currentUser && ['admin', 'super'].includes(currentUser.role) && (
                 <div className='row pb-2'>
-                  <div className='col-5'>
-                    <div className='form-check'>
-                      <input
-                        type='checkbox'
-                        className='form-check-input'
-                        id='isAdmin'
-                        onChange={props.handleChange}
-                        onBlur={props.handleBlur}
-                        checked={props.values.isAdmin}
-                      />
-                      <label className='form-check-label' htmlFor='isAdmin'>Tem diretos de administrador?</label>
-                      <p><b>Administradores podem gerenciar os usuários do licenciado</b></p>
-                    </div>
+                  <div className='form-group col-5'>
+                    <label htmlFor='role'>Perfil</label>
+                    <select
+                      className='form-select'
+                      id='role'
+                      name='role'
+                      onChange={props.handleChange}
+                      onBlur={props.handleBlur}
+                      value={props.values.role}
+                    >
+                      <option value='agent'>Agente</option>
+                      <option value='supervisor'>Supervisor</option>
+                      <option value='admin'>Administrador</option>
+                      {currentUser.role === 'super' && <option value='super'>Super</option>}
+                    </select>
                   </div>
                 </div>
               )}
 
-              {currentUser && currentUser.isSuper && (
-                <div className='row pb-2'>
-                  <div className='col-5'>
-                    <div className='form-check'>
-                      <input
-                        type='checkbox'
-                        className='form-check-input'
-                        id='isSuper'
-                        onChange={props.handleChange}
-                        onBlur={props.handleBlur}
-                        checked={props.values.isSuper}
-                      />
-                      <label className='form-check-label' htmlFor='isSuper'>Tem diretos de super usuário?</label>
-                      <p><b>Libera direitos de acesso a funcionar sem Licenciado e dá acesso a algumas rotinas especiais</b></p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {currentUser && currentUser.isSuper && (
+              {isSuperUser && !ROLES_WITHOUT_LICENSEE.includes(props.values.role) && (
                 <div className='row'>
                   <div className='form-group col-5'>
-                    <label htmlFor='waId'>Licenciado</label>
+                    <label htmlFor='licensee'>Licenciado <span className='text-danger'>*</span></label>
                     <SelectLicenseesWithFilter selectedItem={props.values.licensee} onChange={(e: any) => {
                       const inputValue = e && e.value ? e.value : null
-                      props.setFieldValue('licensee', inputValue, false)
+                      props.setFieldValue('licensee', inputValue, true)
                     }} />
+                    <ErrorMessage name='licensee' />
                   </div>
                 </div>
               )}

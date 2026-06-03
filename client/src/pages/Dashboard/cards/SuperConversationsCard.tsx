@@ -1,43 +1,80 @@
 import { useState, useEffect } from 'react'
 import { getDashboardConversations } from '../../../services/dashboard'
 
-export default function SuperConversationsCard() {
+function formatDuration(seconds: number): string {
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  if (h > 0) return `${h}h ${m}m`
+  return `${m}m`
+}
+
+const today = () => new Date().toISOString().split('T')[0]
+const firstDayOfMonth = () => {
+  const d = new Date()
+  return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().split('T')[0]
+}
+
+export default function SuperConversationsCard({ licensee }: { licensee?: string }) {
+  const [startDate, setStartDate] = useState(firstDayOfMonth)
+  const [endDate, setEndDate] = useState(today)
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<any>(null)
 
   useEffect(() => {
-    getDashboardConversations()
+    setLoading(true)
+    setError(null)
+    getDashboardConversations({ ...(licensee ? { licensee } : {}), startDate, endDate })
       .then((res) => setData(res.data))
       .catch(() => setError('Erro ao carregar dados.'))
       .finally(() => setLoading(false))
-  }, [])
-
-  if (loading) return <div className="card"><div className="card-body">Carregando...</div></div>
-  if (error) return <div className="card"><div className="card-body text-danger">{error}</div></div>
+  }, [licensee, startDate, endDate])
 
   return (
     <div className="card">
-      <div className="card-header">Conversas</div>
-      <div className="card-body">
-        <div className="d-flex gap-4">
-          <div>
-            <div className="fs-4 fw-bold text-success">{data.started_today}</div>
-            <div className="text-muted small">Iniciadas hoje</div>
-          </div>
-          <div>
-            <div className="fs-4 fw-bold">{data.ended_today}</div>
-            <div className="text-muted small">Encerradas hoje</div>
-          </div>
-          <div>
-            <div className="fs-4 fw-bold">{data.avg_messages_per_conversation}</div>
-            <div className="text-muted small">Média msg/conversa</div>
-          </div>
-          <div>
-            <div className="fs-4 fw-bold">{data.avg_duration_seconds}s</div>
-            <div className="text-muted small">Duração média</div>
+      <div className="card-header">
+        <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <span>Conversas</span>
+          <div className="d-flex gap-2 align-items-center">
+            <input
+              type="date"
+              className="form-control form-control-sm"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+            <span className="text-muted small">até</span>
+            <input
+              type="date"
+              className="form-control form-control-sm"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
           </div>
         </div>
+      </div>
+      <div className="card-body">
+        {loading && <p>Carregando...</p>}
+        {error && <p className="text-danger">{error}</p>}
+        {data && (
+          <div className="d-flex gap-4">
+            <div>
+              <div className="fs-4 fw-bold text-success">{data.started_today}</div>
+              <div className="text-muted small">Iniciadas</div>
+            </div>
+            <div>
+              <div className="fs-4 fw-bold">{data.ended_today}</div>
+              <div className="text-muted small">Encerradas</div>
+            </div>
+            <div>
+              <div className="fs-4 fw-bold">{data.avg_messages_per_conversation}</div>
+              <div className="text-muted small">Média msg/conversa</div>
+            </div>
+            <div>
+              <div className="fs-4 fw-bold">{formatDuration(data.avg_duration_seconds)}</div>
+              <div className="text-muted small">Duração média</div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

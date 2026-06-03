@@ -5,18 +5,24 @@ import { getLicensees } from '../../../../services/licensee'
 import { createRoutesStub } from 'react-router'
 import { triggerFactory, triggerSingleProduct, triggerReplyButton, triggerListMessage, triggerText } from '../../../../factories/trigger'
 import { SimpleCrudContextProvider } from '../../../../contexts/SimpleCrud'
+import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/trigger')
 vi.mock('../../../../services/licensee')
 
 describe('<TriggersIndex />', () => {
-  const currentUser = { isSuper: true }
+  const currentUser = { role: 'super' }
+  const appContextValue = { activeLicensee: null, updateActiveLicensee: vi.fn() }
 
   function mount({ currentUser }) {
     const Stub = createRoutesStub([
       {
         path: '/triggers',
-        Component: () => <TriggersIndex currentUser={currentUser} />,
+        Component: () => (
+          <AppContext.Provider value={appContextValue}>
+            <TriggersIndex currentUser={currentUser} />
+          </AppContext.Provider>
+        ),
       },
     ])
     render(
@@ -101,7 +107,7 @@ describe('<TriggersIndex />', () => {
     it('does not show the licensee if logged user is not super', async () => {
       getTriggers.mockResolvedValue({ status: 201, data: [triggerFactory.build({ name: 'Trigger' })] })
 
-      const currentUser = { isSuper: false }
+      const currentUser = { role: 'agent' }
 
       mount({ currentUser })
 

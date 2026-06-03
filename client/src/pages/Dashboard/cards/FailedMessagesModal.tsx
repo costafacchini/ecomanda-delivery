@@ -9,7 +9,7 @@ function formatDate(value: string | undefined): string {
   return moment(value).tz(tz).format('DD/MM/YYYY HH:mm:ss')
 }
 
-export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess }: any) {
+export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, startDate, endDate }: any) {
   const [messages, setMessages] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [fetchError, setFetchError] = useState<any>(null)
@@ -22,11 +22,15 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess }
     setFetchError(null)
     setRowErrors({})
 
-    getMessages({ sended: false, limit: 50 })
+    const params: any = { sended: false, limit: 50 }
+    if (startDate) params.startDate = moment.tz(startDate, tz).startOf('day').utc().toISOString()
+    if (endDate) params.endDate = moment.tz(endDate, tz).endOf('day').utc().toISOString()
+
+    getMessages(params)
       .then((res) => setMessages(res.data))
       .catch(() => setFetchError('Erro ao carregar mensagens falhas.'))
       .finally(() => setLoading(false))
-  }, [isOpen])
+  }, [isOpen, startDate, endDate])
 
   function handleResend(id: any) {
     resendMessage(id)

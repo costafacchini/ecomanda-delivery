@@ -2,15 +2,22 @@ import ContactEdit from './'
 import { fireEvent, screen, waitFor, render } from '@testing-library/react'
 import { getContact, updateContact } from '../../../../services/contact'
 import { createRoutesStub } from 'react-router';
+import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/contact')
 
 describe('<ContactEdit />', () => {
+  const appContextValue = { activeLicensee: null, updateActiveLicensee: vi.fn() }
+
   function mount() {
     const Stub = createRoutesStub([
       {
         path: '/contacts/:id',
-        Component: ContactEdit,
+        Component: () => (
+          <AppContext.Provider value={appContextValue}>
+            <ContactEdit />
+          </AppContext.Provider>
+        ),
       },
       {
         path: '/contacts',

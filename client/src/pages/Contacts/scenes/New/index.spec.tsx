@@ -2,20 +2,27 @@ import ContactNew from '.'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { createRoutesStub } from 'react-router'
 import { createContact } from '../../../../services/contact'
+import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/contact')
 
 describe('<ContactNew />', () => {
-  let currentUser = {
-    isSuper: false,
+  let currentUser: any = {
+    role: 'agent',
     licensee: 'id'
   }
+
+  const appContextValue = { activeLicensee: null, updateActiveLicensee: vi.fn() }
 
   function mount() {
     const Stub = createRoutesStub([
       {
         path: '/contacts/new',
-        Component: () => <ContactNew currentUser={currentUser} />,
+        Component: () => (
+          <AppContext.Provider value={appContextValue}>
+            <ContactNew currentUser={currentUser} />
+          </AppContext.Provider>
+        ),
       },
       {
         path: '/contacts',
@@ -54,7 +61,7 @@ describe('<ContactNew />', () => {
 
   it('creates a new contact when the backend returns success and user is super', async () => {
     currentUser = {
-      isSuper: true,
+      role: 'super',
     }
     mount()
 

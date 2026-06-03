@@ -1,7 +1,14 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { logout } from '../../services/auth'
+import { AppContext } from '../../contexts/App'
 
 export default function Navbar({ currentUser }: any) {
+  const { resetLicenseeModal } = useContext(AppContext)
+
+  function handleSwitchLicensee() {
+    resetLicenseeModal()
+  }
+
   return (
       <nav className='navbar navbar-expand-lg navbar-dark bg-primary'>
         <div className='container-fluid'>
@@ -13,7 +20,7 @@ export default function Navbar({ currentUser }: any) {
               <li className='nav-item'>
                 <a className='nav-link active' aria-current='page' href='/#/'>Dashboard</a>
               </li>
-              {currentUser && currentUser.isAdmin && (
+              {currentUser && ['admin', 'super'].includes(currentUser.role) && (
                 <li className='nav-item dropdown'>
                   <button className='nav-link dropdown-toggle' type='button' data-bs-toggle='dropdown' id='admin-dropdown' aria-expanded='false'>
                     Admin
@@ -52,7 +59,7 @@ export default function Navbar({ currentUser }: any) {
               <li className='nav-item'>
                 <a className='nav-link' href='/#/messages'>Mensagens</a>
               </li>
-              {currentUser && currentUser.isAdmin && currentUser.isSuper && (
+              {currentUser && currentUser.role === 'super' && (
                 <li className='nav-item dropdown'>
                   <button className='nav-link dropdown-toggle' type='button' id='reports-menu' data-bs-toggle='dropdown' aria-expanded='false'>
                     Relatórios
@@ -63,8 +70,22 @@ export default function Navbar({ currentUser }: any) {
                 </li>
               )}
             </ul>
-            <div className='btn-item'>
-              <a className='btn btn-primary' href='/' onClick={logout}>Sair</a>
+            <div className='dropdown'>
+              <button className='btn btn-primary dropdown-toggle' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
+                <i className='bi bi-person-circle'></i>{currentUser?.name ? ` ${currentUser.name}` : ''}
+              </button>
+              <ul className='dropdown-menu dropdown-menu-end'>
+                {currentUser && ['super', 'admin'].includes(currentUser.role) && (
+                  <li>
+                    <button className='dropdown-item' onClick={handleSwitchLicensee}>
+                      Trocar de licenciado
+                    </button>
+                  </li>
+                )}
+                <li>
+                  <a className='dropdown-item' href='/' onClick={logout}>Sair</a>
+                </li>
+              </ul>
             </div>
           </div>
         </div>

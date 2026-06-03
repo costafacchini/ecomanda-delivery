@@ -107,42 +107,45 @@ function authenticate(req: any, res: any, next: any) {
   })
 }
 
-async function requireSuper(req: any, res: any, next: any) {
-  try {
-    const user = await userRepository.findFirst({ _id: req.userId })
-    if (!user || !user.isSuper) {
-      return res.status(403).json({ message: 'Acesso negado.' })
+function authorize(...roles: string[]) {
+  return async (req: any, res: any, next: any) => {
+    try {
+      const user = await userRepository.findFirst({ _id: req.userId })
+      if (!user || !roles.includes(user.role)) {
+        return res.status(403).json({ message: 'Acesso negado.' })
+      }
+      req.user = user
+      next()
+    } catch (err) {
+      next(err)
     }
-    next()
-  } catch (err) {
-    next(err)
   }
 }
 
 router.use(authenticate)
 
-router.post('/users', requireSuper, usersController.validations(), usersController.create)
-router.post('/users/:id', requireSuper, usersController.validations(), usersController.update)
+router.post('/users', authorize('super'), usersController.validations(), usersController.create)
+router.post('/users/:id', authorize('super'), usersController.validations(), usersController.update)
 router.get('/users/:id', usersController.show)
-router.get('/users', usersController.index)
+router.get('/users', authorize('admin', 'super'), usersController.index)
 
-router.post('/licensees', requireSuper, licenseesController.validations(), licenseesController.create)
-router.post('/licensees/:id', requireSuper, licenseesController.validations(), licenseesController.update)
+router.post('/licensees', authorize('super'), licenseesController.validations(), licenseesController.create)
+router.post('/licensees/:id', authorize('super'), licenseesController.validations(), licenseesController.update)
 router.get('/licensees/:id', licenseesController.show)
-router.get('/licensees', licenseesController.index)
+router.get('/licensees', authorize('admin', 'super'), licenseesController.index)
 
-router.post('/contacts', contactsController.validations(), contactsController.create)
-router.post('/contacts/:id', contactsController.validations(), contactsController.update)
+router.post('/contacts', authorize('admin', 'super'), contactsController.validations(), contactsController.create)
+router.post('/contacts/:id', authorize('admin', 'super'), contactsController.validations(), contactsController.update)
 router.get('/contacts/:id', contactsController.show)
 router.get('/contacts', contactsController.index)
 
-router.post('/triggers', triggersController.create)
-router.post('/triggers/:id', triggersController.update)
+router.post('/triggers', authorize('admin', 'super'), triggersController.create)
+router.post('/triggers/:id', authorize('admin', 'super'), triggersController.update)
 router.get('/triggers/:id', triggersController.show)
 router.get('/triggers', triggersController.index)
 
-router.post('/templates', templatesController.create)
-router.post('/templates/:id', templatesController.update)
+router.post('/templates', authorize('admin', 'super'), templatesController.create)
+router.post('/templates/:id', authorize('admin', 'super'), templatesController.update)
 router.get('/templates/:id', templatesController.show)
 router.get('/templates', templatesController.index)
 router.post('/templates/:id/importation', templatesController.importation)
@@ -164,5 +167,7 @@ router.get('/dashboard/conversations', dashboardController.conversations)
 router.get('/dashboard/contacts', dashboardController.contacts)
 router.get('/dashboard/messages-today', dashboardController.messagesToday)
 router.get('/dashboard/messages-per-day', dashboardController.messagesPerDay)
+router.get('/dashboard/open-rooms', dashboardController.openRooms)
+router.post('/dashboard/rooms/:roomId/close', dashboardController.closeRoom)
 
 export default router

@@ -57,8 +57,7 @@ describe('UsersController delegation', () => {
         password: '12345678',
         active: true,
         licensee: 'licensee-id',
-        isAdmin: true,
-        isSuper: false,
+        role: 'admin',
       },
     }
     const res = buildResponse()
@@ -75,8 +74,7 @@ describe('UsersController delegation', () => {
       email: 'mary@jane.com',
       active: true,
       licensee: 'licensee-id',
-      isAdmin: true,
-      isSuper: false,
+      role: 'admin',
     })
   })
 

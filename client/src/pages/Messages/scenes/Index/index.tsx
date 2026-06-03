@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useContext } from 'react'
 import { getMessages, resendMessage } from '../../../../services/message'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 import SelectContactsWithFilter from '../../../../components/SelectContactsWithFilter'
@@ -6,8 +6,10 @@ import CartDescription from './components/cart'
 import styles from './styles.module.scss'
 import moment from 'moment-timezone'
 import isEmpty from 'lodash/isEmpty'
+import { AppContext } from '../../../../contexts/App'
 
 function MessagesIndex({ currentUser }: any) {
+  const { activeLicensee } = useContext(AppContext)
   const [filters, setFilters] = useState<any>({
     startDate: moment().subtract(3, 'hours').format('YYYY-MM-DDTHH:mm'),
     endDate: moment().format('YYYY-MM-DDTHH:mm'),
@@ -61,10 +63,11 @@ function MessagesIndex({ currentUser }: any) {
   )
 
   useEffect(() => {
-    if (currentUser && !currentUser.isSuper && filters.licensee !== currentUser.licensee) {
-      setFilters({ ...filters, licensee: currentUser.licensee })
+    const effectiveLicensee = activeLicensee?._id ?? currentUser?.licensee
+    if (currentUser && effectiveLicensee && filters.licensee !== effectiveLicensee) {
+      setFilters({ ...filters, licensee: effectiveLicensee })
     }
-  }, [currentUser, filters, setFilters])
+  }, [currentUser, activeLicensee, filters, setFilters])
 
   function handleChange({ target }: any) {
     setFilters({ ...filters, [target.name]: target.value, page: 1 })
@@ -169,7 +172,7 @@ function MessagesIndex({ currentUser }: any) {
       </div>
 
       <div className='row'>
-        {currentUser && currentUser.isSuper && (
+        {currentUser && currentUser.role === 'super' && !activeLicensee && (
           <div className='col-6'>
             <div className='form-group'>
               <label htmlFor='licensee' id='licensee'>

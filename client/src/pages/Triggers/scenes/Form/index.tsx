@@ -22,7 +22,7 @@ const triggerInitialValues = {
 }
 
 function TriggerForm(props: any) {
-  const { onSubmit, errors, initialValues, currentUser } = props
+  const { onSubmit, errors, initialValues, currentUser, activeLicensee } = props
   let navigate = useNavigate()
 
   return (
@@ -77,7 +77,7 @@ function TriggerForm(props: any) {
                 </div>
               </div>
 
-              {currentUser && currentUser.isSuper && (
+              {currentUser && currentUser.role === 'super' && !activeLicensee && (
                 <div className='row'>
                   <div className='form-group col-5'>
                     <label htmlFor='licensee'>Licenciado</label>

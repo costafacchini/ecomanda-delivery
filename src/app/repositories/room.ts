@@ -9,6 +9,10 @@ class RoomRepositoryDatabase extends Repository {
   async findFirst(params = {}, relations = ['contact']) {
     return await super.findFirst(params, relations)
   }
+
+  findOpenForContact(contactId: any) {
+    return this.findFirst({ contact: contactId, closed: false })
+  }
 }
 
 class RoomRepositoryMemory extends RepositoryMemory {

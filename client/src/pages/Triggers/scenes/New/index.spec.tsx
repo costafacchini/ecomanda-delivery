@@ -2,20 +2,27 @@ import TriggerNew from '.'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { createRoutesStub } from 'react-router'
 import { createTrigger } from '../../../../services/trigger'
+import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/trigger')
 
 describe('<TriggerNew />', () => {
-  let currentUser = {
-    isSuper: false,
+  let currentUser: any = {
+    role: 'agent',
     licensee: 'id'
   }
+
+  const appContextValue = { activeLicensee: null, updateActiveLicensee: vi.fn() }
 
   function mount() {
     const Stub = createRoutesStub([
       {
         path: '/triggers/new',
-        Component: () => <TriggerNew currentUser={currentUser} />,
+        Component: () => (
+          <AppContext.Provider value={appContextValue}>
+            <TriggerNew currentUser={currentUser} />
+          </AppContext.Provider>
+        ),
       },
       {
         path: '/triggers',
@@ -48,7 +55,7 @@ describe('<TriggerNew />', () => {
 
   it('creates a new trigger when the backend returns success and user is super', async () => {
     currentUser = {
-      isSuper: true,
+      role: 'super',
     }
     mount()
 

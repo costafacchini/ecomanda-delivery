@@ -2,15 +2,22 @@ import TriggerEdit from './'
 import { fireEvent, screen, waitFor, render } from '@testing-library/react'
 import { getTrigger, updateTrigger } from '../../../../services/trigger'
 import { createRoutesStub } from 'react-router'
+import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/trigger')
 
 describe('<TriggerEdit />', () => {
+  const appContextValue = { activeLicensee: null, updateActiveLicensee: vi.fn() }
+
   function mount() {
     const Stub = createRoutesStub([
       {
         path: '/triggers/:id',
-        Component: TriggerEdit,
+        Component: () => (
+          <AppContext.Provider value={appContextValue}>
+            <TriggerEdit />
+          </AppContext.Provider>
+        ),
       },
       {
         path: '/triggers',

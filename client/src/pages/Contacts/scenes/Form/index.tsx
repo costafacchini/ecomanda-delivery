@@ -27,7 +27,7 @@ const contactInitialValues = {
 }
 
 function ContactForm(props: any) {
-  const { onSubmit, errors, initialValues, currentUser } = props
+  const { onSubmit, errors, initialValues, currentUser, activeLicensee } = props
   let navigate = useNavigate()
 
   return (
@@ -100,7 +100,7 @@ function ContactForm(props: any) {
                 </div>
               </div>
 
-              {currentUser && currentUser.isSuper && (
+              {currentUser && currentUser.role === 'super' && !activeLicensee && (
                 <div className='row'>
                   <div className='form-group col-5'>
                     <label htmlFor='waId'>Licenciado</label>

@@ -72,8 +72,8 @@ function buildController({
   }
 }
 
-const SUPER_USER = { _id: 'user-id', isSuper: true }
-const LICENSEE_USER = { _id: 'user-id', isSuper: false, licensee: 'licensee-id' }
+const SUPER_USER = { _id: 'user-id', role: 'super' }
+const LICENSEE_USER = { _id: 'user-id', role: 'agent', licensee: 'licensee-id' }
 
 describe('DashboardController', () => {
   describe('licensees', () => {
@@ -213,7 +213,10 @@ describe('DashboardController', () => {
     it('returns correct percentages on cache miss', async () => {
       const redis = buildRedis({ cachedValue: null })
       const modelAdapter = buildModelAdapter({ countResult: 0 })
-      modelAdapter._queryChain.countDocuments.mockResolvedValueOnce(80).mockResolvedValueOnce(20)
+      modelAdapter._queryChain.countDocuments
+        .mockResolvedValueOnce(80)
+        .mockResolvedValueOnce(20)
+        .mockResolvedValueOnce(35)
       const { controller } = buildController({
         user: SUPER_USER,
         messageModelAdapter: modelAdapter,
@@ -228,6 +231,7 @@ describe('DashboardController', () => {
       const result = res.json.mock.calls[0][0]
       expect(result.sent_today).toBe(80)
       expect(result.failed_today).toBe(20)
+      expect(result.failed_total).toBe(35)
       expect(result.sent_pct).toBe(80)
       expect(result.failed_pct).toBe(20)
     })
@@ -493,6 +497,223 @@ describe('DashboardController', () => {
 
       expect(startDate).toEqual(new Date(start))
       expect(endDate).toEqual(new Date(end))
+    })
+  })
+
+  describe('openRooms', () => {
+    function buildOpenRoomsAdapter(rooms: any[] = []) {
+      const chain = {
+        sort: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        populate: jest.fn().mockReturnThis(),
+        lean: jest.fn().mockResolvedValue(rooms),
+      }
+      return {
+        find: jest.fn().mockReturnValue(chain),
+        aggregate: jest.fn().mockResolvedValue([]),
+        where: jest.fn().mockReturnValue({ countDocuments: jest.fn().mockResolvedValue(0) }),
+        _chain: chain,
+      }
+    }
+
+    function buildLicenseeContactAdapter(contacts: any[] = []) {
+      const chain = {
+        select: jest.fn().mockReturnThis(),
+        lean: jest.fn().mockResolvedValue(contacts),
+      }
+      return {
+        find: jest.fn().mockReturnValue(chain),
+        where: jest.fn().mockReturnValue({ countDocuments: jest.fn().mockResolvedValue(0) }),
+        aggregate: jest.fn().mockResolvedValue([]),
+      }
+    }
+
+    const room1 = { _id: 'room-1', contact: { name: 'Alice', number: '5511999990001' }, createdAt: new Date() }
+    const room2 = { _id: 'room-2', contact: { name: 'Bob', number: '5511999990002' }, createdAt: new Date() }
+    const lastMsg1 = { _id: 'room-1', text: 'Hello', createdAt: new Date() }
+
+    it('returns 403 when user is not super or admin', async () => {
+      const { controller } = buildController({ user: LICENSEE_USER })
+      const req = { userId: 'user-id', query: {}, params: {} }
+      const res = buildResponse()
+
+      await controller.openRooms(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(403)
+    })
+
+    it('returns 404 when user not found', async () => {
+      const { controller } = buildController({ user: null })
+      const req = { userId: 'user-id', query: {}, params: {} }
+      const res = buildResponse()
+
+      await controller.openRooms(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(404)
+    })
+
+    it('returns rooms that have a last message', async () => {
+      const roomAdapter = buildOpenRoomsAdapter([room1, room2])
+      const messageAdapter = buildModelAdapter({ aggregateResult: [lastMsg1] })
+      const { controller } = buildController({
+        user: SUPER_USER,
+        roomModelAdapter: roomAdapter,
+        messageModelAdapter: messageAdapter,
+      })
+      const req = { userId: 'user-id', query: { page: '1' }, params: {} }
+      const res = buildResponse()
+
+      await controller.openRooms(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      const result = res.json.mock.calls[0][0]
+      expect(result.rooms).toHaveLength(1)
+      expect(result.rooms[0]._id).toBe('room-1')
+      expect(result.rooms[0].lastMessage).toEqual(lastMsg1)
+      expect(result.hasMore).toBe(false)
+    })
+
+    it('filters out rooms without a last message', async () => {
+      const roomAdapter = buildOpenRoomsAdapter([room1, room2])
+      const messageAdapter = buildModelAdapter({ aggregateResult: [] })
+      const { controller } = buildController({
+        user: SUPER_USER,
+        roomModelAdapter: roomAdapter,
+        messageModelAdapter: messageAdapter,
+      })
+      const req = { userId: 'user-id', query: {}, params: {} }
+      const res = buildResponse()
+
+      await controller.openRooms(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      const result = res.json.mock.calls[0][0]
+      expect(result.rooms).toHaveLength(0)
+    })
+
+    it('sets hasMore true when DB returns more rooms than the limit', async () => {
+      // controller fetches limit+1 (11) rooms; if it gets 11 back, hasMore=true
+      const manyRooms = Array.from({ length: 11 }, (_, i) => ({
+        _id: `room-${i}`,
+        contact: null,
+        createdAt: new Date(),
+      }))
+      const lastMsgs = manyRooms.slice(0, 10).map((r) => ({ _id: r._id, text: 'msg', createdAt: new Date() }))
+      const roomAdapter = buildOpenRoomsAdapter(manyRooms)
+      const messageAdapter = buildModelAdapter({ aggregateResult: lastMsgs })
+      const { controller } = buildController({
+        user: SUPER_USER,
+        roomModelAdapter: roomAdapter,
+        messageModelAdapter: messageAdapter,
+      })
+      const req = { userId: 'user-id', query: { page: '1' }, params: {} }
+      const res = buildResponse()
+
+      await controller.openRooms(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      const result = res.json.mock.calls[0][0]
+      expect(result.rooms).toHaveLength(10)
+      expect(result.hasMore).toBe(true)
+    })
+
+    it('filters rooms by licensee via contact lookup', async () => {
+      const contacts = [{ _id: 'contact-1' }]
+      const roomAdapter = buildOpenRoomsAdapter([room1])
+      const contactAdapter = buildLicenseeContactAdapter(contacts)
+      const messageAdapter = buildModelAdapter({ aggregateResult: [lastMsg1] })
+      const { controller } = buildController({
+        user: SUPER_USER,
+        roomModelAdapter: roomAdapter,
+        contactModelAdapter: contactAdapter,
+        messageModelAdapter: messageAdapter,
+      })
+      const req = { userId: 'user-id', query: { licensee: 'licensee-id' }, params: {} }
+      const res = buildResponse()
+
+      await controller.openRooms(req, res)
+
+      expect(contactAdapter.find).toHaveBeenCalledWith({ licensee: 'licensee-id' })
+      expect(roomAdapter.find).toHaveBeenCalledWith(expect.objectContaining({ contact: { $in: ['contact-1'] } }))
+      expect(res.status).toHaveBeenCalledWith(200)
+    })
+  })
+
+  describe('closeRoom', () => {
+    function buildCloseRoomAdapter(room: any = null) {
+      return {
+        findById: jest.fn().mockResolvedValue(room),
+        find: jest.fn().mockReturnValue({
+          sort: jest.fn().mockReturnThis(),
+          skip: jest.fn().mockReturnThis(),
+          limit: jest.fn().mockReturnThis(),
+          populate: jest.fn().mockReturnThis(),
+          lean: jest.fn().mockResolvedValue([]),
+        }),
+        where: jest.fn().mockReturnValue({ countDocuments: jest.fn().mockResolvedValue(0) }),
+        aggregate: jest.fn().mockResolvedValue([]),
+      }
+    }
+
+    it('returns 403 when user is not super or admin', async () => {
+      const { controller } = buildController({ user: LICENSEE_USER })
+      const req = { userId: 'user-id', query: {}, params: { roomId: 'room-id' } }
+      const res = buildResponse()
+
+      await controller.closeRoom(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(403)
+    })
+
+    it('returns 404 when user not found', async () => {
+      const { controller } = buildController({ user: null })
+      const req = { userId: 'user-id', query: {}, params: { roomId: 'room-id' } }
+      const res = buildResponse()
+
+      await controller.closeRoom(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(404)
+    })
+
+    it('returns 404 when room not found', async () => {
+      const roomAdapter = buildCloseRoomAdapter(null)
+      const { controller } = buildController({ user: SUPER_USER, roomModelAdapter: roomAdapter })
+      const req = { userId: 'user-id', query: {}, params: { roomId: 'nonexistent-room' } }
+      const res = buildResponse()
+
+      await controller.closeRoom(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(404)
+    })
+
+    it('returns 200 with already-closed message without saving when room is already closed', async () => {
+      const closedRoom = { _id: 'room-id', closed: true, status: 'closed', save: jest.fn() }
+      const roomAdapter = buildCloseRoomAdapter(closedRoom)
+      const { controller } = buildController({ user: SUPER_USER, roomModelAdapter: roomAdapter })
+      const req = { userId: 'user-id', query: {}, params: { roomId: 'room-id' } }
+      const res = buildResponse()
+
+      await controller.closeRoom(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.json).toHaveBeenCalledWith({ message: 'Already closed' })
+      expect(closedRoom.save).not.toHaveBeenCalled()
+    })
+
+    it('sets status to closed, saves, and returns 200', async () => {
+      const openRoom = { _id: 'room-id', closed: false, status: 'open', save: jest.fn().mockResolvedValue(undefined) }
+      const roomAdapter = buildCloseRoomAdapter(openRoom)
+      const { controller } = buildController({ user: SUPER_USER, roomModelAdapter: roomAdapter })
+      const req = { userId: 'user-id', query: {}, params: { roomId: 'room-id' } }
+      const res = buildResponse()
+
+      await controller.closeRoom(req, res)
+
+      expect(openRoom.status).toBe('closed')
+      expect(openRoom.save).toHaveBeenCalled()
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.json).toHaveBeenCalledWith({ message: 'Room closed' })
     })
   })
 })

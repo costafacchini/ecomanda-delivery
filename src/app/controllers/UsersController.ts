@@ -27,12 +27,12 @@ class UsersController {
       return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
     }
 
-    const { name, email, password, active, licensee, isAdmin, isSuper } = req.body
+    const { name, email, password, active, licensee, role } = req.body
 
     try {
-      const user = await this.createUser.execute({ name, email, password, active, licensee, isAdmin, isSuper })
+      const user = await this.createUser.execute({ name, email, password, active, licensee, role })
 
-      res.status(201).send({ _id: user._id, name, email, active, isAdmin, isSuper, licensee })
+      res.status(201).send({ _id: user._id, name, email, active, role, licensee })
     } catch (err: any) {
       if ('errors' in err) {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })

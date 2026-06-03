@@ -70,8 +70,8 @@ describe('authenticate middleware', () => {
 })
 
 describe('requireSuper middleware — POST /users', () => {
-  it('returns 403 when the authenticated user does not have isSuper', async () => {
-    userRepository.findFirst.mockResolvedValue({ _id: 'uid-1', isSuper: false })
+  it('returns 403 when the authenticated user does not have super role', async () => {
+    userRepository.findFirst.mockResolvedValue({ _id: 'uid-1', role: 'agent' })
     const token = signToken({ id: 'uid-1' })
 
     const res = await request(app).post('/resources/users').set('x-access-token', token).send({})
@@ -91,7 +91,7 @@ describe('requireSuper middleware — POST /users', () => {
   })
 
   it('passes requireSuper and reaches controller validation when user is super', async () => {
-    userRepository.findFirst.mockResolvedValue({ _id: 'super-id', isSuper: true })
+    userRepository.findFirst.mockResolvedValue({ _id: 'super-id', role: 'super' })
     const token = signToken({ id: 'super-id' })
 
     // Controller will reject an empty body — but NOT with 403
@@ -103,7 +103,7 @@ describe('requireSuper middleware — POST /users', () => {
 
 describe('requireSuper middleware — POST /licensees', () => {
   it('returns 403 for non-super user on POST /licensees', async () => {
-    userRepository.findFirst.mockResolvedValue({ _id: 'uid-2', isSuper: false })
+    userRepository.findFirst.mockResolvedValue({ _id: 'uid-2', role: 'agent' })
     const token = signToken({ id: 'uid-2' })
 
     const res = await request(app).post('/resources/licensees').set('x-access-token', token).send({})
@@ -113,7 +113,7 @@ describe('requireSuper middleware — POST /licensees', () => {
   })
 
   it('returns 403 for non-super user on POST /licensees/:id', async () => {
-    userRepository.findFirst.mockResolvedValue({ _id: 'uid-3', isSuper: false })
+    userRepository.findFirst.mockResolvedValue({ _id: 'uid-3', role: 'agent' })
     const token = signToken({ id: 'uid-3' })
 
     const res = await request(app).post('/resources/licensees/some-id').set('x-access-token', token).send({})
@@ -122,9 +122,9 @@ describe('requireSuper middleware — POST /licensees', () => {
   })
 })
 
-describe('GET endpoints — no requireSuper required', () => {
-  it('GET /resources/users is accessible to non-super authenticated users', async () => {
-    userRepository.findFirst.mockResolvedValue({ _id: 'uid-4', isSuper: false })
+describe('GET endpoints — accessible to admin users', () => {
+  it('GET /resources/users is accessible to admin users', async () => {
+    userRepository.findFirst.mockResolvedValue({ _id: 'uid-4', role: 'admin' })
     userRepository.find.mockResolvedValue([])
     const token = signToken({ id: 'uid-4' })
 
@@ -133,8 +133,8 @@ describe('GET endpoints — no requireSuper required', () => {
     expect(res.status).not.toBe(403)
   })
 
-  it('GET /resources/licensees is accessible to non-super authenticated users', async () => {
-    userRepository.findFirst.mockResolvedValue({ _id: 'uid-5', isSuper: false })
+  it('GET /resources/licensees is accessible to admin users', async () => {
+    userRepository.findFirst.mockResolvedValue({ _id: 'uid-5', role: 'admin' })
     const token = signToken({ id: 'uid-5' })
 
     const res = await request(app).get('/resources/licensees').set('x-access-token', token)
@@ -152,7 +152,7 @@ describe('POST /licensees/:id/baileys-sync', () => {
   })
 
   it('is accessible to authenticated users and reaches the controller', async () => {
-    userRepository.findFirst.mockResolvedValue({ _id: 'uid-6', isSuper: false })
+    userRepository.findFirst.mockResolvedValue({ _id: 'uid-6', role: 'agent' })
     deps.licenseeRepository.findFirst.mockResolvedValue(null)
     const token = signToken({ id: 'uid-6' })
 

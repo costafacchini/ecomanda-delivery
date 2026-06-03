@@ -27,12 +27,12 @@ describe('<SuperMessageVolumeCard />', () => {
         peak_throughput: 120,
         avg_transfer_rate: 45,
         per_day: [
-          { date: '2026-05-01', count: 200 },
-          { date: '2026-05-02', count: 180 },
+          { _id: '2026-05-01', count: 200 },
+          { _id: '2026-05-02', count: 180 },
         ],
         per_hour: [
-          { hour: 9, count: 30 },
-          { hour: 10, count: 50 },
+          { _id: '2026-05-01T09', count: 30 },
+          { _id: '2026-05-01T10', count: 50 },
         ],
       },
     })
@@ -43,7 +43,7 @@ describe('<SuperMessageVolumeCard />', () => {
     expect(screen.getByText('45')).toBeInTheDocument()
     expect(screen.getByText('2026-05-01')).toBeInTheDocument()
     expect(screen.getByText('2026-05-02')).toBeInTheDocument()
-    expect(screen.getByText('9h')).toBeInTheDocument()
+    expect(screen.getByText('09h')).toBeInTheDocument()
     expect(screen.getByText('10h')).toBeInTheDocument()
     expect(screen.getByText('Volume de Mensagens')).toBeInTheDocument()
   })
@@ -58,6 +58,6 @@ describe('<SuperMessageVolumeCard />', () => {
     await screen.findByText('Volume de Mensagens')
 
     expect(screen.getByText('Por Dia')).toBeInTheDocument()
-    expect(screen.getByText('Por Hora')).toBeInTheDocument()
+    expect(screen.getByText('Por Hora (top 10)')).toBeInTheDocument()
   })
 })

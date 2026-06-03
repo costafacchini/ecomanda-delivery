@@ -5,19 +5,25 @@ import { createRoutesStub } from 'react-router'
 import { getLicensees } from '../../../../services/licensee'
 import { getContacts } from '../../../../services/contact'
 import { messageFactory } from '../../../../factories/message'
+import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/message')
 vi.mock('../../../../services/licensee')
 vi.mock('../../../../services/contact')
 
 describe('<MessageIndex />', () => {
-  const currentUser = { isSuper: true }
+  const currentUser = { role: 'super' }
+  const appContextValue = { activeLicensee: null, updateActiveLicensee: vi.fn() }
 
   function mount({ currentUser }) {
     const Stub = createRoutesStub([
       {
         path: '/messages',
-        Component: () => <MessageIndex currentUser={currentUser} />,
+        Component: () => (
+          <AppContext.Provider value={appContextValue}>
+            <MessageIndex currentUser={currentUser} />
+          </AppContext.Provider>
+        ),
       },
     ])
     render(<Stub initialEntries={['/messages']} />)
@@ -166,7 +172,7 @@ describe('<MessageIndex />', () => {
 
   describe('licensee select filter', () => {
     it('does not show the licensee if logged user is not super', async () => {
-      const currentUser = { isSuper: false }
+      const currentUser = { role: 'agent' }
 
       mount({ currentUser })
 

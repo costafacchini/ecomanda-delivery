@@ -15,6 +15,16 @@ const roomSchema = new Schema(
       ref: 'Contact',
       required: [true, 'Contato: Você deve preencher o campo'],
     },
+    agent: {
+      type: ObjectId,
+      ref: 'User',
+      default: null,
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'open', 'closed'],
+      default: 'pending',
+    },
   },
   { timestamps: true },
 )
@@ -24,6 +34,20 @@ roomSchema.pre('save', function () {
 
   if (!room._id) {
     room._id = new mongoose.Types.ObjectId()
+  }
+
+  if (room.isModified('status')) {
+    if (room.status === 'closed') {
+      room.closed = true
+      if (!room.closedAt) room.closedAt = new Date()
+    } else {
+      room.closed = false
+      room.closedAt = undefined
+    }
+  }
+
+  if (room.isModified('closed') && !room.isModified('status')) {
+    room.status = room.closed ? 'closed' : 'open'
   }
 })
 

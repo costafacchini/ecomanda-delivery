@@ -43,6 +43,54 @@ describe('Room', () => {
       const room = new Room()
 
       expect(room.closed).toEqual(false)
+      expect(room.status).toEqual('pending')
+      expect(room.agent).toEqual(null)
+    })
+
+    describe('status → closed sync', () => {
+      it('setting status to closed syncs closed=true and sets closedAt', async () => {
+        const room = await Room.create({ contact })
+        room.status = 'closed'
+        await room.save()
+
+        expect(room.closed).toEqual(true)
+        expect(room.closedAt).toBeDefined()
+      })
+
+      it('setting status to open syncs closed=false and clears closedAt', async () => {
+        const room = await Room.create({ contact, closed: true, closedAt: new Date() })
+        room.status = 'open'
+        await room.save()
+
+        expect(room.closed).toEqual(false)
+        expect(room.closedAt).toBeUndefined()
+      })
+
+      it('setting status to pending syncs closed=false', async () => {
+        const room = await Room.create({ contact, closed: true, closedAt: new Date() })
+        room.status = 'pending'
+        await room.save()
+
+        expect(room.closed).toEqual(false)
+      })
+    })
+
+    describe('closed → status sync (legacy path)', () => {
+      it('setting closed=true syncs status to closed', async () => {
+        const room = await Room.create({ contact })
+        room.closed = true
+        await room.save()
+
+        expect(room.status).toEqual('closed')
+      })
+
+      it('setting closed=false syncs status to open', async () => {
+        const room = await Room.create({ contact, closed: true, closedAt: new Date(), status: 'closed' })
+        room.closed = false
+        await room.save()
+
+        expect(room.status).toEqual('open')
+      })
     })
   })
 

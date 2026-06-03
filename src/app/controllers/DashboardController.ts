@@ -1,3 +1,7 @@
+import mongoose from 'mongoose'
+
+const EXCLUDE_SYSTEM_CLOSE = { $nor: [{ kind: 'text', text: 'Chat encerrado pelo agente' }] }
+
 class DashboardController {
   userRepository: any
   licenseeRepository: any
@@ -29,6 +33,8 @@ class DashboardController {
     this.contacts = this.contacts.bind(this)
     this.messagesToday = this.messagesToday.bind(this)
     this.messagesPerDay = this.messagesPerDay.bind(this)
+    this.openRooms = this.openRooms.bind(this)
+    this.closeRoom = this.closeRoom.bind(this)
   }
 
   async _resolveUser(req: any) {
@@ -57,7 +63,7 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (!user.isSuper) return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (user.role !== 'super') return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const cacheKey = 'dashboard:super:licensees'
       const data = await this._cached(cacheKey, async () => {
@@ -81,19 +87,21 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (!user.isSuper) return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (!['super', 'admin'].includes(user.role)) return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const { startDate, endDate } = this._parseDateRange(req.query)
-      const cacheKey = `dashboard:super:message-volume:${startDate.toISOString()}:${endDate.toISOString()}`
+      const licensee = req.query.licensee || null
+      const cacheKey = `dashboard:super:message-volume:${startDate.toISOString()}:${endDate.toISOString()}:${licensee || 'all'}`
+      const msgFilter = licensee ? { licensee: new mongoose.Types.ObjectId(licensee as string) } : {}
 
       const data = await this._cached(cacheKey, async () => {
         const perDayPipeline = [
-          { $match: { createdAt: { $gte: startDate, $lt: endDate } } },
+          { $match: { ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, createdAt: { $gte: startDate, $lt: endDate } } },
           { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, count: { $sum: 1 } } },
           { $sort: { _id: 1 } },
         ]
         const perHourPipeline = [
-          { $match: { createdAt: { $gte: startDate, $lt: endDate } } },
+          { $match: { ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, createdAt: { $gte: startDate, $lt: endDate } } },
           { $group: { _id: { $dateToString: { format: '%Y-%m-%dT%H', date: '$createdAt' } }, count: { $sum: 1 } } },
           { $sort: { _id: 1 } },
         ]
@@ -103,11 +111,21 @@ class DashboardController {
           this.messageRepository.model().aggregate(perHourPipeline),
           this.messageRepository
             .model()
-            .where({ sended: true, createdAt: { $gte: startDate, $lt: endDate } })
+            .where({
+              ...msgFilter,
+              ...EXCLUDE_SYSTEM_CLOSE,
+              sended: true,
+              createdAt: { $gte: startDate, $lt: endDate },
+            })
             .countDocuments(),
           this.messageRepository
             .model()
-            .where({ sended: false, createdAt: { $gte: startDate, $lt: endDate } })
+            .where({
+              ...msgFilter,
+              ...EXCLUDE_SYSTEM_CLOSE,
+              sended: false,
+              createdAt: { $gte: startDate, $lt: endDate },
+            })
             .countDocuments(),
         ])
 
@@ -133,20 +151,36 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (!user.isSuper) return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (!['super', 'admin'].includes(user.role)) return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const { startDate, endDate } = this._parseDateRange(req.query)
-      const cacheKey = `dashboard:super:delivery-rate:${startDate.toISOString()}:${endDate.toISOString()}`
+      const licensee = req.query.licensee || null
+      const cacheKey = `dashboard:super:delivery-rate:${startDate.toISOString()}:${endDate.toISOString()}:${licensee || 'all'}`
+      const msgFilter = licensee ? { licensee: new mongoose.Types.ObjectId(licensee as string) } : {}
 
       const data = await this._cached(cacheKey, async () => {
-        const [sentCount, failedCount] = await Promise.all([
+        const [sentCount, failedCount, failedTotal] = await Promise.all([
           this.messageRepository
             .model()
-            .where({ sended: true, createdAt: { $gte: startDate, $lt: endDate } })
+            .where({
+              ...msgFilter,
+              ...EXCLUDE_SYSTEM_CLOSE,
+              sended: true,
+              createdAt: { $gte: startDate, $lt: endDate },
+            })
             .countDocuments(),
           this.messageRepository
             .model()
-            .where({ sended: false, createdAt: { $gte: startDate, $lt: endDate } })
+            .where({
+              ...msgFilter,
+              ...EXCLUDE_SYSTEM_CLOSE,
+              sended: false,
+              createdAt: { $gte: startDate, $lt: endDate },
+            })
+            .countDocuments(),
+          this.messageRepository
+            .model()
+            .where({ ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sended: false })
             .countDocuments(),
         ])
 
@@ -154,7 +188,13 @@ class DashboardController {
         const sentPct = total === 0 ? 0 : parseFloat(((sentCount / total) * 100).toFixed(2))
         const failedPct = total === 0 ? 0 : parseFloat(((failedCount / total) * 100).toFixed(2))
 
-        return { sent_today: sentCount, failed_today: failedCount, sent_pct: sentPct, failed_pct: failedPct }
+        return {
+          sent_today: sentCount,
+          failed_today: failedCount,
+          failed_total: failedTotal,
+          sent_pct: sentPct,
+          failed_pct: failedPct,
+        }
       })
 
       return res.status(200).json(data)
@@ -167,19 +207,31 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (!user.isSuper) return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (!['super', 'admin'].includes(user.role)) return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const { startDate, endDate } = this._parseDateRange(req.query)
-      const cacheKey = `dashboard:super:queue:${startDate.toISOString()}:${endDate.toISOString()}`
+      const licensee = req.query.licensee || null
+      const cacheKey = `dashboard:super:queue:${startDate.toISOString()}:${endDate.toISOString()}:${licensee || 'all'}`
+      const msgFilter = licensee ? { licensee: new mongoose.Types.ObjectId(licensee as string) } : {}
 
       const data = await this._cached(cacheKey, async () => {
         const avgQueuePipeline: any[] = [
-          { $match: { sendedAt: { $exists: true }, createdAt: { $gte: startDate, $lt: endDate } } },
+          {
+            $match: {
+              ...msgFilter,
+              ...EXCLUDE_SYSTEM_CLOSE,
+              sendedAt: { $exists: true },
+              createdAt: { $gte: startDate, $lt: endDate },
+            },
+          },
           { $group: { _id: null, avg: { $avg: { $divide: [{ $subtract: ['$sendedAt', '$createdAt'] }, 1000] } } } },
         ]
 
         const [pendingMessages, avgResult] = await Promise.all([
-          this.messageRepository.model().where({ sended: false, destination: 'to-messenger' }).countDocuments(),
+          this.messageRepository
+            .model()
+            .where({ ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sended: false, destination: 'to-messenger' })
+            .countDocuments(),
           this.messageRepository.model().aggregate(avgQueuePipeline),
         ])
 
@@ -198,30 +250,46 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (!user.isSuper) return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (!['super', 'admin'].includes(user.role)) return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const { startDate, endDate } = this._parseDateRange(req.query)
-      const cacheKey = `dashboard:super:conversations:${startDate.toISOString()}:${endDate.toISOString()}`
+      const licensee = req.query.licensee || null
+      const cacheKey = `dashboard:super:conversations:${startDate.toISOString()}:${endDate.toISOString()}:${licensee || 'all'}`
+      const msgFilter = licensee ? { licensee: new mongoose.Types.ObjectId(licensee as string) } : {}
 
       const data = await this._cached(cacheKey, async () => {
+        let roomFilter: any = {}
+        if (licensee) {
+          const contacts = await this.contactRepository.model().find({ licensee }).select('_id')
+          const contactIds = contacts.map((c: any) => c._id)
+          roomFilter = { contact: { $in: contactIds } }
+        }
+
         const avgMsgPerConvPipeline: any[] = [
-          { $match: { room: { $exists: true }, createdAt: { $gte: startDate, $lt: endDate } } },
+          {
+            $match: {
+              ...msgFilter,
+              ...EXCLUDE_SYSTEM_CLOSE,
+              room: { $exists: true },
+              createdAt: { $gte: startDate, $lt: endDate },
+            },
+          },
           { $group: { _id: '$room', count: { $sum: 1 } } },
           { $group: { _id: null, avg: { $avg: '$count' } } },
         ]
         const avgDurationPipeline: any[] = [
-          { $match: { closedAt: { $gte: startDate, $lt: endDate } } },
+          { $match: { ...roomFilter, closedAt: { $gte: startDate, $lt: endDate } } },
           { $group: { _id: null, avg: { $avg: { $divide: [{ $subtract: ['$closedAt', '$createdAt'] }, 1000] } } } },
         ]
 
         const [startedCount, endedCount, avgMsgResult, avgDurationResult] = await Promise.all([
           this.roomRepository
             .model()
-            .where({ createdAt: { $gte: startDate, $lt: endDate } })
+            .where({ ...roomFilter, createdAt: { $gte: startDate, $lt: endDate } })
             .countDocuments(),
           this.roomRepository
             .model()
-            .where({ closedAt: { $gte: startDate, $lt: endDate } })
+            .where({ ...roomFilter, closedAt: { $gte: startDate, $lt: endDate } })
             .countDocuments(),
           this.messageRepository.model().aggregate(avgMsgPerConvPipeline),
           this.roomRepository.model().aggregate(avgDurationPipeline),
@@ -250,7 +318,7 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (user.isSuper) return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (user.role === 'super') return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const cacheKey = `dashboard:licensee:${user.licensee}:contacts`
 
@@ -272,7 +340,7 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (user.isSuper) return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (user.role === 'super') return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const { startDate, endDate } = this._parseDateRange(req.query)
       const cacheKey = `dashboard:licensee:${user.licensee}:messages-today:${startDate.toISOString()}:${endDate.toISOString()}`
@@ -281,11 +349,21 @@ class DashboardController {
         const [sentCount, failedCount] = await Promise.all([
           this.messageRepository
             .model()
-            .where({ licensee: user.licensee, sended: true, createdAt: { $gte: startDate, $lt: endDate } })
+            .where({
+              licensee: user.licensee,
+              ...EXCLUDE_SYSTEM_CLOSE,
+              sended: true,
+              createdAt: { $gte: startDate, $lt: endDate },
+            })
             .countDocuments(),
           this.messageRepository
             .model()
-            .where({ licensee: user.licensee, sended: false, createdAt: { $gte: startDate, $lt: endDate } })
+            .where({
+              licensee: user.licensee,
+              ...EXCLUDE_SYSTEM_CLOSE,
+              sended: false,
+              createdAt: { $gte: startDate, $lt: endDate },
+            })
             .countDocuments(),
         ])
 
@@ -306,7 +384,7 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (user.isSuper) return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (user.role === 'super') return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const { startDate, endDate } = this._parseDateRange(req.query)
       const cacheKey = `dashboard:licensee:${user.licensee}:messages-per-day:${startDate.toISOString()}:${endDate.toISOString()}`
@@ -314,7 +392,13 @@ class DashboardController {
       const data = await this._cached(cacheKey, async () => {
         const sevenDaysAgo = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000)
         const perDayPipeline = [
-          { $match: { createdAt: { $gte: sevenDaysAgo, $lt: endDate }, licensee: user.licensee } },
+          {
+            $match: {
+              createdAt: { $gte: sevenDaysAgo, $lt: endDate },
+              licensee: user.licensee,
+              ...EXCLUDE_SYSTEM_CLOSE,
+            },
+          },
           { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, count: { $sum: 1 } } },
           { $sort: { _id: 1 } },
         ]
@@ -324,6 +408,75 @@ class DashboardController {
       })
 
       return res.status(200).json(data)
+    } catch (err: any) {
+      return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
+    }
+  }
+  async openRooms(req: any, res: any) {
+    try {
+      const user = await this._resolveUser(req)
+      if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
+      if (!['super', 'admin'].includes(user.role)) return res.status(403).json({ errors: { message: 'Forbidden' } })
+
+      const licensee = req.query.licensee || null
+      const page = Math.max(1, parseInt(req.query.page as string) || 1)
+      const limit = 10
+
+      let roomFilter: any = { closed: false }
+      if (licensee) {
+        const contacts = await this.contactRepository.model().find({ licensee }).select('_id').lean()
+        const contactIds = contacts.map((c: any) => c._id)
+        roomFilter.contact = { $in: contactIds }
+      }
+
+      const roomResults = await this.roomRepository
+        .model()
+        .find(roomFilter)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit + 1)
+        .populate('contact', 'name number')
+        .lean()
+
+      const hasMore = roomResults.length > limit
+      const rooms: any[] = hasMore ? roomResults.slice(0, limit) : roomResults
+
+      const roomIds = rooms.map((r: any) => r._id)
+      const lastMessages = await this.messageRepository
+        .model()
+        .aggregate([
+          { $match: { room: { $in: roomIds }, ...EXCLUDE_SYSTEM_CLOSE } },
+          { $sort: { createdAt: -1 } },
+          { $group: { _id: '$room', text: { $first: '$text' }, createdAt: { $first: '$createdAt' } } },
+        ])
+
+      const lastMsgMap: Record<string, any> = {}
+      for (const m of lastMessages) lastMsgMap[m._id.toString()] = m
+
+      const roomsWithMessages = rooms
+        .map((r: any) => ({ ...r, lastMessage: lastMsgMap[r._id.toString()] || null }))
+        .filter((r: any) => r.lastMessage !== null)
+
+      return res.status(200).json({ rooms: roomsWithMessages, hasMore })
+    } catch (err: any) {
+      return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
+    }
+  }
+
+  async closeRoom(req: any, res: any) {
+    try {
+      const user = await this._resolveUser(req)
+      if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
+      if (!['super', 'admin'].includes(user.role)) return res.status(403).json({ errors: { message: 'Forbidden' } })
+
+      const room = await this.roomRepository.model().findById(req.params.roomId)
+      if (!room) return res.status(404).json({ errors: { message: 'Room not found' } })
+      if (room.closed) return res.status(200).json({ message: 'Already closed' })
+
+      room.status = 'closed'
+      await room.save()
+
+      return res.status(200).json({ message: 'Room closed' })
     } catch (err: any) {
       return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
