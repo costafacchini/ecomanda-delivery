@@ -17,6 +17,8 @@ function buildHourAverages(perHour: any[]) {
   }
   return Object.entries(hourMap)
     .map(([hour, counts]) => ({ hour, avg: Math.round(counts.reduce((a, b) => a + b, 0) / counts.length) }))
+    .sort((a, b) => b.avg - a.avg)
+    .slice(0, 10)
     .sort((a, b) => a.hour.localeCompare(b.hour))
 }
 
