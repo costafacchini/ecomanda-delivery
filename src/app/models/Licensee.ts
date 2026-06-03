@@ -79,13 +79,13 @@ const licenseeSchema = new Schema(
     },
     chatDefault: {
       type: String,
-      enum: ['rocketchat', 'crisp', 'cuboup', 'chatwoot', ''],
+      enum: ['rocketchat', 'crisp', 'cuboup', 'chatwoot', 'local', ''],
     },
     chatUrl: {
       type: String,
       required: [
         function (this: any) {
-          return !!this.chatDefault
+          return !!this.chatDefault && this.chatDefault !== 'local'
         },
         'URL do Chat: deve ser preenchido quando tiver um plugin configurado',
       ],

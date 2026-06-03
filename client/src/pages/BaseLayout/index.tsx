@@ -1,9 +1,14 @@
 import React, { useContext } from 'react'
 import Navbar from '../Navbar'
+import SelectLicenseeModal from '../../components/SelectLicenseeModal'
 import { AppContext } from '../../contexts/App'
 
 export default function BaseLayout({ children }: any) {
-  const { currentUser } = useContext(AppContext)
+  const { currentUser, activeLicensee, updateActiveLicensee } = useContext(AppContext)
+
+  if (currentUser?.role === 'super' && !activeLicensee) {
+    return <SelectLicenseeModal onSelect={updateActiveLicensee} />
+  }
 
   return (
     <>

@@ -1,9 +1,16 @@
 import { createContext, useCallback, useState } from 'react'
+import { saveActiveLicensee, loadActiveLicensee } from '../../services/auth'
 
 const AppContext = createContext<any>(null)
 
 const AppContextProvider = ({ children }: any) => {
   const [currentUser, setCurrentUser] = useState()
+  const [activeLicensee, setActiveLicensee] = useState(loadActiveLicensee)
+
+  const updateActiveLicensee = useCallback((licensee: any) => {
+    saveActiveLicensee(licensee)
+    setActiveLicensee(licensee)
+  }, [])
 
   return (
     <AppContext.Provider
@@ -15,6 +22,8 @@ const AppContextProvider = ({ children }: any) => {
           },
           []
         ),
+        activeLicensee,
+        updateActiveLicensee,
       }}
     >
       {children}

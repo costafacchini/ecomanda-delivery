@@ -2,6 +2,7 @@ import api from './api'
 
 const TOKEN_KEY = "@ecomanda-delivery-bearer"
 const EMAIL_KEY = "@ecomanda-delivery-mail"
+const ACTIVE_LICENSEE_KEY = "@ecomanda-delivery-active-licensee"
 
 export function isAuthenticated() {
   return localStorage.getItem(TOKEN_KEY) !== null
@@ -22,7 +23,24 @@ export function login(email: any, token: any) {
 
 export function logout() {
   localStorage.removeItem(EMAIL_KEY)
-  return localStorage.removeItem(TOKEN_KEY)
+  localStorage.removeItem(TOKEN_KEY)
+  clearActiveLicensee()
+}
+
+export function saveActiveLicensee(licensee: any) {
+  localStorage.setItem(ACTIVE_LICENSEE_KEY, JSON.stringify(licensee))
+}
+
+export function loadActiveLicensee() {
+  try {
+    return JSON.parse(localStorage.getItem(ACTIVE_LICENSEE_KEY) as string)
+  } catch {
+    return null
+  }
+}
+
+export function clearActiveLicensee() {
+  localStorage.removeItem(ACTIVE_LICENSEE_KEY)
 }
 
 export async function fetchLoggedUser() {
