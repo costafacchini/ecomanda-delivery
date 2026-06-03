@@ -35,6 +35,11 @@ const userSchema = new Schema(
     active: { type: Boolean, default: true },
     isAdmin: { type: Boolean, default: false },
     isSuper: { type: Boolean, default: false },
+    role: {
+      type: String,
+      enum: ['agent', 'supervisor', 'admin', 'super'],
+      default: 'agent',
+    },
     licensee: {
       type: ObjectId,
       ref: 'Licensee',

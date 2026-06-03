@@ -107,16 +107,23 @@ function authenticate(req: any, res: any, next: any) {
   })
 }
 
-async function requireSuper(req: any, res: any, next: any) {
-  try {
-    const user = await userRepository.findFirst({ _id: req.userId })
-    if (!user || !user.isSuper) {
-      return res.status(403).json({ message: 'Acesso negado.' })
+function authorize(...roles: string[]) {
+  return async (req: any, res: any, next: any) => {
+    try {
+      const user = await userRepository.findFirst({ _id: req.userId })
+      if (!user || !roles.includes(user.role)) {
+        return res.status(403).json({ message: 'Acesso negado.' })
+      }
+      req.user = user
+      next()
+    } catch (err) {
+      next(err)
     }
-    next()
-  } catch (err) {
-    next(err)
   }
+}
+
+function requireSuper(req: any, res: any, next: any) {
+  return authorize('super')(req, res, next)
 }
 
 router.use(authenticate)

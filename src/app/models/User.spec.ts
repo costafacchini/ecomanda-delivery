@@ -17,6 +17,12 @@ describe('User', () => {
       expect(user._id).not.toEqual(null)
     })
 
+    it('defaults role to agent', () => {
+      const user = new User({ name: 'John Doe', email: 'john@doe.com', password: '12345678', isSuper: true })
+
+      expect(user.role).toEqual('agent')
+    })
+
     it('does not changes _id if user is changed', async () => {
       const user = await User.create({ name: 'John Doe', email: 'john@doe.com', password: '12345678', isSuper: true })
 
@@ -60,6 +66,23 @@ describe('User', () => {
   })
 
   describe('validations', () => {
+    describe('role', () => {
+      it('is valid with allowed values', () => {
+        for (const role of ['agent', 'supervisor', 'admin', 'super']) {
+          const user = new User({ name: 'John Doe', email: 'john@doe.com', password: '12345678', isSuper: true, role })
+          const validation = user.validateSync()
+          expect(validation?.errors['role']).toBeUndefined()
+        }
+      })
+
+      it('is invalid with unknown value', () => {
+        const user = new User({ name: 'John Doe', email: 'john@doe.com', password: '12345678', isSuper: true, role: 'owner' })
+        const validation = user.validateSync()
+
+        expect(validation.errors['role']).toBeDefined()
+      })
+    })
+
     describe('name', () => {
       it('is required', () => {
         const user = new User({ email: 'john@doe.com', password: '12345678', isSuper: true })

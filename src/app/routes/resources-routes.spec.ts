@@ -91,7 +91,7 @@ describe('requireSuper middleware — POST /users', () => {
   })
 
   it('passes requireSuper and reaches controller validation when user is super', async () => {
-    userRepository.findFirst.mockResolvedValue({ _id: 'super-id', isSuper: true })
+    userRepository.findFirst.mockResolvedValue({ _id: 'super-id', isSuper: true, role: 'super' })
     const token = signToken({ id: 'super-id' })
 
     // Controller will reject an empty body — but NOT with 403
