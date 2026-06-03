@@ -99,7 +99,7 @@ export default function SuperMessageVolumeCard({ licensee }: { licensee?: string
                 </table>
               </div>
               <div className="col-6">
-                <div className="fw-semibold mb-1 small">Por Hora</div>
+                <div className="fw-semibold mb-1 small">Por Hora (top 10)</div>
                 <table className="table table-sm mb-0">
                   <thead>
                     <tr>
