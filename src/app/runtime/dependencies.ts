@@ -15,6 +15,7 @@ import { createMessengerPlugin as createMessengerPluginFactory } from '../plugin
 import { TemplatesImporter } from '../plugins/importers/template/index'
 import { BaileysSocketManager } from '../services/BaileysSocketManager'
 import { StartBaileysSocket } from '../usecases/licensees/StartBaileysSocket'
+import { BootBaileysSocketSessions } from '../usecases/licensees/BootBaileysSocketSessions'
 import { IngestMessengerMessage } from '../usecases/webhooks/IngestMessengerMessage'
 import { queueServer } from '../../config/queue'
 
@@ -76,6 +77,13 @@ function buildRuntimeDependencies({
       }),
     }).execute(licensee)
 
+  const bootBaileysSocketSessions = () =>
+    new BootBaileysSocketSessions({
+      licenseeRepository,
+      whatsappSessionRepository,
+      startBaileysSocket,
+    }).execute()
+
   return {
     bodyRepository,
     contactRepository,
@@ -94,6 +102,7 @@ function buildRuntimeDependencies({
     createTemplatesImporter,
     socketManager,
     startBaileysSocket,
+    bootBaileysSocketSessions,
   }
 }
 

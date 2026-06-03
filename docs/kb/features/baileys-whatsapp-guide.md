@@ -493,6 +493,94 @@ Live WhatsApp verification requires a real linked account and cannot be automate
 
 ---
 
+---
+
+## Step 6 — Persistent Socket Monitor
+
+> Feature added: 2026-06-02  
+> Gated by environment variable: `ENABLE_BAILEYS_SOCKET=true`
+
+### What it enables
+
+When `ENABLE_BAILEYS_SOCKET=true` is set, the server maintains a **persistent WebSocket per Baileys licensee** that stays open for the lifetime of the process. This removes the need for the licensee's app (or any external relay) to push messages to the HTTP webhook for inbound flow.
+
+Two event streams are consumed:
+
+| Event | What it does |
+|-------|-------------|
+| `messages.upsert` | Captures inbound messages (`fromMe: false`) and feeds them directly into the `messenger-message` BullMQ pipeline — identical to the existing HTTP webhook flow |
+| `messages.update` | Captures delivery receipts and updates `Message.sendedAt`, `Message.deliveredAt`, and `Message.readAt` via `Baileys.responseToMessages()` |
+
+### Boot behavior
+
+On server start, `BootBaileysSocketSessions` is called as a fire-and-forget hook:
+
+1. All `Licensee` records with `whatsappDefault === 'baileys'` are loaded.
+2. For each licensee, the corresponding `WhatsappSession` record is checked.
+3. If `session.creds` is non-empty (i.e., the account has been authenticated), `startBaileysSocket(licensee)` is called.
+4. Licensees with empty or missing `creds` are logged and skipped — no socket is opened until they re-authenticate via QR.
+5. Errors for any single licensee are caught and logged; boot continues for the remaining licensees.
+
+### Post-QR behavior
+
+When `POST /api/v1/resources/licensees/:id/baileys-qr` is called:
+
+- If `ENABLE_BAILEYS_SOCKET=true`, `startBaileysSocket(licensee)` is triggered as a fire-and-forget call regardless of whether the response is a new QR string or `"Já conectado"`.
+- This ensures the persistent socket is started (or reconnected) after every QR interaction without requiring an app restart.
+
+### How inbound messages reach the DB
+
+The persistent socket calls `IngestMessengerMessage.execute({ body: msg, licenseeId })`, which is the same entry point used by the HTTP webhook. The full pipeline is:
+
+```
+socket messages.upsert event
+→ IngestMessengerMessage.execute({ body, licenseeId })
+  → Body record saved
+  → "messenger-message" BullMQ job queued
+  → Baileys.responseToMessages(body.content)
+     → parseContactData(body)  — extracts phone number and name
+     → parseMessage(body)      — extracts text
+  → Contact created/updated
+  → Message created with destination "to-chat" or "to-chatbot"
+```
+
+### How delivery receipts update message timestamps
+
+The `messages.update` event carries a `status` code per message key. `parseMessageStatus(statusCode)` maps these to timestamp fields:
+
+| Status code | Field updated |
+|-------------|--------------|
+| `2` (server received) | `sendedAt` |
+| `3` (delivered to device) | `deliveredAt` |
+| `4` (read by recipient) | `readAt` |
+
+`Baileys.responseToMessages(update)` is called from the socket's `onReceiptUpdate` callback, which delegates to the existing `responseToMessages` flow.
+
+### HTTP webhook fallback
+
+The HTTP webhook endpoint (`POST /v1/messenger/message/?token=<apiToken>`) **remains active** and is not removed. It serves as:
+
+- A fallback for environments where `ENABLE_BAILEYS_SOCKET` is not set.
+- A compatibility path for non-Baileys messengers (`utalk`, `dialog`, `ycloud`, `pabbly`).
+- A manual override if the persistent socket is not running.
+
+When both the persistent socket and the HTTP webhook are active for the same licensee, duplicate messages are possible if the external relay also sends to the webhook. Use only one inbound path per licensee.
+
+### Manual verification checklist
+
+Before enabling `ENABLE_BAILEYS_SOCKET=true` in production:
+
+- [ ] Set `ENABLE_BAILEYS_SOCKET=true` in the environment and restart the server
+- [ ] Confirm server logs show `"Baileys boot: iniciando socket para licensee <id>"` for each authenticated licensee
+- [ ] Send a text message from a real WhatsApp account to the licensee's number — confirm a `Message` record appears in the DB without hitting the HTTP webhook
+- [ ] Confirm delivery receipt (`delivered`) updates `message.deliveredAt` on the corresponding record
+- [ ] Confirm read receipt updates `message.readAt`
+- [ ] Call `POST /api/v1/resources/licensees/:id/baileys-qr` on a connected licensee — confirm logs show socket start and no duplicate messages appear
+- [ ] Restart the server — confirm sockets reconnect automatically at boot for all licensees with active sessions
+- [ ] Confirm the HTTP webhook (`POST /v1/messenger/message`) still works for non-Baileys licensees
+
+---
+
 ## Troubleshooting
 
 | Symptom | Likely cause | Action |
