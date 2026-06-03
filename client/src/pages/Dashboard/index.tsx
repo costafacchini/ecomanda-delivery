@@ -1,5 +1,4 @@
-import { useState, useEffect, useContext } from 'react'
-import { fetchLoggedUser } from '../../services/auth'
+import { useContext } from 'react'
 import { AppContext } from '../../contexts/App'
 import SuperLicenseesCard from './cards/SuperLicenseesCard'
 import SuperMessageVolumeCard from './cards/SuperMessageVolumeCard'
@@ -12,19 +11,11 @@ import LicenseeMessagesTodayCard from './cards/LicenseeMessagesTodayCard'
 import LicenseeMessagesPerDayCard from './cards/LicenseeMessagesPerDayCard'
 
 export default function Dashboard() {
-  const { activeLicensee } = useContext(AppContext)
-  const [user, setUser] = useState<any>(null)
-  const [loadingUser, setLoadingUser] = useState(true)
+  const { currentUser, activeLicensee } = useContext(AppContext)
 
-  useEffect(() => {
-    fetchLoggedUser()
-      .then(setUser)
-      .finally(() => setLoadingUser(false))
-  }, [])
+  if (!currentUser) return <p>Carregando...</p>
 
-  if (loadingUser) return <p>Carregando...</p>
-
-  if (user?.role === 'super' && !activeLicensee) {
+  if (currentUser.role === 'super' && !activeLicensee) {
     return (
       <>
         <div className="row g-3">
@@ -39,7 +30,7 @@ export default function Dashboard() {
     )
   }
 
-  if (user?.role === 'super' || user?.role === 'admin') {
+  if (currentUser.role === 'super' || currentUser.role === 'admin') {
     const licenseeId = activeLicensee?._id
     return (
       <>
