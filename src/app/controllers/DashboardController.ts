@@ -383,7 +383,7 @@ class DashboardController {
             contact: { $arrayElemAt: ['$contactData', 0] },
           },
         },
-        { $sort: { 'lastMessage.createdAt': -1, createdAt: -1 } },
+        { $sort: { createdAt: -1 } },
         { $skip: (page - 1) * limit },
         { $limit: limit + 1 },
         { $project: { lastMessageArr: 0, contactData: 0, agent: 0, token: 0, roomId: 0 } },
