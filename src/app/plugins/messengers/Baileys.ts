@@ -36,10 +36,10 @@ class Baileys extends MessengersBase {
     }
 
     const statusMap: Record<number, string> = {
-      1: 'sent',      // SERVER_ACK
+      1: 'sent', // SERVER_ACK
       2: 'delivered', // DELIVERY_ACK
-      3: 'read',      // READ
-      4: 'read',      // PLAYED (audio)
+      3: 'read', // READ
+      4: 'read', // PLAYED (audio)
     }
 
     const mapped = statusMap[body.update.status]
