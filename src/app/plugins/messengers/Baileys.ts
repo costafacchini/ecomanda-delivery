@@ -29,10 +29,29 @@ class Baileys extends MessengersBase {
     }
   }
 
-  parseMessageStatus(_body: any) {
-    // Baileys delivery receipts are not received via HTTP webhook body in the same shape.
-    // For now, no status parsing is needed from incoming HTTP payloads.
-    this.messageStatus = null
+  parseMessageStatus(body: any) {
+    if (!body?.key?.id || !body?.key?.fromMe || body.update?.status == null) {
+      this.messageStatus = null
+      return
+    }
+
+    const statusMap: Record<number, string> = {
+      1: 'sent',      // SERVER_ACK
+      2: 'delivered', // DELIVERY_ACK
+      3: 'read',      // READ
+      4: 'read',      // PLAYED (audio)
+    }
+
+    const mapped = statusMap[body.update.status]
+    if (!mapped) {
+      this.messageStatus = null
+      return
+    }
+
+    this.messageStatus = {
+      id: body.key.id,
+      status: mapped,
+    }
   }
 
   parseMessage(body: any) {

@@ -595,4 +595,60 @@ describe('Baileys plugin', () => {
       expect(updatedSession.keys).toEqual(keys)
     })
   })
+
+  describe('#parseMessageStatus', () => {
+    it('sets messageStatus to sent when status is 1 (SERVER_ACK)', () => {
+      const baileys = new Baileys(licensee, dependencies)
+      baileys.parseMessageStatus({ key: { id: 'MSG-001', fromMe: true }, update: { status: 1 } })
+      expect(baileys.messageStatus).toEqual({ id: 'MSG-001', status: 'sent' })
+    })
+
+    it('sets messageStatus to delivered when status is 2 (DELIVERY_ACK)', () => {
+      const baileys = new Baileys(licensee, dependencies)
+      baileys.parseMessageStatus({ key: { id: 'MSG-002', fromMe: true }, update: { status: 2 } })
+      expect(baileys.messageStatus).toEqual({ id: 'MSG-002', status: 'delivered' })
+    })
+
+    it('sets messageStatus to read when status is 3 (READ)', () => {
+      const baileys = new Baileys(licensee, dependencies)
+      baileys.parseMessageStatus({ key: { id: 'MSG-003', fromMe: true }, update: { status: 3 } })
+      expect(baileys.messageStatus).toEqual({ id: 'MSG-003', status: 'read' })
+    })
+
+    it('sets messageStatus to read when status is 4 (PLAYED)', () => {
+      const baileys = new Baileys(licensee, dependencies)
+      baileys.parseMessageStatus({ key: { id: 'MSG-004', fromMe: true }, update: { status: 4 } })
+      expect(baileys.messageStatus).toEqual({ id: 'MSG-004', status: 'read' })
+    })
+
+    it('sets messageStatus to null when fromMe is false', () => {
+      const baileys = new Baileys(licensee, dependencies)
+      baileys.parseMessageStatus({ key: { id: 'MSG-005', fromMe: false }, update: { status: 2 } })
+      expect(baileys.messageStatus).toBeNull()
+    })
+
+    it('sets messageStatus to null when body is null', () => {
+      const baileys = new Baileys(licensee, dependencies)
+      baileys.parseMessageStatus(null)
+      expect(baileys.messageStatus).toBeNull()
+    })
+
+    it('sets messageStatus to null when body is missing key', () => {
+      const baileys = new Baileys(licensee, dependencies)
+      baileys.parseMessageStatus({ update: { status: 2 } })
+      expect(baileys.messageStatus).toBeNull()
+    })
+
+    it('sets messageStatus to null for unknown status code', () => {
+      const baileys = new Baileys(licensee, dependencies)
+      baileys.parseMessageStatus({ key: { id: 'MSG-006', fromMe: true }, update: { status: 99 } })
+      expect(baileys.messageStatus).toBeNull()
+    })
+
+    it('sets messageStatus.id equal to body.key.id', () => {
+      const baileys = new Baileys(licensee, dependencies)
+      baileys.parseMessageStatus({ key: { id: 'EXPECTED-ID', fromMe: true }, update: { status: 3 } })
+      expect(baileys.messageStatus.id).toEqual('EXPECTED-ID')
+    })
+  })
 })
