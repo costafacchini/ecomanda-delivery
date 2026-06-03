@@ -13,6 +13,11 @@ import { createChatPlugin as createChatPluginFactory } from '../plugins/chats/fa
 import { createChatbotPlugin as createChatbotPluginFactory } from '../plugins/chatbots/factory'
 import { createMessengerPlugin as createMessengerPluginFactory } from '../plugins/messengers/factory'
 import { TemplatesImporter } from '../plugins/importers/template/index'
+import { BaileysSocketManager } from '../services/BaileysSocketManager'
+import { StartBaileysSocket } from '../usecases/licensees/StartBaileysSocket'
+import { BootBaileysSocketSessions } from '../usecases/licensees/BootBaileysSocketSessions'
+import { IngestMessengerMessage } from '../usecases/webhooks/IngestMessengerMessage'
+import { queueServer } from '../../config/queue'
 
 // Builds the full runtime dependency graph from caller-supplied repositories.
 // All repository arguments are required at call time; undefined repos will cause runtime errors
@@ -61,6 +66,24 @@ function buildRuntimeDependencies({
       createMessengerPlugin,
     })
 
+  const socketManager = new BaileysSocketManager({ whatsappSessionRepository })
+  const startBaileysSocket = (licensee: any) =>
+    new StartBaileysSocket({
+      socketManager,
+      createMessengerPlugin,
+      ingestMessengerMessage: new IngestMessengerMessage({
+        messengerRepository: bodyRepository,
+        jobQueue: queueServer,
+      }),
+    }).execute(licensee)
+
+  const bootBaileysSocketSessions = () =>
+    new BootBaileysSocketSessions({
+      licenseeRepository,
+      whatsappSessionRepository,
+      startBaileysSocket,
+    }).execute()
+
   return {
     bodyRepository,
     contactRepository,
@@ -77,6 +100,9 @@ function buildRuntimeDependencies({
     createChatbotPlugin,
     createMessengerPlugin,
     createTemplatesImporter,
+    socketManager,
+    startBaileysSocket,
+    bootBaileysSocketSessions,
   }
 }
 

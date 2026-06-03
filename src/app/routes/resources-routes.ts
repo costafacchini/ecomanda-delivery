@@ -42,6 +42,7 @@ const {
   whatsappSessionRepository,
   createMessengerPlugin,
   createTemplatesImporter,
+  startBaileysSocket,
 } = createRuntimeDependencies()
 
 const usersController = new UsersController({
@@ -58,6 +59,7 @@ const licenseesController = new LicenseesController({
   createMessengerPlugin,
   whatsappSessionRepository,
   contactRepository,
+  startBaileysSocket,
 })
 const contactsController = new ContactsController({
   contactRepository,

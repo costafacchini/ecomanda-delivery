@@ -15,6 +15,15 @@ const PORT = process.env.PORT || '5000'
 server.listen(PORT)
 server.on('error', onError)
 
+if (process.env.ENABLE_BAILEYS_SOCKET === 'true') {
+  import('./src/app/runtime/dependencies').then(({ createRuntimeDependencies }) => {
+    const { bootBaileysSocketSessions } = createRuntimeDependencies()
+    bootBaileysSocketSessions().catch((err: any) => {
+      console.error('Baileys boot: erro ao iniciar sockets', err)
+    })
+  })
+}
+
 server.on('listening', onListening)
 
 function onError(error: any) {
