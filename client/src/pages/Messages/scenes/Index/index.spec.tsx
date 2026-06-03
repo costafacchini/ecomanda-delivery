@@ -1,6 +1,6 @@
 import MessageIndex from './'
 import { fireEvent, screen, cleanup, render } from '@testing-library/react'
-import { getMessages } from '../../../../services/message'
+import { getMessages, resendMessage } from '../../../../services/message'
 import { createRoutesStub } from 'react-router'
 import { getLicensees } from '../../../../services/licensee'
 import { getContacts } from '../../../../services/contact'
@@ -221,6 +221,76 @@ describe('<MessageIndex />', () => {
       await screen.findByText('John Doe')
 
       expect(getMessages).toHaveBeenCalledWith(expect.objectContaining({ contact: '9876543' }))
+    })
+  })
+
+  describe('retry button', () => {
+    it('shows the retry button when a message has an error', async () => {
+      getMessages.mockResolvedValueOnce({
+        status: 201,
+        data: [{ id: '1', contact: { name: 'Contact' }, error: 'Some error' }],
+      })
+
+      mount({ currentUser })
+      fireEvent.click(screen.getByText('Pesquisar'))
+
+      expect(await screen.findByRole('button', { name: 'Reenviar' })).toBeInTheDocument()
+    })
+
+    it('does not show the retry button when a message has no error', async () => {
+      getMessages.mockResolvedValueOnce({
+        status: 201,
+        data: [{ id: '1', contact: { name: 'Contact' } }],
+      })
+
+      mount({ currentUser })
+      fireEvent.click(screen.getByText('Pesquisar'))
+
+      await screen.findByText('Contact')
+
+      expect(screen.queryByRole('button', { name: 'Reenviar' })).not.toBeInTheDocument()
+    })
+
+    it('calls resendMessage with the message id on click', async () => {
+      getMessages.mockResolvedValueOnce({
+        status: 201,
+        data: [{ id: 'msg1', contact: { name: 'Contact' }, error: 'Some error' }],
+      })
+      resendMessage.mockResolvedValue({})
+
+      mount({ currentUser })
+      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(await screen.findByRole('button', { name: 'Reenviar' }))
+
+      expect(resendMessage).toHaveBeenCalledWith('msg1')
+    })
+
+    it('shows success feedback after a successful retry', async () => {
+      getMessages.mockResolvedValueOnce({
+        status: 201,
+        data: [{ id: 'msg1', contact: { name: 'Contact' }, error: 'Some error' }],
+      })
+      resendMessage.mockResolvedValue({})
+
+      mount({ currentUser })
+      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(await screen.findByRole('button', { name: 'Reenviar' }))
+
+      expect(await screen.findByText('Reenviado!')).toBeInTheDocument()
+    })
+
+    it('shows error feedback after a failed retry', async () => {
+      getMessages.mockResolvedValueOnce({
+        status: 201,
+        data: [{ id: 'msg1', contact: { name: 'Contact' }, error: 'Some error' }],
+      })
+      resendMessage.mockRejectedValue(new Error('network error'))
+
+      mount({ currentUser })
+      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(await screen.findByRole('button', { name: 'Reenviar' }))
+
+      expect(await screen.findByText('Erro ao reenviar.')).toBeInTheDocument()
     })
   })
 

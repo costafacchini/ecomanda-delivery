@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback, useContext } from 'react'
-import { getMessages } from '../../../../services/message'
+import { useEffect, useState, useCallback } from 'react'
+import { getMessages, resendMessage } from '../../../../services/message'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 import SelectContactsWithFilter from '../../../../components/SelectContactsWithFilter'
 import CartDescription from './components/cart'
@@ -23,6 +23,14 @@ function MessagesIndex({ currentUser }: any) {
 
   const [records, setRecords] = useState<any[]>([])
   const [lastPage, setLastPage] = useState(false)
+  const [retryState, setRetryState] = useState<Record<string, 'idle' | 'loading' | 'success' | 'error'>>({})
+
+  function handleRetry(id: string) {
+    setRetryState((prev) => ({ ...prev, [id]: 'loading' }))
+    resendMessage(id)
+      .then(() => setRetryState((prev) => ({ ...prev, [id]: 'success' })))
+      .catch(() => setRetryState((prev) => ({ ...prev, [id]: 'error' })))
+  }
 
   const addPage = useCallback(
     (records: any, filters: any) => {
@@ -251,6 +259,22 @@ function MessagesIndex({ currentUser }: any) {
                         <summary className='text-muted'>Visualizar erro</summary>
                         <p>{message.error}</p>
                       </details>
+                      <div className='mt-1'>
+                        <button
+                          type='button'
+                          className='btn btn-sm btn-outline-warning'
+                          disabled={retryState[message.id] === 'loading'}
+                          onClick={() => handleRetry(message.id)}
+                        >
+                          {retryState[message.id] === 'loading' ? 'Reenviando...' : 'Reenviar'}
+                        </button>
+                        {retryState[message.id] === 'success' && (
+                          <span className='text-success small ms-2'>Reenviado!</span>
+                        )}
+                        {retryState[message.id] === 'error' && (
+                          <span className='text-danger small ms-2'>Erro ao reenviar.</span>
+                        )}
+                      </div>
                     </div>
                   )}
                 </td>

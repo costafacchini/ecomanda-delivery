@@ -16,8 +16,8 @@ describe('<FailedMessagesModal />', () => {
   it('fetches failed messages on open and renders them in the table', async () => {
     getMessages.mockResolvedValue({
       data: [
-        { _id: 'msg1', contact: { number: '5511999990001' }, text: 'Hello world', error: 'timeout' },
-        { _id: 'msg2', contact: { number: '5511999990002' }, text: null, error: null },
+        { _id: 'msg1', contact: { number: '5511999990001' }, text: 'Hello world', error: 'timeout', createdAt: '2024-06-03T14:30:00.000Z' },
+        { _id: 'msg2', contact: { number: '5511999990002' }, text: null, error: null, createdAt: '2024-06-03T15:00:00.000Z' },
       ],
     })
 
@@ -27,6 +27,7 @@ describe('<FailedMessagesModal />', () => {
     expect(screen.getByText('Hello world')).toBeInTheDocument()
     expect(screen.getByText('timeout')).toBeInTheDocument()
     expect(screen.getByText('5511999990002')).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Data/Hora' })).toBeInTheDocument()
     expect(screen.getAllByRole('button', { name: 'Reenviar' })).toHaveLength(2)
 
     expect(getMessages).toHaveBeenCalledWith({ sended: false, limit: 50 })
