@@ -3,10 +3,10 @@ import { logout } from '../../services/auth'
 import { AppContext } from '../../contexts/App'
 
 export default function Navbar({ currentUser }: any) {
-  const { updateActiveLicensee } = useContext(AppContext)
+  const { resetLicenseeModal } = useContext(AppContext)
 
   function handleSwitchLicensee() {
-    updateActiveLicensee(null)
+    resetLicenseeModal()
   }
 
   return (

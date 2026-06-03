@@ -1,13 +1,25 @@
+import { useMemo } from 'react'
 import { FieldWithError, Form } from '../../../../components/form'
+import { ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 
-const SignupSchema = Yup.object().shape({
-  name: Yup.string(),
-  email: Yup.string().email().max(60),
-  password: Yup.string()
-});
+const ROLES_WITHOUT_LICENSEE = ['admin', 'super']
+
+function buildSchema(isSuperUser: boolean) {
+  return Yup.object().shape({
+    name: Yup.string(),
+    email: Yup.string().email().max(60),
+    password: Yup.string(),
+    licensee: isSuperUser
+      ? Yup.string().when('role', {
+          is: (role: string) => !ROLES_WITHOUT_LICENSEE.includes(role),
+          then: (schema) => schema.required('Licenciado é obrigatório'),
+        })
+      : Yup.string(),
+  })
+}
 
 const userInitialValues = {
   name: '',
@@ -22,10 +34,13 @@ function UserForm(props: any) {
   const { onSubmit, errors, initialValues, currentUser } = props
   let navigate = useNavigate()
 
+  const isSuperUser = currentUser?.role === 'super'
+  const schema = useMemo(() => buildSchema(isSuperUser), [isSuperUser])
+
   return (
     <div>
       <Form
-        validationSchema={SignupSchema}
+        validationSchema={schema}
         initialValues={{...userInitialValues, ...initialValues}}
         onSubmit={(values: any) => {
           onSubmit(values)
@@ -111,14 +126,15 @@ function UserForm(props: any) {
                 </div>
               )}
 
-              {currentUser && currentUser.role === 'super' && (
+              {isSuperUser && !ROLES_WITHOUT_LICENSEE.includes(props.values.role) && (
                 <div className='row'>
                   <div className='form-group col-5'>
-                    <label htmlFor='waId'>Licenciado</label>
+                    <label htmlFor='licensee'>Licenciado <span className='text-danger'>*</span></label>
                     <SelectLicenseesWithFilter selectedItem={props.values.licensee} onChange={(e: any) => {
                       const inputValue = e && e.value ? e.value : null
-                      props.setFieldValue('licensee', inputValue, false)
+                      props.setFieldValue('licensee', inputValue, true)
                     }} />
+                    <ErrorMessage name='licensee' />
                   </div>
                 </div>
               )}

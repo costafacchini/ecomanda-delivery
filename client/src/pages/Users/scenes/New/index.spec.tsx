@@ -6,12 +6,7 @@ import { createUser } from '../../../../services/user'
 vi.mock('../../../../services/user')
 
 describe('<UserNew />', () => {
-  let currentUser: any = {
-    role: 'agent',
-    licensee: 'id'
-  }
-
-  function mount() {
+  function mount(currentUser: any) {
     const Stub = createRoutesStub([
       {
         path: '/users/new',
@@ -25,11 +20,15 @@ describe('<UserNew />', () => {
     render(<Stub initialEntries={['/users/new']} />)
   }
 
-  it('creates a new user when the backend returns success and user is not super', async () => {
-    mount()
+  async function selectRole(role: string) {
+    fireEvent.change(screen.getByLabelText('Perfil'), { target: { value: role } })
+    await waitFor(() => expect(screen.getByLabelText('Perfil')).toHaveValue(role))
+  }
+
+  it('auto-assigns the admin licensee when creating an agent', async () => {
+    mount({ role: 'admin', licensee: 'licensee-id' })
 
     createUser.mockResolvedValue({ status: 201 })
-
     fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
 
     await waitFor(() => expect(createUser).toHaveBeenCalledWith({
@@ -38,18 +37,15 @@ describe('<UserNew />', () => {
       password: '',
       active: true,
       role: 'agent',
-      licensee: 'id'
+      licensee: 'licensee-id',
     }))
   })
 
-  it('creates a new user when the backend returns success and user is super', async () => {
-    currentUser = {
-      role: 'super',
-    }
-    mount()
+  it('strips licensee when creating an admin user', async () => {
+    mount({ role: 'super' })
+    await selectRole('admin')
 
     createUser.mockResolvedValue({ status: 201 })
-
     fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
 
     await waitFor(() => expect(createUser).toHaveBeenCalledWith({
@@ -57,16 +53,25 @@ describe('<UserNew />', () => {
       email: '',
       password: '',
       active: true,
-      role: 'agent',
-      licensee: ''
+      role: 'admin',
     }))
+  })
+
+  it('navigates to /users after successful creation', async () => {
+    mount({ role: 'super' })
+    await selectRole('admin')
+
+    createUser.mockResolvedValue({ status: 201 })
+    fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
+
+    await waitFor(() => expect(screen.getByText('Users Index')).toBeInTheDocument())
   })
 
   it('renders the errors when the backend returns error', async () => {
-    mount()
+    mount({ role: 'super' })
+    await selectRole('admin')
 
     createUser.mockResolvedValue({ status: 422, data: { errors: [{ message: 'This is an error' }] } })
-
     fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
 
     await waitFor(() => {

@@ -1,10 +1,12 @@
 import Form from '../Form'
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { getTemplate } from '../../../../services/template'
 import { useParams } from 'react-router'
 import { useEffect } from 'react'
+import { AppContext } from '../../../../contexts/App'
 
 function TemplateShow({ currentUser }: any) {
+  const { activeLicensee } = useContext(AppContext)
   let { id } = useParams()
   const [template, setTemplate] = useState(null)
 
@@ -39,6 +41,7 @@ function TemplateShow({ currentUser }: any) {
         <Form
           initialValues={template}
           currentUser={currentUser}
+          activeLicensee={activeLicensee}
         />
       </div>
     </div>

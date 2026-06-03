@@ -2,23 +2,23 @@ import { useState, useEffect } from 'react'
 import { getDashboardDeliveryRate } from '../../../services/dashboard'
 import FailedMessagesModal from './FailedMessagesModal'
 
-export default function SuperDeliveryRateCard() {
+export default function SuperDeliveryRateCard({ licensee }: { licensee?: string }) {
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<any>(null)
   const [modalOpen, setModalOpen] = useState(false)
 
   useEffect(() => {
-    getDashboardDeliveryRate()
+    getDashboardDeliveryRate(licensee ? { licensee } : {})
       .then((res) => setData(res.data))
       .catch(() => setError('Erro ao carregar dados.'))
       .finally(() => setLoading(false))
-  }, [])
+  }, [licensee])
 
   function handleResendSuccess() {
     setData((prev: any) => ({
       ...prev,
-      failed_today: Math.max(0, (prev.failed_today || 0) - 1),
+      failed_total: Math.max(0, (prev.failed_total || 0) - 1),
     }))
   }
 
@@ -42,9 +42,9 @@ export default function SuperDeliveryRateCard() {
                 style={{ cursor: 'pointer', textDecoration: 'underline' }}
                 onClick={() => setModalOpen(true)}
               >
-                {data.failed_today}
+                {data.failed_total ?? data.failed_today}
               </div>
-              <div className="text-muted small">Falhas ({data.failed_pct}%)</div>
+              <div className="text-muted small">Falhas hoje ({data.failed_pct}%)</div>
             </div>
           </div>
         </div>

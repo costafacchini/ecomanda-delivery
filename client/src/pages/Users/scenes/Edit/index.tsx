@@ -44,6 +44,11 @@ function UserEdit({ currentUser }: any) {
           currentUser={currentUser}
           errors={errors}
           onSubmit={async (values: any) => {
+            if (['admin', 'super'].includes(values.role)) {
+              delete values.licensee
+            } else if (currentUser.role !== 'super' && !values.licensee) {
+              values.licensee = currentUser.licensee
+            }
             const response = await updateUser(values)
 
             if (response.status === 200) {

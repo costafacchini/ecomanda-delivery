@@ -3,9 +3,11 @@ import { Link } from 'react-router'
 import { getTemplates } from '../../../../services/template'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'
+import { AppContext } from '../../../../contexts/App'
 import isEmpty from 'lodash/isEmpty'
 
 function TemplatesIndex({ currentUser }: any) {
+  const { activeLicensee } = useContext(AppContext)
   const { filters, setFilters, cache } = useContext(SimpleCrudContext)
   const { addPage } = cache
   const [expression, setExpression] = useState(filters?.expression || '')
@@ -39,13 +41,14 @@ function TemplatesIndex({ currentUser }: any) {
   }, [filters, onFilter])
 
   useEffect(() => {
-    if (isEmpty(filters)) return
+    if (isEmpty(filters) || !currentUser) return
 
-    if (currentUser && currentUser.role !== 'super' && filters?.licensee !== currentUser.licensee) {
-      const newFilters = { ...filters, licensee: currentUser.licensee, page: 1 }
+    const effectiveLicensee = activeLicensee?._id ?? currentUser.licensee
+    if (effectiveLicensee && filters?.licensee !== effectiveLicensee) {
+      const newFilters = { ...filters, licensee: effectiveLicensee, page: 1 }
       onFilter(newFilters)
     }
-  }, [currentUser, filters, onFilter])
+  }, [currentUser, activeLicensee, filters, onFilter])
 
   function changeExpression(event: any) {
     setExpression(event.target.value)
@@ -68,7 +71,7 @@ function TemplatesIndex({ currentUser }: any) {
       <div className='row'>
         <div className='d-flex flex-row justify-content-end pb-2'>
           <div className='flex-column w-50'>
-            {currentUser && currentUser.role === 'super' && (
+            {currentUser && currentUser.role === 'super' && !activeLicensee && (
               <div className='form-group'>
                 <label htmlFor='licensee' id='licensee'>Licenciado</label>
                 <SelectLicenseesWithFilter

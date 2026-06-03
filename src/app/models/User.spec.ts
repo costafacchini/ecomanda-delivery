@@ -145,18 +145,20 @@ describe('User', () => {
     })
 
     describe('licensee', () => {
-      it('is not required if user role is super', () => {
-        const user = new User({ role: 'super' })
-        const validation = user.validateSync()
-
-        expect(validation.errors['licensee']).not.toBeDefined()
+      it('is not required for admin or super roles', () => {
+        for (const role of ['admin', 'super']) {
+          const user = new User({ role })
+          const validation = user.validateSync()
+          expect(validation?.errors['licensee']).not.toBeDefined()
+        }
       })
 
-      it('is required if user role is not super', () => {
-        const user = new User({ role: 'agent' })
-        const validation = user.validateSync()
-
-        expect(validation.errors['licensee'].message).toEqual('Licensee: Você deve preencher o campo')
+      it('is required for agent and supervisor roles', () => {
+        for (const role of ['agent', 'supervisor']) {
+          const user = new User({ role })
+          const validation = user.validateSync()
+          expect(validation.errors['licensee'].message).toEqual('Licensee: Você deve preencher o campo')
+        }
       })
     })
   })

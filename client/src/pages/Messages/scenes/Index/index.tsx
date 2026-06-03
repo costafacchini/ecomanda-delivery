@@ -55,7 +55,7 @@ function MessagesIndex({ currentUser }: any) {
   )
 
   useEffect(() => {
-    const effectiveLicensee = currentUser?.role === 'super' ? activeLicensee?._id : currentUser?.licensee
+    const effectiveLicensee = activeLicensee?._id ?? currentUser?.licensee
     if (currentUser && effectiveLicensee && filters.licensee !== effectiveLicensee) {
       setFilters({ ...filters, licensee: effectiveLicensee })
     }
@@ -164,7 +164,7 @@ function MessagesIndex({ currentUser }: any) {
       </div>
 
       <div className='row'>
-        {currentUser && currentUser.role === 'super' && (
+        {currentUser && currentUser.role === 'super' && !activeLicensee && (
           <div className='col-6'>
             <div className='form-group'>
               <label htmlFor='licensee' id='licensee'>

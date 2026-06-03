@@ -1,11 +1,13 @@
 import Form from '../Form'
 import { toast } from 'react-toastify'
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { getContact, updateContact } from '../../../../services/contact'
 import { useNavigate, useParams } from 'react-router'
 import { useEffect } from 'react'
+import { AppContext } from '../../../../contexts/App'
 
 function ContactEdit({ currentUser }: any) {
+  const { activeLicensee } = useContext(AppContext)
   const navigate = useNavigate()
   let { id } = useParams()
   const [errors, setErrors] = useState(null)
@@ -42,6 +44,7 @@ function ContactEdit({ currentUser }: any) {
         <Form
           initialValues={contact}
           currentUser={currentUser}
+          activeLicensee={activeLicensee}
           errors={errors}
           onSubmit={async (values: any) => {
             const response = await updateContact(values)

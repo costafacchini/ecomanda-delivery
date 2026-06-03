@@ -29,7 +29,7 @@ describe('<UserEdit />', () => {
   })
 
   it('edits the user', async () => {
-    getUser.mockResolvedValue({ status: 201, data: { id: '1', name: 'Usuario' } })
+    getUser.mockResolvedValue({ status: 201, data: { id: '1', name: 'Usuario', role: 'admin' } })
 
     mount()
 

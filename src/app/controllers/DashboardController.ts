@@ -81,19 +81,21 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (user.role !== 'super') return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (!['super', 'admin'].includes(user.role)) return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const { startDate, endDate } = this._parseDateRange(req.query)
-      const cacheKey = `dashboard:super:message-volume:${startDate.toISOString()}:${endDate.toISOString()}`
+      const licensee = req.query.licensee || null
+      const cacheKey = `dashboard:super:message-volume:${startDate.toISOString()}:${endDate.toISOString()}:${licensee || 'all'}`
+      const msgFilter = licensee ? { licensee } : {}
 
       const data = await this._cached(cacheKey, async () => {
         const perDayPipeline = [
-          { $match: { createdAt: { $gte: startDate, $lt: endDate } } },
+          { $match: { ...msgFilter, createdAt: { $gte: startDate, $lt: endDate } } },
           { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, count: { $sum: 1 } } },
           { $sort: { _id: 1 } },
         ]
         const perHourPipeline = [
-          { $match: { createdAt: { $gte: startDate, $lt: endDate } } },
+          { $match: { ...msgFilter, createdAt: { $gte: startDate, $lt: endDate } } },
           { $group: { _id: { $dateToString: { format: '%Y-%m-%dT%H', date: '$createdAt' } }, count: { $sum: 1 } } },
           { $sort: { _id: 1 } },
         ]
@@ -101,14 +103,8 @@ class DashboardController {
         const [perDay, perHour, sentCount, failedCount] = await Promise.all([
           this.messageRepository.model().aggregate(perDayPipeline),
           this.messageRepository.model().aggregate(perHourPipeline),
-          this.messageRepository
-            .model()
-            .where({ sended: true, createdAt: { $gte: startDate, $lt: endDate } })
-            .countDocuments(),
-          this.messageRepository
-            .model()
-            .where({ sended: false, createdAt: { $gte: startDate, $lt: endDate } })
-            .countDocuments(),
+          this.messageRepository.model().where({ ...msgFilter, sended: true, createdAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
+          this.messageRepository.model().where({ ...msgFilter, sended: false, createdAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
         ])
 
         const peakThroughput = perHour.length > 0 ? Math.max(...perHour.map((h: any) => h.count)) : 0
@@ -133,28 +129,25 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (user.role !== 'super') return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (!['super', 'admin'].includes(user.role)) return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const { startDate, endDate } = this._parseDateRange(req.query)
-      const cacheKey = `dashboard:super:delivery-rate:${startDate.toISOString()}:${endDate.toISOString()}`
+      const licensee = req.query.licensee || null
+      const cacheKey = `dashboard:super:delivery-rate:${startDate.toISOString()}:${endDate.toISOString()}:${licensee || 'all'}`
+      const msgFilter = licensee ? { licensee } : {}
 
       const data = await this._cached(cacheKey, async () => {
-        const [sentCount, failedCount] = await Promise.all([
-          this.messageRepository
-            .model()
-            .where({ sended: true, createdAt: { $gte: startDate, $lt: endDate } })
-            .countDocuments(),
-          this.messageRepository
-            .model()
-            .where({ sended: false, createdAt: { $gte: startDate, $lt: endDate } })
-            .countDocuments(),
+        const [sentCount, failedCount, failedTotal] = await Promise.all([
+          this.messageRepository.model().where({ ...msgFilter, sended: true, createdAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
+          this.messageRepository.model().where({ ...msgFilter, sended: false, createdAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
+          this.messageRepository.model().where({ ...msgFilter, sended: false }).countDocuments(),
         ])
 
         const total = sentCount + failedCount
         const sentPct = total === 0 ? 0 : parseFloat(((sentCount / total) * 100).toFixed(2))
         const failedPct = total === 0 ? 0 : parseFloat(((failedCount / total) * 100).toFixed(2))
 
-        return { sent_today: sentCount, failed_today: failedCount, sent_pct: sentPct, failed_pct: failedPct }
+        return { sent_today: sentCount, failed_today: failedCount, failed_total: failedTotal, sent_pct: sentPct, failed_pct: failedPct }
       })
 
       return res.status(200).json(data)
@@ -167,19 +160,21 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (user.role !== 'super') return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (!['super', 'admin'].includes(user.role)) return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const { startDate, endDate } = this._parseDateRange(req.query)
-      const cacheKey = `dashboard:super:queue:${startDate.toISOString()}:${endDate.toISOString()}`
+      const licensee = req.query.licensee || null
+      const cacheKey = `dashboard:super:queue:${startDate.toISOString()}:${endDate.toISOString()}:${licensee || 'all'}`
+      const msgFilter = licensee ? { licensee } : {}
 
       const data = await this._cached(cacheKey, async () => {
         const avgQueuePipeline: any[] = [
-          { $match: { sendedAt: { $exists: true }, createdAt: { $gte: startDate, $lt: endDate } } },
+          { $match: { ...msgFilter, sendedAt: { $exists: true }, createdAt: { $gte: startDate, $lt: endDate } } },
           { $group: { _id: null, avg: { $avg: { $divide: [{ $subtract: ['$sendedAt', '$createdAt'] }, 1000] } } } },
         ]
 
         const [pendingMessages, avgResult] = await Promise.all([
-          this.messageRepository.model().where({ sended: false, destination: 'to-messenger' }).countDocuments(),
+          this.messageRepository.model().where({ ...msgFilter, sended: false, destination: 'to-messenger' }).countDocuments(),
           this.messageRepository.model().aggregate(avgQueuePipeline),
         ])
 
@@ -198,31 +193,34 @@ class DashboardController {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
-      if (user.role !== 'super') return res.status(403).json({ errors: { message: 'Forbidden' } })
+      if (!['super', 'admin'].includes(user.role)) return res.status(403).json({ errors: { message: 'Forbidden' } })
 
       const { startDate, endDate } = this._parseDateRange(req.query)
-      const cacheKey = `dashboard:super:conversations:${startDate.toISOString()}:${endDate.toISOString()}`
+      const licensee = req.query.licensee || null
+      const cacheKey = `dashboard:super:conversations:${startDate.toISOString()}:${endDate.toISOString()}:${licensee || 'all'}`
+      const msgFilter = licensee ? { licensee } : {}
 
       const data = await this._cached(cacheKey, async () => {
+        let roomFilter: any = {}
+        if (licensee) {
+          const contacts = await this.contactRepository.model().find({ licensee }).select('_id')
+          const contactIds = contacts.map((c: any) => c._id)
+          roomFilter = { contact: { $in: contactIds } }
+        }
+
         const avgMsgPerConvPipeline: any[] = [
-          { $match: { room: { $exists: true }, createdAt: { $gte: startDate, $lt: endDate } } },
+          { $match: { ...msgFilter, room: { $exists: true }, createdAt: { $gte: startDate, $lt: endDate } } },
           { $group: { _id: '$room', count: { $sum: 1 } } },
           { $group: { _id: null, avg: { $avg: '$count' } } },
         ]
         const avgDurationPipeline: any[] = [
-          { $match: { closedAt: { $gte: startDate, $lt: endDate } } },
+          { $match: { ...roomFilter, closedAt: { $gte: startDate, $lt: endDate } } },
           { $group: { _id: null, avg: { $avg: { $divide: [{ $subtract: ['$closedAt', '$createdAt'] }, 1000] } } } },
         ]
 
         const [startedCount, endedCount, avgMsgResult, avgDurationResult] = await Promise.all([
-          this.roomRepository
-            .model()
-            .where({ createdAt: { $gte: startDate, $lt: endDate } })
-            .countDocuments(),
-          this.roomRepository
-            .model()
-            .where({ closedAt: { $gte: startDate, $lt: endDate } })
-            .countDocuments(),
+          this.roomRepository.model().where({ ...roomFilter, createdAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
+          this.roomRepository.model().where({ ...roomFilter, closedAt: { $gte: startDate, $lt: endDate } }).countDocuments(),
           this.messageRepository.model().aggregate(avgMsgPerConvPipeline),
           this.roomRepository.model().aggregate(avgDurationPipeline),
         ])

@@ -1,10 +1,12 @@
 import Form from '../Form'
 import { toast } from 'react-toastify'
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { createContact } from '../../../../services/contact'
 import { useNavigate } from 'react-router'
+import { AppContext } from '../../../../contexts/App'
 
 function ContactNew({ currentUser }: any) {
+  const { activeLicensee } = useContext(AppContext)
   let navigate = useNavigate()
   const [errors, setErrors] = useState(null)
 
@@ -12,9 +14,13 @@ function ContactNew({ currentUser }: any) {
     <div className='row'>
       <div className='col'>
         <h3>Contato criando</h3>
-        <Form errors={errors} currentUser={currentUser} onSubmit={async (values: any) => {
-          if (values.licensee === '' && currentUser.role !== 'super') {
-            values.licensee = currentUser.licensee
+        <Form errors={errors} currentUser={currentUser} activeLicensee={activeLicensee} onSubmit={async (values: any) => {
+          if (!values.licensee) {
+            if (currentUser.role !== 'super') {
+              values.licensee = currentUser.licensee
+            } else if (activeLicensee) {
+              values.licensee = activeLicensee._id
+            }
           }
           const response = await createContact(values)
 

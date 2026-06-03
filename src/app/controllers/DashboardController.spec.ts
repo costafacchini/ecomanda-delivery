@@ -213,7 +213,7 @@ describe('DashboardController', () => {
     it('returns correct percentages on cache miss', async () => {
       const redis = buildRedis({ cachedValue: null })
       const modelAdapter = buildModelAdapter({ countResult: 0 })
-      modelAdapter._queryChain.countDocuments.mockResolvedValueOnce(80).mockResolvedValueOnce(20)
+      modelAdapter._queryChain.countDocuments.mockResolvedValueOnce(80).mockResolvedValueOnce(20).mockResolvedValueOnce(35)
       const { controller } = buildController({
         user: SUPER_USER,
         messageModelAdapter: modelAdapter,
@@ -228,6 +228,7 @@ describe('DashboardController', () => {
       const result = res.json.mock.calls[0][0]
       expect(result.sent_today).toBe(80)
       expect(result.failed_today).toBe(20)
+      expect(result.failed_total).toBe(35)
       expect(result.sent_pct).toBe(80)
       expect(result.failed_pct).toBe(20)
     })

@@ -43,7 +43,7 @@ const userSchema = new Schema(
       ref: 'Licensee',
       required: [
         function (this: any) {
-          return this.role !== 'super'
+          return !['admin', 'super'].includes(this.role)
         },
         'Licensee: Você deve preencher o campo',
       ],

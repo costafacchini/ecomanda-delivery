@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { fetchLoggedUser } from '../../services/auth'
+import { AppContext } from '../../contexts/App'
 import SuperLicenseesCard from './cards/SuperLicenseesCard'
 import SuperMessageVolumeCard from './cards/SuperMessageVolumeCard'
 import SuperDeliveryRateCard from './cards/SuperDeliveryRateCard'
@@ -10,6 +11,7 @@ import LicenseeMessagesTodayCard from './cards/LicenseeMessagesTodayCard'
 import LicenseeMessagesPerDayCard from './cards/LicenseeMessagesPerDayCard'
 
 export default function Dashboard() {
+  const { activeLicensee } = useContext(AppContext)
   const [user, setUser] = useState<any>(null)
   const [loadingUser, setLoadingUser] = useState(true)
 
@@ -21,7 +23,7 @@ export default function Dashboard() {
 
   if (loadingUser) return <p>Carregando...</p>
 
-  if (user?.role === 'super') {
+  if (user?.role === 'super' && !activeLicensee) {
     return (
       <>
         <div className="row g-3">
@@ -30,6 +32,20 @@ export default function Dashboard() {
           <div className="col-12 col-md-6"><SuperDeliveryRateCard /></div>
           <div className="col-12 col-md-6"><SuperQueueCard /></div>
           <div className="col-12"><SuperConversationsCard /></div>
+        </div>
+      </>
+    )
+  }
+
+  if (user?.role === 'super' || user?.role === 'admin') {
+    const licenseeId = activeLicensee?._id
+    return (
+      <>
+        <div className="row g-3">
+          <div className="col-12 col-md-6"><SuperMessageVolumeCard licensee={licenseeId} /></div>
+          <div className="col-12 col-md-6"><SuperDeliveryRateCard licensee={licenseeId} /></div>
+          <div className="col-12 col-md-6"><SuperQueueCard licensee={licenseeId} /></div>
+          <div className="col-12"><SuperConversationsCard licensee={licenseeId} /></div>
         </div>
       </>
     )

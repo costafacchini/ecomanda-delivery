@@ -3,6 +3,7 @@ import api from './api'
 const TOKEN_KEY = "@ecomanda-delivery-bearer"
 const EMAIL_KEY = "@ecomanda-delivery-mail"
 const ACTIVE_LICENSEE_KEY = "@ecomanda-delivery-active-licensee"
+const LICENSEE_MODAL_SEEN_KEY = "@ecomanda-delivery-licensee-modal-seen"
 
 export function isAuthenticated() {
   return localStorage.getItem(TOKEN_KEY) !== null
@@ -25,6 +26,15 @@ export function logout() {
   localStorage.removeItem(EMAIL_KEY)
   localStorage.removeItem(TOKEN_KEY)
   clearActiveLicensee()
+  localStorage.removeItem(LICENSEE_MODAL_SEEN_KEY)
+}
+
+export function saveLicenseeModalSeen(seen: boolean) {
+  localStorage.setItem(LICENSEE_MODAL_SEEN_KEY, JSON.stringify(seen))
+}
+
+export function loadLicenseeModalSeen() {
+  return localStorage.getItem(LICENSEE_MODAL_SEEN_KEY) === 'true'
 }
 
 export function saveActiveLicensee(licensee: any) {

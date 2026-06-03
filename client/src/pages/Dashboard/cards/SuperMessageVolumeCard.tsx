@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react'
 import { getDashboardMessageVolume } from '../../../services/dashboard'
 
-export default function SuperMessageVolumeCard() {
+export default function SuperMessageVolumeCard({ licensee }: { licensee?: string }) {
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<any>(null)
 
   useEffect(() => {
-    getDashboardMessageVolume()
+    getDashboardMessageVolume(licensee ? { licensee } : {})
       .then((res) => setData(res.data))
       .catch(() => setError('Erro ao carregar dados.'))
       .finally(() => setLoading(false))
-  }, [])
+  }, [licensee])
 
   if (loading) return <div className="card"><div className="card-body">Carregando...</div></div>
   if (error) return <div className="card"><div className="card-body text-danger">{error}</div></div>
