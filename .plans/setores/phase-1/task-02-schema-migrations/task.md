@@ -1,4 +1,4 @@
-# Task: Schema migrations (WhatsappSession, Room, Licensee)
+# Task: Schema migrations (WhatsappSession, Room, Licensee, Message, Body)
 
 **Plan**: Setores
 **Phase**: 1
@@ -9,7 +9,7 @@
 
 ## Objective
 
-Add `setor` field to `WhatsappSession` and `Room`, change the `WhatsappSession` unique index from `{ licensee }` to `{ licensee, setor }`, and add `useSetores` flag to `Licensee`.
+Add `setor` field to `WhatsappSession`, `Room`, `Message`, and `Body`; change the `WhatsappSession` unique index from `{ licensee }` to `{ licensee, setor }`; add `useSetores` flag to `Licensee`.
 
 ## Context
 
@@ -27,6 +27,23 @@ Adding `setor` as an optional ObjectId reference. Existing rooms have no sector 
 **`Licensee`:**
 Adding `useSetores: { type: Boolean, default: false }`. Existing licensees default to `false` — no behavioral change until explicitly enabled.
 
+**`Message`:**
+Adding `setor` as an optional ObjectId reference. This is the **pipeline carrier** — the only way the sector context can travel from the Baileys socket event, through the async job worker, and into Room creation. Without it, `LocalChat.sendMessage()` has no way to know which sector's socket received the inbound message.
+
+**`Body`:**
+Adding `setor` as an optional ObjectId reference. `Body` is the persistence bridge between `IngestMessengerMessage` (socket callback, sync) and `transformMessengerBody` (job worker, async). The job payload only carries `bodyId` + `licenseeId` — if `setor` is not stored on the `Body` document, the sector context is lost before message creation.
+
+The propagation chain is:
+```
+WhatsappSession.setor
+  → BaileysSocketManager (passes setorId in onMessage callback)
+    → IngestMessengerMessage({ body, licenseeId, setorId })
+      → Body.create({ ..., setor: setorId })   ← stored here to survive the async gap
+        → job queue: { bodyId, licenseeId }
+          → transformMessengerBody() reads body.setor → Message.create({ ..., setor })
+            → LocalChat.sendMessage() reads message.setor → Room.create({ ..., setor })
+```
+
 ## Before You Start
 
 - [ ] Switch to main and pull: `git switch main && git pull --rebase origin main`
@@ -35,6 +52,8 @@ Adding `useSetores: { type: Boolean, default: false }`. Existing licensees defau
 - [ ] Read `src/app/models/WhatsappSession.ts` (full file)
 - [ ] Read `src/app/models/Room.ts` (full file)
 - [ ] Read `src/app/models/Licensee.ts` (scan for existing field patterns)
+- [ ] Read `src/app/models/Message.ts` (full file)
+- [ ] Read `src/app/models/Body.ts` (full file)
 - [ ] Mark this task `in-progress` in `status.md`
 
 ## File Ownership
@@ -47,12 +66,19 @@ Adding `useSetores: { type: Boolean, default: false }`. Existing licensees defau
 | `src/app/models/Room.spec.ts` | modify | Add field test |
 | `src/app/models/Licensee.ts` | modify | Add `useSetores` flag |
 | `src/app/models/Licensee.spec.ts` | modify | Add flag test |
+| `src/app/models/Message.ts` | modify | Add `setor` field (pipeline carrier) |
+| `src/app/models/Message.spec.ts` | modify | Add field test |
+| `src/app/models/Body.ts` | modify | Add `setor` field (async job bridge) |
+| `src/app/models/Body.spec.ts` | modify | Add field test |
 
 ### Do NOT Modify
 
 - `src/app/models/Setor.ts` — owned by phase-1/task-01-setor-model-api
 - `src/app/repositories/whatsappsession.ts` — read-only (no changes needed to repository layer)
 - `src/app/services/BaileysSocketManager.ts` — owned by phase-2/task-03
+- `src/app/usecases/webhooks/IngestMessengerMessage.ts` — owned by phase-2/task-03
+- `src/app/services/MessengerMessage.ts` — owned by phase-2/task-03
+- `src/app/plugins/chats/LocalChat.ts` — owned by phase-2/task-04
 
 ## Implementation Steps
 
@@ -107,6 +133,28 @@ Add `useSetores` with the other feature flags (near `useChatbot`, `useSenderName
 useSetores: { type: Boolean, default: false },
 ```
 
+### Step 4: Update `Message.ts`
+
+Add after the `room` field:
+```js
+setor: {
+  type: ObjectId,
+  ref: 'Setor',
+  default: null,
+},
+```
+
+### Step 5: Update `Body.ts`
+
+Add after the `kind` field:
+```js
+setor: {
+  type: ObjectId,
+  ref: 'Setor',
+  default: null,
+},
+```
+
 ## Testing
 
 - [ ] `WhatsappSession`: two sessions with the same `licensee` and `setor: null` — second create should fail (application-level guard test)
@@ -114,6 +162,8 @@ useSetores: { type: Boolean, default: false },
 - [ ] `WhatsappSession`: existing session without `setor` field defaults to `null`
 - [ ] `Room`: `setor` field defaults to `null` on new rooms
 - [ ] `Licensee`: `useSetores` defaults to `false`
+- [ ] `Message`: `setor` field defaults to `null`
+- [ ] `Body`: `setor` field defaults to `null`
 - [ ] All existing model tests still pass
 - [ ] `pre-commit-check` passes
 
@@ -123,7 +173,7 @@ useSetores: { type: Boolean, default: false },
 
 ## Completion Criteria
 
-- [ ] All three models updated as described
+- [ ] All five models updated as described (`WhatsappSession`, `Room`, `Licensee`, `Message`, `Body`)
 - [ ] Compound index added to `WhatsappSession`
 - [ ] All tests pass: `npx jest src/app/models/`
 - [ ] `npx eslint src/app/models/` passes
