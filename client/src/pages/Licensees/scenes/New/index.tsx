@@ -12,7 +12,6 @@ function LicenseeNew({ currentUser }: any) {
     <div className='row'>
       <div className='col'>
         <LicenseeWizard
-          currentUser={currentUser}
           errors={errors}
           onSubmit={async (values: any) => {
             const response = await createLicensee(values)
