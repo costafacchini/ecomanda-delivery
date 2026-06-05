@@ -171,9 +171,7 @@ class Chatwoot extends ChatsBase {
 
     const rawContactId =
       responseBody.conversation?.contact_inbox?.contact_id ??
-      (responseBody.conversation?.meta?.sender?.type === 'contact'
-        ? responseBody.conversation.meta.sender.id
-        : null)
+      (responseBody.conversation?.meta?.sender?.type === 'contact' ? responseBody.conversation.meta.sender.id : null)
 
     const chatwootContactId = rawContactId != null ? String(rawContactId) : null
 
