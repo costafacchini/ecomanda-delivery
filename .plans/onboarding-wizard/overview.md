@@ -50,8 +50,8 @@ Add a public self-service onboarding flow reachable from the login screen. A "Cr
 
 | Task Path | Title | Phase | Status | Depends On |
 |-----------|-------|-------|--------|------------|
-| phase-1/task-01-backend-onboarding-endpoint | Backend Onboarding Endpoint | 1 | not-started | — |
-| phase-2/task-02-onboarding-modal | Onboarding Modal Component | 2 | not-started | phase-1/task-01-backend-onboarding-endpoint |
+| phase-1/task-01-backend-onboarding-endpoint | Backend Onboarding Endpoint | 1 | complete | — |
+| phase-2/task-02-onboarding-modal | Onboarding Modal Component | 2 | complete | phase-1/task-01-backend-onboarding-endpoint |
 | phase-3/task-03-signin-integration | Sign-in Page Integration | 3 | not-started | phase-2/task-02-onboarding-modal |
 
 ## Branch Convention
