@@ -169,21 +169,29 @@ class Chatwoot extends ChatsBase {
       return
     }
 
-    if (!responseBody.conversation?.contact_inbox?.contact_id) {
+    const rawContactId =
+      responseBody.conversation?.contact_inbox?.contact_id ??
+      (responseBody.conversation?.meta?.sender?.type === 'contact'
+        ? responseBody.conversation.meta.sender.id
+        : null)
+
+    const chatwootContactId = rawContactId != null ? String(rawContactId) : null
+
+    if (!chatwootContactId) {
       this.messageParsed = null
       return
     }
 
     const contact = await this.findContact({
       licensee: this.licensee._id,
-      chatwootId: responseBody.conversation.contact_inbox.contact_id,
+      chatwootId: chatwootContactId,
     })
     if (!contact) {
       this.messageParsed = null
       return
     }
 
-    let room = await this.roomRepository.findFirst({ roomId: responseBody.conversation.id })
+    let room = await this.roomRepository.findFirst({ roomId: String(responseBody.conversation.id) })
     if (!room) {
       await this.roomRepository.create({ roomId: responseBody.conversation.id, contact: contact })
       this.messageParsed = null

@@ -154,6 +154,80 @@ describe('Chatwoot plugin', () => {
       expect(messages).toEqual([])
     })
 
+    it('resolves contact from meta.sender.id when contact_inbox.contact_id is absent', async () => {
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(
+        contactFactory.build({
+          name: 'Juarez',
+          chatwootId: 78059,
+          licensee,
+        }),
+      )
+
+      await Room.create(
+        roomFactory.build({
+          roomId: 396,
+          contact,
+        }),
+      )
+
+      const responseBody = {
+        event: 'message_created',
+        message_type: 'outgoing',
+        content: 'Quem vai te atender é AMANDA TEODORO.',
+        content_type: 'text',
+        conversation: {
+          id: 396,
+          contact_inbox: {
+            id: 82266,
+            source_id: 'b3ceb73d-c4cc-47f7-a95e-d1cc4d6da0ef',
+          },
+          meta: {
+            sender: {
+              id: 78059,
+              name: 'Juarez',
+              type: 'contact',
+            },
+          },
+          messages: [],
+        },
+      }
+
+      const chatwoot = new Chatwoot(licensee, dependencies)
+      const messages = await chatwoot.responseToMessages(responseBody)
+
+      expect(messages.length).toEqual(1)
+      expect(messages[0].contact).toEqual(contact._id)
+      expect(messages[0].text).toEqual('Quem vai te atender é AMANDA TEODORO.')
+    })
+
+    it('returns empty array when contact_inbox.contact_id is absent and meta.sender is not a contact', async () => {
+      const responseBody = {
+        event: 'message_created',
+        message_type: 'outgoing',
+        conversation: {
+          id: 'conversation_456',
+          contact_inbox: {
+            id: 82266,
+            source_id: 'some-source-id',
+          },
+          meta: {
+            sender: {
+              id: 4,
+              name: 'Jota - Assistente Virtual',
+              type: 'user',
+            },
+          },
+          messages: [],
+        },
+      }
+
+      const chatwoot = new Chatwoot(licensee, dependencies)
+      const messages = await chatwoot.responseToMessages(responseBody)
+
+      expect(messages).toEqual([])
+    })
+
     it('creates new room if room does not exist', async () => {
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(
