@@ -1,6 +1,6 @@
 # Status: Backend Onboarding Endpoint
 
-**Current Status**: in-progress
+**Current Status**: complete
 **Last Updated**: 2026-06-05
 **Agent**: claude-sonnet-4-6
 **Branch**: plan/onboarding-wizard/phase-1/task-01-backend-onboarding-endpoint
@@ -12,6 +12,7 @@
 |-----------|--------|-------|-------|
 | 2026-06-05 | not-started | — | Task created |
 | 2026-06-05 | in-progress | claude-sonnet-4-6 | Implementing OnboardAccount use case, controller, route |
+| 2026-06-05 | complete | claude-sonnet-4-6 | 9/9 tests pass, ESLint clean, PR opened |
 
 ## Blockers
 
