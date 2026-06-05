@@ -30,7 +30,7 @@ Git-native Markdown plans for multi-step work.
 | 6 | [Setores — Webhook Providers](./setores-webhook-providers/overview.md) | `setores-webhook-providers/` | not-started | Extend sector routing to utalk/dialog/ycloud/pabbly via sector token in webhook URL; prerequisite: setores complete |
 | 7 | [Backend Type Narrowing](./type-backend/overview.md) | `type-backend/` | not-started | Replace `any` with interfaces across models, repositories, use cases, controllers, and plugins — 3 phases, 11 tasks |
 | 8 | [Client Type Narrowing](./type-client/overview.md) | `type-client/` | not-started | Replace `any` with interfaces across React services, contexts, pages, and components — 2 phases, 6 tasks |
-| 9 | [Onboarding Wizard](./onboarding-wizard/overview.md) | `onboarding-wizard/` | not-started | Public sign-up flow from the login screen: wizard modal collects licensee identity + user credentials and creates both via a single unauthenticated endpoint |
+| 9 | [Onboarding Wizard](./onboarding-wizard/overview.md) | `onboarding-wizard/` | complete | Public sign-up flow from the login screen: wizard modal collects licensee identity + user credentials and creates both via a single unauthenticated endpoint |
 
 ---
 

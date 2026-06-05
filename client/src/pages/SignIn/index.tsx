@@ -4,13 +4,21 @@ import api from '../../services/api'
 import { login, fetchLoggedUser } from '../../services/auth'
 import styles from './index.module.scss'
 import { AppContext } from '../../contexts/App'
+import OnboardingModal from './OnboardingModal'
 
 function SignIn() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
   let navigate = useNavigate()
   const { setCurrentUser } = useContext(AppContext)
+
+  function handleOnboardingSuccess() {
+    setIsOnboardingOpen(false)
+    setSuccessMessage('Conta criada com sucesso! Faça login para continuar.')
+  }
 
   async function handleSignIn(e: any) {
     e.preventDefault()
@@ -79,11 +87,25 @@ function SignIn() {
                   {error && <p>{error}</p>}
                 </div>
 
+                {successMessage && (
+                  <div className="alert alert-success mt-3">{successMessage}</div>
+                )}
+
                 <button
                   className='btn btn-primary mt-4 w-100'
                   onClick={handleSignIn}>
                   Entrar
                 </button>
+
+                <div className="text-center mt-3">
+                  <button
+                    type="button"
+                    className="btn btn-link text-white p-0"
+                    onClick={() => setIsOnboardingOpen(true)}
+                  >
+                    Criar conta
+                  </button>
+                </div>
 
               </div>
             </div>
@@ -91,6 +113,12 @@ function SignIn() {
 
         </div>
       </div>
+
+      <OnboardingModal
+        isOpen={isOnboardingOpen}
+        onClose={() => setIsOnboardingOpen(false)}
+        onSuccess={handleOnboardingSuccess}
+      />
     </>
   )
 }
