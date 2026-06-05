@@ -54,7 +54,7 @@ describe('GetBaileysQr', () => {
     expect(response).toEqual({ message: 'Licensee não usa Baileys' })
   })
 
-  it('calls startBaileysSocket when ENABLE_BAILEYS_SOCKET is true and QR is returned', async () => {
+  it('does not call startBaileysSocket when QR is returned (avoid conflicting sockets during pairing)', async () => {
     process.env.ENABLE_BAILEYS_SOCKET = 'true'
     const licenseeRepository = new LicenseeRepositoryMemory()
     const plugin = { getQrCode: jest.fn().mockResolvedValue('qr-string-data') }
@@ -66,7 +66,7 @@ describe('GetBaileysQr', () => {
     const response = await useCase.execute(licensee._id)
 
     expect(response).toEqual({ qr: 'qr-string-data' })
-    expect(startBaileysSocket).toHaveBeenCalledWith(licensee)
+    expect(startBaileysSocket).not.toHaveBeenCalled()
   })
 
   it('calls startBaileysSocket when ENABLE_BAILEYS_SOCKET is true and already connected (qr is null)', async () => {

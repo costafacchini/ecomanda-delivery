@@ -3,10 +3,12 @@ import { logger } from '../helpers/logger'
 class BaileysSocketManager {
   private _whatsappSessionRepository: any
   private _sockets: Map<string, { socket: any; licensee: any }>
+  private _pending: Set<string>
 
   constructor({ whatsappSessionRepository }: Record<string, any> = {}) {
     this._whatsappSessionRepository = whatsappSessionRepository
     this._sockets = new Map()
+    this._pending = new Set()
   }
 
   isConnected(licenseeId: any): boolean {
@@ -17,6 +19,9 @@ class BaileysSocketManager {
     licensee: any,
     { onMessage, onReceiptUpdate, onLogout, reconnectDelay }: Record<string, any> = {},
   ): Promise<void> {
+    const key = licensee._id.toString()
+    if (this._sockets.has(key) || this._pending.has(key)) return
+    this._pending.add(key)
     // Load or create session for this licensee
     let session = await this._whatsappSessionRepository.findFirst({ licensee: licensee._id })
     if (!session) {
@@ -79,13 +84,15 @@ class BaileysSocketManager {
 
     socket.ev.on('connection.update', ({ connection, lastDisconnect }: any) => {
       if (connection === 'open') {
-        this._sockets.set(licensee._id.toString(), { socket, licensee })
+        this._pending.delete(key)
+        this._sockets.set(key, { socket, licensee })
         logger.info(`BaileysSocketManager: socket aberto para licensee ${licensee._id}`)
         return
       }
 
       if (connection === 'close') {
-        this._sockets.delete(licensee._id.toString())
+        this._pending.delete(key)
+        this._sockets.delete(key)
 
         const statusCode = lastDisconnect?.error?.output?.statusCode
         const isLoggedOut = statusCode === DisconnectReason.loggedOut
