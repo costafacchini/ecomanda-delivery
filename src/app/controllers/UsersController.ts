@@ -5,11 +5,13 @@ class UsersController {
   userRepository: any
   createUser: any
   updateUser: any
+  createUsersQuery: any
 
-  constructor({ userRepository, createUser, updateUser }: Record<string, any> = {}) {
+  constructor({ userRepository, createUser, updateUser, createUsersQuery }: Record<string, any> = {}) {
     this.userRepository = userRepository
     this.createUser = createUser
     this.updateUser = updateUser
+    this.createUsersQuery = createUsersQuery
 
     this.create = this.create.bind(this)
     this.update = this.update.bind(this)
@@ -79,7 +81,29 @@ class UsersController {
 
   async index(req: any, res: any) {
     try {
-      res.status(200).send(await this.userRepository.find({}, { password: 0 }))
+      const page = req.query.page || 1
+      const limit = req.query.limit || 30
+
+      const usersQuery = this.createUsersQuery()
+
+      usersQuery.page(page)
+      usersQuery.limit(limit)
+
+      if (req.query.expression) {
+        usersQuery.filterByExpression(req.query.expression)
+      }
+
+      if (req.query.licensee) {
+        usersQuery.filterByLicensee(req.query.licensee)
+      }
+
+      if (req.query.active) {
+        usersQuery.filterByActive()
+      }
+
+      const users = await usersQuery.all()
+
+      res.status(200).send(users)
     } catch (err: any) {
       res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }

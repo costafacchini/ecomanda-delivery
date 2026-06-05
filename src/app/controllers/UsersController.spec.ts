@@ -25,11 +25,20 @@ function buildController() {
   const updateUser = {
     execute: jest.fn(),
   }
+  const usersQueryInstance = {
+    page: jest.fn(),
+    limit: jest.fn(),
+    filterByLicensee: jest.fn(),
+    filterByExpression: jest.fn(),
+    all: jest.fn(),
+  }
+  const createUsersQuery = jest.fn().mockReturnValue(usersQueryInstance)
 
   const controller = new UsersController({
     userRepository,
     createUser,
     updateUser,
+    createUsersQuery,
   })
 
   return {
@@ -37,6 +46,8 @@ function buildController() {
     userRepository,
     createUser,
     updateUser,
+    createUsersQuery,
+    usersQueryInstance,
   }
 }
 
@@ -171,24 +182,21 @@ describe('UsersController delegation', () => {
     expect(res.send).toHaveBeenCalledWith({ errors: { message: 'Usuário não encontrado' } })
   })
 
-  it('delegates index to userRepository.find and returns status 200', async () => {
-    const { controller, userRepository } = buildController()
-    await userRepository.create({
-      name: 'John Doe',
-      email: 'john@doe.com',
-      password: 'password123',
-      licensee: '507f1f77bcf86cd799439011',
-    })
+  it('delegates index to contactsQuery and returns status 200', async () => {
+    const { controller, usersQueryInstance } = buildController()
+    const users = [{ _id: 'user-id' }]
+    usersQueryInstance.all.mockResolvedValue(users)
 
-    const req = { query: {} }
+    const req = { userId: 'user-id', query: { page: '1', limit: '3', expression: 'Doe' } }
     const res = buildResponse()
 
     await controller.index(req, res)
 
+    expect(usersQueryInstance.page).toHaveBeenCalledWith('1')
+    expect(usersQueryInstance.limit).toHaveBeenCalledWith('3')
+    expect(usersQueryInstance.filterByExpression).toHaveBeenCalledWith('Doe')
     expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.send).toHaveBeenCalledWith(
-      expect.arrayContaining([expect.objectContaining({ name: 'John Doe', email: 'john@doe.com' })]),
-    )
+    expect(res.send).toHaveBeenCalledWith(users)
   })
 
   it.each([
@@ -226,6 +234,18 @@ describe('UsersController delegation', () => {
 
     expect(res.status).toHaveBeenCalledWith(422)
     expect(res.json).toHaveBeenCalledWith(modelErrorResponse)
+  })
+
+  it('applies query.licensee filter when provided', async () => {
+    const { controller, usersQueryInstance } = buildController()
+    usersQueryInstance.all.mockResolvedValue([])
+
+    const req = { userId: 'user-id', query: { licensee: 'specific-licensee-id' } }
+    const res = buildResponse()
+
+    await controller.index(req, res)
+
+    expect(usersQueryInstance.filterByLicensee).toHaveBeenCalledWith('specific-licensee-id')
   })
 
   it.each([
