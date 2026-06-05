@@ -25,7 +25,10 @@ const identitySchema = Yup.object().shape({
 
 const chatSchema = Yup.object().shape({
   chatDefault: Yup.string().required('Chat padrão é obrigatório'),
-  chatUrl:     Yup.string().required('URL do chat é obrigatória'),
+  chatUrl: Yup.string().when('chatDefault', {
+    is: (v: string) => v && v !== 'local',
+    then: (s) => s.required('URL do chat é obrigatória'),
+  }),
   chatIdentifier: Yup.string().when('chatDefault', {
     is: (v: string) => ['crisp', 'chatwoot'].includes(v),
     then: (s) => s.required('Identifier é obrigatório'),
