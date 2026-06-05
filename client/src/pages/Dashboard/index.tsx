@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { AppContext } from '../../contexts/App'
 import SuperLicenseesCard from './cards/SuperLicenseesCard'
 import SuperMessageVolumeCard from './cards/SuperMessageVolumeCard'
@@ -34,12 +34,13 @@ export default function Dashboard() {
   if (currentUser.role === 'super' || currentUser.role === 'admin') {
     const licenseeId = activeLicensee?._id
     const needsBaileysSetup = currentUser.role === 'admin' && currentUser.licensee?.whatsappDefault === 'baileys'
+    const [showBaileysCard, setShowBaileysCard] = useState(needsBaileysSetup)
     return (
       <>
         <div className="row g-3">
-          {needsBaileysSetup && (
+          {showBaileysCard && (
             <div className="col-12 col-md-6">
-              <BaileysSetupCard licenseeId={currentUser.licensee._id} />
+              <BaileysSetupCard licenseeId={currentUser.licensee._id} onConnected={() => setShowBaileysCard(false)} />
             </div>
           )}
           <div className="col-12 col-md-6"><SuperMessageVolumeCard licensee={licenseeId} /></div>

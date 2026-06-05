@@ -4,11 +4,11 @@ import { getBaileysQr, getBaileysStatus } from '../../../services/licensee'
 
 interface Props {
   licenseeId: string
+  onConnected: () => void
 }
 
-export default function BaileysSetupCard({ licenseeId }: Props) {
+export default function BaileysSetupCard({ licenseeId, onConnected }: Props) {
   const [qr, setQr] = useState<string | null>(null)
-  const [connected, setConnected] = useState(false)
   const [loading, setLoading] = useState(true)
   const [statusMessage, setStatusMessage] = useState('')
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -25,8 +25,8 @@ export default function BaileysSetupCard({ licenseeId }: Props) {
   async function checkStatus(): Promise<boolean> {
     const res = await getBaileysStatus(licensee)
     if (res.data?.connected) {
-      setConnected(true)
       stopPolling()
+      onConnected()
       return true
     }
     return false
@@ -59,8 +59,6 @@ export default function BaileysSetupCard({ licenseeId }: Props) {
 
     return () => stopPolling()
   }, [licenseeId])
-
-  if (connected) return null
 
   return (
     <div className='card border-warning'>
