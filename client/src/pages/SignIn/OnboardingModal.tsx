@@ -190,12 +190,13 @@ function OnboardingModal({ isOpen, onClose, onSuccess }: Props) {
     if (response.status === 201) {
       onSuccess()
     } else {
+      console.error('onboarding error', response)
       const errors = response.data?.errors
       if (errors && typeof errors === 'object') {
         const messages = Object.values(errors).map((e: any) => e.message || String(e))
         setSubmitError(messages.join(', '))
       } else {
-        setSubmitError(response.data?.message || 'Erro ao criar conta')
+        setSubmitError(response.data?.message || `Erro ao criar conta (status ${response.status})`)
       }
     }
   }

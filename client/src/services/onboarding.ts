@@ -19,5 +19,5 @@ export interface OnboardingFields {
 }
 
 export function createAccount(fields: OnboardingFields) {
-  return api().post('/onboarding', { body: fields })
+  return api().post('/login/onboarding', { body: fields })
 }

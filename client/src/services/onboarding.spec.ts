@@ -23,9 +23,9 @@ describe('onboarding service', () => {
       password: 'senha123',
     }
 
-    it('sends POST to /onboarding with the provided fields', async () => {
+    it('sends POST to /login/onboarding with the provided fields', async () => {
       await createAccount(fields)
-      expect(mockPost).toHaveBeenCalledWith('/onboarding', { body: fields })
+      expect(mockPost).toHaveBeenCalledWith('/login/onboarding', { body: fields })
     })
 
     it('does not include an x-access-token header', async () => {
