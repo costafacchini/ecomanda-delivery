@@ -97,16 +97,16 @@ function SignIn() {
                   Entrar
                 </button>
 
-                <div className="text-center mt-3">
+                <div className="text-center mt-3 d-flex justify-content-center align-items-center">
+                  <span>Não tem uma conta?</span>
                   <button
                     type="button"
-                    className="btn btn-link text-white p-0"
+                    className="btn btn-link p-0 ms-2"
                     onClick={() => setIsOnboardingOpen(true)}
                   >
                     Criar conta
                   </button>
                 </div>
-
               </div>
             </div>
           </div>
