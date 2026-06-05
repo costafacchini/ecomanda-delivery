@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Form } from '../../../../components/form'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router'
@@ -6,9 +6,6 @@ import MainPanel from './panels/MainPanel'
 import ChatPanel from './panels/ChatPanel'
 import ChatbotPanel from './panels/ChatbotPanel'
 import WhatsAppPanel from './panels/WhatsAppPanel'
-import CartPanel from './panels/CartPanel'
-import PagarMePanel from './panels/PagarMePanel'
-import Pedidos10Panel from './panels/Pedidos10Panel'
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string()
@@ -34,33 +31,9 @@ const licenseeInitialValues = {
   chatUrl: '',
   chatKey: '',
   chatIdentifier: '',
-  cartDefault: '',
-  unidadeId: '',
-  statusId: '',
   messageOnCloseChat: '',
-  productFractional2Name: '',
-  productFractional2Id: '',
-  productFractional3Name: '',
-  productFractional3Id: '',
-  productFractionalSize3Name: '',
-  productFractionalSize3Id: '',
-  productFractionalSize4Name: '',
-  productFractionalSize4Id: '',
-  productFractionals: '',
-  pedidos10_integration: '',
-  pedidos10_integrator: '',
   document: '',
   kind: '',
-  financial_player_fee: '0.00',
-  holder_name: '',
-  bank: '',
-  branch_number: '',
-  branch_check_digit: '',
-  account_number: '',
-  account_check_digit: '',
-  holder_kind: '',
-  holder_document: '',
-  account_type: '',
   useSenderName: false,
   useFileIDYcloud: false,
 }
@@ -69,15 +42,6 @@ function LicenseeForm(props: any) {
   const { onSubmit, errors, initialValues, currentUser } = props
   let navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('principal')
-  const [useChat, setUseChat] = useState(true)
-  const [useWhatsapp, setUseWhatsapp] = useState(true)
-  const [useCart, setUseCart] = useState(true)
-  const [usePagarMe, setUsePagarMe] = useState(true)
-
-  useEffect(() => { if (!useChat && activeTab === 'chat') setActiveTab('principal') }, [useChat])
-  useEffect(() => { if (!useWhatsapp && activeTab === 'whatsapp') setActiveTab('principal') }, [useWhatsapp])
-  useEffect(() => { if (!useCart && activeTab === 'carrinho') setActiveTab('principal') }, [useCart])
-  useEffect(() => { if (!usePagarMe && activeTab === 'pagarme') setActiveTab('principal') }, [usePagarMe])
 
   return (
     <div>
@@ -127,35 +91,6 @@ function LicenseeForm(props: any) {
                   WhatsApp
                 </button>
               </li>
-              <li className="nav-item">
-                <button
-                  type="button"
-                  className={`nav-link ${activeTab === 'carrinho' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('carrinho')}
-                >
-                  Carrinho de Compras
-                </button>
-              </li>
-              <li className="nav-item">
-                <button
-                  type="button"
-                  className={`nav-link ${activeTab === 'pagarme' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('pagarme')}
-                >
-                  PagarMe
-                </button>
-              </li>
-              {currentUser?.isPedidos10 && (
-                <li className="nav-item">
-                  <button
-                    type="button"
-                    className={`nav-link ${activeTab === 'pedidos10' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('pedidos10')}
-                  >
-                    Pedidos10
-                  </button>
-                </li>
-              )}
             </ul>
 
             <div className="tab-content">
@@ -195,33 +130,6 @@ function LicenseeForm(props: any) {
                   handleChange={props.handleChange}
                   handleBlur={props.handleBlur}
                   isActive={activeTab === 'whatsapp'}
-                />
-              </div>
-              <div className={`tab-pane fade ${activeTab === 'carrinho' ? 'show active' : ''}`}>
-                <CartPanel
-                  values={props.values}
-                  errors={props.errors}
-                  touched={props.touched}
-                  handleChange={props.handleChange}
-                  handleBlur={props.handleBlur}
-                />
-              </div>
-              <div className={`tab-pane fade ${activeTab === 'pagarme' ? 'show active' : ''}`}>
-                <PagarMePanel
-                  values={props.values}
-                  errors={props.errors}
-                  touched={props.touched}
-                  handleChange={props.handleChange}
-                  handleBlur={props.handleBlur}
-                />
-              </div>
-              <div className={`tab-pane fade ${activeTab === 'pedidos10' ? 'show active' : ''}`}>
-                <Pedidos10Panel
-                  values={props.values}
-                  errors={props.errors}
-                  touched={props.touched}
-                  handleChange={props.handleChange}
-                  handleBlur={props.handleBlur}
                 />
               </div>
             </div>

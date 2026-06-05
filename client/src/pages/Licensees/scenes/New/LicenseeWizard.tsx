@@ -6,9 +6,6 @@ import { FieldWithError } from '../../../../components/form'
 import ChatPanel from '../Form/panels/ChatPanel'
 import ChatbotPanel from '../Form/panels/ChatbotPanel'
 import WhatsAppPanel from '../Form/panels/WhatsAppPanel'
-import CartPanel from '../Form/panels/CartPanel'
-import PagarMePanel from '../Form/panels/PagarMePanel'
-import Pedidos10Panel from '../Form/panels/Pedidos10Panel'
 
 const licenseeInitialValues = {
   name: '',
@@ -31,44 +28,17 @@ const licenseeInitialValues = {
   chatIdentifier: '',
   chatKey: '',
   chatUrl: '',
-  cartDefault: '',
-  unidadeId: '',
-  statusId: '',
   messageOnCloseChat: '',
-  productFractional2Name: '',
-  productFractional2Id: '',
-  productFractional3Name: '',
-  productFractional3Id: '',
-  productFractionalSize3Name: '',
-  productFractionalSize3Id: '',
-  productFractionalSize4Name: '',
-  productFractionalSize4Id: '',
-  productFractionals: '',
-  pedidos10_integration: '',
-  pedidos10_integrator: '',
   document: '',
   kind: '',
-  financial_player_fee: '0.00',
-  holder_name: '',
-  bank: '',
-  branch_number: '',
-  branch_check_digit: '',
-  account_number: '',
-  account_check_digit: '',
-  holder_kind: '',
-  holder_document: '',
-  account_type: '',
   useSenderName: false,
 }
 
 const STEPS = [
-  { id: 'identity',  title: 'Identidade', pedidos10Only: false },
-  { id: 'chat',      title: 'Chat',        pedidos10Only: false },
-  { id: 'chatbot',   title: 'ChatBot',     pedidos10Only: false },
-  { id: 'whatsapp',  title: 'WhatsApp',    pedidos10Only: false },
-  { id: 'carrinho',  title: 'Carrinho',    pedidos10Only: false },
-  { id: 'pagarme',   title: 'PagarMe',     pedidos10Only: false },
-  { id: 'pedidos10', title: 'Pedidos10',   pedidos10Only: true  },
+  { id: 'identity', title: 'Identidade' },
+  { id: 'chat',     title: 'Chat' },
+  { id: 'chatbot',  title: 'ChatBot' },
+  { id: 'whatsapp', title: 'WhatsApp' },
 ]
 
 const identitySchema = Yup.object().shape({
@@ -112,31 +82,6 @@ const whatsappSchema = Yup.object().shape({
     is: (v: any) => v && v !== 'baileys',
     then: (s: any) => s.required('URL do WhatsApp é obrigatória'),
   }),
-})
-
-const cartSchema = Yup.object().shape({
-  cartDefault:        Yup.string().required('Plugin de carrinho é obrigatório'),
-  unidadeId:          Yup.string().required('Id da loja é obrigatório'),
-  statusId:           Yup.string().required('Id do status é obrigatório'),
-  productFractionals: Yup.string().required('Produtos fracionados são obrigatórios'),
-})
-
-const pagarmeSchema = Yup.object().shape({
-  financial_player_fee: Yup.string().required('Taxa é obrigatória'),
-  holder_name:          Yup.string().required('Nome do titular é obrigatório'),
-  holder_kind:          Yup.string().required('Tipo do titular é obrigatório'),
-  holder_document:      Yup.string().required('Documento do titular é obrigatório'),
-  bank:                 Yup.string().required('Banco é obrigatório'),
-  branch_number:        Yup.string().required('Agência é obrigatória'),
-  branch_check_digit:   Yup.string().required('Dígito da agência é obrigatório'),
-  account_number:       Yup.string().required('Conta é obrigatória'),
-  account_check_digit:  Yup.string().required('Dígito da conta é obrigatório'),
-  account_type:         Yup.string().required('Tipo da conta é obrigatório'),
-})
-
-const pedidos10Schema = Yup.object().shape({
-  pedidos10_integrator:  Yup.string().required('Software integrador é obrigatório'),
-  pedidos10_integration: Yup.string().required('Dados da integração são obrigatórios'),
 })
 
 function IdentityStep({ values, errors, touched, handleChange, handleBlur }: any) {
@@ -225,32 +170,24 @@ function YesNoGate({ label, isYes, onChange }: any) {
   )
 }
 
-function LicenseeWizard({ currentUser, onSubmit, errors: backendErrors }: any) {
+function LicenseeWizard({ onSubmit, errors: backendErrors }: any) {
   const navigate = useNavigate()
-  const steps = STEPS.filter(s => !s.pedidos10Only || currentUser?.isPedidos10)
   const [currentStep, setCurrentStep] = useState(0)
   const [stepErrors, setStepErrors] = useState<any>(null)
-  const [useChat,      setUseChat]      = useState(null)
-  const [useWhatsapp,  setUseWhatsapp]  = useState(null)
-  const [useCart,      setUseCart]      = useState(null)
-  const [usePagarMe,   setUsePagarMe]   = useState(null)
-  const [usePedidos10, setUsePedidos10] = useState(null)
-  // useChatbot → formik.values.useChatbot (Formik field)
+  const [useChat,     setUseChat]     = useState(null)
+  const [useWhatsapp, setUseWhatsapp] = useState(null)
 
-  const totalSteps = steps.length
-  const step = steps[currentStep]
+  const totalSteps = STEPS.length
+  const step = STEPS[currentStep]
   const isLastStep = currentStep === totalSteps - 1
   const progressPct = Math.round(((currentStep + 1) / totalSteps) * 100)
 
   async function validateStep(values: any) {
     const schemas: any = {
       identity: identitySchema,
-      chat:      useChat                  ? chatSchema      : null,
-      chatbot:   values.useChatbot        ? chatbotSchema   : null,
-      whatsapp:  useWhatsapp              ? whatsappSchema  : null,
-      carrinho:  useCart                  ? cartSchema      : null,
-      pagarme:   usePagarMe               ? pagarmeSchema   : null,
-      pedidos10: usePedidos10             ? pedidos10Schema : null,
+      chat:     useChat           ? chatSchema    : null,
+      chatbot:  values.useChatbot ? chatbotSchema : null,
+      whatsapp: useWhatsapp       ? whatsappSchema : null,
     }
     const schema = schemas[step.id]
     if (!schema) return true
@@ -286,28 +223,6 @@ function LicenseeWizard({ currentUser, onSubmit, errors: backendErrors }: any) {
           cleaned.whatsappToken = ''
           cleaned.whatsappUrl = ''
           cleaned.useFileIDYcloud = false
-        }
-        if (!useCart) {
-          cleaned.cartDefault = ''
-          cleaned.unidadeId = ''
-          cleaned.statusId = ''
-          cleaned.productFractionals = ''
-        }
-        if (!usePagarMe) {
-          cleaned.financial_player_fee = '0.00'
-          cleaned.holder_name = ''
-          cleaned.holder_kind = ''
-          cleaned.holder_document = ''
-          cleaned.bank = ''
-          cleaned.branch_number = ''
-          cleaned.branch_check_digit = ''
-          cleaned.account_number = ''
-          cleaned.account_check_digit = ''
-          cleaned.account_type = ''
-        }
-        if (!usePedidos10) {
-          cleaned.pedidos10_integrator = ''
-          cleaned.pedidos10_integration = ''
         }
         onSubmit(cleaned)
       }}>
@@ -387,62 +302,6 @@ function LicenseeWizard({ currentUser, onSubmit, errors: backendErrors }: any) {
                     touched={formik.touched}
                     handleChange={formik.handleChange}
                     handleBlur={formik.handleBlur}
-                  />
-                )}
-              </>
-            )}
-            {step.id === 'carrinho' && (
-              <>
-                <YesNoGate
-                  label='Deseja integrar com um Carrinho de Compras?'
-                  isYes={useCart}
-                  onChange={setUseCart}
-                />
-                {useCart && (
-                  <CartPanel
-                    values={formik.values}
-                    errors={formik.errors}
-                    touched={formik.touched}
-                    handleChange={formik.handleChange}
-                    handleBlur={formik.handleBlur}
-                  />
-                )}
-              </>
-            )}
-            {step.id === 'pagarme' && (
-              <>
-                <YesNoGate
-                  label='Deseja integrar com o PagarMe?'
-                  isYes={usePagarMe}
-                  onChange={setUsePagarMe}
-                />
-                {usePagarMe && (
-                  <PagarMePanel
-                    values={formik.values}
-                    errors={formik.errors}
-                    touched={formik.touched}
-                    handleChange={formik.handleChange}
-                    handleBlur={formik.handleBlur}
-                    wizardMode={true}
-                  />
-                )}
-              </>
-            )}
-            {step.id === 'pedidos10' && (
-              <>
-                <YesNoGate
-                  label='Deseja integrar com o Pedidos10?'
-                  isYes={usePedidos10}
-                  onChange={setUsePedidos10}
-                />
-                {usePedidos10 && (
-                  <Pedidos10Panel
-                    values={formik.values}
-                    errors={formik.errors}
-                    touched={formik.touched}
-                    handleChange={formik.handleChange}
-                    handleBlur={formik.handleBlur}
-                    wizardMode={true}
                   />
                 )}
               </>

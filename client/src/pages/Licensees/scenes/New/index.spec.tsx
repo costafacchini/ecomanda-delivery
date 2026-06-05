@@ -34,14 +34,14 @@ describe('<LicenseeNew />', () => {
     await fillIdentityStep()
     fireEvent.click(screen.getByRole('button', { name: 'Próximo →' }))
 
-    // Steps 2-5: Chat, ChatBot, WhatsApp, Carrinho — click Próximo without Sim (treated as No)
-    // Step 6: PagarMe is the last step (shows Salvar, not Próximo)
-    for (let i = 0; i < 4; i++) {
+    // Steps 2-3: Chat and ChatBot — click Próximo without choosing Sim (treated as No)
+    // Step 4: WhatsApp is the last step (shows Salvar, not Próximo)
+    for (let i = 0; i < 2; i++) {
       await waitFor(() => expect(screen.getByRole('button', { name: 'Próximo →' })).toBeInTheDocument())
       fireEvent.click(screen.getByRole('button', { name: 'Próximo →' }))
     }
 
-    // Now on last step (PagarMe or Pedidos10 if isPedidos10)
+    // Now on last step (WhatsApp)
     await waitFor(() => expect(screen.getByRole('button', { name: 'Salvar' })).toBeInTheDocument())
   }
 
