@@ -9,23 +9,28 @@
 
 ## Objective
 
-Add a public self-service onboarding flow reachable from the login screen. A "Create your account" link opens a multi-step wizard modal over the login background; the user fills in licensee identity info and their own credentials, the backend creates both records in a single public endpoint, and the user is redirected to login to access the platform.
+Add a public self-service onboarding flow reachable from the login screen. A "Criar conta" link opens a multi-step wizard modal over the login background; the user fills in licensee identity, chooses optional chat/WhatsApp integrations, configures chosen integrations, and finally sets their own credentials. The backend creates both records in a single public endpoint and the user is redirected to login.
 
 ## Scope
 
 ### In Scope
-- Public `POST /onboarding` backend endpoint (no auth required, rate-limited) that creates a Licensee and an admin User in one request
+- Public `POST /onboarding` backend endpoint (no auth required, rate-limited) that creates a Licensee and an admin User in one request — accepts licensee identity fields + optional chat/WhatsApp integration fields + user credentials
 - `OnboardAccount` use case with cleanup if user creation fails after licensee creation
 - `OnboardingController` wired directly into `login-route.ts`
-- `OnboardingModal.tsx` — multi-step Bootstrap modal (Step 1: licensee identity; Step 2: user credentials)
+- `OnboardingModal.tsx` — dynamic multi-step wizard modal:
+  - Step 1: Licensee identity (name, kind, document, email, phone)
+  - Step 2: Integration choices — two YesNo gates on same screen (Chat platform? / WhatsApp platform?)
+  - Step 3 (conditional): Chat platform fields — shown only if user chose "Sim" for chat
+  - Step 4 (conditional): WhatsApp platform fields — shown only if user chose "Sim" for WhatsApp
+  - Step 5 (always last): User credentials (name, email, password, confirmPassword)
 - `onboarding.ts` frontend service calling the public endpoint
 - "Criar conta" link on the Sign-In page that opens the modal
 - On success: modal closes and user lands on the login form with a success banner
 
 ### Out of Scope
-- Integration (chat/chatbot/WhatsApp/cart/PagarMe/Pedidos10) wizard steps — those require admin configuration post-signup; excluded to keep onboarding minimal
+- ChatBot integration step — out of scope for onboarding (admin can configure post-signup)
+- `licenseKind` is locked to `'demo'` server-side; not shown in wizard — plan/upgrade is future work
 - Email verification flow — out of scope for this iteration
-- `licenseKind` locked to `'demo'` server-side — the frontend shows it as a read-only "Demo" label; plan/upgrade flow is future work
 - Any modification to existing `POST /licensees` or `POST /users` protected routes
 
 ## Kill Criteria
@@ -38,7 +43,7 @@ Add a public self-service onboarding flow reachable from the login screen. A "Cr
 | Phase | Name | Tasks | Dependencies | Description |
 |-------|------|-------|--------------|-------------|
 | 1 | Backend | task-01 | None | Public use case, controller, and route for combined licensee+user creation |
-| 2 | Frontend Modal | task-02 | Phase 1 | Multi-step wizard component + API service layer |
+| 2 | Frontend Modal | task-02 | Phase 1 | Dynamic multi-step wizard component + API service layer |
 | 3 | Sign-in Integration | task-03 | Phase 2 | Wire the modal into the Sign-in page |
 
 ## Task Summary
@@ -65,28 +70,32 @@ Base branch: `main`
 | File/Directory | Relevance |
 |----------------|-----------|
 | `src/app/routes/login-route.ts` | Public router — add `POST /onboarding` here (same public boundary as login) |
-| `src/app/usecases/licensees/CreateLicensee.ts` | Reference for field whitelist and `pickFields` helper pattern |
-| `src/app/usecases/users/CreateUser.ts` | Reference for user creation pattern |
-| `src/app/models/Licensee.ts` | Required fields: name (≥4), licenseKind (demo/free/paid), email, phone, document, kind (individual/company) |
-| `src/app/models/User.ts` | Required fields: name (≥4), email (unique), password (≥8); `licensee` optional when role=admin |
+| `src/app/usecases/licensees/CreateLicensee.ts` | Reference for `pickFields` helper and field whitelist pattern |
+| `src/app/models/Licensee.ts` | Field constraints: name ≥4, licenseKind enum, chatDefault enum, whatsappDefault enum, conditional token/url requirements |
+| `src/app/models/User.ts` | Required: name ≥4, email (unique), password ≥8; role=admin makes licensee optional |
 | `client/src/pages/SignIn/index.tsx` | Login page — add "Criar conta" link + mount modal |
-| `client/src/pages/Licensees/scenes/New/LicenseeWizard.tsx` | Reference for wizard step structure, Formik setup, and field names |
-| `client/src/components/SelectLicenseeModal/index.tsx` | Reference for Bootstrap modal HTML pattern used in this codebase |
-| `client/src/services/licensee.ts` | Reference for frontend service pattern (api() wrapper, headers) |
+| `client/src/pages/Licensees/scenes/New/LicenseeWizard.tsx` | Reference for YesNoGate component, step progression, Formik + Yup per-step validation pattern |
+| `client/src/pages/Licensees/scenes/Form/panels/ChatPanel.tsx` | Reference for chat field set (chatDefault, chatUrl, chatIdentifier, chatKey) |
+| `client/src/pages/Licensees/scenes/Form/panels/WhatsAppPanel.tsx` | Reference for WhatsApp field set (whatsappDefault, whatsappToken, whatsappUrl) |
+| `client/src/components/SelectLicenseeModal/index.tsx` | Reference for Bootstrap modal HTML pattern |
+| `client/src/services/licensee.ts` | Reference for frontend service pattern (api() wrapper) |
 
 ## Risks
 
-- `POST /onboarding` is unauthenticated — rate limiting is mandatory to prevent account spam; reuse the loginLimiter pattern from `login-route.ts`
-- User email uniqueness — if signup is attempted with an already-registered email, the backend must return a clear 409 error surfaced in the wizard
+- `POST /onboarding` is unauthenticated — rate limiting is mandatory; reuse the loginLimiter pattern from `login-route.ts` with a tighter window (5 per hour)
+- User email uniqueness — duplicate email must surface as a 409 inline in the wizard
 - Licensee orphan on partial failure — if licensee creation succeeds but user creation fails, the use case must delete the orphaned licensee before returning an error
+- Dynamic step sequence — skipping integration steps based on yes/no choices requires careful "next/previous" logic; use a computed `steps` array derived from `wantsChat`/`wantsWhatsapp` state
 
 ## Success Criteria
 
 - [ ] `POST /onboarding` creates a Licensee and linked admin User; returns 201 with `{ licensee, user }` (password excluded)
 - [ ] `POST /onboarding` is rate-limited and requires no auth token
 - [ ] Wizard modal renders over the login gradient background, not a separate page
-- [ ] Step 1 collects: name, kind, document, email, phone (licenseKind fixed to 'demo' server-side, shown as read-only in UI)
-- [ ] Step 2 collects: user name, email, password, confirmPassword (confirmPassword is frontend-only)
+- [ ] Step 1 collects licensee identity (name, kind, document, email, phone)
+- [ ] Step 2 shows two YesNo gates (Chat / WhatsApp); choosing "Não" for both skips directly to user credentials
+- [ ] Steps 3/4 appear only when the user chose "Sim" for the respective integration
+- [ ] Last step always collects user credentials (name, email, password, confirmPassword)
 - [ ] On success: modal closes, Sign-in page shows a success message
 - [ ] On failure: wizard displays the server error message inline
 - [ ] All new backend specs pass (`npx jest`)
