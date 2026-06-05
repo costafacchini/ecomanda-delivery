@@ -2,7 +2,7 @@
 
 **Status**: not-started
 **Created**: 2026-05-29
-**Last Updated**: 2026-05-29
+**Last Updated**: 2026-06-04
 **Estimated Demo Date**: TBD — depends on local-chat-infra completion
 **Assigned Dev**: Alan Costa Facchini
 **Assigned QA**: unassigned
@@ -30,9 +30,10 @@ Add a Setor (department) entity to the platform, allowing a licensee to have mul
 ### Out of Scope
 - Cross-sector message forwarding or escalation
 - Sector-level chatbot configuration — uses licensee chatbot settings
-- Group WhatsApp numbers per sector (one Baileys session per sector max)
+- Multiple WhatsApp numbers per sector — each sector is limited to exactly one Baileys session (one phone number). Pooling two or more numbers under the same sector is not supported; it would require `WhatsappSession.setor` to become a 1-to-many relationship and a more complex room-lookup strategy.
 - Sector analytics / reporting
 - Automatic agent assignment within a sector (manual pickup only, for now)
+- Sectors for non-Baileys messenger plugins (utalk, dialog, ycloud, pabbly) — those plugins are webhook-based and share a single `licensee.apiToken` endpoint with no mechanism to identify which sector's number a message arrived on. Sector routing is Baileys-only in this plan.
 
 ## Kill Criteria
 
@@ -59,7 +60,7 @@ Add a Setor (department) entity to the platform, allowing a licensee to have mul
 | Task Path | Title | Phase | Status | Depends On |
 |-----------|-------|-------|--------|------------|
 | phase-1/task-01-setor-model-api | Setor model + CRUD API | 1 | not-started | — |
-| phase-1/task-02-schema-migrations | Schema migrations (WhatsappSession, Room, Licensee) | 1 | not-started | — |
+| phase-1/task-02-schema-migrations | Schema migrations (WhatsappSession, Room, Licensee, Message, Body) | 1 | not-started | — |
 | phase-2/task-03-multi-session-baileys | Multi-session BaileysSocketManager + sector endpoints | 2 | not-started | phase-1/task-01-setor-model-api, phase-1/task-02-schema-migrations |
 | phase-2/task-04-message-routing | Message routing + agent access filtering | 2 | not-started | phase-1/task-01-setor-model-api, phase-1/task-02-schema-migrations |
 | phase-3/task-05-frontend-setor-crud | Frontend: Setor CRUD + Baileys connect | 3 | not-started | phase-2/task-03-multi-session-baileys |
@@ -89,6 +90,8 @@ Base branch: `main`
 | `src/app/models/WhatsappSession.ts` | Modify — add `setor` field, change unique index |
 | `src/app/models/Room.ts` | Modify — add `setor` field |
 | `src/app/models/Licensee.ts` | Modify — add `useSetores` flag |
+| `src/app/models/Message.ts` | Modify — add `setor` field (pipeline carrier from socket to Room) |
+| `src/app/models/Body.ts` | Modify — add `setor` field (async job bridge) |
 | `src/app/services/BaileysSocketManager.ts` | Modify — re-key by `session._id` |
 | `src/app/usecases/licensees/StartBaileysSocket.ts` | Modify — accept optional `setor` param |
 | `src/app/routes/resources-routes.ts` | Modify — add sector routes |
