@@ -217,39 +217,57 @@ function OnboardingModal({ isOpen, onClose, onSuccess }: Props) {
             )}
           </div>
 
-          <div className='mb-3'>
-            <label htmlFor='kind' className='form-label'>Tipo</label>
-            <select
-              id='kind'
-              name='kind'
-              className='form-select'
-              value={formik.values.kind}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            >
-              <option value=''></option>
-              <option value='company'>Jurídica</option>
-              <option value='individual'>Física</option>
-            </select>
-            {formik.touched.kind && formik.errors.kind && (
-              <div className='text-danger small'>{formik.errors.kind as string}</div>
-            )}
-          </div>
+          <div className='row mb-3'>
+            <div className='col-3'>
+              <label htmlFor='kind' className='form-label'>Tipo</label>
+              <select
+                id='kind'
+                name='kind'
+                className='form-select'
+                value={formik.values.kind}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              >
+                <option value=''></option>
+                <option value='company'>Jurídica</option>
+                <option value='individual'>Física</option>
+              </select>
+              {formik.touched.kind && formik.errors.kind && (
+                <div className='text-danger small'>{formik.errors.kind as string}</div>
+              )}
+            </div>
 
-          <div className='mb-3'>
-            <label htmlFor='document' className='form-label'>Documento</label>
-            <input
-              id='document'
-              name='document'
-              type='text'
-              className='form-control'
-              value={formik.values.document}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            />
-            {formik.touched.document && formik.errors.document && (
-              <div className='text-danger small'>{formik.errors.document as string}</div>
-            )}
+            <div className='col-5'>
+              <label htmlFor='document' className='form-label'>Documento</label>
+              <input
+                id='document'
+                name='document'
+                type='text'
+                className='form-control'
+                value={formik.values.document}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.touched.document && formik.errors.document && (
+                <div className='text-danger small'>{formik.errors.document as string}</div>
+              )}
+            </div>
+
+            <div className='col-4'>
+              <label htmlFor='phone' className='form-label'>Telefone</label>
+              <input
+                id='phone'
+                name='phone'
+                type='text'
+                className='form-control'
+                value={formik.values.phone}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.touched.phone && formik.errors.phone && (
+                <div className='text-danger small'>{formik.errors.phone as string}</div>
+              )}
+            </div>
           </div>
 
           <div className='mb-3'>
@@ -265,22 +283,6 @@ function OnboardingModal({ isOpen, onClose, onSuccess }: Props) {
             />
             {formik.touched.licenseeEmail && formik.errors.licenseeEmail && (
               <div className='text-danger small'>{formik.errors.licenseeEmail as string}</div>
-            )}
-          </div>
-
-          <div className='mb-3'>
-            <label htmlFor='phone' className='form-label'>Telefone</label>
-            <input
-              id='phone'
-              name='phone'
-              type='text'
-              className='form-control'
-              value={formik.values.phone}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            />
-            {formik.touched.phone && formik.errors.phone && (
-              <div className='text-danger small'>{formik.errors.phone as string}</div>
             )}
           </div>
         </>
