@@ -1,0 +1,136 @@
+{
+  "event": {
+    "body": {
+      "account": { "id": 16, "name": "Jaicar" },
+      "additional_attributes": {},
+      "content": "Quem vai te atender é AMANDA TEODORO.",
+      "content_attributes": {},
+      "content_type": "text",
+      "conversation": {
+        "additional_attributes": {},
+        "agent_last_seen_at": 0,
+        "can_reply": true,
+        "channel": "Channel::Api",
+        "contact_inbox": {
+          "id": 82266,
+          "source_id": "b3ceb73d-c4cc-47f7-a95e-d1cc4d6da0ef"
+        },
+        "contact_last_seen_at": 0,
+        "created_at": 1780686992,
+        "custom_attributes": {},
+        "first_reply_created_at": "2026-06-05T19:16:33.938Z",
+        "id": 396,
+        "inbox_id": 405,
+        "labels": [],
+        "last_activity_at": 1780686997,
+        "messages": [
+          {
+            "account_id": 16,
+            "additional_attributes": {},
+            "content": "Quem vai te atender é AMANDA TEODORO.",
+            "content_attributes": {},
+            "content_type": "text",
+            "conversation": {
+              "assignee_id": 363,
+              "contact_inbox": {
+                "source_id": "b3ceb73d-c4cc-47f7-a95e-d1cc4d6da0ef"
+              },
+              "last_activity_at": 1780686997,
+              "unread_count": 1
+            },
+            "conversation_id": 396,
+            "created_at": 1780686997,
+            "id": 2593201,
+            "inbox_id": 405,
+            "message_type": 1,
+            "private": false,
+            "processed_message_content": "Quem vai te atender é AMANDA TEODORO.",
+            "sender": {
+              "availability_status": null,
+              "available_name": "Jota - Assistente Virtual",
+              "avatar_url": "https://fortbras.zibb.com.br/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBMmdwQXc9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--ba2e3bed2ec1df7bf079f5419e9df5224efbc20f/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2RTNKbGMybDZaVjkwYjE5bWFXeHNXd2RwQWZvdyIsImV4cCI6bnVsbCwicHVyIjoidmFyaWF0aW9uIn19--6e01188d5edb4be53ced9c1b8a6267644ec8b8f0/zibb-bot2.png?v=1780493813",
+              "id": 4,
+              "name": "Jota - Assistente Virtual",
+              "thumbnail": "https://fortbras.zibb.com.br/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBMmdwQXc9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--ba2e3bed2ec1df7bf079f5419e9df5224efbc20f/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2RTNKbGMybDZaVjkwYjE5bWFXeHNXd2RwQWZvdyIsImV4cCI6bnVsbCwicHVyIjoidmFyaWF0aW9uIn19--6e01188d5edb4be53ced9c1b8a6267644ec8b8f0/zibb-bot2.png?v=1780493813",
+              "type": "user"
+            },
+            "sender_id": 4,
+            "sender_type": "User",
+            "sentiment": {},
+            "source_id": null,
+            "status": "sent",
+            "updated_at": "2026-06-05T19:16:37.438Z"
+          }
+        ],
+        "meta": {
+          "assignee": {
+            "availability_status": null,
+            "available_name": "AMANDA TEODORO",
+            "avatar_url": "",
+            "id": 363,
+            "name": "AMANDA TEODORO",
+            "thumbnail": "",
+            "type": "user"
+          },
+          "assignee_type": "User",
+          "channel": "Channel::Api",
+          "hmac_verified": false,
+          "sender": {
+            "additional_attributes": {},
+            "blocked": false,
+            "custom_attributes": {},
+            "email": null,
+            "id": 78059,
+            "identifier": null,
+            "name": "Juarez",
+            "phone_number": "+5544999743256",
+            "thumbnail": "",
+            "type": "contact",
+            "whatsapp_bsuid": null,
+            "whatsapp_username": null
+          },
+          "team": null
+        },
+        "priority": null,
+        "snoozed_until": null,
+        "status": "open",
+        "timestamp": 1780686997,
+        "unread_count": 1,
+        "updated_at": 1780686997.452055,
+        "waiting_since": 0
+      },
+      "created_at": "2026-06-05T19:16:37.438Z",
+      "event": "message_created",
+      "id": 2593201,
+      "inbox": { "id": 405, "name": "Principal" },
+      "message_type": "outgoing",
+      "private": false,
+      "sender": {
+        "email": "whatsapp@deliverywhats.app",
+        "id": 4,
+        "name": "Jota - Assistente Virtual",
+        "type": "user"
+      },
+      "source_id": null,
+      "status": "sent"
+    },
+    "client_ip": "195.35.17.120",
+    "headers": {
+      "accept": "application/json",
+      "accept-encoding": "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
+      "baggage": "sentry-trace_id=5b37538ba25d450494bbeb5f3010258a,sentry-sample_rate=0.1,sentry-sampled=false,sentry-environment=production,sentry-release=mega%404.16.5,sentry-public_key=7c275388d012ba24458982275d7de4d8",
+      "content-length": "3096",
+      "content-type": "application/json",
+      "host": "eow5qhsclsxwf6l.m.pipedream.net",
+      "sentry-trace": "5b37538ba25d450494bbeb5f3010258a-5c4127da45c84e51-0",
+      "user-agent": "Ruby",
+      "x-chatwoot-delivery": "56026a43-eaa9-4b3b-a31b-700ffbf8deee",
+      "x-chatwoot-signature": "sha256=9f48b66b7657a8a45f04c5fb6c08350ffa819b76840b03b42433211bafbb87a7",
+      "x-chatwoot-timestamp": "1780686997"
+    },
+    "method": "POST",
+    "path": "/",
+    "query": {},
+    "url": "https://eow5qhsclsxwf6l.m.pipedream.net/"
+  }
+}

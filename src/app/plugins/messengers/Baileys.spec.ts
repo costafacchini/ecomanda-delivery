@@ -259,6 +259,25 @@ describe('Baileys plugin', () => {
         const contact = await contactRepository.findFirst({ licensee: licensee._id })
         expect(contact.number).not.toMatch(/\.$/)
       })
+
+      it('stores group contact waId with @g.us suffix so it can be used as a JID for sending', async () => {
+        const groupJid = '120363181039895068@g.us'
+        const body = {
+          key: { remoteJid: groupJid, id: 'BAILEYS-GROUP-MSG-001' },
+          pushName: 'Group Sender',
+          message: { conversation: 'Hello from group' },
+        }
+
+        const baileys = new Baileys(licensee, dependencies)
+        await baileys.responseToMessages(body)
+
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.findFirst({ licensee: licensee._id, type: '@g.us' })
+        expect(contact).toBeTruthy()
+        expect(contact.waId).toEqual('120363181039895068@g.us')
+        expect(contact.number).toEqual('120363181039895068')
+        expect(contact.type).toEqual('@g.us')
+      })
     })
   })
 
