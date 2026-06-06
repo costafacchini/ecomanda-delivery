@@ -26,10 +26,6 @@ class GetBaileysQr {
       return { message: 'Já conectado' }
     }
 
-    if (process.env.ENABLE_BAILEYS_SOCKET === 'true') {
-      this.startBaileysSocket?.(licensee).catch(() => {})
-    }
-
     return { qr }
   }
 }

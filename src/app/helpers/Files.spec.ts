@@ -23,6 +23,12 @@ describe('.isVideo', () => {
   it.each(photoExtensions.concat(midiaExtensions).concat(voiceExtensions))('is false if it is %o', (videoExtension) => {
     expect(isVideo(`file.${videoExtension}`)).toEqual(false)
   })
+
+  it('is true for S3 presigned URL with extension inside query param', () => {
+    const presignedUrl =
+      'https://broken-bird-5742.fly.storage.tigris.dev/1h1y3onjjy3i7yn74vyo9ppz8shb?response-content-disposition=attachment%3B%20filename%3D%220506_Stories.mp4%22%3B%20filename%2A%3DUTF-8%27%270506_Stories.mp4&response-content-type=video%2Fmp4&X-Amz-Algorithm=AWS4-HMAC-SHA256'
+    expect(isVideo(presignedUrl)).toEqual(true)
+  })
 })
 
 describe('.isMidia', () => {

@@ -24,6 +24,7 @@ class LicenseesController {
     whatsappSessionRepository,
     contactRepository,
     startBaileysSocket,
+    socketManager,
   }: Record<string, any> = {}) {
     this.licenseeRepository = licenseeRepository
     this.createLicenseesQuery = createLicenseesQuery
@@ -31,7 +32,12 @@ class LicenseesController {
     this.updateLicensee = updateLicensee
     this.setDialogWebhookUseCase = setDialogWebhook
     this.getBaileysQrUseCase = new GetBaileysQr({ licenseeRepository, createMessengerPlugin, startBaileysSocket })
-    this.getBaileysStatusUseCase = new GetBaileysStatus({ licenseeRepository, whatsappSessionRepository })
+    this.getBaileysStatusUseCase = new GetBaileysStatus({
+      licenseeRepository,
+      whatsappSessionRepository,
+      startBaileysSocket,
+      socketManager,
+    })
     this.syncBaileysDirectoryUseCase = new SyncBaileysDirectory({
       licenseeRepository,
       contactRepository,
