@@ -25,6 +25,7 @@ import { CreateUser } from '../usecases/users/CreateUser'
 import { UpdateUser } from '../usecases/users/UpdateUser'
 import { CreateMessage } from '../usecases/messages/CreateMessage'
 import { createRuntimeDependencies } from '../runtime/dependencies'
+import { UsersQuery } from '../queries/UsersQuery'
 
 const router = express.Router()
 const SECRET = process.env.SECRET as string
@@ -49,6 +50,7 @@ const usersController = new UsersController({
   userRepository,
   createUser: new CreateUser({ userRepository }),
   updateUser: new UpdateUser({ userRepository }),
+  createUsersQuery: () => new UsersQuery({ userRepository }),
 })
 const licenseesController = new LicenseesController({
   licenseeRepository,

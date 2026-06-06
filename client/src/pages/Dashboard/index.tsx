@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { AppContext } from '../../contexts/App'
 import SuperLicenseesCard from './cards/SuperLicenseesCard'
 import SuperMessageVolumeCard from './cards/SuperMessageVolumeCard'
@@ -9,6 +9,7 @@ import SuperOpenRoomsCard from './cards/SuperOpenRoomsCard'
 import LicenseeContactsCard from './cards/LicenseeContactsCard'
 import LicenseeMessagesTodayCard from './cards/LicenseeMessagesTodayCard'
 import LicenseeMessagesPerDayCard from './cards/LicenseeMessagesPerDayCard'
+import BaileysSetupCard from './cards/BaileysSetupCard'
 
 export default function Dashboard() {
   const { currentUser, activeLicensee } = useContext(AppContext)
@@ -32,9 +33,16 @@ export default function Dashboard() {
 
   if (currentUser.role === 'super' || currentUser.role === 'admin') {
     const licenseeId = activeLicensee?._id
+    const needsBaileysSetup = currentUser.role === 'admin' && currentUser.licensee?.whatsappDefault === 'baileys'
+    const [showBaileysCard, setShowBaileysCard] = useState(needsBaileysSetup)
     return (
       <>
         <div className="row g-3">
+          {showBaileysCard && (
+            <div className="col-12 col-md-6">
+              <BaileysSetupCard licenseeId={currentUser.licensee._id} onConnected={() => setShowBaileysCard(false)} />
+            </div>
+          )}
           <div className="col-12 col-md-6"><SuperMessageVolumeCard licensee={licenseeId} /></div>
           <div className="col-12 col-md-6"><SuperDeliveryRateCard licensee={licenseeId} /></div>
           <div className="col-12 col-md-6"><SuperQueueCard licensee={licenseeId} /></div>
