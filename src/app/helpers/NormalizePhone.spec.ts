@@ -16,8 +16,10 @@ describe('NormalizePhone', () => {
   describe('phone number', () => {
     it('normalizes phone', () => {
       const phone = new NormalizePhone('5539012345683@c.us')
+      const phoneWithWppDomain = new NormalizePhone('554899098045@s.whatsapp.net')
 
       expect(phone.number).toEqual('5539012345683')
+      expect(phoneWithWppDomain.number).toEqual('5548999098045')
     })
 
     it('does not normalize phone if length is 13 numbers', () => {
