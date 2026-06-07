@@ -45,6 +45,7 @@ describe('transformChatbotBody', () => {
     const body = await Body.create(
       bodyFactory.build({
         licensee: licensee,
+        concluded: false,
       }),
     )
 
@@ -56,8 +57,8 @@ describe('transformChatbotBody', () => {
 
     expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
-    const bodyDeleted = await Body.findById(body._id)
-    expect(bodyDeleted).toEqual(null)
+    const bodyUpdated = await Body.findById(body._id)
+    expect(bodyUpdated.concluded).toEqual(true)
 
     expect(actions[0].action).toEqual('send-message-to-messenger')
     expect(actions[0].body).toEqual({
@@ -80,7 +81,7 @@ describe('transformChatbotBody', () => {
     expect(actions.length).toEqual(2)
   })
 
-  it('responds with blank actions if body is invalid and delete body', async () => {
+  it('responds with blank actions if body is invalid and update body', async () => {
     const chatbotPluginResponseToMessages = jest
       .spyOn(Landbot.prototype, 'responseToMessages')
       .mockImplementation(() => {
@@ -93,6 +94,7 @@ describe('transformChatbotBody', () => {
           is: 'invalid',
         },
         licensee: licensee,
+        concluded: false,
       }),
     )
 
@@ -104,8 +106,8 @@ describe('transformChatbotBody', () => {
 
     expect(chatbotPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
-    const bodyDeleted = await Body.findById(body._id)
-    expect(bodyDeleted).toEqual(null)
+    const bodyUpdated = await Body.findById(body._id)
+    expect(bodyUpdated.concluded).toEqual(true)
 
     expect(actions.length).toEqual(0)
   })

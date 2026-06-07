@@ -50,6 +50,7 @@ describe('transformChatBody', () => {
     const body = await Body.create(
       bodyFactory.build({
         licensee: licensee,
+        concluded: false,
       }),
     )
 
@@ -61,8 +62,8 @@ describe('transformChatBody', () => {
 
     expect(chatPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
-    const bodyDeleted = await Body.findById(body._id)
-    expect(bodyDeleted).toEqual(null)
+    const bodyUpdated = await Body.findById(body._id)
+    expect(bodyUpdated.concluded).toEqual(true)
 
     expect(actions[0].action).toEqual('send-message-to-messenger')
     expect(actions[0].body).toEqual({
@@ -115,6 +116,7 @@ describe('transformChatBody', () => {
     const body = await Body.create(
       bodyFactory.build({
         licensee: licensee,
+        concluded: false,
       }),
     )
 
@@ -126,8 +128,8 @@ describe('transformChatBody', () => {
 
     expect(chatPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
-    const bodyDeleted = await Body.findById(body._id)
-    expect(bodyDeleted).toEqual(null)
+    const bodyUpdated = await Body.findById(body._id)
+    expect(bodyUpdated.concluded).toEqual(true)
 
     expect(actions[0].action).toEqual('send-message-to-chat')
     expect(actions[0].body).toEqual(expect.objectContaining({ url: 'https://www.jivo.chat.com', token: '' }))
@@ -147,6 +149,7 @@ describe('transformChatBody', () => {
     const body = await Body.create(
       bodyFactory.build({
         licensee: licensee,
+        concluded: false,
       }),
     )
 
@@ -158,8 +161,8 @@ describe('transformChatBody', () => {
 
     expect(chatPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
-    const bodyDeleted = await Body.findById(body._id)
-    expect(bodyDeleted).toEqual(null)
+    const bodyUpdated = await Body.findById(body._id)
+    expect(bodyUpdated.concluded).toEqual(true)
 
     expect(actions[0].action).toEqual('send-message-to-messenger')
     expect(actions[0].body).toEqual({
@@ -173,7 +176,7 @@ describe('transformChatBody', () => {
     expect(actions.length).toEqual(1)
   })
 
-  it('responds with blank actions if body is invalid and delete body', async () => {
+  it('responds with blank actions if body is invalid and update body', async () => {
     const chatPluginResponseToMessages = jest
       .spyOn(Rocketchat.prototype, 'responseToMessages')
       .mockImplementation(() => {
@@ -188,6 +191,7 @@ describe('transformChatBody', () => {
           },
         },
         licensee: licensee,
+        concluded: false,
       }),
     )
 
@@ -199,8 +203,8 @@ describe('transformChatBody', () => {
 
     expect(chatPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
-    const bodyDeleted = await Body.findById(body._id)
-    expect(bodyDeleted).toEqual(null)
+    const bodyUpdated = await Body.findById(body._id)
+    expect(bodyUpdated.concluded).toEqual(true)
 
     expect(actions.length).toEqual(0)
   })

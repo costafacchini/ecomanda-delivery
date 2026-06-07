@@ -34,7 +34,7 @@ describe('transformMessengerBody', () => {
     resetMemoryRepositories()
   })
 
-  it('responds with action to send message to chat and chatbot and delete body', async () => {
+  it('responds with action to send message to chat and chatbot and update body', async () => {
     const messengerPluginResponseToMessages = jest
       .spyOn(Dialog.prototype, 'responseToMessages')
       .mockImplementation(() => {
@@ -69,6 +69,7 @@ describe('transformMessengerBody', () => {
           ],
         },
         licensee,
+        concluded: false,
       }),
     )
 
@@ -80,8 +81,8 @@ describe('transformMessengerBody', () => {
 
     expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
-    const bodyDeleted = await Body.findById(body._id)
-    expect(bodyDeleted).toEqual(null)
+    const bodyUpdated = await Body.findById(body._id)
+    expect(bodyUpdated.concluded).toEqual(true)
 
     expect(actions.length).toEqual(3)
 
@@ -113,7 +114,7 @@ describe('transformMessengerBody', () => {
     })
   })
 
-  it('responds with blank actions if body is invalid and delete body', async () => {
+  it('responds with blank actions if body is invalid and update body', async () => {
     const messengerPluginResponseToMessages = jest
       .spyOn(Dialog.prototype, 'responseToMessages')
       .mockImplementation(() => {
@@ -128,6 +129,7 @@ describe('transformMessengerBody', () => {
           },
         },
         licensee,
+        concluded: false,
       }),
     )
 
@@ -139,8 +141,8 @@ describe('transformMessengerBody', () => {
 
     expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body.content)
 
-    const bodyDeleted = await Body.findById(body._id)
-    expect(bodyDeleted).toEqual(null)
+    const bodyUpdated = await Body.findById(body._id)
+    expect(bodyUpdated.concluded).toEqual(true)
 
     expect(actions.length).toEqual(0)
   })

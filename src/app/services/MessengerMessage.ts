@@ -39,7 +39,7 @@ async function transformMessengerBody(data: any, { bodyRepository, createMesseng
     })
   }
 
-  await bodyRepository.delete({ _id: bodyId })
+  await bodyRepository.update({ _id: bodyId }, { concluded: true })
 
   return actions
 }
