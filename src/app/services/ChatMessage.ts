@@ -54,7 +54,7 @@ async function transformChatBody(
     })
   }
 
-  await bodyRepository.delete({ _id: bodyId })
+  await bodyRepository.update({ _id: bodyId }, { concluded: true })
 
   return actions
 }

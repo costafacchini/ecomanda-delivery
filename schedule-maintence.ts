@@ -3,32 +3,23 @@ import 'module-alias/register'
 import '@models/index'
 import moment from 'moment'
 
-import request from './src/app/services/request'
 import Body from '@models/Body'
-import Room from '@models/Room'
 import { connect } from './src/config/database'
 connect()
 
 async function schedule() {
-  // This command destroy bodies that are older than 1 day
+  // This command destroy bodies that are older than 3 days and are concluded, to avoid the database growing too much with old bodies that are not needed anymore. The command is scheduled to run every day at 3am, but you can change the schedule as you want.
 
   try {
-    const yesterday = moment().subtract(1, 'days')
-    const start = moment().subtract(10, 'days')
-    const end = moment(yesterday).endOf('day')
+    const threeDaysAgo = moment().subtract(3, 'days')
+    const end = moment(threeDaysAgo).endOf('day')
 
-    let res = await Body.deleteMany({ createdAt: { $gte: start.toDate(), $lt: end.toDate() }, kind: 'normal' })
+    let res = await Body.deleteMany({ createdAt: { $lt: end.toDate() }, kind: 'normal', concluded: true })
     console.log(`Bodies concluded destroyed: ${res.deletedCount}`)
-
-    res = await Room.deleteMany({ closed: true })
-    console.log(`Rooms concluded destroyed: ${res.deletedCount}`)
   } catch (err) {
     console.log(err)
   }
-
-  // This command is necessary to wake up the heroku application
-  await request.get('https://clave-digital.herokuapp.com/resources')
-  // process.exit()
+  process.exit()
 }
 
 schedule()
