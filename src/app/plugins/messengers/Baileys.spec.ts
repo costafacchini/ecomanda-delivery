@@ -211,7 +211,6 @@ describe('Baileys plugin', () => {
 
         expect(contact).toBeTruthy()
         expect(contact.name).toEqual('New Contact')
-        expect(contact.waId).toEqual(PARSED_WA_ID)
       })
 
       it('updates contact name when it differs from stored name', async () => {

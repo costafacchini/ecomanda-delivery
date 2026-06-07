@@ -5,7 +5,6 @@ import { requireDependency } from '../../helpers/RequireDependency'
 import { isPhoto, isVideo } from '../../helpers/Files'
 
 const JID_GROUP_SUFFIX = '@g.us'
-const JID_WA_NET_SUFFIX = '@s.whatsapp.net'
 
 class Baileys extends MessengersBase {
   _whatsappSessionRepository: any
@@ -81,19 +80,32 @@ class Baileys extends MessengersBase {
       return
     }
 
-    const remoteJid = body.key.remoteJid
-    const phone = remoteJid
-      .replace(new RegExp(`${JID_WA_NET_SUFFIX}$`), '')
-      .replace(new RegExp(`${JID_GROUP_SUFFIX}$`), '')
-    const normalizePhone = new NormalizePhone(phone)
+    let phone: NormalizePhone
+    phone = this.getPhone(body.key.remoteJidAlt)
+    if (!phone.number) {
+      phone = this.getPhone(body.key.remoteJid)
+    }
+    if (!phone.number) {
+      phone = this.getPhone(body.key.participant)
+    }
+
+    if (!phone.number) {
+      this.contactData = null
+      return
+    }
 
     this.contactData = {
-      number: normalizePhone.number,
-      type: normalizePhone.type,
-      waId: remoteJid.replace(new RegExp(`${JID_WA_NET_SUFFIX}$`), '').replace(new RegExp(`${JID_GROUP_SUFFIX}$`), ''),
-      name: body.pushName || normalizePhone.number,
+      number: phone.number,
+      type: phone.type,
+      name: body.pushName || phone.number,
       wa_start_chat: new Date(),
     }
+  }
+
+  getPhone(number: string | undefined): NormalizePhone {
+    if (!number) return new NormalizePhone('')
+
+    return new NormalizePhone(number)
   }
 
   contactWithDifferentData(contact: any) {
