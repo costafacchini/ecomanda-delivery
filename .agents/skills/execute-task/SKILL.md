@@ -1,6 +1,6 @@
 ---
 name: execute-task
-description: Executes a single task from a development plan. Loads task context, runs pre-flight checks, creates a git branch, follows implementation steps with adaptation protocol, runs tests, and updates status. Use when working on a specific plan task.
+description: Execute a single plan task. Loads context, branches, follows implementation steps with adaptation protocol, runs tests, updates status.
 ---
 
 # Execute Task

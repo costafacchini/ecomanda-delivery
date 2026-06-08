@@ -1,6 +1,6 @@
 ---
 name: execute-plan
-description: Runs remaining plan tasks in in a development plan with parallel agent support. Builds a dependency DAG, identifies ready tasks, and runs them in waves with formal phase gates. Supports both agent teams (parallel) and sequential fallback. Use when you want to run all remaining tasks in a plan.
+description: Run all remaining tasks in a plan. Dependency DAG, parallel agent support, wave execution, formal phase gates.
 ---
 
 # Execute Plan

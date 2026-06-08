@@ -1,6 +1,6 @@
 ---
 name: investigate-bug
-description: Full bug lifecycle — investigate, root cause, plan fix, document. For when something is broken and you need structured debugging, not ad-hoc poking.
+description: Full bug lifecycle — investigate, root cause, plan fix, document. For structured debugging, not ad-hoc poking.
 argument-hint: "<description of the bug or error>"
 ---
 

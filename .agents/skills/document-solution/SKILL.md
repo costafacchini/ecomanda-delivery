@@ -1,6 +1,6 @@
 ---
 name: document-solution
-description: Creates a KB doc from a complex solution discovered during development. Use when KB lookup missed then solved via code search, bug fix required 3+ files, solution used non-obvious pattern, or 5+ exchanges to resolve. Captures patterns, gotchas, and key files for future reference.
+description: Creates a KB doc from a complex solution. Use when KB missed, fix spanned 3+ files, pattern was non-obvious, or 5+ exchanges to resolve.
 ---
 
 # Document Solution
