@@ -75,7 +75,7 @@ export default function Navbar({ currentUser }: any) {
                 <i className='bi bi-person-circle'></i>{currentUser?.name ? ` ${currentUser.name}` : ''}
               </button>
               <ul className='dropdown-menu dropdown-menu-end'>
-                {currentUser && ['super', 'admin'].includes(currentUser.role) && (
+                {currentUser && !currentUser?.licensee && ['super', 'admin'].includes(currentUser.role) && (
                   <li>
                     <button className='dropdown-item' onClick={handleSwitchLicensee}>
                       Trocar de licenciado

@@ -41,8 +41,8 @@ function UsersIndex({ currentUser }: any) {
   useEffect(() => {
     if (isEmpty(filters)) return
 
-    if (currentUser && currentUser.role !== 'super' && filters?.licensee !== currentUser.licensee) {
-      const newFilters = { ...filters, licensee: currentUser.licensee, page: 1 }
+    if (currentUser && currentUser.role !== 'super' && filters?.licensee !== currentUser.licensee?._id) {
+      const newFilters = { ...filters, licensee: currentUser.licensee?._id, page: 1 }
       onFilter(newFilters)
     }
   }, [currentUser, filters, onFilter])

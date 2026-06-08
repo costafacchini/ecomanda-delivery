@@ -30,7 +30,7 @@ function ContactsIndex({ currentUser }: any) {
       if (!currentUser) return
 
       const initialFilters: any = { page: 1 }
-      const effectiveLicensee = activeLicensee?._id ?? currentUser.licensee
+      const effectiveLicensee = activeLicensee?._id ?? currentUser.licensee?._id
       if (effectiveLicensee) initialFilters.licensee = effectiveLicensee
 
       onFilter(initialFilters)
