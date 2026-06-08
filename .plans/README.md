@@ -22,15 +22,11 @@ Git-native Markdown plans for multi-step work.
 
 | # | Plan | Folder | Status | Description |
 |---|------|--------|--------|-------------|
-| 1 | [Remove PDV](./remove-pdv/overview.md) | `remove-pdv/` | complete | Delete cart, payment (PagarMe), and order integration (Pedidos10) domain — strip PDV fields from Licensee and Contact |
-| 2 | [MongoDB → PostgreSQL](./mongo-to-postgres/overview.md) | `mongo-to-postgres/` | not-started | Migrate all persistent data from MongoDB/Mongoose to PostgreSQL/Prisma using dual-write strategy; prerequisite: remove-pdv complete |
-| 3 | [Baileys Socket Monitor](./baileys-socket-monitor/overview.md) | `baileys-socket-monitor/` | complete | Replace webhook-only inbound flow with a persistent Baileys socket per licensee; captures messages.upsert and messages.update natively |
-| 4 | [Local Chat Infrastructure](./local-chat-infra/overview.md) | `local-chat-infra/` | complete | User role system (agent/supervisor/admin/super), LocalChat plugin, super licensee flow, route authorization — prerequisite for setores |
-| 5 | [Setores](./setores/overview.md) | `setores/` | not-started | Multiple WhatsApp numbers per licensee via sectors; sector-scoped message routing and agent access filtering |
-| 6 | [Setores — Webhook Providers](./setores-webhook-providers/overview.md) | `setores-webhook-providers/` | not-started | Extend sector routing to utalk/dialog/ycloud/pabbly via sector token in webhook URL; prerequisite: setores complete |
-| 7 | [Backend Type Narrowing](./type-backend/overview.md) | `type-backend/` | not-started | Replace `any` with interfaces across models, repositories, use cases, controllers, and plugins — 3 phases, 11 tasks |
-| 8 | [Client Type Narrowing](./type-client/overview.md) | `type-client/` | not-started | Replace `any` with interfaces across React services, contexts, pages, and components — 2 phases, 6 tasks |
-| 9 | [Onboarding Wizard](./onboarding-wizard/overview.md) | `onboarding-wizard/` | complete | Public sign-up flow from the login screen: wizard modal collects licensee identity + user credentials and creates both via a single unauthenticated endpoint |
+| 1 | [Setores](./setores/overview.md) | `setores/` | not-started | Multiple WhatsApp numbers per licensee via sectors; sector-scoped message routing and agent access filtering |
+| 2 | [Setores — Webhook Providers](./setores-webhook-providers/overview.md) | `setores-webhook-providers/` | not-started | Extend sector routing to utalk/dialog/ycloud/pabbly via sector token in webhook URL; prerequisite: setores complete |
+| 3 | [MongoDB → PostgreSQL](./mongo-to-postgres/overview.md) | `mongo-to-postgres/` | not-started | Migrate all persistent data from MongoDB/Mongoose to PostgreSQL/Prisma using dual-write strategy; prerequisite: remove-pdv complete |
+| 4 | [Backend Type Narrowing](./type-backend/overview.md) | `type-backend/` | not-started | Replace `any` with interfaces across models, repositories, use cases, controllers, and plugins — 3 phases, 11 tasks |
+| 5 | [Client Type Narrowing](./type-client/overview.md) | `type-client/` | not-started | Replace `any` with interfaces across React services, contexts, pages, and components — 2 phases, 6 tasks |
 
 ---
 
@@ -48,6 +44,10 @@ Git-native Markdown plans for multi-step work.
 | 6 | [Baileys Group Messaging & Directory Sync](./baileys-groups-directory/overview.md) | `baileys-groups-directory/` | 2026-05-16 | Extend the existing Baileys plugin to import WhatsApp groups into Contacts and send outbound messages to group JIDs |
 | 7 | [Baileys Socket Monitor](./baileys-socket-monitor/overview.md) | `baileys-socket-monitor/` | 2026-06-02 | Replace webhook-only inbound flow with a persistent Baileys socket per licensee; captures messages.upsert and messages.update natively |
 | 8 | [Local Chat Infrastructure](./local-chat-infra/overview.md) | `local-chat-infra/` | 2026-06-02 | User role system (agent/supervisor/admin/super), LocalChat plugin, super licensee flow, route authorization |
+| 9 | [Remove PDV](./remove-pdv/overview.md) | `remove-pdv/` | 2026-06-01 | Delete cart, payment (PagarMe), and order integration (Pedidos10) domain — strip PDV fields from Licensee and Contact |
+| 10 | [Baileys Socket Monitor](./baileys-socket-monitor/overview.md) | `baileys-socket-monitor/` | 2026-06-02 | Replace webhook-only inbound flow with a persistent Baileys socket per licensee; captures messages.upsert and messages.update natively |
+| 11 | [Local Chat Infrastructure](./local-chat-infra/overview.md) | `local-chat-infra/` | 2026-06-02 | User role system (agent/supervisor/admin/super), LocalChat plugin, super licensee flow, route authorization — prerequisite for setores |
+| 12 | [Onboarding Wizard](./onboarding-wizard/overview.md) | `onboarding-wizard/` | 2026-06-02 | Public sign-up flow from the login screen: wizard modal collects licensee identity + user credentials and creates both via a single unauthenticated endpoint |
 
 ---
 
