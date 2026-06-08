@@ -8,7 +8,7 @@ export default function BaseLayout({ children }: any) {
 
   const showModal =
     (currentUser?.role === 'super' && !licenseeModalSeen) ||
-    (currentUser?.role === 'admin' && !activeLicensee)
+    (currentUser?.role === 'admin' && !currentUser?.licensee && !activeLicensee)
 
   if (showModal) {
     return (

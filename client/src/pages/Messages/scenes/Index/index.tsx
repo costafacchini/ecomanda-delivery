@@ -63,7 +63,7 @@ function MessagesIndex({ currentUser }: any) {
   )
 
   useEffect(() => {
-    const effectiveLicensee = activeLicensee?._id ?? currentUser?.licensee
+    const effectiveLicensee = activeLicensee?._id ?? currentUser?.licensee?._id
     if (currentUser && effectiveLicensee && filters.licensee !== effectiveLicensee) {
       setFilters({ ...filters, licensee: effectiveLicensee })
     }

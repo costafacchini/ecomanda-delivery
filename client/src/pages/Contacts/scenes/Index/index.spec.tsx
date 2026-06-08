@@ -141,7 +141,7 @@ describe('<ContactsIndex />', () => {
     it('does not show the licensee if logged user is not super', async () => {
       getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'Contact' })] })
 
-      const currentUser = { role: 'agent', licensee: 'licensee-abc' }
+      const currentUser = { role: 'agent', licensee: { _id: 'licensee-abc' } }
 
       mount({ currentUser })
 
@@ -155,7 +155,7 @@ describe('<ContactsIndex />', () => {
     it('includes the user licensee in the initial fetch for non-super users', async () => {
       getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'Contact' })] })
 
-      const currentUser = { role: 'agent', licensee: 'licensee-abc' }
+      const currentUser = { role: 'agent', licensee: { _id: 'licensee-abc' } }
 
       mount({ currentUser })
 

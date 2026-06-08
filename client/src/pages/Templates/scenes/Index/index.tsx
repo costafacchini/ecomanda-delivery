@@ -43,7 +43,7 @@ function TemplatesIndex({ currentUser }: any) {
   useEffect(() => {
     if (isEmpty(filters) || !currentUser) return
 
-    const effectiveLicensee = activeLicensee?._id ?? currentUser.licensee
+    const effectiveLicensee = activeLicensee?._id ?? currentUser.licensee?._id
     if (effectiveLicensee && filters?.licensee !== effectiveLicensee) {
       const newFilters = { ...filters, licensee: effectiveLicensee, page: 1 }
       onFilter(newFilters)
