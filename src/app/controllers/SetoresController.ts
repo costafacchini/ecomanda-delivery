@@ -1,16 +1,52 @@
 import { sanitizeModelErrors } from '../helpers/SanitizeErrors'
+import { GetBaileysQrForSetor } from '../usecases/licensees/GetBaileysQrForSetor'
+import { GetBaileysStatusForSetor } from '../usecases/licensees/GetBaileysStatusForSetor'
+import { SyncBaileysDirectoryForSetor } from '../usecases/licensees/SyncBaileysDirectoryForSetor'
 
 class SetoresController {
   setorRepository: any
+  getBaileysQrUseCase: any
+  getBaileysStatusUseCase: any
+  syncBaileysDirectoryUseCase: any
 
-  constructor({ setorRepository }: Record<string, any> = {}) {
+  constructor({
+    setorRepository,
+    licenseeRepository,
+    whatsappSessionRepository,
+    contactRepository,
+    createMessengerPlugin,
+    startBaileysSocket,
+    socketManager,
+  }: Record<string, any> = {}) {
     this.setorRepository = setorRepository
+    this.getBaileysQrUseCase = new GetBaileysQrForSetor({
+      setorRepository,
+      licenseeRepository,
+      createMessengerPlugin,
+      startBaileysSocket,
+    })
+    this.getBaileysStatusUseCase = new GetBaileysStatusForSetor({
+      setorRepository,
+      licenseeRepository,
+      whatsappSessionRepository,
+      startBaileysSocket,
+      socketManager,
+    })
+    this.syncBaileysDirectoryUseCase = new SyncBaileysDirectoryForSetor({
+      setorRepository,
+      licenseeRepository,
+      contactRepository,
+      createMessengerPlugin,
+    })
 
     this.index = this.index.bind(this)
     this.show = this.show.bind(this)
     this.create = this.create.bind(this)
     this.update = this.update.bind(this)
     this.destroy = this.destroy.bind(this)
+    this.getBaileysQr = this.getBaileysQr.bind(this)
+    this.getBaileysStatus = this.getBaileysStatus.bind(this)
+    this.baileysSync = this.baileysSync.bind(this)
   }
 
   async index(req: any, res: any) {
@@ -66,6 +102,36 @@ class SetoresController {
     try {
       await this.setorRepository.delete({ _id: req.params.id })
       return res.status(204).send()
+    } catch (err: any) {
+      return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
+    }
+  }
+
+  async getBaileysQr(req: any, res: any) {
+    try {
+      const response = await this.getBaileysQrUseCase.execute(req.params.id)
+
+      return res.status(200).send(response)
+    } catch (err: any) {
+      return res.status(408).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
+    }
+  }
+
+  async getBaileysStatus(req: any, res: any) {
+    try {
+      const response = await this.getBaileysStatusUseCase.execute(req.params.id)
+
+      return res.status(200).send(response)
+    } catch (err: any) {
+      return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
+    }
+  }
+
+  async baileysSync(req: any, res: any) {
+    try {
+      const response = await this.syncBaileysDirectoryUseCase.execute(req.params.id)
+
+      return res.status(200).send(response)
     } catch (err: any) {
       return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }

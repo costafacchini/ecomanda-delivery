@@ -87,7 +87,15 @@ const messagesController = new MessagesController({
   queueServer,
   createMessage: new CreateMessage({ messageRepository, contactRepository, jobQueue: queueServer }),
 })
-const setoresController = new SetoresController({ setorRepository })
+const setoresController = new SetoresController({
+  setorRepository,
+  licenseeRepository,
+  whatsappSessionRepository,
+  contactRepository,
+  createMessengerPlugin,
+  startBaileysSocket,
+  socketManager,
+})
 
 const dashboardController = new DashboardController({
   userRepository,
@@ -168,6 +176,9 @@ router.get('/setores/:id', authorize('admin', 'super'), setoresController.show)
 router.post('/setores', authorize('admin', 'super'), setoresController.create)
 router.put('/setores/:id', authorize('admin', 'super'), setoresController.update)
 router.delete('/setores/:id', authorize('admin', 'super'), setoresController.destroy)
+router.post('/setores/:id/baileys-qr', authorize('admin', 'super'), setoresController.getBaileysQr)
+router.get('/setores/:id/baileys-status', authorize('admin', 'super'), setoresController.getBaileysStatus)
+router.post('/setores/:id/baileys-sync', authorize('admin', 'super'), setoresController.baileysSync)
 
 router.get('/messages', messagesController.index)
 router.post('/messages', messagesController.create)

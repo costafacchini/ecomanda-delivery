@@ -69,19 +69,21 @@ function buildRuntimeDependencies({
     })
 
   const socketManager = new BaileysSocketManager({ whatsappSessionRepository })
-  const startBaileysSocket = (licensee: any) =>
+  const startBaileysSocket = (licensee: any, setor: any = null) =>
     new StartBaileysSocket({
       socketManager,
+      whatsappSessionRepository,
       createMessengerPlugin,
       ingestMessengerMessage: new IngestMessengerMessage({
         messengerRepository: bodyRepository,
         jobQueue: queueServer,
       }),
-    }).execute(licensee)
+    }).execute(licensee, setor)
 
   const bootBaileysSocketSessions = () =>
     new BootBaileysSocketSessions({
       licenseeRepository,
+      setorRepository,
       whatsappSessionRepository,
       startBaileysSocket,
     }).execute()
