@@ -1,6 +1,6 @@
 ---
 name: strategic-compact
-description: Guide for compacting context at logical task boundaries rather than letting auto-compaction fire mid-task. Preserves what matters, clears what doesn't.
+description: Compact context at logical task boundaries before auto-compaction fires mid-task. Preserves what matters, clears what doesn't.
 auto: false
 ---
 

@@ -5,9 +5,8 @@
 **Status**: not-started | in-progress | complete
 **Created**: [DATE]
 **Last Updated**: [DATE]
-**Estimated Demo Date**: [YYYY-MM-DD]
 **Assigned Dev**: [NAME]
-**Assigned QA**: [NAME or "unassigned"]
+**PR Strategy**: per-task | per-wave | single
 
 <!-- Status values: not-started | in-progress | complete -->
 <!-- A plan is in-progress when any task is in-progress. Complete when all tasks are complete or adapted, CI is green for completed work, any PR/review/merge follow-up is tracked, and required KB/doc follow-up is complete or explicitly marked not needed. -->
@@ -89,7 +88,6 @@ Files most likely to be touched by this plan:
 
 ## Success Criteria
 
-<!-- These are validated at demo time. Every criterion must be demonstrable. -->
 - [ ] [Criterion 1]
 - [ ] [Criterion 2]
 - [ ] All tests pass

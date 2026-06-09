@@ -38,13 +38,20 @@ Classify the plan type:
 - **Type 2 (Technical)**: Infrastructure, refactor, performance, security
 - **Type 3 (Bug/Support)**: Reactive fix from L3 or escalation
 
+**PR Strategy** — ask the user which PR strategy they want for this plan:
+- **per-task**: Each task opens its own PR when complete. Best for granular review.
+- **per-wave**: One PR per wave after all tasks in the wave complete. Best for grouped review.
+- **single**: One PR for the entire plan after all tasks complete. Best for atomic delivery.
+
+Record the chosen strategy in `overview.md` as `**PR Strategy**`.
+
 ### Step 2: Explore Codebase Context
 
 1. Read `AGENTS.md` for project conventions and constraints
 2. Check `docs/kb/README.md` for relevant KB docs
 3. Explore relevant source files to understand existing patterns
 4. Identify files that will need to be created or modified
-5. Identify the existing tests, validation harnesses, or QA workflows that cover this area
+5. Identify the existing tests and validation harnesses that cover this area
 6. Identify the existing KB/docs that should be updated, or note that the work may require a new KB entry via `document-solution`
 
 ### Step 3: Generate Plan Slug
@@ -172,7 +179,7 @@ User: "/create-plan Add user authentication with OAuth"
 Agent explores codebase, identifies auth patterns, and creates:
 ```text
 .plans/user-auth/
-  overview.md          (3 phases, 6 tasks, demo 2026-03-12)
+  overview.md          (3 phases, 6 tasks)
   phase-1/
     task-01-db-schema/
       task.md          (Create users table, OAuth tokens)

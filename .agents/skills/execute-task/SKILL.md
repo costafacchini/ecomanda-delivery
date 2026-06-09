@@ -1,6 +1,6 @@
 ---
 name: execute-task
-description: Executes a single task from a development plan. Loads task context, runs pre-flight checks, creates a git branch, follows implementation steps with adaptation protocol, runs tests, and updates status. Use when working on a specific plan task.
+description: Execute a single plan task. Loads context, branches, follows implementation steps with adaptation protocol, runs tests, updates status.
 ---
 
 # Execute Task
@@ -117,13 +117,17 @@ Update status.md: `complete` (or `adapted`), timestamp, branch/PR link, Adaptati
 Update task status in `overview.md` task summary table.
 Update progress in `.plans/README.md`.
 
-### Step 8: Commit and Push
+### Step 8: Commit, Push, and PR
 
 ```bash
 git add [owned files] .plans/{plan-slug}/{task-path}/status.md .plans/{plan-slug}/overview.md .plans/README.md
 git commit -m "plan({plan-slug}): {task title}"
 git push -u origin plan/{plan-slug}/{task-path}
 ```
+
+**PR creation** — read `PR Strategy` from `overview.md`:
+- **`per-task`**: Open a PR now targeting `{base-branch}`.
+- **`per-wave`** or **`single`**: Push only — do not open a PR. Note in the report that the PR will be created after the wave / plan completes.
 
 ### Step 9: Report Completion
 

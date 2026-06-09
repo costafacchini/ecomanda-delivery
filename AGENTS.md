@@ -122,6 +122,7 @@ Update `.agents/memory/preferences.md` when you learn how the user works.
 | `tdd-workflow` | Red-green-refactor TDD cycle — write tests first, implement, verify coverage |
 | `verification-loop` | Full pre-PR check: build, types, lint, tests, security scan, diff review |
 | `strategic-compact` | Compact context at logical task boundaries, not mid-task |
+| `memory-compress` | manual | Compress memory/KB/CLAUDE.md files to reduce input tokens. Preserves a |
 
 ---
 
