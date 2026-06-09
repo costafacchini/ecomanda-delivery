@@ -22,7 +22,7 @@ Git-native Markdown plans for multi-step work.
 
 | # | Plan | Folder | Status | Description |
 |---|------|--------|--------|-------------|
-| 1 | [Setores](./setores/overview.md) | `setores/` | not-started | Multiple WhatsApp numbers per licensee via sectors; sector-scoped message routing and agent access filtering |
+| 1 | [Setores](./setores/overview.md) | `setores/` | in-progress | Multiple WhatsApp numbers per licensee via sectors; sector-scoped message routing and agent access filtering |
 | 2 | [Setores — Webhook Providers](./setores-webhook-providers/overview.md) | `setores-webhook-providers/` | not-started | Extend sector routing to utalk/dialog/ycloud/pabbly via sector token in webhook URL; prerequisite: setores complete |
 | 3 | [MongoDB → PostgreSQL](./mongo-to-postgres/overview.md) | `mongo-to-postgres/` | not-started | Migrate all persistent data from MongoDB/Mongoose to PostgreSQL/Prisma using dual-write strategy; prerequisite: remove-pdv complete |
 | 4 | [Backend Type Narrowing](./type-backend/overview.md) | `type-backend/` | not-started | Replace `any` with interfaces across models, repositories, use cases, controllers, and plugins — 3 phases, 11 tasks |

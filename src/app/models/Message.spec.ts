@@ -219,4 +219,12 @@ describe('Message', () => {
       })
     })
   })
+
+  describe('setor field', () => {
+    it('defaults to null', () => {
+      const message = new Message()
+
+      expect(message.setor).toBeNull()
+    })
+  })
 })
