@@ -1,9 +1,9 @@
 # Status: task-01-setor-model-api
 
-**Current Status**: not-started
-**Last Updated**: 2026-05-29
-**Agent**: —
-**Branch**: —
+**Current Status**: in-progress
+**Last Updated**: 2026-06-09
+**Agent**: claude-sonnet-4-6
+**Branch**: plan/setores/phase-1/task-01-setor-model-api
 **PR**: —
 
 ## Status History
