@@ -104,4 +104,12 @@ describe('Room', () => {
       })
     })
   })
+
+  describe('setor field', () => {
+    it('defaults to null', () => {
+      const room = new Room({ contact })
+
+      expect(room.setor).toBeNull()
+    })
+  })
 })

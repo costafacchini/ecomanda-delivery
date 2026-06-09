@@ -86,6 +86,18 @@ describe('OnboardAccount', () => {
     expect(result.licensee.whatsappDefault).toEqual('baileys')
   })
 
+  it('forwards useSetores to the licensee when provided', async () => {
+    const result = await onboardAccount.execute({ ...validInput, useSetores: true })
+
+    expect(result.licensee.useSetores).toEqual(true)
+  })
+
+  it('licensee defaults useSetores to false when not provided', async () => {
+    const result = await onboardAccount.execute(validInput)
+
+    expect(result.licensee.useSetores).toBeFalsy()
+  })
+
   it('deletes the orphaned licensee and re-throws when user creation fails', async () => {
     jest.spyOn(userRepository, 'create').mockRejectedValueOnce(new Error('user creation failed'))
     const deleteSpy = jest.spyOn(licenseeRepository, 'delete')
