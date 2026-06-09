@@ -35,6 +35,8 @@ The Baileys connect flow within a sector reuses the same QR rendering logic alre
 - [ ] Read `client/src/pages/Licensees/` (scan WhatsApp/Baileys panel)
 - [ ] Read `client/src/pages/Navbar/index.tsx` (nav item pattern)
 - [ ] Read `client/src/pages/routes.tsx` (route registration)
+- [ ] Read `client/src/pages/SignIn/OnboardingModal.tsx` (integrations step + whatsapp step)
+- [ ] Read `client/src/services/onboarding.ts` (`OnboardingFields` interface)
 - [ ] Mark this task `in-progress` in `status.md`
 
 ## File Ownership
@@ -45,7 +47,10 @@ The Baileys connect flow within a sector reuses the same QR rendering logic alre
 | `client/src/services/setor.ts` | create | API client for sector endpoints |
 | `client/src/pages/Navbar/index.tsx` | modify | Add Setores nav item (role-gated) |
 | `client/src/pages/routes.tsx` | modify | Register Setor routes |
-| `client/src/pages/Licensees/` | modify | Add `useSetores` toggle to edit form |
+| `client/src/pages/Licensees/scenes/Form/index.tsx` | modify | Add `useSetores: false` to `licenseeInitialValues` |
+| `client/src/pages/Licensees/scenes/Form/panels/WhatsAppPanel.tsx` | modify | Add `useSetores` checkbox when `whatsappDefault === 'baileys'` |
+| `client/src/services/onboarding.ts` | modify | Add `useSetores?: boolean` to `OnboardingFields` |
+| `client/src/pages/SignIn/OnboardingModal.tsx` | modify | Add `useSetores` checkbox in whatsapp step when `baileys` is selected |
 
 ### Do NOT Modify
 
@@ -96,6 +101,50 @@ Add routes in `client/src/pages/routes.tsx`:
 
 Add nav item in `Navbar/index.tsx` — visible only when `currentUser.role` is `admin` or `supervisor` AND `currentUser.licensee.useSetores` is `true` (or fetch from context).
 
+### Step 5: Update onboarding screen
+
+In `client/src/services/onboarding.ts`, add `useSetores` to `OnboardingFields`:
+
+```ts
+export interface OnboardingFields {
+  // ... existing fields
+  useSetores?: boolean
+}
+```
+
+In `client/src/pages/SignIn/OnboardingModal.tsx`, inside the `whatsapp` step block (after the `whatsappDefault` select and its token/URL fields), add a checkbox visible only when `baileys` is selected:
+
+```tsx
+{formik.values.whatsappDefault === 'baileys' && (
+  <div className='mb-3 form-check'>
+    <input
+      type='checkbox'
+      className='form-check-input'
+      id='useSetores'
+      name='useSetores'
+      checked={formik.values.useSetores ?? false}
+      onChange={formik.handleChange}
+    />
+    <label className='form-check-label' htmlFor='useSetores'>
+      Usar setores (múltiplos departamentos com números de WhatsApp separados)
+    </label>
+  </div>
+)}
+```
+
+Add `useSetores: false` to `initialValues` in `OnboardingModal.tsx`.
+
+Include `useSetores` in the submission payload inside `handleSubmit`:
+
+```ts
+...(wantsWhatsapp ? {
+  whatsappDefault: values.whatsappDefault,
+  whatsappToken:   values.whatsappToken,
+  whatsappUrl:     values.whatsappUrl,
+  useSetores:      values.useSetores ?? false,
+} : {}),
+```
+
 ## Testing
 
 - [ ] Sector list page renders sectors for current licensee
@@ -105,6 +154,9 @@ Add nav item in `Navbar/index.tsx` — visible only when `currentUser.role` is `
 - [ ] Delete removes sector from list
 - [ ] Nav item hidden when `useSetores = false`
 - [ ] Nav item hidden for `agent` role
+- [ ] Onboarding whatsapp step shows `useSetores` checkbox only when `baileys` is selected
+- [ ] Onboarding payload includes `useSetores` when whatsapp integration is chosen
+- [ ] Licensee form `useSetores` checkbox appears in WhatsApp panel when `whatsappDefault === 'baileys'`
 - [ ] `pre-commit-check` passes
 
 ## Documentation / KB Updates
@@ -115,7 +167,8 @@ Add nav item in `Navbar/index.tsx` — visible only when `currentUser.role` is `
 
 - [ ] Setor CRUD fully functional
 - [ ] Baileys connect flow works per sector
-- [ ] `useSetores` toggle in Licensee form
+- [ ] `useSetores` toggle in Licensee WhatsApp panel (Baileys-gated)
+- [ ] `useSetores` checkbox in onboarding whatsapp step (Baileys-gated)
 - [ ] Role-gated nav item
 - [ ] Changes committed to `plan/setores/phase-3/task-05-frontend-setor-crud` branch
 - [ ] Status updated to `complete` in `status.md`

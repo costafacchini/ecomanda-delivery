@@ -71,6 +71,9 @@ WhatsappSession.setor
 | `src/app/models/Body.ts` | modify | Add `setor` field (async job bridge) |
 | `src/app/models/Body.spec.ts` | modify | Add field test |
 
+| `src/app/usecases/onboarding/OnboardAccount.ts` | modify | Add `useSetores` to `ONBOARD_LICENSEE_FIELDS` |
+| `src/app/usecases/onboarding/OnboardAccount.spec.ts` | modify | Add test for `useSetores` field pass-through |
+
 ### Do NOT Modify
 
 - `src/app/models/Setor.ts` — owned by phase-1/task-01-setor-model-api
@@ -155,6 +158,28 @@ setor: {
 },
 ```
 
+### Step 6: Update `src/app/usecases/onboarding/OnboardAccount.ts`
+
+Add `useSetores` to `ONBOARD_LICENSEE_FIELDS`:
+
+```ts
+const ONBOARD_LICENSEE_FIELDS = [
+  'name',
+  'email',
+  'phone',
+  'document',
+  'kind',
+  'chatDefault',
+  'chatUrl',
+  'chatIdentifier',
+  'chatKey',
+  'whatsappDefault',
+  'whatsappToken',
+  'whatsappUrl',
+  'useSetores',   // ← add this
+]
+```
+
 ## Testing
 
 - [ ] `WhatsappSession`: two sessions with the same `licensee` and `setor: null` — second create should fail (application-level guard test)
@@ -164,6 +189,8 @@ setor: {
 - [ ] `Licensee`: `useSetores` defaults to `false`
 - [ ] `Message`: `setor` field defaults to `null`
 - [ ] `Body`: `setor` field defaults to `null`
+- [ ] `OnboardAccount`: when `useSetores: true` is passed, the created licensee has `useSetores: true`
+- [ ] `OnboardAccount`: when `useSetores` is omitted, the created licensee defaults to `useSetores: false`
 - [ ] All existing model tests still pass
 - [ ] `pre-commit-check` passes
 
@@ -175,8 +202,9 @@ setor: {
 
 - [ ] All five models updated as described (`WhatsappSession`, `Room`, `Licensee`, `Message`, `Body`)
 - [ ] Compound index added to `WhatsappSession`
-- [ ] All tests pass: `npx jest src/app/models/`
-- [ ] `npx eslint src/app/models/` passes
+- [ ] `OnboardAccount.ts` picks up `useSetores` from the inbound payload
+- [ ] All tests pass: `npx jest src/app/models/ src/app/usecases/onboarding/`
+- [ ] `npx eslint src/app/models/ src/app/usecases/onboarding/` passes
 - [ ] Changes committed to `plan/setores/phase-1/task-02-schema-migrations` branch
 - [ ] Status updated to `complete` in `status.md`
 
