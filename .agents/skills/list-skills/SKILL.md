@@ -1,6 +1,6 @@
 ---
 name: list-skills
-description: Lists all available skills with descriptions and trigger conditions. Reads skill definitions from the skills directories and presents a formatted summary.
+description: Lists all available skills with descriptions and trigger conditions. Reads skill definitions and presents a formatted summary.
 ---
 
 # List Skills

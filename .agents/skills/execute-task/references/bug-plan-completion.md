@@ -23,15 +23,7 @@ If all automatable criteria pass:
 
 Update STATUS.md in work-plans: set repo progress to all-complete. If ALL repos complete, add: "All repos complete — ready for archival via `/archive-plan`".
 
-## Step 5: Jira Transition
-
-If Jira MCP available and JIRA key exists:
-- Fetch transitions via `getTransitionsForJiraIssue`
-- Transition to "Ready for QA" (or equivalent)
-- Add comment: "All fix tasks complete. Regression tests passing. Ready for QA verification."
-- If MCP unavailable, output the transition recommendation for manual action.
-
-## Step 6: Prompt for Staging Verification
+## Step 5: Prompt for Staging Verification
 
 Always end with:
 > "Bug plan `{slug}` is complete. All {N} tasks done. Before closing the Jira ticket, verify the fix in staging using the original reproduction steps from the investigation."

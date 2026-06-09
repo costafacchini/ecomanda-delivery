@@ -1,6 +1,6 @@
 ---
 name: execute-plan
-description: Runs remaining plan tasks in in a development plan with parallel agent support. Builds a dependency DAG, identifies ready tasks, and runs them in waves with formal phase gates. Supports both agent teams (parallel) and sequential fallback. Use when you want to run all remaining tasks in a plan.
+description: Run all remaining tasks in a plan. Dependency DAG, parallel agent support, wave execution, formal phase gates.
 ---
 
 # Execute Plan
@@ -121,12 +121,13 @@ For cross-repo plans:
 - Verify contract status (Draft/Frozen/Deprecated) is appropriate for the current phase
 - Note cross-repo dependencies in wave presentation
 
-### Step 8: Consolidation PR (Optional)
+### Step 8: Post-Wave PR (Strategy-Driven)
 
-After all tasks in a phase merge individually, offer a consolidation PR:
-- Verifies the combined result works end-to-end
-- Runs integration tests across merged changes
-- Provides a single review point for the phase
+Read `PR Strategy` from `overview.md`:
+
+- **`per-task`**: PRs were already opened by each task. No action here.
+- **`per-wave`**: After the wave's phase gate passes, open one PR targeting `{base-branch}` that covers all task branches in the wave. Run integration tests across the combined changes before opening.
+- **`single`**: No PR yet — push only. Continue to the next wave.
 
 ### Step 9: Plan Completion
 
@@ -138,11 +139,12 @@ When all tasks are `complete` or `adapted` (or remaining are blocked and unresol
    - For each task worktree created during this plan:
      `git worktree remove .worktrees/{plan-slug}/{task-path} --force`
    - Verify: `git worktree list`
-4. Report summary:
+4. **`single` PR strategy**: Open one final PR targeting `{base-branch}` that covers all task branches. Run the full test suite before opening.
+5. Report summary:
    - Total tasks completed vs adapted vs blocked
    - List of branches created
    - Test / verification and KB/doc follow-up status
-   - Suggested next steps (PR creation, merge strategy)
+   - PR(s) created (or link to open PRs for `per-task`)
 
 ## Output
 

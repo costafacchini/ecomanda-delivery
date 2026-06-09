@@ -1,6 +1,6 @@
 ---
 name: promptcraft
-description: Generate an optimized, structured prompt for a development task. Creates LLM-optimized prompts using primacy/recency effects, concrete examples, and mandatory language. Supports 8 task types. Use this when you want to create a high-quality prompt for a new Claude Code session or to hand off to a teammate.
+description: Craft optimized prompts for development tasks. Uses primacy/recency effects, examples, and mandatory language. Supports 8 task types.
 argument-hint: "<task-type> <description>"
 ---
 

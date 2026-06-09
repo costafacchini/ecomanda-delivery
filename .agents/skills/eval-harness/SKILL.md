@@ -1,6 +1,6 @@
 ---
 name: eval-harness
-description: Eval-driven development (EDD) — define pass/fail criteria before coding, measure reliability with pass@k metrics, track regressions. For AI-assisted feature development.
+description: Eval-driven development — define pass/fail criteria before coding, measure pass@k reliability, and track regressions.
 auto: false
 argument-hint: "<feature name>"
 ---
