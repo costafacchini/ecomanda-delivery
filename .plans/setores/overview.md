@@ -59,7 +59,7 @@ Add a Setor (department) entity to the platform, allowing a licensee to have mul
 
 | Task Path | Title | Phase | Status | Depends On |
 |-----------|-------|-------|--------|------------|
-| phase-1/task-01-setor-model-api | Setor model + CRUD API | 1 | not-started | — |
+| phase-1/task-01-setor-model-api | Setor model + CRUD API | 1 | complete | — |
 | phase-1/task-02-schema-migrations | Schema migrations (WhatsappSession, Room, Licensee, Message, Body) | 1 | not-started | — |
 | phase-2/task-03-multi-session-baileys | Multi-session BaileysSocketManager + sector endpoints | 2 | not-started | phase-1/task-01-setor-model-api, phase-1/task-02-schema-migrations |
 | phase-2/task-04-message-routing | Message routing + agent access filtering | 2 | not-started | phase-1/task-01-setor-model-api, phase-1/task-02-schema-migrations |

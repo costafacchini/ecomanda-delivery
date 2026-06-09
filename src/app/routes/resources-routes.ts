@@ -2,6 +2,7 @@ import express from 'express'
 import jwt from 'jsonwebtoken'
 import { UsersController } from '../controllers/UsersController'
 import { LicenseesController } from '../controllers/LicenseesController'
+import { SetoresController } from '../controllers/SetoresController'
 import { ContactsController } from '../controllers/ContactsController'
 import { TriggersController } from '../controllers/TriggersController'
 import { MessagesController } from '../controllers/MessagesController'
@@ -41,6 +42,7 @@ const {
   messageRepository,
   roomRepository,
   whatsappSessionRepository,
+  setorRepository,
   createMessengerPlugin,
   createTemplatesImporter,
   startBaileysSocket,
@@ -85,6 +87,8 @@ const messagesController = new MessagesController({
   queueServer,
   createMessage: new CreateMessage({ messageRepository, contactRepository, jobQueue: queueServer }),
 })
+const setoresController = new SetoresController({ setorRepository })
+
 const dashboardController = new DashboardController({
   userRepository,
   licenseeRepository,
@@ -158,6 +162,12 @@ router.post('/licensees/:id/dialogwebhook', licenseesController.setDialogWebhook
 router.get('/licensees/:id/baileys-status', licenseesController.getBaileysStatus)
 router.post('/licensees/:id/baileys-qr', (req, res) => licenseesController.getBaileysQr(req, res))
 router.post('/licensees/:id/baileys-sync', licenseesController.baileysSync)
+
+router.get('/setores', authorize('admin', 'super'), setoresController.index)
+router.get('/setores/:id', authorize('admin', 'super'), setoresController.show)
+router.post('/setores', authorize('admin', 'super'), setoresController.create)
+router.put('/setores/:id', authorize('admin', 'super'), setoresController.update)
+router.delete('/setores/:id', authorize('admin', 'super'), setoresController.destroy)
 
 router.get('/messages', messagesController.index)
 router.post('/messages', messagesController.create)
