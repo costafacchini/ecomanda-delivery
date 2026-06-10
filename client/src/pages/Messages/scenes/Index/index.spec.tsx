@@ -492,4 +492,63 @@ describe('<MessageIndex />', () => {
       expect(link).toHaveAttribute('href', '#/triggers/123235')
     })
   })
+
+  describe('sector badge', () => {
+    it('renders the sector badge when message has a setor', async () => {
+      getMessages.mockResolvedValueOnce({
+        status: 200,
+        data: [
+          {
+            id: '1',
+            contact: { name: 'Contact' },
+            setor: { _id: 'setor-id-1', name: 'Vendas' },
+          },
+        ],
+      })
+
+      mount({ currentUser })
+      fireEvent.click(screen.getByText('Pesquisar'))
+
+      expect(await screen.findByText('Vendas')).toBeInTheDocument()
+    })
+
+    it('does not render a sector badge when message has no setor', async () => {
+      getMessages.mockResolvedValueOnce({
+        status: 200,
+        data: [
+          {
+            id: '1',
+            contact: { name: 'Contact' },
+            setor: null,
+          },
+        ],
+      })
+
+      mount({ currentUser })
+      fireEvent.click(screen.getByText('Pesquisar'))
+
+      await screen.findByText('Contact')
+
+      expect(screen.queryByText('Vendas')).not.toBeInTheDocument()
+    })
+
+    it('does not render a sector badge when setor field is absent', async () => {
+      getMessages.mockResolvedValueOnce({
+        status: 200,
+        data: [
+          {
+            id: '1',
+            contact: { name: 'Contact' },
+          },
+        ],
+      })
+
+      mount({ currentUser })
+      fireEvent.click(screen.getByText('Pesquisar'))
+
+      await screen.findByText('Contact')
+
+      expect(screen.queryByRole('status')).not.toBeInTheDocument()
+    })
+  })
 })

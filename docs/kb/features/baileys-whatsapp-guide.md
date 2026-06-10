@@ -581,6 +581,17 @@ Before enabling `ENABLE_BAILEYS_SOCKET=true` in production:
 
 ---
 
+## Step 7 — Sector-Specific Message Routing
+
+When a Licensee uses sectors (`Setor`), inbound messages received via the persistent Baileys socket are routed to **sector-specific rooms**. The socket and message pipeline attach the `setor` ObjectId to both the `Room` and the created `Message` records.
+
+- `Room.setor` stores which sector owns the conversation.
+- `Message.setor` mirrors the sector on each message so that the Messages inbox can display a sector badge per row.
+- Agent users are automatically scoped to their sector(s) by the backend repository (`RoomRepositoryDatabase.findForAgent`), which filters rooms by `setor: { $in: setorIds }`. No additional frontend query parameter is required — the backend enforces the boundary transparently.
+- The `MessagesQuery` populates `setor` (name field only) so the frontend receives `{ _id, name }` alongside each message.
+
+---
+
 ## Troubleshooting
 
 | Symptom | Likely cause | Action |
