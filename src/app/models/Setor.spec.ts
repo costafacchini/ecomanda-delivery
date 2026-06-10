@@ -32,28 +32,28 @@ describe('Setor', () => {
   })
 
   describe('validations', () => {
-    it('fails when name is missing', async () => {
+    it('fails when name is missing', () => {
       const setor = new Setor({ licensee: new mongoose.Types.ObjectId(), users: [new mongoose.Types.ObjectId()] })
       const error = setor.validateSync()
 
       expect(error?.errors['name']).toBeDefined()
     })
 
-    it('fails when licensee is missing', async () => {
+    it('fails when licensee is missing', () => {
       const setor = new Setor({ name: 'Vendas', users: [new mongoose.Types.ObjectId()] })
       const error = setor.validateSync()
 
       expect(error?.errors['licensee']).toBeDefined()
     })
 
-    it('fails when users array is empty', async () => {
+    it('fails when users array is empty', () => {
       const setor = new Setor({ name: 'Vendas', licensee: new mongoose.Types.ObjectId(), users: [] })
       const error = setor.validateSync()
 
       expect(error?.errors['users']).toBeDefined()
     })
 
-    it('passes with name, licensee and at least one user', async () => {
+    it('passes with name, licensee and at least one user', () => {
       const setor = new Setor({
         name: 'Vendas',
         licensee: new mongoose.Types.ObjectId(),

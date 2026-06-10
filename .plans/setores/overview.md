@@ -2,7 +2,7 @@
 
 **Status**: in-progress
 **Created**: 2026-05-29
-**Last Updated**: 2026-06-09
+**Last Updated**: 2026-06-10
 **Estimated Demo Date**: TBD — depends on local-chat-infra completion
 **Assigned Dev**: Alan Costa Facchini
 **Assigned QA**: unassigned
@@ -61,10 +61,10 @@ Add a Setor (department) entity to the platform, allowing a licensee to have mul
 |-----------|-------|-------|--------|------------|
 | phase-1/task-01-setor-model-api | Setor model + CRUD API | 1 | complete | — |
 | phase-1/task-02-schema-migrations | Schema migrations (WhatsappSession, Room, Licensee, Message, Body) | 1 | complete | — |
-| phase-2/task-03-multi-session-baileys | Multi-session BaileysSocketManager + sector endpoints | 2 | not-started | phase-1/task-01-setor-model-api, phase-1/task-02-schema-migrations |
-| phase-2/task-04-message-routing | Message routing + agent access filtering | 2 | not-started | phase-1/task-01-setor-model-api, phase-1/task-02-schema-migrations |
-| phase-3/task-05-frontend-setor-crud | Frontend: Setor CRUD + Baileys connect | 3 | not-started | phase-2/task-03-multi-session-baileys |
-| phase-3/task-06-frontend-inbox-filtering | Frontend: Inbox sector filtering | 3 | not-started | phase-2/task-04-message-routing |
+| phase-2/task-03-multi-session-baileys | Multi-session BaileysSocketManager + sector endpoints | 2 | complete | phase-1/task-01-setor-model-api, phase-1/task-02-schema-migrations |
+| phase-2/task-04-message-routing | Message routing + agent access filtering | 2 | complete | phase-1/task-01-setor-model-api, phase-1/task-02-schema-migrations |
+| phase-3/task-05-frontend-setor-crud | Frontend: Setor CRUD + Baileys connect | 3 | complete | phase-2/task-03-multi-session-baileys |
+| phase-3/task-06-frontend-inbox-filtering | Frontend: Inbox sector filtering | 3 | complete | phase-2/task-04-message-routing |
 
 ## Branch Convention
 

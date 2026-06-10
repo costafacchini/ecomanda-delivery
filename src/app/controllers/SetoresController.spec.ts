@@ -45,9 +45,7 @@ describe('SetoresController', () => {
       await controller.create(req, res)
 
       expect(res.status).toHaveBeenCalledWith(422)
-      expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining({ errors: expect.any(Array) }),
-      )
+      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ errors: expect.any(Array) }))
     })
 
     it('returns 422 when name is missing', async () => {

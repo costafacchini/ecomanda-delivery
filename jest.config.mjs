@@ -4,7 +4,8 @@ dotenv.config()
 
 const jest = {
   testEnvironment: 'node',
-  modulePathIgnorePatterns: ['<rootDir>/client/'],
+  modulePathIgnorePatterns: ['<rootDir>/client/', '<rootDir>/.worktrees/'],
+  testPathIgnorePatterns: ['/node_modules/', '<rootDir>/.worktrees/'],
   transform: {
     '^.+\\.(js|ts)$': 'babel-jest',
   },

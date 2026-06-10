@@ -52,9 +52,7 @@ describe('BootBaileysSocketSessions', () => {
     await useCase.execute()
 
     expect(startBaileysSocket).not.toHaveBeenCalled()
-    expect(logger.info).toHaveBeenCalledWith(
-      `Baileys boot: sessão ${session._id} sem creds ativas, ignorando.`,
-    )
+    expect(logger.info).toHaveBeenCalledWith(`Baileys boot: sessão ${session._id} sem creds ativas, ignorando.`)
   })
 
   it('skips session when session does not exist (no sessions at all)', async () => {

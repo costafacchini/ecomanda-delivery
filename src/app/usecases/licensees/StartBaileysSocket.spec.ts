@@ -31,7 +31,15 @@ function buildUseCase(overrides: Record<string, any> = {}) {
     createMessengerPlugin,
     ingestMessengerMessage,
   })
-  return { useCase, socketManager, plugin, createMessengerPlugin, ingestMessengerMessage, whatsappSessionRepository, session }
+  return {
+    useCase,
+    socketManager,
+    plugin,
+    createMessengerPlugin,
+    ingestMessengerMessage,
+    whatsappSessionRepository,
+    session,
+  }
 }
 
 describe('StartBaileysSocket', () => {
