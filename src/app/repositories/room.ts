@@ -13,6 +13,14 @@ class RoomRepositoryDatabase extends Repository {
   findOpenForContact(contactId: any) {
     return this.findFirst({ contact: contactId, closed: false })
   }
+
+  findForAgent(_userId: any, _licenseeId: any, setorIds: any[] = []) {
+    const query: any = {}
+    if (setorIds.length > 0) {
+      query.setor = { $in: setorIds }
+    }
+    return this.model().find(query)
+  }
 }
 
 class RoomRepositoryMemory extends RepositoryMemory {

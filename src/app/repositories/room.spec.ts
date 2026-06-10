@@ -1,5 +1,6 @@
 import mongoServer from '../../../.jest/utils'
 import Room from '@models/Room'
+import mongoose from 'mongoose'
 import { RoomRepositoryDatabase } from '@repositories/room'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
@@ -105,6 +106,46 @@ describe('room repository', () => {
 
       const roomSaved = await roomRepository.findFirst({ _id: room._id })
       expect(roomSaved.closed).toEqual(true)
+    })
+  })
+
+  describe('#findForAgent', () => {
+    it('returns only rooms matching the provided setorIds', async () => {
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
+
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee }))
+
+      const setorId = new mongoose.Types.ObjectId()
+      const otherSetorId = new mongoose.Types.ObjectId()
+
+      const roomRepository = new RoomRepositoryDatabase()
+      await roomRepository.create({ contact, setor: setorId })
+      await roomRepository.create({ contact, setor: otherSetorId })
+
+      const rooms = await roomRepository.findForAgent(null, licensee._id, [setorId])
+
+      expect(rooms.length).toEqual(1)
+      expect(rooms[0].setor.toString()).toEqual(setorId.toString())
+    })
+
+    it('returns all rooms when setorIds is empty', async () => {
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
+
+      const contactRepository = new ContactRepositoryDatabase()
+      const contact = await contactRepository.create(contactFactory.build({ licensee }))
+
+      const setorId = new mongoose.Types.ObjectId()
+
+      const roomRepository = new RoomRepositoryDatabase()
+      await roomRepository.create({ contact, setor: setorId })
+      await roomRepository.create({ contact })
+
+      const rooms = await roomRepository.findForAgent(null, licensee._id, [])
+
+      expect(rooms.length).toEqual(2)
     })
   })
 })

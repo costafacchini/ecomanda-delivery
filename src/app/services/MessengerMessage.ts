@@ -5,11 +5,12 @@ async function transformMessengerBody(data: any, { bodyRepository, createMesseng
     return []
   }
   const licensee = body.licensee
+  const setorId = body.setor ?? null
 
   const messengerPlugin = createMessengerPlugin(licensee)
 
   const actions = []
-  const messages = await messengerPlugin.responseToMessages(body.content)
+  const messages = await messengerPlugin.responseToMessages(body.content, { setorId })
 
   for (const message of messages) {
     const action = messengerPlugin.action(message.destination)
