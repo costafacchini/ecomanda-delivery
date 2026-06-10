@@ -37,6 +37,11 @@ export default function Navbar({ currentUser }: any) {
                   </div>
                 </li>
               )}
+              {currentUser && ['admin', 'supervisor'].includes(currentUser.role) && currentUser.licensee?.useSetores && (
+                <li className='nav-item'>
+                  <a className='nav-link' href='/#/setores'>Setores</a>
+                </li>
+              )}
               <li className='nav-item dropdown'>
                 <button className='nav-link dropdown-toggle' type='button' data-bs-toggle='dropdown' id='cadastros-dropdown' aria-expanded='false'>
                   Cadastros
