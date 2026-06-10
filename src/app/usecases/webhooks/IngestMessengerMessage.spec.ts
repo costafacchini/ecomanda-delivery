@@ -27,4 +27,43 @@ describe('IngestMessengerMessage', () => {
       licenseeId: 'licensee-id',
     })
   })
+
+  it('saves the body with setor null when setorId is not provided', async () => {
+    const messengerRepository = new BodyRepositoryMemory()
+    const jobQueue = {
+      addJob: jest.fn().mockResolvedValue(undefined),
+    }
+    const ingestMessengerMessage = new IngestMessengerMessage({ messengerRepository, jobQueue })
+
+    const bodySaved = await ingestMessengerMessage.execute({
+      body: { message: 'hello' },
+      licenseeId: 'licensee-id',
+    })
+
+    expect(bodySaved).toEqual(
+      expect.objectContaining({
+        setor: null,
+      }),
+    )
+  })
+
+  it('saves the body with setor populated when setorId is provided', async () => {
+    const messengerRepository = new BodyRepositoryMemory()
+    const jobQueue = {
+      addJob: jest.fn().mockResolvedValue(undefined),
+    }
+    const ingestMessengerMessage = new IngestMessengerMessage({ messengerRepository, jobQueue })
+
+    const bodySaved = await ingestMessengerMessage.execute({
+      body: { message: 'hello' },
+      licenseeId: 'licensee-id',
+      setorId: 'setor-123',
+    })
+
+    expect(bodySaved).toEqual(
+      expect.objectContaining({
+        setor: 'setor-123',
+      }),
+    )
+  })
 })
