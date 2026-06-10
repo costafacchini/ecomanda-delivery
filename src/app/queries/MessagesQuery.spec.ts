@@ -6,6 +6,7 @@ import { message as messageFactory } from '@factories/message'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
 import { MessageRepositoryDatabase } from '@repositories/message'
+import '@models/Setor'
 
 const buildMessagesQuery = () => new MessagesQuery({ messageRepository: new MessageRepositoryDatabase() })
 

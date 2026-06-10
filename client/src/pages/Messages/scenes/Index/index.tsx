@@ -191,6 +191,7 @@ function MessagesIndex({ currentUser }: any) {
             </div>
           </div>
         )}
+        {/* TODO: sector filter for admin — deferred */}
 
         <div className='col-6'>
           <div className='form-group'>
@@ -252,7 +253,10 @@ function MessagesIndex({ currentUser }: any) {
             {records.map((message) => (
               <tr key={message.id}>
                 <td>
-                  <div>{message.contact?.name}</div>
+                  <div>
+                    {message.contact?.name}
+                    {message.setor && <span className="badge bg-secondary ms-1">{message.setor.name}</span>}
+                  </div>
                   {message.error && (
                     <div>
                       <details className='mt-1'>
