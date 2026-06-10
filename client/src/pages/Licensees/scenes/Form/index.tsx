@@ -36,6 +36,7 @@ const licenseeInitialValues = {
   kind: '',
   useSenderName: false,
   useFileIDYcloud: false,
+  useSetores: false,
 }
 
 function LicenseeForm(props: any) {

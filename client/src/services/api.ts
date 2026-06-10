@@ -41,6 +41,9 @@ export default function api() {
     },
     get: function (url: any, requestOpts: any = {}) {
       return request(url, 'get', requestOpts)
+    },
+    delete: function (url: any, requestOpts: any = {}) {
+      return request(url, 'delete', requestOpts)
     }
   }
 }

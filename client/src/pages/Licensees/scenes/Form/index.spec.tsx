@@ -272,6 +272,7 @@ describe('<LicenseeForm />', () => {
         licenseKind: 'demo',
         useChatbot: false,
         useFileIDYcloud: false,
+        useSetores: false,
         chatbotDefault: '',
         chatbotUrl: '',
         chatbotAuthorizationToken: '',
