@@ -3,7 +3,6 @@ import { toast } from 'react-toastify'
 import { useState, useEffect } from 'react'
 import { getSetor, updateSetor } from '../../../../services/setor'
 import { useNavigate, useParams } from 'react-router'
-import SetorBaileysPanel from './SetorBaileysPanel'
 
 function SetorEdit({ currentUser }: any) {
   const navigate = useNavigate()
@@ -41,6 +40,7 @@ function SetorEdit({ currentUser }: any) {
           initialValues={setor}
           currentUser={currentUser}
           errors={errors}
+          setorId={setor.id}
           onSubmit={async (values: any) => {
             const response = await updateSetor({ ...values, id: setor.id })
 
@@ -54,7 +54,6 @@ function SetorEdit({ currentUser }: any) {
             }
           }}
         />
-        <SetorBaileysPanel setorId={setor.id} isActive={true} />
       </div>
     </div>
   )

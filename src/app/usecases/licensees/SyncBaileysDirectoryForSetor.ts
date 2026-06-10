@@ -30,7 +30,7 @@ class SyncBaileysDirectoryForSetor {
       return { message: NOT_BAILEYS_MESSAGE }
     }
 
-    const plugin = this.createMessengerPlugin(licensee)
+    const plugin = this.createMessengerPlugin(licensee, { setor })
 
     await this.contactRepository.deactivateGroupsForLicensee(licensee._id)
 

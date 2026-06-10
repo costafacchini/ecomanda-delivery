@@ -19,7 +19,11 @@ class StartBaileysSocket {
   }
 
   async execute(licensee: any, setor: any = null) {
-    const plugin = this.createMessengerPlugin(licensee)
+    const extras: any = {}
+    if (setor) {
+      extras.setor = setor._id
+    }
+    const plugin = this.createMessengerPlugin(licensee, extras)
 
     const setorId = setor?._id ?? null
     let session = await this.whatsappSessionRepository.findFirst({ licensee: licensee._id, setor: setorId })

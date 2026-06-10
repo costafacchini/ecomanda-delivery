@@ -27,14 +27,14 @@ class GetBaileysQrForSetor {
       return { message: 'Licensee não usa Baileys' }
     }
 
-    const plugin = this.createMessengerPlugin(licensee)
+    const plugin = this.createMessengerPlugin(licensee, { setor })
     const qr = await plugin.getQrCode()
 
     if (!qr) {
       if (process.env.ENABLE_BAILEYS_SOCKET === 'true') {
         this.startBaileysSocket?.(licensee, setor).catch(() => {})
       }
-      return { message: 'Já conectado' }
+      return { connected: true, message: 'Já conectado' }
     }
 
     return { qr }

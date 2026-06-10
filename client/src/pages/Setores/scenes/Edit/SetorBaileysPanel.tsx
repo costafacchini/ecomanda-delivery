@@ -108,6 +108,8 @@ function SetorBaileysPanel({ setorId, isActive }: Props) {
               const response = await getSetorBaileysQr({ id: setorId })
               if (response.data?.qr) {
                 setBaileysQr(response.data.qr)
+              } else if (response.data?.connected) {
+                setBaileysConnected(true)
               } else {
                 setBaileysStatus(response.data?.message ?? 'Erro ao gerar QR')
               }

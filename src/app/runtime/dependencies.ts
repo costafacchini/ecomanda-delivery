@@ -52,7 +52,7 @@ function buildRuntimeDependencies({
       roomRepository,
       triggerRepository,
     })
-  const createMessengerPlugin = (licensee: any) =>
+  const createMessengerPlugin = (licensee: any, extras: Record<string, any> = {}) =>
     createMessengerPluginFactory(licensee, {
       contactRepository,
       messageRepository,
@@ -60,6 +60,7 @@ function buildRuntimeDependencies({
       templateRepository,
       parseText,
       whatsappSessionRepository,
+      ...extras,
     })
   const createTemplatesImporter = (licenseeId: any) =>
     new TemplatesImporter(licenseeId, {

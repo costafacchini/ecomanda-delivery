@@ -140,13 +140,18 @@ function authorize(...roles: string[]) {
 
 router.use(authenticate)
 
-router.post('/users', authorize('super'), usersController.validations(), usersController.create)
-router.post('/users/:id', authorize('super'), usersController.validations(), usersController.update)
+router.post('/users', authorize('super', 'admin'), usersController.validations(), usersController.create)
+router.post('/users/:id', authorize('super', 'admin'), usersController.validations(), usersController.update)
 router.get('/users/:id', usersController.show)
 router.get('/users', authorize('admin', 'super'), usersController.index)
 
 router.post('/licensees', authorize('super'), licenseesController.validations(), licenseesController.create)
-router.post('/licensees/:id', authorize('super'), licenseesController.validations(), licenseesController.update)
+router.post(
+  '/licensees/:id',
+  authorize('super', 'admin'),
+  licenseesController.validations(),
+  licenseesController.update,
+)
 router.get('/licensees/:id', licenseesController.show)
 router.get('/licensees', authorize('admin', 'super'), licenseesController.index)
 
@@ -174,7 +179,7 @@ router.post('/licensees/:id/baileys-sync', licenseesController.baileysSync)
 router.get('/setores', authorize('admin', 'super'), setoresController.index)
 router.get('/setores/:id', authorize('admin', 'super'), setoresController.show)
 router.post('/setores', authorize('admin', 'super'), setoresController.create)
-router.put('/setores/:id', authorize('admin', 'super'), setoresController.update)
+router.post('/setores/:id', authorize('admin', 'super'), setoresController.update)
 router.delete('/setores/:id', authorize('admin', 'super'), setoresController.destroy)
 router.post('/setores/:id/baileys-qr', authorize('admin', 'super'), setoresController.getBaileysQr)
 router.get('/setores/:id/baileys-status', authorize('admin', 'super'), setoresController.getBaileysStatus)

@@ -4,6 +4,7 @@ import * as Yup from 'yup'
 import { useNavigate } from 'react-router'
 import Select from 'react-select'
 import { getUsers } from '../../../../services/user'
+import SetorBaileysPanel from '../Edit/SetorBaileysPanel'
 
 const setorSchema = Yup.object().shape({
   name: Yup.string().required('Nome é obrigatório'),
@@ -16,7 +17,7 @@ const setorInitialValues = {
 }
 
 function SetorForm(props: any) {
-  const { onSubmit, errors, initialValues, currentUser } = props
+  const { onSubmit, errors, initialValues, currentUser, setorId } = props
   let navigate = useNavigate()
   const [userOptions, setUserOptions] = useState<{ value: string; label: string }[]>([])
 
@@ -43,7 +44,7 @@ function SetorForm(props: any) {
         }}
       >
         {(formikProps: any) => {
-          const selectedUserValues: string[] = formikProps.values.users || []
+          const selectedUserValues: string[] = formikProps.values.users.map((opt: any) => opt._id) || []
           const selectedOptions = userOptions.filter(opt => selectedUserValues.includes(opt.value))
 
           return (
@@ -102,6 +103,8 @@ function SetorForm(props: any) {
                   </ul>
                 </div>
               )}
+
+              {setorId && <SetorBaileysPanel setorId={setorId} isActive={initialValues.active} />}
 
               <div className='row'>
                 <div className='col-5'>
