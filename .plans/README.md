@@ -22,11 +22,10 @@ Git-native Markdown plans for multi-step work.
 
 | # | Plan | Folder | Status | Description |
 |---|------|--------|--------|-------------|
-| 1 | [Setores](./setores/overview.md) | `setores/` | in-progress | Multiple WhatsApp numbers per licensee via sectors; sector-scoped message routing and agent access filtering |
-| 2 | [Setores — Webhook Providers](./setores-webhook-providers/overview.md) | `setores-webhook-providers/` | not-started | Extend sector routing to utalk/dialog/ycloud/pabbly via sector token in webhook URL; prerequisite: setores complete |
-| 3 | [MongoDB → PostgreSQL](./mongo-to-postgres/overview.md) | `mongo-to-postgres/` | not-started | Migrate all persistent data from MongoDB/Mongoose to PostgreSQL/Prisma using dual-write strategy; prerequisite: remove-pdv complete |
-| 4 | [Backend Type Narrowing](./type-backend/overview.md) | `type-backend/` | not-started | Replace `any` with interfaces across models, repositories, use cases, controllers, and plugins — 3 phases, 11 tasks |
-| 5 | [Client Type Narrowing](./type-client/overview.md) | `type-client/` | not-started | Replace `any` with interfaces across React services, contexts, pages, and components — 2 phases, 6 tasks |
+| 1 | [Setores — Webhook Providers](./setores-webhook-providers/overview.md) | `setores-webhook-providers/` | not-started | Extend sector routing to utalk/dialog/ycloud/pabbly via sector token in webhook URL; prerequisite: setores complete |
+| 2 | [MongoDB → PostgreSQL](./mongo-to-postgres/overview.md) | `mongo-to-postgres/` | not-started | Migrate all persistent data from MongoDB/Mongoose to PostgreSQL/Prisma using dual-write strategy; prerequisite: remove-pdv complete |
+| 3 | [Backend Type Narrowing](./type-backend/overview.md) | `type-backend/` | not-started | Replace `any` with interfaces across models, repositories, use cases, controllers, and plugins — 3 phases, 11 tasks |
+| 4 | [Client Type Narrowing](./type-client/overview.md) | `type-client/` | not-started | Replace `any` with interfaces across React services, contexts, pages, and components — 2 phases, 6 tasks |
 
 ---
 
@@ -48,6 +47,7 @@ Git-native Markdown plans for multi-step work.
 | 10 | [Baileys Socket Monitor](./baileys-socket-monitor/overview.md) | `baileys-socket-monitor/` | 2026-06-02 | Replace webhook-only inbound flow with a persistent Baileys socket per licensee; captures messages.upsert and messages.update natively |
 | 11 | [Local Chat Infrastructure](./local-chat-infra/overview.md) | `local-chat-infra/` | 2026-06-02 | User role system (agent/supervisor/admin/super), LocalChat plugin, super licensee flow, route authorization — prerequisite for setores |
 | 12 | [Onboarding Wizard](./onboarding-wizard/overview.md) | `onboarding-wizard/` | 2026-06-02 | Public sign-up flow from the login screen: wizard modal collects licensee identity + user credentials and creates both via a single unauthenticated endpoint |
+| 13 | [Setores](./setores/overview.md) | `setores/` | 2026-06-10 | Multiple WhatsApp numbers per licensee via sectors; sector-scoped message routing and agent access filtering |
 
 ---
 

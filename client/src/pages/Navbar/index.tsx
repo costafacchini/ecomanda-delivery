@@ -37,7 +37,7 @@ export default function Navbar({ currentUser }: any) {
                   </div>
                 </li>
               )}
-              {currentUser && ['admin', 'supervisor'].includes(currentUser.role) && currentUser.licensee?.useSetores && (
+              {currentUser && ['super', 'admin', 'supervisor'].includes(currentUser.role) && currentUser.licensee?.useSetores && (
                 <li className='nav-item'>
                   <a className='nav-link' href='/#/setores'>Setores</a>
                 </li>
