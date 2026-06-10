@@ -79,7 +79,7 @@ describe('<OnboardingModal />', () => {
       fireEvent.change(screen.getByLabelText('Senha'), { target: { value: 'senha123' } })
       fireEvent.change(screen.getByLabelText('Confirmar senha'), { target: { value: 'senha123' } })
 
-      fireEvent.click(screen.getByText('Criar conta'))
+      fireEvent.click(screen.getByRole('button', { name: 'Criar conta' }))
 
       await waitFor(() =>
         expect(createAccount).toHaveBeenCalledWith(

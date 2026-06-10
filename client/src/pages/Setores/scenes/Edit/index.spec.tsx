@@ -1,6 +1,6 @@
 import SetorEdit from './'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { getSetor, updateSetor } from '../../../../services/setor'
+import { getSetor, updateSetor, getSetorBaileysStatus } from '../../../../services/setor'
 import { getUsers } from '../../../../services/user'
 import { createRoutesStub } from 'react-router'
 
@@ -15,6 +15,7 @@ describe('<SetorEdit />', () => {
 
   function mount() {
     ;(getUsers as any).mockResolvedValue({ data: [] })
+    ;(getSetorBaileysStatus as any).mockResolvedValue({ data: { connected: false } })
 
     const Stub = createRoutesStub([
       {
