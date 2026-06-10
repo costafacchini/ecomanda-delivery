@@ -15,11 +15,11 @@ class BaileysSocketManager {
     return this._sockets.has(sessionId.toString())
   }
 
-  isConnectedForLicensee(licenseeId: any, setorId: any = null): boolean {
+  isConnectedForLicensee(licenseeId: any, sectorId: any = null): boolean {
     for (const [, entry] of this._sockets) {
       if (
         entry.session.licensee.toString() === licenseeId.toString() &&
-        String(entry.session.setor ?? null) === String(setorId ?? null)
+        String(entry.session.sector ?? null) === String(sectorId ?? null)
       ) {
         return true
       }

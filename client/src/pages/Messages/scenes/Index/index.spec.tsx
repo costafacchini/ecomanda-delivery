@@ -494,14 +494,14 @@ describe('<MessageIndex />', () => {
   })
 
   describe('sector badge', () => {
-    it('renders the sector badge when message has a setor', async () => {
+    it('renders the sector badge when message has a sector', async () => {
       getMessages.mockResolvedValueOnce({
         status: 200,
         data: [
           {
             id: '1',
             contact: { name: 'Contact' },
-            setor: { _id: 'setor-id-1', name: 'Vendas' },
+            sector: { _id: 'sector-id-1', name: 'Vendas' },
           },
         ],
       })
@@ -512,14 +512,14 @@ describe('<MessageIndex />', () => {
       expect(await screen.findByText('Vendas')).toBeInTheDocument()
     })
 
-    it('does not render a sector badge when message has no setor', async () => {
+    it('does not render a sector badge when message has no sector', async () => {
       getMessages.mockResolvedValueOnce({
         status: 200,
         data: [
           {
             id: '1',
             contact: { name: 'Contact' },
-            setor: null,
+            sector: null,
           },
         ],
       })
@@ -532,7 +532,7 @@ describe('<MessageIndex />', () => {
       expect(screen.queryByText('Vendas')).not.toBeInTheDocument()
     })
 
-    it('does not render a sector badge when setor field is absent', async () => {
+    it('does not render a sector badge when sector field is absent', async () => {
       getMessages.mockResolvedValueOnce({
         status: 200,
         data: [

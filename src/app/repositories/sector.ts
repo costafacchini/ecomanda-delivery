@@ -1,9 +1,9 @@
 import Repository, { RepositoryMemory } from './repository'
-import Setor from '../models/Setor'
+import Sector from '../models/Sector'
 
-class SetorRepositoryDatabase extends Repository {
+class SectorRepositoryDatabase extends Repository {
   model() {
-    return Setor
+    return Sector
   }
 
   async find(params: any = {}, relations: any[] = []) {
@@ -13,6 +13,6 @@ class SetorRepositoryDatabase extends Repository {
   }
 }
 
-class SetorRepositoryMemory extends RepositoryMemory {}
+class SectorRepositoryMemory extends RepositoryMemory {}
 
-export { SetorRepositoryDatabase, SetorRepositoryMemory }
+export { SectorRepositoryDatabase, SectorRepositoryMemory }

@@ -28,7 +28,7 @@ describe('IngestMessengerMessage', () => {
     })
   })
 
-  it('saves the body with setor null when setorId is not provided', async () => {
+  it('saves the body with sector null when sectorId is not provided', async () => {
     const messengerRepository = new BodyRepositoryMemory()
     const jobQueue = {
       addJob: jest.fn().mockResolvedValue(undefined),
@@ -42,12 +42,12 @@ describe('IngestMessengerMessage', () => {
 
     expect(bodySaved).toEqual(
       expect.objectContaining({
-        setor: null,
+        sector: null,
       }),
     )
   })
 
-  it('saves the body with setor populated when setorId is provided', async () => {
+  it('saves the body with sector populated when sectorId is provided', async () => {
     const messengerRepository = new BodyRepositoryMemory()
     const jobQueue = {
       addJob: jest.fn().mockResolvedValue(undefined),
@@ -57,12 +57,12 @@ describe('IngestMessengerMessage', () => {
     const bodySaved = await ingestMessengerMessage.execute({
       body: { message: 'hello' },
       licenseeId: 'licensee-id',
-      setorId: 'setor-123',
+      sectorId: 'sector-123',
     })
 
     expect(bodySaved).toEqual(
       expect.objectContaining({
-        setor: 'setor-123',
+        sector: 'sector-123',
       }),
     )
   })

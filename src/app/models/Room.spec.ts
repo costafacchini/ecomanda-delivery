@@ -105,11 +105,11 @@ describe('Room', () => {
     })
   })
 
-  describe('setor field', () => {
+  describe('sector field', () => {
     it('defaults to null', () => {
       const room = new Room({ contact })
 
-      expect(room.setor).toBeNull()
+      expect(room.sector).toBeNull()
     })
   })
 })

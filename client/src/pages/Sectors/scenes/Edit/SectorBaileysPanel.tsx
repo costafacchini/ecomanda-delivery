@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
-import { getSetorBaileysStatus, getSetorBaileysQr, syncSetorBaileys } from '../../../../services/setor'
+import { getSectorBaileysStatus, getSectorBaileysQr, syncSectorBaileys } from '../../../../services/sector'
 
 interface Props {
-  setorId: string
+  sectorId: string
   isActive: boolean
 }
 
-function SetorBaileysPanel({ setorId, isActive }: Props) {
+function SectorBaileysPanel({ sectorId, isActive }: Props) {
   const [baileysQr, setBaileysQr] = useState<any>(null)
   const [baileysStatus, setBaileysStatus] = useState<any>(null)
   const [baileysConnected, setBaileysConnected] = useState<boolean | null>(null)
@@ -17,10 +17,10 @@ function SetorBaileysPanel({ setorId, isActive }: Props) {
   const [syncError, setSyncError] = useState<any>(null)
 
   useEffect(() => {
-    if (!isActive || !setorId) return
+    if (!isActive || !sectorId) return
 
     setBaileysChecking(true)
-    getSetorBaileysStatus({ id: setorId })
+    getSectorBaileysStatus({ id: sectorId })
       .then((response) => {
         setBaileysConnected(response.data?.connected ?? false)
       })
@@ -30,7 +30,7 @@ function SetorBaileysPanel({ setorId, isActive }: Props) {
       .finally(() => {
         setBaileysChecking(false)
       })
-  }, [isActive, setorId])
+  }, [isActive, sectorId])
 
   return (
     <div className='mt-4'>
@@ -49,7 +49,7 @@ function SetorBaileysPanel({ setorId, isActive }: Props) {
               setBaileysConnected(null)
               setBaileysQr(null)
               setBaileysStatus(null)
-              const response = await getSetorBaileysQr({ id: setorId })
+              const response = await getSectorBaileysQr({ id: sectorId })
               if (response.data?.qr) {
                 setBaileysQr(response.data.qr)
                 setBaileysConnected(false)
@@ -68,7 +68,7 @@ function SetorBaileysPanel({ setorId, isActive }: Props) {
               setSyncError(null)
               setSyncLoading(true)
               try {
-                const response = await syncSetorBaileys({ id: setorId })
+                const response = await syncSectorBaileys({ id: sectorId })
                 setSyncResult(response.data)
               } catch {
                 setSyncError('Erro ao sincronizar grupos')
@@ -105,7 +105,7 @@ function SetorBaileysPanel({ setorId, isActive }: Props) {
               event.preventDefault()
               setBaileysQr(null)
               setBaileysStatus(null)
-              const response = await getSetorBaileysQr({ id: setorId })
+              const response = await getSectorBaileysQr({ id: sectorId })
               if (response.data?.qr) {
                 setBaileysQr(response.data.qr)
               } else if (response.data?.connected) {
@@ -136,4 +136,4 @@ function SetorBaileysPanel({ setorId, isActive }: Props) {
   )
 }
 
-export default SetorBaileysPanel
+export default SectorBaileysPanel

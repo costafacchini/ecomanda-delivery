@@ -12,7 +12,7 @@ import { logger } from '../../helpers/logger'
 import { StartBaileysSocket } from './StartBaileysSocket'
 
 function makeSession(overrides: Record<string, any> = {}) {
-  return { _id: 'session-id-1', licensee: 'licensee-id-123', setor: null, ...overrides }
+  return { _id: 'session-id-1', licensee: 'licensee-id-123', sector: null, ...overrides }
 }
 
 function buildUseCase(overrides: Record<string, any> = {}) {
@@ -53,17 +53,17 @@ describe('StartBaileysSocket', () => {
     expect(socketManager.start).toHaveBeenCalledWith(session, licensee, expect.any(Object))
   })
 
-  it('looks up the session by licensee._id and setor=null when no setor given', async () => {
+  it('looks up the session by licensee._id and sector=null when no sector given', async () => {
     const { useCase, whatsappSessionRepository } = buildUseCase()
 
     await useCase.execute(licensee)
 
-    expect(whatsappSessionRepository.findFirst).toHaveBeenCalledWith({ licensee: licensee._id, setor: null })
+    expect(whatsappSessionRepository.findFirst).toHaveBeenCalledWith({ licensee: licensee._id, sector: null })
   })
 
-  it('looks up the session by licensee._id and setor._id when setor is given', async () => {
-    const setor = { _id: 'setor-id-abc' }
-    const sectorSession = makeSession({ _id: 'session-id-2', setor: setor._id })
+  it('looks up the session by licensee._id and sector._id when sector is given', async () => {
+    const sector = { _id: 'sector-id-abc' }
+    const sectorSession = makeSession({ _id: 'session-id-2', sector: sector._id })
     const { useCase, whatsappSessionRepository } = buildUseCase({
       whatsappSessionRepository: {
         findFirst: jest.fn().mockResolvedValue(sectorSession),
@@ -71,9 +71,9 @@ describe('StartBaileysSocket', () => {
       },
     })
 
-    await useCase.execute(licensee, setor)
+    await useCase.execute(licensee, sector)
 
-    expect(whatsappSessionRepository.findFirst).toHaveBeenCalledWith({ licensee: licensee._id, setor: setor._id })
+    expect(whatsappSessionRepository.findFirst).toHaveBeenCalledWith({ licensee: licensee._id, sector: sector._id })
   })
 
   it('creates a new session when none is found', async () => {
@@ -86,13 +86,13 @@ describe('StartBaileysSocket', () => {
 
     await useCase.execute(licensee)
 
-    expect(whatsappSessionRepository.create).toHaveBeenCalledWith({ licensee: licensee._id, setor: null })
+    expect(whatsappSessionRepository.create).toHaveBeenCalledWith({ licensee: licensee._id, sector: null })
     expect(socketManager.start).toHaveBeenCalledWith(session, licensee, expect.any(Object))
   })
 
-  it('passes setorId in ingestMessengerMessage.execute when setor is provided', async () => {
-    const setor = { _id: 'setor-id-abc' }
-    const sectorSession = makeSession({ _id: 'session-id-2', setor: setor._id })
+  it('passes sectorId in ingestMessengerMessage.execute when sector is provided', async () => {
+    const sector = { _id: 'sector-id-abc' }
+    const sectorSession = makeSession({ _id: 'session-id-2', sector: sector._id })
     const whatsappSessionRepository = {
       findFirst: jest.fn().mockResolvedValue(sectorSession),
       create: jest.fn().mockResolvedValue(sectorSession),
@@ -108,7 +108,7 @@ describe('StartBaileysSocket', () => {
       ingestMessengerMessage,
     })
 
-    await useCase.execute(licensee, setor)
+    await useCase.execute(licensee, sector)
 
     const { onMessage } = socketManager.start.mock.calls[0][2]
     const msg = { key: { id: 'msg-1' }, message: { conversation: 'hello' } }
@@ -117,7 +117,7 @@ describe('StartBaileysSocket', () => {
     expect(ingestMessengerMessage.execute).toHaveBeenCalledWith({
       body: msg,
       licenseeId: licensee._id,
-      setorId: setor._id,
+      sectorId: sector._id,
     })
   })
 
@@ -134,7 +134,7 @@ describe('StartBaileysSocket', () => {
     expect(ingestMessengerMessage.execute).toHaveBeenCalledWith({
       body: msg,
       licenseeId: licensee._id,
-      setorId: null,
+      sectorId: null,
     })
   })
 

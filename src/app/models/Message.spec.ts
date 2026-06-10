@@ -220,11 +220,11 @@ describe('Message', () => {
     })
   })
 
-  describe('setor field', () => {
+  describe('sector field', () => {
     it('defaults to null', () => {
       const message = new Message()
 
-      expect(message.setor).toBeNull()
+      expect(message.sector).toBeNull()
     })
   })
 })

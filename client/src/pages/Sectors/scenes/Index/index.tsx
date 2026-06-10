@@ -1,35 +1,35 @@
 import { useEffect, useState, useCallback } from 'react'
 import { Link } from 'react-router'
-import { getSetores, deleteSetor } from '../../../../services/setor'
+import { getSectors, deleteSector } from '../../../../services/sector'
 import { toast } from 'react-toastify'
 
-function SetoresIndex({ currentUser }: any) {
-  const [setores, setSetores] = useState<any[]>([])
+function SectorsIndex({ currentUser }: any) {
+  const [sectors, setSectors] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
 
-  const fetchSetores = useCallback(async () => {
+  const fetchSectors = useCallback(async () => {
     if (!currentUser?.licensee?._id) return
 
     setLoading(true)
     try {
-      const { data } = await getSetores({ licensee: currentUser.licensee._id })
-      setSetores(Array.isArray(data) ? data : [])
+      const { data } = await getSectors({ licensee: currentUser.licensee._id })
+      setSectors(Array.isArray(data) ? data : [])
     } finally {
       setLoading(false)
     }
   }, [currentUser])
 
   useEffect(() => {
-    fetchSetores()
-  }, [fetchSetores])
+    fetchSectors()
+  }, [fetchSectors])
 
   async function handleDelete(id: string) {
     if (!window.confirm('Deseja realmente excluir este setor?')) return
 
-    const response = await deleteSetor(id)
+    const response = await deleteSector(id)
     if (response.status === 200) {
       toast.success('Setor excluído com sucesso!')
-      fetchSetores()
+      fetchSectors()
     } else {
       toast.error('Ops! Não foi possível excluir o setor.')
     }
@@ -43,7 +43,7 @@ function SetoresIndex({ currentUser }: any) {
             <h3 className='pr-3'>Setores</h3>
           </div>
           <div className=''>
-            <Link to='/setores/new' className='btn btn-primary'>Criar +</Link>
+            <Link to='/sectors/new' className='btn btn-primary'>Criar +</Link>
           </div>
         </div>
       </div>
@@ -58,17 +58,17 @@ function SetoresIndex({ currentUser }: any) {
             </tr>
           </thead>
           <tbody>
-            {!loading && setores.map((setor: any) => (
-              <tr key={setor.id}>
-                <td>{setor.name}</td>
-                <td>{setor.active ? 'Sim' : 'Não'}</td>
+            {!loading && sectors.map((sector: any) => (
+              <tr key={sector.id}>
+                <td>{sector.name}</td>
+                <td>{sector.active ? 'Sim' : 'Não'}</td>
                 <td>
-                  <Link to={`/setores/${setor.id}/edit`} className='me-2'>
+                  <Link to={`/sectors/${sector.id}/edit`} className='me-2'>
                     <i className='bi bi-pencil' />
                   </Link>
                   <button
                     className='btn btn-link p-0 text-danger'
-                    onClick={() => handleDelete(setor.id)}
+                    onClick={() => handleDelete(sector.id)}
                     title='Excluir setor'
                   >
                     <i className='bi bi-trash' />
@@ -83,4 +83,4 @@ function SetoresIndex({ currentUser }: any) {
   )
 }
 
-export default SetoresIndex
+export default SectorsIndex

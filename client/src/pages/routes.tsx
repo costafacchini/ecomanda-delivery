@@ -3,7 +3,7 @@ import { HashRouter, Route, Routes } from 'react-router'
 import SignIn from './SignIn'
 import LicenseesRoutes from './Licensees/routes'
 import UsersRoutes from './Users/routes'
-import SetoresRoutes from './Setores/routes'
+import SectorsRoutes from './Sectors/routes'
 import ContactsRoutes from './Contacts/routes'
 import TriggersRoutes from './Triggers/routes'
 import TemplatesRoutes from './Templates/routes'
@@ -55,10 +55,10 @@ function RootRoutes() {
           }
         />
         <Route
-          path='/setores/*'
+          path='/sectors/*'
           element={
             <PrivateRoute redirectTo='/'>
-              <SetoresRoutes />
+              <SectorsRoutes />
             </PrivateRoute>
           }
         />

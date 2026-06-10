@@ -86,16 +86,16 @@ describe('OnboardAccount', () => {
     expect(result.licensee.whatsappDefault).toEqual('baileys')
   })
 
-  it('forwards useSetores to the licensee when provided', async () => {
-    const result = await onboardAccount.execute({ ...validInput, useSetores: true })
+  it('forwards useSectors to the licensee when provided', async () => {
+    const result = await onboardAccount.execute({ ...validInput, useSectors: true })
 
-    expect(result.licensee.useSetores).toEqual(true)
+    expect(result.licensee.useSectors).toEqual(true)
   })
 
-  it('licensee defaults useSetores to false when not provided', async () => {
+  it('licensee defaults useSectors to false when not provided', async () => {
     const result = await onboardAccount.execute(validInput)
 
-    expect(result.licensee.useSetores).toBeFalsy()
+    expect(result.licensee.useSectors).toBeFalsy()
   })
 
   it('deletes the orphaned licensee and re-throws when user creation fails', async () => {

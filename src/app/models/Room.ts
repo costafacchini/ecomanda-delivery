@@ -20,9 +20,9 @@ const roomSchema = new Schema(
       ref: 'User',
       default: null,
     },
-    setor: {
+    sector: {
       type: ObjectId,
-      ref: 'Setor',
+      ref: 'Sector',
       default: null,
     },
     status: {

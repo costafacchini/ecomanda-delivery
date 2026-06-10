@@ -80,7 +80,7 @@ const initialValues = {
   whatsappDefault: '',
   whatsappToken: '',
   whatsappUrl: '',
-  useSetores: false,
+  useSectors: false,
   userName: '',
   userEmail: '',
   password: '',
@@ -182,7 +182,7 @@ function OnboardingModal({ isOpen, onClose, onSuccess }: Props) {
         whatsappDefault: values.whatsappDefault,
         whatsappToken:   values.whatsappToken,
         whatsappUrl:     values.whatsappUrl,
-        useSetores:      values.useSetores ?? false,
+        useSectors:      values.useSectors ?? false,
       } : {}),
     }
 
@@ -424,12 +424,12 @@ function OnboardingModal({ isOpen, onClose, onSuccess }: Props) {
               <input
                 type='checkbox'
                 className='form-check-input'
-                id='useSetores'
-                name='useSetores'
-                checked={formik.values.useSetores ?? false}
+                id='useSectors'
+                name='useSectors'
+                checked={formik.values.useSectors ?? false}
                 onChange={formik.handleChange}
               />
-              <label className='form-check-label' htmlFor='useSetores'>
+              <label className='form-check-label' htmlFor='useSectors'>
                 Usar setores (múltiplos departamentos com números de WhatsApp separados)
               </label>
             </div>

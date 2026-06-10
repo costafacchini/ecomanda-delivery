@@ -139,13 +139,13 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                 <input
                   type='checkbox'
                   className='form-check-input'
-                  id='useSetores'
-                  name='useSetores'
+                  id='useSectors'
+                  name='useSectors'
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  checked={values.useSetores ?? false}
+                  checked={values.useSectors ?? false}
                 />
-                <label className='form-check-label' htmlFor='useSetores'>
+                <label className='form-check-label' htmlFor='useSectors'>
                   Usar setores (múltiplos departamentos com números de WhatsApp separados)
                 </label>
               </div>

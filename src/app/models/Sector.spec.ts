@@ -1,10 +1,10 @@
-import Setor from '@models/Setor'
+import Sector from '@models/Sector'
 import mongoServer from '../../../.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import mongoose from 'mongoose'
 
-describe('Setor', () => {
+describe('Sector', () => {
   beforeEach(async () => {
     await mongoServer.connect()
   })
@@ -19,47 +19,47 @@ describe('Setor', () => {
       const licensee = await licenseeRepository.create(licenseeFactory.build())
       const userId = new mongoose.Types.ObjectId()
 
-      const setor = await Setor.create({ name: 'Vendas', licensee, users: [userId] })
+      const sector = await Sector.create({ name: 'Vendas', licensee, users: [userId] })
 
-      expect(setor._id).not.toBeNull()
+      expect(sector._id).not.toBeNull()
     })
 
     it('defaults active to true', () => {
-      const setor = new Setor({ name: 'Vendas' })
+      const sector = new Sector({ name: 'Vendas' })
 
-      expect(setor.active).toEqual(true)
+      expect(sector.active).toEqual(true)
     })
   })
 
   describe('validations', () => {
     it('fails when name is missing', () => {
-      const setor = new Setor({ licensee: new mongoose.Types.ObjectId(), users: [new mongoose.Types.ObjectId()] })
-      const error = setor.validateSync()
+      const sector = new Sector({ licensee: new mongoose.Types.ObjectId(), users: [new mongoose.Types.ObjectId()] })
+      const error = sector.validateSync()
 
       expect(error?.errors['name']).toBeDefined()
     })
 
     it('fails when licensee is missing', () => {
-      const setor = new Setor({ name: 'Vendas', users: [new mongoose.Types.ObjectId()] })
-      const error = setor.validateSync()
+      const sector = new Sector({ name: 'Vendas', users: [new mongoose.Types.ObjectId()] })
+      const error = sector.validateSync()
 
       expect(error?.errors['licensee']).toBeDefined()
     })
 
     it('fails when users array is empty', () => {
-      const setor = new Setor({ name: 'Vendas', licensee: new mongoose.Types.ObjectId(), users: [] })
-      const error = setor.validateSync()
+      const sector = new Sector({ name: 'Vendas', licensee: new mongoose.Types.ObjectId(), users: [] })
+      const error = sector.validateSync()
 
       expect(error?.errors['users']).toBeDefined()
     })
 
     it('passes with name, licensee and at least one user', () => {
-      const setor = new Setor({
+      const sector = new Sector({
         name: 'Vendas',
         licensee: new mongoose.Types.ObjectId(),
         users: [new mongoose.Types.ObjectId()],
       })
-      const error = setor.validateSync()
+      const error = sector.validateSync()
 
       expect(error).toBeUndefined()
     })

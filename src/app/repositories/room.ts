@@ -14,10 +14,10 @@ class RoomRepositoryDatabase extends Repository {
     return this.findFirst({ contact: contactId, closed: false })
   }
 
-  findForAgent(_userId: any, _licenseeId: any, setorIds: any[] = []) {
+  findForAgent(_userId: any, _licenseeId: any, sectorIds: any[] = []) {
     const query: any = {}
-    if (setorIds.length > 0) {
-      query.setor = { $in: setorIds }
+    if (sectorIds.length > 0) {
+      query.sector = { $in: sectorIds }
     }
     return this.model().find(query)
   }

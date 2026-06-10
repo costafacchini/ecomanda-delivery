@@ -8,12 +8,12 @@ const JID_GROUP_SUFFIX = '@g.us'
 
 class Baileys extends MessengersBase {
   _whatsappSessionRepository: any
-  _setor: any
+  _sector: any
 
-  constructor(licensee: any, { whatsappSessionRepository, setor, ...dependencies }: Record<string, any> = {}) {
+  constructor(licensee: any, { whatsappSessionRepository, sector, ...dependencies }: Record<string, any> = {}) {
     super(licensee, dependencies)
     this._whatsappSessionRepository = whatsappSessionRepository
-    this._setor = setor ?? null
+    this._sector = sector ?? null
   }
 
   get whatsappSessionRepository() {
@@ -123,12 +123,12 @@ class Baileys extends MessengersBase {
 
   async loadOrCreateSession() {
     const filter: Record<string, any> = { licensee: this.licensee._id }
-    if (this._setor) filter.setor = this._setor._id
+    if (this._sector) filter.sector = this._sector._id
     let session = await this.whatsappSessionRepository.findFirst(filter)
     if (!session) {
       session = await this.whatsappSessionRepository.create({
         licensee: this.licensee._id,
-        setor: this._setor?._id ?? null,
+        sector: this._sector?._id ?? null,
       })
     }
     return session

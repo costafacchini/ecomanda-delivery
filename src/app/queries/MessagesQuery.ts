@@ -1,4 +1,4 @@
-import '@models/Setor'
+import '@models/Sector'
 import { QueryBuilder } from './QueryBuilder'
 
 class MessagesQuery {
@@ -92,7 +92,7 @@ class MessagesQuery {
       .populate('contact')
       .populate('cart')
       .populate('trigger')
-      .populate('setor', 'name')
+      .populate('sector', 'name')
       .exec()
   }
 

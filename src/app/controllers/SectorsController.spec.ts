@@ -1,6 +1,6 @@
-import { SetorRepositoryMemory } from '@repositories/setor'
-import { SetoresController } from './SetoresController'
-import Setor from '@models/Setor'
+import { SectorRepositoryMemory } from '@repositories/sector'
+import { SectorsController } from './SectorsController'
+import Sector from '@models/Sector'
 import mongoose from 'mongoose'
 
 function buildResponse() {
@@ -12,18 +12,18 @@ function buildResponse() {
 }
 
 function buildController() {
-  const setorRepository = new SetorRepositoryMemory()
-  setorRepository.modelClass = Setor
+  const sectorRepository = new SectorRepositoryMemory()
+  sectorRepository.modelClass = Sector
 
-  const controller = new SetoresController({ setorRepository })
+  const controller = new SectorsController({ sectorRepository })
 
-  return { controller, setorRepository }
+  return { controller, sectorRepository }
 }
 
-describe('SetoresController', () => {
+describe('SectorsController', () => {
   describe('#create', () => {
-    it('returns 201 with the created setor', async () => {
-      const { controller, setorRepository } = buildController()
+    it('returns 201 with the created sector', async () => {
+      const { controller, sectorRepository } = buildController()
       const licenseeId = new mongoose.Types.ObjectId()
       const userId = new mongoose.Types.ObjectId()
       const req = { body: { name: 'Vendas', licensee: licenseeId, users: [userId] } }
@@ -33,7 +33,7 @@ describe('SetoresController', () => {
 
       expect(res.status).toHaveBeenCalledWith(201)
       expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ name: 'Vendas' }))
-      expect(setorRepository.items).toHaveLength(1)
+      expect(sectorRepository.items).toHaveLength(1)
     })
 
     it('returns 422 when users array is empty', async () => {
@@ -62,14 +62,14 @@ describe('SetoresController', () => {
   })
 
   describe('#index', () => {
-    it('returns all setores filtered by licensee', async () => {
-      const { controller, setorRepository } = buildController()
+    it('returns all sectors filtered by licensee', async () => {
+      const { controller, sectorRepository } = buildController()
       const licenseeId = new mongoose.Types.ObjectId()
       const otherLicenseeId = new mongoose.Types.ObjectId()
       const userId = new mongoose.Types.ObjectId()
 
-      await setorRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
-      await setorRepository.create({ name: 'Suporte', licensee: otherLicenseeId, users: [userId] })
+      await sectorRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
+      await sectorRepository.create({ name: 'Suporte', licensee: otherLicenseeId, users: [userId] })
 
       const req = { query: { licensee: licenseeId.toString() } }
       const res = buildResponse()
@@ -82,13 +82,13 @@ describe('SetoresController', () => {
       expect(sent[0].name).toEqual('Vendas')
     })
 
-    it('returns all setores when no licensee filter', async () => {
-      const { controller, setorRepository } = buildController()
+    it('returns all sectors when no licensee filter', async () => {
+      const { controller, sectorRepository } = buildController()
       const licenseeId = new mongoose.Types.ObjectId()
       const userId = new mongoose.Types.ObjectId()
 
-      await setorRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
-      await setorRepository.create({ name: 'Suporte', licensee: licenseeId, users: [userId] })
+      await sectorRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
+      await sectorRepository.create({ name: 'Suporte', licensee: licenseeId, users: [userId] })
 
       const req = { query: {} }
       const res = buildResponse()
@@ -101,32 +101,32 @@ describe('SetoresController', () => {
   })
 
   describe('#destroy', () => {
-    it('removes the setor and returns 204', async () => {
-      const { controller, setorRepository } = buildController()
+    it('removes the sector and returns 204', async () => {
+      const { controller, sectorRepository } = buildController()
       const licenseeId = new mongoose.Types.ObjectId()
       const userId = new mongoose.Types.ObjectId()
 
-      const setor = await setorRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
+      const sector = await sectorRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
 
-      const req = { params: { id: setor._id } }
+      const req = { params: { id: sector._id } }
       const res = buildResponse()
 
       await controller.destroy(req, res)
 
       expect(res.status).toHaveBeenCalledWith(204)
-      expect(setorRepository.items).toHaveLength(0)
+      expect(sectorRepository.items).toHaveLength(0)
     })
   })
 
   describe('#show', () => {
-    it('returns the setor by id', async () => {
-      const { controller, setorRepository } = buildController()
+    it('returns the sector by id', async () => {
+      const { controller, sectorRepository } = buildController()
       const licenseeId = new mongoose.Types.ObjectId()
       const userId = new mongoose.Types.ObjectId()
 
-      const setor = await setorRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
+      const sector = await sectorRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
 
-      const req = { params: { id: setor._id } }
+      const req = { params: { id: sector._id } }
       const res = buildResponse()
 
       await controller.show(req, res)

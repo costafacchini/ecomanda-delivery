@@ -75,11 +75,11 @@ describe('Body', () => {
     })
   })
 
-  describe('setor field', () => {
+  describe('sector field', () => {
     it('defaults to null', () => {
       const body = new Body()
 
-      expect(body.setor).toBeNull()
+      expect(body.sector).toBeNull()
     })
   })
 })

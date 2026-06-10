@@ -7,8 +7,8 @@ async function sendMessageToMessenger(
   const licensee = message.licensee
 
   const extras: any = {}
-  if (message.setor) {
-    extras.setor = message.setor
+  if (message.sector) {
+    extras.sector = message.sector
   }
   const messegnerPlugin = createMessengerPlugin(licensee, extras)
 

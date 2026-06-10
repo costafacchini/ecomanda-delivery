@@ -110,37 +110,37 @@ describe('room repository', () => {
   })
 
   describe('#findForAgent', () => {
-    it('returns only rooms matching the provided setorIds', async () => {
+    it('returns only rooms matching the provided sectorIds', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
 
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(contactFactory.build({ licensee }))
 
-      const setorId = new mongoose.Types.ObjectId()
-      const otherSetorId = new mongoose.Types.ObjectId()
+      const sectorId = new mongoose.Types.ObjectId()
+      const otherSectorId = new mongoose.Types.ObjectId()
 
       const roomRepository = new RoomRepositoryDatabase()
-      await roomRepository.create({ contact, setor: setorId })
-      await roomRepository.create({ contact, setor: otherSetorId })
+      await roomRepository.create({ contact, sector: sectorId })
+      await roomRepository.create({ contact, sector: otherSectorId })
 
-      const rooms = await roomRepository.findForAgent(null, licensee._id, [setorId])
+      const rooms = await roomRepository.findForAgent(null, licensee._id, [sectorId])
 
       expect(rooms.length).toEqual(1)
-      expect(rooms[0].setor.toString()).toEqual(setorId.toString())
+      expect(rooms[0].sector.toString()).toEqual(sectorId.toString())
     })
 
-    it('returns all rooms when setorIds is empty', async () => {
+    it('returns all rooms when sectorIds is empty', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
 
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(contactFactory.build({ licensee }))
 
-      const setorId = new mongoose.Types.ObjectId()
+      const sectorId = new mongoose.Types.ObjectId()
 
       const roomRepository = new RoomRepositoryDatabase()
-      await roomRepository.create({ contact, setor: setorId })
+      await roomRepository.create({ contact, sector: sectorId })
       await roomRepository.create({ contact })
 
       const rooms = await roomRepository.findForAgent(null, licensee._id, [])

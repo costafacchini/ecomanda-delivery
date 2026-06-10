@@ -18,42 +18,42 @@ describe('WhatsappSession', () => {
     await mongoServer.disconnect()
   })
 
-  describe('setor field', () => {
-    it('defaults setor to null', async () => {
+  describe('sector field', () => {
+    it('defaults sector to null', async () => {
       const session = await WhatsappSession.create({ licensee })
 
-      expect(session.setor).toBeNull()
+      expect(session.sector).toBeNull()
     })
 
-    it('accepts a setor ObjectId', async () => {
-      const setorId = new mongoose.Types.ObjectId()
-      const session = await WhatsappSession.create({ licensee, setor: setorId })
+    it('accepts a sector ObjectId', async () => {
+      const sectorId = new mongoose.Types.ObjectId()
+      const session = await WhatsappSession.create({ licensee, sector: sectorId })
 
-      expect(session.setor?.toString()).toEqual(setorId.toString())
+      expect(session.sector?.toString()).toEqual(sectorId.toString())
     })
   })
 
-  describe('compound unique index (licensee + setor)', () => {
+  describe('compound unique index (licensee + sector)', () => {
     beforeEach(async () => {
       await WhatsappSession.syncIndexes()
     })
 
-    it('allows two sessions for the same licensee when setors differ', async () => {
-      const setorA = new mongoose.Types.ObjectId()
-      const setorB = new mongoose.Types.ObjectId()
+    it('allows two sessions for the same licensee when sectors differ', async () => {
+      const sectorA = new mongoose.Types.ObjectId()
+      const sectorB = new mongoose.Types.ObjectId()
 
-      await WhatsappSession.create({ licensee, setor: setorA })
-      const second = await WhatsappSession.create({ licensee, setor: setorB })
+      await WhatsappSession.create({ licensee, sector: sectorA })
+      const second = await WhatsappSession.create({ licensee, sector: sectorB })
 
       expect(second._id).toBeDefined()
     })
 
-    it('rejects a duplicate (licensee + setor) pair', async () => {
-      const setorId = new mongoose.Types.ObjectId()
+    it('rejects a duplicate (licensee + sector) pair', async () => {
+      const sectorId = new mongoose.Types.ObjectId()
 
-      await WhatsappSession.create({ licensee, setor: setorId })
+      await WhatsappSession.create({ licensee, sector: sectorId })
 
-      await expect(WhatsappSession.create({ licensee, setor: setorId })).rejects.toThrow()
+      await expect(WhatsappSession.create({ licensee, sector: sectorId })).rejects.toThrow()
     })
   })
 })

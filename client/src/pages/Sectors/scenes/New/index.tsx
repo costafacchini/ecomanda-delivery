@@ -1,10 +1,10 @@
 import Form from '../Form'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
-import { createSetor } from '../../../../services/setor'
+import { createSector } from '../../../../services/sector'
 import { useNavigate } from 'react-router'
 
-function SetorNew({ currentUser }: any) {
+function SectorNew({ currentUser }: any) {
   let navigate = useNavigate()
   const [errors, setErrors] = useState(null)
 
@@ -20,11 +20,11 @@ function SetorNew({ currentUser }: any) {
               ...values,
               licensee: currentUser?.licensee?._id || currentUser?.licensee,
             }
-            const response = await createSetor(payload)
+            const response = await createSector(payload)
 
             if (response.status === 201) {
               toast.success('Setor criado com sucesso!')
-              navigate('/setores')
+              navigate('/sectors')
               setErrors(null)
             } else {
               setErrors(response.data.errors)
@@ -37,4 +37,4 @@ function SetorNew({ currentUser }: any) {
   )
 }
 
-export default SetorNew
+export default SectorNew

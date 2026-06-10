@@ -36,8 +36,8 @@ describe('<OnboardingModal />', () => {
     await screen.findByText('WhatsApp padrão')
   }
 
-  describe('useSetores checkbox', () => {
-    it('does not show useSetores checkbox when baileys is not selected', async () => {
+  describe('useSectors checkbox', () => {
+    it('does not show useSectors checkbox when baileys is not selected', async () => {
       mount()
       await navigateToWhatsappStep()
 
@@ -46,7 +46,7 @@ describe('<OnboardingModal />', () => {
       expect(screen.queryByLabelText(/Usar setores/)).not.toBeInTheDocument()
     })
 
-    it('shows useSetores checkbox when baileys is selected', async () => {
+    it('shows useSectors checkbox when baileys is selected', async () => {
       mount()
       await navigateToWhatsappStep()
 
@@ -57,7 +57,7 @@ describe('<OnboardingModal />', () => {
   })
 
   describe('onboarding payload', () => {
-    it('includes useSetores in the whatsapp submission payload', async () => {
+    it('includes useSectors in the whatsapp submission payload', async () => {
       ;(createAccount as any).mockResolvedValue({ status: 201 })
 
       mount()
@@ -66,7 +66,7 @@ describe('<OnboardingModal />', () => {
       // Select baileys
       fireEvent.change(screen.getByLabelText('WhatsApp padrão'), { target: { value: 'baileys' } })
 
-      // Check useSetores
+      // Check useSectors
       const checkbox = await screen.findByLabelText(/Usar setores/)
       fireEvent.click(checkbox)
 
@@ -83,7 +83,7 @@ describe('<OnboardingModal />', () => {
 
       await waitFor(() =>
         expect(createAccount).toHaveBeenCalledWith(
-          expect.objectContaining({ useSetores: true })
+          expect.objectContaining({ useSectors: true })
         )
       )
     })

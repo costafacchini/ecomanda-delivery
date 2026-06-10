@@ -41,22 +41,22 @@ describe('<Navbar>', () => {
 
   describe('Setores nav item', () => {
     it('is hidden when useSetores is false', () => {
-      renderWithContext(<Navbar currentUser={{ role: 'admin', licensee: { useSetores: false } }} />)
+      renderWithContext(<Navbar currentUser={{ role: 'admin', licensee: { useSectors: false } }} />)
       expect(screen.queryByText(/Setores/i)).not.toBeInTheDocument()
     })
 
     it('is hidden when role is agent', () => {
-      renderWithContext(<Navbar currentUser={{ role: 'agent', licensee: { useSetores: true } }} />)
+      renderWithContext(<Navbar currentUser={{ role: 'agent', licensee: { useSectors: true } }} />)
       expect(screen.queryByText(/Setores/i)).not.toBeInTheDocument()
     })
 
     it('is visible for admin with useSetores enabled', () => {
-      renderWithContext(<Navbar currentUser={{ role: 'admin', licensee: { useSetores: true } }} />)
+      renderWithContext(<Navbar currentUser={{ role: 'admin', licensee: { useSectors: true } }} />)
       expect(screen.getByText(/Setores/i)).toBeInTheDocument()
     })
 
     it('is visible for supervisor with useSetores enabled', () => {
-      renderWithContext(<Navbar currentUser={{ role: 'supervisor', licensee: { useSetores: true } }} />)
+      renderWithContext(<Navbar currentUser={{ role: 'supervisor', licensee: { useSectors: true } }} />)
       expect(screen.getByText(/Setores/i)).toBeInTheDocument()
     })
   })

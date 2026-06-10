@@ -82,7 +82,7 @@ describe('transformMessengerBody', () => {
 
     const actions = await transformMessengerBody(data, dependencies)
 
-    expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body.content, { setorId: null })
+    expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body.content, { sectorId: null })
 
     const bodyUpdated = await Body.findById(body._id)
     expect(bodyUpdated.concluded).toEqual(true)
@@ -117,8 +117,8 @@ describe('transformMessengerBody', () => {
     })
   })
 
-  it('passes setorId extracted from body to responseToMessages', async () => {
-    const setorObjectId = new (require('mongoose').Types.ObjectId)()
+  it('passes sectorId extracted from body to responseToMessages', async () => {
+    const sectorObjectId = new (require('mongoose').Types.ObjectId)()
 
     const messengerPluginResponseToMessages = jest
       .spyOn(Dialog.prototype, 'responseToMessages')
@@ -131,14 +131,14 @@ describe('transformMessengerBody', () => {
         content: { message: { type: 'text' } },
         licensee,
         concluded: false,
-        setor: setorObjectId,
+        sector: sectorObjectId,
       }),
     )
 
     await transformMessengerBody({ bodyId: body._id }, dependencies)
 
     expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body.content, {
-      setorId: setorObjectId,
+      sectorId: sectorObjectId,
     })
   })
 
@@ -167,7 +167,7 @@ describe('transformMessengerBody', () => {
 
     const actions = await transformMessengerBody(data, dependencies)
 
-    expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body.content, { setorId: null })
+    expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body.content, { sectorId: null })
 
     const bodyUpdated = await Body.findById(body._id)
     expect(bodyUpdated.concluded).toEqual(true)

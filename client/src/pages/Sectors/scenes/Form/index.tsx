@@ -4,20 +4,20 @@ import * as Yup from 'yup'
 import { useNavigate } from 'react-router'
 import Select from 'react-select'
 import { getUsers } from '../../../../services/user'
-import SetorBaileysPanel from '../Edit/SetorBaileysPanel'
+import SectorBaileysPanel from '../Edit/SectorBaileysPanel'
 
-const setorSchema = Yup.object().shape({
+const sectorSchema = Yup.object().shape({
   name: Yup.string().required('Nome é obrigatório'),
 })
 
-const setorInitialValues = {
+const sectorInitialValues = {
   name: '',
   users: [] as string[],
   active: true,
 }
 
-function SetorForm(props: any) {
-  const { onSubmit, errors, initialValues, currentUser, setorId } = props
+function SectorForm(props: any) {
+  const { onSubmit, errors, initialValues, currentUser, sectorId } = props
   let navigate = useNavigate()
   const [userOptions, setUserOptions] = useState<{ value: string; label: string }[]>([])
 
@@ -32,12 +32,12 @@ function SetorForm(props: any) {
     fetchUsers()
   }, [currentUser])
 
-  const mergedInitialValues = { ...setorInitialValues, ...initialValues }
+  const mergedInitialValues = { ...sectorInitialValues, ...initialValues }
 
   return (
     <div>
       <Form
-        validationSchema={setorSchema}
+        validationSchema={sectorSchema}
         initialValues={mergedInitialValues}
         onSubmit={(values: any) => {
           onSubmit(values)
@@ -104,12 +104,12 @@ function SetorForm(props: any) {
                 </div>
               )}
 
-              {setorId && <SetorBaileysPanel setorId={setorId} isActive={initialValues.active} />}
+              {sectorId && <SectorBaileysPanel sectorId={sectorId} isActive={initialValues.active} />}
 
               <div className='row'>
                 <div className='col-5'>
                   <div className='mt-4 d-flex justify-content-between'>
-                    <button onClick={() => navigate('/setores')} className='btn btn-secondary' type='button'>Voltar</button>
+                    <button onClick={() => navigate('/sectors')} className='btn btn-secondary' type='button'>Voltar</button>
                     <button className='btn btn-success' type='submit'>Salvar</button>
                   </div>
                 </div>
@@ -122,4 +122,4 @@ function SetorForm(props: any) {
   )
 }
 
-export default SetorForm
+export default SectorForm

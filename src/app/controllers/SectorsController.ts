@@ -1,16 +1,16 @@
 import { sanitizeModelErrors } from '../helpers/SanitizeErrors'
-import { GetBaileysQrForSetor } from '../usecases/licensees/GetBaileysQrForSetor'
-import { GetBaileysStatusForSetor } from '../usecases/licensees/GetBaileysStatusForSetor'
-import { SyncBaileysDirectoryForSetor } from '../usecases/licensees/SyncBaileysDirectoryForSetor'
+import { GetBaileysQrForSector } from '../usecases/licensees/GetBaileysQrForSector'
+import { GetBaileysStatusForSector } from '../usecases/licensees/GetBaileysStatusForSector'
+import { SyncBaileysDirectoryForSector } from '../usecases/licensees/SyncBaileysDirectoryForSector'
 
-class SetoresController {
-  setorRepository: any
+class SectorsController {
+  sectorRepository: any
   getBaileysQrUseCase: any
   getBaileysStatusUseCase: any
   syncBaileysDirectoryUseCase: any
 
   constructor({
-    setorRepository,
+    sectorRepository,
     licenseeRepository,
     whatsappSessionRepository,
     contactRepository,
@@ -18,22 +18,22 @@ class SetoresController {
     startBaileysSocket,
     socketManager,
   }: Record<string, any> = {}) {
-    this.setorRepository = setorRepository
-    this.getBaileysQrUseCase = new GetBaileysQrForSetor({
-      setorRepository,
+    this.sectorRepository = sectorRepository
+    this.getBaileysQrUseCase = new GetBaileysQrForSector({
+      sectorRepository,
       licenseeRepository,
       createMessengerPlugin,
       startBaileysSocket,
     })
-    this.getBaileysStatusUseCase = new GetBaileysStatusForSetor({
-      setorRepository,
+    this.getBaileysStatusUseCase = new GetBaileysStatusForSector({
+      sectorRepository,
       licenseeRepository,
       whatsappSessionRepository,
       startBaileysSocket,
       socketManager,
     })
-    this.syncBaileysDirectoryUseCase = new SyncBaileysDirectoryForSetor({
-      setorRepository,
+    this.syncBaileysDirectoryUseCase = new SyncBaileysDirectoryForSector({
+      sectorRepository,
       licenseeRepository,
       contactRepository,
       createMessengerPlugin,
@@ -54,8 +54,8 @@ class SetoresController {
       const params: any = {}
       if (req.query.licensee) params.licensee = req.query.licensee
 
-      const setores = await this.setorRepository.find(params, ['users'])
-      return res.status(200).send(setores)
+      const sectors = await this.sectorRepository.find(params, ['users'])
+      return res.status(200).send(sectors)
     } catch (err: any) {
       return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
@@ -63,8 +63,8 @@ class SetoresController {
 
   async show(req: any, res: any) {
     try {
-      const setor = await this.setorRepository.findFirst({ _id: req.params.id }, ['users'])
-      return res.status(200).send(setor)
+      const sector = await this.sectorRepository.findFirst({ _id: req.params.id }, ['users'])
+      return res.status(200).send(sector)
     } catch (err: any) {
       if (err.name === 'CastError' && err.kind === 'ObjectId') {
         return res.status(404).send({ errors: { message: `Setor ${req.params.id} não encontrado` } })
@@ -75,8 +75,8 @@ class SetoresController {
 
   async create(req: any, res: any) {
     try {
-      const setor = await this.setorRepository.create(req.body)
-      return res.status(201).send(setor)
+      const sector = await this.sectorRepository.create(req.body)
+      return res.status(201).send(sector)
     } catch (err: any) {
       if (err?.errors) {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
@@ -87,9 +87,9 @@ class SetoresController {
 
   async update(req: any, res: any) {
     try {
-      await this.setorRepository.update(req.params.id, req.body)
-      const setor = await this.setorRepository.findFirst({ _id: req.params.id })
-      return res.status(200).send(setor)
+      await this.sectorRepository.update(req.params.id, req.body)
+      const sector = await this.sectorRepository.findFirst({ _id: req.params.id })
+      return res.status(200).send(sector)
     } catch (err: any) {
       if (err?.errors) {
         return res.status(422).json({ errors: sanitizeModelErrors(err.errors) })
@@ -100,7 +100,7 @@ class SetoresController {
 
   async destroy(req: any, res: any) {
     try {
-      await this.setorRepository.delete({ _id: req.params.id })
+      await this.sectorRepository.delete({ _id: req.params.id })
       return res.status(204).send()
     } catch (err: any) {
       return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
@@ -138,4 +138,4 @@ class SetoresController {
   }
 }
 
-export { SetoresController }
+export { SectorsController }

@@ -70,9 +70,9 @@ const messageSchema = new Schema(
       type: ObjectId,
       ref: 'Room',
     },
-    setor: {
+    sector: {
       type: ObjectId,
-      ref: 'Setor',
+      ref: 'Sector',
       default: null,
     },
     trigger: {

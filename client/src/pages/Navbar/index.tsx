@@ -47,8 +47,8 @@ export default function Navbar({ currentUser }: any) {
                     Contatos
                   </a>
 
-                  {currentUser && ['super', 'admin', 'supervisor'].includes(currentUser.role) && currentUser.licensee?.useSetores && (
-                    <a className='dropdown-item' href='/#/setores'>
+                  {currentUser && ['super', 'admin', 'supervisor'].includes(currentUser.role) && currentUser.licensee?.useSectors && (
+                    <a className='dropdown-item' href='/#/sectors'>
                       Setores
                     </a>
                   )}

@@ -1,5 +1,5 @@
 import { WhatsappSessionRepositoryDatabase } from '../repositories/whatsappsession'
-import { SetorRepositoryDatabase } from '../repositories/setor'
+import { SectorRepositoryDatabase } from '../repositories/sector'
 import { BodyRepositoryDatabase } from '../repositories/body'
 import { ContactRepositoryDatabase } from '../repositories/contact'
 import { LicenseeRepositoryDatabase } from '../repositories/licensee'
@@ -30,7 +30,7 @@ function buildRuntimeDependencies({
   licenseeRepository,
   messageRepository,
   roomRepository,
-  setorRepository,
+  sectorRepository,
   templateRepository,
   trafficlightRepository,
   triggerRepository,
@@ -70,7 +70,7 @@ function buildRuntimeDependencies({
     })
 
   const socketManager = new BaileysSocketManager({ whatsappSessionRepository })
-  const startBaileysSocket = (licensee: any, setor: any = null) =>
+  const startBaileysSocket = (licensee: any, sector: any = null) =>
     new StartBaileysSocket({
       socketManager,
       whatsappSessionRepository,
@@ -79,12 +79,12 @@ function buildRuntimeDependencies({
         messengerRepository: bodyRepository,
         jobQueue: queueServer,
       }),
-    }).execute(licensee, setor)
+    }).execute(licensee, sector)
 
   const bootBaileysSocketSessions = () =>
     new BootBaileysSocketSessions({
       licenseeRepository,
-      setorRepository,
+      sectorRepository,
       whatsappSessionRepository,
       startBaileysSocket,
     }).execute()
@@ -95,7 +95,7 @@ function buildRuntimeDependencies({
     licenseeRepository,
     messageRepository,
     roomRepository,
-    setorRepository,
+    sectorRepository,
     templateRepository,
     trafficlightRepository,
     triggerRepository,
@@ -128,7 +128,7 @@ function createRuntimeDependencies(overrides: Record<string, any> = {}) {
     trafficlightRepository: overrides.trafficlightRepository ?? new TrafficlightRepositoryDatabase(),
     triggerRepository,
     userRepository: overrides.userRepository ?? new UserRepositoryDatabase(),
-    setorRepository: overrides.setorRepository ?? new SetorRepositoryDatabase(),
+    sectorRepository: overrides.sectorRepository ?? new SectorRepositoryDatabase(),
     whatsappSessionRepository: overrides.whatsappSessionRepository ?? new WhatsappSessionRepositoryDatabase(),
   })
 }

@@ -2,18 +2,18 @@ import { logger } from '../../helpers/logger'
 
 class BootBaileysSocketSessions {
   licenseeRepository: any
-  setorRepository: any
+  sectorRepository: any
   whatsappSessionRepository: any
   startBaileysSocket: any
 
   constructor({
     licenseeRepository,
-    setorRepository,
+    sectorRepository,
     whatsappSessionRepository,
     startBaileysSocket,
   }: Record<string, any> = {}) {
     this.licenseeRepository = licenseeRepository
-    this.setorRepository = setorRepository
+    this.sectorRepository = sectorRepository
     this.whatsappSessionRepository = whatsappSessionRepository
     this.startBaileysSocket = startBaileysSocket
   }
@@ -36,10 +36,10 @@ class BootBaileysSocketSessions {
           continue
         }
 
-        const setor = session.setor ? await this.setorRepository.findFirst({ _id: session.setor }) : null
+        const sector = session.sector ? await this.sectorRepository.findFirst({ _id: session.sector }) : null
 
         logger.info(`Baileys boot: iniciando socket para sessão ${session._id} (licensee ${licensee._id})`)
-        await this.startBaileysSocket(licensee, setor)
+        await this.startBaileysSocket(licensee, sector)
       } catch (err: any) {
         logger.error(`Baileys boot: falha ao iniciar socket para sessão ${session._id}: ${err.message ?? err}`)
       }

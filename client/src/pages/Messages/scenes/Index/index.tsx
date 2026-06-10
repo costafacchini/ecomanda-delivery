@@ -255,7 +255,7 @@ function MessagesIndex({ currentUser }: any) {
                 <td>
                   <div>
                     {message.contact?.name}
-                    {message.setor && <span className="badge bg-secondary ms-1">{message.setor.name}</span>}
+                    {message.sector && <span className="badge bg-secondary ms-1">{message.sector.name}</span>}
                   </div>
                   {message.error && (
                     <div>

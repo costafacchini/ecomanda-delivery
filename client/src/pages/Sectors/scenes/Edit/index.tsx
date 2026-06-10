@@ -1,22 +1,22 @@
 import Form from '../Form'
 import { toast } from 'react-toastify'
 import { useState, useEffect } from 'react'
-import { getSetor, updateSetor } from '../../../../services/setor'
+import { getSector, updateSector } from '../../../../services/sector'
 import { useNavigate, useParams } from 'react-router'
 
-function SetorEdit({ currentUser }: any) {
+function SectorEdit({ currentUser }: any) {
   const navigate = useNavigate()
   let { id } = useParams()
   const [errors, setErrors] = useState(null)
-  const [setor, setSetor] = useState<any>(null)
+  const [sector, setSector] = useState<any>(null)
 
   useEffect(() => {
     let abortController = new AbortController()
 
-    async function fetchSetor() {
+    async function fetchSector() {
       try {
-        const { data } = await getSetor(id)
-        setSetor(data)
+        const { data } = await getSector(id)
+        setSector(data)
       } catch (error: any) {
         if (error.name === 'AbortError') {
           // Handling error thrown by aborting request
@@ -24,29 +24,29 @@ function SetorEdit({ currentUser }: any) {
       }
     }
 
-    fetchSetor()
+    fetchSector()
     return () => {
       abortController.abort()
     }
   }, [id])
 
-  if (!setor) return null
+  if (!sector) return null
 
   return (
     <div className='row'>
       <div className='col'>
         <h3>Setor editando</h3>
         <Form
-          initialValues={setor}
+          initialValues={sector}
           currentUser={currentUser}
           errors={errors}
-          setorId={setor.id}
+          sectorId={sector.id}
           onSubmit={async (values: any) => {
-            const response = await updateSetor({ ...values, id: setor.id })
+            const response = await updateSector({ ...values, id: sector.id })
 
             if (response.status === 200) {
               toast.success('Setor atualizado com sucesso!')
-              navigate('/setores')
+              navigate('/sectors')
               setErrors(null)
             } else {
               setErrors(response.data.errors)
@@ -59,4 +59,4 @@ function SetorEdit({ currentUser }: any) {
   )
 }
 
-export default SetorEdit
+export default SectorEdit

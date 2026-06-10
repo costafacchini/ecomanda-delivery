@@ -1,13 +1,13 @@
-import SetorEdit from './'
+import SectorEdit from './'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { getSetor, updateSetor, getSetorBaileysStatus } from '../../../../services/setor'
+import { getSector, updateSector, getSectorBaileysStatus } from '../../../../services/sector'
 import { getUsers } from '../../../../services/user'
 import { createRoutesStub } from 'react-router'
 
-vi.mock('../../../../services/setor')
+vi.mock('../../../../services/sector')
 vi.mock('../../../../services/user')
 
-describe('<SetorEdit />', () => {
+describe('<SectorEdit />', () => {
   const currentUser = {
     role: 'admin',
     licensee: { _id: 'lic-1' },
@@ -15,23 +15,23 @@ describe('<SetorEdit />', () => {
 
   function mount() {
     ;(getUsers as any).mockResolvedValue({ data: [] })
-    ;(getSetorBaileysStatus as any).mockResolvedValue({ data: { connected: false } })
+    ;(getSectorBaileysStatus as any).mockResolvedValue({ data: { connected: false } })
 
     const Stub = createRoutesStub([
       {
-        path: '/setores/:id/edit',
-        Component: () => <SetorEdit currentUser={currentUser} />,
+        path: '/sectors/:id/edit',
+        Component: () => <SectorEdit currentUser={currentUser} />,
       },
       {
-        path: '/setores',
-        Component: () => <div>Setores Index</div>,
+        path: '/sectors',
+        Component: () => <div>Sectors Index</div>,
       },
     ])
-    render(<Stub initialEntries={['/setores/1/edit']} />)
+    render(<Stub initialEntries={['/sectors/1/edit']} />)
   }
 
-  it('renders the form with the received setor', async () => {
-    ;(getSetor as any).mockResolvedValue({
+  it('renders the form with the received sector', async () => {
+    ;(getSector as any).mockResolvedValue({
       status: 200,
       data: { id: '1', name: 'Suporte', active: true, users: [] },
     })
@@ -41,8 +41,8 @@ describe('<SetorEdit />', () => {
     await screen.findByDisplayValue('Suporte')
   })
 
-  it('updates the setor on submit', async () => {
-    ;(getSetor as any).mockResolvedValue({
+  it('updates the sector on submit', async () => {
+    ;(getSector as any).mockResolvedValue({
       status: 200,
       data: { id: '1', name: 'Suporte', active: true, users: [] },
     })
@@ -53,12 +53,12 @@ describe('<SetorEdit />', () => {
 
     fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'TI' } })
 
-    ;(updateSetor as any).mockResolvedValue({ status: 200 })
+    ;(updateSector as any).mockResolvedValue({ status: 200 })
 
     fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
 
     await waitFor(() =>
-      expect(updateSetor).toHaveBeenCalledWith(expect.objectContaining({ name: 'TI' }))
+      expect(updateSector).toHaveBeenCalledWith(expect.objectContaining({ name: 'TI' }))
     )
   })
 })

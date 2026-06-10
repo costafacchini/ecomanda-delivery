@@ -1,11 +1,11 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { createRoutesStub } from 'react-router'
-import SetorForm from './'
+import SectorForm from './'
 import { getUsers } from '../../../../services/user'
 
 vi.mock('../../../../services/user')
 
-describe('<SetorForm />', () => {
+describe('<SectorForm />', () => {
   const onSubmit = vi.fn()
   const currentUser = {
     role: 'admin',
@@ -18,7 +18,7 @@ describe('<SetorForm />', () => {
     const Stub = createRoutesStub([
       {
         path: '/test',
-        Component: () => <SetorForm onSubmit={onSubmit} currentUser={currentUser} {...props} />,
+        Component: () => <SectorForm onSubmit={onSubmit} currentUser={currentUser} {...props} />,
       },
     ])
     render(<Stub initialEntries={['/test']} />)

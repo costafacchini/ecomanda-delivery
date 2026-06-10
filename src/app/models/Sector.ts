@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
 
-const setorSchema = new Schema(
+const sectorSchema = new Schema(
   {
     _id: ObjectId,
     name: {
@@ -27,16 +27,16 @@ const setorSchema = new Schema(
   { timestamps: true },
 )
 
-setorSchema.pre('save', function () {
+sectorSchema.pre('save', function () {
   if (!this._id) {
     this._id = new mongoose.Types.ObjectId()
   }
 })
 
-setorSchema.set('toJSON', {
+sectorSchema.set('toJSON', {
   virtuals: true,
 })
 
-const Setor = mongoose.model('Setor', setorSchema)
+const Sector = mongoose.model('Sector', sectorSchema)
 
-export default Setor
+export default Sector

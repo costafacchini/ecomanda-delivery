@@ -10,23 +10,23 @@ jest.mock('../../helpers/logger', () => ({
 
 import { logger } from '../../helpers/logger'
 import { LicenseeRepositoryMemory } from '@repositories/licensee'
-import { SetorRepositoryMemory } from '@repositories/setor'
+import { SectorRepositoryMemory } from '@repositories/sector'
 import { WhatsappSessionRepositoryMemory } from '@repositories/whatsappsession'
 import { licenseeComplete as licenseeCompleteFactory } from '@factories/licensee'
 import { BootBaileysSocketSessions } from './BootBaileysSocketSessions'
 
 function buildUseCase(overrides: Record<string, any> = {}) {
   const licenseeRepository = overrides.licenseeRepository ?? new LicenseeRepositoryMemory()
-  const setorRepository = overrides.setorRepository ?? new SetorRepositoryMemory()
+  const sectorRepository = overrides.sectorRepository ?? new SectorRepositoryMemory()
   const whatsappSessionRepository = overrides.whatsappSessionRepository ?? new WhatsappSessionRepositoryMemory()
   const startBaileysSocket = overrides.startBaileysSocket ?? jest.fn().mockResolvedValue(undefined)
   const useCase = new BootBaileysSocketSessions({
     licenseeRepository,
-    setorRepository,
+    sectorRepository,
     whatsappSessionRepository,
     startBaileysSocket,
   })
-  return { useCase, licenseeRepository, setorRepository, whatsappSessionRepository, startBaileysSocket }
+  return { useCase, licenseeRepository, sectorRepository, whatsappSessionRepository, startBaileysSocket }
 }
 
 describe('BootBaileysSocketSessions', () => {
@@ -63,21 +63,21 @@ describe('BootBaileysSocketSessions', () => {
     expect(startBaileysSocket).not.toHaveBeenCalled()
   })
 
-  it('loads setor and passes it to startBaileysSocket when session has setor', async () => {
-    const { useCase, licenseeRepository, setorRepository, whatsappSessionRepository, startBaileysSocket } =
+  it('loads sector and passes it to startBaileysSocket when session has sector', async () => {
+    const { useCase, licenseeRepository, sectorRepository, whatsappSessionRepository, startBaileysSocket } =
       buildUseCase()
     const licensee = await licenseeRepository.create(licenseeCompleteFactory.build({ whatsappDefault: 'baileys' }))
-    const setor = await setorRepository.create({ name: 'Setor A', licensee: licensee._id })
+    const sector = await sectorRepository.create({ name: 'Sector A', licensee: licensee._id })
     await whatsappSessionRepository.create({
       licensee: licensee._id,
-      setor: setor._id,
+      sector: sector._id,
       creds: { noiseKey: 'creds-1' },
       keys: {},
     })
 
     await useCase.execute()
 
-    expect(startBaileysSocket).toHaveBeenCalledWith(licensee, setor)
+    expect(startBaileysSocket).toHaveBeenCalledWith(licensee, sector)
   })
 
   it('logs error and continues when startBaileysSocket throws for one session', async () => {

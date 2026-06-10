@@ -89,7 +89,7 @@ class MessengersBase {
     })
   }
 
-  async responseToMessages(responseBody: any, { setorId: _setorId = null }: { setorId?: any } = {}) {
+  async responseToMessages(responseBody: any, { sectorId: _sectorId = null }: { sectorId?: any } = {}) {
     this.parseMessageStatus(responseBody)
     if (this.messageStatus) {
       const message = await this.messageRepository.findFirst({
