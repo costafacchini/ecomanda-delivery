@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { v4 as uuidv4 } from 'uuid'
 
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
@@ -23,6 +24,7 @@ const sectorSchema = new Schema(
       },
     },
     active: { type: Boolean, default: true },
+    sectorToken: { type: String, unique: true, default: uuidv4 },
   },
   { timestamps: true },
 )
@@ -31,6 +33,11 @@ sectorSchema.pre('save', function () {
   if (!this._id) {
     this._id = new mongoose.Types.ObjectId()
   }
+})
+
+sectorSchema.virtual('webhookUrl').get(function () {
+  if (!this.populated('licensee')) return null
+  return `https://clave-digital.herokuapp.com/api/v1/messenger/message/?token=${(this.licensee as any).apiToken}&sector=${this.sectorToken}`
 })
 
 sectorSchema.set('toJSON', {

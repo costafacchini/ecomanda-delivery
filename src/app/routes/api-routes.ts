@@ -1,16 +1,30 @@
 import express from 'express'
 import v1Routes from './v1/v1-routes'
 import { LicenseeRepositoryDatabase } from '../repositories/licensee'
+import { SectorRepositoryDatabase } from '../repositories/sector'
 
 const router = express.Router()
 const licenseeRepository = new LicenseeRepositoryDatabase()
+const sectorRepository = new SectorRepositoryDatabase()
 
-function buildAuthenticateLicensee({ licenseeRepository }: any) {
+export function buildAuthenticateLicensee({ licenseeRepository, sectorRepository }: any) {
   return async function authenticateLicensee(req: any, res: any, next: any) {
     if (req.query.token) {
       const licensee = await licenseeRepository.findFirst({ apiToken: req.query.token })
       if (licensee) {
         req.licensee = licensee
+
+        if (req.query.sector) {
+          const sector = await sectorRepository.findFirst({
+            sectorToken: req.query.sector,
+            licensee: licensee._id,
+          })
+          if (!sector || !sector.active) {
+            return res.status(401).json({ message: 'Token de setor inválido ou inativo.' })
+          }
+          req.sector = sector
+        }
+
         return next()
       }
     }
@@ -19,7 +33,7 @@ function buildAuthenticateLicensee({ licenseeRepository }: any) {
   }
 }
 
-router.use(buildAuthenticateLicensee({ licenseeRepository }))
+router.use(buildAuthenticateLicensee({ licenseeRepository, sectorRepository }))
 
 router.use('/v1', v1Routes)
 

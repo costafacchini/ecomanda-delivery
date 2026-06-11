@@ -54,7 +54,7 @@ class SectorsController {
       const params: any = {}
       if (req.query.licensee) params.licensee = req.query.licensee
 
-      const sectors = await this.sectorRepository.find(params, ['users'])
+      const sectors = await this.sectorRepository.find(params, ['licensee', 'users'])
       return res.status(200).send(sectors)
     } catch (err: any) {
       return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
@@ -63,7 +63,7 @@ class SectorsController {
 
   async show(req: any, res: any) {
     try {
-      const sector = await this.sectorRepository.findFirst({ _id: req.params.id }, ['users'])
+      const sector = await this.sectorRepository.findFirst({ _id: req.params.id }, ['licensee', 'users'])
       return res.status(200).send(sector)
     } catch (err: any) {
       if (err.name === 'CastError' && err.kind === 'ObjectId') {
