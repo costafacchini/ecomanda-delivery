@@ -100,6 +100,20 @@ describe('SectorsController', () => {
       expect(res.status).toHaveBeenCalledWith(200)
       expect(res.send.mock.calls[0][0]).toHaveLength(2)
     })
+
+    it('returns 500 when repository throws an unexpected error', async () => {
+      const sectorRepository = {
+        find: jest.fn().mockRejectedValue(new Error('connection lost')),
+      }
+      const controller = new SectorsController({ sectorRepository })
+      const req = { query: {} }
+      const res = buildResponse()
+
+      await controller.index(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ errors: expect.any(Object) }))
+    })
   })
 
   describe('#destroy', () => {
@@ -118,6 +132,20 @@ describe('SectorsController', () => {
       expect(res.status).toHaveBeenCalledWith(204)
       expect(sectorRepository.items).toHaveLength(0)
     })
+
+    it('returns 500 when repository throws an unexpected error', async () => {
+      const sectorRepository = {
+        delete: jest.fn().mockRejectedValue(new Error('disk failure')),
+      }
+      const controller = new SectorsController({ sectorRepository })
+      const req = { params: { id: 'some-id' } }
+      const res = buildResponse()
+
+      await controller.destroy(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ errors: expect.any(Object) }))
+    })
   })
 
   describe('#show', () => {
@@ -135,38 +163,6 @@ describe('SectorsController', () => {
 
       expect(res.status).toHaveBeenCalledWith(200)
       expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ name: 'Vendas' }))
-    })
-  })
-
-  describe('#index', () => {
-    it('returns 500 when repository throws an unexpected error', async () => {
-      const sectorRepository = {
-        find: jest.fn().mockRejectedValue(new Error('connection lost')),
-      }
-      const controller = new SectorsController({ sectorRepository })
-      const req = { query: {} }
-      const res = buildResponse()
-
-      await controller.index(req, res)
-
-      expect(res.status).toHaveBeenCalledWith(500)
-      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ errors: expect.any(Object) }))
-    })
-  })
-
-  describe('#destroy', () => {
-    it('returns 500 when repository throws an unexpected error', async () => {
-      const sectorRepository = {
-        delete: jest.fn().mockRejectedValue(new Error('disk failure')),
-      }
-      const controller = new SectorsController({ sectorRepository })
-      const req = { params: { id: 'some-id' } }
-      const res = buildResponse()
-
-      await controller.destroy(req, res)
-
-      expect(res.status).toHaveBeenCalledWith(500)
-      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ errors: expect.any(Object) }))
     })
   })
 

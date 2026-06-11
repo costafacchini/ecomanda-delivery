@@ -27,7 +27,12 @@ function buildUseCase({ groups } = {}) {
   const resolvedGroups = groups !== undefined ? groups : DEFAULT_GROUPS
   const plugin = { fetchGroups: jest.fn().mockResolvedValue({ groups: resolvedGroups }) }
   const createMessengerPlugin = jest.fn().mockReturnValue(plugin)
-  const useCase = new SyncBaileysDirectoryForSector({ sectorRepository, licenseeRepository, contactRepository, createMessengerPlugin })
+  const useCase = new SyncBaileysDirectoryForSector({
+    sectorRepository,
+    licenseeRepository,
+    contactRepository,
+    createMessengerPlugin,
+  })
   return { sectorRepository, licenseeRepository, contactRepository, createMessengerPlugin, plugin, useCase }
 }
 
