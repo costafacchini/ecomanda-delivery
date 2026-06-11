@@ -31,8 +31,33 @@ describe('MessengersController delegation', () => {
 
     await controller.message(req, res)
 
-    expect(ingestMessengerMessage.execute).toHaveBeenCalledWith({ body: req.body, licenseeId: 'licensee-id' })
+    expect(ingestMessengerMessage.execute).toHaveBeenCalledWith({
+      body: req.body,
+      licenseeId: 'licensee-id',
+      sectorId: null,
+    })
     expect(res.status).toHaveBeenCalledWith(200)
     expect(res.send).toHaveBeenCalledWith({ body: 'Solicitação de mensagem para a plataforma de messenger agendado' })
+  })
+
+  it('forwards sectorId from req.sector when sector is present', async () => {
+    const { controller, ingestMessengerMessage } = buildController()
+    const req = {
+      body: { field: 'test' },
+      licensee: { _id: 'licensee-id' },
+      sector: { _id: 'sector-id' },
+    }
+    const res = buildResponse()
+
+    ingestMessengerMessage.execute.mockResolvedValue({})
+
+    await controller.message(req, res)
+
+    expect(ingestMessengerMessage.execute).toHaveBeenCalledWith({
+      body: req.body,
+      licenseeId: 'licensee-id',
+      sectorId: 'sector-id',
+    })
+    expect(res.status).toHaveBeenCalledWith(200)
   })
 })
