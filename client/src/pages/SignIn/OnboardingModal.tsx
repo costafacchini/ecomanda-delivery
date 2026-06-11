@@ -80,6 +80,7 @@ const initialValues = {
   whatsappDefault: '',
   whatsappToken: '',
   whatsappUrl: '',
+  useSectors: false,
   userName: '',
   userEmail: '',
   password: '',
@@ -181,6 +182,7 @@ function OnboardingModal({ isOpen, onClose, onSuccess }: Props) {
         whatsappDefault: values.whatsappDefault,
         whatsappToken:   values.whatsappToken,
         whatsappUrl:     values.whatsappUrl,
+        useSectors:      values.useSectors ?? false,
       } : {}),
     }
 
@@ -416,6 +418,22 @@ function OnboardingModal({ isOpen, onClose, onSuccess }: Props) {
               <div className='text-danger small'>{formik.errors.whatsappDefault as string}</div>
             )}
           </div>
+
+          {formik.values.whatsappDefault === 'baileys' && (
+            <div className='mb-3 form-check'>
+              <input
+                type='checkbox'
+                className='form-check-input'
+                id='useSectors'
+                name='useSectors'
+                checked={formik.values.useSectors ?? false}
+                onChange={formik.handleChange}
+              />
+              <label className='form-check-label' htmlFor='useSectors'>
+                Usar setores (múltiplos departamentos com números de WhatsApp separados)
+              </label>
+            </div>
+          )}
 
           {formik.values.whatsappDefault && formik.values.whatsappDefault !== 'baileys' && (
             <>

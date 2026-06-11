@@ -2,6 +2,7 @@ import express from 'express'
 import jwt from 'jsonwebtoken'
 import { UsersController } from '../controllers/UsersController'
 import { LicenseesController } from '../controllers/LicenseesController'
+import { SectorsController } from '../controllers/SectorsController'
 import { ContactsController } from '../controllers/ContactsController'
 import { TriggersController } from '../controllers/TriggersController'
 import { MessagesController } from '../controllers/MessagesController'
@@ -41,6 +42,7 @@ const {
   messageRepository,
   roomRepository,
   whatsappSessionRepository,
+  sectorRepository,
   createMessengerPlugin,
   createTemplatesImporter,
   startBaileysSocket,
@@ -85,6 +87,16 @@ const messagesController = new MessagesController({
   queueServer,
   createMessage: new CreateMessage({ messageRepository, contactRepository, jobQueue: queueServer }),
 })
+const sectorsController = new SectorsController({
+  sectorRepository,
+  licenseeRepository,
+  whatsappSessionRepository,
+  contactRepository,
+  createMessengerPlugin,
+  startBaileysSocket,
+  socketManager,
+})
+
 const dashboardController = new DashboardController({
   userRepository,
   licenseeRepository,
@@ -128,13 +140,18 @@ function authorize(...roles: string[]) {
 
 router.use(authenticate)
 
-router.post('/users', authorize('super'), usersController.validations(), usersController.create)
-router.post('/users/:id', authorize('super'), usersController.validations(), usersController.update)
+router.post('/users', authorize('super', 'admin'), usersController.validations(), usersController.create)
+router.post('/users/:id', authorize('super', 'admin'), usersController.validations(), usersController.update)
 router.get('/users/:id', usersController.show)
 router.get('/users', authorize('admin', 'super'), usersController.index)
 
 router.post('/licensees', authorize('super'), licenseesController.validations(), licenseesController.create)
-router.post('/licensees/:id', authorize('super'), licenseesController.validations(), licenseesController.update)
+router.post(
+  '/licensees/:id',
+  authorize('super', 'admin'),
+  licenseesController.validations(),
+  licenseesController.update,
+)
 router.get('/licensees/:id', licenseesController.show)
 router.get('/licensees', authorize('admin', 'super'), licenseesController.index)
 
@@ -158,6 +175,15 @@ router.post('/licensees/:id/dialogwebhook', licenseesController.setDialogWebhook
 router.get('/licensees/:id/baileys-status', licenseesController.getBaileysStatus)
 router.post('/licensees/:id/baileys-qr', (req, res) => licenseesController.getBaileysQr(req, res))
 router.post('/licensees/:id/baileys-sync', licenseesController.baileysSync)
+
+router.get('/sectors', authorize('admin', 'super'), sectorsController.index)
+router.get('/sectors/:id', authorize('admin', 'super'), sectorsController.show)
+router.post('/sectors', authorize('admin', 'super'), sectorsController.create)
+router.post('/sectors/:id', authorize('admin', 'super'), sectorsController.update)
+router.delete('/sectors/:id', authorize('admin', 'super'), sectorsController.destroy)
+router.post('/sectors/:id/baileys-qr', authorize('admin', 'super'), sectorsController.getBaileysQr)
+router.get('/sectors/:id/baileys-status', authorize('admin', 'super'), sectorsController.getBaileysStatus)
+router.post('/sectors/:id/baileys-sync', authorize('admin', 'super'), sectorsController.baileysSync)
 
 router.get('/messages', messagesController.index)
 router.post('/messages', messagesController.create)

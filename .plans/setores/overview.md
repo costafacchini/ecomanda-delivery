@@ -1,8 +1,8 @@
 # Plan: Setores
 
-**Status**: not-started
+**Status**: complete
 **Created**: 2026-05-29
-**Last Updated**: 2026-06-04
+**Last Updated**: 2026-06-11
 **Estimated Demo Date**: TBD — depends on local-chat-infra completion
 **Assigned Dev**: Alan Costa Facchini
 **Assigned QA**: unassigned
@@ -59,12 +59,12 @@ Add a Setor (department) entity to the platform, allowing a licensee to have mul
 
 | Task Path | Title | Phase | Status | Depends On |
 |-----------|-------|-------|--------|------------|
-| phase-1/task-01-setor-model-api | Setor model + CRUD API | 1 | not-started | — |
-| phase-1/task-02-schema-migrations | Schema migrations (WhatsappSession, Room, Licensee, Message, Body) | 1 | not-started | — |
-| phase-2/task-03-multi-session-baileys | Multi-session BaileysSocketManager + sector endpoints | 2 | not-started | phase-1/task-01-setor-model-api, phase-1/task-02-schema-migrations |
-| phase-2/task-04-message-routing | Message routing + agent access filtering | 2 | not-started | phase-1/task-01-setor-model-api, phase-1/task-02-schema-migrations |
-| phase-3/task-05-frontend-setor-crud | Frontend: Setor CRUD + Baileys connect | 3 | not-started | phase-2/task-03-multi-session-baileys |
-| phase-3/task-06-frontend-inbox-filtering | Frontend: Inbox sector filtering | 3 | not-started | phase-2/task-04-message-routing |
+| phase-1/task-01-setor-model-api | Setor model + CRUD API | 1 | complete | — |
+| phase-1/task-02-schema-migrations | Schema migrations (WhatsappSession, Room, Licensee, Message, Body) | 1 | complete | — |
+| phase-2/task-03-multi-session-baileys | Multi-session BaileysSocketManager + sector endpoints | 2 | complete | phase-1/task-01-setor-model-api, phase-1/task-02-schema-migrations |
+| phase-2/task-04-message-routing | Message routing + agent access filtering | 2 | complete | phase-1/task-01-setor-model-api, phase-1/task-02-schema-migrations |
+| phase-3/task-05-frontend-setor-crud | Frontend: Setor CRUD + Baileys connect | 3 | complete | phase-2/task-03-multi-session-baileys |
+| phase-3/task-06-frontend-inbox-filtering | Frontend: Inbox sector filtering | 3 | complete | phase-2/task-04-message-routing |
 
 ## Branch Convention
 
@@ -84,19 +84,19 @@ Base branch: `main`
 
 | File/Directory | Relevance |
 |----------------|-----------|
-| `src/app/models/Setor.ts` | NEW — sector model |
-| `src/app/repositories/setor.ts` | NEW — sector repository |
-| `src/app/controllers/SetoresController.ts` | NEW — CRUD + Baileys methods |
-| `src/app/models/WhatsappSession.ts` | Modify — add `setor` field, change unique index |
-| `src/app/models/Room.ts` | Modify — add `setor` field |
-| `src/app/models/Licensee.ts` | Modify — add `useSetores` flag |
-| `src/app/models/Message.ts` | Modify — add `setor` field (pipeline carrier from socket to Room) |
-| `src/app/models/Body.ts` | Modify — add `setor` field (async job bridge) |
+| `src/app/models/Sector.ts` | NEW — sector model |
+| `src/app/repositories/sector.ts` | NEW — sector repository |
+| `src/app/controllers/SectorsController.ts` | NEW — CRUD + Baileys methods |
+| `src/app/models/WhatsappSession.ts` | Modify — add `sector` field, change unique index |
+| `src/app/models/Room.ts` | Modify — add `sector` field |
+| `src/app/models/Licensee.ts` | Modify — add `useSectors` flag |
+| `src/app/models/Message.ts` | Modify — add `sector` field (pipeline carrier from socket to Room) |
+| `src/app/models/Body.ts` | Modify — add `sector` field (async job bridge) |
 | `src/app/services/BaileysSocketManager.ts` | Modify — re-key by `session._id` |
-| `src/app/usecases/licensees/StartBaileysSocket.ts` | Modify — accept optional `setor` param |
+| `src/app/usecases/licensees/StartBaileysSocket.ts` | Modify — accept optional `sector` param |
 | `src/app/routes/resources-routes.ts` | Modify — add sector routes |
-| `src/app/runtime/dependencies.ts` | Modify — add `setorRepository` |
-| `client/src/pages/Setores/` | NEW — sector management UI |
+| `src/app/runtime/dependencies.ts` | Modify — add `sectorRepository` |
+| `client/src/pages/Sectors/` | NEW — sector management UI |
 | `client/src/pages/Messages/` | Modify — sector filtering for agents |
 
 ## Risks
@@ -107,16 +107,16 @@ Base branch: `main`
 
 ## Success Criteria
 
-- [ ] A sector can be created with at least one user — creation fails without users
-- [ ] A sector can have a Baileys number connected independently from the licensee's main number
-- [ ] Messages arriving on the sector's number create a Room with `setor` populated
-- [ ] Agents assigned to a sector only see rooms/messages for that sector
-- [ ] Messages arriving on the licensee's main number (no sector) are visible to all agents
-- [ ] `Licensee.useSetores = false` hides all sector functionality for that licensee
-- [ ] Existing licensees without sectors are unaffected
-- [ ] `BaileysSocketManager` supports concurrent sockets for main + all active sector sessions
-- [ ] All unit tests pass: `npx jest`
-- [ ] `npx eslint .` produces no new errors
+- [x] A sector can be created with at least one user — creation fails without users
+- [x] A sector can have a Baileys number connected independently from the licensee's main number
+- [x] Messages arriving on the sector's number create a Room with `sector` populated
+- [x] Agents assigned to a sector only see rooms/messages for that sector
+- [x] Messages arriving on the licensee's main number (no sector) are visible to all agents
+- [x] `Licensee.useSectors = false` hides all sector functionality for that licensee
+- [x] Existing licensees without sectors are unaffected
+- [x] `BaileysSocketManager` supports concurrent sockets for main + all active sector sessions
+- [x] All unit tests pass: `npx jest`
+- [x] `npx eslint .` produces no new errors
 
 ## References
 

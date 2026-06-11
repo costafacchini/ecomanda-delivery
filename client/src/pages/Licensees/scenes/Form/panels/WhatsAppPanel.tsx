@@ -133,6 +133,27 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
           )}
 
         {values.whatsappDefault === 'baileys' && (
+          <div className='row pb-2'>
+            <div className='col-5'>
+              <div className='form-check'>
+                <input
+                  type='checkbox'
+                  className='form-check-input'
+                  id='useSectors'
+                  name='useSectors'
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  checked={values.useSectors ?? false}
+                />
+                <label className='form-check-label' htmlFor='useSectors'>
+                  Usar setores (múltiplos departamentos com números de WhatsApp separados)
+                </label>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {values.whatsappDefault === 'baileys' && (
           <div className='row mt-3 pb-4'>
             {baileysChecking && (
               <div className='form-group col-12'>

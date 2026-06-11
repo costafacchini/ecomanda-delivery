@@ -74,4 +74,12 @@ describe('Body', () => {
       })
     })
   })
+
+  describe('sector field', () => {
+    it('defaults to null', () => {
+      const body = new Body()
+
+      expect(body.sector).toBeNull()
+    })
+  })
 })

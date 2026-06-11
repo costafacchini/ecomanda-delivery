@@ -20,6 +20,11 @@ const bodySchema = new Schema(
       enum: ['normal', 'webhook'],
       required: [true, 'Tipo de Body: Você deve informar um valor ( normal | webhook )'],
     },
+    sector: {
+      type: ObjectId,
+      ref: 'Sector',
+      default: null,
+    },
     concluded: { type: Boolean, default: false },
   },
   { timestamps: true },

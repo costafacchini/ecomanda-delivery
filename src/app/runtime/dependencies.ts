@@ -1,4 +1,5 @@
 import { WhatsappSessionRepositoryDatabase } from '../repositories/whatsappsession'
+import { SectorRepositoryDatabase } from '../repositories/sector'
 import { BodyRepositoryDatabase } from '../repositories/body'
 import { ContactRepositoryDatabase } from '../repositories/contact'
 import { LicenseeRepositoryDatabase } from '../repositories/licensee'
@@ -29,6 +30,7 @@ function buildRuntimeDependencies({
   licenseeRepository,
   messageRepository,
   roomRepository,
+  sectorRepository,
   templateRepository,
   trafficlightRepository,
   triggerRepository,
@@ -50,7 +52,7 @@ function buildRuntimeDependencies({
       roomRepository,
       triggerRepository,
     })
-  const createMessengerPlugin = (licensee: any) =>
+  const createMessengerPlugin = (licensee: any, extras: Record<string, any> = {}) =>
     createMessengerPluginFactory(licensee, {
       contactRepository,
       messageRepository,
@@ -58,6 +60,7 @@ function buildRuntimeDependencies({
       templateRepository,
       parseText,
       whatsappSessionRepository,
+      ...extras,
     })
   const createTemplatesImporter = (licenseeId: any) =>
     new TemplatesImporter(licenseeId, {
@@ -67,19 +70,21 @@ function buildRuntimeDependencies({
     })
 
   const socketManager = new BaileysSocketManager({ whatsappSessionRepository })
-  const startBaileysSocket = (licensee: any) =>
+  const startBaileysSocket = (licensee: any, sector: any = null) =>
     new StartBaileysSocket({
       socketManager,
+      whatsappSessionRepository,
       createMessengerPlugin,
       ingestMessengerMessage: new IngestMessengerMessage({
         messengerRepository: bodyRepository,
         jobQueue: queueServer,
       }),
-    }).execute(licensee)
+    }).execute(licensee, sector)
 
   const bootBaileysSocketSessions = () =>
     new BootBaileysSocketSessions({
       licenseeRepository,
+      sectorRepository,
       whatsappSessionRepository,
       startBaileysSocket,
     }).execute()
@@ -90,6 +95,7 @@ function buildRuntimeDependencies({
     licenseeRepository,
     messageRepository,
     roomRepository,
+    sectorRepository,
     templateRepository,
     trafficlightRepository,
     triggerRepository,
@@ -122,6 +128,7 @@ function createRuntimeDependencies(overrides: Record<string, any> = {}) {
     trafficlightRepository: overrides.trafficlightRepository ?? new TrafficlightRepositoryDatabase(),
     triggerRepository,
     userRepository: overrides.userRepository ?? new UserRepositoryDatabase(),
+    sectorRepository: overrides.sectorRepository ?? new SectorRepositoryDatabase(),
     whatsappSessionRepository: overrides.whatsappSessionRepository ?? new WhatsappSessionRepositoryDatabase(),
   })
 }

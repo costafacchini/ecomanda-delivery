@@ -1,0 +1,67 @@
+import Sector from '@models/Sector'
+import mongoServer from '../../../.jest/utils'
+import { licensee as licenseeFactory } from '@factories/licensee'
+import { LicenseeRepositoryDatabase } from '@repositories/licensee'
+import mongoose from 'mongoose'
+
+describe('Sector', () => {
+  beforeEach(async () => {
+    await mongoServer.connect()
+  })
+
+  afterEach(async () => {
+    await mongoServer.disconnect()
+  })
+
+  describe('before save', () => {
+    it('generates _id', async () => {
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee = await licenseeRepository.create(licenseeFactory.build())
+      const userId = new mongoose.Types.ObjectId()
+
+      const sector = await Sector.create({ name: 'Vendas', licensee, users: [userId] })
+
+      expect(sector._id).not.toBeNull()
+    })
+
+    it('defaults active to true', () => {
+      const sector = new Sector({ name: 'Vendas' })
+
+      expect(sector.active).toEqual(true)
+    })
+  })
+
+  describe('validations', () => {
+    it('fails when name is missing', () => {
+      const sector = new Sector({ licensee: new mongoose.Types.ObjectId(), users: [new mongoose.Types.ObjectId()] })
+      const error = sector.validateSync()
+
+      expect(error?.errors['name']).toBeDefined()
+    })
+
+    it('fails when licensee is missing', () => {
+      const sector = new Sector({ name: 'Vendas', users: [new mongoose.Types.ObjectId()] })
+      const error = sector.validateSync()
+
+      expect(error?.errors['licensee']).toBeDefined()
+    })
+
+    it('fails when users array is empty', () => {
+      const sector = new Sector({ name: 'Vendas', licensee: new mongoose.Types.ObjectId(), users: [] })
+      const error = sector.validateSync()
+
+      expect(error?.errors['users']).toBeDefined()
+    })
+
+    it('passes with name, licensee and at least one user', () => {
+      const sector = new Sector({
+        name: 'Vendas',
+        licensee: new mongoose.Types.ObjectId(),
+        users: [new mongoose.Types.ObjectId()],
+      })
+      const error = sector.validateSync()
+
+      expect(error).toBeUndefined()
+    })
+  })
+})

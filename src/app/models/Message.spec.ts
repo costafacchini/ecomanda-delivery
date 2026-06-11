@@ -219,4 +219,12 @@ describe('Message', () => {
       })
     })
   })
+
+  describe('sector field', () => {
+    it('defaults to undefined', () => {
+      const message = new Message()
+
+      expect(message.sector).toBeUndefined()
+    })
+  })
 })

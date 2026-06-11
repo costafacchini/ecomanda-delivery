@@ -2,7 +2,7 @@ import { logger } from '../helpers/logger'
 
 class BaileysSocketManager {
   private _whatsappSessionRepository: any
-  private _sockets: Map<string, { socket: any; licensee: any }>
+  private _sockets: Map<string, { socket: any; licensee: any; session: any }>
   private _pending: Set<string>
 
   constructor({ whatsappSessionRepository }: Record<string, any> = {}) {
@@ -11,22 +11,30 @@ class BaileysSocketManager {
     this._pending = new Set()
   }
 
-  isConnected(licenseeId: any): boolean {
-    return this._sockets.has(licenseeId.toString())
+  isConnected(sessionId: any): boolean {
+    return this._sockets.has(sessionId.toString())
+  }
+
+  isConnectedForLicensee(licenseeId: any, sectorId: any = null): boolean {
+    for (const [, entry] of this._sockets) {
+      if (
+        entry.session.licensee.toString() === licenseeId.toString() &&
+        String(entry.session.sector ?? null) === String(sectorId ?? null)
+      ) {
+        return true
+      }
+    }
+    return false
   }
 
   async start(
+    session: any,
     licensee: any,
     { onMessage, onReceiptUpdate, onLogout, reconnectDelay }: Record<string, any> = {},
   ): Promise<void> {
-    const key = licensee._id.toString()
+    const key = session._id.toString()
     if (this._sockets.has(key) || this._pending.has(key)) return
     this._pending.add(key)
-    // Load or create session for this licensee
-    let session = await this._whatsappSessionRepository.findFirst({ licensee: licensee._id })
-    if (!session) {
-      session = await this._whatsappSessionRepository.create({ licensee: licensee._id })
-    }
 
     const {
       default: makeWASocket,
@@ -85,7 +93,7 @@ class BaileysSocketManager {
     socket.ev.on('connection.update', ({ connection, lastDisconnect }: any) => {
       if (connection === 'open') {
         this._pending.delete(key)
-        this._sockets.set(key, { socket, licensee })
+        this._sockets.set(key, { socket, licensee, session })
         logger.info(`BaileysSocketManager: socket aberto para licensee ${licensee._id}`)
         return
       }
@@ -102,7 +110,7 @@ class BaileysSocketManager {
           logger.warn(`BaileysSocketManager: licensee ${licensee._id} deslogado do WhatsApp`)
           onLogout?.()
         } else {
-          this._scheduleReconnect(licensee, callbacks, reconnectDelay ?? 2000)
+          this._scheduleReconnect(session, licensee, callbacks, reconnectDelay ?? 2000)
         }
       }
     })
@@ -123,8 +131,8 @@ class BaileysSocketManager {
     })
   }
 
-  stop(licenseeId: any): void {
-    const key = licenseeId.toString()
+  stop(sessionId: any): void {
+    const key = sessionId.toString()
     const entry = this._sockets.get(key)
     if (!entry) return
 
@@ -137,11 +145,11 @@ class BaileysSocketManager {
     this._sockets.delete(key)
   }
 
-  _scheduleReconnect(licensee: any, callbacks: any, delayMs = 2000): void {
+  _scheduleReconnect(session: any, licensee: any, callbacks: any, delayMs = 2000): void {
     const jitter = Math.random() * 1000
     const nextDelay = Math.min(delayMs * 2, 30000)
     setTimeout(() => {
-      this.start(licensee, { ...callbacks, reconnectDelay: nextDelay })
+      this.start(session, licensee, { ...callbacks, reconnectDelay: nextDelay })
     }, delayMs + jitter)
   }
 }

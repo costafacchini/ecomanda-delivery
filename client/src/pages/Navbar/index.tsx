@@ -47,6 +47,12 @@ export default function Navbar({ currentUser }: any) {
                     Contatos
                   </a>
 
+                  {currentUser && ['super', 'admin', 'supervisor'].includes(currentUser.role) && currentUser.licensee?.useSectors && (
+                    <a className='dropdown-item' href='/#/sectors'>
+                      Setores
+                    </a>
+                  )}
+
                   <a className='dropdown-item' href='/#/triggers'>
                     Gatilhos
                   </a>

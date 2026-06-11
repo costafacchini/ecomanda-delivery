@@ -1,3 +1,6 @@
+jest.mock('../../config/queue', () => ({ queueServer: {} }))
+jest.mock('../../config/redis', () => ({ redisConnection: {} }))
+
 import { transformMessengerBody } from './MessengerMessage'
 import Body from '@models/Body'
 import { Dialog } from '../plugins/messengers/Dialog'
@@ -79,7 +82,7 @@ describe('transformMessengerBody', () => {
 
     const actions = await transformMessengerBody(data, dependencies)
 
-    expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body.content)
+    expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body.content, { sectorId: null })
 
     const bodyUpdated = await Body.findById(body._id)
     expect(bodyUpdated.concluded).toEqual(true)
@@ -114,6 +117,31 @@ describe('transformMessengerBody', () => {
     })
   })
 
+  it('passes sectorId extracted from body to responseToMessages', async () => {
+    const sectorObjectId = new (require('mongoose').Types.ObjectId)()
+
+    const messengerPluginResponseToMessages = jest
+      .spyOn(Dialog.prototype, 'responseToMessages')
+      .mockImplementation(() => {
+        return []
+      })
+
+    const body = await Body.create(
+      bodyFactory.build({
+        content: { message: { type: 'text' } },
+        licensee,
+        concluded: false,
+        sector: sectorObjectId,
+      }),
+    )
+
+    await transformMessengerBody({ bodyId: body._id }, dependencies)
+
+    expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body.content, {
+      sectorId: sectorObjectId,
+    })
+  })
+
   it('responds with blank actions if body is invalid and update body', async () => {
     const messengerPluginResponseToMessages = jest
       .spyOn(Dialog.prototype, 'responseToMessages')
@@ -139,7 +167,7 @@ describe('transformMessengerBody', () => {
 
     const actions = await transformMessengerBody(data, dependencies)
 
-    expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body.content)
+    expect(messengerPluginResponseToMessages).toHaveBeenCalledWith(body.content, { sectorId: null })
 
     const bodyUpdated = await Body.findById(body._id)
     expect(bodyUpdated.concluded).toEqual(true)

@@ -20,6 +20,11 @@ const roomSchema = new Schema(
       ref: 'User',
       default: null,
     },
+    sector: {
+      type: ObjectId,
+      ref: 'Sector',
+      default: null,
+    },
     status: {
       type: String,
       enum: ['pending', 'open', 'closed'],

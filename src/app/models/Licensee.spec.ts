@@ -33,6 +33,7 @@ describe('Licensee', () => {
 
       expect(licensee.active).toEqual(true)
       expect(licensee.useChatbot).toEqual(false)
+      expect(licensee.useSectors).toEqual(false)
       expect(licensee.apiToken).toBeDefined()
       expect(licensee.apiToken).not.toBe(null)
     })

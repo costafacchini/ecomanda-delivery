@@ -10,13 +10,19 @@ const whatsappSessionSchema = new Schema(
       type: ObjectId,
       ref: 'Licensee',
       required: [true, 'Licensee: Você deve preencher o campo'],
-      unique: true,
+    },
+    sector: {
+      type: ObjectId,
+      ref: 'Sector',
+      default: null,
     },
     creds: { type: Object },
     keys: { type: Object },
   },
   { timestamps: true },
 )
+
+whatsappSessionSchema.index({ licensee: 1, sector: 1 }, { unique: true })
 
 whatsappSessionSchema.pre('save', function () {
   if (!this._id) {
