@@ -8,11 +8,30 @@ function buildUseCase(overrides: Record<string, any> = {}) {
   const licenseeRepository = overrides.licenseeRepository ?? new LicenseeRepositoryMemory()
   const whatsappSessionRepository = overrides.whatsappSessionRepository ?? new WhatsappSessionRepositoryMemory()
   const sectorRepository = overrides.sectorRepository ?? new SectorRepositoryMemory()
-  const useCase = new GetBaileysStatusForSector({ licenseeRepository, whatsappSessionRepository, sectorRepository })
+  const startBaileysSocket = overrides.startBaileysSocket
+  const socketManager = overrides.socketManager
+  const useCase = new GetBaileysStatusForSector({
+    licenseeRepository,
+    whatsappSessionRepository,
+    sectorRepository,
+    startBaileysSocket,
+    socketManager,
+  })
   return { licenseeRepository, whatsappSessionRepository, sectorRepository, useCase }
 }
 
 describe('GetBaileysStatusForSector', () => {
+  const originalEnv = process.env
+
+  beforeEach(() => {
+    process.env = { ...originalEnv }
+    delete process.env.ENABLE_BAILEYS_SOCKET
+  })
+
+  afterAll(() => {
+    process.env = originalEnv
+  })
+
   it('returns { connected: false } when sector is not found', async () => {
     const { useCase } = buildUseCase()
 
@@ -79,5 +98,47 @@ describe('GetBaileysStatusForSector', () => {
     const result = await useCase.execute(sector._id)
 
     expect(result).toEqual({ connected: false })
+  })
+
+  it('starts the socket when connected and ENABLE_BAILEYS_SOCKET is true and socket is not yet running', async () => {
+    process.env.ENABLE_BAILEYS_SOCKET = 'true'
+    const startBaileysSocket = jest.fn().mockResolvedValue(undefined)
+    const socketManager = { isConnectedForLicensee: jest.fn().mockReturnValue(false) }
+    const { licenseeRepository, whatsappSessionRepository, sectorRepository, useCase } = buildUseCase({
+      startBaileysSocket,
+      socketManager,
+    })
+    const licensee = await licenseeRepository.create(licenseeCompleteFactory.build({ whatsappDefault: 'baileys' }))
+    const sector = await sectorRepository.create({ name: 'Suporte', licensee: licensee._id })
+    await whatsappSessionRepository.create({
+      licensee: licensee._id,
+      sector: sector._id,
+      creds: { registered: true, me: { id: '5511999999999' } },
+    })
+
+    await useCase.execute(sector._id)
+
+    expect(startBaileysSocket).toHaveBeenCalledWith(licensee, sector)
+  })
+
+  it('does not start the socket when already connected in socket manager', async () => {
+    process.env.ENABLE_BAILEYS_SOCKET = 'true'
+    const startBaileysSocket = jest.fn().mockResolvedValue(undefined)
+    const socketManager = { isConnectedForLicensee: jest.fn().mockReturnValue(true) }
+    const { licenseeRepository, whatsappSessionRepository, sectorRepository, useCase } = buildUseCase({
+      startBaileysSocket,
+      socketManager,
+    })
+    const licensee = await licenseeRepository.create(licenseeCompleteFactory.build({ whatsappDefault: 'baileys' }))
+    const sector = await sectorRepository.create({ name: 'Suporte', licensee: licensee._id })
+    await whatsappSessionRepository.create({
+      licensee: licensee._id,
+      sector: sector._id,
+      creds: { registered: true, me: { id: '5511999999999' } },
+    })
+
+    await useCase.execute(sector._id)
+
+    expect(startBaileysSocket).not.toHaveBeenCalled()
   })
 })

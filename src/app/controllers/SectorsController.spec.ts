@@ -137,4 +137,159 @@ describe('SectorsController', () => {
       expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ name: 'Vendas' }))
     })
   })
+
+  describe('#index', () => {
+    it('returns 500 when repository throws an unexpected error', async () => {
+      const sectorRepository = {
+        find: jest.fn().mockRejectedValue(new Error('connection lost')),
+      }
+      const controller = new SectorsController({ sectorRepository })
+      const req = { query: {} }
+      const res = buildResponse()
+
+      await controller.index(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ errors: expect.any(Object) }))
+    })
+  })
+
+  describe('#destroy', () => {
+    it('returns 500 when repository throws an unexpected error', async () => {
+      const sectorRepository = {
+        delete: jest.fn().mockRejectedValue(new Error('disk failure')),
+      }
+      const controller = new SectorsController({ sectorRepository })
+      const req = { params: { id: 'some-id' } }
+      const res = buildResponse()
+
+      await controller.destroy(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ errors: expect.any(Object) }))
+    })
+  })
+
+  describe('#update', () => {
+    it('returns 200 with the updated sector', async () => {
+      const { controller, sectorRepository } = buildController()
+      const licenseeId = 'license-id'
+      const userId = 'user-id'
+
+      const sector = await sectorRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
+
+      const req = { params: { id: sector._id }, body: { name: 'Suporte' } }
+      const res = buildResponse()
+
+      await controller.update(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ name: 'Suporte' }))
+    })
+
+    it('returns 422 when validation error occurs', async () => {
+      const sectorRepository = {
+        update: jest.fn().mockRejectedValue({ errors: { name: { message: 'Nome: Você deve preencher o campo' } } }),
+        findFirst: jest.fn(),
+      }
+      const controller = new SectorsController({ sectorRepository })
+      const req = { params: { id: 'some-id' }, body: { name: '' } }
+      const res = buildResponse()
+
+      await controller.update(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(422)
+      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ errors: expect.any(Array) }))
+    })
+  })
+
+  describe('#getBaileysQr', () => {
+    it('returns 200 with the response from the use case', async () => {
+      const { controller } = buildController()
+      const qrResponse = { qr: 'data:image/png;base64,abc123' }
+      controller.getBaileysQrUseCase = { execute: jest.fn().mockResolvedValue(qrResponse) }
+
+      const req = { params: { id: 'sector-id' } }
+      const res = buildResponse()
+
+      await controller.getBaileysQr(req, res)
+
+      expect(controller.getBaileysQrUseCase.execute).toHaveBeenCalledWith('sector-id')
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.send).toHaveBeenCalledWith(qrResponse)
+    })
+
+    it('returns 408 on error', async () => {
+      const { controller } = buildController()
+      controller.getBaileysQrUseCase = { execute: jest.fn().mockRejectedValue(new Error('timeout')) }
+
+      const req = { params: { id: 'sector-id' } }
+      const res = buildResponse()
+
+      await controller.getBaileysQr(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(408)
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ errors: expect.any(Object) }))
+    })
+  })
+
+  describe('#getBaileysStatus', () => {
+    it('returns 200 with the response from the use case', async () => {
+      const { controller } = buildController()
+      const statusResponse = { status: 'connected' }
+      controller.getBaileysStatusUseCase = { execute: jest.fn().mockResolvedValue(statusResponse) }
+
+      const req = { params: { id: 'sector-id' } }
+      const res = buildResponse()
+
+      await controller.getBaileysStatus(req, res)
+
+      expect(controller.getBaileysStatusUseCase.execute).toHaveBeenCalledWith('sector-id')
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.send).toHaveBeenCalledWith(statusResponse)
+    })
+
+    it('returns 500 on error', async () => {
+      const { controller } = buildController()
+      controller.getBaileysStatusUseCase = { execute: jest.fn().mockRejectedValue(new Error('internal error')) }
+
+      const req = { params: { id: 'sector-id' } }
+      const res = buildResponse()
+
+      await controller.getBaileysStatus(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ errors: expect.any(Object) }))
+    })
+  })
+
+  describe('#baileysSync', () => {
+    it('returns 200 with the response from the use case', async () => {
+      const { controller } = buildController()
+      const syncResponse = { synced: true }
+      controller.syncBaileysDirectoryUseCase = { execute: jest.fn().mockResolvedValue(syncResponse) }
+
+      const req = { params: { id: 'sector-id' } }
+      const res = buildResponse()
+
+      await controller.baileysSync(req, res)
+
+      expect(controller.syncBaileysDirectoryUseCase.execute).toHaveBeenCalledWith('sector-id')
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.send).toHaveBeenCalledWith(syncResponse)
+    })
+
+    it('returns 500 on error', async () => {
+      const { controller } = buildController()
+      controller.syncBaileysDirectoryUseCase = { execute: jest.fn().mockRejectedValue(new Error('sync failed')) }
+
+      const req = { params: { id: 'sector-id' } }
+      const res = buildResponse()
+
+      await controller.baileysSync(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ errors: expect.any(Object) }))
+    })
+  })
 })
