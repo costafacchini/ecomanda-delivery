@@ -39,7 +39,6 @@ describe('Sector', () => {
 
       expect(sector.sectorToken).toMatch(/^[0-9a-f-]{36}$/)
     })
-
   })
 
   describe('webhookUrl virtual', () => {
@@ -51,9 +50,7 @@ describe('Sector', () => {
       const sector = await Sector.create({ name: 'Vendas', licensee, users: [userId] })
       const populated = await Sector.findById(sector._id).populate('licensee')
 
-      expect(populated!.webhookUrl).toMatch(
-        new RegExp(`token=${licensee.apiToken}&sector=${sector.sectorToken}`),
-      )
+      expect(populated!.webhookUrl).toMatch(new RegExp(`token=${licensee.apiToken}&sector=${sector.sectorToken}`))
     })
 
     it('returns null when licensee is not populated', async () => {

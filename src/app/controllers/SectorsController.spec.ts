@@ -179,7 +179,10 @@ describe('SectorsController', () => {
     })
 
     it('populates licensee so webhookUrl virtual resolves', async () => {
-      const sectorData = { name: 'Vendas', webhookUrl: 'https://clave-digital.herokuapp.com/api/v1/messenger/message/?token=abc&sector=xyz' }
+      const sectorData = {
+        name: 'Vendas',
+        webhookUrl: 'https://clave-digital.herokuapp.com/api/v1/messenger/message/?token=abc&sector=xyz',
+      }
       const sectorRepository = {
         findFirst: jest.fn().mockResolvedValue(sectorData),
       }
