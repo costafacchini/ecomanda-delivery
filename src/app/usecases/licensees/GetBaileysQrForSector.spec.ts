@@ -8,7 +8,12 @@ function buildUseCase(overrides: Record<string, any> = {}) {
   const sectorRepository = overrides.sectorRepository ?? new SectorRepositoryMemory()
   const createMessengerPlugin = overrides.createMessengerPlugin ?? jest.fn()
   const startBaileysSocket = overrides.startBaileysSocket
-  const useCase = new GetBaileysQrForSector({ licenseeRepository, sectorRepository, createMessengerPlugin, startBaileysSocket })
+  const useCase = new GetBaileysQrForSector({
+    licenseeRepository,
+    sectorRepository,
+    createMessengerPlugin,
+    startBaileysSocket,
+  })
   return { licenseeRepository, sectorRepository, createMessengerPlugin, useCase }
 }
 
@@ -71,7 +76,9 @@ describe('GetBaileysQrForSector', () => {
   it('calls startBaileysSocket with licensee and sector when ENABLE_BAILEYS_SOCKET is true and already connected', async () => {
     process.env.ENABLE_BAILEYS_SOCKET = 'true'
     const startBaileysSocket = jest.fn().mockResolvedValue(undefined)
-    const { licenseeRepository, sectorRepository, createMessengerPlugin, useCase } = buildUseCase({ startBaileysSocket })
+    const { licenseeRepository, sectorRepository, createMessengerPlugin, useCase } = buildUseCase({
+      startBaileysSocket,
+    })
     const licensee = await licenseeRepository.create(licenseeCompleteFactory.build({ whatsappDefault: 'baileys' }))
     const sector = await sectorRepository.create({ name: 'Suporte', licensee: licensee._id })
     const plugin = { getQrCode: jest.fn().mockResolvedValue(null) }
@@ -84,7 +91,9 @@ describe('GetBaileysQrForSector', () => {
 
   it('does not call startBaileysSocket when ENABLE_BAILEYS_SOCKET is not set', async () => {
     const startBaileysSocket = jest.fn()
-    const { licenseeRepository, sectorRepository, createMessengerPlugin, useCase } = buildUseCase({ startBaileysSocket })
+    const { licenseeRepository, sectorRepository, createMessengerPlugin, useCase } = buildUseCase({
+      startBaileysSocket,
+    })
     const licensee = await licenseeRepository.create(licenseeCompleteFactory.build({ whatsappDefault: 'baileys' }))
     const sector = await sectorRepository.create({ name: 'Suporte', licensee: licensee._id })
     const plugin = { getQrCode: jest.fn().mockResolvedValue(null) }

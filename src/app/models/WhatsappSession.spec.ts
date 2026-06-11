@@ -2,7 +2,10 @@ import WhatsappSession from '@models/WhatsappSession'
 import mongoServer from '../../../.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
-import mongoose from 'mongoose'
+import { SectorRepositoryDatabase } from '@repositories/sector'
+import { UserRepositoryDatabase } from '@repositories/user'
+import { sector as sectorFactory } from '@factories/sector'
+import { user as userFactory } from '@factories/user'
 
 describe('WhatsappSession', () => {
   let licensee: any
@@ -26,10 +29,14 @@ describe('WhatsappSession', () => {
     })
 
     it('accepts a sector ObjectId', async () => {
-      const sectorId = new mongoose.Types.ObjectId()
-      const session = await WhatsappSession.create({ licensee, sector: sectorId })
+      const userRepository = new UserRepositoryDatabase()
+      const user = await userRepository.create(userFactory.build({ licensee }))
 
-      expect(session.sector?.toString()).toEqual(sectorId.toString())
+      const sectorRepository = new SectorRepositoryDatabase()
+      const sector = await sectorRepository.create(sectorFactory.build({ licensee, users: [user] }))
+      const session = await WhatsappSession.create({ licensee, sector: sector._id })
+
+      expect(session.sector?.toString()).toEqual(sector._id.toString())
     })
   })
 
@@ -39,8 +46,12 @@ describe('WhatsappSession', () => {
     })
 
     it('allows two sessions for the same licensee when sectors differ', async () => {
-      const sectorA = new mongoose.Types.ObjectId()
-      const sectorB = new mongoose.Types.ObjectId()
+      const userRepository = new UserRepositoryDatabase()
+      const user = await userRepository.create(userFactory.build({ licensee }))
+
+      const sectorRepository = new SectorRepositoryDatabase()
+      const sectorA = await sectorRepository.create(sectorFactory.build({ licensee, users: [user] }))
+      const sectorB = await sectorRepository.create(sectorFactory.build({ licensee, users: [user] }))
 
       await WhatsappSession.create({ licensee, sector: sectorA })
       const second = await WhatsappSession.create({ licensee, sector: sectorB })
@@ -49,11 +60,15 @@ describe('WhatsappSession', () => {
     })
 
     it('rejects a duplicate (licensee + sector) pair', async () => {
-      const sectorId = new mongoose.Types.ObjectId()
+      const userRepository = new UserRepositoryDatabase()
+      const user = await userRepository.create(userFactory.build({ licensee }))
 
-      await WhatsappSession.create({ licensee, sector: sectorId })
+      const sectorRepository = new SectorRepositoryDatabase()
+      const sector = await sectorRepository.create(sectorFactory.build({ licensee, users: [user] }))
 
-      await expect(WhatsappSession.create({ licensee, sector: sectorId })).rejects.toThrow()
+      await WhatsappSession.create({ licensee, sector: sector })
+
+      await expect(WhatsappSession.create({ licensee, sector: sector })).rejects.toThrow()
     })
   })
 })

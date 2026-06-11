@@ -1,11 +1,14 @@
 import mongoServer from '../../../.jest/utils'
 import Room from '@models/Room'
-import mongoose from 'mongoose'
 import { RoomRepositoryDatabase } from '@repositories/room'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
+import { sector as sectorFactory } from '@factories/sector'
+import { user as userFactory } from '@factories/user'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
+import { SectorRepositoryDatabase } from '@repositories/sector'
+import { UserRepositoryDatabase } from '@repositories/user'
 
 describe('room repository', () => {
   beforeEach(async () => {
@@ -117,17 +120,21 @@ describe('room repository', () => {
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(contactFactory.build({ licensee }))
 
-      const sectorId = new mongoose.Types.ObjectId()
-      const otherSectorId = new mongoose.Types.ObjectId()
+      const userRepository = new UserRepositoryDatabase()
+      const user = await userRepository.create(userFactory.build({ licensee }))
+
+      const sectorRepository = new SectorRepositoryDatabase()
+      const sector = await sectorRepository.create(sectorFactory.build({ licensee, users: [user] }))
+      const otherSector = await sectorRepository.create(sectorFactory.build({ licensee, users: [user] }))
 
       const roomRepository = new RoomRepositoryDatabase()
-      await roomRepository.create({ contact, sector: sectorId })
-      await roomRepository.create({ contact, sector: otherSectorId })
+      await roomRepository.create({ contact, sector: sector })
+      await roomRepository.create({ contact, sector: otherSector })
 
-      const rooms = await roomRepository.findForAgent(null, licensee._id, [sectorId])
+      const rooms = await roomRepository.findForAgent(null, licensee._id, [sector._id])
 
       expect(rooms.length).toEqual(1)
-      expect(rooms[0].sector.toString()).toEqual(sectorId.toString())
+      expect(rooms[0].sector.toString()).toEqual(sector._id.toString())
     })
 
     it('returns all rooms when sectorIds is empty', async () => {
@@ -137,10 +144,14 @@ describe('room repository', () => {
       const contactRepository = new ContactRepositoryDatabase()
       const contact = await contactRepository.create(contactFactory.build({ licensee }))
 
-      const sectorId = new mongoose.Types.ObjectId()
+      const userRepository = new UserRepositoryDatabase()
+      const user = await userRepository.create(userFactory.build({ licensee }))
+
+      const sectorRepository = new SectorRepositoryDatabase()
+      const sector = await sectorRepository.create(sectorFactory.build({ licensee, users: [user] }))
 
       const roomRepository = new RoomRepositoryDatabase()
-      await roomRepository.create({ contact, sector: sectorId })
+      await roomRepository.create({ contact, sector: sector })
       await roomRepository.create({ contact })
 
       const rooms = await roomRepository.findForAgent(null, licensee._id, [])

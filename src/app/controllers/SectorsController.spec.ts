@@ -1,7 +1,5 @@
 import { SectorRepositoryMemory } from '@repositories/sector'
 import { SectorsController } from './SectorsController'
-import Sector from '@models/Sector'
-import mongoose from 'mongoose'
 
 function buildResponse() {
   return {
@@ -13,7 +11,6 @@ function buildResponse() {
 
 function buildController() {
   const sectorRepository = new SectorRepositoryMemory()
-  sectorRepository.modelClass = Sector
 
   const controller = new SectorsController({ sectorRepository })
 
@@ -24,8 +21,8 @@ describe('SectorsController', () => {
   describe('#create', () => {
     it('returns 201 with the created sector', async () => {
       const { controller, sectorRepository } = buildController()
-      const licenseeId = new mongoose.Types.ObjectId()
-      const userId = new mongoose.Types.ObjectId()
+      const licenseeId = 'license-id'
+      const userId = 'user-id'
       const req = { body: { name: 'Vendas', licensee: licenseeId, users: [userId] } }
       const res = buildResponse()
 
@@ -37,9 +34,11 @@ describe('SectorsController', () => {
     })
 
     it('returns 422 when users array is empty', async () => {
-      const { controller } = buildController()
-      const licenseeId = new mongoose.Types.ObjectId()
-      const req = { body: { name: 'Vendas', licensee: licenseeId, users: [] } }
+      const sectorRepository = {
+        create: jest.fn().mockRejectedValue({ errors: { users: { message: 'Usuários: Informe ao menos um usuário' } } }),
+      }
+      const controller = new SectorsController({ sectorRepository })
+      const req = { body: { name: 'Vendas', licensee: 'license-id', users: [] } }
       const res = buildResponse()
 
       await controller.create(req, res)
@@ -49,10 +48,11 @@ describe('SectorsController', () => {
     })
 
     it('returns 422 when name is missing', async () => {
-      const { controller } = buildController()
-      const licenseeId = new mongoose.Types.ObjectId()
-      const userId = new mongoose.Types.ObjectId()
-      const req = { body: { licensee: licenseeId, users: [userId] } }
+      const sectorRepository = {
+        create: jest.fn().mockRejectedValue({ errors: { name: { message: 'Nome: Você deve preencher o campo' } } }),
+      }
+      const controller = new SectorsController({ sectorRepository })
+      const req = { body: { licensee: 'license-id', users: ['user-id'] } }
       const res = buildResponse()
 
       await controller.create(req, res)
@@ -64,9 +64,9 @@ describe('SectorsController', () => {
   describe('#index', () => {
     it('returns all sectors filtered by licensee', async () => {
       const { controller, sectorRepository } = buildController()
-      const licenseeId = new mongoose.Types.ObjectId()
-      const otherLicenseeId = new mongoose.Types.ObjectId()
-      const userId = new mongoose.Types.ObjectId()
+      const licenseeId = 'license-id'
+      const otherLicenseeId = 'other-licensee-id'
+      const userId = 'user-id'
 
       await sectorRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
       await sectorRepository.create({ name: 'Suporte', licensee: otherLicenseeId, users: [userId] })
@@ -84,8 +84,8 @@ describe('SectorsController', () => {
 
     it('returns all sectors when no licensee filter', async () => {
       const { controller, sectorRepository } = buildController()
-      const licenseeId = new mongoose.Types.ObjectId()
-      const userId = new mongoose.Types.ObjectId()
+      const licenseeId = 'license-id'
+      const userId = 'user-id'
 
       await sectorRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
       await sectorRepository.create({ name: 'Suporte', licensee: licenseeId, users: [userId] })
@@ -103,8 +103,8 @@ describe('SectorsController', () => {
   describe('#destroy', () => {
     it('removes the sector and returns 204', async () => {
       const { controller, sectorRepository } = buildController()
-      const licenseeId = new mongoose.Types.ObjectId()
-      const userId = new mongoose.Types.ObjectId()
+      const licenseeId = 'license-id'
+      const userId = 'user-id'
 
       const sector = await sectorRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
 
@@ -121,8 +121,8 @@ describe('SectorsController', () => {
   describe('#show', () => {
     it('returns the sector by id', async () => {
       const { controller, sectorRepository } = buildController()
-      const licenseeId = new mongoose.Types.ObjectId()
-      const userId = new mongoose.Types.ObjectId()
+      const licenseeId = 'license-id'
+      const userId = 'user-id'
 
       const sector = await sectorRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
 
