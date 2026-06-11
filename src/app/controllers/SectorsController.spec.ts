@@ -114,6 +114,19 @@ describe('SectorsController', () => {
       expect(res.status).toHaveBeenCalledWith(500)
       expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ errors: expect.any(Object) }))
     })
+
+    it('populates licensee so webhookUrl virtual resolves', async () => {
+      const sectorRepository = {
+        find: jest.fn().mockResolvedValue([]),
+      }
+      const controller = new SectorsController({ sectorRepository })
+      const req = { query: { licensee: 'lic-id' } }
+      const res = buildResponse()
+
+      await controller.index(req, res)
+
+      expect(sectorRepository.find).toHaveBeenCalledWith({ licensee: 'lic-id' }, ['licensee', 'users'])
+    })
   })
 
   describe('#destroy', () => {
@@ -163,6 +176,21 @@ describe('SectorsController', () => {
 
       expect(res.status).toHaveBeenCalledWith(200)
       expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ name: 'Vendas' }))
+    })
+
+    it('populates licensee so webhookUrl virtual resolves', async () => {
+      const sectorData = { name: 'Vendas', webhookUrl: 'https://clave-digital.herokuapp.com/api/v1/messenger/message/?token=abc&sector=xyz' }
+      const sectorRepository = {
+        findFirst: jest.fn().mockResolvedValue(sectorData),
+      }
+      const controller = new SectorsController({ sectorRepository })
+      const req = { params: { id: 'sector-id' } }
+      const res = buildResponse()
+
+      await controller.show(req, res)
+
+      expect(sectorRepository.findFirst).toHaveBeenCalledWith({ _id: 'sector-id' }, ['licensee', 'users'])
+      expect(res.status).toHaveBeenCalledWith(200)
     })
   })
 
