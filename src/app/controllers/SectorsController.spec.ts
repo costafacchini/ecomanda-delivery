@@ -35,7 +35,9 @@ describe('SectorsController', () => {
 
     it('returns 422 when users array is empty', async () => {
       const sectorRepository = {
-        create: jest.fn().mockRejectedValue({ errors: { users: { message: 'Usuários: Informe ao menos um usuário' } } }),
+        create: jest
+          .fn()
+          .mockRejectedValue({ errors: { users: { message: 'Usuários: Informe ao menos um usuário' } } }),
       }
       const controller = new SectorsController({ sectorRepository })
       const req = { body: { name: 'Vendas', licensee: 'license-id', users: [] } }

@@ -73,7 +73,6 @@ const messageSchema = new Schema(
     sector: {
       type: ObjectId,
       ref: 'Sector',
-      default: null,
     },
     trigger: {
       type: ObjectId,

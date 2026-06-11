@@ -1,4 +1,3 @@
-import '@models/Sector'
 import { QueryBuilder } from './QueryBuilder'
 
 class MessagesQuery {
