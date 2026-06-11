@@ -1,8 +1,8 @@
 # Plan: Setores — Webhook Providers
 
-**Status**: not-started
+**Status**: complete
 **Created**: 2026-06-04
-**Last Updated**: 2026-06-04
+**Last Updated**: 2026-06-11
 **Estimated Demo Date**: TBD — depends on `setores` plan completion
 **Assigned Dev**: Alan Costa Facchini
 **Assigned QA**: unassigned
