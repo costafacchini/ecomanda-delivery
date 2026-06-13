@@ -52,7 +52,7 @@
     "jest": "30.4.2",
     "jest-date-mock": "1.0.10",
     "mongodb-memory-server": "11.2.0",
-    "npm-run-all2": "9.0.1",
+    "npm-run-all2": "9.0.2",
     "prettier": "3.8.4",
     "supertest": "7.2.2",
     "typescript": "6.0.3"
