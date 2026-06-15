@@ -23,6 +23,7 @@ Git-native Markdown plans for multi-step work.
 | # | Plan | Folder | Status | Description |
 |---|------|--------|--------|-------------|
 | 2 | [MongoDB → PostgreSQL](./mongo-to-postgres/overview.md) | `mongo-to-postgres/` | not-started | Migrate all persistent data from MongoDB/Mongoose to PostgreSQL/Prisma using dual-write strategy; prerequisite: remove-pdv complete |
+| 5 | [Local Chat UI](./local-chat-ui/overview.md) | `local-chat-ui/` | not-started | Agent-facing full-screen chat page at /chat: room list + conversation panel adapted from whatsapp-web-clone, conditional navbar link, Socket.IO real-time updates |
 | 3 | [Backend Type Narrowing](./type-backend/overview.md) | `type-backend/` | not-started | Replace `any` with interfaces across models, repositories, use cases, controllers, and plugins — 3 phases, 11 tasks |
 | 4 | [Client Type Narrowing](./type-client/overview.md) | `type-client/` | not-started | Replace `any` with interfaces across React services, contexts, pages, and components — 2 phases, 6 tasks |
 
