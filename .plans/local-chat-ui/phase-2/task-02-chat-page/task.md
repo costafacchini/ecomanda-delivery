@@ -53,14 +53,21 @@ Build the full-screen `/chat` page with a room list sidebar and conversation pan
 | `client/src/pages/PrivateRoute/index.tsx` | modify | Add `noLayout` prop |
 | `client/src/pages/routes.tsx` | modify | Add `/chat` route |
 | `client/src/pages/Navbar/index.tsx` | modify | Add conditional Chat link |
+| `client/src/pages/PrivateRoute/index.tsx` | modify | Add `noLayout` prop |
+| `client/src/pages/routes.tsx` | modify | Add `/chat` route |
+| `client/src/pages/Navbar/index.tsx` | modify | Add conditional Chat link |
 | `client/src/pages/Chat/index.tsx` | create | Full-screen page entry |
 | `client/src/pages/Chat/components/RoomList.tsx` | create | Left sidebar room list |
+| `client/src/pages/Chat/components/RoomList.spec.tsx` | create | RoomList unit tests |
 | `client/src/pages/Chat/components/RoomItem.tsx` | create | Single room list entry |
+| `client/src/pages/Chat/components/RoomItem.spec.tsx` | create | RoomItem unit tests |
 | `client/src/pages/Chat/components/ConversationPanel.tsx` | create | Right panel: messages + input |
+| `client/src/pages/Chat/components/ConversationPanel.spec.tsx` | create | ConversationPanel unit tests |
 | `client/src/pages/Chat/components/MessageInput.tsx` | create | Text input + send button |
+| `client/src/pages/Chat/components/MessageInput.spec.tsx` | create | MessageInput unit tests |
+| `client/src/pages/Chat/index.spec.tsx` | create | Integration smoke tests |
 | `client/src/pages/Chat/styles.module.scss` | create | Scoped chat styles |
 | `client/src/services/rooms.ts` | create | API calls for rooms + messages |
-| `client/src/pages/Chat/index.spec.tsx` | create | Smoke tests |
 | `client/src/pages/Navbar/index.spec.tsx` | modify | Add Chat link visibility tests |
 
 ### Do NOT Modify
@@ -217,23 +224,54 @@ const effectiveLicensee = activeLicensee ?? currentUser?.licensee
 
 ### Step 6: Write tests
 
-**`client/src/pages/Chat/index.spec.tsx`** — smoke tests:
-- Renders the room list sidebar
-- Clicking a room item loads messages
-- Submitting the input calls `sendRoomMessage`
+Write one spec file per component. Follow the pattern in existing specs (e.g., `client/src/pages/Licensees/scenes/Form/panels/ChatPanel.spec.tsx`): use `@testing-library/react`, `vi.mock` for services, `render` + `screen` + `fireEvent`.
 
-Mock `client/src/services/rooms.ts` using `vi.mock`.
+**`RoomItem.spec.tsx`**:
+- Renders contact name and number
+- Renders last message text and timestamp when present
+- Renders unread badge when `unreadCount > 0`
+- Calls `onClick` when clicked
 
-**`client/src/pages/Navbar/index.spec.tsx`** — add:
-- "Chat" link NOT rendered when `chatDefault` is not `'local'`
+**`RoomList.spec.tsx`**:
+- Renders all rooms passed as props
+- Shows "Nenhuma conversa." when `rooms` is empty
+- Passes `isSelected=true` only to the selected room
+
+**`MessageInput.spec.tsx`**:
+- Renders the text input and send button
+- Calls `onSend` with the current input value on button click
+- Clears the input after send
+- Send button is disabled when `disabled` prop is true
+- Does NOT call `onSend` on empty input
+
+**`ConversationPanel.spec.tsx`**:
+- Renders "Selecione uma conversa" empty state when `room` is null
+- Renders contact name in the header when a room is provided
+- Renders all messages — `fromMe` messages aligned right, inbound messages aligned left
+- Delegates send to `MessageInput` (fires `onSend` callback)
+
+**`client/src/pages/Chat/index.spec.tsx`** — integration smoke tests (mock `client/src/services/rooms.ts` with `vi.mock`):
+- Calls `getRooms` on mount
+- Renders rooms returned by `getRooms`
+- Clicking a room calls `getRoomMessages` with that roomId
+- Messages from `getRoomMessages` render in the conversation panel
+- Submitting the input calls `sendRoomMessage` with roomId + text
+
+**`client/src/pages/Navbar/index.spec.tsx`** — add to existing spec:
+- "Chat" link is NOT rendered when `effectiveLicensee.chatDefault` is not `'local'`
 - "Chat" link IS rendered when `effectiveLicensee.chatDefault === 'local'`
+- "Chat" link resolves to `/#/chat`
 
 ## Testing
 
+- [ ] `RoomItem.spec.tsx` — renders name/number/last message/unread badge; fires onClick
+- [ ] `RoomList.spec.tsx` — renders all rooms; empty state; isSelected propagation
+- [ ] `MessageInput.spec.tsx` — calls onSend with text; clears after send; disabled state; blocks empty send
+- [ ] `ConversationPanel.spec.tsx` — empty state; header; fromMe vs inbound alignment; delegates send
+- [ ] `Chat/index.spec.tsx` — getRooms on mount; room click triggers getRoomMessages; send calls sendRoomMessage
+- [ ] `Navbar/index.spec.tsx` — Chat link shown/hidden based on chatDefault; link href is `/#/chat`
 - [ ] `npx vitest run` inside `client/` — all existing tests still pass
-- [ ] New Chat page spec passes: rooms render, room selection triggers message fetch, send calls API
-- [ ] Navbar spec covers: Chat link shown/hidden based on `chatDefault`
-- [ ] Manual: run `yarn run dev` and navigate to `/#/chat` — full-screen layout renders correctly
+- [ ] Manual: run `yarn run dev`, navigate to `/#/chat`, verify full-screen layout renders
 
 ## Documentation / KB Updates
 
