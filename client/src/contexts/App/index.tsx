@@ -1,14 +1,31 @@
-import { createContext, useCallback, useState } from 'react'
+import { createContext, useCallback, useContext, useState } from 'react'
 import { saveActiveLicensee, loadActiveLicensee, saveLicenseeModalSeen, loadLicenseeModalSeen } from '../../services/auth'
+import type { IUser, ILicensee } from '../../types'
 
-const AppContext = createContext<any>(null)
+interface IAppContext {
+  currentUser: IUser | undefined
+  setCurrentUser: (user: IUser | undefined) => void
+  activeLicensee: ILicensee | null
+  updateActiveLicensee: (licensee: ILicensee | null) => void
+  licenseeModalSeen: boolean
+  markLicenseeModalSeen: () => void
+  resetLicenseeModal: () => void
+}
 
-const AppContextProvider = ({ children }: any) => {
-  const [currentUser, setCurrentUser] = useState()
-  const [activeLicensee, setActiveLicensee] = useState(loadActiveLicensee)
-  const [licenseeModalSeen, setLicenseeModalSeen] = useState(loadLicenseeModalSeen)
+const AppContext = createContext<IAppContext | null>(null)
 
-  const updateActiveLicensee = useCallback((licensee: any) => {
+export function useApp(): IAppContext {
+  const ctx = useContext(AppContext)
+  if (!ctx) throw new Error('useApp must be used within AppContextProvider')
+  return ctx
+}
+
+const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
+  const [currentUser, setCurrentUser] = useState<IUser | undefined>()
+  const [activeLicensee, setActiveLicensee] = useState<ILicensee | null>(loadActiveLicensee as unknown as ILicensee | null)
+  const [licenseeModalSeen, setLicenseeModalSeen] = useState<boolean>(loadLicenseeModalSeen)
+
+  const updateActiveLicensee = useCallback((licensee: ILicensee | null) => {
     saveActiveLicensee(licensee)
     setActiveLicensee(licensee)
   }, [])
@@ -29,7 +46,7 @@ const AppContextProvider = ({ children }: any) => {
     <AppContext.Provider
       value={{
         currentUser,
-        setCurrentUser: useCallback((user: any) => { setCurrentUser(user) }, []),
+        setCurrentUser: useCallback((user: IUser | undefined) => { setCurrentUser(user) }, []),
         activeLicensee,
         updateActiveLicensee,
         licenseeModalSeen,
