@@ -2,9 +2,9 @@
 
 **Plan**: Local Chat UI
 **Phase**: 3
-**Task ID (phase-local)**: task-03
-**Task Path**: phase-3/task-03-socket-realtime
-**Depends On**: phase-2/task-02-chat-page
+**Task ID (phase-local)**: task-04
+**Task Path**: phase-3/task-04-socket-realtime
+**Depends On**: phase-2/task-03-chat-page
 **JIRA**: N/A
 
 ## Objective
@@ -45,7 +45,7 @@ The `new-room-message` payload is `{ roomId, messageId, licenseeId }`. The front
 ## Before You Start
 
 - [ ] `git switch main && git pull --rebase origin main`
-- [ ] Verify `phase-2/task-02-chat-page/status.md` shows `complete`
+- [ ] Verify `phase-2/task-03-chat-page/status.md` shows `complete`
 - [ ] Read `src/config/http.ts` — current socket.io server setup
 - [ ] Read `src/app/services/socketEmitter.ts` — `emitToLicensee` pattern
 - [ ] Read `client/src/pages/Chat/index.tsx` (created in task-02) — understand state structure
@@ -190,7 +190,7 @@ Mock `socket.io-client` with `vi.mock`. Tests:
 - [ ] Lint clean
 - [ ] `document-solution` run; KB index updated
 - [ ] Status updated to `complete` in `status.md`
-- [ ] Changes committed to `plan/local-chat-ui/phase-3/task-03-socket-realtime`
+- [ ] Changes committed to `plan/local-chat-ui/phase-3/task-04-socket-realtime`
 
 ## Conflict Avoidance Notes
 

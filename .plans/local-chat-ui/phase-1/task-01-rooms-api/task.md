@@ -1,4 +1,4 @@
-# Task: Rooms API endpoints
+# Task: Rooms API endpoints (sector-aware)
 
 **Plan**: Local Chat UI
 **Phase**: 1
@@ -9,70 +9,81 @@
 
 ## Objective
 
-Create two REST endpoints that the frontend chat page will consume: `GET /resources/rooms` (list open rooms for the current user's licensee) and `GET /resources/rooms/:roomId/messages` (paginated message history for a room).
+Create three REST endpoints: `GET /resources/rooms` (sector-aware room listing), `POST /resources/rooms` (agent-initiated room creation), and `GET /resources/rooms/:roomId/messages` (paginated message history).
 
 ## Context
 
-The `local-chat-infra` plan already built the Room model, the LocalChat plugin, and the agent-reply endpoint (`POST /v1/chat/rooms/:roomId/messages`). The dashboard controller has a similar `openRooms` endpoint but it is super/admin-only and unsuitable for agents — a dedicated resource controller is needed.
+The `local-chat-infra` plan built the Room model, the LocalChat plugin, and the agent-reply endpoint (`POST /v1/chat/rooms/:roomId/messages`). The `setores-webhook-providers` plan added sector-scoped webhook routing — messages arriving via a sector's webhook already carry `message.sector`. The dashboard controller has a similar `openRooms` endpoint but it is super/admin-only; a dedicated resource controller is needed.
 
-Key existing files:
-- `src/app/models/Room.ts` — Room schema: `contact (ref Contact)`, `agent (ref User)`, `status (pending|open|closed)`, `closed (bool)`, `closedAt`
+**Key existing files:**
+- `src/app/models/Room.ts` — schema: `contact (ref Contact)`, `sector (ref Sector, nullable)`, `agent (ref User)`, `status (pending|open|closed)`, `closed (bool)`
+- `src/app/models/Sector.ts` — schema: `licensee`, `users: [ObjectId ref User]`, `active`
 - `src/app/repositories/room.ts` — `RoomRepositoryDatabase` with `findOpenForContact` and `findForAgent`
 - `src/app/controllers/DashboardController.ts` — `openRooms()` for reference (super/admin only)
-- `src/app/routes/resources-routes.ts` — composition root; add routes here
-- `src/types/index.ts` — shared interfaces; `IRoom`, `IContact` live here
+- `src/app/routes/resources-routes.ts` — composition root
 
-Auth pattern (from `resources-routes.ts`):
+**Auth pattern:**
 ```ts
-function authenticate(req, res, next) { /* validates x-access-token JWT */ }
-function authorize(...roles) { /* checks user.role */ }
+// authenticate sets req.userId from JWT; authorize checks user.role
 router.use(authenticate)
 ```
 
-The `req.userId` is set by `authenticate`. Use `userRepository.findFirst({ _id: req.userId })` to resolve the user; the user's `licensee` field is an ObjectId (not populated on this call).
+**Sector-scoped filtering logic:**
+- Fetch sectors where `users` array contains `req.userId` → `agentSectorIds`
+- If `agentSectorIds.length > 0`: filter rooms where `room.sector` is in `agentSectorIds`
+- If `agentSectorIds.length === 0` (agent not in any sector, or admin/super): return all rooms for the licensee regardless of sector
+- Super can pass `?licensee=` to filter by licensee
 
-Super users have no `licensee` on their User document; they can pass `?licensee=` as a query param to filter by licensee.
+**Agent-initiated room creation (`POST /resources/rooms`):**
+- If an open room already exists for the contact, return it (no duplicate)
+- If only closed rooms exist, create a new one
+- Validate that the contact belongs to the user's licensee (prevent cross-licensee room creation)
 
 ## Before You Start
 
 - [ ] `git switch main && git pull --rebase origin main`
-- [ ] Verify `phase-1/task-01-rooms-api/status.md` shows `not-started`
-- [ ] Read `src/app/controllers/DashboardController.ts` — `openRooms` method — for the aggregation pattern to fetch lastMessage per room
-- [ ] Read `src/app/repositories/room.ts` for existing query helpers
-- [ ] Read `src/app/routes/resources-routes.ts` to understand the composition root
+- [ ] Verify `status.md` shows `not-started`
+- [ ] Read `src/app/controllers/DashboardController.ts` — `openRooms` and `closeRoom` for aggregation patterns
+- [ ] Read `src/app/repositories/room.ts` — existing helpers
+- [ ] Read `src/app/models/Sector.ts` — `users` array field
+- [ ] Read `src/app/routes/resources-routes.ts` — composition root pattern
 - [ ] Mark this task `in-progress` in `status.md`
 
 ## File Ownership
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/controllers/RoomsController.ts` | create | New controller |
+| `src/app/controllers/RoomsController.ts` | create | index, create, messages actions |
 | `src/app/controllers/RoomsController.spec.ts` | create | Controller specs |
 | `src/app/repositories/room.ts` | modify | Add `findForLicensee()` helper |
-| `src/app/routes/resources-routes.ts` | modify | Wire routes + controller |
+| `src/app/routes/resources-routes.ts` | modify | Wire 3 new routes |
 
 ### Do NOT Modify
 
 - `src/app/controllers/DashboardController.ts` — read-only reference
 - `src/app/models/Room.ts` — schema is stable; read-only
-- `src/types/index.ts` — no new types needed for this task
+- `src/app/plugins/chats/LocalChat.ts` — owned by phase-1/task-02-localchat-sector
 
 ## Implementation Steps
 
 ### Step 1: Add `findForLicensee` to `RoomRepositoryDatabase`
 
-In `src/app/repositories/room.ts`, add a method to `RoomRepositoryDatabase`:
+In `src/app/repositories/room.ts`, add to `RoomRepositoryDatabase`:
 
 ```ts
-async findForLicensee(licenseeId: any, { status, page = 1, limit = 20 }: { status?: string; page?: number; limit?: number } = {}) {
+async findForLicensee(
+  licenseeId: any,
+  { sectorIds = [], page = 1, limit = 20 }: { sectorIds?: any[]; page?: number; limit?: number } = {}
+) {
   const contacts = await this.model().db.model('Contact').find({ licensee: licenseeId }).select('_id').lean()
   const contactIds = contacts.map((c: any) => c._id)
-  const filter: any = { contact: { $in: contactIds } }
-  if (status) {
-    filter.status = status
-  } else {
-    filter.closed = false
+
+  const filter: any = { contact: { $in: contactIds }, closed: false }
+
+  if (sectorIds.length > 0) {
+    filter.sector = { $in: sectorIds }
   }
+
   return this.model()
     .find(filter)
     .sort({ updatedAt: -1 })
@@ -83,140 +94,164 @@ async findForLicensee(licenseeId: any, { status, page = 1, limit = 20 }: { statu
 }
 ```
 
-This pattern mirrors the contact lookup in `DashboardController.openRooms`.
+When `sectorIds` is empty the sector filter is omitted — all open rooms for the licensee are returned (admin/super or agents not assigned to any sector).
 
 ### Step 2: Create `RoomsController`
 
-Create `src/app/controllers/RoomsController.ts`:
+Create `src/app/controllers/RoomsController.ts` with three actions:
 
+**`index`** — `GET /resources/rooms`:
 ```ts
-class RoomsController {
-  userRepository: any
-  roomRepository: any
-  messageRepository: any
+async index(req, res) {
+  const user = await this.userRepository.findFirst({ _id: req.userId }, ['licensee'])
+  if (!user) return res.status(404).json({ message: 'Usuário não encontrado.' })
 
-  constructor({ userRepository, roomRepository, messageRepository }: Record<string, any> = {}) {
-    this.userRepository = userRepository
-    this.roomRepository = roomRepository
-    this.messageRepository = messageRepository
-    this.index = this.index.bind(this)
-    this.messages = this.messages.bind(this)
-  }
+  const licenseeId = user.role === 'super'
+    ? (req.query.licensee ?? null)
+    : (user.licensee?._id ?? user.licensee)
 
-  async index(req: any, res: any) {
-    try {
-      const user = await this.userRepository.findFirst({ _id: req.userId }, ['licensee'])
-      if (!user) return res.status(404).json({ message: 'Usuário não encontrado.' })
+  if (!licenseeId) return res.status(400).json({ message: 'Licenciado não identificado.' })
 
-      const licenseeId = user.role === 'super'
-        ? (req.query.licensee ?? null)
-        : user.licensee?._id ?? user.licensee
+  // Resolve agent's sectors
+  const agentSectors = await this.sectorRepository
+    .model()
+    .find({ users: req.userId, licensee: licenseeId, active: true })
+    .select('_id')
+    .lean()
+  const sectorIds = agentSectors.map((s: any) => s._id)
 
-      if (!licenseeId) return res.status(400).json({ message: 'Licenciado não identificado.' })
+  const page = Math.max(1, parseInt(req.query.page as string) || 1)
+  const limit = 20
 
-      const page = Math.max(1, parseInt(req.query.page as string) || 1)
-      const limit = 20
+  const roomResults = await this.roomRepository.findForLicensee(licenseeId, { sectorIds, page, limit })
+  const hasMore = roomResults.length > limit
+  const rooms = hasMore ? roomResults.slice(0, limit) : roomResults
 
-      const roomResults = await this.roomRepository.findForLicensee(licenseeId, { page, limit })
-      const hasMore = roomResults.length > limit
-      const rooms = hasMore ? roomResults.slice(0, limit) : roomResults
+  // Attach last message
+  const roomIds = rooms.map((r: any) => r._id)
+  const lastMessages = await this.messageRepository.model().aggregate([
+    { $match: { room: { $in: roomIds } } },
+    { $sort: { createdAt: -1 } },
+    { $group: { _id: '$room', text: { $first: '$text' }, kind: { $first: '$kind' }, createdAt: { $first: '$createdAt' } } },
+  ])
+  const lastMsgMap: Record<string, any> = {}
+  for (const m of lastMessages) lastMsgMap[m._id.toString()] = m
+  const roomsWithLast = rooms.map((r: any) => ({ ...r, lastMessage: lastMsgMap[r._id.toString()] || null }))
 
-      // Attach last message to each room
-      const roomIds = rooms.map((r: any) => r._id)
-      const lastMessages = await this.messageRepository.model().aggregate([
-        { $match: { room: { $in: roomIds } } },
-        { $sort: { createdAt: -1 } },
-        { $group: { _id: '$room', text: { $first: '$text' }, kind: { $first: '$kind' }, createdAt: { $first: '$createdAt' } } },
-      ])
-      const lastMsgMap: Record<string, any> = {}
-      for (const m of lastMessages) lastMsgMap[m._id.toString()] = m
-      const roomsWithLast = rooms.map((r: any) => ({ ...r, lastMessage: lastMsgMap[r._id.toString()] || null }))
-
-      return res.status(200).json({ rooms: roomsWithLast, hasMore })
-    } catch (err: any) {
-      return res.status(500).json({ message: `Erro interno do servidor: ${err.message}` })
-    }
-  }
-
-  async messages(req: any, res: any) {
-    try {
-      const user = await this.userRepository.findFirst({ _id: req.userId }, ['licensee'])
-      if (!user) return res.status(404).json({ message: 'Usuário não encontrado.' })
-
-      const room = await this.roomRepository.findFirst({ _id: req.params.roomId }, ['contact'])
-      if (!room) return res.status(404).json({ message: 'Conversa não encontrada.' })
-
-      // Authorization: room's contact must belong to the user's licensee
-      const userLicenseeId = user.role === 'super' ? null : (user.licensee?._id ?? user.licensee)?.toString()
-      const roomLicenseeId = room.contact?.licensee?.toString()
-      if (userLicenseeId && roomLicenseeId && userLicenseeId !== roomLicenseeId) {
-        return res.status(403).json({ message: 'Acesso negado.' })
-      }
-
-      const page = Math.max(1, parseInt(req.query.page as string) || 1)
-      const limit = 30
-
-      const total = await this.messageRepository.model().countDocuments({ room: room._id })
-      const messages = await this.messageRepository.model()
-        .find({ room: room._id })
-        .sort({ createdAt: 1 })
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .lean()
-
-      return res.status(200).json({ messages, total, page, hasMore: page * limit < total })
-    } catch (err: any) {
-      return res.status(500).json({ message: `Erro interno do servidor: ${err.message}` })
-    }
-  }
+  return res.status(200).json({ rooms: roomsWithLast, hasMore })
 }
-
-export { RoomsController }
 ```
+
+**`create`** — `POST /resources/rooms`:
+```ts
+async create(req, res) {
+  const user = await this.userRepository.findFirst({ _id: req.userId }, ['licensee'])
+  if (!user) return res.status(404).json({ message: 'Usuário não encontrado.' })
+
+  const licenseeId = (user.licensee?._id ?? user.licensee)?.toString()
+
+  const contact = await this.contactRepository.findFirst({ _id: req.body.contactId })
+  if (!contact) return res.status(404).json({ message: 'Contato não encontrado.' })
+  if (contact.licensee?.toString() !== licenseeId && user.role !== 'super') {
+    return res.status(403).json({ message: 'Acesso negado.' })
+  }
+
+  // Return existing open room if one exists
+  const existing = await this.roomRepository.findOpenForContact(contact._id)
+  if (existing) return res.status(200).json({ room: existing })
+
+  const room = await this.roomRepository.create({
+    contact: contact._id,
+    status: 'pending',
+  })
+  return res.status(201).json({ room })
+}
+```
+
+**`messages`** — `GET /resources/rooms/:roomId/messages`:
+```ts
+async messages(req, res) {
+  const user = await this.userRepository.findFirst({ _id: req.userId }, ['licensee'])
+  if (!user) return res.status(404).json({ message: 'Usuário não encontrado.' })
+
+  const room = await this.roomRepository.findFirst({ _id: req.params.roomId }, ['contact'])
+  if (!room) return res.status(404).json({ message: 'Conversa não encontrada.' })
+
+  const userLicenseeId = user.role === 'super' ? null : (user.licensee?._id ?? user.licensee)?.toString()
+  const roomLicenseeId = room.contact?.licensee?.toString()
+  if (userLicenseeId && roomLicenseeId && userLicenseeId !== roomLicenseeId) {
+    return res.status(403).json({ message: 'Acesso negado.' })
+  }
+
+  const page = Math.max(1, parseInt(req.query.page as string) || 1)
+  const limit = 30
+  const total = await this.messageRepository.model().countDocuments({ room: room._id })
+  const messages = await this.messageRepository.model()
+    .find({ room: room._id })
+    .sort({ createdAt: 1 })
+    .skip((page - 1) * limit)
+    .limit(limit)
+    .lean()
+
+  return res.status(200).json({ messages, total, page, hasMore: page * limit < total })
+}
+```
+
+Constructor must inject `sectorRepository` and `contactRepository` in addition to user/room/message repos.
 
 ### Step 3: Wire routes in `resources-routes.ts`
 
-In `src/app/routes/resources-routes.ts`:
-
-1. Import `RoomsController`:
-```ts
-import { RoomsController } from '../controllers/RoomsController'
-```
-
-2. In the composition root (after `createRuntimeDependencies()`):
-```ts
-const roomsController = new RoomsController({ userRepository, roomRepository, messageRepository })
-```
-
-3. Add routes (after existing router registrations, before `export default router`):
+1. Import `RoomsController`.
+2. In the composition root: `const roomsController = new RoomsController({ userRepository, roomRepository, messageRepository, sectorRepository, contactRepository })`
+3. Add routes:
 ```ts
 router.get('/rooms', roomsController.index)
+router.post('/rooms', roomsController.create)
 router.get('/rooms/:roomId/messages', roomsController.messages)
 ```
 
 ### Step 4: Write `RoomsController.spec.ts`
 
-Follow the pattern of existing controller specs (e.g., `DashboardController.spec.ts` or `MessagesController.spec.ts`). Use the Memory repository variants.
+Follow the pattern of existing controller specs (e.g., `DashboardController.spec.ts`). Use Memory repository variants.
 
-Tests to write:
-- `index` — returns rooms for user's licensee; super can filter by `?licensee=`; 400 when super provides no licensee; 404 for unknown user
-- `index` — pagination: `hasMore: true` when > 20 rooms exist
-- `messages` — returns messages sorted by `createdAt` asc for valid room; 403 when user's licensee doesn't match room's contact licensee; 404 for unknown room
+**`index` tests:**
+- Returns rooms for user's licensee (happy path)
+- Returns only rooms in agent's sectors when agent belongs to sectors
+- Returns all rooms when agent has no sectors (not sector-restricted)
+- Super can filter by `?licensee=`
+- Returns 400 when super provides no `?licensee=`
+- Returns 404 for unknown user
+- `hasMore: true` when > 20 rooms exist
+
+**`create` tests:**
+- Creates and returns a new room for a valid contact
+- Returns the existing open room (HTTP 200) when one already exists for the contact
+- Returns 404 when contact not found
+- Returns 403 when contact belongs to a different licensee
+- Returns 404 when user not found
+
+**`messages` tests:**
+- Returns paginated messages sorted by `createdAt asc` for a valid room
+- Returns 403 when user's licensee doesn't match room's contact licensee
+- Returns 404 when room not found
+- `hasMore` reflects pagination correctly
 
 ## Testing
 
-- [ ] `RoomsController.spec.ts` covers: index (happy path, super filter, no-licensee 400, pagination), messages (happy path, 403 cross-licensee, 404 unknown room)
+- [ ] `RoomsController.spec.ts` covers all cases listed above (12+ test cases)
+- [ ] `findForLicensee` sector filtering is exercised via controller spec (agent with sectors vs. without)
 - [ ] Existing backend tests still pass: `npx jest`
 - [ ] `npx eslint .` produces no new errors
 
 ## Documentation / KB Updates
 
-- [ ] No KB/doc updates required — this follows the established controller pattern. If the pattern diverges significantly, run `document-solution` after completion.
+- [ ] No KB/doc updates required for this task — follows established controller pattern.
 
 ## Completion Criteria
 
-- [ ] `GET /resources/rooms` returns open rooms with populated contact + lastMessage
-- [ ] `GET /resources/rooms/:roomId/messages` returns paginated message list; 403 on cross-licensee access
+- [ ] `GET /resources/rooms` returns sector-filtered rooms with last message
+- [ ] `POST /resources/rooms` creates a room or returns existing open room; 403 on cross-licensee contact
+- [ ] `GET /resources/rooms/:roomId/messages` returns paginated messages; 403 on cross-licensee room
 - [ ] All new and existing backend tests pass
 - [ ] Lint clean
 - [ ] Status updated to `complete` in `status.md`
@@ -224,4 +259,4 @@ Tests to write:
 
 ## Conflict Avoidance Notes
 
-No sibling tasks in Phase 1.
+Parallel task in Phase 1: `phase-1/task-02-localchat-sector` owns `src/app/plugins/chats/LocalChat.ts` — do not touch that file.
