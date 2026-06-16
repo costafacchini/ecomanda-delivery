@@ -1,13 +1,12 @@
 export interface ILicensee {
   id: string
+  _id: string
   name: string
   email: string
   phone: string
   active: boolean
   apiToken: string
   licenseKind: string
-  document: string
-  kind: string
   useChatbot: boolean
   chatbotDefault: string
   chatbotUrl: string
@@ -22,7 +21,19 @@ export interface ILicensee {
   chatKey: string
   chatIdentifier: string
   messageOnCloseChat: string
+  document: string
+  kind: string
   useSenderName: boolean
   useFileIDYcloud: boolean
   useSectors: boolean
 }
+
+export interface ILicenseeFilters {
+  page?: number
+  expression?: string
+  pedidos10_active?: boolean
+  active?: boolean
+  [key: string]: unknown
+}
+
+export type ILicenseeInput = Omit<ILicensee, 'id' | '_id'>

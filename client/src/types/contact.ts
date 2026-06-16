@@ -1,10 +1,12 @@
 export interface IContact {
   id: string
+  _id: string
   name: string
   number: string
   email: string
+  type: string
   talkingWithChatBot: boolean
-  licensee: string | null
+  licensee: string
   waId: string
   landbotId: string
   address: string
@@ -17,3 +19,12 @@ export interface IContact {
   delivery_tax: number
   plugin_cart_id: string
 }
+
+export interface IContactFilters {
+  page?: number
+  expression?: string
+  licensee?: string
+  [key: string]: unknown
+}
+
+export type IContactInput = Omit<IContact, 'id' | '_id'>

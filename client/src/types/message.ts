@@ -1,29 +1,43 @@
-import type { IContact } from './contact'
+export interface IMessageContact {
+  name: string
+  number?: string
+}
 
-export interface IMessageTriggerRef {
-  _id: string
+export interface IMessageSector {
   name: string
 }
 
-export interface IMessageSectorRef {
+export interface IMessageTrigger {
   _id: string
   name: string
 }
 
 export interface IMessage {
   id: string
-  kind: 'text' | 'file' | 'location' | 'interactive' | 'cart' | string
-  destination: 'to-chatbot' | 'to-chat' | 'to-messenger' | 'to-transfer' | string
-  text: string
-  url: string
-  fileName: string
-  latitude: number
-  longitude: number
-  sended: boolean
-  error: string | null
-  cart: unknown
+  _id: string
+  kind: string
+  text?: string
+  url?: string
+  fileName?: string
+  error?: string
+  latitude?: number
+  longitude?: number
+  cart?: unknown
   createdAt: string
-  contact: Pick<IContact, 'id' | 'name'> | null
-  trigger: IMessageTriggerRef | null
-  sector: IMessageSectorRef | null
+  contact?: IMessageContact
+  sector?: IMessageSector
+  trigger?: IMessageTrigger
+  destination?: string
+}
+
+export interface IMessageFilters {
+  page?: number
+  licensee?: string
+  contact?: string
+  kind?: string
+  destination?: string
+  onlyErrors?: boolean
+  startDate?: string
+  endDate?: string
+  [key: string]: unknown
 }
