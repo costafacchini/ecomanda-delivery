@@ -1,47 +1,48 @@
 import api from './api'
+import type { IUser } from '../types'
 
 const TOKEN_KEY = "@ecomanda-delivery-bearer"
 const EMAIL_KEY = "@ecomanda-delivery-mail"
 const ACTIVE_LICENSEE_KEY = "@ecomanda-delivery-active-licensee"
 const LICENSEE_MODAL_SEEN_KEY = "@ecomanda-delivery-licensee-modal-seen"
 
-export function isAuthenticated() {
+export function isAuthenticated(): boolean {
   return localStorage.getItem(TOKEN_KEY) !== null
 }
 
-export function getToken() {
+export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY)
 }
 
-export function getEmail() {
+export function getEmail(): string | null {
   return localStorage.getItem(EMAIL_KEY)
 }
 
-export function login(email: any, token: any) {
+export function login(email: string, token: string): void {
   localStorage.setItem(EMAIL_KEY, email)
-  return localStorage.setItem(TOKEN_KEY, token)
+  localStorage.setItem(TOKEN_KEY, token)
 }
 
-export function logout() {
+export function logout(): void {
   localStorage.removeItem(EMAIL_KEY)
   localStorage.removeItem(TOKEN_KEY)
   clearActiveLicensee()
   localStorage.removeItem(LICENSEE_MODAL_SEEN_KEY)
 }
 
-export function saveLicenseeModalSeen(seen: boolean) {
+export function saveLicenseeModalSeen(seen: boolean): void {
   localStorage.setItem(LICENSEE_MODAL_SEEN_KEY, JSON.stringify(seen))
 }
 
-export function loadLicenseeModalSeen() {
+export function loadLicenseeModalSeen(): boolean {
   return localStorage.getItem(LICENSEE_MODAL_SEEN_KEY) === 'true'
 }
 
-export function saveActiveLicensee(licensee: any) {
+export function saveActiveLicensee(licensee: object | null): void {
   localStorage.setItem(ACTIVE_LICENSEE_KEY, JSON.stringify(licensee))
 }
 
-export function loadActiveLicensee() {
+export function loadActiveLicensee(): unknown {
   try {
     return JSON.parse(localStorage.getItem(ACTIVE_LICENSEE_KEY) as string)
   } catch {
@@ -49,16 +50,16 @@ export function loadActiveLicensee() {
   }
 }
 
-export function clearActiveLicensee() {
+export function clearActiveLicensee(): void {
   localStorage.removeItem(ACTIVE_LICENSEE_KEY)
 }
 
-export async function fetchLoggedUser() {
+export async function fetchLoggedUser(): Promise<IUser | null> {
   const email = getEmail()
   const token = getToken()
   if (token) {
     const headers = { 'x-access-token': `${token}` }
-    const response = await api().get(`/resources/users/${email}`, { headers })
+    const response = await api().get<IUser>(`/resources/users/${email}`, { headers })
     return response.data
   }
   return null
