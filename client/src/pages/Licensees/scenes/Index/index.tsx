@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useContext, useCallback } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Link } from 'react-router'
 import { getLicensees } from '../../../../services/licensee'
-import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'
+import { useSimpleCrud } from '../../../../contexts/SimpleCrud'
 import isEmpty from 'lodash/isEmpty'
 import type { ILicensee, IUser } from '../../../../types'
 
@@ -17,25 +17,27 @@ interface LicenseesIndexProps {
 }
 
 function LicenseesIndex({ currentUser }: LicenseesIndexProps) {
-  const { filters, setFilters, cache } = useContext(SimpleCrudContext)
+  const { filters, setFilters, cache } = useSimpleCrud()
   const { addPage } = cache
-  const [expression, setExpression] = useState<string>(filters?.expression || '')
+  const licenseeFilters = filters as LicenseeFilters | undefined
+  const [expression, setExpression] = useState<string>(licenseeFilters?.expression || '')
 
   const onFilter = useCallback(
     async (changedFilters: LicenseeFilters) => {
-      const newFilters: LicenseeFilters = { ...filters, ...changedFilters }
+      const newFilters: LicenseeFilters = { ...licenseeFilters, ...changedFilters }
       setFilters(newFilters)
       const { data: licensees } = await getLicensees(newFilters)
-      addPage(licensees, newFilters)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      addPage(licensees as any, newFilters)
     },
-    [filters, setFilters, addPage],
+    [licenseeFilters, setFilters, addPage],
   )
 
   useEffect(() => {
     let abortController = new AbortController()
 
     try {
-      if (!isEmpty(filters)) return
+      if (!isEmpty(licenseeFilters)) return
 
       onFilter({ page: 1, pedidos10_active: false })
     } catch (error: unknown) {
@@ -47,14 +49,14 @@ function LicenseesIndex({ currentUser }: LicenseesIndexProps) {
     return () => {
       abortController.abort()
     }
-  }, [filters, onFilter])
+  }, [licenseeFilters, onFilter])
 
   function changeExpression(event: React.ChangeEvent<HTMLInputElement>) {
     setExpression(event.target.value)
   }
 
   function nextPage() {
-    const newFilters: LicenseeFilters = { ...filters, page: filters.page + 1 }
+    const newFilters: LicenseeFilters = { ...licenseeFilters, page: (licenseeFilters?.page ?? 1) + 1 }
     onFilter(newFilters)
   }
 
@@ -90,7 +92,7 @@ function LicenseesIndex({ currentUser }: LicenseesIndexProps) {
                   className='btn btn-primary'
                   title='Filtre pelo licenciado'
                   onClick={() => {
-                    const newFilters: LicenseeFilters = { ...filters, expression: expression, page: 1 }
+                    const newFilters: LicenseeFilters = { ...licenseeFilters, expression: expression, page: 1 }
                     onFilter(newFilters)
                   }}
                 >
@@ -114,7 +116,7 @@ function LicenseesIndex({ currentUser }: LicenseesIndexProps) {
             </tr>
           </thead>
           <tbody>
-            {cache.records.map((licensee: ILicensee) => (
+            {(cache.records as unknown as ILicensee[]).map((licensee) => (
               <tr key={licensee.id}>
                 <td>{licensee.name}</td>
                 <td>{licensee.email}</td>

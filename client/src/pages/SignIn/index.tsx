@@ -1,9 +1,9 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router'
 import api from '../../services/api'
 import { login, fetchLoggedUser } from '../../services/auth'
 import styles from './index.module.scss'
-import { AppContext } from '../../contexts/App'
+import { useApp } from '../../contexts/App'
 import OnboardingModal from './OnboardingModal'
 
 interface ILoginResponse {
@@ -18,7 +18,7 @@ function SignIn() {
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
   let navigate = useNavigate()
-  const { setCurrentUser } = useContext(AppContext)
+  const { setCurrentUser } = useApp()
 
   function handleOnboardingSuccess() {
     setIsOnboardingOpen(false)
@@ -37,7 +37,7 @@ function SignIn() {
         login(email, response.data.token)
 
         fetchLoggedUser().then(user => {
-          setCurrentUser(user)
+          setCurrentUser(user ?? undefined)
         })
 
         navigate('/#/')

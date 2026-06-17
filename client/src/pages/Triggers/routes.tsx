@@ -1,14 +1,14 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Route, Routes } from 'react-router'
 import TriggersIndex from './scenes/Index'
 import TriggerNew from './scenes/New'
 import TriggerEdit from './scenes/Edit'
 import TriggerImportation from './scenes/Importation'
 import { SimpleCrudContextProvider } from '../../contexts/SimpleCrud'
-import { AppContext } from '../../contexts/App'
+import { useApp } from '../../contexts/App'
 
 function TriggersRoutes() {
-  const { currentUser } = useContext(AppContext)
+  const { currentUser } = useApp()
 
   return (
     <SimpleCrudContextProvider>

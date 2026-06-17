@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useContext } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { getMessages, resendMessage } from '../../../../services/message'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 import SelectContactsWithFilter from '../../../../components/SelectContactsWithFilter'
@@ -6,7 +6,7 @@ import CartDescription from './components/cart'
 import styles from './styles.module.scss'
 import moment from 'moment-timezone'
 import isEmpty from 'lodash/isEmpty'
-import { AppContext } from '../../../../contexts/App'
+import { useApp } from '../../../../contexts/App'
 import type { IMessage, IMessageFilters } from '../../../../types'
 import type { IUser } from '../../../../types'
 
@@ -17,7 +17,7 @@ interface MessagesIndexProps {
 type RetryStatus = 'idle' | 'loading' | 'success' | 'error'
 
 function MessagesIndex({ currentUser }: MessagesIndexProps) {
-  const { activeLicensee } = useContext(AppContext)
+  const { activeLicensee } = useApp()
   const [filters, setFilters] = useState<IMessageFilters>({
     startDate: moment().subtract(3, 'hours').format('YYYY-MM-DDTHH:mm'),
     endDate: moment().format('YYYY-MM-DDTHH:mm'),
@@ -71,7 +71,8 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
   )
 
   useEffect(() => {
-    const effectiveLicensee = activeLicensee?._id ?? currentUser?.licensee?._id
+    const licenseeObj = currentUser?.licensee as { id?: string } | string | null | undefined
+    const effectiveLicensee = activeLicensee?.id ?? (typeof licenseeObj === 'object' && licenseeObj !== null ? licenseeObj.id : undefined)
     if (currentUser && effectiveLicensee && filters.licensee !== effectiveLicensee) {
       setFilters({ ...filters, licensee: effectiveLicensee })
     }
@@ -189,7 +190,7 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
               <SelectLicenseesWithFilter
                 name='licensee'
                 aria-labelledby='licensee'
-                selectedItem={filters.licensee}
+                selectedItem={null}
                 onChange={(e: { value?: string } | null) => {
                   const inputValue = e && e.value ? e.value : ''
                   const newFilters: IMessageFilters = { ...filters, licensee: inputValue, page: 1 }
@@ -303,7 +304,7 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
                       {` (${message.latitude}, ${message.longitude})`}
                     </>
                   )}
-                  {message.kind === 'cart' && message.cart && <CartDescription cart={message.cart} />}
+                  {message.kind === 'cart' && Boolean(message.cart) && <CartDescription cart={message.cart as any} />}
                   {message.kind !== 'location' && message.kind !== 'cart' && <p>{message.text}</p>}
                 </td>
                 <td>

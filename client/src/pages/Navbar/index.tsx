@@ -1,9 +1,9 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { logout } from '../../services/auth'
-import { AppContext } from '../../contexts/App'
+import { useApp } from '../../contexts/App'
 
 export default function Navbar({ currentUser }: any) {
-  const { resetLicenseeModal } = useContext(AppContext)
+  const { resetLicenseeModal } = useApp()
 
   function handleSwitchLicensee() {
     resetLicenseeModal()

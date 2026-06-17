@@ -1,10 +1,10 @@
 import Form from '../Form'
 import { toast } from 'react-toastify'
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 import { getTrigger, updateTrigger } from '../../../../services/trigger'
 import { useNavigate, useParams } from 'react-router'
 import { useEffect } from 'react'
-import { AppContext } from '../../../../contexts/App'
+import { useApp } from '../../../../contexts/App'
 import type { IUser, ITrigger } from '../../../../types'
 
 interface IFormError {
@@ -16,7 +16,7 @@ interface TriggerEditProps {
 }
 
 function TriggerEdit({ currentUser }: TriggerEditProps) {
-  const { activeLicensee } = useContext(AppContext)
+  const { activeLicensee } = useApp()
   const navigate = useNavigate()
   let { id } = useParams()
   const [errors, setErrors] = useState<IFormError[] | null>(null)
@@ -29,7 +29,7 @@ function TriggerEdit({ currentUser }: TriggerEditProps) {
 
     async function fetchTrigger() {
       try {
-        const { data: licensee } = await getTrigger(triggerId)
+        const { data: licensee } = await getTrigger(triggerId!)
         setTrigger(licensee as ITrigger)
       } catch (error: any) {
         if (error.name === 'AbortError') {
@@ -53,10 +53,10 @@ function TriggerEdit({ currentUser }: TriggerEditProps) {
         <Form
           initialValues={trigger}
           currentUser={currentUser}
-          activeLicensee={activeLicensee}
+          activeLicensee={activeLicensee as any}
           errors={errors}
           onSubmit={async (values) => {
-            const response = await updateTrigger(values)
+            const response = await updateTrigger({ ...values, id: trigger.id } as ITrigger)
 
             if (response.status === 200) {
               toast.success('Gatilho atualizado com sucesso!');

@@ -1,13 +1,13 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Route, Routes } from 'react-router'
 import UsersIndex from './scenes/Index'
 import UserNew from './scenes/New'
 import UserEdit from './scenes/Edit'
 import { SimpleCrudContextProvider } from '../../contexts/SimpleCrud'
-import { AppContext } from '../../contexts/App'
+import { useApp } from '../../contexts/App'
 
 function UsersRoutes() {
-  const { currentUser } = useContext(AppContext)
+  const { currentUser } = useApp()
 
   return (
     <SimpleCrudContextProvider>

@@ -43,7 +43,7 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, 
     if (endDate) params.endDate = moment.tz(endDate, tz).endOf('day').utc().toISOString()
 
     getMessages(params)
-      .then((res) => setMessages(res.data as IFailedMessage[]))
+      .then((res) => setMessages(res.data as unknown as IFailedMessage[]))
       .catch(() => setFetchError('Erro ao carregar mensagens falhas.'))
       .finally(() => setLoading(false))
   }, [isOpen, startDate, endDate])

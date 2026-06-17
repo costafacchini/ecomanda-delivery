@@ -25,6 +25,8 @@ export interface IDashboardMessageVolume {
   total: number
   per_hour?: IDashboardMessageVolumeRow[]
   per_day?: IDashboardMessageVolumeRow[]
+  peak_throughput?: number
+  avg_transfer_rate?: number
 }
 
 /** Returned by getDashboardDeliveryRate */
@@ -34,17 +36,25 @@ export interface IDashboardDeliveryRate {
   failed: number
   rate: number
   failed_today?: number
+  sent_today?: number
+  sent_pct?: number
+  failed_pct?: number
 }
 
 /** Returned by getDashboardQueue */
 export interface IDashboardQueue {
   pending_messages: number
+  avg_time_in_queue_seconds?: number
 }
 
 /** Returned by getDashboardConversations */
 export interface IDashboardConversations {
   total: number
   avg_duration?: number
+  started_today?: number
+  ended_today?: number
+  avg_messages_per_conversation?: number
+  avg_duration_seconds?: number
 }
 
 /** Returned by getDashboardMessagesToday */
@@ -83,6 +93,10 @@ export interface IDashboardOpenRooms {
   rooms: IDashboardRoom[]
   hasMore: boolean
 }
+
+/** Aliases for backward compatibility */
+export type IDashboardOpenRoom = IDashboardRoom
+export type IDashboardOpenRoomsResponse = IDashboardOpenRooms
 
 /** Common date-range filter params used by time-scoped dashboard endpoints */
 export interface IDashboardDateFilters {

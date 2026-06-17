@@ -1,9 +1,9 @@
 import Form from '../Form'
 import { toast } from 'react-toastify'
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 import { createTrigger } from '../../../../services/trigger'
 import { useNavigate } from 'react-router'
-import { AppContext } from '../../../../contexts/App'
+import { useApp } from '../../../../contexts/App'
 import type { IUser } from '../../../../types'
 
 interface IFormError {
@@ -15,7 +15,7 @@ interface TriggerNewProps {
 }
 
 function TriggerNew({ currentUser }: TriggerNewProps) {
-  const { activeLicensee } = useContext(AppContext)
+  const { activeLicensee } = useApp()
   let navigate = useNavigate()
   const [errors, setErrors] = useState<IFormError[] | null>(null)
 
@@ -23,15 +23,15 @@ function TriggerNew({ currentUser }: TriggerNewProps) {
     <div className='row'>
       <div className='col'>
         <h3>Gatilho criando</h3>
-        <Form errors={errors} currentUser={currentUser} activeLicensee={activeLicensee} onSubmit={async (values) => {
+        <Form errors={errors} currentUser={currentUser} activeLicensee={activeLicensee as any} onSubmit={async (values) => {
           if (!values.licensee) {
             if (currentUser && currentUser.role !== 'super') {
               values.licensee = currentUser.licensee as string
             } else if (activeLicensee) {
-              values.licensee = activeLicensee._id
+              values.licensee = activeLicensee.id
             }
           }
-          const response = await createTrigger(values)
+          const response = await createTrigger({ ...values, text: values.text ?? '' })
 
           if (response.status === 201) {
             toast.success('Gatilho criado com sucesso!');

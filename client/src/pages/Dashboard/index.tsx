@@ -1,5 +1,5 @@
-import { useContext, useState } from 'react'
-import { AppContext } from '../../contexts/App'
+import { useState } from 'react'
+import { useApp } from '../../contexts/App'
 import SuperLicenseesCard from './cards/SuperLicenseesCard'
 import SuperMessageVolumeCard from './cards/SuperMessageVolumeCard'
 import SuperDeliveryRateCard from './cards/SuperDeliveryRateCard'
@@ -12,7 +12,7 @@ import LicenseeMessagesPerDayCard from './cards/LicenseeMessagesPerDayCard'
 import BaileysSetupCard from './cards/BaileysSetupCard'
 
 export default function Dashboard() {
-  const { currentUser, activeLicensee } = useContext(AppContext)
+  const { currentUser, activeLicensee } = useApp()
 
   if (!currentUser) return <p>Carregando...</p>
 
@@ -32,15 +32,17 @@ export default function Dashboard() {
   }
 
   if (currentUser.role === 'super' || currentUser.role === 'admin') {
-    const licenseeId = activeLicensee?._id
-    const needsBaileysSetup = currentUser.role === 'admin' && currentUser.licensee?.whatsappDefault === 'baileys'
+    const licenseeId = activeLicensee?.id
+    const licenseeObj = currentUser.licensee as { id?: string; whatsappDefault?: string } | string | null
+    const licenseeObjId = typeof licenseeObj === 'object' && licenseeObj !== null ? licenseeObj.id : undefined
+    const needsBaileysSetup = currentUser.role === 'admin' && (typeof licenseeObj === 'object' && licenseeObj !== null ? licenseeObj.whatsappDefault === 'baileys' : false)
     const [showBaileysCard, setShowBaileysCard] = useState(needsBaileysSetup)
     return (
       <>
         <div className="row g-3">
-          {showBaileysCard && (
+          {showBaileysCard && licenseeObjId && (
             <div className="col-12 col-md-6">
-              <BaileysSetupCard licenseeId={currentUser.licensee._id} onConnected={() => setShowBaileysCard(false)} />
+              <BaileysSetupCard licenseeId={licenseeObjId} onConnected={() => setShowBaileysCard(false)} />
             </div>
           )}
           <div className="col-12 col-md-6"><SuperMessageVolumeCard licensee={licenseeId} /></div>

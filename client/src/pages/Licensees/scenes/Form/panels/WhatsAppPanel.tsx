@@ -46,7 +46,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
     if (!isActive || values.whatsappDefault !== 'baileys' || !values.id) return
 
     setBaileysChecking(true)
-    getBaileysStatus(values)
+    getBaileysStatus(values as any)
       .then((response) => {
         setBaileysConnected((response.data as IBaileysStatusResponse)?.connected ?? false)
       })
@@ -140,7 +140,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                 <button
                   onClick={async (event) => {
                     event.preventDefault()
-                    await setLicenseeWebhook(values)
+                    await setLicenseeWebhook(values as any)
                   }}
                   className='btn btn-info'
                 >
@@ -152,7 +152,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                 <button
                   onClick={async (event) => {
                     event.preventDefault()
-                    await importLicenseeTemplate(values)
+                    await importLicenseeTemplate(values as any)
                   }}
                   className='btn btn-info'
                 >
@@ -200,7 +200,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                     setBaileysConnected(null)
                     setBaileysQr(null)
                     setBaileysStatus(null)
-                    const response = await getBaileysQr(values)
+                    const response = await getBaileysQr(values as any)
                     const qrData = response.data as IBaileysQrResponse
                     if (qrData?.qr) {
                       setBaileysQr(qrData.qr)
@@ -221,7 +221,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                       setSyncError(null)
                       setSyncLoading(true)
                       try {
-                        const response = await syncBaileysDirectory(values)
+                        const response = await syncBaileysDirectory(values as any)
                         setSyncResult(response.data as SyncResult)
                       } catch {
                         setSyncError('Erro ao sincronizar grupos')
@@ -259,7 +259,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                     event.preventDefault()
                     setBaileysQr(null)
                     setBaileysStatus(null)
-                    const response = await getBaileysQr(values)
+                    const response = await getBaileysQr(values as any)
                     const qrData = response.data as IBaileysQrResponse
                     if (qrData?.qr) {
                       setBaileysQr(qrData.qr)
@@ -281,7 +281,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                     event.preventDefault()
                     setBaileysQr(null)
                     setBaileysStatus(null)
-                    const response = await getBaileysQr(values)
+                    const response = await getBaileysQr(values as any)
                     const qrData = response.data as IBaileysQrResponse
                     if (qrData?.qr) {
                       setBaileysQr(qrData.qr)

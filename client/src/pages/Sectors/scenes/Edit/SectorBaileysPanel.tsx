@@ -7,6 +7,17 @@ interface Props {
   isActive: boolean
 }
 
+// Sectors not in type-narrowing plan scope — minimal local types for API responses
+interface BaileysStatusResponse {
+  connected?: boolean
+}
+
+interface BaileysQrResponse {
+  qr?: string
+  connected?: boolean
+  message?: string
+}
+
 function SectorBaileysPanel({ sectorId, isActive }: Props) {
   const [baileysQr, setBaileysQr] = useState<any>(null)
   const [baileysStatus, setBaileysStatus] = useState<any>(null)
@@ -22,7 +33,7 @@ function SectorBaileysPanel({ sectorId, isActive }: Props) {
     setBaileysChecking(true)
     getSectorBaileysStatus({ id: sectorId })
       .then((response) => {
-        setBaileysConnected(response.data?.connected ?? false)
+        setBaileysConnected((response.data as BaileysStatusResponse)?.connected ?? false)
       })
       .catch(() => {
         setBaileysConnected(false)
@@ -50,11 +61,12 @@ function SectorBaileysPanel({ sectorId, isActive }: Props) {
               setBaileysQr(null)
               setBaileysStatus(null)
               const response = await getSectorBaileysQr({ id: sectorId })
-              if (response.data?.qr) {
-                setBaileysQr(response.data.qr)
+              const qrData = response.data as BaileysQrResponse
+              if (qrData?.qr) {
+                setBaileysQr(qrData.qr)
                 setBaileysConnected(false)
               } else {
-                setBaileysStatus(response.data?.message ?? 'Erro ao gerar QR')
+                setBaileysStatus(qrData?.message ?? 'Erro ao gerar QR')
               }
             }}
             className='btn btn-outline-secondary btn-sm'
@@ -106,12 +118,13 @@ function SectorBaileysPanel({ sectorId, isActive }: Props) {
               setBaileysQr(null)
               setBaileysStatus(null)
               const response = await getSectorBaileysQr({ id: sectorId })
-              if (response.data?.qr) {
-                setBaileysQr(response.data.qr)
-              } else if (response.data?.connected) {
+              const qrData = response.data as BaileysQrResponse
+              if (qrData?.qr) {
+                setBaileysQr(qrData.qr)
+              } else if (qrData?.connected) {
                 setBaileysConnected(true)
               } else {
-                setBaileysStatus(response.data?.message ?? 'Erro ao gerar QR')
+                setBaileysStatus(qrData?.message ?? 'Erro ao gerar QR')
               }
             }}
             className='btn btn-info'

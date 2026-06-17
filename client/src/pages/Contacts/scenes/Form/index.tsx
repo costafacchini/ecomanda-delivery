@@ -73,18 +73,12 @@ function ContactForm(props: ContactFormProps) {
     <div>
       <Form
         validationSchema={SignupSchema}
-        initialValues={{...contactInitialValues, ...initialValues}}
+        initialValues={{...contactInitialValues, ...initialValues} as IContactFormValues}
         onSubmit={(values: IContactFormValues) => {
           onSubmit(values)
         }}
       >
-        {(formProps: {
-          handleSubmit: React.FormEventHandler
-          handleChange: React.ChangeEventHandler
-          handleBlur: React.FocusEventHandler
-          values: IContactFormValues
-          setFieldValue: (field: string, value: unknown, shouldValidate?: boolean) => void
-        }) => (
+        {(formProps) => (
           <form onSubmit={formProps.handleSubmit}>
             <fieldset className='pb-4'>
               <div className='row'>
@@ -149,7 +143,7 @@ function ContactForm(props: ContactFormProps) {
                 <div className='row'>
                   <div className='form-group col-5'>
                     <label htmlFor='waId'>Licenciado</label>
-                    <SelectLicenseesWithFilter selectedItem={formProps.values.licensee} onChange={(e: { value?: string } | null) => {
+                    <SelectLicenseesWithFilter selectedItem={typeof formProps.values.licensee === 'string' ? null : formProps.values.licensee} onChange={(e: { value?: string } | null) => {
                       const inputValue = e && e.value ? e.value : null
                       formProps.setFieldValue('licensee', inputValue, false)
                     }} />

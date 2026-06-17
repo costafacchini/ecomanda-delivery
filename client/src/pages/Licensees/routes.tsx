@@ -1,13 +1,13 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Route, Routes } from 'react-router'
 import LicenseesIndex from './scenes/Index'
 import LicenseeNew from './scenes/New'
 import LicenseeEdit from './scenes/Edit'
 import { SimpleCrudContextProvider } from '../../contexts/SimpleCrud'
-import { AppContext } from '../../contexts/App'
+import { useApp } from '../../contexts/App'
 
 function LicenseesRoutes() {
-  const { currentUser } = useContext(AppContext)
+  const { currentUser } = useApp()
 
   return (
     <SimpleCrudContextProvider>

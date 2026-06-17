@@ -1,12 +1,12 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Route, Routes } from 'react-router'
 import TemplatesIndex from './scenes/Index'
 import TemplateShow from './scenes/Show'
 import { SimpleCrudContextProvider } from '../../contexts/SimpleCrud'
-import { AppContext } from '../../contexts/App'
+import { useApp } from '../../contexts/App'
 
 function TemplatesRoutes() {
-  const { currentUser } = useContext(AppContext)
+  const { currentUser } = useApp()
 
   return (
     <SimpleCrudContextProvider>

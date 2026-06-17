@@ -70,3 +70,13 @@ export interface ILicenseeFilters {
 }
 
 export type ILicenseeInput = Omit<ILicensee, 'id'>
+
+export interface IBaileysStatusResponse {
+  connected?: boolean
+}
+
+export interface IBaileysQrResponse {
+  qr?: string
+  connected?: boolean
+  message?: string
+}

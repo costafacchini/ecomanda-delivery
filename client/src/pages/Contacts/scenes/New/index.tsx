@@ -1,18 +1,17 @@
 import Form from '../Form'
 import { toast } from 'react-toastify'
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 import { createContact } from '../../../../services/contact'
 import { useNavigate } from 'react-router'
-import { AppContext } from '../../../../contexts/App'
-import type { IUser } from '../../../../types'
-import type { ILicensee } from '../../../../types'
+import { useApp } from '../../../../contexts/App'
+import type { IUser, IContactInput } from '../../../../types'
 
 interface ContactNewProps {
   currentUser: IUser | null | undefined
 }
 
 function ContactNew({ currentUser }: ContactNewProps) {
-  const { activeLicensee }: { activeLicensee: ILicensee | null } = useContext(AppContext)
+  const { activeLicensee } = useApp()
   const navigate = useNavigate()
   const [errors, setErrors] = useState<Array<{ message: string }> | null>(null)
 
@@ -20,23 +19,23 @@ function ContactNew({ currentUser }: ContactNewProps) {
     <div className='row'>
       <div className='col'>
         <h3>Contato criando</h3>
-        <Form errors={errors} currentUser={currentUser} activeLicensee={activeLicensee} onSubmit={async (values: { licensee?: string | null; [key: string]: unknown }) => {
+        <Form errors={errors} currentUser={currentUser} activeLicensee={activeLicensee} onSubmit={async (values) => {
           if (!values.licensee) {
             if (currentUser?.role !== 'super') {
-              // licensee may be a string id or an object — preserve the raw value as-is
-              values.licensee = (currentUser?.licensee as unknown) as string | null | undefined
+              values.licensee = (currentUser?.licensee as string | null) ?? null
             } else if (activeLicensee) {
-              values.licensee = activeLicensee._id
+              values.licensee = activeLicensee.id
             }
           }
-          const response = await createContact(values)
+          const response = await createContact(values as unknown as IContactInput)
 
           if (response.status === 201) {
             toast.success('Contato criado com sucesso!');
             navigate('/contacts')
             setErrors(null)
           } else {
-            setErrors(response.data.errors)
+            const data = response.data as unknown as { errors: Array<{ message: string }> }
+            setErrors(data.errors)
             toast.error('Ops! Não foi possível criar o contato.');
           }
         }} />

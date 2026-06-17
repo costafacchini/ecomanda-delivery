@@ -70,7 +70,7 @@ export default function SelectContactsWithFilter({
       }
       const { data: contacts } = await getContacts(filters)
 
-      setOptions(transformData(contacts))
+      setOptions(transformData(contacts as unknown as Array<{ _id: string; name: string; number?: string }>))
     } catch (_) {}
     setIsLoading(false)
   }

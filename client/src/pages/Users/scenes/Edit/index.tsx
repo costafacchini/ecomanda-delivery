@@ -27,7 +27,7 @@ function UserEdit({ currentUser }: UserEditProps) {
 
     async function fetchUser() {
       try {
-        const { data: user } = await getUser(userId)
+        const { data: user } = await getUser(userId!)
         setUser(user as IUser)
       } catch (error: any) {
         if (error.name === 'AbortError') {
@@ -58,7 +58,7 @@ function UserEdit({ currentUser }: UserEditProps) {
             } else if (currentUser && currentUser.role !== 'super' && !values.licensee) {
               values.licensee = currentUser.licensee as string
             }
-            const response = await updateUser(values)
+            const response = await updateUser({ ...values, id: user.id } as IUser)
 
             if (response.status === 200) {
               toast.success('Usuário atualizado com sucesso!');

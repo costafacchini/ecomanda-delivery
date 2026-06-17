@@ -69,7 +69,7 @@ export default function SuperDeliveryRateCard({ licensee }: { licensee?: string 
                 <div className="fs-4 fw-bold text-danger">{data.failed_today}</div>
                 <div className="text-muted small">Falhas no período ({data.failed_pct}%)</div>
               </div>
-              {data.failed_today > 0 && (
+              {(data.failed_today ?? 0) > 0 && (
                 <div className="ms-auto">
                   <button
                     className="btn btn-sm btn-outline-danger"

@@ -27,7 +27,7 @@ function UserNew({ currentUser }: UserNewProps) {
           } else if (currentUser && currentUser.role !== 'super') {
             values.licensee = currentUser.licensee as string
           }
-          const response = await createUser(values)
+          const response = await createUser({ ...values, licensee: values.licensee ?? undefined })
 
           if (response.status === 201) {
             toast.success('Usuário criado com sucesso!');

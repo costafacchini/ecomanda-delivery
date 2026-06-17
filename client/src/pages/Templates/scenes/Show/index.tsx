@@ -1,9 +1,9 @@
 import Form from '../Form'
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 import { getTemplate } from '../../../../services/template'
 import { useParams } from 'react-router'
 import { useEffect } from 'react'
-import { AppContext } from '../../../../contexts/App'
+import { useApp } from '../../../../contexts/App'
 import type { IUser, ITemplate } from '../../../../types'
 
 interface TemplateShowProps {
@@ -11,7 +11,7 @@ interface TemplateShowProps {
 }
 
 function TemplateShow({ currentUser }: TemplateShowProps) {
-  const { activeLicensee } = useContext(AppContext)
+  const { activeLicensee } = useApp()
   let { id } = useParams()
   const [template, setTemplate] = useState<ITemplate | null>(null)
 
@@ -22,7 +22,7 @@ function TemplateShow({ currentUser }: TemplateShowProps) {
 
     async function fetchTemplate() {
       try {
-        const { data: licensee } = await getTemplate(templateId)
+        const { data: licensee } = await getTemplate(templateId!)
         setTemplate(licensee as ITemplate)
       } catch (error: any) {
         if (error.name === 'AbortError') {
@@ -46,7 +46,7 @@ function TemplateShow({ currentUser }: TemplateShowProps) {
         <Form
           initialValues={template}
           currentUser={currentUser}
-          activeLicensee={activeLicensee}
+          activeLicensee={activeLicensee as any}
         />
       </div>
     </div>

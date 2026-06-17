@@ -1,6 +1,7 @@
 export * from './pagination'
 export * from './licensee'
 export * from './contact'
+export * from './cart'
 export * from './message'
 export * from './template'
 export * from './trigger'

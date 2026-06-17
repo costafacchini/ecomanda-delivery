@@ -1,37 +1,39 @@
-import { useEffect, useState, useCallback, useContext } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Link } from 'react-router'
 import { getTriggers } from '../../../../services/trigger'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
-import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'
-import { AppContext } from '../../../../contexts/App'
+import { useSimpleCrud } from '../../../../contexts/SimpleCrud'
+import { useApp } from '../../../../contexts/App'
 import isEmpty from 'lodash/isEmpty'
-import type { IUser } from '../../../../types'
+import type { IUser, ITriggerFilters } from '../../../../types'
 
 interface TriggersIndexProps {
   currentUser?: IUser | null
 }
 
 function TriggersIndex({ currentUser }: TriggersIndexProps) {
-  const { activeLicensee } = useContext(AppContext)
-  const { filters, setFilters, cache } = useContext(SimpleCrudContext)
+  const { activeLicensee } = useApp()
+  const { filters, setFilters, cache } = useSimpleCrud()
   const { addPage } = cache
-  const [expression, setExpression] = useState(filters?.expression || '')
+  const triggerFilters = filters as ITriggerFilters | undefined
+  const [expression, setExpression] = useState(triggerFilters?.expression || '')
 
   const onFilter = useCallback(
     async (changedFilters: any) => {
-      const newFilters = { ...filters, ...changedFilters }
+      const newFilters = { ...triggerFilters, ...changedFilters }
       setFilters(newFilters)
       const { data: records } = await getTriggers(newFilters)
-      addPage(records, newFilters)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      addPage(records as any, newFilters)
     },
-    [filters, setFilters, addPage]
+    [triggerFilters, setFilters, addPage]
   )
 
   useEffect(() => {
     let abortController = new AbortController()
 
     try {
-      if (!isEmpty(filters)) return
+      if (!isEmpty(triggerFilters)) return
 
       onFilter({ page: 1 })
     } catch (error: any) {
@@ -43,25 +45,25 @@ function TriggersIndex({ currentUser }: TriggersIndexProps) {
     return () => {
       abortController.abort()
     }
-  }, [filters, onFilter])
+  }, [triggerFilters, onFilter])
 
   useEffect(() => {
-    if (isEmpty(filters) || !currentUser) return
+    if (isEmpty(triggerFilters) || !currentUser) return
 
-    const licenseeObj = currentUser.licensee as { _id?: string } | string | null
-    const effectiveLicensee = activeLicensee?._id ?? (typeof licenseeObj === 'object' && licenseeObj !== null ? licenseeObj._id : undefined)
-    if (effectiveLicensee && filters?.licensee !== effectiveLicensee) {
-      const newFilters = { ...filters, licensee: effectiveLicensee, page: 1 }
+    const licenseeObj = currentUser.licensee as { id?: string } | string | null
+    const effectiveLicensee = activeLicensee?.id ?? (typeof licenseeObj === 'object' && licenseeObj !== null ? licenseeObj.id : undefined)
+    if (effectiveLicensee && triggerFilters?.licensee !== effectiveLicensee) {
+      const newFilters = { ...triggerFilters, licensee: effectiveLicensee, page: 1 }
       onFilter(newFilters)
     }
-  }, [currentUser, activeLicensee, filters, onFilter])
+  }, [currentUser, activeLicensee, triggerFilters, onFilter])
 
   function changeExpression(event: React.ChangeEvent<HTMLInputElement>) {
     setExpression(event.target.value)
   }
 
   function nextPage() {
-    const newFilters = { ...filters, page: filters.page + 1 }
+    const newFilters = { ...triggerFilters, page: (triggerFilters?.page ?? 1) + 1 }
     onFilter(newFilters)
   }
 
@@ -86,10 +88,10 @@ function TriggersIndex({ currentUser }: TriggersIndexProps) {
                 <SelectLicenseesWithFilter
                   name='licensee'
                   aria-labelledby='licensee'
-                  selectedItem={filters?.licensee}
+                  selectedItem={null}
                   onChange={(e: any) => {
                     const inputValue = e && e.value ? e.value : ''
-                    const newFilters = { ...filters, licensee: inputValue, page: 1 }
+                    const newFilters = { ...triggerFilters, licensee: inputValue, page: 1 }
                     onFilter(newFilters)
                   }}
                 />
@@ -114,7 +116,7 @@ function TriggersIndex({ currentUser }: TriggersIndexProps) {
               />
               <div className='input-group-append'>
                 <button className='btn btn-primary' title='Filtre pelo gatilho' onClick={() => {
-                  const newFilters = { ...filters, expression: expression, page: 1 }
+                  const newFilters = { ...triggerFilters, expression: expression, page: 1 }
                   onFilter(newFilters)
                 }}>
                   <i className='bi bi-search'></i>

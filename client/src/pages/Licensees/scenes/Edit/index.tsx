@@ -24,7 +24,7 @@ function LicenseeEdit({ currentUser }: LicenseeEditProps) {
 
   useEffect(() => {
     async function fetchLicensee() {
-      const { data } = await getLicensee(licenseeId)
+      const { data } = await getLicensee(licenseeId!)
       setLicensee(data as ILicensee)
     }
 
@@ -42,7 +42,7 @@ function LicenseeEdit({ currentUser }: LicenseeEditProps) {
           errors={errors}
           currentUser={currentUser}
           onSubmit={async (values) => {
-            const response = await updateLicensee(values)
+            const response = await updateLicensee({ ...values, id: licensee.id } as ILicensee)
 
             if (response.status === 200) {
               toast.success('Licenciado atualizado com sucesso!')

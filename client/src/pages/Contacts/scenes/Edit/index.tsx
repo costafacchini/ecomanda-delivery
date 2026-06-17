@@ -1,18 +1,18 @@
 import Form from '../Form'
 import { toast } from 'react-toastify'
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 import { getContact, updateContact } from '../../../../services/contact'
 import { useNavigate, useParams } from 'react-router'
 import { useEffect } from 'react'
-import { AppContext } from '../../../../contexts/App'
-import type { IContact, IUser, ILicensee } from '../../../../types'
+import { useApp } from '../../../../contexts/App'
+import type { IContact, IUser } from '../../../../types'
 
 interface ContactEditProps {
   currentUser?: IUser | null
 }
 
 function ContactEdit({ currentUser }: ContactEditProps) {
-  const { activeLicensee }: { activeLicensee: ILicensee | null } = useContext(AppContext)
+  const { activeLicensee } = useApp()
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const [errors, setErrors] = useState<Array<{ message: string }> | null>(null)
@@ -25,8 +25,8 @@ function ContactEdit({ currentUser }: ContactEditProps) {
 
     async function fetchContact() {
       try {
-        const { data: contactData } = await getContact(contactId)
-        setContact(contactData)
+        const { data: contactData } = await getContact(contactId!)
+        setContact(contactData as IContact)
       } catch (error: unknown) {
         if (error instanceof Error && error.name === 'AbortError') {
           // Handling error thrown by aborting request
@@ -51,15 +51,16 @@ function ContactEdit({ currentUser }: ContactEditProps) {
           currentUser={currentUser}
           activeLicensee={activeLicensee}
           errors={errors}
-          onSubmit={async (values: { [key: string]: unknown }) => {
-            const response = await updateContact(values)
+          onSubmit={async (values) => {
+            const response = await updateContact({ ...values, id: contact.id } as IContact)
 
             if (response.status === 200) {
               toast.success('Contato atualizado com sucesso!');
               navigate('/contacts')
               setErrors(null)
             } else {
-              setErrors(response.data.errors)
+              const data = response.data as unknown as { errors: Array<{ message: string }> }
+              setErrors(data.errors)
               toast.error('Ops! Não foi possível atualizar o contato.');
             }
           }}

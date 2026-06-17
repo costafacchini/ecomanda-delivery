@@ -71,7 +71,7 @@ export default function SuperConversationsCard({ licensee }: { licensee?: string
               <div className="text-muted small">Média msg/conversa</div>
             </div>
             <div>
-              <div className="fs-4 fw-bold">{formatDuration(data.avg_duration_seconds)}</div>
+              <div className="fs-4 fw-bold">{formatDuration(data.avg_duration_seconds ?? 0)}</div>
               <div className="text-muted small">Duração média</div>
             </div>
           </div>
