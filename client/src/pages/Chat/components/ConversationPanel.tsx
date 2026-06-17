@@ -1,6 +1,5 @@
-import React, { useRef, useEffect } from 'react'
-import type { IRoom } from '../../../types'
-import type { IMessage } from '../../../types'
+import { useRef, useEffect } from 'react'
+import type { IRoom, IMessage } from '../../../types'
 import styles from '../styles.module.scss'
 import MessageInput from './MessageInput'
 
@@ -8,50 +7,96 @@ interface ConversationPanelProps {
   room: IRoom | null
   messages: IMessage[]
   onSend: (text: string) => void
+  loading: boolean
+  onBack: () => void
 }
 
-const STATUS_BADGE: Record<string, string> = {
-  pending: 'warning',
-  open: 'success',
-  closed: 'secondary',
+const STATUS_LABEL: Record<string, string> = {
+  pending: 'Pendente',
+  open: 'Aberta',
+  closed: 'Encerrada',
 }
 
-export default function ConversationPanel({ room, messages, onSend }: ConversationPanelProps) {
+const STATUS_CLASS: Record<string, string> = {
+  pending: styles.statusPending,
+  open: styles.statusOpen,
+  closed: styles.statusClosed,
+}
+
+function formatMsgTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+}
+
+export default function ConversationPanel({ room, messages, onSend, loading, onBack }: ConversationPanelProps) {
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (bottomRef.current && typeof bottomRef.current.scrollIntoView === 'function') {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth' })
-    }
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
   if (!room) {
-    return <div className={styles.emptyState}>Selecione uma conversa.</div>
+    return (
+      <div className={styles.conversationEmpty} role='status' aria-label='Nenhuma conversa selecionada'>
+        <i className='bi bi-chat-left-text' aria-hidden='true' />
+        <p>Selecione uma conversa na lista ao lado.</p>
+      </div>
+    )
   }
 
-  const badgeColor = STATUS_BADGE[room.status] ?? 'secondary'
+  const statusClass = STATUS_CLASS[room.status] ?? styles.statusClosed
+  const statusLabel = STATUS_LABEL[room.status] ?? room.status
 
   return (
-    <div className={styles.conversation}>
-      <div className={styles.conversationHeader}>
-        <span className='fw-bold me-2'>{room.contact.name}</span>
-        <span className={`badge bg-${badgeColor}`}>{room.status}</span>
+    <>
+      <div className={styles.convHeader}>
+        <button
+          type='button'
+          className={styles.backBtn}
+          onClick={onBack}
+          aria-label='Voltar para lista de conversas'
+        >
+          <i className='bi bi-chevron-left' aria-hidden='true' />
+        </button>
+
+        <div className={styles.convHeaderInfo}>
+          <span className={styles.convContactName}>{room.contact.name}</span>
+          <span className={`${styles.convStatusBadge} ${statusClass}`} aria-label={`Status: ${statusLabel}`}>
+            {statusLabel}
+          </span>
+        </div>
       </div>
-      <div className={styles.messageList}>
-        {messages.map((message) => {
-          const fromMe = message.sended === true
-          return (
-            <div
-              key={message.id}
-              className={`${styles.message} ${fromMe ? styles.messageFromMe : styles.messageInbound}`}
-            >
-              {message.text}
-            </div>
-          )
-        })}
-        <div ref={bottomRef} />
-      </div>
-      <MessageInput onSend={onSend} />
-    </div>
+
+      {loading ? (
+        <div className={styles.skeletonList} role='status' aria-label='Carregando mensagens'>
+          <div className={`${styles.skeletonBubble} ${styles.in}`} />
+          <div className={`${styles.skeletonBubble} ${styles.out}`} />
+          <div className={`${styles.skeletonBubble} ${styles.in}`} />
+        </div>
+      ) : (
+        <div className={styles.messageList} role='log' aria-label='Mensagens' aria-live='polite'>
+          {messages.map((message) => {
+            const fromMe = message.sended === true
+            return (
+              <div
+                key={message.id}
+                className={`${styles.messageGroup} ${fromMe ? styles.outbound : styles.inbound}`}
+              >
+                <div className={`${styles.bubble} ${fromMe ? styles.bubbleSent : styles.bubbleReceived}`}>
+                  <span className={styles.bubbleText}>
+                    {message.text || (message.url ? '[arquivo]' : '[mensagem]')}
+                  </span>
+                  <span className={styles.bubbleTime} aria-hidden='true'>
+                    {formatMsgTime(message.createdAt)}
+                  </span>
+                </div>
+              </div>
+            )
+          })}
+          <div ref={bottomRef} aria-hidden='true' />
+        </div>
+      )}
+
+      <MessageInput onSend={onSend} disabled={loading} />
+    </>
   )
 }
