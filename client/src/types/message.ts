@@ -27,3 +27,15 @@ export interface IMessage {
   trigger: IMessageTriggerRef | null
   sector: IMessageSectorRef | null
 }
+
+export interface IMessageFilters {
+  page?: number
+  licensee?: string
+  contact?: string
+  kind?: string
+  destination?: string
+  onlyErrors?: boolean
+  startDate?: string
+  endDate?: string
+  [key: string]: unknown
+}

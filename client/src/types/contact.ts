@@ -17,3 +17,12 @@ export interface IContact {
   delivery_tax: number
   plugin_cart_id: string
 }
+
+export interface IContactFilters {
+  page?: number
+  expression?: string
+  licensee?: string
+  [key: string]: unknown
+}
+
+export type IContactInput = Omit<IContact, 'id'>

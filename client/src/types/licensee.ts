@@ -26,3 +26,13 @@ export interface ILicensee {
   useFileIDYcloud: boolean
   useSectors: boolean
 }
+
+export interface ILicenseeFilters {
+  page?: number
+  expression?: string
+  pedidos10_active?: boolean
+  active?: boolean
+  [key: string]: unknown
+}
+
+export type ILicenseeInput = Omit<ILicensee, 'id'>

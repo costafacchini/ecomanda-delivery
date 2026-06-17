@@ -11,3 +11,16 @@ export interface ITemplate {
   bodyParams: ITemplateParam[]
   footerParams: ITemplateParam[]
 }
+
+export interface ITemplateFilters {
+  page?: number
+  expression?: string
+  licensee?: string
+  [key: string]: unknown
+}
+
+export type ITemplateInput = Omit<ITemplate, 'id'>
+
+export interface ITemplateImportValues {
+  [key: string]: unknown
+}
