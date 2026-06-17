@@ -1,20 +1,22 @@
 import { useState, useEffect } from 'react'
 import { getDashboardContacts } from '../../../services/dashboard'
+import type { IDashboardContacts } from '../../../types'
 
 export default function LicenseeContactsCard() {
-  const [data, setData] = useState<any>(null)
+  const [data, setData] = useState<IDashboardContacts | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<any>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     getDashboardContacts()
-      .then((res) => setData(res.data))
+      .then((res) => setData(res.data as IDashboardContacts))
       .catch(() => setError('Erro ao carregar dados.'))
       .finally(() => setLoading(false))
   }, [])
 
   if (loading) return <div className="card"><div className="card-body">Carregando...</div></div>
   if (error) return <div className="card"><div className="card-body text-danger">{error}</div></div>
+  if (!data) return null
 
   return (
     <div className="card">

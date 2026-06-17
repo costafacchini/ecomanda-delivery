@@ -5,8 +5,13 @@ import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWit
 import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'
 import { AppContext } from '../../../../contexts/App'
 import isEmpty from 'lodash/isEmpty'
+import type { IUser } from '../../../../types'
 
-function TemplatesIndex({ currentUser }: any) {
+interface TemplatesIndexProps {
+  currentUser?: IUser | null
+}
+
+function TemplatesIndex({ currentUser }: TemplatesIndexProps) {
   const { activeLicensee } = useContext(AppContext)
   const { filters, setFilters, cache } = useContext(SimpleCrudContext)
   const { addPage } = cache
@@ -43,14 +48,15 @@ function TemplatesIndex({ currentUser }: any) {
   useEffect(() => {
     if (isEmpty(filters) || !currentUser) return
 
-    const effectiveLicensee = activeLicensee?._id ?? currentUser.licensee?._id
+    const licenseeObj = currentUser.licensee as { _id?: string } | string | null
+    const effectiveLicensee = activeLicensee?._id ?? (typeof licenseeObj === 'object' && licenseeObj !== null ? licenseeObj._id : undefined)
     if (effectiveLicensee && filters?.licensee !== effectiveLicensee) {
       const newFilters = { ...filters, licensee: effectiveLicensee, page: 1 }
       onFilter(newFilters)
     }
   }, [currentUser, activeLicensee, filters, onFilter])
 
-  function changeExpression(event: any) {
+  function changeExpression(event: React.ChangeEvent<HTMLInputElement>) {
     setExpression(event.target.value)
   }
 

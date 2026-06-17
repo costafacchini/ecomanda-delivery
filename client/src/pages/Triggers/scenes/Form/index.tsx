@@ -3,12 +3,39 @@ import * as Yup from 'yup'
 import { useNavigate } from 'react-router'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 import styles from './styles.module.scss'
+import type { IUser, TriggerKind } from '../../../../types'
+
+interface ITriggerFormValues {
+  name: string
+  triggerKind: TriggerKind
+  expression: string
+  catalogMulti: string
+  licensee: string | null
+  catalogSingle: string
+  textReplyButton: string
+  messagesList: string
+  catalogId: string
+  order: number
+  text?: string
+}
+
+interface IFormError {
+  message: string
+}
+
+interface TriggerFormProps {
+  onSubmit: (values: ITriggerFormValues) => void
+  errors?: IFormError[] | null
+  initialValues?: Partial<ITriggerFormValues>
+  currentUser?: IUser | null
+  activeLicensee?: { _id: string } | null
+}
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string()
 });
 
-const triggerInitialValues = {
+const triggerInitialValues: ITriggerFormValues = {
   name: '',
   triggerKind: 'multi_product',
   expression: '',
@@ -21,8 +48,7 @@ const triggerInitialValues = {
   order: 1,
 }
 
-function TriggerForm(props: any) {
-  const { onSubmit, errors, initialValues, currentUser, activeLicensee } = props
+function TriggerForm({ onSubmit, errors, initialValues, currentUser, activeLicensee }: TriggerFormProps) {
   let navigate = useNavigate()
 
   return (
@@ -30,12 +56,12 @@ function TriggerForm(props: any) {
       <Form
         validationSchema={SignupSchema}
         initialValues={{...triggerInitialValues, ...initialValues}}
-        onSubmit={(values: any) => {
+        onSubmit={(values) => {
           onSubmit(values)
         }}
       >
-        {(props: any) => (
-          <form onSubmit={props.handleSubmit}>
+        {(formik) => (
+          <form onSubmit={formik.handleSubmit}>
             <fieldset className='pb-4'>
               <div className='row'>
                 <div className='form-group col-4'>
@@ -43,9 +69,9 @@ function TriggerForm(props: any) {
                   <FieldWithError
                     id='name'
                     type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.name}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.name}
                     name='name'
                   />
                 </div>
@@ -55,9 +81,9 @@ function TriggerForm(props: any) {
                   <FieldWithError
                     id='order'
                     type='number'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.order}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.order}
                     name='order'
                   />
                 </div>
@@ -70,9 +96,9 @@ function TriggerForm(props: any) {
                     id='expression'
                     name='expression'
                     type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.expression}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.expression}
                   />
                 </div>
               </div>
@@ -81,8 +107,8 @@ function TriggerForm(props: any) {
                 <div className='row'>
                   <div className='form-group col-5'>
                     <label htmlFor='licensee'>Licenciado</label>
-                    <SelectLicenseesWithFilter selectedItem={props.values.licensee} onChange={(e: any) => (
-                      props.setFieldValue('licensee', e.value, false)
+                    <SelectLicenseesWithFilter selectedItem={typeof formik.values.licensee === 'string' ? null : formik.values.licensee} onChange={(e: any) => (
+                      formik.setFieldValue('licensee', e?.value ?? null, false)
                     )} />
                   </div>
                 </div>
@@ -92,11 +118,11 @@ function TriggerForm(props: any) {
                 <div className='form-group col-5'>
                   <label htmlFor='triggerKind'>Tipo</label>
                   <select
-                    value={props.values.triggerKind}
+                    value={formik.values.triggerKind}
                     className='form-select'
                     id='triggerKind'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
                   >
                     <option value='multi_product'>Multiplos produtos</option>
                     <option value='single_product'>Único produto</option>
@@ -107,7 +133,7 @@ function TriggerForm(props: any) {
                 </div>
               </div>
 
-              { props.values.triggerKind === 'multi_product' && (
+              { formik.values.triggerKind === 'multi_product' && (
                 <>
                   <div className='row'>
                     <div className='form-group col-5'>
@@ -115,9 +141,9 @@ function TriggerForm(props: any) {
                       <FieldWithError
                         id='catalogId'
                         type='text'
-                        onChange={props.handleChange}
-                        onBlur={props.handleBlur}
-                        value={props.values.catalogId}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.catalogId}
                         name='catalogId'
                       />
                     </div>
@@ -132,9 +158,9 @@ function TriggerForm(props: any) {
                           name='catalogMulti'
                           className='form-control'
                           rows={10}
-                          onChange={props.handleChange}
-                          onBlur={props.handleBlur}
-                          value={props.values.catalogMulti}
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                          value={formik.values.catalogMulti}
                         />
                       </div>
                     </div>
@@ -142,7 +168,7 @@ function TriggerForm(props: any) {
                 </>
               )}
 
-              {props.values.triggerKind === 'single_product' && (
+              {formik.values.triggerKind === 'single_product' && (
                 <div className='row'>
                   <div className='form-group col-5'>
                     <label htmlFor='catalogSingle'>Catálogo</label>
@@ -152,16 +178,16 @@ function TriggerForm(props: any) {
                         name='catalogSingle'
                         className='form-control'
                         rows={10}
-                        onChange={props.handleChange}
-                        onBlur={props.handleBlur}
-                        value={props.values.catalogSingle}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.catalogSingle}
                       />
                     </div>
                   </div>
                 </div>
               )}
 
-              {props.values.triggerKind === 'reply_button' && (
+              {formik.values.triggerKind === 'reply_button' && (
                 <div className='row'>
                   <div className='form-group col-5'>
                     <label htmlFor='textReplyButton'>Script</label>
@@ -171,16 +197,16 @@ function TriggerForm(props: any) {
                         name='textReplyButton'
                         className='form-control'
                         rows={8}
-                        onChange={props.handleChange}
-                        onBlur={props.handleBlur}
-                        value={props.values.textReplyButton}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.textReplyButton}
                       />
                     </div>
                   </div>
                 </div>
               )}
 
-              {props.values.triggerKind === 'list_message' && (
+              {formik.values.triggerKind === 'list_message' && (
                 <div className='row'>
                   <div className='form-group col-5'>
                     <label htmlFor='messagesList'>Mensagens</label>
@@ -190,16 +216,16 @@ function TriggerForm(props: any) {
                         name='messagesList'
                         className='form-control'
                         rows={8}
-                        onChange={props.handleChange}
-                        onBlur={props.handleBlur}
-                        value={props.values.messagesList}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.messagesList}
                       />
                     </div>
                   </div>
                 </div>
               )}
 
-              {props.values.triggerKind === 'text' && (
+              {formik.values.triggerKind === 'text' && (
                 <div className='row'>
                   <div className='form-group col-5'>
                     <label htmlFor='text'>Texto</label>
@@ -209,9 +235,9 @@ function TriggerForm(props: any) {
                         name='text'
                         className='form-control'
                         rows={8}
-                        onChange={props.handleChange}
-                        onBlur={props.handleBlur}
-                        value={props.values.text}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.text}
                       />
                     </div>
                     <div className={`${styles.textHelp}`}>

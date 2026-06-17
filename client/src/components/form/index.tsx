@@ -1,15 +1,28 @@
-import { Field, ErrorMessage, Formik } from 'formik'
+import { Field, ErrorMessage, Formik, FormikConfig, FormikValues } from 'formik'
 
-const FieldWithError = (props: any) => {
+interface FieldWithErrorProps {
+  name: string
+  id?: string
+  type?: string
+  value?: unknown
+  onChange?: React.ChangeEventHandler
+  onBlur?: React.FocusEventHandler
+  className?: string
+  autoComplete?: string
+  disabled?: boolean
+  placeholder?: string
+}
+
+const FieldWithError = (props: FieldWithErrorProps) => {
   return (
     <div className='pb-2'>
-      <Field  {...props} className={`form-control ${props.className}`} />
+      <Field  {...props} className={`form-control ${props.className ?? ''}`} />
       <ErrorMessage name={props.name} />
     </div>
   )
 }
 
-const Form = (props: any) => {
+function Form<T extends FormikValues = FormikValues>(props: FormikConfig<T>) {
   return (
     <Formik {...props}>{props.children}</Formik>
   )

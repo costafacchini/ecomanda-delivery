@@ -9,11 +9,27 @@ function formatDate(value: string | undefined): string {
   return moment(value).tz(tz).format('DD/MM/YYYY HH:mm:ss')
 }
 
-export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, startDate, endDate }: any) {
-  const [messages, setMessages] = useState<any[]>([])
+interface IFailedMessage {
+  _id: string
+  text?: string
+  error?: string
+  createdAt?: string
+  contact?: { number?: string }
+}
+
+interface FailedMessagesModalProps {
+  isOpen: boolean
+  onClose: () => void
+  onResendSuccess: () => void
+  startDate?: string
+  endDate?: string
+}
+
+export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, startDate, endDate }: FailedMessagesModalProps) {
+  const [messages, setMessages] = useState<IFailedMessage[]>([])
   const [loading, setLoading] = useState(false)
-  const [fetchError, setFetchError] = useState<any>(null)
-  const [rowErrors, setRowErrors] = useState<any>({})
+  const [fetchError, setFetchError] = useState<string | null>(null)
+  const [rowErrors, setRowErrors] = useState<Record<string, string>>({})
 
   useEffect(() => {
     if (!isOpen) return
@@ -22,21 +38,21 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, 
     setFetchError(null)
     setRowErrors({})
 
-    const params: any = { sended: false, limit: 50 }
+    const params: Record<string, unknown> = { sended: false, limit: 50 }
     if (startDate) params.startDate = moment.tz(startDate, tz).startOf('day').utc().toISOString()
     if (endDate) params.endDate = moment.tz(endDate, tz).endOf('day').utc().toISOString()
 
     getMessages(params)
-      .then((res) => setMessages(res.data))
+      .then((res) => setMessages(res.data as IFailedMessage[]))
       .catch(() => setFetchError('Erro ao carregar mensagens falhas.'))
       .finally(() => setLoading(false))
   }, [isOpen, startDate, endDate])
 
-  function handleResend(id: any) {
+  function handleResend(id: string) {
     resendMessage(id)
       .then(() => {
-        setMessages((prev: any) => prev.filter((m: any) => m._id !== id))
-        setRowErrors((prev: any) => {
+        setMessages((prev) => prev.filter((m) => m._id !== id))
+        setRowErrors((prev) => {
           const next = { ...prev }
           delete next[id]
           return next
@@ -44,7 +60,7 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, 
         onResendSuccess()
       })
       .catch(() => {
-        setRowErrors((prev: any) => ({ ...prev, [id]: 'Erro ao reenviar.' }))
+        setRowErrors((prev) => ({ ...prev, [id]: 'Erro ao reenviar.' }))
       })
   }
 

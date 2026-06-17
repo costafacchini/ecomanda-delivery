@@ -5,13 +5,22 @@ import { getTrigger, updateTrigger } from '../../../../services/trigger'
 import { useNavigate, useParams } from 'react-router'
 import { useEffect } from 'react'
 import { AppContext } from '../../../../contexts/App'
+import type { IUser, ITrigger } from '../../../../types'
 
-function TriggerEdit({ currentUser }: any) {
+interface IFormError {
+  message: string
+}
+
+interface TriggerEditProps {
+  currentUser?: IUser | null
+}
+
+function TriggerEdit({ currentUser }: TriggerEditProps) {
   const { activeLicensee } = useContext(AppContext)
   const navigate = useNavigate()
   let { id } = useParams()
-  const [errors, setErrors] = useState(null)
-  const [trigger, setTrigger] = useState(null)
+  const [errors, setErrors] = useState<IFormError[] | null>(null)
+  const [trigger, setTrigger] = useState<ITrigger | null>(null)
 
   const triggerId = id
 
@@ -21,7 +30,7 @@ function TriggerEdit({ currentUser }: any) {
     async function fetchTrigger() {
       try {
         const { data: licensee } = await getTrigger(triggerId)
-        setTrigger(licensee)
+        setTrigger(licensee as ITrigger)
       } catch (error: any) {
         if (error.name === 'AbortError') {
           // Handling error thrown by aborting request
@@ -46,7 +55,7 @@ function TriggerEdit({ currentUser }: any) {
           currentUser={currentUser}
           activeLicensee={activeLicensee}
           errors={errors}
-          onSubmit={async (values: any) => {
+          onSubmit={async (values) => {
             const response = await updateTrigger(values)
 
             if (response.status === 200) {
@@ -54,7 +63,8 @@ function TriggerEdit({ currentUser }: any) {
               navigate('/triggers')
               setErrors(null)
             } else {
-              setErrors(response.data.errors)
+              const data = response.data as { errors: IFormError[] }
+              setErrors(data.errors)
               toast.error('Ops! Não foi possível atualizar o gatilho.');
             }
           }}
