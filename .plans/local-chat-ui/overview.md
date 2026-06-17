@@ -2,7 +2,7 @@
 
 **Status**: not-started
 **Created**: 2026-06-15
-**Last Updated**: 2026-06-16
+**Last Updated**: 2026-06-17
 **Assigned Dev**: Alan Costa Facchini
 **PR Strategy**: per-wave
 
@@ -39,6 +39,7 @@ Build the agent-facing frontend for the local chat: a full-screen WhatsApp-style
 
 - `local-chat-infra` plan: complete ✓ — LocalChat plugin, Room model (with `sector` field), agent reply endpoint, socketEmitter singleton all exist
 - `setores-webhook-providers` plan: complete ✓ — messages arriving via sector webhooks already carry `message.sector`
+- `type-client` plan: complete ✓ — all `any` replaced with typed interfaces; `useApp()` hook is the correct context access pattern; `activeLicensee.id` (not `._id`) is the primary licensee ID field
 
 ## Phases
 
@@ -81,6 +82,7 @@ Base branch: `main`
 | `src/config/http.ts` | Add `join-licensee` socket event handler with JWT validation |
 | `client/src/pages/Chat/` | NEW — full-screen chat page + components |
 | `client/src/pages/Chat/components/NewConversationModal.tsx` | NEW — contact search + room creation |
+| `client/src/types/room.ts` | NEW — `IRoom` interface (room + lastMessage + unreadCount) |
 | `client/src/services/rooms.ts` | NEW — getRooms, createRoom, getRoomMessages, sendMessage |
 | `client/src/hooks/useChatSocket.ts` | NEW — socket.io-client hook |
 | `client/src/pages/routes.tsx` | Add /chat route with noLayout PrivateRoute |

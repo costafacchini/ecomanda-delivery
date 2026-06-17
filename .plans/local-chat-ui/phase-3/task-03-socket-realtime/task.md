@@ -127,9 +127,10 @@ Check `client/src/services/auth.ts` for the `getToken` export name.
 
 ### Step 3: Update `client/src/pages/Chat/index.tsx`
 
-1. Import and call `useChatSocket`:
+1. Import and call `useChatSocket`. Use `activeLicensee?.id` (the typed REST field) — not `._id`. Match the same pattern used in `ChatPage` for the rooms load effect:
 ```ts
-const effectiveLicenseeId = (activeLicensee?._id ?? currentUser?.licensee?._id)?.toString()
+const effectiveLicenseeId = activeLicensee?.id ??
+  (typeof currentUser?.licensee === 'object' ? currentUser.licensee?.id : undefined)
 
 useChatSocket(effectiveLicenseeId, ({ roomId }) => {
   if (selectedRoom && selectedRoom._id === roomId) {

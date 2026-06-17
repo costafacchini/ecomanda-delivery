@@ -55,7 +55,9 @@ The Navbar already has `useContext(AppContext)` pulling `resetLicenseeModal` —
 
 | File | Action | Notes |
 |------|--------|-------|
-| `client/src/pages/PrivateRoute/index.tsx` | modify | Add `noLayout` prop |
+| `client/src/types/room.ts` | create | `IRoom` and related interfaces |
+| `client/src/types/index.ts` | modify | `export * from './room'` |
+| `client/src/pages/PrivateRoute/index.tsx` | modify | Add `noLayout` prop with typed interface |
 | `client/src/pages/routes.tsx` | modify | Add `/chat` route |
 | `client/src/pages/Navbar/index.tsx` | modify | Add conditional Chat link |
 | `client/src/pages/Chat/index.tsx` | create | Full-screen page entry, state management |
@@ -82,12 +84,45 @@ The Navbar already has `useContext(AppContext)` pulling `resetLicenseeModal` —
 
 ## Implementation Steps
 
+### Step 0: Add `IRoom` type to `client/src/types/room.ts`
+
+```ts
+import type { IMessage } from './message'
+
+export interface IRoom {
+  _id: string
+  id: string
+  contact: {
+    _id: string
+    name: string
+    number?: string
+  }
+  sector?: string | null
+  status: 'pending' | 'open' | 'closed'
+  closed: boolean
+  unreadCount?: number
+  lastMessage?: Pick<IMessage, 'text' | 'kind'> & { createdAt?: string } | null
+}
+```
+
+Then add `export * from './room'` to `client/src/types/index.ts`.
+
 ### Step 1: Add `noLayout` prop to `PrivateRoute`
 
+The current file uses `any` props. Replace with a typed interface:
+
 ```tsx
-export default function PrivateRoute({ children, redirectTo, noLayout }: any) {
+import type { ReactNode } from 'react'
+
+interface PrivateRouteProps {
+  children: ReactNode
+  redirectTo: string
+  noLayout?: boolean
+}
+
+export default function PrivateRoute({ children, redirectTo, noLayout }: PrivateRouteProps) {
   if (!isAuthenticated()) return <Navigate to={redirectTo} />
-  if (noLayout) return children
+  if (noLayout) return <>{children}</>
   return <BaseLayout>{children}</BaseLayout>
 }
 ```
@@ -95,18 +130,35 @@ export default function PrivateRoute({ children, redirectTo, noLayout }: any) {
 ### Step 2: Create `client/src/services/rooms.ts`
 
 Match the `api()` import pattern from an existing service (e.g., `client/src/services/message.ts`).
+Use typed response shapes; import `IRoom` and `IMessage` from `../types`.
 
 ```ts
+import api from './api'
+import type { IRoom } from '../types'
+import type { IMessage } from '../types'
+
+interface IRoomListResponse {
+  rooms: IRoom[]
+  hasMore: boolean
+}
+
+interface IRoomMessagesResponse {
+  messages: IMessage[]
+  total: number
+  page: number
+  hasMore: boolean
+}
+
 export function getRooms(params: { page?: number; licensee?: string } = {}) {
-  return api().get('/resources/rooms', { params })
+  return api().get<IRoomListResponse>('/resources/rooms', { params })
 }
 
 export function createRoom(contactId: string) {
-  return api().post('/resources/rooms', { contactId })
+  return api().post<{ room: IRoom }>('/resources/rooms', { contactId })
 }
 
 export function getRoomMessages(roomId: string, params: { page?: number } = {}) {
-  return api().get(`/resources/rooms/${roomId}/messages`, { params })
+  return api().get<IRoomMessagesResponse>(`/resources/rooms/${roomId}/messages`, { params })
 }
 
 export function sendRoomMessage(roomId: string, text: string) {
@@ -144,16 +196,22 @@ export function sendRoomMessage(roomId: string, text: string) {
 - On success: calls `onRoomCreated(room)` then closes
 - Shows error toast on failure
 
-**`index.tsx`** — full-screen page:
-```tsx
-export default function ChatPage() {
-  const { currentUser, activeLicensee } = useContext(AppContext)
-  const effectiveLicensee = activeLicensee ?? currentUser?.licensee
-  const effectiveLicenseeId = (effectiveLicensee?._id ?? effectiveLicensee)?.toString()
+**`index.tsx`** — full-screen page. Use `useApp()` hook (not `useContext(AppContext)` directly — the hook is already set up in `contexts/App/index.tsx`). `activeLicensee` is typed as `ILicensee | null`; use `.id` (not `._id`) since `ILicensee.id` is the primary REST field.
 
-  const [rooms, setRooms] = useState<any[]>([])
-  const [selectedRoom, setSelectedRoom] = useState<any>(null)
-  const [messages, setMessages] = useState<any[]>([])
+```tsx
+import { useApp } from '../../contexts/App'
+import type { IRoom } from '../../types'
+import type { IMessage } from '../../types'
+
+export default function ChatPage() {
+  const { currentUser, activeLicensee } = useApp()
+  // activeLicensee?.id is defined after SelectLicenseeModal fix (stores both id and _id)
+  const effectiveLicenseeId = activeLicensee?.id ??
+    (typeof currentUser?.licensee === 'object' ? currentUser.licensee?.id : undefined)
+
+  const [rooms, setRooms] = useState<IRoom[]>([])
+  const [selectedRoom, setSelectedRoom] = useState<IRoom | null>(null)
+  const [messages, setMessages] = useState<IMessage[]>([])
   const [showNewConvo, setShowNewConvo] = useState(false)
 
   // Load rooms on mount / licensee change
@@ -162,14 +220,14 @@ export default function ChatPage() {
   // Load messages when room changes
   useEffect(() => { /* call getRoomMessages, setMessages */ }, [selectedRoom])
 
-  function handleRoomSelect(room: any) {
+  function handleRoomSelect(room: IRoom) {
     setSelectedRoom({ ...room, unreadCount: 0 })
     setRooms(prev => prev.map(r => r._id === room._id ? { ...r, unreadCount: 0 } : r))
   }
 
   async function handleSend(text: string) { /* sendRoomMessage, append to messages */ }
 
-  function handleRoomCreated(room: any) {
+  function handleRoomCreated(room: IRoom) {
     setRooms(prev => [room, ...prev.filter(r => r._id !== room._id)])
     handleRoomSelect(room)
     setShowNewConvo(false)
@@ -213,8 +271,14 @@ import ChatPage from './Chat'
 ### Step 5: Add Navbar link
 
 In `client/src/pages/Navbar/index.tsx`:
-1. Extend `useContext(AppContext)` to include `activeLicensee`
-2. `const effectiveLicensee = activeLicensee ?? currentUser?.licensee`
+1. `Navbar` already calls `useApp()` — extend the destructure to also pull `activeLicensee`:
+   ```tsx
+   const { resetLicenseeModal, activeLicensee } = useApp()
+   ```
+2. Compute effective licensee (typed: `ILicensee | null | string | undefined`):
+   ```tsx
+   const effectiveLicensee = activeLicensee ?? (typeof currentUser?.licensee === 'object' ? currentUser.licensee : null)
+   ```
 3. After the "Mensagens" link:
 ```tsx
 {effectiveLicensee?.chatDefault === 'local' && (
@@ -223,6 +287,7 @@ In `client/src/pages/Navbar/index.tsx`:
   </li>
 )}
 ```
+Note: `ILicensee.chatDefault` is typed as `string` in `client/src/types/licensee.ts` — no cast needed.
 
 ### Step 6: Write tests
 
