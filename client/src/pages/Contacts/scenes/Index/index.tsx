@@ -39,7 +39,9 @@ function ContactsIndex({ currentUser }: ContactsIndexProps) {
       const initialFilters: IContactFilters = { page: 1 }
       const licenseeObj = currentUser.licensee
       const effectiveLicensee = activeLicensee?.id ??
-        (typeof licenseeObj === 'object' && licenseeObj !== null ? (licenseeObj as { id?: string }).id : undefined)
+        (typeof licenseeObj === 'object' && licenseeObj !== null
+          ? ((licenseeObj as { id?: string; _id?: string }).id ?? (licenseeObj as { id?: string; _id?: string })._id)
+          : undefined)
       if (effectiveLicensee) initialFilters.licensee = effectiveLicensee
 
       onFilter(initialFilters)

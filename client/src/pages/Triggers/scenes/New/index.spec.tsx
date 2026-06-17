@@ -50,6 +50,7 @@ describe('<TriggerNew />', () => {
       textReplyButton: '',
       messagesList: '',
       order: 1,
+      text: '',
     }))
   })
 
@@ -74,6 +75,7 @@ describe('<TriggerNew />', () => {
       textReplyButton: '',
       messagesList: '',
       order: 1,
+      text: '',
     }))
   })
 
