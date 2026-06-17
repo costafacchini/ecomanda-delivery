@@ -8,6 +8,7 @@ import { TriggersController } from '../controllers/TriggersController'
 import { MessagesController } from '../controllers/MessagesController'
 import { TemplatesController } from '../controllers/TemplatesController'
 import { DashboardController } from '../controllers/DashboardController'
+import { RoomsController } from '../controllers/RoomsController'
 import { queueServer } from '../../config/queue'
 import { redisConnection } from '../../config/redis'
 import { LicenseesQuery } from '../queries/LicenseesQuery'
@@ -105,6 +106,13 @@ const dashboardController = new DashboardController({
   roomRepository,
   redisConnection,
 })
+const roomsController = new RoomsController({
+  userRepository,
+  roomRepository,
+  messageRepository,
+  sectorRepository,
+  contactRepository,
+})
 const templatesController = new TemplatesController({
   templateRepository,
   createTemplatesQuery: () => new TemplatesQuery({ templateRepository }),
@@ -199,5 +207,9 @@ router.get('/dashboard/messages-today', dashboardController.messagesToday)
 router.get('/dashboard/messages-per-day', dashboardController.messagesPerDay)
 router.get('/dashboard/open-rooms', dashboardController.openRooms)
 router.post('/dashboard/rooms/:roomId/close', dashboardController.closeRoom)
+
+router.get('/rooms', (req, res) => roomsController.index(req, res))
+router.post('/rooms', (req, res) => roomsController.create(req, res))
+router.get('/rooms/:roomId/messages', (req, res) => roomsController.messages(req, res))
 
 export default router
