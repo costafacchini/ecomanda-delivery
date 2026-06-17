@@ -3,7 +3,9 @@ import { logout } from '../../services/auth'
 import { useApp } from '../../contexts/App'
 
 export default function Navbar({ currentUser }: any) {
-  const { resetLicenseeModal } = useApp()
+  const { resetLicenseeModal, activeLicensee } = useApp()
+
+  const effectiveLicensee = activeLicensee ?? (typeof currentUser?.licensee === 'object' ? currentUser.licensee : null)
 
   function handleSwitchLicensee() {
     resetLicenseeModal()
@@ -65,6 +67,11 @@ export default function Navbar({ currentUser }: any) {
               <li className='nav-item'>
                 <a className='nav-link' href='/#/messages'>Mensagens</a>
               </li>
+              {effectiveLicensee?.chatDefault === 'local' && (
+                <li className='nav-item'>
+                  <a className='nav-link' href='/#/chat'>Chat</a>
+                </li>
+              )}
               {currentUser && currentUser.role === 'super' && (
                 <li className='nav-item dropdown'>
                   <button className='nav-link dropdown-toggle' type='button' id='reports-menu' data-bs-toggle='dropdown' aria-expanded='false'>
