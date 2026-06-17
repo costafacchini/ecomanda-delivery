@@ -36,6 +36,7 @@ export default defineConfig(({ mode }) => {
       proxy: {
         '/resources': apiProxyTarget,
         '/login': apiProxyTarget,
+        '/v1': apiProxyTarget,
       },
     },
     css: {
