@@ -5,19 +5,32 @@ import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWit
 import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'
 import { AppContext } from '../../../../contexts/App'
 import isEmpty from 'lodash/isEmpty'
+import type { IContact, IContactFilters, IUser, ILicensee } from '../../../../types'
 
-function ContactsIndex({ currentUser }: any) {
-  const { activeLicensee } = useContext(AppContext)
-  const { filters, setFilters, cache } = useContext(SimpleCrudContext)
+interface ContactsIndexProps {
+  currentUser: IUser | null | undefined
+}
+
+function ContactsIndex({ currentUser }: ContactsIndexProps) {
+  const { activeLicensee }: { activeLicensee: ILicensee | null } = useContext(AppContext)
+  const { filters, setFilters, cache }: {
+    filters: IContactFilters | undefined
+    setFilters: (filters: IContactFilters) => void
+    cache: {
+      records: IContact[]
+      addPage: (records: IContact[], filters: IContactFilters) => void
+      lastPage: boolean
+    }
+  } = useContext(SimpleCrudContext)
   const { addPage } = cache
-  const [expression, setExpression] = useState(filters?.expression || '')
+  const [expression, setExpression] = useState(filters?.expression ?? '')
 
   const onFilter = useCallback(
-    async (changedFilters: any) => {
-      const newFilters = { ...filters, ...changedFilters }
+    async (changedFilters: Partial<IContactFilters>) => {
+      const newFilters: IContactFilters = { ...filters, ...changedFilters }
       setFilters(newFilters)
-      const { data: users } = await getContacts(newFilters)
-      addPage(users, newFilters)
+      const { data: contacts } = await getContacts(newFilters)
+      addPage(contacts, newFilters)
     },
     [filters, setFilters, addPage]
   )
@@ -29,13 +42,13 @@ function ContactsIndex({ currentUser }: any) {
       if (!isEmpty(filters)) return
       if (!currentUser) return
 
-      const initialFilters: any = { page: 1 }
+      const initialFilters: IContactFilters = { page: 1 }
       const effectiveLicensee = activeLicensee?._id ?? currentUser.licensee?._id
       if (effectiveLicensee) initialFilters.licensee = effectiveLicensee
 
       onFilter(initialFilters)
-    } catch (error: any) {
-      if (error.name === 'AbortError') {
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'AbortError') {
         // Handling error thrown by aborting request
       }
     }
@@ -45,18 +58,18 @@ function ContactsIndex({ currentUser }: any) {
     }
   }, [filters, onFilter, currentUser, activeLicensee])
 
-  function changeExpression(event: any) {
+  function changeExpression(event: React.ChangeEvent<HTMLInputElement>) {
     setExpression(event.target.value)
   }
 
   function nextPage() {
-    const newFilters = { ...filters, page: filters.page + 1 }
+    const newFilters: IContactFilters = { ...filters, page: (filters?.page ?? 1) + 1 }
     onFilter(newFilters)
   }
 
   function toggleGroupFilter() {
     const isGroup = filters?.isGroup ? undefined : true
-    const newFilters = { ...filters, isGroup, page: 1 }
+    const newFilters: IContactFilters = { ...filters, isGroup, page: 1 }
     onFilter(newFilters)
   }
 
@@ -82,9 +95,9 @@ function ContactsIndex({ currentUser }: any) {
                   name='licensee'
                   aria-labelledby='licensee'
                   selectedItem={filters?.licensee}
-                  onChange={(e: any) => {
+                  onChange={(e: { value?: string } | null) => {
                     const inputValue = e && e.value ? e.value : ''
-                    const newFilters = { ...filters, licensee: inputValue, page: 1 }
+                    const newFilters: IContactFilters = { ...filters, licensee: inputValue, page: 1 }
                     onFilter(newFilters)
                   }}
                 />
@@ -116,7 +129,7 @@ function ContactsIndex({ currentUser }: any) {
               />
               <div className='input-group-append'>
                 <button className='btn btn-primary' title='Filtre pelo contato' onClick={() => {
-                  const newFilters = { ...filters, expression: expression, page: 1 }
+                  const newFilters: IContactFilters = { ...filters, expression: expression, page: 1 }
                   onFilter(newFilters)
                 }}>
                   <i className='bi bi-search'></i>
@@ -138,13 +151,13 @@ function ContactsIndex({ currentUser }: any) {
             </tr>
           </thead>
           <tbody>
-            {cache.records.map((contact: any) => (
-              <tr key={contact.id}>
+            {cache.records.map((contact) => (
+              <tr key={contact.id ?? contact._id}>
                 <td>{contact.name}</td>
                 <td>{contact.number}</td>
                 <td>{contact.type}</td>
                 <td>{contact.email}</td>
-                <td><Link to={`/contacts/${contact.id}`}><i className='bi bi-pencil' /></Link></td>
+                <td><Link to={`/contacts/${contact.id ?? contact._id}`}><i className='bi bi-pencil' /></Link></td>
               </tr>
             ))}
           </tbody>

@@ -5,25 +5,30 @@ import { getContact, updateContact } from '../../../../services/contact'
 import { useNavigate, useParams } from 'react-router'
 import { useEffect } from 'react'
 import { AppContext } from '../../../../contexts/App'
+import type { IContact, IUser, ILicensee } from '../../../../types'
 
-function ContactEdit({ currentUser }: any) {
-  const { activeLicensee } = useContext(AppContext)
+interface ContactEditProps {
+  currentUser?: IUser | null
+}
+
+function ContactEdit({ currentUser }: ContactEditProps) {
+  const { activeLicensee }: { activeLicensee: ILicensee | null } = useContext(AppContext)
   const navigate = useNavigate()
-  let { id } = useParams()
-  const [errors, setErrors] = useState(null)
-  const [contact, setContact] = useState(null)
+  const { id } = useParams<{ id: string }>()
+  const [errors, setErrors] = useState<Array<{ message: string }> | null>(null)
+  const [contact, setContact] = useState<IContact | null>(null)
 
   const contactId = id
 
   useEffect(() => {
-    let abortController = new AbortController()
+    const abortController = new AbortController()
 
     async function fetchContact() {
       try {
-        const { data: licensee } = await getContact(contactId)
-        setContact(licensee)
-      } catch (error: any) {
-        if (error.name === 'AbortError') {
+        const { data: contactData } = await getContact(contactId)
+        setContact(contactData)
+      } catch (error: unknown) {
+        if (error instanceof Error && error.name === 'AbortError') {
           // Handling error thrown by aborting request
         }
       }
@@ -46,7 +51,7 @@ function ContactEdit({ currentUser }: any) {
           currentUser={currentUser}
           activeLicensee={activeLicensee}
           errors={errors}
-          onSubmit={async (values: any) => {
+          onSubmit={async (values: { [key: string]: unknown }) => {
             const response = await updateContact(values)
 
             if (response.status === 200) {

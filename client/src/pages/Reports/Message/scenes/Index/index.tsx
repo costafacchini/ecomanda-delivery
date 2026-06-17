@@ -3,21 +3,37 @@ import styles from './styles.module.scss'
 import { io } from 'socket.io-client'
 import moment from 'moment'
 
-function totalMessages(licensees: any) {
-  return licensees.reduce((total: any, licensee: any) => {
-    const licenseeTotal = licensee.days.reduce((sum: any, day: any) => sum + day.count, 0)
+interface IMessageReportFilters {
+  initialDate: string
+  endDate: string
+}
+
+interface IReportDay {
+  date: string
+  count: number
+}
+
+interface IReportLicensee {
+  _id: string
+  name: string
+  days: IReportDay[]
+}
+
+function totalMessages(licensees: IReportLicensee[]) {
+  return licensees.reduce((total, licensee) => {
+    const licenseeTotal = licensee.days.reduce((sum, day) => sum + day.count, 0)
     return total + licenseeTotal
   }, 0)
 }
 
-function MessageIndex(_props?: any) {
+function MessageIndex() {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [records, setRecords] = useState<any[]>([])
-  const [filters, setFilters] = useState({ initialDate: '', endDate: '' })
+  const [records, setRecords] = useState<IReportLicensee[]>([])
+  const [filters, setFilters] = useState<IMessageReportFilters>({ initialDate: '', endDate: '' })
 
   useEffect(() => {
     const socket = io()
-    socket.on('send_licensees_messages_by_day', (data: any) => {
+    socket.on('send_licensees_messages_by_day', (data: { data: IReportLicensee[] }) => {
       setRecords(data.data)
       setIsSubmitting(false)
     })
@@ -25,11 +41,11 @@ function MessageIndex(_props?: any) {
     return () => { socket.disconnect() }
   }, [setRecords])
 
-  function handleChange({ target }: any) {
+  function handleChange({ target }: React.ChangeEvent<HTMLInputElement>) {
     setFilters({ ...filters, [target.name]: target.value })
   }
 
-  function handleSubmitSearch(e: any) {
+  function handleSubmitSearch(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
 
     const socket = io()
@@ -87,7 +103,7 @@ function MessageIndex(_props?: any) {
           <thead>
             <tr>
               <th scope='col'>Licenciado</th>
-              {records.length > 0 && records[0].days.map((day: any) => (
+              {records.length > 0 && records[0].days.map((day) => (
                 <th key={day.date} scope='col'>
                   {moment(day.date).format('DD/MM')}
                 </th>
@@ -98,7 +114,7 @@ function MessageIndex(_props?: any) {
             {records.map((licensee) => (
               <tr key={licensee._id.toString()}>
                 <td>{licensee.name}</td>
-                {licensee.days.map((day: any) => (
+                {licensee.days.map((day) => (
                   <td key={day.date}>{day.count}</td>
                 ))}
               </tr>
