@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getDashboardConversations } from '../../../services/dashboard'
+import type { IDashboardConversations } from '../../../types'
 
 function formatDuration(seconds: number): string {
   const h = Math.floor(seconds / 3600)
@@ -17,15 +18,15 @@ const firstDayOfMonth = () => {
 export default function SuperConversationsCard({ licensee }: { licensee?: string }) {
   const [startDate, setStartDate] = useState(firstDayOfMonth)
   const [endDate, setEndDate] = useState(today)
-  const [data, setData] = useState<any>(null)
+  const [data, setData] = useState<IDashboardConversations | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<any>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     setLoading(true)
     setError(null)
     getDashboardConversations({ ...(licensee ? { licensee } : {}), startDate, endDate })
-      .then((res) => setData(res.data))
+      .then((res) => setData(res.data as IDashboardConversations))
       .catch(() => setError('Erro ao carregar dados.'))
       .finally(() => setLoading(false))
   }, [licensee, startDate, endDate])
@@ -70,7 +71,7 @@ export default function SuperConversationsCard({ licensee }: { licensee?: string
               <div className="text-muted small">Média msg/conversa</div>
             </div>
             <div>
-              <div className="fs-4 fw-bold">{formatDuration(data.avg_duration_seconds)}</div>
+              <div className="fs-4 fw-bold">{formatDuration(data.avg_duration_seconds ?? 0)}</div>
               <div className="text-muted small">Duração média</div>
             </div>
           </div>

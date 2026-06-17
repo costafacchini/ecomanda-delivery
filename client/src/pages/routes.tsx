@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useEffect } from 'react'
 import { HashRouter, Route, Routes } from 'react-router'
 import SignIn from './SignIn'
 import LicenseesRoutes from './Licensees/routes'
@@ -13,15 +13,15 @@ import Dashboard from './Dashboard'
 import { isAuthenticated, fetchLoggedUser } from '../services/auth'
 import BaseLayout from './BaseLayout/index'
 import PrivateRoute from './PrivateRoute/index'
-import { AppContext } from '../contexts/App'
+import { useApp } from '../contexts/App'
 
 function RootRoutes() {
-  const { currentUser, setCurrentUser } = useContext(AppContext)
+  const { currentUser, setCurrentUser } = useApp()
 
   useEffect(() => {
     if (isAuthenticated() && !currentUser) {
       fetchLoggedUser().then(user => {
-        setCurrentUser(user)
+        setCurrentUser(user ?? undefined)
       })
     }
   }, [currentUser, setCurrentUser])

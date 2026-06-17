@@ -4,19 +4,28 @@ import { useState } from 'react'
 import { getLicensee, updateLicensee } from '../../../../services/licensee'
 import { useNavigate, useParams } from 'react-router'
 import { useEffect } from 'react'
+import type { ILicensee, IUser } from '../../../../types'
 
-function LicenseeEdit({ currentUser }: any) {
+interface LicenseeEditProps {
+  currentUser?: IUser | null
+}
+
+interface ApiError {
+  message: string
+}
+
+function LicenseeEdit({ currentUser }: LicenseeEditProps) {
   const navigate = useNavigate()
   let { id } = useParams()
-  const [errors, setErrors] = useState(null)
-  const [licensee, setLicensee] = useState(null)
+  const [errors, setErrors] = useState<ApiError[] | null>(null)
+  const [licensee, setLicensee] = useState<ILicensee | null>(null)
 
   const licenseeId = id
 
   useEffect(() => {
     async function fetchLicensee() {
-      const { data: licensee } = await getLicensee(licenseeId)
-      setLicensee(licensee)
+      const { data } = await getLicensee(licenseeId!)
+      setLicensee(data as ILicensee)
     }
 
     fetchLicensee()
@@ -32,15 +41,16 @@ function LicenseeEdit({ currentUser }: any) {
           initialValues={licensee}
           errors={errors}
           currentUser={currentUser}
-          onSubmit={async (values: any) => {
-            const response = await updateLicensee(values)
+          onSubmit={async (values) => {
+            const response = await updateLicensee({ ...values, id: licensee.id } as ILicensee)
 
             if (response.status === 200) {
               toast.success('Licenciado atualizado com sucesso!')
               navigate('/licensees')
               setErrors(null)
             } else {
-              setErrors(response.data.errors)
+              const errorData = response.data as { errors: ApiError[] }
+              setErrors(errorData.errors)
               toast.error('Ops! Não foi possível atualizar o licenciado.')
             }
           }}

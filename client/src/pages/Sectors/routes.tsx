@@ -1,12 +1,12 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Route, Routes } from 'react-router'
 import SectorsIndex from './scenes/Index'
 import SectorNew from './scenes/New'
 import SectorEdit from './scenes/Edit'
-import { AppContext } from '../../contexts/App'
+import { useApp } from '../../contexts/App'
 
 function SectorsRoutes() {
-  const { currentUser } = useContext(AppContext)
+  const { currentUser } = useApp()
 
   return (
     <Routes>

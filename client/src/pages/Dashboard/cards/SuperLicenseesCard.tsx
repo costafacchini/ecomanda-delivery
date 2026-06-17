@@ -1,20 +1,22 @@
 import { useState, useEffect } from 'react'
 import { getDashboardLicensees } from '../../../services/dashboard'
+import type { IDashboardLicensees } from '../../../types'
 
 export default function SuperLicenseesCard() {
-  const [data, setData] = useState<any>(null)
+  const [data, setData] = useState<IDashboardLicensees | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<any>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     getDashboardLicensees()
-      .then((res) => setData(res.data))
+      .then((res) => setData(res.data as IDashboardLicensees))
       .catch(() => setError('Erro ao carregar dados.'))
       .finally(() => setLoading(false))
   }, [])
 
   if (loading) return <div className="card"><div className="card-body">Carregando...</div></div>
   if (error) return <div className="card"><div className="card-body text-danger">{error}</div></div>
+  if (!data) return null
 
   return (
     <div className="card">

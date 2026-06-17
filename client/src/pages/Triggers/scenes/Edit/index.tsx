@@ -1,17 +1,26 @@
 import Form from '../Form'
 import { toast } from 'react-toastify'
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 import { getTrigger, updateTrigger } from '../../../../services/trigger'
 import { useNavigate, useParams } from 'react-router'
 import { useEffect } from 'react'
-import { AppContext } from '../../../../contexts/App'
+import { useApp } from '../../../../contexts/App'
+import type { IUser, ITrigger } from '../../../../types'
 
-function TriggerEdit({ currentUser }: any) {
-  const { activeLicensee } = useContext(AppContext)
+interface IFormError {
+  message: string
+}
+
+interface TriggerEditProps {
+  currentUser?: IUser | null
+}
+
+function TriggerEdit({ currentUser }: TriggerEditProps) {
+  const { activeLicensee } = useApp()
   const navigate = useNavigate()
   let { id } = useParams()
-  const [errors, setErrors] = useState(null)
-  const [trigger, setTrigger] = useState(null)
+  const [errors, setErrors] = useState<IFormError[] | null>(null)
+  const [trigger, setTrigger] = useState<ITrigger | null>(null)
 
   const triggerId = id
 
@@ -20,8 +29,8 @@ function TriggerEdit({ currentUser }: any) {
 
     async function fetchTrigger() {
       try {
-        const { data: licensee } = await getTrigger(triggerId)
-        setTrigger(licensee)
+        const { data: licensee } = await getTrigger(triggerId!)
+        setTrigger(licensee as ITrigger)
       } catch (error: any) {
         if (error.name === 'AbortError') {
           // Handling error thrown by aborting request
@@ -44,17 +53,18 @@ function TriggerEdit({ currentUser }: any) {
         <Form
           initialValues={trigger}
           currentUser={currentUser}
-          activeLicensee={activeLicensee}
+          activeLicensee={activeLicensee as any}
           errors={errors}
-          onSubmit={async (values: any) => {
-            const response = await updateTrigger(values)
+          onSubmit={async (values) => {
+            const response = await updateTrigger({ ...values, id: trigger.id } as ITrigger)
 
             if (response.status === 200) {
               toast.success('Gatilho atualizado com sucesso!');
               navigate('/triggers')
               setErrors(null)
             } else {
-              setErrors(response.data.errors)
+              const data = response.data as { errors: IFormError[] }
+              setErrors(data.errors)
               toast.error('Ops! Não foi possível atualizar o gatilho.');
             }
           }}

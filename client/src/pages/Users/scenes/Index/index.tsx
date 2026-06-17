@@ -1,30 +1,37 @@
-import { useEffect, useState, useContext, useCallback } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Link } from 'react-router'
 import { getUsers } from '../../../../services/user'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
-import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'
+import { useSimpleCrud } from '../../../../contexts/SimpleCrud'
 import isEmpty from 'lodash/isEmpty'
+import type { IUser, IUserFilters } from '../../../../types'
 
-function UsersIndex({ currentUser }: any) {
-  const { filters, setFilters, cache } = useContext(SimpleCrudContext)
+interface UsersIndexProps {
+  currentUser?: IUser | null
+}
+
+function UsersIndex({ currentUser }: UsersIndexProps) {
+  const { filters, setFilters, cache } = useSimpleCrud()
   const { addPage } = cache
-  const [expression, setExpression] = useState(filters?.expression || '')
+  const userFilters = filters as IUserFilters | undefined
+  const [expression, setExpression] = useState(userFilters?.expression || '')
 
   const onFilter = useCallback(
     async (changedFilters: any) => {
-      const newFilters = { ...filters, ...changedFilters }
+      const newFilters = { ...userFilters, ...changedFilters }
       setFilters(newFilters)
       const { data: users } = await getUsers(newFilters)
-      addPage(users, newFilters)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      addPage(users as any, newFilters)
     },
-    [filters, setFilters, addPage]
+    [userFilters, setFilters, addPage]
   )
 
   useEffect(() => {
     let abortController = new AbortController()
 
     try {
-      if (!isEmpty(filters)) return
+      if (!isEmpty(userFilters)) return
 
       onFilter({ page: 1 })
     } catch (error: any) {
@@ -36,23 +43,25 @@ function UsersIndex({ currentUser }: any) {
     return () => {
       abortController.abort()
     }
-  }, [filters, onFilter])
+  }, [userFilters, onFilter])
 
   useEffect(() => {
-    if (isEmpty(filters)) return
+    if (isEmpty(userFilters)) return
 
-    if (currentUser && currentUser.role !== 'super' && filters?.licensee !== currentUser.licensee?._id) {
-      const newFilters = { ...filters, licensee: currentUser.licensee?._id, page: 1 }
+    const licenseeObj = currentUser?.licensee as { id?: string } | string | null | undefined
+    const licenseId = typeof licenseeObj === 'object' && licenseeObj !== null ? licenseeObj.id : undefined
+    if (currentUser && currentUser.role !== 'super' && userFilters?.licensee !== licenseId) {
+      const newFilters = { ...userFilters, licensee: licenseId, page: 1 }
       onFilter(newFilters)
     }
-  }, [currentUser, filters, onFilter])
+  }, [currentUser, userFilters, onFilter])
 
-  function changeExpression(event: any) {
+  function changeExpression(event: React.ChangeEvent<HTMLInputElement>) {
     setExpression(event.target.value)
   }
 
   function nextPage() {
-    const newFilters = { ...filters, page: filters.page + 1 }
+    const newFilters = { ...userFilters, page: (userFilters?.page ?? 1) + 1 }
     onFilter(newFilters)
   }
 
@@ -77,10 +86,10 @@ function UsersIndex({ currentUser }: any) {
                 <SelectLicenseesWithFilter
                   name='licensee'
                   aria-labelledby='licensee'
-                  selectedItem={filters?.licensee}
+                  selectedItem={null}
                   onChange={(e: any) => {
                     const inputValue = e && e.value ? e.value : ''
-                    const newFilters = { ...filters, licensee: inputValue, page: 1 }
+                    const newFilters = { ...userFilters, licensee: inputValue, page: 1 }
                     onFilter(newFilters)
                   }}
                 />
@@ -105,7 +114,7 @@ function UsersIndex({ currentUser }: any) {
               />
               <div className='input-group-append'>
                 <button className='btn btn-primary' title='Filtre pelo usuário' onClick={() => {
-                  const newFilters = { ...filters, expression: expression, page: 1 }
+                  const newFilters = { ...userFilters, expression: expression, page: 1 }
                   onFilter(newFilters)
                 }}>
                   <i className='bi bi-search'></i>

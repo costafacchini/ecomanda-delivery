@@ -2,12 +2,22 @@ import { FieldWithError, Form } from '../../../../components/form'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
+import type { IContact } from '../../../../types'
+import type { IUser } from '../../../../types'
+import type { ILicensee } from '../../../../types'
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string()
 });
 
-const contactInitialValues = {
+const contactInitialValues: Partial<IContact> & {
+  talkingWithChatBot: boolean
+  waId: string
+  landbotId: string
+  ud: string
+  delivery_tax: number
+  plugin_cart_id: string
+} = {
   name: '',
   number: '',
   email: '',
@@ -26,21 +36,50 @@ const contactInitialValues = {
   plugin_cart_id: ''
 }
 
-function ContactForm(props: any) {
+interface ContactFormProps {
+  onSubmit: (values: IContactFormValues) => void
+  errors?: Array<{ message: string }> | null
+  initialValues?: Partial<IContact>
+  currentUser?: IUser | null
+  activeLicensee?: ILicensee | null
+}
+
+interface IContactFormValues {
+  name: string
+  number: string
+  email: string
+  talkingWithChatBot: boolean
+  licensee: string | null
+  waId: string
+  landbotId: string
+  address: string
+  address_number: string
+  address_complement: string
+  neighborhood: string
+  city: string
+  cep: string
+  uf?: string
+  ud: string
+  delivery_tax: number
+  plugin_cart_id: string
+  [key: string]: unknown
+}
+
+function ContactForm(props: ContactFormProps) {
   const { onSubmit, errors, initialValues, currentUser, activeLicensee } = props
-  let navigate = useNavigate()
+  const navigate = useNavigate()
 
   return (
     <div>
       <Form
         validationSchema={SignupSchema}
-        initialValues={{...contactInitialValues, ...initialValues}}
-        onSubmit={(values: any) => {
+        initialValues={{...contactInitialValues, ...initialValues} as IContactFormValues}
+        onSubmit={(values: IContactFormValues) => {
           onSubmit(values)
         }}
       >
-        {(props: any) => (
-          <form onSubmit={props.handleSubmit}>
+        {(formProps) => (
+          <form onSubmit={formProps.handleSubmit}>
             <fieldset className='pb-4'>
               <div className='row'>
                 <div className='form-group col-5'>
@@ -48,9 +87,9 @@ function ContactForm(props: any) {
                   <FieldWithError
                     id='name'
                     type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.name}
+                    onChange={formProps.handleChange}
+                    onBlur={formProps.handleBlur}
+                    value={formProps.values.name}
                     name='name'
                   />
                 </div>
@@ -63,9 +102,9 @@ function ContactForm(props: any) {
                     id='email'
                     name='email'
                     type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.email}
+                    onChange={formProps.handleChange}
+                    onBlur={formProps.handleBlur}
+                    value={formProps.values.email}
                   />
                 </div>
               </div>
@@ -76,9 +115,9 @@ function ContactForm(props: any) {
                   <FieldWithError
                     id='number'
                     type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.number}
+                    onChange={formProps.handleChange}
+                    onBlur={formProps.handleBlur}
+                    value={formProps.values.number}
                     name='number'
                   />
                 </div>
@@ -91,9 +130,9 @@ function ContactForm(props: any) {
                       type='checkbox'
                       className='form-check-input'
                       id='talkingWithChatBot'
-                      onChange={props.handleChange}
-                      onBlur={props.handleBlur}
-                      checked={props.values.talkingWithChatBot}
+                      onChange={formProps.handleChange}
+                      onBlur={formProps.handleBlur}
+                      checked={formProps.values.talkingWithChatBot}
                     />
                     <label className='form-check-label' htmlFor='talkingWithChatBot'>Conversando com chatbot?</label>
                   </div>
@@ -104,9 +143,9 @@ function ContactForm(props: any) {
                 <div className='row'>
                   <div className='form-group col-5'>
                     <label htmlFor='waId'>Licenciado</label>
-                    <SelectLicenseesWithFilter selectedItem={props.values.licensee} onChange={(e: any) => {
+                    <SelectLicenseesWithFilter selectedItem={typeof formProps.values.licensee === 'string' ? null : formProps.values.licensee} onChange={(e: { value?: string } | null) => {
                       const inputValue = e && e.value ? e.value : null
-                      props.setFieldValue('licensee', inputValue, false)
+                      formProps.setFieldValue('licensee', inputValue, false)
                     }} />
                   </div>
                 </div>
@@ -119,9 +158,9 @@ function ContactForm(props: any) {
                     id='waId'
                     name='waId'
                     type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.waId}
+                    onChange={formProps.handleChange}
+                    onBlur={formProps.handleBlur}
+                    value={formProps.values.waId}
                   />
                 </div>
               </div>
@@ -133,9 +172,9 @@ function ContactForm(props: any) {
                     id='landbotId'
                     name='landbotId'
                     type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.landbotId}
+                    onChange={formProps.handleChange}
+                    onBlur={formProps.handleBlur}
+                    value={formProps.values.landbotId}
                   />
                 </div>
               </div>
@@ -149,9 +188,9 @@ function ContactForm(props: any) {
                     id='cep'
                     name='cep'
                     type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.cep}
+                    onChange={formProps.handleChange}
+                    onBlur={formProps.handleBlur}
+                    value={formProps.values.cep}
                   />
                 </div>
               </div>
@@ -163,9 +202,9 @@ function ContactForm(props: any) {
                     id='city'
                     name='city'
                     type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.city}
+                    onChange={formProps.handleChange}
+                    onBlur={formProps.handleBlur}
+                    value={formProps.values.city}
                   />
                 </div>
 
@@ -175,9 +214,9 @@ function ContactForm(props: any) {
                     id='uf'
                     name='uf'
                     type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.uf}
+                    onChange={formProps.handleChange}
+                    onBlur={formProps.handleBlur}
+                    value={formProps.values.uf}
                   />
                 </div>
               </div>
@@ -189,9 +228,9 @@ function ContactForm(props: any) {
                     id='address'
                     name='address'
                     type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.address}
+                    onChange={formProps.handleChange}
+                    onBlur={formProps.handleBlur}
+                    value={formProps.values.address}
                   />
                 </div>
               </div>
@@ -203,9 +242,9 @@ function ContactForm(props: any) {
                     id='address_number'
                     name='address_number'
                     type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.address_number}
+                    onChange={formProps.handleChange}
+                    onBlur={formProps.handleBlur}
+                    value={formProps.values.address_number}
                   />
                 </div>
               </div>
@@ -217,9 +256,9 @@ function ContactForm(props: any) {
                     id='address_complement'
                     name='address_complement'
                     type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.address_complement}
+                    onChange={formProps.handleChange}
+                    onBlur={formProps.handleBlur}
+                    value={formProps.values.address_complement}
                   />
                 </div>
               </div>
@@ -231,9 +270,9 @@ function ContactForm(props: any) {
                     id='neighborhood'
                     name='neighborhood'
                     type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.neighborhood}
+                    onChange={formProps.handleChange}
+                    onBlur={formProps.handleBlur}
+                    value={formProps.values.neighborhood}
                   />
                 </div>
               </div>
@@ -245,9 +284,9 @@ function ContactForm(props: any) {
                     id='delivery_tax'
                     name='delivery_tax'
                     type='number'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.delivery_tax}
+                    onChange={formProps.handleChange}
+                    onBlur={formProps.handleBlur}
+                    value={formProps.values.delivery_tax}
                   />
                 </div>
               </div>
@@ -259,9 +298,9 @@ function ContactForm(props: any) {
                     id='plugin_cart_id'
                     name='plugin_cart_id'
                     type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.plugin_cart_id}
+                    onChange={formProps.handleChange}
+                    onBlur={formProps.handleBlur}
+                    value={formProps.values.plugin_cart_id}
                   />
                 </div>
               </div>
@@ -270,7 +309,7 @@ function ContactForm(props: any) {
             {errors && (
               <div className='alert alert-danger'>
                 <ul>
-                  {errors.map((error: any) => (<li key={error.message}>{error.message}</li>))}
+                  {errors.map((error) => (<li key={error.message}>{error.message}</li>))}
                 </ul>
               </div>
             )}

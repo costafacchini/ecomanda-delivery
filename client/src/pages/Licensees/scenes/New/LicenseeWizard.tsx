@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
@@ -6,8 +6,10 @@ import { FieldWithError } from '../../../../components/form'
 import ChatPanel from '../Form/panels/ChatPanel'
 import ChatbotPanel from '../Form/panels/ChatbotPanel'
 import WhatsAppPanel from '../Form/panels/WhatsAppPanel'
+import type { ILicenseeFormValues } from '../../../../types'
+import type { FormikErrors, FormikTouched } from 'formik'
 
-const licenseeInitialValues = {
+const licenseeInitialValues: ILicenseeFormValues = {
   name: '',
   email: '',
   phone: '',
@@ -32,6 +34,7 @@ const licenseeInitialValues = {
   document: '',
   kind: '',
   useSenderName: false,
+  useSectors: false,
 }
 
 const STEPS = [
@@ -54,12 +57,12 @@ const chatSchema = Yup.object().shape({
   chatDefault: Yup.string().required('Chat padrão é obrigatório'),
   chatUrl:     Yup.string().required('URL do chat é obrigatória'),
   chatIdentifier: Yup.string().when('chatDefault', {
-    is: (v: any) => ['crisp', 'chatwoot'].includes(v),
-    then: (s: any) => s.required('Identifier é obrigatório'),
+    is: (v: string) => ['crisp', 'chatwoot'].includes(v),
+    then: (s: Yup.StringSchema) => s.required('Identifier é obrigatório'),
   }),
   chatKey: Yup.string().when('chatDefault', {
-    is: (v: any) => ['crisp', 'chatwoot'].includes(v),
-    then: (s: any) => s.required('Key é obrigatória'),
+    is: (v: string) => ['crisp', 'chatwoot'].includes(v),
+    then: (s: Yup.StringSchema) => s.required('Key é obrigatória'),
   }),
 })
 
@@ -75,16 +78,24 @@ const chatbotSchema = Yup.object().shape({
 const whatsappSchema = Yup.object().shape({
   whatsappDefault: Yup.string().required('WhatsApp padrão é obrigatório'),
   whatsappToken: Yup.string().when('whatsappDefault', {
-    is: (v: any) => v && v !== 'baileys',
-    then: (s: any) => s.required('Token do WhatsApp é obrigatório'),
+    is: (v: string) => !!v && v !== 'baileys',
+    then: (s: Yup.StringSchema) => s.required('Token do WhatsApp é obrigatório'),
   }),
   whatsappUrl: Yup.string().when('whatsappDefault', {
-    is: (v: any) => v && v !== 'baileys',
-    then: (s: any) => s.required('URL do WhatsApp é obrigatória'),
+    is: (v: string) => !!v && v !== 'baileys',
+    then: (s: Yup.StringSchema) => s.required('URL do WhatsApp é obrigatória'),
   }),
 })
 
-function IdentityStep({ values, errors, touched, handleChange, handleBlur }: any) {
+interface IdentityStepProps {
+  values: ILicenseeFormValues
+  errors: FormikErrors<ILicenseeFormValues>
+  touched: FormikTouched<ILicenseeFormValues>
+  handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  handleBlur: React.FocusEventHandler<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+}
+
+function IdentityStep({ values, errors, touched, handleChange, handleBlur }: IdentityStepProps) {
   return (
     <>
       <div className='row'>
@@ -146,7 +157,13 @@ function IdentityStep({ values, errors, touched, handleChange, handleBlur }: any
   )
 }
 
-function YesNoGate({ label, isYes, onChange }: any) {
+interface YesNoGateProps {
+  label: string
+  isYes: boolean | null
+  onChange: (value: boolean) => void
+}
+
+function YesNoGate({ label, isYes, onChange }: YesNoGateProps) {
   return (
     <div className='mb-3'>
       <p className='fw-semibold'>{label}</p>
@@ -170,20 +187,29 @@ function YesNoGate({ label, isYes, onChange }: any) {
   )
 }
 
-function LicenseeWizard({ onSubmit, errors: backendErrors }: any) {
+interface ApiError {
+  message: string
+}
+
+interface LicenseeWizardProps {
+  onSubmit: (values: ILicenseeFormValues) => void
+  errors?: ApiError[] | null
+}
+
+function LicenseeWizard({ onSubmit, errors: backendErrors }: LicenseeWizardProps) {
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(0)
-  const [stepErrors, setStepErrors] = useState<any>(null)
-  const [useChat,     setUseChat]     = useState(null)
-  const [useWhatsapp, setUseWhatsapp] = useState(null)
+  const [stepErrors, setStepErrors] = useState<string[] | null>(null)
+  const [useChat,     setUseChat]     = useState<boolean | null>(null)
+  const [useWhatsapp, setUseWhatsapp] = useState<boolean | null>(null)
 
   const totalSteps = STEPS.length
   const step = STEPS[currentStep]
   const isLastStep = currentStep === totalSteps - 1
   const progressPct = Math.round(((currentStep + 1) / totalSteps) * 100)
 
-  async function validateStep(values: any) {
-    const schemas: any = {
+  async function validateStep(values: ILicenseeFormValues) {
+    const schemas: Record<string, Yup.ObjectSchema<object> | null> = {
       identity: identitySchema,
       chat:     useChat           ? chatSchema    : null,
       chatbot:  values.useChatbot ? chatbotSchema : null,
@@ -194,8 +220,10 @@ function LicenseeWizard({ onSubmit, errors: backendErrors }: any) {
     try {
       await schema.validate(values, { abortEarly: false })
       return true
-    } catch (err: any) {
-      setStepErrors(err.errors)
+    } catch (err: unknown) {
+      if (err instanceof Yup.ValidationError) {
+        setStepErrors(err.errors)
+      }
       return false
     }
   }
@@ -275,7 +303,7 @@ function LicenseeWizard({ onSubmit, errors: backendErrors }: any) {
                 <YesNoGate
                   label='Deseja integrar com uma Plataforma de ChatBot?'
                   isYes={formik.values.useChatbot || null}
-                  onChange={(val: any) => formik.setFieldValue('useChatbot', val)}
+                  onChange={(val: boolean) => formik.setFieldValue('useChatbot', val)}
                 />
                 {formik.values.useChatbot && (
                   <ChatbotPanel
@@ -311,8 +339,8 @@ function LicenseeWizard({ onSubmit, errors: backendErrors }: any) {
           {(backendErrors || stepErrors) && (
             <div className='alert alert-danger'>
               <ul className='mb-0'>
-                {backendErrors?.map((e: any) => <li key={e.message || e}>{e.message || e}</li>)}
-                {stepErrors?.map((e: any) => <li key={e}>{e}</li>)}
+                {backendErrors?.map((e) => <li key={e.message}>{e.message}</li>)}
+                {stepErrors?.map((e) => <li key={e}>{e}</li>)}
               </ul>
             </div>
           )}

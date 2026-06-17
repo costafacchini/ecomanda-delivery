@@ -5,18 +5,26 @@ import { toast } from 'react-toastify'
 import { useState } from 'react'
 import { importTriggerMultiProduct } from '../../../../services/trigger'
 
+interface IImportationFormValues {
+  text: string
+}
+
+interface IFormError {
+  message: string
+}
+
 const SignupSchema = Yup.object().shape({
   text: Yup.string()
 });
 
-const triggerInitialValues = {
+const triggerInitialValues: IImportationFormValues = {
   text: ''
 }
 
 function TriggerImportation() {
   let navigate = useNavigate()
   let { id } = useParams()
-  const [errors, setErrors] = useState<any>(null)
+  const [errors, setErrors] = useState<IFormError[] | null>(null)
 
   const triggerId = id
 
@@ -30,7 +38,7 @@ function TriggerImportation() {
           <Form
             validationSchema={SignupSchema}
             initialValues={{ ...triggerInitialValues }}
-            onSubmit={async (values: any) => {
+            onSubmit={async (values) => {
               const response = await importTriggerMultiProduct(triggerId, values)
 
               if (response.status === 201) {
@@ -38,13 +46,14 @@ function TriggerImportation() {
                 navigate('/triggers')
                 setErrors(null)
               } else {
-                setErrors(response.data.errors)
+                const data = response.data as { errors: IFormError[] }
+                setErrors(data.errors)
                 toast.error('Ops! Não foi possível importar a catálogo.');
               }
             }}
           >
-            {(props: any) => (
-              <form onSubmit={props.handleSubmit}>
+            {(formik) => (
+              <form onSubmit={formik.handleSubmit}>
                 <fieldset className='pb-4'>
                   <div className='row'>
                     <div className='form-group'>
@@ -55,9 +64,9 @@ function TriggerImportation() {
                           name='text'
                           className='form-control'
                           rows={15}
-                          onChange={props.handleChange}
-                          onBlur={props.handleBlur}
-                          value={props.values.text}
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                          value={formik.values.text}
                         />
                       </div>
                     </div>

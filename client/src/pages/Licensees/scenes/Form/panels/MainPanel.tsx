@@ -1,4 +1,24 @@
+import React from 'react'
 import { FieldWithError } from '../../../../../components/form'
+import type { ILicenseeFormValues } from '../../../../../types'
+import type { FormikErrors, FormikTouched } from 'formik'
+
+/** MainPanel also receives the read-only webhook URL fields returned by the API */
+interface MainPanelValues extends ILicenseeFormValues {
+  urlChatWebhook?: string
+  urlChatbotWebhook?: string
+  urlChatbotTransfer?: string
+  urlWhatsappWebhook?: string
+}
+
+interface MainPanelProps {
+  values: MainPanelValues
+  errors: FormikErrors<MainPanelValues>
+  touched: FormikTouched<MainPanelValues>
+  handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  handleBlur: React.FocusEventHandler<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  currentUser?: unknown
+}
 
 function MainPanel({
   values,
@@ -7,7 +27,7 @@ function MainPanel({
   handleChange,
   handleBlur,
   currentUser,
-}: any) {
+}: MainPanelProps) {
   return (
     <>
       <div className='row'>

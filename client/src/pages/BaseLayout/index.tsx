@@ -1,10 +1,10 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import Navbar from '../Navbar'
 import SelectLicenseeModal from '../../components/SelectLicenseeModal'
-import { AppContext } from '../../contexts/App'
+import { useApp } from '../../contexts/App'
 
 export default function BaseLayout({ children }: any) {
-  const { currentUser, activeLicensee, updateActiveLicensee, licenseeModalSeen, markLicenseeModalSeen } = useContext(AppContext)
+  const { currentUser, activeLicensee, updateActiveLicensee, licenseeModalSeen, markLicenseeModalSeen } = useApp()
 
   const showModal =
     (currentUser?.role === 'super' && !licenseeModalSeen) ||

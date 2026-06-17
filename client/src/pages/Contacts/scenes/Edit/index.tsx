@@ -1,29 +1,34 @@
 import Form from '../Form'
 import { toast } from 'react-toastify'
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 import { getContact, updateContact } from '../../../../services/contact'
 import { useNavigate, useParams } from 'react-router'
 import { useEffect } from 'react'
-import { AppContext } from '../../../../contexts/App'
+import { useApp } from '../../../../contexts/App'
+import type { IContact, IUser } from '../../../../types'
 
-function ContactEdit({ currentUser }: any) {
-  const { activeLicensee } = useContext(AppContext)
+interface ContactEditProps {
+  currentUser?: IUser | null
+}
+
+function ContactEdit({ currentUser }: ContactEditProps) {
+  const { activeLicensee } = useApp()
   const navigate = useNavigate()
-  let { id } = useParams()
-  const [errors, setErrors] = useState(null)
-  const [contact, setContact] = useState(null)
+  const { id } = useParams<{ id: string }>()
+  const [errors, setErrors] = useState<Array<{ message: string }> | null>(null)
+  const [contact, setContact] = useState<IContact | null>(null)
 
   const contactId = id
 
   useEffect(() => {
-    let abortController = new AbortController()
+    const abortController = new AbortController()
 
     async function fetchContact() {
       try {
-        const { data: licensee } = await getContact(contactId)
-        setContact(licensee)
-      } catch (error: any) {
-        if (error.name === 'AbortError') {
+        const { data: contactData } = await getContact(contactId!)
+        setContact(contactData as IContact)
+      } catch (error: unknown) {
+        if (error instanceof Error && error.name === 'AbortError') {
           // Handling error thrown by aborting request
         }
       }
@@ -46,15 +51,16 @@ function ContactEdit({ currentUser }: any) {
           currentUser={currentUser}
           activeLicensee={activeLicensee}
           errors={errors}
-          onSubmit={async (values: any) => {
-            const response = await updateContact(values)
+          onSubmit={async (values) => {
+            const response = await updateContact({ ...values, id: contact.id } as IContact)
 
             if (response.status === 200) {
               toast.success('Contato atualizado com sucesso!');
               navigate('/contacts')
               setErrors(null)
             } else {
-              setErrors(response.data.errors)
+              const data = response.data as unknown as { errors: Array<{ message: string }> }
+              setErrors(data.errors)
               toast.error('Ops! Não foi possível atualizar o contato.');
             }
           }}

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { getBaileysQr, getBaileysStatus } from '../../../services/licensee'
+import type { IBaileysStatusResponse, IBaileysQrResponse } from '../../../types'
 
 interface Props {
   licenseeId: string
@@ -24,7 +25,8 @@ export default function BaileysSetupCard({ licenseeId, onConnected }: Props) {
 
   async function checkStatus(): Promise<boolean> {
     const res = await getBaileysStatus(licensee)
-    if (res.data?.connected) {
+    const statusData = res.data as IBaileysStatusResponse
+    if (statusData?.connected) {
       stopPolling()
       onConnected()
       return true
@@ -38,10 +40,11 @@ export default function BaileysSetupCard({ licenseeId, onConnected }: Props) {
     setStatusMessage('')
     const res = await getBaileysQr(licensee)
     setLoading(false)
-    if (res.data?.qr) {
-      setQr(res.data.qr)
+    const qrData = res.data as IBaileysQrResponse
+    if (qrData?.qr) {
+      setQr(qrData.qr)
     } else {
-      setStatusMessage(res.data?.message || 'Erro ao gerar QR Code')
+      setStatusMessage(qrData?.message || 'Erro ao gerar QR Code')
     }
   }
 

@@ -1,18 +1,27 @@
 import styles from './styles.module.scss'
+import type { ICart, ICartProduct } from '../../../../../types'
 
-function concludedDescription(concluded: any) {
+function concludedDescription(concluded: boolean) {
   return concluded ? 'Sim' : 'Não'
 }
 
-function formatNumber(value: any, decimal = 2) {
+function formatNumber(value: number, decimal = 2) {
   return '$' + value.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 
-function productsDescription(products: any) {
-  return products.map((item: any) => <li key={item.product_retailer_id}><p>{`${item.quantity} - ${item.product_retailer_id} - ${formatNumber(item.unit_price)}`}</p></li>)
+function productsDescription(products: ICartProduct[]) {
+  return products.map((item) => (
+    <li key={item.product_retailer_id}>
+      <p>{`${item.quantity} - ${item.product_retailer_id} - ${formatNumber(item.unit_price)}`}</p>
+    </li>
+  ))
 }
 
-function CartDescription({ cart }: any) {
+interface CartDescriptionProps {
+  cart: ICart
+}
+
+function CartDescription({ cart }: CartDescriptionProps) {
   return (
     <div className={`${styles.cartDescription}`}>
       {cart.products.length > 0 && (

@@ -49,7 +49,8 @@ function SectorEdit({ currentUser }: any) {
               navigate('/sectors')
               setErrors(null)
             } else {
-              setErrors(response.data.errors)
+              // @ts-ignore — Sectors not in type-narrowing plan scope
+              setErrors((response.data as any).errors)
               toast.error('Ops! Não foi possível atualizar o setor.')
             }
           }}

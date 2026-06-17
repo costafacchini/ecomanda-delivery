@@ -1,41 +1,52 @@
-import { useEffect, useState, useCallback, useContext } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Link } from 'react-router'
 import { getContacts } from '../../../../services/contact'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
-import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'
-import { AppContext } from '../../../../contexts/App'
+import { useSimpleCrud } from '../../../../contexts/SimpleCrud'
+import { useApp } from '../../../../contexts/App'
 import isEmpty from 'lodash/isEmpty'
+import type { IContact, IContactFilters, IUser } from '../../../../types'
 
-function ContactsIndex({ currentUser }: any) {
-  const { activeLicensee } = useContext(AppContext)
-  const { filters, setFilters, cache } = useContext(SimpleCrudContext)
+interface ContactsIndexProps {
+  currentUser: IUser | null | undefined
+}
+
+function ContactsIndex({ currentUser }: ContactsIndexProps) {
+  const { activeLicensee } = useApp()
+  const { filters, setFilters, cache } = useSimpleCrud()
   const { addPage } = cache
-  const [expression, setExpression] = useState(filters?.expression || '')
+  const contactFilters = filters as IContactFilters | undefined
+  const [expression, setExpression] = useState(contactFilters?.expression ?? '')
 
   const onFilter = useCallback(
-    async (changedFilters: any) => {
-      const newFilters = { ...filters, ...changedFilters }
+    async (changedFilters: Partial<IContactFilters>) => {
+      const newFilters: IContactFilters = { ...contactFilters, ...changedFilters }
       setFilters(newFilters)
-      const { data: users } = await getContacts(newFilters)
-      addPage(users, newFilters)
+      const { data: contacts } = await getContacts(newFilters)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      addPage(contacts as any, newFilters)
     },
-    [filters, setFilters, addPage]
+    [contactFilters, setFilters, addPage]
   )
 
   useEffect(() => {
     let abortController = new AbortController()
 
     try {
-      if (!isEmpty(filters)) return
+      if (!isEmpty(contactFilters)) return
       if (!currentUser) return
 
-      const initialFilters: any = { page: 1 }
-      const effectiveLicensee = activeLicensee?._id ?? currentUser.licensee?._id
+      const initialFilters: IContactFilters = { page: 1 }
+      const licenseeObj = currentUser.licensee
+      const effectiveLicensee = activeLicensee?.id ??
+        (typeof licenseeObj === 'object' && licenseeObj !== null
+          ? ((licenseeObj as { id?: string; _id?: string }).id ?? (licenseeObj as { id?: string; _id?: string })._id)
+          : undefined)
       if (effectiveLicensee) initialFilters.licensee = effectiveLicensee
 
       onFilter(initialFilters)
-    } catch (error: any) {
-      if (error.name === 'AbortError') {
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'AbortError') {
         // Handling error thrown by aborting request
       }
     }
@@ -43,20 +54,20 @@ function ContactsIndex({ currentUser }: any) {
     return () => {
       abortController.abort()
     }
-  }, [filters, onFilter, currentUser, activeLicensee])
+  }, [contactFilters, onFilter, currentUser, activeLicensee])
 
-  function changeExpression(event: any) {
+  function changeExpression(event: React.ChangeEvent<HTMLInputElement>) {
     setExpression(event.target.value)
   }
 
   function nextPage() {
-    const newFilters = { ...filters, page: filters.page + 1 }
+    const newFilters: IContactFilters = { ...contactFilters, page: (contactFilters?.page ?? 1) + 1 }
     onFilter(newFilters)
   }
 
   function toggleGroupFilter() {
-    const isGroup = filters?.isGroup ? undefined : true
-    const newFilters = { ...filters, isGroup, page: 1 }
+    const isGroup = contactFilters?.isGroup ? undefined : true
+    const newFilters: IContactFilters = { ...contactFilters, isGroup, page: 1 }
     onFilter(newFilters)
   }
 
@@ -81,10 +92,10 @@ function ContactsIndex({ currentUser }: any) {
                 <SelectLicenseesWithFilter
                   name='licensee'
                   aria-labelledby='licensee'
-                  selectedItem={filters?.licensee}
-                  onChange={(e: any) => {
+                  selectedItem={contactFilters?.licensee ? null : null}
+                  onChange={(e: { value?: string } | null) => {
                     const inputValue = e && e.value ? e.value : ''
-                    const newFilters = { ...filters, licensee: inputValue, page: 1 }
+                    const newFilters: IContactFilters = { ...contactFilters, licensee: inputValue, page: 1 }
                     onFilter(newFilters)
                   }}
                 />
@@ -98,10 +109,10 @@ function ContactsIndex({ currentUser }: any) {
           <div className=''>
             <button
               type='button'
-              className={`btn btn-sm ${filters?.isGroup ? 'btn-primary' : 'btn-outline-secondary'}`}
+              className={`btn btn-sm ${contactFilters?.isGroup ? 'btn-primary' : 'btn-outline-secondary'}`}
               onClick={toggleGroupFilter}
             >
-              {filters?.isGroup ? 'Apenas Grupos' : 'Todos os Contatos'}
+              {contactFilters?.isGroup ? 'Apenas Grupos' : 'Todos os Contatos'}
             </button>
           </div>
           <div className=''>
@@ -116,7 +127,7 @@ function ContactsIndex({ currentUser }: any) {
               />
               <div className='input-group-append'>
                 <button className='btn btn-primary' title='Filtre pelo contato' onClick={() => {
-                  const newFilters = { ...filters, expression: expression, page: 1 }
+                  const newFilters: IContactFilters = { ...contactFilters, expression: expression, page: 1 }
                   onFilter(newFilters)
                 }}>
                   <i className='bi bi-search'></i>
@@ -138,11 +149,11 @@ function ContactsIndex({ currentUser }: any) {
             </tr>
           </thead>
           <tbody>
-            {cache.records.map((contact: any) => (
+            {(cache.records as unknown as IContact[]).map((contact) => (
               <tr key={contact.id}>
                 <td>{contact.name}</td>
                 <td>{contact.number}</td>
-                <td>{contact.type}</td>
+                <td>{(contact as any).type}</td>
                 <td>{contact.email}</td>
                 <td><Link to={`/contacts/${contact.id}`}><i className='bi bi-pencil' /></Link></td>
               </tr>

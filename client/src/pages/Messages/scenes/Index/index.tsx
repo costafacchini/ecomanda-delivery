@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useContext } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { getMessages, resendMessage } from '../../../../services/message'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 import SelectContactsWithFilter from '../../../../components/SelectContactsWithFilter'
@@ -6,11 +6,19 @@ import CartDescription from './components/cart'
 import styles from './styles.module.scss'
 import moment from 'moment-timezone'
 import isEmpty from 'lodash/isEmpty'
-import { AppContext } from '../../../../contexts/App'
+import { useApp } from '../../../../contexts/App'
+import type { IMessage, IMessageFilters } from '../../../../types'
+import type { IUser } from '../../../../types'
 
-function MessagesIndex({ currentUser }: any) {
-  const { activeLicensee } = useContext(AppContext)
-  const [filters, setFilters] = useState<any>({
+interface MessagesIndexProps {
+  currentUser: IUser | null | undefined
+}
+
+type RetryStatus = 'idle' | 'loading' | 'success' | 'error'
+
+function MessagesIndex({ currentUser }: MessagesIndexProps) {
+  const { activeLicensee } = useApp()
+  const [filters, setFilters] = useState<IMessageFilters>({
     startDate: moment().subtract(3, 'hours').format('YYYY-MM-DDTHH:mm'),
     endDate: moment().format('YYYY-MM-DDTHH:mm'),
     licensee: '',
@@ -21,9 +29,9 @@ function MessagesIndex({ currentUser }: any) {
     page: 1
   })
 
-  const [records, setRecords] = useState<any[]>([])
+  const [records, setRecords] = useState<IMessage[]>([])
   const [lastPage, setLastPage] = useState(false)
-  const [retryState, setRetryState] = useState<Record<string, 'idle' | 'loading' | 'success' | 'error'>>({})
+  const [retryState, setRetryState] = useState<Record<string, RetryStatus>>({})
 
   function handleRetry(id: string) {
     setRetryState((prev) => ({ ...prev, [id]: 'loading' }))
@@ -33,25 +41,25 @@ function MessagesIndex({ currentUser }: any) {
   }
 
   const addPage = useCallback(
-    (records: any, filters: any) => {
-      if (filters?.page === 1) {
-        setRecords(records)
+    (messages: IMessage[], appliedFilters: IMessageFilters) => {
+      if (appliedFilters?.page === 1) {
+        setRecords(messages)
       } else {
-        setRecords((prevRecords) => [...prevRecords, ...records])
+        setRecords((prevRecords) => [...prevRecords, ...messages])
       }
 
-      setLastPage(isEmpty(records))
+      setLastPage(isEmpty(messages))
     },
     [setRecords]
   )
 
   const onFilter = useCallback(
-    async (changedFilters: any) => {
-      const newFilters = { ...filters, ...changedFilters }
+    async (changedFilters: Partial<IMessageFilters>) => {
+      const newFilters: IMessageFilters = { ...filters, ...changedFilters }
       setFilters(newFilters)
 
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
-      const apiFilters = {
+      const apiFilters: IMessageFilters = {
         ...newFilters,
         ...(newFilters.startDate && { startDate: moment.tz(newFilters.startDate, tz).utc().toISOString() }),
         ...(newFilters.endDate && { endDate: moment.tz(newFilters.endDate, tz).utc().toISOString() }),
@@ -63,38 +71,42 @@ function MessagesIndex({ currentUser }: any) {
   )
 
   useEffect(() => {
-    const effectiveLicensee = activeLicensee?._id ?? currentUser?.licensee?._id
+    const licenseeObj = currentUser?.licensee as { id?: string } | string | null | undefined
+    const effectiveLicensee = activeLicensee?.id ??
+      (typeof licenseeObj === 'object' && licenseeObj !== null
+        ? ((licenseeObj as { id?: string; _id?: string }).id ?? (licenseeObj as { id?: string; _id?: string })._id)
+        : undefined)
     if (currentUser && effectiveLicensee && filters.licensee !== effectiveLicensee) {
       setFilters({ ...filters, licensee: effectiveLicensee })
     }
   }, [currentUser, activeLicensee, filters, setFilters])
 
-  function handleChange({ target }: any) {
+  function handleChange({ target }: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     setFilters({ ...filters, [target.name]: target.value, page: 1 })
   }
 
-  function handleChangeOnlyErrors({ target }: any) {
-    let newFilters
+  function handleChangeOnlyErrors({ target }: React.ChangeEvent<HTMLInputElement>) {
+    let newFilters: IMessageFilters
 
     if (target.checked === true) {
       newFilters = { ...filters, sended: false }
     } else {
-      const { sended: removed, ...rest } = filters
+      const { sended: _removed, ...rest } = filters
       newFilters = rest
     }
 
     setFilters({ ...newFilters, onlyErrors: target.checked })
   }
 
-  function handleSubmitSearch(e: any) {
+  function handleSubmitSearch(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
 
-    let abortController = new AbortController()
+    const abortController = new AbortController()
 
     try {
       onFilter(filters)
-    } catch (error: any) {
-      if (error.name === 'AbortError') {
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'AbortError') {
         // Handling error thrown by aborting request
       }
     }
@@ -181,10 +193,10 @@ function MessagesIndex({ currentUser }: any) {
               <SelectLicenseesWithFilter
                 name='licensee'
                 aria-labelledby='licensee'
-                selectedItem={filters.licensee}
-                onChange={(e: any) => {
+                selectedItem={null}
+                onChange={(e: { value?: string } | null) => {
                   const inputValue = e && e.value ? e.value : ''
-                  const newFilters = { ...filters, licensee: inputValue, page: 1 }
+                  const newFilters: IMessageFilters = { ...filters, licensee: inputValue, page: 1 }
                   setFilters(newFilters)
                 }}
               />
@@ -202,9 +214,9 @@ function MessagesIndex({ currentUser }: any) {
               name='contact'
               aria-labelledby='contact'
               selectedItem={filters.contact}
-              onChange={(e: any) => {
+              onChange={(e: { value?: string } | null) => {
                 const inputValue = e && e.value ? e.value : ''
-                const newFilters = { ...filters, contact: inputValue, page: 1 }
+                const newFilters: IMessageFilters = { ...filters, contact: inputValue, page: 1 }
                 setFilters(newFilters)
               }}
               licensee={filters.licensee}
@@ -295,7 +307,7 @@ function MessagesIndex({ currentUser }: any) {
                       {` (${message.latitude}, ${message.longitude})`}
                     </>
                   )}
-                  {message.kind === 'cart' && <CartDescription cart={message.cart} />}
+                  {message.kind === 'cart' && Boolean(message.cart) && <CartDescription cart={message.cart as any} />}
                   {message.kind !== 'location' && message.kind !== 'cart' && <p>{message.text}</p>}
                 </td>
                 <td>
@@ -329,7 +341,7 @@ function MessagesIndex({ currentUser }: any) {
                     type='button'
                     className='btn btn-outline-primary d-print-none'
                     onClick={() => {
-                      onFilter({ ...filters, page: filters.page + 1 })
+                      onFilter({ ...filters, page: (filters.page ?? 1) + 1 })
                     }}
                   >
                     Carregar mais

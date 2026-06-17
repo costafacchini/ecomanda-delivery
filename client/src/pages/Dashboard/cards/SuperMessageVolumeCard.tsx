@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { getDashboardMessageVolume } from '../../../services/dashboard'
+import type { IDashboardMessageVolume, IDashboardMessageVolumeRow } from '../../../types'
 
 const today = () => new Date().toISOString().split('T')[0]
 const firstDayOfMonth = () => {
@@ -7,7 +8,7 @@ const firstDayOfMonth = () => {
   return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().split('T')[0]
 }
 
-function buildHourAverages(perHour: any[]) {
+function buildHourAverages(perHour: IDashboardMessageVolumeRow[]) {
   const hourMap: Record<string, number[]> = {}
   for (const row of perHour) {
     const hour = row._id?.split('T')[1]
@@ -25,15 +26,15 @@ function buildHourAverages(perHour: any[]) {
 export default function SuperMessageVolumeCard({ licensee }: { licensee?: string }) {
   const [startDate, setStartDate] = useState(firstDayOfMonth)
   const [endDate, setEndDate] = useState(today)
-  const [data, setData] = useState<any>(null)
+  const [data, setData] = useState<IDashboardMessageVolume | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<any>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     setLoading(true)
     setError(null)
     getDashboardMessageVolume({ ...(licensee ? { licensee } : {}), startDate, endDate })
-      .then((res) => setData(res.data))
+      .then((res) => setData(res.data as IDashboardMessageVolume))
       .catch(() => setError('Erro ao carregar dados.'))
       .finally(() => setLoading(false))
   }, [licensee, startDate, endDate])

@@ -1,24 +1,54 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { FieldWithError } from '../../../../../components/form'
 import { setLicenseeWebhook, getBaileysQr, getBaileysStatus, importLicenseeTemplate, syncBaileysDirectory } from '../../../../../services/licensee'
+import type { ILicenseeFormValues } from '../../../../../types'
+import type { FormikErrors, FormikTouched } from 'formik'
 
-function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isActive }: any) {
-  const [baileysQr, setBaileysQr] = useState<any>(null)
-  const [baileysStatus, setBaileysStatus] = useState<any>(null)
+interface WhatsAppPanelValues extends ILicenseeFormValues {
+  id?: string
+  apiToken: string
+}
+
+interface WhatsAppPanelProps {
+  values: WhatsAppPanelValues
+  errors: FormikErrors<WhatsAppPanelValues>
+  touched: FormikTouched<WhatsAppPanelValues>
+  handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  handleBlur: React.FocusEventHandler<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  isActive?: boolean
+}
+
+interface SyncResult {
+  importedGroups: number
+  updatedGroups: number
+}
+
+interface IBaileysQrResponse {
+  qr?: string
+  message?: string
+}
+
+interface IBaileysStatusResponse {
+  connected?: boolean
+}
+
+function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isActive }: WhatsAppPanelProps) {
+  const [baileysQr, setBaileysQr] = useState<string | null>(null)
+  const [baileysStatus, setBaileysStatus] = useState<string | null>(null)
   const [baileysConnected, setBaileysConnected] = useState<boolean | null>(null)
   const [baileysChecking, setBaileysChecking] = useState(false)
   const [syncLoading, setSyncLoading] = useState(false)
-  const [syncResult, setSyncResult] = useState<any>(null)
-  const [syncError, setSyncError] = useState<any>(null)
+  const [syncResult, setSyncResult] = useState<SyncResult | null>(null)
+  const [syncError, setSyncError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!isActive || values.whatsappDefault !== 'baileys' || !values.id) return
 
     setBaileysChecking(true)
-    getBaileysStatus(values)
+    getBaileysStatus(values as any)
       .then((response) => {
-        setBaileysConnected(response.data?.connected ?? false)
+        setBaileysConnected((response.data as IBaileysStatusResponse)?.connected ?? false)
       })
       .catch(() => {
         setBaileysConnected(false)
@@ -110,7 +140,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                 <button
                   onClick={async (event) => {
                     event.preventDefault()
-                    await setLicenseeWebhook(values)
+                    await setLicenseeWebhook(values as any)
                   }}
                   className='btn btn-info'
                 >
@@ -122,7 +152,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                 <button
                   onClick={async (event) => {
                     event.preventDefault()
-                    await importLicenseeTemplate(values)
+                    await importLicenseeTemplate(values as any)
                   }}
                   className='btn btn-info'
                 >
@@ -170,12 +200,13 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                     setBaileysConnected(null)
                     setBaileysQr(null)
                     setBaileysStatus(null)
-                    const response = await getBaileysQr(values)
-                    if (response.data?.qr) {
-                      setBaileysQr(response.data.qr)
+                    const response = await getBaileysQr(values as any)
+                    const qrData = response.data as IBaileysQrResponse
+                    if (qrData?.qr) {
+                      setBaileysQr(qrData.qr)
                       setBaileysConnected(false)
                     } else {
-                      setBaileysStatus(response.data?.message ?? 'Erro ao gerar QR')
+                      setBaileysStatus(qrData?.message ?? 'Erro ao gerar QR')
                     }
                   }}
                   className='btn btn-outline-secondary btn-sm'
@@ -190,8 +221,8 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                       setSyncError(null)
                       setSyncLoading(true)
                       try {
-                        const response = await syncBaileysDirectory(values)
-                        setSyncResult(response.data)
+                        const response = await syncBaileysDirectory(values as any)
+                        setSyncResult(response.data as SyncResult)
                       } catch {
                         setSyncError('Erro ao sincronizar grupos')
                       } finally {
@@ -228,11 +259,12 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                     event.preventDefault()
                     setBaileysQr(null)
                     setBaileysStatus(null)
-                    const response = await getBaileysQr(values)
-                    if (response.data?.qr) {
-                      setBaileysQr(response.data.qr)
+                    const response = await getBaileysQr(values as any)
+                    const qrData = response.data as IBaileysQrResponse
+                    if (qrData?.qr) {
+                      setBaileysQr(qrData.qr)
                     } else {
-                      setBaileysStatus(response.data?.message ?? 'Erro ao gerar QR')
+                      setBaileysStatus(qrData?.message ?? 'Erro ao gerar QR')
                     }
                   }}
                   className='btn btn-info'
@@ -249,11 +281,12 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                     event.preventDefault()
                     setBaileysQr(null)
                     setBaileysStatus(null)
-                    const response = await getBaileysQr(values)
-                    if (response.data?.qr) {
-                      setBaileysQr(response.data.qr)
+                    const response = await getBaileysQr(values as any)
+                    const qrData = response.data as IBaileysQrResponse
+                    if (qrData?.qr) {
+                      setBaileysQr(qrData.qr)
                     } else {
-                      setBaileysStatus(response.data?.message ?? 'Erro ao gerar QR')
+                      setBaileysStatus(qrData?.message ?? 'Erro ao gerar QR')
                     }
                   }}
                   className='btn btn-info'

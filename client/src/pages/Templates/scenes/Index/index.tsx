@@ -1,32 +1,39 @@
-import { useEffect, useState, useCallback, useContext } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Link } from 'react-router'
 import { getTemplates } from '../../../../services/template'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
-import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'
-import { AppContext } from '../../../../contexts/App'
+import { useSimpleCrud } from '../../../../contexts/SimpleCrud'
+import { useApp } from '../../../../contexts/App'
 import isEmpty from 'lodash/isEmpty'
+import type { IUser, ITemplateFilters } from '../../../../types'
 
-function TemplatesIndex({ currentUser }: any) {
-  const { activeLicensee } = useContext(AppContext)
-  const { filters, setFilters, cache } = useContext(SimpleCrudContext)
+interface TemplatesIndexProps {
+  currentUser?: IUser | null
+}
+
+function TemplatesIndex({ currentUser }: TemplatesIndexProps) {
+  const { activeLicensee } = useApp()
+  const { filters, setFilters, cache } = useSimpleCrud()
   const { addPage } = cache
-  const [expression, setExpression] = useState(filters?.expression || '')
+  const templateFilters = filters as ITemplateFilters | undefined
+  const [expression, setExpression] = useState(templateFilters?.expression || '')
 
   const onFilter = useCallback(
     async (changedFilters: any) => {
-      const newFilters = { ...filters, ...changedFilters }
+      const newFilters = { ...templateFilters, ...changedFilters }
       setFilters(newFilters)
       const { data: templates } = await getTemplates(newFilters)
-      addPage(templates, newFilters)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      addPage(templates as any, newFilters)
     },
-    [filters, setFilters, addPage]
+    [templateFilters, setFilters, addPage]
   )
 
   useEffect(() => {
     let abortController = new AbortController()
 
     try {
-      if (!isEmpty(filters)) return
+      if (!isEmpty(templateFilters)) return
 
       onFilter({ page: 1 })
     } catch (error: any) {
@@ -38,24 +45,25 @@ function TemplatesIndex({ currentUser }: any) {
     return () => {
       abortController.abort()
     }
-  }, [filters, onFilter])
+  }, [templateFilters, onFilter])
 
   useEffect(() => {
-    if (isEmpty(filters) || !currentUser) return
+    if (isEmpty(templateFilters) || !currentUser) return
 
-    const effectiveLicensee = activeLicensee?._id ?? currentUser.licensee?._id
-    if (effectiveLicensee && filters?.licensee !== effectiveLicensee) {
-      const newFilters = { ...filters, licensee: effectiveLicensee, page: 1 }
+    const licenseeObj = currentUser.licensee as { id?: string } | string | null
+    const effectiveLicensee = activeLicensee?.id ?? (typeof licenseeObj === 'object' && licenseeObj !== null ? licenseeObj.id : undefined)
+    if (effectiveLicensee && templateFilters?.licensee !== effectiveLicensee) {
+      const newFilters = { ...templateFilters, licensee: effectiveLicensee, page: 1 }
       onFilter(newFilters)
     }
-  }, [currentUser, activeLicensee, filters, onFilter])
+  }, [currentUser, activeLicensee, templateFilters, onFilter])
 
-  function changeExpression(event: any) {
+  function changeExpression(event: React.ChangeEvent<HTMLInputElement>) {
     setExpression(event.target.value)
   }
 
   function nextPage() {
-    const newFilters = { ...filters, page: filters.page + 1 }
+    const newFilters = { ...templateFilters, page: (templateFilters?.page ?? 1) + 1 }
     onFilter(newFilters)
   }
 
@@ -77,10 +85,10 @@ function TemplatesIndex({ currentUser }: any) {
                 <SelectLicenseesWithFilter
                   name='licensee'
                   aria-labelledby='licensee'
-                  selectedItem={filters?.licensee}
+                  selectedItem={null}
                   onChange={(e: any) => {
                     const inputValue = e && e.value ? e.value : ''
-                    const newFilters = { ...filters, licensee: inputValue, page: 1 }
+                    const newFilters = { ...templateFilters, licensee: inputValue, page: 1 }
                     onFilter(newFilters)
                   }}
                 />
@@ -105,7 +113,7 @@ function TemplatesIndex({ currentUser }: any) {
               />
               <div className='input-group-append'>
                 <button className='btn btn-primary' title='Filtre pelo template' onClick={() => {
-                  const newFilters = { ...filters, expression: expression, page: 1 }
+                  const newFilters = { ...templateFilters, expression: expression, page: 1 }
                   onFilter(newFilters)
                 }}>
                   <i className='bi bi-search'></i>

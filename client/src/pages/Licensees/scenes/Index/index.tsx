@@ -1,33 +1,47 @@
-import { useEffect, useState, useContext, useCallback } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Link } from 'react-router'
 import { getLicensees } from '../../../../services/licensee'
-import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'
+import { useSimpleCrud } from '../../../../contexts/SimpleCrud'
 import isEmpty from 'lodash/isEmpty'
+import type { ILicensee, IUser } from '../../../../types'
 
-function LicenseesIndex({ currentUser }: any) {
-  const { filters, setFilters, cache } = useContext(SimpleCrudContext)
+interface LicenseeFilters {
+  page: number
+  expression?: string
+  pedidos10_active?: boolean
+  [key: string]: unknown
+}
+
+interface LicenseesIndexProps {
+  currentUser?: IUser | null
+}
+
+function LicenseesIndex({ currentUser }: LicenseesIndexProps) {
+  const { filters, setFilters, cache } = useSimpleCrud()
   const { addPage } = cache
-  const [expression, setExpression] = useState(filters?.expression || '')
+  const licenseeFilters = filters as LicenseeFilters | undefined
+  const [expression, setExpression] = useState<string>(licenseeFilters?.expression || '')
 
   const onFilter = useCallback(
-    async (changedFilters: any) => {
-      const newFilters = { ...filters, ...changedFilters }
+    async (changedFilters: LicenseeFilters) => {
+      const newFilters: LicenseeFilters = { ...licenseeFilters, ...changedFilters }
       setFilters(newFilters)
       const { data: licensees } = await getLicensees(newFilters)
-      addPage(licensees, newFilters)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      addPage(licensees as any, newFilters)
     },
-    [filters, setFilters, addPage],
+    [licenseeFilters, setFilters, addPage],
   )
 
   useEffect(() => {
     let abortController = new AbortController()
 
     try {
-      if (!isEmpty(filters)) return
+      if (!isEmpty(licenseeFilters)) return
 
       onFilter({ page: 1, pedidos10_active: false })
-    } catch (error: any) {
-      if (error.name === 'AbortError') {
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'AbortError') {
         // Handling error thrown by aborting request
       }
     }
@@ -35,14 +49,14 @@ function LicenseesIndex({ currentUser }: any) {
     return () => {
       abortController.abort()
     }
-  }, [filters, onFilter])
+  }, [licenseeFilters, onFilter])
 
-  function changeExpression(event: any) {
+  function changeExpression(event: React.ChangeEvent<HTMLInputElement>) {
     setExpression(event.target.value)
   }
 
   function nextPage() {
-    const newFilters = { ...filters, page: filters.page + 1 }
+    const newFilters: LicenseeFilters = { ...licenseeFilters, page: (licenseeFilters?.page ?? 1) + 1 }
     onFilter(newFilters)
   }
 
@@ -78,7 +92,7 @@ function LicenseesIndex({ currentUser }: any) {
                   className='btn btn-primary'
                   title='Filtre pelo licenciado'
                   onClick={() => {
-                    const newFilters = { ...filters, expression: expression, page: 1 }
+                    const newFilters: LicenseeFilters = { ...licenseeFilters, expression: expression, page: 1 }
                     onFilter(newFilters)
                   }}
                 >
@@ -102,7 +116,7 @@ function LicenseesIndex({ currentUser }: any) {
             </tr>
           </thead>
           <tbody>
-            {cache.records.map((licensee: any) => (
+            {(cache.records as unknown as ILicensee[]).map((licensee) => (
               <tr key={licensee.id}>
                 <td>{licensee.name}</td>
                 <td>{licensee.email}</td>

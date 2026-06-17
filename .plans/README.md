@@ -25,7 +25,6 @@ Git-native Markdown plans for multi-step work.
 | 2 | [MongoDB → PostgreSQL](./mongo-to-postgres/overview.md) | `mongo-to-postgres/` | not-started | Migrate all persistent data from MongoDB/Mongoose to PostgreSQL/Prisma using dual-write strategy; prerequisite: remove-pdv complete |
 | 5 | [Local Chat UI](./local-chat-ui/overview.md) | `local-chat-ui/` | not-started | Agent-facing full-screen chat page at /chat: room list + conversation panel adapted from whatsapp-web-clone, conditional navbar link, Socket.IO real-time updates |
 | 3 | [Backend Type Narrowing](./type-backend/overview.md) | `type-backend/` | not-started | Replace `any` with interfaces across models, repositories, use cases, controllers, and plugins — 3 phases, 11 tasks |
-| 4 | [Client Type Narrowing](./type-client/overview.md) | `type-client/` | not-started | Replace `any` with interfaces across React services, contexts, pages, and components — 2 phases, 6 tasks |
 
 ---
 
@@ -49,6 +48,7 @@ Git-native Markdown plans for multi-step work.
 | 12 | [Onboarding Wizard](./onboarding-wizard/overview.md) | `onboarding-wizard/` | 2026-06-02 | Public sign-up flow from the login screen: wizard modal collects licensee identity + user credentials and creates both via a single unauthenticated endpoint |
 | 13 | [Setores](./setores/overview.md) | `setores/` | 2026-06-10 | Multiple WhatsApp numbers per licensee via sectors; sector-scoped message routing and agent access filtering |
 | 14 | [Setores — Webhook Providers](./setores-webhook-providers/overview.md) | `setores-webhook-providers/` | 2026-06-11 | sectorToken + webhookUrl virtual on Sector; auth middleware resolves ?sector= query param; MessengersController threads sectorId |
+| 15 | [Client Type Narrowing](./type-client/overview.md) | `type-client/` | 2026-06-17 | Replace `any` with interfaces across React services, contexts, pages, and components — 2 phases, 6 tasks |
 
 ---
 

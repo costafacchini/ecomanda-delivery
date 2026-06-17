@@ -1,8 +1,8 @@
-export default function parseUrl(url: any, urlParams: any) {
+export default function parseUrl(url: string, urlParams: Record<string, unknown>): string {
   return urlParams && objectToQueryParameter(urlParams) !== '' ? `${url}?${objectToQueryParameter(urlParams)}` : url
 }
 
-function objectToQueryParameter(object: any) {
+function objectToQueryParameter(object: Record<string, unknown>): string {
   return Object.keys(object)
     .map((key) => {
       if (object[key] == null) return ''
@@ -13,17 +13,17 @@ function objectToQueryParameter(object: any) {
     .join('&')
 }
 
-function encodeValueToUrl(value: any): any {
+function encodeValueToUrl(value: unknown): string {
   if (isDate(value)) {
-    return new Date(value).toISOString()
+    return new Date(value as string | Date).toISOString()
   } else if (value instanceof Array) {
-    return value.map(encodeValueToUrl)
+    return value.map(encodeValueToUrl).join(',')
   } else {
-    return `${encodeURIComponent(value)}`
+    return `${encodeURIComponent(String(value))}`
   }
 }
 
-function isDate(value: any) {
+function isDate(value: unknown): boolean {
   if (value instanceof Date) {
     return true
   }
@@ -35,13 +35,13 @@ function isDate(value: any) {
   return false
 }
 
-function encodeArrayToUrl(objectWithArray: any, key: any) {
-  const array = objectWithArray[key]
-  const isArrayOfObjects = array.find((value: any) => typeof value === 'object' && !(value instanceof Date))
+function encodeArrayToUrl(objectWithArray: Record<string, unknown>, key: string): string {
+  const array = objectWithArray[key] as unknown[]
+  const isArrayOfObjects = (array as unknown[]).find((value: unknown) => typeof value === 'object' && !(value instanceof Date))
 
   if (isArrayOfObjects) {
-    const queryParameters: any[] = []
-    array.forEach((value: any) => {
+    const queryParameters: string[] = []
+    ;(array as Record<string, unknown>[]).forEach((value) => {
       Object.keys(value).forEach((prop) => {
         queryParameters.push(`${key}[][${prop}]=${encodeValueToUrl(value[prop])}`)
       })

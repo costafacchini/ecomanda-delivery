@@ -1,10 +1,15 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router'
 import api from '../../services/api'
 import { login, fetchLoggedUser } from '../../services/auth'
 import styles from './index.module.scss'
-import { AppContext } from '../../contexts/App'
+import { useApp } from '../../contexts/App'
 import OnboardingModal from './OnboardingModal'
+
+interface ILoginResponse {
+  token: string
+  message?: string
+}
 
 function SignIn() {
   const [email, setEmail] = useState('')
@@ -13,32 +18,32 @@ function SignIn() {
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
   let navigate = useNavigate()
-  const { setCurrentUser } = useContext(AppContext)
+  const { setCurrentUser } = useApp()
 
   function handleOnboardingSuccess() {
     setIsOnboardingOpen(false)
     setSuccessMessage('Conta criada com sucesso! Faça login para continuar.')
   }
 
-  async function handleSignIn(e: any) {
+  async function handleSignIn(e: React.FormEvent | React.MouseEvent) {
     e.preventDefault()
 
     if (!email || !password) {
       setError('Preencha e-mail e senha para continuar!')
     } else {
       const body = { email, password }
-      const response = await api().post('/login', { body })
+      const response = await api().post<ILoginResponse>('/login', { body })
       if (response.status === 200) {
         login(email, response.data.token)
 
         fetchLoggedUser().then(user => {
-          setCurrentUser(user)
+          setCurrentUser(user ?? undefined)
         })
 
         navigate('/#/')
       } else {
         console.log(response)
-        setError(response.data.message)
+        setError(response.data.message ?? 'Erro ao fazer login')
       }
     }
   }
