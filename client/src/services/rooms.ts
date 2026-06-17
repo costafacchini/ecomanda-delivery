@@ -24,5 +24,5 @@ export function getRoomMessages(roomId: string, params: { page?: number } = {}) 
 }
 
 export function sendRoomMessage(roomId: string, text: string) {
-  return api().post(`v1/chat/rooms/${roomId}/messages`, { headers: headers(), body: { text } })
+  return api().post(`resources/rooms/${roomId}/messages`, { headers: headers(), body: { text } })
 }
