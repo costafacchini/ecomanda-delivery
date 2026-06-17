@@ -1,4 +1,4 @@
-export type { ILicensee } from './licensee'
+export type { ILicensee, ILicenseeFormValues } from './licensee'
 export type { IContact } from './contact'
 export type { IMessage, IMessageTriggerRef, IMessageSectorRef } from './message'
 export type { IUser, UserRole } from './user'
