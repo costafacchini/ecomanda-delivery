@@ -1,17 +1,29 @@
-import { useEffect, useState, useContext, useCallback } from 'react'
+import React, { useEffect, useState, useContext, useCallback } from 'react'
 import { Link } from 'react-router'
 import { getLicensees } from '../../../../services/licensee'
 import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'
 import isEmpty from 'lodash/isEmpty'
+import type { ILicensee, IUser } from '../../../../types'
 
-function LicenseesIndex({ currentUser }: any) {
+interface LicenseeFilters {
+  page: number
+  expression?: string
+  pedidos10_active?: boolean
+  [key: string]: unknown
+}
+
+interface LicenseesIndexProps {
+  currentUser?: IUser | null
+}
+
+function LicenseesIndex({ currentUser }: LicenseesIndexProps) {
   const { filters, setFilters, cache } = useContext(SimpleCrudContext)
   const { addPage } = cache
-  const [expression, setExpression] = useState(filters?.expression || '')
+  const [expression, setExpression] = useState<string>(filters?.expression || '')
 
   const onFilter = useCallback(
-    async (changedFilters: any) => {
-      const newFilters = { ...filters, ...changedFilters }
+    async (changedFilters: LicenseeFilters) => {
+      const newFilters: LicenseeFilters = { ...filters, ...changedFilters }
       setFilters(newFilters)
       const { data: licensees } = await getLicensees(newFilters)
       addPage(licensees, newFilters)
@@ -26,8 +38,8 @@ function LicenseesIndex({ currentUser }: any) {
       if (!isEmpty(filters)) return
 
       onFilter({ page: 1, pedidos10_active: false })
-    } catch (error: any) {
-      if (error.name === 'AbortError') {
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'AbortError') {
         // Handling error thrown by aborting request
       }
     }
@@ -37,12 +49,12 @@ function LicenseesIndex({ currentUser }: any) {
     }
   }, [filters, onFilter])
 
-  function changeExpression(event: any) {
+  function changeExpression(event: React.ChangeEvent<HTMLInputElement>) {
     setExpression(event.target.value)
   }
 
   function nextPage() {
-    const newFilters = { ...filters, page: filters.page + 1 }
+    const newFilters: LicenseeFilters = { ...filters, page: filters.page + 1 }
     onFilter(newFilters)
   }
 
@@ -78,7 +90,7 @@ function LicenseesIndex({ currentUser }: any) {
                   className='btn btn-primary'
                   title='Filtre pelo licenciado'
                   onClick={() => {
-                    const newFilters = { ...filters, expression: expression, page: 1 }
+                    const newFilters: LicenseeFilters = { ...filters, expression: expression, page: 1 }
                     onFilter(newFilters)
                   }}
                 >
@@ -102,7 +114,7 @@ function LicenseesIndex({ currentUser }: any) {
             </tr>
           </thead>
           <tbody>
-            {cache.records.map((licensee: any) => (
+            {cache.records.map((licensee: ILicensee) => (
               <tr key={licensee.id}>
                 <td>{licensee.name}</td>
                 <td>{licensee.email}</td>

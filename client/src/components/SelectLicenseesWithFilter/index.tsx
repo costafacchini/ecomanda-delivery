@@ -1,23 +1,48 @@
 import React, { useState } from 'react'
-import Select, { createFilter } from 'react-select'
+import Select, { createFilter, SingleValue, FilterOptionOption } from 'react-select'
 import debounce from 'lodash/debounce'
 import { getLicensees } from '../../services/licensee'
 
-export default function SelectLicenseesWithFilter({ isDisabled, onChange, selectedItem, ...props }: any) {
-  const [defaultValue, setDefaultValue] = useState(null)
-  const [selectedOption, setSelectedOption] = useState(null)
-  const [options, setOptions] = useState<any[]>([])
+interface LicenseeOption {
+  value: string
+  label: string
+}
+
+/** Raw record returned by the API uses MongoDB-style _id */
+interface LicenseeRecord {
+  _id: string
+  name: string
+  [key: string]: unknown
+}
+
+interface SelectedLicenseeItem {
+  _id: string
+  name: string
+  [key: string]: unknown
+}
+
+interface SelectLicenseesWithFilterProps {
+  isDisabled?: boolean
+  onChange: (value: SingleValue<LicenseeOption>) => void
+  selectedItem?: SelectedLicenseeItem | null
+  [key: string]: unknown
+}
+
+export default function SelectLicenseesWithFilter({ isDisabled, onChange, selectedItem, ...props }: SelectLicenseesWithFilterProps) {
+  const [defaultValue, setDefaultValue] = useState<LicenseeOption | null>(null)
+  const [selectedOption, setSelectedOption] = useState<LicenseeOption | null>(null)
+  const [options, setOptions] = useState<LicenseeOption[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [optionsLoaded, setOptionsLoaded] = useState(false)
 
-  const filterConfig: any = {
+  const filterConfig = {
     ignoreCase: true,
     ignoreAccents: true,
     trim: true,
-    matchFrom: true
+    matchFrom: 'any' as const,
   }
 
-  function handleOnChange(value: any) {
+  function handleOnChange(value: SingleValue<LicenseeOption>) {
     if (value !== selectedOption) {
       setSelectedOption(value)
 
@@ -25,19 +50,19 @@ export default function SelectLicenseesWithFilter({ isDisabled, onChange, select
     }
   }
 
-  function transformData(values: any) {
-    return values.map((value: any) => ({ value: value._id, label: value.name }))
+  function transformData(values: LicenseeRecord[]): LicenseeOption[] {
+    return values.map((value) => ({ value: value._id, label: value.name }))
   }
 
-  function handleSetSearchInput(value: any) {
+  function handleSetSearchInput(value: string) {
     if (value.length > 2) handleFetch(value)
   }
 
-  async function onFetch(value?: any) {
+  async function onFetch(value?: string) {
     try {
       setIsLoading(true)
       const { data: licensees } = await getLicensees({ expression: value, active: true })
-      setOptions(transformData(licensees))
+      setOptions(transformData(licensees as LicenseeRecord[]))
     } catch (_) {}
     setIsLoading(false)
   }
@@ -45,7 +70,7 @@ export default function SelectLicenseesWithFilter({ isDisabled, onChange, select
   const handleFetch = debounce(onFetch, 500)
 
   if (selectedItem && !defaultValue) {
-    const newSelectedOption = { value: selectedItem._id, label: selectedItem.name, ...selectedItem }
+    const newSelectedOption: LicenseeOption = { value: selectedItem._id, label: selectedItem.name }
 
     const hasItem = options.find(item => item.value === selectedItem._id)
     if (!hasItem) {
@@ -69,7 +94,9 @@ export default function SelectLicenseesWithFilter({ isDisabled, onChange, select
         isLoading={isLoading}
         isDisabled={isDisabled}
         options={options}
-        filterOption={createFilter(filterConfig)}
+        filterOption={(option: FilterOptionOption<LicenseeOption>, inputValue: string) =>
+          createFilter(filterConfig)(option, inputValue)
+        }
         onChange={handleOnChange}
         onInputChange={handleSetSearchInput}
         {...props}

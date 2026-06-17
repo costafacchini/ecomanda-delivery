@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Form } from '../../../../components/form'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router'
@@ -6,12 +6,24 @@ import MainPanel from './panels/MainPanel'
 import ChatPanel from './panels/ChatPanel'
 import ChatbotPanel from './panels/ChatbotPanel'
 import WhatsAppPanel from './panels/WhatsAppPanel'
+import type { ILicensee, ILicenseeFormValues } from '../../../../types'
+import type { FormikProps } from 'formik'
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string()
 });
 
-const licenseeInitialValues = {
+/** Form values include apiToken (read-only) and useSectors (edit form only) */
+interface LicenseeEditFormValues extends ILicenseeFormValues {
+  apiToken: string
+  useSectors: boolean
+  urlChatWebhook?: string
+  urlChatbotWebhook?: string
+  urlChatbotTransfer?: string
+  urlWhatsappWebhook?: string
+}
+
+const licenseeInitialValues: LicenseeEditFormValues = {
   name: '',
   email: '',
   phone: '',
@@ -39,7 +51,14 @@ const licenseeInitialValues = {
   useSectors: false,
 }
 
-function LicenseeForm(props: any) {
+interface LicenseeFormProps {
+  onSubmit: (values: LicenseeEditFormValues) => void
+  errors?: Array<{ message: string }> | null
+  initialValues?: Partial<ILicensee>
+  currentUser?: unknown
+}
+
+function LicenseeForm(props: LicenseeFormProps) {
   const { onSubmit, errors, initialValues, currentUser } = props
   let navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('principal')
@@ -49,11 +68,11 @@ function LicenseeForm(props: any) {
       <Form
         validationSchema={SignupSchema}
         initialValues={{ ...licenseeInitialValues, ...initialValues }}
-        onSubmit={(values: any) => {
+        onSubmit={(values: LicenseeEditFormValues) => {
           onSubmit(values)
         }}
       >
-        {(props: any) => (
+        {(props: FormikProps<LicenseeEditFormValues>) => (
           <form onSubmit={props.handleSubmit}>
             <ul className="nav nav-tabs mb-3">
               <li className="nav-item">
@@ -138,7 +157,7 @@ function LicenseeForm(props: any) {
             {errors && (
               <div className='alert alert-danger'>
                 <ul>
-                  {errors.map((error: any) => (
+                  {errors.map((error) => (
                     <li key={error.message}>{error.message}</li>
                   ))}
                 </ul>

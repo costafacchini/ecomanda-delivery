@@ -1,6 +1,17 @@
+import React from 'react'
 import { FieldWithError } from '../../../../../components/form'
+import type { ILicenseeFormValues } from '../../../../../types'
+import type { FormikErrors, FormikTouched } from 'formik'
 
-function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }: any) {
+interface ChatbotPanelProps {
+  values: ILicenseeFormValues
+  errors: FormikErrors<ILicenseeFormValues>
+  touched: FormikTouched<ILicenseeFormValues>
+  handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  handleBlur: React.FocusEventHandler<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+}
+
+function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }: ChatbotPanelProps) {
   return (
     <>
       <div className='row'>
