@@ -1,5 +1,5 @@
 import MessageIndex from './'
-import { fireEvent, screen, cleanup, render } from '@testing-library/react'
+import { fireEvent, screen, cleanup, render, waitFor } from '@testing-library/react'
 import { getMessages, resendMessage } from '../../../../services/message'
 import { createRoutesStub } from 'react-router'
 import { getLicensees } from '../../../../services/licensee'
@@ -221,6 +221,27 @@ describe('<MessageIndex />', () => {
       await screen.findByText('John Doe')
 
       expect(getMessages).toHaveBeenCalledWith(expect.objectContaining({ contact: '9876543' }))
+    })
+
+    it('re-fetches contacts filtered by licensee when activeLicensee is set', async () => {
+      getContacts.mockResolvedValue({ status: 201, data: [] })
+
+      const activeLicensee = { id: 'licensee-xyz', _id: 'licensee-xyz', name: 'Test Licensee' }
+      const Stub = createRoutesStub([
+        {
+          path: '/messages',
+          Component: () => (
+            <AppContext.Provider value={{ activeLicensee, updateActiveLicensee: vi.fn() }}>
+              <MessageIndex currentUser={{ role: 'super' }} />
+            </AppContext.Provider>
+          ),
+        },
+      ])
+      render(<Stub initialEntries={['/messages']} />)
+
+      await waitFor(() => {
+        expect(getContacts).toHaveBeenCalledWith(expect.objectContaining({ licensee: 'licensee-xyz' }))
+      })
     })
   })
 

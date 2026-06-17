@@ -36,6 +36,7 @@ export default function SelectContactsWithFilter({
 
   useEffect(() => {
     setSelectedLicensee(licensee)
+    setOptionsLoaded(false)
   }, [licensee])
 
   const filterConfig = {
