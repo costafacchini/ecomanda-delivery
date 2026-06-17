@@ -21,7 +21,7 @@ export default function ChatPage() {
 
   useEffect(() => {
     if (!effectiveLicenseeId) return
-    getRooms().then(res => setRooms(res.data.rooms)).catch(console.error)
+    getRooms({ licensee: effectiveLicenseeId }).then(res => setRooms(res.data.rooms)).catch(console.error)
   }, [effectiveLicenseeId])
 
   function loadMessages(roomId: string) {
