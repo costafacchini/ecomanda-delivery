@@ -4,8 +4,29 @@ import { ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
+import type { IUser, UserRole } from '../../../../types'
 
-const ROLES_WITHOUT_LICENSEE = ['admin', 'super']
+export interface IUserFormValues {
+  name: string
+  email: string
+  password: string
+  licensee?: string | null
+  active: boolean
+  role: UserRole
+}
+
+interface IFormError {
+  message: string
+}
+
+interface UserFormProps {
+  onSubmit: (values: IUserFormValues) => void
+  errors?: IFormError[] | null
+  initialValues?: Partial<IUserFormValues>
+  currentUser?: IUser | null
+}
+
+const ROLES_WITHOUT_LICENSEE: UserRole[] = ['admin', 'super']
 
 function buildSchema(isSuperUser: boolean) {
   return Yup.object().shape({
@@ -14,14 +35,14 @@ function buildSchema(isSuperUser: boolean) {
     password: Yup.string(),
     licensee: isSuperUser
       ? Yup.string().when('role', {
-          is: (role: string) => !ROLES_WITHOUT_LICENSEE.includes(role),
+          is: (role: string) => !ROLES_WITHOUT_LICENSEE.includes(role as UserRole),
           then: (schema) => schema.required('Licenciado é obrigatório'),
         })
       : Yup.string(),
   })
 }
 
-const userInitialValues = {
+const userInitialValues: IUserFormValues = {
   name: '',
   email: '',
   password: '',
@@ -30,8 +51,7 @@ const userInitialValues = {
   role: 'agent',
 }
 
-function UserForm(props: any) {
-  const { onSubmit, errors, initialValues, currentUser } = props
+function UserForm({ onSubmit, errors, initialValues, currentUser }: UserFormProps) {
   let navigate = useNavigate()
 
   const isSuperUser = currentUser?.role === 'super'
@@ -42,12 +62,12 @@ function UserForm(props: any) {
       <Form
         validationSchema={schema}
         initialValues={{...userInitialValues, ...initialValues}}
-        onSubmit={(values: any) => {
+        onSubmit={(values) => {
           onSubmit(values)
         }}
       >
-        {(props: any) => (
-          <form onSubmit={props.handleSubmit}>
+        {(formik) => (
+          <form onSubmit={formik.handleSubmit}>
             <fieldset className='pb-4'>
               <div className='row'>
                 <div className='form-group col-5'>
@@ -55,18 +75,18 @@ function UserForm(props: any) {
                   <FieldWithError
                     id='name'
                     type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.name}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.name}
                     name='name'
                   />
                 </div>
                 <div className='form-group col-5'>
                   <div className='form-check mt-4'>
                     <input
-                      checked={props.values.active}
-                      onChange={props.handleChange}
-                      onBlur={props.handleBlur}
+                      checked={formik.values.active}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
                       type='checkbox'
                       className='form-check-input'
                       id='active'
@@ -83,9 +103,9 @@ function UserForm(props: any) {
                     id='email'
                     name='email'
                     type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.email}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.email}
                   />
                 </div>
               </div>
@@ -96,9 +116,9 @@ function UserForm(props: any) {
                   <FieldWithError
                     id='password'
                     type='password'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.password}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.password}
                     name='password'
                     autoComplete='new-password'
                   />
@@ -113,9 +133,9 @@ function UserForm(props: any) {
                       className='form-select'
                       id='role'
                       name='role'
-                      onChange={props.handleChange}
-                      onBlur={props.handleBlur}
-                      value={props.values.role}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.role}
                     >
                       <option value='agent'>Agente</option>
                       <option value='supervisor'>Supervisor</option>
@@ -126,13 +146,13 @@ function UserForm(props: any) {
                 </div>
               )}
 
-              {isSuperUser && !ROLES_WITHOUT_LICENSEE.includes(props.values.role) && (
+              {isSuperUser && !ROLES_WITHOUT_LICENSEE.includes(formik.values.role) && (
                 <div className='row'>
                   <div className='form-group col-5'>
                     <label htmlFor='licensee'>Licenciado <span className='text-danger'>*</span></label>
-                    <SelectLicenseesWithFilter selectedItem={props.values.licensee} onChange={(e: any) => {
+                    <SelectLicenseesWithFilter selectedItem={typeof formik.values.licensee === 'string' ? null : formik.values.licensee} onChange={(e: any) => {
                       const inputValue = e && e.value ? e.value : null
-                      props.setFieldValue('licensee', inputValue, true)
+                      formik.setFieldValue('licensee', inputValue, true)
                     }} />
                     <ErrorMessage name='licensee' />
                   </div>

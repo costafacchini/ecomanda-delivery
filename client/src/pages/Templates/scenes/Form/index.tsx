@@ -1,21 +1,43 @@
 import { FieldWithError, Form } from '../../../../components/form'
-import { FieldArray } from 'formik'
+import { FieldArray, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
+import type { IUser } from '../../../../types'
+import type { ITemplateParam } from '../../../../types'
+
+interface ITemplateFormValues {
+  name: string
+  namespace: string
+  licensee?: string | null
+  headerParams?: ITemplateParam[]
+  bodyParams?: ITemplateParam[]
+  footerParams?: ITemplateParam[]
+}
+
+interface IFormError {
+  message: string
+}
+
+interface TemplateFormProps {
+  onSubmit?: (values: ITemplateFormValues, helpers?: FormikHelpers<ITemplateFormValues>) => void
+  errors?: IFormError[] | null
+  initialValues?: Partial<ITemplateFormValues>
+  currentUser?: IUser | null
+  activeLicensee?: { _id: string } | null
+}
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string(),
   namespace: Yup.string()
 });
 
-const templateInitialValues = {
+const templateInitialValues: ITemplateFormValues = {
   name: '',
   namespace: '',
 }
 
-function TemplateForm(props: any) {
-  const { onSubmit, errors, initialValues, currentUser, activeLicensee } = props
+function TemplateForm({ onSubmit, errors, initialValues, currentUser, activeLicensee }: TemplateFormProps) {
   let navigate = useNavigate()
 
   return (
@@ -23,12 +45,12 @@ function TemplateForm(props: any) {
       <Form
         validationSchema={SignupSchema}
         initialValues={{...templateInitialValues, ...initialValues}}
-        onSubmit={(values: any) => {
-          onSubmit(values)
+        onSubmit={(values) => {
+          onSubmit?.(values)
         }}
       >
-        {(props: any) => (
-          <form onSubmit={props.handleSubmit}>
+        {(formik) => (
+          <form onSubmit={formik.handleSubmit}>
             <fieldset className='pb-4' disabled={true}>
               <div className='row'>
                 <div className='form-group col-4'>
@@ -36,9 +58,9 @@ function TemplateForm(props: any) {
                   <FieldWithError
                     id='name'
                     type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.name}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.name}
                     name='name'
                   />
                 </div>
@@ -51,9 +73,9 @@ function TemplateForm(props: any) {
                     id='namespace'
                     name='namespace'
                     type='text'
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={props.values.namespace}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.namespace}
                   />
                 </div>
               </div>
@@ -62,8 +84,8 @@ function TemplateForm(props: any) {
                 <div className='row'>
                   <div className='form-group col-5'>
                     <label htmlFor='licensee'>Licenciado</label>
-                    <SelectLicenseesWithFilter selectedItem={props.values.licensee} isDisabled={true} onChange={(e: any) => (
-                      props.setFieldValue('licensee', e.value, false)
+                    <SelectLicenseesWithFilter selectedItem={typeof formik.values.licensee === 'string' ? null : formik.values.licensee} isDisabled={true} onChange={(e: any) => (
+                      formik.setFieldValue('licensee', e?.value ?? null, false)
                     )} />
                   </div>
                 </div>
@@ -74,8 +96,8 @@ function TemplateForm(props: any) {
                 name='headerParams'
                 render={() => (
                   <div>
-                    {props.values.headerParams && props.values.headerParams.length > 0 && (
-                      props.values.headerParams.map((param: any, index: any) => (
+                    {formik.values.headerParams && formik.values.headerParams.length > 0 && (
+                      formik.values.headerParams.map((param, index) => (
                         <div key={index} className='row'>
                           <div className='form-group col-5'>
                             <FieldWithError
@@ -96,8 +118,8 @@ function TemplateForm(props: any) {
                 name='bodyParams'
                 render={() => (
                   <div>
-                    {props.values.bodyParams && props.values.bodyParams.length > 0 && (
-                      props.values.bodyParams.map((param: any, index: any) => (
+                    {formik.values.bodyParams && formik.values.bodyParams.length > 0 && (
+                      formik.values.bodyParams.map((param, index) => (
                         <div key={index} className='row'>
                           <div className='form-group col-5'>
                             <FieldWithError
@@ -118,8 +140,8 @@ function TemplateForm(props: any) {
                 name='footerParams'
                 render={() => (
                   <div>
-                    {props.values.footerParams && props.values.footerParams.length > 0 && (
-                      props.values.footerParams.map((param: any, index: any) => (
+                    {formik.values.footerParams && formik.values.footerParams.length > 0 && (
+                      formik.values.footerParams.map((param, index) => (
                         <div key={index} className='row'>
                           <div className='form-group col-5'>
                             <FieldWithError

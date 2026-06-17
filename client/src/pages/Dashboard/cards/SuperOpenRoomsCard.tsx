@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import moment from 'moment-timezone'
 import { getDashboardOpenRooms, closeDashboardRoom } from '../../../services/dashboard'
+import type { IDashboardOpenRoom, IDashboardOpenRoomsResponse } from '../../../types'
 
 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
 
@@ -12,7 +13,7 @@ function formatDate(value: string | undefined): string {
 const LIMIT = 10
 
 export default function SuperOpenRoomsCard({ licensee }: { licensee?: string }) {
-  const [rooms, setRooms] = useState<any[]>([])
+  const [rooms, setRooms] = useState<IDashboardOpenRoom[]>([])
   const [hasMore, setHasMore] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -33,7 +34,7 @@ export default function SuperOpenRoomsCard({ licensee }: { licensee?: string }) 
             setError('Erro ao carregar conversas.')
             return
           }
-          const { rooms: newRooms = [], hasMore: more = false } = res.data || {}
+          const { rooms: newRooms = [], hasMore: more = false } = (res.data as IDashboardOpenRoomsResponse) || {}
           setRooms((prev) => (reset ? newRooms : [...prev, ...newRooms]))
           hasMoreRef.current = more
           setHasMore(more)

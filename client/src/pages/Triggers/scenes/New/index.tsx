@@ -4,20 +4,29 @@ import { useState, useContext } from 'react'
 import { createTrigger } from '../../../../services/trigger'
 import { useNavigate } from 'react-router'
 import { AppContext } from '../../../../contexts/App'
+import type { IUser } from '../../../../types'
 
-function TriggerNew({ currentUser }: any) {
+interface IFormError {
+  message: string
+}
+
+interface TriggerNewProps {
+  currentUser?: IUser | null
+}
+
+function TriggerNew({ currentUser }: TriggerNewProps) {
   const { activeLicensee } = useContext(AppContext)
   let navigate = useNavigate()
-  const [errors, setErrors] = useState(null)
+  const [errors, setErrors] = useState<IFormError[] | null>(null)
 
   return (
     <div className='row'>
       <div className='col'>
         <h3>Gatilho criando</h3>
-        <Form errors={errors} currentUser={currentUser} activeLicensee={activeLicensee} onSubmit={async (values: any) => {
+        <Form errors={errors} currentUser={currentUser} activeLicensee={activeLicensee} onSubmit={async (values) => {
           if (!values.licensee) {
-            if (currentUser.role !== 'super') {
-              values.licensee = currentUser.licensee
+            if (currentUser && currentUser.role !== 'super') {
+              values.licensee = currentUser.licensee as string
             } else if (activeLicensee) {
               values.licensee = activeLicensee._id
             }
@@ -29,7 +38,8 @@ function TriggerNew({ currentUser }: any) {
             navigate('/triggers')
             setErrors(null)
           } else {
-            setErrors(response.data.errors)
+            const data = response.data as { errors: IFormError[] }
+            setErrors(data.errors)
             toast.error('Ops! Não foi possível criar o contato.');
           }
         }} />

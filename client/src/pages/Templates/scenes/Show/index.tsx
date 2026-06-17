@@ -4,11 +4,16 @@ import { getTemplate } from '../../../../services/template'
 import { useParams } from 'react-router'
 import { useEffect } from 'react'
 import { AppContext } from '../../../../contexts/App'
+import type { IUser, ITemplate } from '../../../../types'
 
-function TemplateShow({ currentUser }: any) {
+interface TemplateShowProps {
+  currentUser?: IUser | null
+}
+
+function TemplateShow({ currentUser }: TemplateShowProps) {
   const { activeLicensee } = useContext(AppContext)
   let { id } = useParams()
-  const [template, setTemplate] = useState(null)
+  const [template, setTemplate] = useState<ITemplate | null>(null)
 
   const templateId = id
 
@@ -18,7 +23,7 @@ function TemplateShow({ currentUser }: any) {
     async function fetchTemplate() {
       try {
         const { data: licensee } = await getTemplate(templateId)
-        setTemplate(licensee)
+        setTemplate(licensee as ITemplate)
       } catch (error: any) {
         if (error.name === 'AbortError') {
           // Handling error thrown by aborting request

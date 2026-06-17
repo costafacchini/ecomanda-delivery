@@ -1,20 +1,22 @@
 import { useState, useEffect } from 'react'
 import { getDashboardMessagesPerDay } from '../../../services/dashboard'
+import type { IDashboardMessagesPerDay } from '../../../types'
 
 export default function LicenseeMessagesPerDayCard() {
-  const [data, setData] = useState<any>(null)
+  const [data, setData] = useState<IDashboardMessagesPerDay | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<any>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     getDashboardMessagesPerDay()
-      .then((res) => setData(res.data))
+      .then((res) => setData(res.data as IDashboardMessagesPerDay))
       .catch(() => setError('Erro ao carregar dados.'))
       .finally(() => setLoading(false))
   }, [])
 
   if (loading) return <div className="card"><div className="card-body">Carregando...</div></div>
   if (error) return <div className="card"><div className="card-body text-danger">{error}</div></div>
+  if (!data) return null
 
   return (
     <div className="card">
@@ -28,7 +30,7 @@ export default function LicenseeMessagesPerDayCard() {
             </tr>
           </thead>
           <tbody>
-            {(data.per_day || []).map((row: any) => (
+            {(data.per_day || []).map((row) => (
               <tr key={row.date}>
                 <td>{row.date}</td>
                 <td>{row.count}</td>

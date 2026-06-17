@@ -4,8 +4,13 @@ import { getUsers } from '../../../../services/user'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 import { SimpleCrudContext } from '../../../../contexts/SimpleCrud'
 import isEmpty from 'lodash/isEmpty'
+import type { IUser } from '../../../../types'
 
-function UsersIndex({ currentUser }: any) {
+interface UsersIndexProps {
+  currentUser?: IUser | null
+}
+
+function UsersIndex({ currentUser }: UsersIndexProps) {
   const { filters, setFilters, cache } = useContext(SimpleCrudContext)
   const { addPage } = cache
   const [expression, setExpression] = useState(filters?.expression || '')
@@ -41,13 +46,15 @@ function UsersIndex({ currentUser }: any) {
   useEffect(() => {
     if (isEmpty(filters)) return
 
-    if (currentUser && currentUser.role !== 'super' && filters?.licensee !== currentUser.licensee?._id) {
-      const newFilters = { ...filters, licensee: currentUser.licensee?._id, page: 1 }
+    const licenseeObj = currentUser?.licensee as { _id?: string } | string | null | undefined
+    const licenseId = typeof licenseeObj === 'object' && licenseeObj !== null ? licenseeObj._id : undefined
+    if (currentUser && currentUser.role !== 'super' && filters?.licensee !== licenseId) {
+      const newFilters = { ...filters, licensee: licenseId, page: 1 }
       onFilter(newFilters)
     }
   }, [currentUser, filters, onFilter])
 
-  function changeExpression(event: any) {
+  function changeExpression(event: React.ChangeEvent<HTMLInputElement>) {
     setExpression(event.target.value)
   }
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Formik } from 'formik'
+import { Formik, FormikProps } from 'formik'
 import * as Yup from 'yup'
 import { createAccount, OnboardingFields } from '../../services/onboarding'
 
@@ -130,7 +130,7 @@ function OnboardingModal({ isOpen, onClose, onSuccess }: Props) {
   const stepId = steps[currentStepIndex]
   const isLast = currentStepIndex === steps.length - 1
 
-  async function validateCurrentStep(values: any): Promise<boolean> {
+  async function validateCurrentStep(values: typeof initialValues): Promise<boolean> {
     const schema = schemaMap[stepId]
     if (!schema) return true
     try {
@@ -143,7 +143,7 @@ function OnboardingModal({ isOpen, onClose, onSuccess }: Props) {
     }
   }
 
-  async function handleNext(values: any) {
+  async function handleNext(values: typeof initialValues) {
     const valid = await validateCurrentStep(values)
     if (valid) {
       setStepErrors(null)
@@ -156,7 +156,7 @@ function OnboardingModal({ isOpen, onClose, onSuccess }: Props) {
     setCurrentStepIndex((i) => i - 1)
   }
 
-  async function handleSubmit(values: any, { setSubmitting }: any) {
+  async function handleSubmit(values: typeof initialValues, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) {
     const valid = await validateCurrentStep(values)
     if (!valid) {
       setSubmitting(false)
@@ -193,17 +193,18 @@ function OnboardingModal({ isOpen, onClose, onSuccess }: Props) {
       onSuccess()
     } else {
       console.error('onboarding error', response)
-      const errors = response.data?.errors
+      const responseData = response.data as { errors?: Record<string, { message?: string } | string>; message?: string } | undefined
+      const errors = responseData?.errors
       if (errors && typeof errors === 'object') {
-        const messages = Object.values(errors).map((e: any) => e.message || String(e))
+        const messages = Object.values(errors).map((e) => (typeof e === 'object' && e !== null ? e.message || String(e) : String(e)))
         setSubmitError(messages.join(', '))
       } else {
-        setSubmitError(response.data?.message || `Erro ao criar conta (status ${response.status})`)
+        setSubmitError(responseData?.message || `Erro ao criar conta (status ${response.status})`)
       }
     }
   }
 
-  function renderStepContent(formik: any) {
+  function renderStepContent(formik: FormikProps<typeof initialValues>) {
     if (stepId === 'identity') {
       return (
         <>

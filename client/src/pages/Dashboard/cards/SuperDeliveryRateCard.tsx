@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { getDashboardDeliveryRate } from '../../../services/dashboard'
 import FailedMessagesModal from './FailedMessagesModal'
+import type { IDashboardDeliveryRate } from '../../../types'
 
 const today = () => new Date().toISOString().split('T')[0]
 const firstDayOfMonth = () => {
@@ -11,25 +12,25 @@ const firstDayOfMonth = () => {
 export default function SuperDeliveryRateCard({ licensee }: { licensee?: string }) {
   const [startDate, setStartDate] = useState(firstDayOfMonth)
   const [endDate, setEndDate] = useState(today)
-  const [data, setData] = useState<any>(null)
+  const [data, setData] = useState<IDashboardDeliveryRate | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<any>(null)
+  const [error, setError] = useState<string | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
 
   useEffect(() => {
     setLoading(true)
     setError(null)
     getDashboardDeliveryRate({ ...(licensee ? { licensee } : {}), startDate, endDate })
-      .then((res) => setData(res.data))
+      .then((res) => setData(res.data as IDashboardDeliveryRate))
       .catch(() => setError('Erro ao carregar dados.'))
       .finally(() => setLoading(false))
   }, [licensee, startDate, endDate])
 
   function handleResendSuccess() {
-    setData((prev: any) => ({
+    setData((prev) => prev ? ({
       ...prev,
       failed_today: Math.max(0, (prev.failed_today || 0) - 1),
-    }))
+    }) : prev)
   }
 
   return (

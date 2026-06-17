@@ -1,20 +1,21 @@
 import { useState, useEffect } from 'react'
 import { getDashboardQueue } from '../../../services/dashboard'
+import type { IDashboardQueue } from '../../../types'
 
 const today = () => new Date().toISOString().split('T')[0]
 
 export default function SuperQueueCard({ licensee }: { licensee?: string }) {
   const [startDate, setStartDate] = useState(today)
   const [endDate, setEndDate] = useState(today)
-  const [data, setData] = useState<any>(null)
+  const [data, setData] = useState<IDashboardQueue | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<any>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     setLoading(true)
     setError(null)
     getDashboardQueue({ ...(licensee ? { licensee } : {}), startDate, endDate })
-      .then((res) => setData(res.data))
+      .then((res) => setData(res.data as IDashboardQueue))
       .catch(() => setError('Erro ao carregar dados.'))
       .finally(() => setLoading(false))
   }, [licensee, startDate, endDate])

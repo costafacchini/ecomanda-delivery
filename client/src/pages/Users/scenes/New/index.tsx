@@ -1,22 +1,31 @@
-import Form from '../Form'
+import Form, { IUserFormValues } from '../Form'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
 import { createUser } from '../../../../services/user'
 import { useNavigate } from 'react-router'
+import type { IUser } from '../../../../types'
 
-function UserNew({ currentUser }: any) {
+interface IFormError {
+  message: string
+}
+
+interface UserNewProps {
+  currentUser?: IUser | null
+}
+
+function UserNew({ currentUser }: UserNewProps) {
   let navigate = useNavigate()
-  const [errors, setErrors] = useState(null)
+  const [errors, setErrors] = useState<IFormError[] | null>(null)
 
   return (
     <div className='row'>
       <div className='col'>
         <h3>Usuário criando</h3>
-        <Form errors={errors} currentUser={currentUser} onSubmit={async (values: any) => {
+        <Form errors={errors} currentUser={currentUser} onSubmit={async (values: IUserFormValues) => {
           if (['admin', 'super'].includes(values.role)) {
             delete values.licensee
-          } else if (currentUser.role !== 'super') {
-            values.licensee = currentUser.licensee
+          } else if (currentUser && currentUser.role !== 'super') {
+            values.licensee = currentUser.licensee as string
           }
           const response = await createUser(values)
 
@@ -25,7 +34,8 @@ function UserNew({ currentUser }: any) {
             navigate('/users')
             setErrors(null)
           } else {
-            setErrors(response.data.errors)
+            const data = response.data as { errors: IFormError[] }
+            setErrors(data.errors)
             toast.error('Ops! Não foi possível criar o usuário.');
           }
         }} />
