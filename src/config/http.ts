@@ -16,6 +16,7 @@ import { Server } from 'socket.io'
 import Rollbar from 'rollbar'
 import { frontendDistDir } from './frontend-paths'
 import { expressErrorHandler } from '@appsignal/nodejs'
+import jwt from 'jsonwebtoken'
 
 const app = express()
 
@@ -57,10 +58,31 @@ if (process.env.ROLLBAR_ACCESS_TOKEN) {
   })
 }
 
+const SECRET = process.env.SECRET as string
+
+const OBJECT_ID_REGEX = /^[a-f0-9]{24}$/
+
 const server = http.createServer(app)
 
 const io = new Server(server)
-io.on('connection', (_) => {})
+
+io.use((socket, next) => {
+  const token = socket.handshake.auth?.token
+  if (!token) return next(new Error('Authentication required'))
+  jwt.verify(token, SECRET, (err: any) => {
+    if (err) return next(new Error('Invalid token'))
+    next()
+  })
+})
+
+io.on('connection', (socket) => {
+  socket.on('join-licensee', (licenseeId: string) => {
+    if (typeof licenseeId === 'string' && OBJECT_ID_REGEX.test(licenseeId)) {
+      socket.join(`licensee:${licenseeId}`)
+    }
+  })
+})
+
 setIo(io)
 
 export { server, io }

@@ -7,6 +7,7 @@ import styles from './styles.module.scss'
 import RoomList from './components/RoomList'
 import ConversationPanel from './components/ConversationPanel'
 import NewConversationModal from './components/NewConversationModal'
+import { useChatSocket } from '../../hooks/useChatSocket'
 
 export default function ChatPage() {
   const { currentUser, activeLicensee } = useApp()
@@ -38,6 +39,16 @@ export default function ChatPage() {
     await sendRoomMessage(selectedRoom._id, text)
     loadMessages(selectedRoom._id)
   }
+
+  useChatSocket(effectiveLicenseeId, ({ roomId }) => {
+    if (selectedRoom && selectedRoom._id === roomId) {
+      loadMessages(selectedRoom._id)
+    } else {
+      setRooms(prev =>
+        prev.map(r => r._id === roomId ? { ...r, unreadCount: (r.unreadCount ?? 0) + 1 } : r)
+      )
+    }
+  })
 
   function handleRoomCreated(room: IRoom) {
     setRooms(prev => [room, ...prev.filter(r => r._id !== room._id)])
