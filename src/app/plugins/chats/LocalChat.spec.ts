@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import { LocalChat } from './LocalChat'
 import { installMemoryRepositories, resetMemoryRepositories } from '@repositories/testing'
 import { licensee as licenseeFactory } from '@factories/licensee'
@@ -88,6 +89,31 @@ describe('LocalChat plugin', () => {
         'new-room-message',
         expect.objectContaining({ messageId: message._id, licenseeId: licensee._id }),
       )
+    })
+
+    it("creates a room with the message's sector when no open room exists", async () => {
+      const sectorId = new mongoose.Types.ObjectId()
+      const message = await messageRepository.create(
+        messageFactory.build({ contact, licensee, sended: false, sector: sectorId }),
+      )
+
+      await plugin.sendMessage(message._id)
+
+      const room = await roomRepository.findFirst({ contact: contact._id, closed: false })
+      expect(room).not.toBeNull()
+      expect(room.sector.toString()).toEqual(sectorId.toString())
+    })
+
+    it('creates a room with sector null when message has no sector', async () => {
+      const message = await messageRepository.create(
+        messageFactory.build({ contact, licensee, sended: false, sector: undefined }),
+      )
+
+      await plugin.sendMessage(message._id)
+
+      const room = await roomRepository.findFirst({ contact: contact._id, closed: false })
+      expect(room).not.toBeNull()
+      expect(room.sector).toBeNull()
     })
   })
 
