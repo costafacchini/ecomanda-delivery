@@ -33,6 +33,36 @@ describe('<FailedMessagesModal />', () => {
     expect(getMessages).toHaveBeenCalledWith({ sended: false, limit: 50 })
   })
 
+  it('passes licensee to getMessages when provided', async () => {
+    getMessages.mockResolvedValue({ data: [] })
+
+    render(
+      <FailedMessagesModal
+        isOpen={true}
+        onClose={noop}
+        onResendSuccess={noop}
+        licensee="licensee-abc"
+      />
+    )
+
+    await screen.findByText('Nenhuma mensagem com falha.')
+
+    expect(getMessages).toHaveBeenCalledWith(
+      expect.objectContaining({ licensee: 'licensee-abc', sended: false })
+    )
+  })
+
+  it('does not include licensee in params when not provided', async () => {
+    getMessages.mockResolvedValue({ data: [] })
+
+    render(<FailedMessagesModal isOpen={true} onClose={noop} onResendSuccess={noop} />)
+
+    await screen.findByText('Nenhuma mensagem com falha.')
+
+    const call = (getMessages as ReturnType<typeof vi.fn>).mock.calls[0][0]
+    expect(call).not.toHaveProperty('licensee')
+  })
+
   it('shows empty state when no failed messages are returned', async () => {
     getMessages.mockResolvedValue({ data: [] })
 

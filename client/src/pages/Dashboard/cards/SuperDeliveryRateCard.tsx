@@ -90,6 +90,7 @@ export default function SuperDeliveryRateCard({ licensee }: { licensee?: string 
         onResendSuccess={handleResendSuccess}
         startDate={startDate}
         endDate={endDate}
+        licensee={licensee}
       />
     </>
   )

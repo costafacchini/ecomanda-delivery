@@ -23,9 +23,10 @@ interface FailedMessagesModalProps {
   onResendSuccess: () => void
   startDate?: string
   endDate?: string
+  licensee?: string
 }
 
-export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, startDate, endDate }: FailedMessagesModalProps) {
+export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, startDate, endDate, licensee }: FailedMessagesModalProps) {
   const [messages, setMessages] = useState<IFailedMessage[]>([])
   const [loading, setLoading] = useState(false)
   const [fetchError, setFetchError] = useState<string | null>(null)
@@ -41,12 +42,13 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, 
     const params: Record<string, unknown> = { sended: false, limit: 50 }
     if (startDate) params.startDate = moment.tz(startDate, tz).startOf('day').utc().toISOString()
     if (endDate) params.endDate = moment.tz(endDate, tz).endOf('day').utc().toISOString()
+    if (licensee) params.licensee = licensee
 
     getMessages(params)
       .then((res) => setMessages(res.data as unknown as IFailedMessage[]))
       .catch(() => setFetchError('Erro ao carregar mensagens falhas.'))
       .finally(() => setLoading(false))
-  }, [isOpen, startDate, endDate])
+  }, [isOpen, startDate, endDate, licensee])
 
   function handleResend(id: string) {
     resendMessage(id)
