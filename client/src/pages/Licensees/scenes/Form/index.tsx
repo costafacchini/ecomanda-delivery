@@ -88,6 +88,15 @@ function LicenseeForm(props: LicenseeFormProps) {
               <li className="nav-item">
                 <button
                   type="button"
+                  className={`nav-link ${activeTab === 'whatsapp' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('whatsapp')}
+                >
+                  WhatsApp
+                </button>
+              </li>
+              <li className="nav-item">
+                <button
+                  type="button"
                   className={`nav-link ${activeTab === 'chat' ? 'active' : ''}`}
                   onClick={() => setActiveTab('chat')}
                 >
@@ -101,15 +110,6 @@ function LicenseeForm(props: LicenseeFormProps) {
                   onClick={() => setActiveTab('chatbot')}
                 >
                   ChatBot
-                </button>
-              </li>
-              <li className="nav-item">
-                <button
-                  type="button"
-                  className={`nav-link ${activeTab === 'whatsapp' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('whatsapp')}
-                >
-                  WhatsApp
                 </button>
               </li>
             </ul>

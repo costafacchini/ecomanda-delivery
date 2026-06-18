@@ -39,9 +39,9 @@ const licenseeInitialValues: ILicenseeFormValues = {
 
 const STEPS = [
   { id: 'identity', title: 'Identidade' },
+  { id: 'whatsapp', title: 'WhatsApp' },
   { id: 'chat',     title: 'Chat' },
   { id: 'chatbot',  title: 'ChatBot' },
-  { id: 'whatsapp', title: 'WhatsApp' },
 ]
 
 const identitySchema = Yup.object().shape({
@@ -110,13 +110,6 @@ function IdentityStep({ values, errors, touched, handleChange, handleBlur }: Ide
           <label htmlFor='name'>Nome<Required /></label>
           <FieldWithError id='name' type='text' name='name'
             value={values.name} onChange={handleChange} onBlur={handleBlur} />
-        </div>
-        <div className='form-group col-4'>
-          <div className='form-check mt-4'>
-            <input checked={values.active} onChange={handleChange} onBlur={handleBlur}
-              type='checkbox' className='form-check-input' id='active' />
-            <label className='form-check-label' htmlFor='active'>Ativo</label>
-          </div>
         </div>
       </div>
       <div className='row'>
@@ -263,7 +256,7 @@ function LicenseeWizard({ onSubmit, errors: backendErrors }: LicenseeWizardProps
         onSubmit(cleaned)
       }}>
       {(formik) => (
-        <form onSubmit={formik.handleSubmit}>
+        <form>
           <h3>Criar Licenciado</h3>
           <p className='text-muted mb-1'>Passo {currentStep + 1} de {totalSteps} — {step.title}</p>
           <p className='text-muted small mb-3'>Campos marcados com <span className='text-danger'>*</span> são obrigatórios.</p>
@@ -380,7 +373,7 @@ function LicenseeWizard({ onSubmit, errors: backendErrors }: LicenseeWizardProps
                   Próximo →
                 </button>
               ) : (
-                <button type='submit' className='btn btn-success'>Salvar</button>
+                <button type='button' className='btn btn-success' onClick={() => formik.submitForm()}>Salvar</button>
               )}
             </div>
           </div>

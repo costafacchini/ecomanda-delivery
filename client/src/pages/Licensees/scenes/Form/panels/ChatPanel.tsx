@@ -25,7 +25,7 @@ function ChatPanel({ values, errors, touched, handleChange, handleBlur }: ChatPa
 
   return (
     <>
-      <div className='row'>
+      <div className='row mb-3'>
         <div className='form-group col-5'>
           <label htmlFor='chatDefault'>Chat padrão<Required /></label>
           <select
@@ -35,7 +35,7 @@ function ChatPanel({ values, errors, touched, handleChange, handleBlur }: ChatPa
             onChange={handleChange}
             onBlur={handleBlur}
           >
-            <option value=''></option>
+            <option value=''>Nenhum</option>
             <option value='rocketchat'>Rocketchat</option>
             <option value='crisp'>Crisp</option>
             <option value='cuboup'>CuboUp</option>
@@ -47,7 +47,7 @@ function ChatPanel({ values, errors, touched, handleChange, handleBlur }: ChatPa
 
       {['rocketchat', 'crisp', 'chatwoot', 'cuboup'].includes(values.chatDefault) && (
         <>
-          <div className='row'>
+          <div className='row mb-3'>
             <div className='form-group col-8'>
               <label htmlFor='chatUrl'>URL do chat<Required /></label>
               <FieldWithError
@@ -61,7 +61,7 @@ function ChatPanel({ values, errors, touched, handleChange, handleBlur }: ChatPa
             </div>
           </div>
 
-          <div className='row pb-2'>
+          <div className='row mb-3'>
             <div className='col-8'>
               <div className='form-check'>
                 <input
@@ -83,7 +83,7 @@ function ChatPanel({ values, errors, touched, handleChange, handleBlur }: ChatPa
 
       {['crisp', 'chatwoot'].includes(values.chatDefault) && (
         <>
-          <div className='row'>
+          <div className='row mb-3'>
             <div className='form-group col-8'>
               <label htmlFor='chatIdentifier'>
                 Identifier{platformName && <span className='text-muted fw-normal ms-1 small'>({platformName} Website ID)</span>}
@@ -100,7 +100,7 @@ function ChatPanel({ values, errors, touched, handleChange, handleBlur }: ChatPa
             </div>
           </div>
 
-          <div className='row'>
+          <div className='row mb-3'>
             <div className='form-group col-8'>
               <label htmlFor='chatKey'>
                 Key{platformName && <span className='text-muted fw-normal ms-1 small'>({platformName} Token de acesso)</span>}
