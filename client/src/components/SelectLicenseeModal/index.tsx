@@ -6,6 +6,7 @@ interface LicenseeOption {
   value: string
   label: string
   chatDefault?: string
+  whatsappDefault?: string
 }
 
 interface SelectedLicensee {
@@ -13,6 +14,7 @@ interface SelectedLicensee {
   _id: string
   name: string
   chatDefault?: string
+  whatsappDefault?: string
 }
 
 interface SelectLicenseeModalProps {
@@ -24,7 +26,7 @@ export default function SelectLicenseeModal({ onSelect, required = true }: Selec
   const [selected, setSelected] = useState<SingleValue<LicenseeOption>>(null)
 
   function handleConfirm() {
-    onSelect(selected ? { id: selected.value, _id: selected.value, name: selected.label, chatDefault: selected.chatDefault } : null)
+    onSelect(selected ? { id: selected.value, _id: selected.value, name: selected.label, chatDefault: selected.chatDefault, whatsappDefault: selected.whatsappDefault } : null)
   }
 
   return (
