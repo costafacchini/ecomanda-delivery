@@ -33,7 +33,7 @@ function MainPanel({
 }: MainPanelProps) {
   return (
     <>
-      <div className='row'>
+      <div className='row mb-3'>
         <div className='form-group col-8'>
           <label htmlFor='name'>Nome<Required /></label>
           <FieldWithError
@@ -62,7 +62,7 @@ function MainPanel({
         </div>
       </div>
 
-      <div className='row'>
+      <div className='row mb-3'>
         <div className='form-group col-2'>
           <label htmlFor='kind'>Tipo<Required /></label>
           <select
@@ -72,7 +72,7 @@ function MainPanel({
             onChange={handleChange}
             onBlur={handleBlur}
           >
-            <option value=''></option>
+            <option value=''>Selecione</option>
             <option value='company'>Jurídica</option>
             <option value='individual'>Física</option>
           </select>
@@ -91,7 +91,7 @@ function MainPanel({
         </div>
       </div>
 
-      <div className='row'>
+      <div className='row mb-3'>
         <div className='form-group col-8'>
           <label htmlFor='email'>E-mail<Required /></label>
           <FieldWithError
@@ -105,8 +105,8 @@ function MainPanel({
         </div>
       </div>
 
-      <div className='row'>
-        <div className='form-group col-5'>
+      <div className='row mb-3'>
+        <div className='form-group col-8'>
           <label htmlFor='licenseKind'>Licença<Required /></label>
           <select
             value={values.licenseKind}
@@ -122,7 +122,7 @@ function MainPanel({
         </div>
       </div>
 
-      <div className='row mt-3'>
+      <div className='row mb-3'>
         <div className='form-group col-8'>
           <label htmlFor='phone'>Telefone<Required /></label>
           <FieldWithError
@@ -136,7 +136,7 @@ function MainPanel({
         </div>
       </div>
 
-      <div className='row'>
+      <div className='row mb-3'>
         <div className='form-group col-8'>
           <label htmlFor='apiToken'>API token</label>
           <FieldWithError
@@ -157,7 +157,7 @@ function MainPanel({
         </summary>
         <fieldset className='mt-2'>
           <legend className='visually-hidden'>URLs de webhook geradas pelo sistema</legend>
-          <div className='row'>
+          <div className='row mb-3'>
             <div className='form-group col-8'>
               <label htmlFor='urlChatWebhook'>URL para webhook de Chat</label>
               <FieldWithError
@@ -172,7 +172,7 @@ function MainPanel({
             </div>
           </div>
 
-          <div className='row'>
+          <div className='row mb-3'>
             <div className='form-group col-8'>
               <label htmlFor='urlChatbotWebhook'>URL para webhook de Chatbot</label>
               <FieldWithError
@@ -187,7 +187,7 @@ function MainPanel({
             </div>
           </div>
 
-          <div className='row'>
+          <div className='row mb-3'>
             <div className='form-group col-8'>
               <label htmlFor='urlChatbotTransfer'>URL de webhook para transferir do Chatbot para o Chat</label>
               <FieldWithError
@@ -202,7 +202,7 @@ function MainPanel({
             </div>
           </div>
 
-          <div className='row'>
+          <div className='row mb-3'>
             <div className='form-group col-8'>
               <label htmlFor='urlWhatsappWebhook'>URL para webhook de WhatsApp</label>
               <FieldWithError

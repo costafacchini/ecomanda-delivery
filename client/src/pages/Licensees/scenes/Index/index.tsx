@@ -16,6 +16,12 @@ interface LicenseesIndexProps {
   currentUser?: IUser | null
 }
 
+const LICENSE_KIND_LABELS: Record<string, string> = {
+  demo: 'Demonstração',
+  free: 'Grátis',
+  paid: 'Pago',
+}
+
 function LicenseesIndex({ currentUser }: LicenseesIndexProps) {
   const { filters, setFilters, cache } = useSimpleCrud()
   const { addPage } = cache
@@ -65,7 +71,7 @@ function LicenseesIndex({ currentUser }: LicenseesIndexProps) {
       <div className='row'>
         <div className='d-flex justify-content-between pb-2'>
           <div className=''>
-            <h3 className='pr-3'>Licenciados</h3>
+            <h3 className='pe-3'>Licenciados</h3>
           </div>
           <div className=''>
             <Link to='/licensees/new' className='btn btn-primary'>
@@ -125,7 +131,7 @@ function LicenseesIndex({ currentUser }: LicenseesIndexProps) {
               <tr key={licensee.id}>
                 <td>{licensee.name}</td>
                 <td>{licensee.email}</td>
-                <td>{licensee.licenseKind}</td>
+                <td>{LICENSE_KIND_LABELS[licensee.licenseKind] ?? licensee.licenseKind}</td>
                 <td>{licensee.phone}</td>
                 <td>{licensee.apiToken}</td>
                 <td>

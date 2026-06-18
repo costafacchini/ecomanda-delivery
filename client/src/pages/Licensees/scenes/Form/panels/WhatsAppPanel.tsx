@@ -62,7 +62,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
     <>
       <div className='row mb-3'>
         <div className='form-group col-8'>
-          <label htmlFor='whatsappDefault'>Whatsapp padrão</label>
+          <label htmlFor='whatsappDefault'>WhatsApp padrão</label>
           <select
             value={values.whatsappDefault}
             className='form-select'
@@ -85,7 +85,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
           <>
             <div className='row mb-3'>
               <div className='form-group col-8'>
-                <label htmlFor='whatsappToken'>Token do whatsapp</label>
+                <label htmlFor='whatsappToken'>Token do WhatsApp</label>
                 <FieldWithError
                   id='whatsappToken'
                   name='whatsappToken'
@@ -99,7 +99,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
 
             <div className='row mb-3'>
               <div className='form-group col-8'>
-                <label htmlFor='whatsappUrl'>Url do whatsapp</label>
+                <label htmlFor='whatsappUrl'>URL do WhatsApp</label>
                 <FieldWithError
                   id='whatsappUrl'
                   name='whatsappUrl'

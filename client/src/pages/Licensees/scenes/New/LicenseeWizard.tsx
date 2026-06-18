@@ -105,19 +105,19 @@ function Required() {
 function IdentityStep({ values, errors, touched, handleChange, handleBlur }: IdentityStepProps) {
   return (
     <>
-      <div className='row'>
+      <div className='row mb-3'>
         <div className='form-group col-8'>
           <label htmlFor='name'>Nome<Required /></label>
           <FieldWithError id='name' type='text' name='name'
             value={values.name} onChange={handleChange} onBlur={handleBlur} />
         </div>
       </div>
-      <div className='row'>
+      <div className='row mb-3'>
         <div className='form-group col-2'>
           <label htmlFor='kind'>Tipo<Required /></label>
           <select value={values.kind} className='form-select' id='kind'
             onChange={handleChange} onBlur={handleBlur}>
-            <option value=''></option>
+            <option value=''>Selecione</option>
             <option value='company'>Jurídica</option>
             <option value='individual'>Física</option>
           </select>
@@ -128,15 +128,15 @@ function IdentityStep({ values, errors, touched, handleChange, handleBlur }: Ide
             value={values.document} onChange={handleChange} onBlur={handleBlur} />
         </div>
       </div>
-      <div className='row'>
+      <div className='row mb-3'>
         <div className='form-group col-8'>
           <label htmlFor='email'>E-mail<Required /></label>
           <FieldWithError id='email' name='email' type='text'
             value={values.email} onChange={handleChange} onBlur={handleBlur} />
         </div>
       </div>
-      <div className='row'>
-        <div className='form-group col-5'>
+      <div className='row mb-3'>
+        <div className='form-group col-8'>
           <label htmlFor='licenseKind'>Licença<Required /></label>
           <select value={values.licenseKind} className='form-select' id='licenseKind'
             onChange={handleChange} onBlur={handleBlur}>
@@ -146,7 +146,7 @@ function IdentityStep({ values, errors, touched, handleChange, handleBlur }: Ide
           </select>
         </div>
       </div>
-      <div className='row mt-3'>
+      <div className='row mb-3'>
         <div className='form-group col-8'>
           <label htmlFor='phone'>Telefone<Required /></label>
           <FieldWithError id='phone' name='phone' type='text'
