@@ -237,6 +237,7 @@ function LicenseeWizard({ onSubmit, errors: backendErrors }: LicenseeWizardProps
 
   return (
     <Formik initialValues={licenseeInitialValues} validationSchema={Yup.object()} onSubmit={(values) => {
+        if (currentStep !== totalSteps - 1) return
         const cleaned = { ...values }
         if (!useChat) {
           cleaned.chatDefault = ''
@@ -310,7 +311,7 @@ function LicenseeWizard({ onSubmit, errors: backendErrors }: LicenseeWizardProps
               <>
                 <YesNoGate
                   label='Deseja integrar com uma Plataforma de ChatBot?'
-                  isYes={formik.values.useChatbot || null}
+                  isYes={typeof formik.values.useChatbot === 'boolean' ? formik.values.useChatbot : null}
                   onChange={(val: boolean) => formik.setFieldValue('useChatbot', val)}
                 />
                 {formik.values.useChatbot && (
