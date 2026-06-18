@@ -1,11 +1,12 @@
-let _io: any = null
+import { Emitter } from '@socket.io/redis-emitter'
+import { redisConnection } from '../../config/redis'
 
-const setIo = (io: any) => {
-  _io = io
-}
+// Dedicated connection — subscribe mode blocks the shared BullMQ connection
+const emitClient = redisConnection.duplicate()
+const emitter = new Emitter(emitClient)
 
 const emitToLicensee = (licenseeId: any, event: string, data: any) => {
-  _io?.to(`licensee:${licenseeId.toString()}`).emit(event, data)
+  emitter.to(`licensee:${licenseeId.toString()}`).emit(event, data)
 }
 
-export { setIo, emitToLicensee }
+export { emitToLicensee }

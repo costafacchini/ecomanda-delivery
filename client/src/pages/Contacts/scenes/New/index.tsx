@@ -18,7 +18,7 @@ function ContactNew({ currentUser }: ContactNewProps) {
   return (
     <div className='row'>
       <div className='col'>
-        <h3>Contato criando</h3>
+        <h3>Novo Contato</h3>
         <Form errors={errors} currentUser={currentUser} activeLicensee={activeLicensee} onSubmit={async (values) => {
           if (!values.licensee) {
             if (currentUser?.role !== 'super') {

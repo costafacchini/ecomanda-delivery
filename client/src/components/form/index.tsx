@@ -10,6 +10,7 @@ interface FieldWithErrorProps {
   className?: string
   autoComplete?: string
   disabled?: boolean
+  readOnly?: boolean
   placeholder?: string
 }
 

@@ -14,13 +14,14 @@ export interface IMessage {
   id: string
   kind: 'text' | 'file' | 'location' | 'interactive' | 'cart' | string
   destination: 'to-chatbot' | 'to-chat' | 'to-messenger' | 'to-transfer' | string
-  text: string
-  url: string
-  fileName: string
+  text: string | null
+  url: string | null
+  fileName: string | null
   latitude: number
   longitude: number
   sended: boolean
   error: string | null
+  ignored?: boolean
   cart: unknown
   createdAt: string
   contact: Pick<IContact, 'id' | 'name'> | null

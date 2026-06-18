@@ -31,12 +31,20 @@ function LicenseeEdit({ currentUser }: LicenseeEditProps) {
     fetchLicensee()
   }, [licenseeId])
 
-  if (!licensee) return null
+  if (!licensee) {
+    return (
+      <div className='d-flex justify-content-center mt-5'>
+        <div className='spinner-border text-primary' role='status'>
+          <span className='visually-hidden'>Carregando...</span>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className='row'>
       <div className='col'>
-        <h3>Licenciado editando</h3>
+        <h3>Editando: {licensee.name}</h3>
         <Form
           initialValues={licensee}
           errors={errors}

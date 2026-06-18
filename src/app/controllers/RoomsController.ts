@@ -23,6 +23,7 @@ class RoomsController {
     this.index = this.index.bind(this)
     this.create = this.create.bind(this)
     this.messages = this.messages.bind(this)
+    this.closeRoom = this.closeRoom.bind(this)
   }
 
   async _resolveUser(req: any) {
@@ -108,7 +109,8 @@ class RoomsController {
         return res.status(200).json({ room: existingRoom })
       }
 
-      const room = await this.roomRepository.create({ contact: contact._id, status: 'pending' })
+      await this.roomRepository.create({ contact: contact._id, status: 'pending' })
+      const room = await this.roomRepository.findOpenForContact(contact._id)
       return res.status(201).json({ room })
     } catch (err: any) {
       return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
@@ -148,6 +150,34 @@ class RoomsController {
       const pageMessages = hasMore ? messages.slice(0, limit) : messages
 
       return res.status(200).json({ messages: pageMessages, total, page, hasMore })
+    } catch (err: any) {
+      return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
+    }
+  }
+
+  async closeRoom(req: any, res: any) {
+    try {
+      const user = await this._resolveUser(req)
+      if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
+
+      const room = await this.roomRepository.model().findById(req.params.roomId)
+      if (!room) return res.status(404).json({ errors: { message: 'Room not found' } })
+
+      if (user.role !== 'super') {
+        const userLicenseeId = this._resolveLicenseeId(user)?.toString()
+        const contact = await this.contactRepository.findFirst({ _id: room.contact })
+        const roomLicenseeId = contact?.licensee?._id?.toString() ?? contact?.licensee?.toString() ?? null
+        if (userLicenseeId !== roomLicenseeId) {
+          return res.status(403).json({ errors: { message: 'Forbidden' } })
+        }
+      }
+
+      if (room.closed) return res.status(200).json({ message: 'Already closed' })
+
+      room.status = 'closed'
+      await room.save()
+
+      return res.status(200).json({ message: 'Room closed' })
     } catch (err: any) {
       return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }

@@ -12,4 +12,8 @@ function resendMessage(id: string) {
   return api().post(`resources/messages/${id}/resend`, { headers: { 'x-access-token': getToken() } })
 }
 
-export { getMessages, resendMessage }
+function ignoreMessage(id: string) {
+  return api().post(`resources/messages/${id}/ignore`, { headers: { 'x-access-token': getToken() } })
+}
+
+export { getMessages, resendMessage, ignoreMessage }

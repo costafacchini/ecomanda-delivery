@@ -14,8 +14,8 @@ interface ChatbotPanelProps {
 function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }: ChatbotPanelProps) {
   return (
     <>
-      <div className='row'>
-        <div className='form-group col-5'>
+      <div className='row mb-3'>
+        <div className='form-group col-8'>
           <label htmlFor='chatbotDefault'>Chatbot padrão</label>
           <select
             value={values.chatbotDefault}
@@ -24,14 +24,15 @@ function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }: Cha
             onChange={handleChange}
             onBlur={handleBlur}
           >
-            <option value=''></option>
+            <option value=''>Nenhum</option>
             <option value='landbot'>Landbot</option>
           </select>
         </div>
       </div>
 
-      <div className='row'>
-        <div className='form-group col-5'>
+      {values.chatbotDefault !== '' && <>
+      <div className='row mb-3'>
+        <div className='form-group col-8'>
           <label htmlFor='chatbotUrl'>URL do chatbot</label>
           <FieldWithError
             id='chatbotUrl'
@@ -44,8 +45,8 @@ function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }: Cha
         </div>
       </div>
 
-      <div className='row'>
-        <div className='form-group col-5'>
+      <div className='row mb-3'>
+        <div className='form-group col-8'>
           <label htmlFor='chatbotAuthorizationToken'>Token do chatbot</label>
           <FieldWithError
             id='chatbotAuthorizationToken'
@@ -58,8 +59,8 @@ function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }: Cha
         </div>
       </div>
 
-      <div className='row'>
-        <div className='form-group col-5'>
+      <div className='row mb-3'>
+        <div className='form-group col-8'>
           <label htmlFor='chatbotApiToken'>Token de acesso via API do chatbot</label>
           <FieldWithError
             id='chatbotApiToken'
@@ -72,8 +73,8 @@ function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }: Cha
         </div>
       </div>
 
-      <div className='row'>
-        <div className='form-group col-5'>
+      <div className='row mb-3'>
+        <div className='form-group col-8'>
           <label htmlFor='messageOnResetChatbot'>Mensagem de encerramento de chatbot abandonado</label>
           <textarea
             className='form-control'
@@ -87,8 +88,8 @@ function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }: Cha
         </div>
       </div>
 
-      <div className='row'>
-        <div className='form-group col-5'>
+      <div className='row mb-3'>
+        <div className='form-group col-8'>
           <label htmlFor='messageOnCloseChat'>Mensagem de encerramento de chat</label>
           <textarea
             className='form-control'
@@ -101,6 +102,7 @@ function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }: Cha
           />
         </div>
       </div>
+      </>}
     </>
   )
 }

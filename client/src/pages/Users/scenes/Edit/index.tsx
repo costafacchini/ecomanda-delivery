@@ -16,21 +16,22 @@ interface UserEditProps {
 
 function UserEdit({ currentUser }: UserEditProps) {
   const navigate = useNavigate()
-  let { id } = useParams()
+  const { id } = useParams()
   const [errors, setErrors] = useState<IFormError[] | null>(null)
   const [user, setUser] = useState<IUser | null>(null)
+  const [saving, setSaving] = useState(false)
 
   const userId = id
 
   useEffect(() => {
-    let abortController = new AbortController()
+    const abortController = new AbortController()
 
     async function fetchUser() {
       try {
         const { data: user } = await getUser(userId!)
         setUser(user as IUser)
-      } catch (error: any) {
-        if (error.name === 'AbortError') {
+      } catch (error: unknown) {
+        if (error instanceof Error && error.name === 'AbortError') {
           // Handling error thrown by aborting request
         }
       }
@@ -42,32 +43,47 @@ function UserEdit({ currentUser }: UserEditProps) {
     }
   }, [userId])
 
-  if (!user) return null
+  if (!user) {
+    return (
+      <div className='d-flex justify-content-center mt-5'>
+        <div className='spinner-border text-primary' role='status'>
+          <span className='visually-hidden'>Carregando...</span>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className='row'>
       <div className='col'>
-        <h3>Usuário editando</h3>
+        <h3>Editando: {user.name}</h3>
         <Form
           initialValues={user as Partial<IUserFormValues>}
           currentUser={currentUser}
           errors={errors}
+          isNew={false}
+          saving={saving}
           onSubmit={async (values: IUserFormValues) => {
             if (['admin', 'super'].includes(values.role)) {
               delete values.licensee
             } else if (currentUser && currentUser.role !== 'super' && !values.licensee) {
               values.licensee = currentUser.licensee as string
             }
-            const response = await updateUser({ ...values, id: user.id } as IUser)
+            setSaving(true)
+            try {
+              const response = await updateUser({ ...values, id: user.id } as IUser)
 
-            if (response.status === 200) {
-              toast.success('Usuário atualizado com sucesso!');
-              navigate('/users')
-              setErrors(null)
-            } else {
-              const data = response.data as { errors: IFormError[] }
-              setErrors(data.errors)
-              toast.error('Ops! Não foi possível atualizar o usuário.');
+              if (response.status === 200) {
+                toast.success('Usuário atualizado com sucesso!');
+                navigate('/users')
+                setErrors(null)
+              } else {
+                const data = response.data as { errors: IFormError[] }
+                setErrors(data.errors)
+                toast.error('Ops! Não foi possível atualizar o usuário.');
+              }
+            } finally {
+              setSaving(false)
             }
           }}
         />

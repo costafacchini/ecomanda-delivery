@@ -1,11 +1,30 @@
 import React, { useState } from 'react'
 import SelectLicenseesWithFilter from '../SelectLicenseesWithFilter'
+import type { SingleValue } from 'react-select'
 
-export default function SelectLicenseeModal({ onSelect, required = true }: any) {
-  const [selected, setSelected] = useState<any>(null)
+interface LicenseeOption {
+  value: string
+  label: string
+  chatDefault?: string
+}
+
+interface SelectedLicensee {
+  id: string
+  _id: string
+  name: string
+  chatDefault?: string
+}
+
+interface SelectLicenseeModalProps {
+  onSelect: (licensee: SelectedLicensee | null) => void
+  required?: boolean
+}
+
+export default function SelectLicenseeModal({ onSelect, required = true }: SelectLicenseeModalProps) {
+  const [selected, setSelected] = useState<SingleValue<LicenseeOption>>(null)
 
   function handleConfirm() {
-    onSelect(selected ? { id: selected.value, _id: selected.value, name: selected.label } : null)
+    onSelect(selected ? { id: selected.value, _id: selected.value, name: selected.label, chatDefault: selected.chatDefault } : null)
   }
 
   return (

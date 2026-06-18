@@ -16,6 +16,7 @@ export interface IContact {
   ud: string
   delivery_tax: number
   plugin_cart_id: string
+  type?: string
 }
 
 export interface IContactFilters {

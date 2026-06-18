@@ -6,6 +6,7 @@ import CartDescription from './components/cart'
 import styles from './styles.module.scss'
 import moment from 'moment-timezone'
 import isEmpty from 'lodash/isEmpty'
+import { toast } from 'react-toastify'
 import { useApp } from '../../../../contexts/App'
 import type { IMessage, IMessageFilters } from '../../../../types'
 import type { IUser } from '../../../../types'
@@ -16,9 +17,23 @@ interface MessagesIndexProps {
 
 type RetryStatus = 'idle' | 'loading' | 'success' | 'error'
 
-function MessagesIndex({ currentUser }: MessagesIndexProps) {
-  const { activeLicensee } = useApp()
-  const [filters, setFilters] = useState<IMessageFilters>({
+const KIND_LABELS: Record<string, string> = {
+  text: 'Texto',
+  file: 'Arquivo',
+  location: 'Localização',
+  interactive: 'Interativa',
+  cart: 'Carrinho',
+}
+
+const DESTINATION_LABELS: Record<string, string> = {
+  'to-chatbot': 'Chatbot',
+  'to-chat': 'Chat',
+  'to-messenger': 'WhatsApp',
+  'to-transfer': 'Transferência',
+}
+
+function getInitialFilters(): IMessageFilters {
+  return {
     startDate: moment().subtract(3, 'hours').format('YYYY-MM-DDTHH:mm'),
     endDate: moment().format('YYYY-MM-DDTHH:mm'),
     licensee: '',
@@ -27,11 +42,20 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
     kind: '',
     destination: '',
     page: 1
-  })
+  }
+}
+
+function MessagesIndex({ currentUser }: MessagesIndexProps) {
+  const { activeLicensee } = useApp()
+  const [filters, setFilters] = useState<IMessageFilters>(getInitialFilters)
 
   const [records, setRecords] = useState<IMessage[]>([])
   const [lastPage, setLastPage] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [hasSearched, setHasSearched] = useState(false)
   const [retryState, setRetryState] = useState<Record<string, RetryStatus>>({})
+
+  const showLicenseeFilter = currentUser?.role === 'super' && !activeLicensee
 
   function handleRetry(id: string) {
     setRetryState((prev) => ({ ...prev, [id]: 'loading' }))
@@ -57,15 +81,24 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
     async (changedFilters: Partial<IMessageFilters>) => {
       const newFilters: IMessageFilters = { ...filters, ...changedFilters }
       setFilters(newFilters)
+      setLoading(true)
 
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
-      const apiFilters: IMessageFilters = {
-        ...newFilters,
-        ...(newFilters.startDate && { startDate: moment.tz(newFilters.startDate, tz).utc().toISOString() }),
-        ...(newFilters.endDate && { endDate: moment.tz(newFilters.endDate, tz).utc().toISOString() }),
+      try {
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+        const apiFilters: IMessageFilters = {
+          ...newFilters,
+          ...(newFilters.startDate && { startDate: moment.tz(newFilters.startDate, tz).utc().toISOString() }),
+          ...(newFilters.endDate && { endDate: moment.tz(newFilters.endDate, tz).utc().toISOString() }),
+        }
+        const { data: messages } = await getMessages(apiFilters)
+        addPage(messages, newFilters)
+        setHasSearched(true)
+      } catch (error: unknown) {
+        if (error instanceof Error && error.name === 'AbortError') return
+        toast.error('Erro ao carregar mensagens. Tente novamente.')
+      } finally {
+        setLoading(false)
       }
-      const { data: messages } = await getMessages(apiFilters)
-      addPage(messages, newFilters)
     },
     [filters, setFilters, addPage]
   )
@@ -98,8 +131,20 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
     setFilters({ ...newFilters, onlyErrors: target.checked })
   }
 
+  function handleReset() {
+    setFilters(getInitialFilters())
+    setRecords([])
+    setLastPage(false)
+    setHasSearched(false)
+  }
+
   function handleSubmitSearch(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
+
+    if (filters.startDate && filters.endDate && filters.startDate > filters.endDate) {
+      toast.error('A data inicial não pode ser posterior à data final.')
+      return
+    }
 
     const abortController = new AbortController()
 
@@ -120,11 +165,11 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
     <>
       <div className='d-flex justify-content-between pb-2'>
         <div className=''>
-          <h3 className='pr-3'>Mensagens</h3>
+          <h3 className='pe-3'>Mensagens</h3>
         </div>
       </div>
 
-      <div className='row'>
+      <div className='row mb-3'>
         <div className='col-3'>
           <div className='form-group'>
             <label htmlFor='startDate'>Data inicial</label>
@@ -156,7 +201,7 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
         <div className='form-group col-3'>
           <label htmlFor='kind'>Tipo</label>
           <select value={filters.kind} name='kind' id='kind' className='form-select' onChange={handleChange}>
-            <option value=''></option>
+            <option value=''>Todos</option>
             <option value='text'>Texto</option>
             <option value='file'>Arquivo</option>
             <option value='location'>Localização</option>
@@ -174,17 +219,17 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
             className='form-select'
             onChange={handleChange}
           >
-            <option value=''></option>
+            <option value=''>Todos</option>
             <option value='to-chatbot'>Chatbot</option>
             <option value='to-chat'>Chat</option>
-            <option value='to-messenger'>Whatsapp</option>
+            <option value='to-messenger'>WhatsApp</option>
             <option value='to-transfer'>Transferência</option>
           </select>
         </div>
       </div>
 
-      <div className='row'>
-        {currentUser && currentUser.role === 'super' && !activeLicensee && (
+      <div className='row mb-3'>
+        {showLicenseeFilter && (
           <div className='col-6'>
             <div className='form-group'>
               <label htmlFor='licensee' id='licensee'>
@@ -205,7 +250,7 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
         )}
         {/* TODO: sector filter for admin — deferred */}
 
-        <div className='col-6'>
+        <div className={showLicenseeFilter ? 'col-6' : 'col-12'}>
           <div className='form-group'>
             <label htmlFor='contact' id='contact'>
               Contato
@@ -224,7 +269,7 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
           </div>
         </div>
 
-        <div className='col-3 col-12 mt-3'>
+        <div className='col-12 mt-3'>
           <div className='form-check'>
             <input
               checked={filters.onlyErrors}
@@ -241,16 +286,34 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
         </div>
       </div>
 
-      <div className='row justify-content-end'>
-        <div className='col-1'>
-          <button type='button' className='btn btn-primary' onClick={handleSubmitSearch}>
-            Pesquisar
+      <div className='row justify-content-end mb-3'>
+        <div className='col-auto'>
+          <button
+            type='button'
+            className='btn btn-outline-secondary me-2'
+            onClick={handleReset}
+          >
+            Limpar filtros
+          </button>
+          <button
+            type='button'
+            className='btn btn-primary'
+            aria-label='Pesquisar mensagens'
+            onClick={handleSubmitSearch}
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <span className='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true' />
+                Pesquisando...
+              </>
+            ) : 'Pesquisar'}
           </button>
         </div>
       </div>
 
       <div className='row mt-3'>
-        <table className={`${styles.stickyHeader} table table-striped table-hover table table-bordered`}>
+        <table className={`${styles.stickyHeader} table table-striped table-hover table-bordered`}>
           <thead>
             <tr>
               <th scope='col'>Contato</th>
@@ -258,22 +321,37 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
               <th scope='col'>Tipo</th>
               <th scope='col'>Destino</th>
               <th scope='col'>Data</th>
-              <th scope='col'>Enviada?</th>
+              <th scope='col'>Enviada</th>
             </tr>
           </thead>
           <tbody>
-            {records.map((message) => (
+            {loading ? (
+              <tr>
+                <td colSpan={6} className='text-center text-muted py-4'>
+                  <span className='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true' />
+                  Carregando...
+                </td>
+              </tr>
+            ) : records.length === 0 ? (
+              <tr>
+                <td colSpan={6} className='text-center text-muted py-4'>
+                  {hasSearched
+                    ? 'Nenhuma mensagem encontrada.'
+                    : 'Aplique os filtros e clique em Pesquisar para ver as mensagens.'}
+                </td>
+              </tr>
+            ) : records.map((message) => (
               <tr key={message.id}>
                 <td>
                   <div>
                     {message.contact?.name}
-                    {message.sector && <span className="badge bg-secondary ms-1">{message.sector.name}</span>}
+                    {message.sector && <span className='badge bg-secondary ms-1'>{message.sector.name}</span>}
                   </div>
                   {message.error && (
                     <div>
                       <details className='mt-1'>
                         <summary className='text-muted'>Visualizar erro</summary>
-                        <p>{message.error}</p>
+                        <p className='mb-0'>{message.error}</p>
                       </details>
                       <div className='mt-1'>
                         <button
@@ -307,11 +385,12 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
                       {` (${message.latitude}, ${message.longitude})`}
                     </>
                   )}
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   {message.kind === 'cart' && Boolean(message.cart) && <CartDescription cart={message.cart as any} />}
-                  {message.kind !== 'location' && message.kind !== 'cart' && <p>{message.text}</p>}
+                  {message.kind !== 'location' && message.kind !== 'cart' && <p className='mb-0'>{message.text}</p>}
                 </td>
                 <td>
-                  <div>{message.kind}</div>
+                  <div>{KIND_LABELS[message.kind] ?? message.kind}</div>
                   <div>
                     {message.url && (
                       <a href={message.url} download target='_blank' rel='noreferrer'>
@@ -325,7 +404,7 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
                     )}
                   </div>
                 </td>
-                <td>{message.destination}</td>
+                <td>{DESTINATION_LABELS[message.destination] ?? message.destination}</td>
                 <td>{moment(message.createdAt).tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format('DD/MM/YYYY HH:mm:ss')}</td>
                 <td>{message.sended ? 'Sim' : 'Não'}</td>
               </tr>
@@ -334,17 +413,23 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
         </table>
         <section>
           <div className='container'>
-            {!lastPage && (
+            {!lastPage && hasSearched && (
               <div className='row'>
                 <div className='col text-center mt-3'>
                   <button
                     type='button'
                     className='btn btn-outline-primary d-print-none'
+                    disabled={loading}
                     onClick={() => {
                       onFilter({ ...filters, page: (filters.page ?? 1) + 1 })
                     }}
                   >
-                    Carregar mais
+                    {loading ? (
+                      <>
+                        <span className='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true' />
+                        Carregando...
+                      </>
+                    ) : 'Carregar mais'}
                   </button>
                 </div>
               </div>

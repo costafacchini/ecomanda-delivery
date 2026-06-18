@@ -40,12 +40,20 @@ function ContactEdit({ currentUser }: ContactEditProps) {
     }
   }, [contactId])
 
-  if (!contact) return null
+  if (!contact) {
+    return (
+      <div className='d-flex justify-content-center mt-5'>
+        <div className='spinner-border text-primary' role='status'>
+          <span className='visually-hidden'>Carregando...</span>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className='row'>
       <div className='col'>
-        <h3>Contato editando</h3>
+        <h3>Editando: {contact.name}</h3>
         <Form
           initialValues={contact}
           currentUser={currentUser}

@@ -1,8 +1,9 @@
 import React from 'react'
 import { logout } from '../../services/auth'
 import { useApp } from '../../contexts/App'
+import type { IUser } from '../../types'
 
-export default function Navbar({ currentUser }: any) {
+export default function Navbar({ currentUser }: { currentUser?: IUser | null }) {
   const { resetLicenseeModal, activeLicensee } = useApp()
 
   const effectiveLicensee = activeLicensee ?? (typeof currentUser?.licensee === 'object' ? currentUser.licensee : null)
@@ -49,7 +50,7 @@ export default function Navbar({ currentUser }: any) {
                     Contatos
                   </a>
 
-                  {currentUser && ['super', 'admin', 'supervisor'].includes(currentUser.role) && currentUser.licensee?.useSectors && (
+                  {currentUser && ['super', 'admin', 'supervisor'].includes(currentUser.role) && effectiveLicensee?.useSectors && (
                     <a className='dropdown-item' href='/#/sectors'>
                       Setores
                     </a>
@@ -83,7 +84,13 @@ export default function Navbar({ currentUser }: any) {
                 </li>
               )}
             </ul>
-            <div className='dropdown'>
+            <div className='d-flex align-items-center gap-3'>
+              {effectiveLicensee?.name && (
+                <span className='d-none d-lg-block text-white-50' style={{ fontSize: '0.85rem' }}>
+                  {effectiveLicensee.name}
+                </span>
+              )}
+              <div className='dropdown'>
               <button className='btn btn-primary dropdown-toggle' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
                 <i className='bi bi-person-circle'></i>{currentUser?.name ? ` ${currentUser.name}` : ''}
               </button>
@@ -101,6 +108,7 @@ export default function Navbar({ currentUser }: any) {
               </ul>
             </div>
           </div>
+        </div>
         </div>
       </nav>
   )
