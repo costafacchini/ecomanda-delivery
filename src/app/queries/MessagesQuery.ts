@@ -74,6 +74,7 @@ class MessagesQuery {
     if (this.sendedClause) {
       query.filterBy('sended', this.sendedClause)
       query.filterNotEqual('text', 'Chat encerrado pelo agente')
+      query.filterNotEqual('ignored', true)
     }
   }
 

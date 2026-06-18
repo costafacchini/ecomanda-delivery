@@ -78,6 +78,7 @@ export default function SuperOpenRoomsCard({ licensee }: { licensee?: string }) 
   }, [fetchRooms])
 
   function handleClose(roomId: string) {
+    if (!window.confirm('Fechar esta conversa? Esta ação não pode ser desfeita.')) return
     closeDashboardRoom(roomId)
       .then(() => setRooms((prev) => prev.filter((r) => r._id !== roomId)))
       .catch(() => setError('Erro ao fechar conversa.'))
@@ -86,7 +87,7 @@ export default function SuperOpenRoomsCard({ licensee }: { licensee?: string }) 
   return (
     <div className="card">
       <div className="card-header">Conversas Abertas</div>
-      <div ref={containerRef} className="card-body p-0" style={{ maxHeight: 480, overflowY: 'auto' }}>
+      <div ref={containerRef} className="card-body pb-0" style={{ maxHeight: 480, overflowY: 'auto' }}>
         {error && <p className="text-danger p-3 mb-0">{error}</p>}
         {rooms.length === 0 && !loading && !error && (
           <p className="text-muted p-3 mb-0">Nenhuma conversa aberta.</p>
@@ -117,6 +118,7 @@ export default function SuperOpenRoomsCard({ licensee }: { licensee?: string }) 
                     <button
                       type="button"
                       className="btn btn-sm btn-outline-danger"
+                      aria-label={`Fechar conversa de ${room.contact?.name || room.contact?.number || 'contato'}`}
                       onClick={() => handleClose(room._id)}
                     >
                       Fechar
@@ -128,7 +130,12 @@ export default function SuperOpenRoomsCard({ licensee }: { licensee?: string }) 
           </table>
         )}
         <div ref={sentinelRef} className="py-2 text-center text-muted small">
-          {loading && 'Carregando...'}
+          {loading && (
+            <>
+              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
+              Carregando...
+            </>
+          )}
           {!loading && !hasMore && rooms.length > 0 && 'Fim da lista.'}
         </div>
       </div>

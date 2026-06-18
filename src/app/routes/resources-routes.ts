@@ -204,6 +204,7 @@ router.post('/sectors/:id/baileys-sync', authorize('admin', 'super'), sectorsCon
 router.get('/messages', messagesController.index)
 router.post('/messages', messagesController.create)
 router.post('/messages/:id/resend', messagesController.resend)
+router.post('/messages/:id/ignore', messagesController.ignore)
 
 router.get('/dashboard/licensees', dashboardController.licensees)
 router.get('/dashboard/message-volume', dashboardController.messageVolume)

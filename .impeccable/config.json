@@ -74,6 +74,18 @@
         "value": "rgba(108, 117, 125, 0.12)",
         "reason": "Intentional: Neutral Muted alpha for closed badge background",
         "createdAt": "2026-06-17T23:15:20.341Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(0,0,0,0.5)",
+        "reason": "Standard Bootstrap modal backdrop overlay, not a brand color",
+        "createdAt": "2026-06-18T14:32:52.159Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#ffffff",
+        "reason": "White text on colored elements — matches DESIGN.md components textColor usage on buttons, badges, and chat bubbles",
+        "createdAt": "2026-06-18T15:32:33.052Z"
       }
     ]
   }

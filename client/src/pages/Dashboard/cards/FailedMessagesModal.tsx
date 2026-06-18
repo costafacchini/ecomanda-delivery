@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import moment from 'moment-timezone'
-import { getMessages, resendMessage } from '../../../services/message'
+import { getMessages, resendMessage, ignoreMessage } from '../../../services/message'
 
 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
 
@@ -21,16 +21,19 @@ interface FailedMessagesModalProps {
   isOpen: boolean
   onClose: () => void
   onResendSuccess: () => void
+  onIgnoreSuccess: () => void
   startDate?: string
   endDate?: string
   licensee?: string
 }
 
-export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, startDate, endDate, licensee }: FailedMessagesModalProps) {
+export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, onIgnoreSuccess, startDate, endDate, licensee }: FailedMessagesModalProps) {
   const [messages, setMessages] = useState<IFailedMessage[]>([])
   const [loading, setLoading] = useState(false)
   const [fetchError, setFetchError] = useState<string | null>(null)
   const [rowErrors, setRowErrors] = useState<Record<string, string>>({})
+  const [resendingIds, setResendingIds] = useState<Set<string>>(new Set())
+  const [ignoringIds, setIgnoringIds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     if (!isOpen) return
@@ -51,9 +54,11 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, 
   }, [isOpen, startDate, endDate, licensee])
 
   function handleResend(id: string) {
+    setResendingIds((prev) => new Set(prev).add(id))
     resendMessage(id)
       .then(() => {
         setMessages((prev) => prev.filter((m) => m._id !== id))
+        setResendingIds((prev) => { const next = new Set(prev); next.delete(id); return next })
         setRowErrors((prev) => {
           const next = { ...prev }
           delete next[id]
@@ -62,7 +67,27 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, 
         onResendSuccess()
       })
       .catch(() => {
+        setResendingIds((prev) => { const next = new Set(prev); next.delete(id); return next })
         setRowErrors((prev) => ({ ...prev, [id]: 'Erro ao reenviar.' }))
+      })
+  }
+
+  function handleIgnore(id: string) {
+    setIgnoringIds((prev) => new Set(prev).add(id))
+    ignoreMessage(id)
+      .then(() => {
+        setMessages((prev) => prev.filter((m) => m._id !== id))
+        setIgnoringIds((prev) => { const next = new Set(prev); next.delete(id); return next })
+        setRowErrors((prev) => {
+          const next = { ...prev }
+          delete next[id]
+          return next
+        })
+        onIgnoreSuccess()
+      })
+      .catch(() => {
+        setIgnoringIds((prev) => { const next = new Set(prev); next.delete(id); return next })
+        setRowErrors((prev) => ({ ...prev, [id]: 'Erro ao ignorar.' }))
       })
   }
 
@@ -83,7 +108,12 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, 
             <button type="button" className="btn-close" onClick={onClose} aria-label="Fechar" />
           </div>
           <div className="modal-body">
-            {loading && <p>Carregando...</p>}
+            {loading && (
+              <p className="text-muted">
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
+                Carregando...
+              </p>
+            )}
             {fetchError && <p className="text-danger">{fetchError}</p>}
             {!loading && !fetchError && messages.length === 0 && (
               <p className="text-muted">Nenhuma mensagem com falha.</p>
@@ -112,10 +142,29 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, 
                         )}
                         <button
                           type="button"
-                          className="btn btn-sm btn-outline-primary"
+                          className="btn btn-sm btn-outline-primary me-1"
+                          disabled={resendingIds.has(msg._id) || ignoringIds.has(msg._id)}
                           onClick={() => handleResend(msg._id)}
                         >
-                          Reenviar
+                          {resendingIds.has(msg._id) ? (
+                            <>
+                              <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" />
+                              Reenviando...
+                            </>
+                          ) : 'Reenviar'}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-secondary"
+                          disabled={resendingIds.has(msg._id) || ignoringIds.has(msg._id)}
+                          onClick={() => handleIgnore(msg._id)}
+                        >
+                          {ignoringIds.has(msg._id) ? (
+                            <>
+                              <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" />
+                              Ignorando...
+                            </>
+                          ) : 'Ignorar'}
                         </button>
                       </td>
                     </tr>

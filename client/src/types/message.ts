@@ -21,6 +21,7 @@ export interface IMessage {
   longitude: number
   sended: boolean
   error: string | null
+  ignored?: boolean
   cart: unknown
   createdAt: string
   contact: Pick<IContact, 'id' | 'name'> | null
