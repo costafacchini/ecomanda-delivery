@@ -1,8 +1,9 @@
 import React from 'react'
 import { logout } from '../../services/auth'
 import { useApp } from '../../contexts/App'
+import type { IUser } from '../../types'
 
-export default function Navbar({ currentUser }: any) {
+export default function Navbar({ currentUser }: { currentUser?: IUser | null }) {
   const { resetLicenseeModal, activeLicensee } = useApp()
 
   const effectiveLicensee = activeLicensee ?? (typeof currentUser?.licensee === 'object' ? currentUser.licensee : null)
@@ -49,7 +50,7 @@ export default function Navbar({ currentUser }: any) {
                     Contatos
                   </a>
 
-                  {currentUser && ['super', 'admin', 'supervisor'].includes(currentUser.role) && currentUser.licensee?.useSectors && (
+                  {currentUser && ['super', 'admin', 'supervisor'].includes(currentUser.role) && effectiveLicensee?.useSectors && (
                     <a className='dropdown-item' href='/#/sectors'>
                       Setores
                     </a>

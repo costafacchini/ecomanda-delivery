@@ -87,18 +87,17 @@ function LicenseesIndex({ currentUser }: LicenseesIndexProps) {
                 placeholder='Digite a expressão'
                 onChange={changeExpression}
               />
-              <div className='input-group-append'>
-                <button
-                  className='btn btn-primary'
-                  title='Filtre pelo licenciado'
-                  onClick={() => {
-                    const newFilters: LicenseeFilters = { ...licenseeFilters, expression: expression, page: 1 }
-                    onFilter(newFilters)
-                  }}
-                >
-                  <i className='bi bi-search'></i>
-                </button>
-              </div>
+              <button
+                className='btn btn-primary'
+                title='Filtre pelo licenciado'
+                aria-label='Pesquisar licenciados'
+                onClick={() => {
+                  const newFilters: LicenseeFilters = { ...licenseeFilters, expression: expression, page: 1 }
+                  onFilter(newFilters)
+                }}
+              >
+                <i className='bi bi-search'></i>
+              </button>
             </div>
           </div>
         </div>
@@ -116,7 +115,13 @@ function LicenseesIndex({ currentUser }: LicenseesIndexProps) {
             </tr>
           </thead>
           <tbody>
-            {(cache.records as unknown as ILicensee[]).map((licensee) => (
+            {(cache.records as unknown as ILicensee[]).length === 0 ? (
+              <tr>
+                <td colSpan={6} className='text-center text-muted py-4'>
+                  Nenhum licenciado encontrado.
+                </td>
+              </tr>
+            ) : (cache.records as unknown as ILicensee[]).map((licensee) => (
               <tr key={licensee.id}>
                 <td>{licensee.name}</td>
                 <td>{licensee.email}</td>
@@ -124,7 +129,7 @@ function LicenseesIndex({ currentUser }: LicenseesIndexProps) {
                 <td>{licensee.phone}</td>
                 <td>{licensee.apiToken}</td>
                 <td>
-                  <Link to={`/licensees/${licensee.id}`}>
+                  <Link to={`/licensees/${licensee.id}`} aria-label={`Editar ${licensee.name}`}>
                     <i className='bi bi-pencil' />
                   </Link>
                 </td>
