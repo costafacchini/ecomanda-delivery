@@ -95,16 +95,20 @@ interface IdentityStepProps {
   handleBlur: React.FocusEventHandler<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
 }
 
+function Required() {
+  return <span className='text-danger ms-1' aria-hidden='true'>*</span>
+}
+
 function IdentityStep({ values, errors, touched, handleChange, handleBlur }: IdentityStepProps) {
   return (
     <>
       <div className='row'>
-        <div className='form-group col-5'>
-          <label htmlFor='name'>Nome</label>
+        <div className='form-group col-8'>
+          <label htmlFor='name'>Nome<Required /></label>
           <FieldWithError id='name' type='text' name='name'
             value={values.name} onChange={handleChange} onBlur={handleBlur} />
         </div>
-        <div className='form-group col-5'>
+        <div className='form-group col-4'>
           <div className='form-check mt-4'>
             <input checked={values.active} onChange={handleChange} onBlur={handleBlur}
               type='checkbox' className='form-check-input' id='active' />
@@ -114,7 +118,7 @@ function IdentityStep({ values, errors, touched, handleChange, handleBlur }: Ide
       </div>
       <div className='row'>
         <div className='form-group col-2'>
-          <label htmlFor='kind'>Tipo</label>
+          <label htmlFor='kind'>Tipo<Required /></label>
           <select value={values.kind} className='form-select' id='kind'
             onChange={handleChange} onBlur={handleBlur}>
             <option value=''></option>
@@ -122,22 +126,22 @@ function IdentityStep({ values, errors, touched, handleChange, handleBlur }: Ide
             <option value='individual'>Física</option>
           </select>
         </div>
-        <div className='form-group col-3'>
-          <label htmlFor='document'>Documento</label>
+        <div className='form-group col-4'>
+          <label htmlFor='document'>Documento<Required /></label>
           <FieldWithError id='document' name='document' type='text'
             value={values.document} onChange={handleChange} onBlur={handleBlur} />
         </div>
       </div>
       <div className='row'>
-        <div className='form-group col-5'>
-          <label htmlFor='email'>E-mail</label>
+        <div className='form-group col-8'>
+          <label htmlFor='email'>E-mail<Required /></label>
           <FieldWithError id='email' name='email' type='text'
             value={values.email} onChange={handleChange} onBlur={handleBlur} />
         </div>
       </div>
       <div className='row'>
         <div className='form-group col-5'>
-          <label htmlFor='licenseKind'>Licença</label>
+          <label htmlFor='licenseKind'>Licença<Required /></label>
           <select value={values.licenseKind} className='form-select' id='licenseKind'
             onChange={handleChange} onBlur={handleBlur}>
             <option value='demo'>Demonstração</option>
@@ -147,8 +151,8 @@ function IdentityStep({ values, errors, touched, handleChange, handleBlur }: Ide
         </div>
       </div>
       <div className='row mt-3'>
-        <div className='form-group col-5'>
-          <label htmlFor='phone'>Telefone</label>
+        <div className='form-group col-8'>
+          <label htmlFor='phone'>Telefone<Required /></label>
           <FieldWithError id='phone' name='phone' type='text'
             value={values.phone} onChange={handleChange} onBlur={handleBlur} />
         </div>
@@ -257,7 +261,8 @@ function LicenseeWizard({ onSubmit, errors: backendErrors }: LicenseeWizardProps
       {(formik) => (
         <form onSubmit={formik.handleSubmit}>
           <h3>Criar Licenciado</h3>
-          <p className='text-muted'>Passo {currentStep + 1} de {totalSteps} — {step.title}</p>
+          <p className='text-muted mb-1'>Passo {currentStep + 1} de {totalSteps} — {step.title}</p>
+          <p className='text-muted small mb-3'>Campos marcados com <span className='text-danger'>*</span> são obrigatórios.</p>
 
           <div className='progress mb-4' style={{ height: '6px' }}>
             <div

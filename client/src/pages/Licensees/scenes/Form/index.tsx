@@ -74,6 +74,7 @@ function LicenseeForm(props: LicenseeFormProps) {
       >
         {(props: FormikProps<LicenseeEditFormValues>) => (
           <form onSubmit={props.handleSubmit}>
+            <p className='text-muted small mb-3'>Campos marcados com <span className='text-danger'>*</span> são obrigatórios.</p>
             <ul className="nav nav-tabs mb-3">
               <li className="nav-item">
                 <button
@@ -165,7 +166,7 @@ function LicenseeForm(props: LicenseeFormProps) {
             )}
 
             <div className='row'>
-              <div className='col-5'>
+              <div className='col-8'>
                 <div className='mt-4 d-flex justify-content-between'>
                   <button onClick={() => navigate('/licensees')} className='btn btn-secondary' type='button'>
                     Voltar

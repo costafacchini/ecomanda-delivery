@@ -20,19 +20,22 @@ interface MainPanelProps {
   currentUser?: unknown
 }
 
+function Required() {
+  return <span className='text-danger ms-1' aria-hidden='true'>*</span>
+}
+
 function MainPanel({
   values,
   errors,
   touched,
   handleChange,
   handleBlur,
-  currentUser,
 }: MainPanelProps) {
   return (
     <>
       <div className='row'>
-        <div className='form-group col-5'>
-          <label htmlFor='name'>Nome</label>
+        <div className='form-group col-8'>
+          <label htmlFor='name'>Nome<Required /></label>
           <FieldWithError
             id='name'
             type='text'
@@ -42,7 +45,7 @@ function MainPanel({
             name='name'
           />
         </div>
-        <div className='form-group col-5'>
+        <div className='form-group col-4'>
           <div className='form-check mt-4'>
             <input
               checked={values.active}
@@ -61,7 +64,7 @@ function MainPanel({
 
       <div className='row'>
         <div className='form-group col-2'>
-          <label htmlFor='kind'>Tipo</label>
+          <label htmlFor='kind'>Tipo<Required /></label>
           <select
             value={values.kind}
             className='form-select'
@@ -76,7 +79,7 @@ function MainPanel({
         </div>
 
         <div className='form-group col-3'>
-          <label htmlFor='document'>Documento</label>
+          <label htmlFor='document'>Documento<Required /></label>
           <FieldWithError
             id='document'
             name='document'
@@ -89,8 +92,8 @@ function MainPanel({
       </div>
 
       <div className='row'>
-        <div className='form-group col-5'>
-          <label htmlFor='email'>E-email</label>
+        <div className='form-group col-8'>
+          <label htmlFor='email'>E-mail<Required /></label>
           <FieldWithError
             id='email'
             name='email'
@@ -104,7 +107,7 @@ function MainPanel({
 
       <div className='row'>
         <div className='form-group col-5'>
-          <label htmlFor='licenseKind'>Licença</label>
+          <label htmlFor='licenseKind'>Licença<Required /></label>
           <select
             value={values.licenseKind}
             className='form-select'
@@ -120,8 +123,8 @@ function MainPanel({
       </div>
 
       <div className='row mt-3'>
-        <div className='form-group col-5'>
-          <label htmlFor='phone'>Telefone</label>
+        <div className='form-group col-8'>
+          <label htmlFor='phone'>Telefone<Required /></label>
           <FieldWithError
             id='phone'
             type='text'
@@ -134,10 +137,10 @@ function MainPanel({
       </div>
 
       <div className='row'>
-        <div className='form-group col-5'>
+        <div className='form-group col-8'>
           <label htmlFor='apiToken'>API token</label>
           <FieldWithError
-            disabled
+            readOnly
             id='apiToken'
             type='text'
             onChange={handleChange}
@@ -148,67 +151,73 @@ function MainPanel({
         </div>
       </div>
 
-      <fieldset>
-        <div className='row'>
-          <div className='form-group col-5'>
-            <label htmlFor='urlChatWebhook'>URL para webhook de Chat</label>
-            <FieldWithError
-              disabled
-              id='urlChatWebhook'
-              type='text'
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.urlChatWebhook}
-              name='urlChatWebhook'
-            />
+      <details className='mt-2'>
+        <summary className='text-muted small' style={{ cursor: 'pointer', userSelect: 'none' }}>
+          URLs de webhook (somente leitura)
+        </summary>
+        <fieldset className='mt-2'>
+          <legend className='visually-hidden'>URLs de webhook geradas pelo sistema</legend>
+          <div className='row'>
+            <div className='form-group col-8'>
+              <label htmlFor='urlChatWebhook'>URL para webhook de Chat</label>
+              <FieldWithError
+                readOnly
+                id='urlChatWebhook'
+                type='text'
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.urlChatWebhook}
+                name='urlChatWebhook'
+              />
+            </div>
           </div>
-        </div>
 
-        <div className='row'>
-          <div className='form-group col-5'>
-            <label htmlFor='urlChatbotWebhook'>URL para webhook de Chatbot</label>
-            <FieldWithError
-              disabled
-              id='urlChatbotWebhook'
-              type='text'
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.urlChatbotWebhook}
-              name='urlChatbotWebhook'
-            />
+          <div className='row'>
+            <div className='form-group col-8'>
+              <label htmlFor='urlChatbotWebhook'>URL para webhook de Chatbot</label>
+              <FieldWithError
+                readOnly
+                id='urlChatbotWebhook'
+                type='text'
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.urlChatbotWebhook}
+                name='urlChatbotWebhook'
+              />
+            </div>
           </div>
-        </div>
 
-        <div className='row'>
-          <div className='form-group col-5'>
-            <label htmlFor='urlChatbotTransfer'>URL de webhook para transferir do Chatbot para o Chat</label>
-            <FieldWithError
-              disabled
-              id='urlChatbotTransfer'
-              type='text'
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.urlChatbotTransfer}
-              name='urlChatbotTransfer'
-            />
+          <div className='row'>
+            <div className='form-group col-8'>
+              <label htmlFor='urlChatbotTransfer'>URL de webhook para transferir do Chatbot para o Chat</label>
+              <FieldWithError
+                readOnly
+                id='urlChatbotTransfer'
+                type='text'
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.urlChatbotTransfer}
+                name='urlChatbotTransfer'
+              />
+            </div>
           </div>
-        </div>
 
-        <div className='row'>
-          <div className='form-group col-5'>
-            <label htmlFor='urlWhatsappWebhook'>URL para webhook de whatsapp</label>
-            <FieldWithError
-              disabled
-              id='urlWhatsappWebhook'
-              type='text'
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.urlWhatsappWebhook}
-              name='urlWhatsappWebhook'
-            />
+          <div className='row'>
+            <div className='form-group col-8'>
+              <label htmlFor='urlWhatsappWebhook'>URL para webhook de WhatsApp</label>
+              <FieldWithError
+                readOnly
+                id='urlWhatsappWebhook'
+                type='text'
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.urlWhatsappWebhook}
+                name='urlWhatsappWebhook'
+              />
+            </div>
           </div>
-        </div>
-      </fieldset>
+        </fieldset>
+      </details>
     </>
   )
 }

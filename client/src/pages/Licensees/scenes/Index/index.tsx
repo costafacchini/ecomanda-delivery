@@ -69,7 +69,7 @@ function LicenseesIndex({ currentUser }: LicenseesIndexProps) {
           </div>
           <div className=''>
             <Link to='/licensees/new' className='btn btn-primary'>
-              Criar +
+              Novo Licenciado
             </Link>
           </div>
         </div>
