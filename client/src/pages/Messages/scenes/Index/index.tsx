@@ -6,6 +6,7 @@ import CartDescription from './components/cart'
 import styles from './styles.module.scss'
 import moment from 'moment-timezone'
 import isEmpty from 'lodash/isEmpty'
+import { toast } from 'react-toastify'
 import { useApp } from '../../../../contexts/App'
 import type { IMessage, IMessageFilters } from '../../../../types'
 import type { IUser } from '../../../../types'
@@ -31,9 +32,8 @@ const DESTINATION_LABELS: Record<string, string> = {
   'to-transfer': 'Transferência',
 }
 
-function MessagesIndex({ currentUser }: MessagesIndexProps) {
-  const { activeLicensee } = useApp()
-  const [filters, setFilters] = useState<IMessageFilters>({
+function getInitialFilters(): IMessageFilters {
+  return {
     startDate: moment().subtract(3, 'hours').format('YYYY-MM-DDTHH:mm'),
     endDate: moment().format('YYYY-MM-DDTHH:mm'),
     licensee: '',
@@ -42,12 +42,20 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
     kind: '',
     destination: '',
     page: 1
-  })
+  }
+}
+
+function MessagesIndex({ currentUser }: MessagesIndexProps) {
+  const { activeLicensee } = useApp()
+  const [filters, setFilters] = useState<IMessageFilters>(getInitialFilters)
 
   const [records, setRecords] = useState<IMessage[]>([])
   const [lastPage, setLastPage] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [hasSearched, setHasSearched] = useState(false)
   const [retryState, setRetryState] = useState<Record<string, RetryStatus>>({})
+
+  const showLicenseeFilter = currentUser?.role === 'super' && !activeLicensee
 
   function handleRetry(id: string) {
     setRetryState((prev) => ({ ...prev, [id]: 'loading' }))
@@ -84,6 +92,10 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
         }
         const { data: messages } = await getMessages(apiFilters)
         addPage(messages, newFilters)
+        setHasSearched(true)
+      } catch (error: unknown) {
+        if (error instanceof Error && error.name === 'AbortError') return
+        toast.error('Erro ao carregar mensagens. Tente novamente.')
       } finally {
         setLoading(false)
       }
@@ -119,8 +131,20 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
     setFilters({ ...newFilters, onlyErrors: target.checked })
   }
 
+  function handleReset() {
+    setFilters(getInitialFilters())
+    setRecords([])
+    setLastPage(false)
+    setHasSearched(false)
+  }
+
   function handleSubmitSearch(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
+
+    if (filters.startDate && filters.endDate && filters.startDate > filters.endDate) {
+      toast.error('A data inicial não pode ser posterior à data final.')
+      return
+    }
 
     const abortController = new AbortController()
 
@@ -205,7 +229,7 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
       </div>
 
       <div className='row mb-3'>
-        {currentUser && currentUser.role === 'super' && !activeLicensee && (
+        {showLicenseeFilter && (
           <div className='col-6'>
             <div className='form-group'>
               <label htmlFor='licensee' id='licensee'>
@@ -226,7 +250,7 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
         )}
         {/* TODO: sector filter for admin — deferred */}
 
-        <div className='col-6'>
+        <div className={showLicenseeFilter ? 'col-6' : 'col-12'}>
           <div className='form-group'>
             <label htmlFor='contact' id='contact'>
               Contato
@@ -266,6 +290,13 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
         <div className='col-auto'>
           <button
             type='button'
+            className='btn btn-outline-secondary me-2'
+            onClick={handleReset}
+          >
+            Limpar filtros
+          </button>
+          <button
+            type='button'
             className='btn btn-primary'
             aria-label='Pesquisar mensagens'
             onClick={handleSubmitSearch}
@@ -290,7 +321,7 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
               <th scope='col'>Tipo</th>
               <th scope='col'>Destino</th>
               <th scope='col'>Data</th>
-              <th scope='col'>Enviada?</th>
+              <th scope='col'>Enviada</th>
             </tr>
           </thead>
           <tbody>
@@ -304,7 +335,9 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
             ) : records.length === 0 ? (
               <tr>
                 <td colSpan={6} className='text-center text-muted py-4'>
-                  Nenhuma mensagem encontrada.
+                  {hasSearched
+                    ? 'Nenhuma mensagem encontrada.'
+                    : 'Aplique os filtros e clique em Pesquisar para ver as mensagens.'}
                 </td>
               </tr>
             ) : records.map((message) => (
@@ -380,7 +413,7 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
         </table>
         <section>
           <div className='container'>
-            {!lastPage && (
+            {!lastPage && hasSearched && (
               <div className='row'>
                 <div className='col text-center mt-3'>
                   <button
