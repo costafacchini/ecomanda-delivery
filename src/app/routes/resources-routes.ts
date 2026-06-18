@@ -220,5 +220,6 @@ router.get('/rooms', (req, res) => roomsController.index(req, res))
 router.post('/rooms', (req, res) => roomsController.create(req, res))
 router.get('/rooms/:roomId/messages', (req, res) => roomsController.messages(req, res))
 router.post('/rooms/:roomId/messages', (req, res) => chatRoomsController.replyToRoom(req, res))
+router.post('/rooms/:roomId/close', (req, res) => roomsController.closeRoom(req, res))
 
 export default router

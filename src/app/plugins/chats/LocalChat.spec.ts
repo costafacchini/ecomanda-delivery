@@ -79,6 +79,16 @@ describe('LocalChat plugin', () => {
       expect(updated.sended).toEqual(true)
     })
 
+    it('assigns room to message before saving', async () => {
+      const message = await messageRepository.create(messageFactory.build({ contact, licensee, sended: false }))
+
+      await plugin.sendMessage(message._id)
+
+      const updated = await messageRepository.findFirst({ _id: message._id })
+      const room = await roomRepository.findFirst({ contact: contact._id })
+      expect(updated.room?.toString()).toEqual(room._id.toString())
+    })
+
     it('emits new-room-message via socketEmitter', async () => {
       const message = await messageRepository.create(messageFactory.build({ contact, licensee, sended: false }))
 
@@ -149,6 +159,39 @@ describe('LocalChat plugin', () => {
       await plugin.parseMessage({ text: 'Hi' })
 
       expect(plugin.messageParsed).toBeNull()
+    })
+  })
+
+  describe('#responseToMessages', () => {
+    it('sets sector on message when room has a sector', async () => {
+      const sectorId = new mongoose.Types.ObjectId()
+      const room = await roomRepository.create({ contact: contact._id, status: 'open', sector: sectorId })
+      const fullPlugin = new LocalChat(licensee, {
+        messageRepository,
+        roomRepository,
+        triggerRepository: dependencies.triggerRepository,
+      })
+
+      await fullPlugin.responseToMessages({ roomId: room._id, text: 'Hello' })
+
+      const saved = await messageRepository.findFirst({ contact: contact._id })
+      expect(saved).not.toBeNull()
+      expect(saved.sector?.toString()).toEqual(sectorId.toString())
+    })
+
+    it('sets sector null on message when room has no sector', async () => {
+      const room = await roomRepository.create({ contact: contact._id, status: 'open' })
+      const fullPlugin = new LocalChat(licensee, {
+        messageRepository,
+        roomRepository,
+        triggerRepository: dependencies.triggerRepository,
+      })
+
+      await fullPlugin.responseToMessages({ roomId: room._id, text: 'Hello' })
+
+      const saved = await messageRepository.findFirst({ contact: contact._id })
+      expect(saved).not.toBeNull()
+      expect(saved.sector).toBeNull()
     })
   })
 

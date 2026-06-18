@@ -9,6 +9,7 @@ interface ConversationPanelProps {
   onSend: (text: string) => void
   loading: boolean
   onBack: () => void
+  onClose: () => void
 }
 
 const STATUS_LABEL: Record<string, string> = {
@@ -27,7 +28,7 @@ function formatMsgTime(iso: string): string {
   return new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
 }
 
-export default function ConversationPanel({ room, messages, onSend, loading, onBack }: ConversationPanelProps) {
+export default function ConversationPanel({ room, messages, onSend, loading, onBack, onClose }: ConversationPanelProps) {
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -64,6 +65,17 @@ export default function ConversationPanel({ room, messages, onSend, loading, onB
             {statusLabel}
           </span>
         </div>
+
+        {!room.closed && (
+          <button
+            type='button'
+            className={styles.closeRoomBtn}
+            onClick={onClose}
+            aria-label='Concluir conversa'
+          >
+            Concluir
+          </button>
+        )}
       </div>
 
       {loading ? (
@@ -75,7 +87,7 @@ export default function ConversationPanel({ room, messages, onSend, loading, onB
       ) : (
         <div className={styles.messageList} role='log' aria-label='Mensagens' aria-live='polite'>
           {messages.map((message) => {
-            const fromMe = message.sended === true
+            const fromMe = message.destination === 'to-messenger'
             return (
               <div
                 key={message.id}
@@ -96,7 +108,7 @@ export default function ConversationPanel({ room, messages, onSend, loading, onB
         </div>
       )}
 
-      <MessageInput onSend={onSend} disabled={loading} />
+      <MessageInput onSend={onSend} disabled={loading || room.closed} />
     </>
   )
 }

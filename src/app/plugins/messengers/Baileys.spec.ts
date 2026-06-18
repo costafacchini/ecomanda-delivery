@@ -146,6 +146,60 @@ describe('Baileys plugin', () => {
       })
     })
 
+    describe('sector propagation', () => {
+      it('sets sector on message when sectorId is provided', async () => {
+        const contactRepository = new ContactRepositoryDatabase()
+        await contactRepository.create(
+          contactFactory.build({
+            name: 'John Doe',
+            number: PARSED_NUMBER,
+            type: PARSED_TYPE,
+            waId: PARSED_WA_ID,
+            talkingWithChatBot: false,
+            licensee,
+          }),
+        )
+        const mongoose = await import('mongoose')
+        const sectorId = new mongoose.default.Types.ObjectId()
+        const body = {
+          key: { remoteJid: REMOTE_JID, id: 'BAILEYS-MSG-SECTOR-001' },
+          pushName: 'John Doe',
+          message: { conversation: 'Hello with sector' },
+        }
+
+        const baileys = new Baileys(licensee, dependencies)
+        const messages = await baileys.responseToMessages(body, { sectorId })
+
+        expect(messages.length).toEqual(1)
+        expect(messages[0].sector?.toString()).toEqual(sectorId.toString())
+      })
+
+      it('does not set sector when sectorId is not provided', async () => {
+        const contactRepository = new ContactRepositoryDatabase()
+        await contactRepository.create(
+          contactFactory.build({
+            name: 'John Doe',
+            number: PARSED_NUMBER,
+            type: PARSED_TYPE,
+            waId: PARSED_WA_ID,
+            talkingWithChatBot: false,
+            licensee,
+          }),
+        )
+        const body = {
+          key: { remoteJid: REMOTE_JID, id: 'BAILEYS-MSG-NOSECTOR-001' },
+          pushName: 'John Doe',
+          message: { conversation: 'Hello without sector' },
+        }
+
+        const baileys = new Baileys(licensee, dependencies)
+        const messages = await baileys.responseToMessages(body)
+
+        expect(messages.length).toEqual(1)
+        expect(messages[0].sector).toBeUndefined()
+      })
+    })
+
     describe('unknown/unsupported message type', () => {
       it('returns empty array when body has no key', async () => {
         const baileys = new Baileys(licensee, dependencies)

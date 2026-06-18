@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useApp } from '../../contexts/App'
-import { getRooms, getRoomMessages, sendRoomMessage } from '../../services/rooms'
+import { getRooms, getRoomMessages, sendRoomMessage, closeRoom } from '../../services/rooms'
 import type { IRoom, IMessage } from '../../types'
 import styles from './styles.module.scss'
 import RoomList from './components/RoomList'
@@ -29,7 +29,18 @@ export default function ChatPage() {
   function loadMessages(roomId: string) {
     setMessagesLoading(true)
     getRoomMessages(roomId)
-      .then(res => setMessages(res.data.messages))
+      .then(res => {
+        const msgs = res.data.messages
+        setMessages(msgs)
+        if (msgs.length > 0) {
+          const last = msgs[msgs.length - 1]
+          setRooms(prev => prev.map(r =>
+            r._id === roomId
+              ? { ...r, lastMessage: { text: last.text, kind: last.kind, createdAt: last.createdAt } }
+              : r
+          ))
+        }
+      })
       .catch(console.error)
       .finally(() => setMessagesLoading(false))
   }
@@ -47,19 +58,90 @@ export default function ChatPage() {
 
   async function handleSend(text: string) {
     if (!selectedRoom) return
-    await sendRoomMessage(selectedRoom._id, text)
-    loadMessages(selectedRoom._id)
+    const optimistic: IMessage = {
+      id: `optimistic-${Date.now()}`,
+      kind: 'text',
+      destination: 'to-messenger',
+      text,
+      url: null,
+      fileName: null,
+      latitude: 0,
+      longitude: 0,
+      sended: true,
+      error: null,
+      cart: null,
+      createdAt: new Date().toISOString(),
+      contact: null,
+      trigger: null,
+      sector: null,
+    }
+    setMessages(prev => [...prev, optimistic])
+    try {
+      await sendRoomMessage(selectedRoom._id, text)
+    } catch {
+      setMessages(prev => prev.filter(m => m.id !== optimistic.id))
+    }
   }
 
-  useChatSocket(effectiveLicenseeId, ({ roomId }) => {
+  useChatSocket(effectiveLicenseeId, ({ roomId, messageId, text, kind, destination, createdAt, sended, contact }) => {
+    const ts = createdAt ?? new Date().toISOString()
+
     if (selectedRoom && selectedRoom._id === roomId) {
-      loadMessages(selectedRoom._id)
-    } else {
-      setRooms(prev =>
-        prev.map(r => r._id === roomId ? { ...r, unreadCount: (r.unreadCount ?? 0) + 1 } : r)
-      )
+      const incoming: IMessage = {
+        id: messageId,
+        kind: kind ?? 'text',
+        destination: destination ?? 'to-chat',
+        text: text ?? null,
+        url: null,
+        fileName: null,
+        latitude: 0,
+        longitude: 0,
+        sended: sended ?? false,
+        error: null,
+        cart: null,
+        createdAt: ts,
+        contact: contact ?? null,
+        trigger: null,
+        sector: null,
+      }
+      setMessages(prev => {
+        if (prev.some(m => m.id === messageId)) return prev
+        return [...prev, incoming]
+      })
+      setRooms(prev => prev.map(r =>
+        r._id === roomId ? { ...r, lastMessage: { text: text ?? null, kind: kind ?? 'text', createdAt: ts } } : r
+      ))
+      return
     }
+
+    setRooms(prev => {
+      const roomExists = prev.some(r => r._id === roomId)
+      if (!roomExists) {
+        if (effectiveLicenseeId) {
+          getRooms({ licensee: effectiveLicenseeId }).then(res => setRooms(res.data.rooms)).catch(console.error)
+        }
+        return prev
+      }
+      return prev.map(r =>
+        r._id === roomId
+          ? {
+              ...r,
+              unreadCount: (r.unreadCount ?? 0) + 1,
+              lastMessage: { text: text ?? null, kind: kind ?? 'text', createdAt: ts },
+            }
+          : r
+      )
+    })
   })
+
+  async function handleClose() {
+    if (!selectedRoom) return
+    await closeRoom(selectedRoom._id)
+    setRooms(prev => prev.filter(r => r._id !== selectedRoom._id))
+    setSelectedRoom(null)
+    setMessages([])
+    setMobileView('rooms')
+  }
 
   function handleRoomCreated(room: IRoom) {
     setRooms(prev => [room, ...prev.filter(r => r._id !== room._id)])
@@ -89,6 +171,7 @@ export default function ChatPage() {
             onSend={handleSend}
             loading={messagesLoading}
             onBack={handleBack}
+            onClose={handleClose}
           />
         </div>
       </main>

@@ -26,3 +26,7 @@ export function getRoomMessages(roomId: string, params: { page?: number } = {}) 
 export function sendRoomMessage(roomId: string, text: string) {
   return api().post(`resources/rooms/${roomId}/messages`, { headers: headers(), body: { text } })
 }
+
+export function closeRoom(roomId: string) {
+  return api().post(`resources/rooms/${roomId}/close`, { headers: headers() })
+}

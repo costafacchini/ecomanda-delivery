@@ -2,7 +2,7 @@ import('../app/repositories/index')
 
 import createError from 'http-errors'
 import express from 'express'
-import { setIo } from '../app/services/socketEmitter'
+import { createAdapter } from '@socket.io/redis-adapter'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import logger from 'morgan'
@@ -13,6 +13,7 @@ import { routes } from './routes'
 import { helmetConfig } from './security'
 import http from 'http'
 import { Server } from 'socket.io'
+import { redisConnection } from './redis'
 import Rollbar from 'rollbar'
 import { frontendDistDir } from './frontend-paths'
 import { expressErrorHandler } from '@appsignal/nodejs'
@@ -66,6 +67,10 @@ const server = http.createServer(app)
 
 const io = new Server(server)
 
+// Sub client must be a separate connection — subscribe mode blocks other commands
+const subClient = redisConnection.duplicate()
+io.adapter(createAdapter(redisConnection, subClient))
+
 io.use((socket, next) => {
   const token = socket.handshake.auth?.token
   if (!token) return next(new Error('Authentication required'))
@@ -82,7 +87,5 @@ io.on('connection', (socket) => {
     }
   })
 })
-
-setIo(io)
 
 export { server, io }

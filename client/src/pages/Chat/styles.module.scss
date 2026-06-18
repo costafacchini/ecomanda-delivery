@@ -17,6 +17,8 @@ $border:          #dee2e6;
 $muted:           #636c73;
 $ink:             #333333;
 $white:           #ffffff;
+$black:           #000000;
+$success:         #11ad66;
 $bubble-in-bg:    #f0f0f0;
 $bubble-in-text:  $ink;
 
@@ -170,9 +172,9 @@ $t-slide:           300ms $ease-out-quart;
   }
 
   .roomName    { color: $white; }
-  .roomSub     { color: rgba(255, 255, 255, 0.90); }
-  .roomPreview { color: rgba(255, 255, 255, 0.90); }
-  .roomTime    { color: rgba(255, 255, 255, 0.85); }
+  .roomSub     { color: rgba($white, 0.90); }
+  .roomPreview { color: rgba($white, 0.90); }
+  .roomTime    { color: rgba($white, 0.85); }
   .roomAvatar  { background: rgba(255, 255, 255, 0.22); color: $white; }
   .unreadBadge { background: $white; color: $primary-deep; }
 }
@@ -395,6 +397,29 @@ $t-slide:           300ms $ease-out-quart;
   }
 }
 
+.closeRoomBtn {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border: 1px solid $success;
+  border-radius: 6px;
+  background: transparent;
+  color: $success;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background $t-fast, color $t-fast;
+
+  &:hover {
+    background: $success;
+    color: $white;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($success, 0.25);
+  }
+}
+
 // ----------------------------------------------------------------
 // Message list
 // ----------------------------------------------------------------
@@ -461,11 +486,11 @@ $t-slide:           300ms $ease-out-quart;
 }
 
 .bubbleSent .bubbleTime {
-  color: rgba(0, 0, 0, 0.65);
+  color: rgba($black, 0.65);
 }
 
 .bubbleReceived .bubbleTime {
-  color: rgba(0, 0, 0, 0.60);
+  color: rgba($black, 0.60);
 }
 
 @keyframes bubbleIn {
