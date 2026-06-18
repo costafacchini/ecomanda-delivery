@@ -3162,6 +3162,24 @@
   resolved "https://registry.yarnpkg.com/@socket.io/component-emitter/-/component-emitter-3.1.2.tgz#821f8442f4175d8f0467b9daf26e3a18e2d02af2"
   integrity sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==
 
+"@socket.io/redis-adapter@8.3.0":
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/@socket.io/redis-adapter/-/redis-adapter-8.3.0.tgz#bdce1e8f34c07df4a8baf98170bf24dc84eaed4a"
+  integrity sha512-ly0cra+48hDmChxmIpnESKrc94LjRL80TEmZVscuQ/WWkRP81nNj8W8cCGMqbI4L6NCuAaPRSzZF1a9GlAxxnA==
+  dependencies:
+    debug "~4.3.1"
+    notepack.io "~3.0.1"
+    uid2 "1.0.0"
+
+"@socket.io/redis-emitter@5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@socket.io/redis-emitter/-/redis-emitter-5.1.0.tgz#faab6dc363135e44a5a37b5ef5d4f723c80e0db1"
+  integrity sha512-QQUFPBq6JX7JIuM/X1811ymKlAfwufnQ8w6G2/59Jaqp09hdF1GJ/+e8eo/XdcmT0TqkvcSa2TT98ggTXa5QYw==
+  dependencies:
+    debug "~4.3.1"
+    notepack.io "~3.0.1"
+    socket.io-parser "~4.2.1"
+
 "@tokenizer/inflate@^0.4.1":
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/@tokenizer/inflate/-/inflate-0.4.1.tgz#fa6cdb8366151b3cc8426bf9755c1ea03a2fba08"
@@ -4645,6 +4663,13 @@ debug@^3.2.7:
   integrity sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==
   dependencies:
     ms "^2.1.1"
+
+debug@~4.3.1:
+  version "4.3.7"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.7.tgz#87945b4151a011d76d95a198d7111c865c360a52"
+  integrity sha512-Er2nc/H7RrMXZBFCEim6TCmMk02Z8vLC2Rbi1KEBggpo0fS6l0S1nnapwmIi3yW/+GOJap1Krg4w0Hg80oCqgQ==
+  dependencies:
+    ms "^2.1.3"
 
 dedent@^1.6.0:
   version "1.7.2"
@@ -7585,6 +7610,11 @@ normalize-path@^3.0.0, normalize-path@~3.0.0:
   resolved "https://registry.yarnpkg.com/normalize-path/-/normalize-path-3.0.0.tgz#0dcd69ff23a1c9b11fd0978316644a0388216a65"
   integrity sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==
 
+notepack.io@~3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/notepack.io/-/notepack.io-3.0.1.tgz#2c2c9de1bd4e64a79d34e33c413081302a0d4019"
+  integrity sha512-TKC/8zH5pXIAMVQio2TvVDTtPRX+DJPHDqjRbxogtFiByHyzKmy96RA0JtCQJ+WouyyL4A10xomQzgbUT+1jCg==
+
 npm-normalize-package-bin@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/npm-normalize-package-bin/-/npm-normalize-package-bin-6.0.0.tgz#d8cc44d7a9eff2a2a210e9b2442edf3824f2d227"
@@ -8673,7 +8703,7 @@ socket.io-adapter@~2.5.2:
     debug "~4.4.1"
     ws "~8.20.1"
 
-socket.io-parser@~4.2.4:
+socket.io-parser@~4.2.1, socket.io-parser@~4.2.4:
   version "4.2.6"
   resolved "https://registry.yarnpkg.com/socket.io-parser/-/socket.io-parser-4.2.6.tgz#19156bf179af3931abd05260cfb1491822578a6f"
   integrity sha512-asJqbVBDsBCJx0pTqw3WfesSY0iRX+2xzWEWzrpcH7L6fLzrhyF8WPI8UaeM4YCuDfpwA/cgsdugMsmtz8EJeg==
@@ -9271,6 +9301,11 @@ typescript@6.0.3:
   version "6.0.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-6.0.3.tgz#90251dc007916e972786cb94d74d15b185577d21"
   integrity sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==
+
+uid2@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/uid2/-/uid2-1.0.0.tgz#ef8d95a128d7c5c44defa1a3d052eecc17a06bfb"
+  integrity sha512-+I6aJUv63YAcY9n4mQreLUt0d4lvwkkopDNmpomkAUz0fAkEMV9pRWxN0EjhW1YfRhcuyHg2v3mwddCDW1+LFQ==
 
 uint8array-extras@^1.4.0, uint8array-extras@^1.5.0:
   version "1.5.0"

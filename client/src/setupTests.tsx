@@ -4,6 +4,8 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom'
 
+window.HTMLElement.prototype.scrollIntoView = () => {}
+
 // Polyfills for TextEncoder/TextDecoder (required by React Router v7)
 import { TextEncoder, TextDecoder } from 'util'
 

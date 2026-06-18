@@ -46,27 +46,27 @@ describe('Body', () => {
 
   describe('validations', () => {
     describe('content', () => {
-      it('is required', () => {
+      it('is required', async () => {
         const body = new Body()
-        const validation = body.validateSync()
+        const validation = await body.validate().catch((e: any) => e)
 
         expect(validation.errors['content'].message).toEqual('Conteúdo: Você deve preencher o campo')
       })
     })
 
     describe('licensee', () => {
-      it('is required', () => {
+      it('is required', async () => {
         const body = new Body()
-        const validation = body.validateSync()
+        const validation = await body.validate().catch((e: any) => e)
 
         expect(validation.errors['licensee'].message).toEqual('Licensee: Você deve preencher o campo')
       })
     })
 
     describe('kind', () => {
-      it('is required', () => {
+      it('is required', async () => {
         const body = new Body()
-        const validation = body.validateSync()
+        const validation = await body.validate().catch((e: any) => e)
 
         expect(validation.errors['kind'].message).toEqual(
           'Tipo de Body: Você deve informar um valor ( normal | webhook )',

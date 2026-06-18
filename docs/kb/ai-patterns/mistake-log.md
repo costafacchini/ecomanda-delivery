@@ -1,6 +1,6 @@
 # Mistake Log
 
-**Last Updated**: 2026-05-16
+**Last Updated**: 2026-06-17
 **Context**: Read at session start to avoid repeating known error patterns.
 
 When the AI is corrected, `log-mistake` appends an entry here.
@@ -82,6 +82,14 @@ not yet represented by the task list.
 **Correct**: When a requirement excludes a data source or workflow, mark that exclusion explicitly in scope, out-of-scope, kill criteria, and task instructions, and treat any history-dependent capability as a validation risk or fallback.
 **Area**: Create-plan scoping, requirements translation
 **Prevention**: During plan review, scan the overview and early task files for accidental dependencies on prohibited flows such as chat history, background imports, or additional models.
+**Count**: 1
+
+## [2026-06-17] Always forward x-access-token header in new client service files
+
+**Wrong**: Generated `client/src/services/rooms.ts` calling `api().get(url)` and `api().post(url, ...)` without passing `{ headers: { 'x-access-token': getToken() } }`, causing every request to return 401 Unauthorized.
+**Correct**: Every file in `client/src/services/` that calls authenticated endpoints must import `getToken` from `./auth` and pass `headers: { 'x-access-token': getToken() }` on every `api()` call. The convention is `const headers = () => ({ 'x-access-token': getToken() })` at the top of the file.
+**Area**: Client service layer, new service file generation
+**Prevention**: Before writing any new `client/src/services/*.ts` file, read an existing service (e.g. `message.ts`, `sector.ts`) to confirm the auth header pattern, then replicate it on every `get`/`post`/`delete` call in the new file. A service file without `getToken` is always incomplete.
 **Count**: 1
 
 ## [2026-05-16] Prefer the primary user outcome over optional directory features in plans

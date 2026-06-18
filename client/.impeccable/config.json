@@ -1,0 +1,32 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-color",
+        "value": "rgba(255, 255, 255, 0.90)",
+        "reason": "WCAG AA contrast fix for sub-text on primary-deep selected room background",
+        "createdAt": "2026-06-18T00:24:36.903Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(255, 255, 255, 0.85)",
+        "reason": "WCAG AA contrast fix for timestamp on primary-deep selected room background",
+        "createdAt": "2026-06-18T00:24:42.276Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(0, 0, 0, 0.65)",
+        "reason": "WCAG AA contrast fix for bubble timestamp on teal sent bubble",
+        "createdAt": "2026-06-18T00:24:42.309Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(0, 0, 0, 0.60)",
+        "reason": "WCAG AA contrast fix for bubble timestamp on received bubble",
+        "createdAt": "2026-06-18T00:24:42.341Z"
+      }
+    ]
+  }
+}

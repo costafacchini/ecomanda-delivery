@@ -41,16 +41,16 @@ describe('Licensee', () => {
 
   describe('validations', () => {
     describe('name', () => {
-      it('is required', () => {
+      it('is required', async () => {
         const licensee = new Licensee()
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['name'].message).toEqual('Nome: Você deve preencher o campo')
       })
 
-      it('greater than 4 characters', () => {
+      it('greater than 4 characters', async () => {
         const licensee = new Licensee({ name: 'abc' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['name'].message).toEqual(
           'Nome: Informe um valor com mais que 4 caracteres! Atual: abc',
@@ -59,38 +59,38 @@ describe('Licensee', () => {
     })
 
     describe('licenseKind', () => {
-      it('is required', () => {
+      it('is required', async () => {
         const licensee = new Licensee()
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['licenseKind'].message).toEqual(
           'Tipo de Licença: Você deve informar um valor ( demo | free | paid)',
         )
       })
 
-      it('accepts "demo", "free" and "paid" values', () => {
+      it('accepts "demo", "free" and "paid" values', async () => {
         let validation
         const licensee = new Licensee()
 
         licensee.licenseKind = 'demo'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['licenseKind']).not.toBeDefined()
 
         licensee.licenseKind = 'paid'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['licenseKind']).not.toBeDefined()
 
         licensee.licenseKind = 'paid'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['licenseKind']).not.toBeDefined()
       })
 
-      it('does not accepts another values', () => {
+      it('does not accepts another values', async () => {
         const licensee = new Licensee({ licenseKind: 'some' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['licenseKind'].message).toEqual(
           '`some` is not a valid enum value for path `licenseKind`.',
@@ -99,30 +99,30 @@ describe('Licensee', () => {
     })
 
     describe('chatbotDefault', () => {
-      it('accepts blank value', () => {
+      it('accepts blank value', async () => {
         const licensee = new Licensee({ chatbotDefault: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatbotDefault']).not.toBeDefined()
       })
 
-      it('accepts nil value', () => {
+      it('accepts nil value', async () => {
         const licensee = new Licensee()
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatbotDefault']).not.toBeDefined()
       })
 
-      it('accepts "landbot" value', () => {
+      it('accepts "landbot" value', async () => {
         const licensee = new Licensee({ chatbotDefault: 'landbot' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatbotDefault']).not.toBeDefined()
       })
 
-      it('does not accepts another values', () => {
+      it('does not accepts another values', async () => {
         const licensee = new Licensee({ chatbotDefault: 'some' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatbotDefault'].message).toEqual(
           '`some` is not a valid enum value for path `chatbotDefault`.',
@@ -131,16 +131,16 @@ describe('Licensee', () => {
     })
 
     describe('chatbotUrl', () => {
-      it('is not required if not useChatbot', () => {
+      it('is not required if not useChatbot', async () => {
         const licensee = new Licensee({ useChatbot: false, chatbotUrl: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatbotUrl']).not.toBeDefined()
       })
 
-      it('is required if useChatbot', () => {
+      it('is required if useChatbot', async () => {
         const licensee = new Licensee({ useChatbot: true, chatbotUrl: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatbotUrl'].message).toEqual(
           'URL do Chatbot: deve ser preenchido quando utiliza Chatbot',
@@ -149,16 +149,16 @@ describe('Licensee', () => {
     })
 
     describe('chatbotAuthorizationToken', () => {
-      it('is not required if not useChatbot', () => {
+      it('is not required if not useChatbot', async () => {
         const licensee = new Licensee({ useChatbot: false, chatbotAuthorizationToken: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatbotAuthorizationToken']).not.toBeDefined()
       })
 
-      it('is required if useChatbot', () => {
+      it('is required if useChatbot', async () => {
         const licensee = new Licensee({ useChatbot: true, chatbotAuthorizationToken: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatbotAuthorizationToken'].message).toEqual(
           'Token de Autorização do Chatbot: deve ser preenchido quando utiliza Chatbot',
@@ -167,48 +167,48 @@ describe('Licensee', () => {
     })
 
     describe('whatsappDefault', () => {
-      it('accepts blank value', () => {
+      it('accepts blank value', async () => {
         const licensee = new Licensee({ whatsappDefault: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['whatsappDefault']).not.toBeDefined()
       })
 
-      it('accepts nil value', () => {
+      it('accepts nil value', async () => {
         const licensee = new Licensee()
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['whatsappDefault']).not.toBeDefined()
       })
 
-      it('accepts "utalk" and "dialog" values', () => {
+      it('accepts "utalk" and "dialog" values', async () => {
         let validation
         const licensee = new Licensee()
 
         licensee.whatsappDefault = 'utalk'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['whatsappDefault']).not.toBeDefined()
 
         licensee.whatsappDefault = 'dialog'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['whatsappDefault']).not.toBeDefined()
 
         licensee.whatsappDefault = 'pabbly'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['whatsappDefault']).not.toBeDefined()
 
         licensee.whatsappDefault = 'ycloud'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['whatsappDefault']).not.toBeDefined()
       })
 
-      it('does not accepts another values', () => {
+      it('does not accepts another values', async () => {
         const licensee = new Licensee({ whatsappDefault: 'some' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['whatsappDefault'].message).toEqual(
           '`some` is not a valid enum value for path `whatsappDefault`.',
@@ -217,16 +217,16 @@ describe('Licensee', () => {
     })
 
     describe('whatsappToken', () => {
-      it('is not required if not whatsappDefault', () => {
+      it('is not required if not whatsappDefault', async () => {
         const licensee = new Licensee({ whatsappDefault: '', whatsappToken: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['whatsappToken']).not.toBeDefined()
       })
 
-      it('is required if whatsappDefault', () => {
+      it('is required if whatsappDefault', async () => {
         const licensee = new Licensee({ whatsappDefault: 'dialog', whatsappToken: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['whatsappToken'].message).toEqual(
           'Token de Whatsapp: deve ser preenchido quando tiver um plugin configurado',
@@ -235,16 +235,16 @@ describe('Licensee', () => {
     })
 
     describe('whatsappUrl', () => {
-      it('is not required if not whatsappDefault', () => {
+      it('is not required if not whatsappDefault', async () => {
         const licensee = new Licensee({ whatsappDefault: '', whatsappUrl: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['whatsappUrl']).not.toBeDefined()
       })
 
-      it('is required if whatsappDefault', () => {
+      it('is required if whatsappDefault', async () => {
         const licensee = new Licensee({ whatsappDefault: 'dialog', whatsappUrl: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['whatsappUrl'].message).toEqual(
           'URL de Whatsapp: deve ser preenchido quando tiver um plugin configurado',
@@ -253,43 +253,43 @@ describe('Licensee', () => {
     })
 
     describe('chatDefault', () => {
-      it('accepts blank value', () => {
+      it('accepts blank value', async () => {
         const licensee = new Licensee({ chatDefault: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatDefault']).not.toBeDefined()
       })
 
-      it('accepts nil value', () => {
+      it('accepts nil value', async () => {
         const licensee = new Licensee()
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatDefault']).not.toBeDefined()
       })
 
-      it('accepts "rocketchat" and "crisp" values', () => {
+      it('accepts "rocketchat" and "crisp" values', async () => {
         let validation
         const licensee = new Licensee()
 
         licensee.chatDefault = 'rocketchat'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatDefault']).not.toBeDefined()
 
         licensee.chatDefault = 'crisp'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatDefault']).not.toBeDefined()
 
         licensee.chatDefault = 'cuboup'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatDefault']).not.toBeDefined()
       })
 
-      it('does not accepts another values', () => {
+      it('does not accepts another values', async () => {
         const licensee = new Licensee({ chatDefault: 'some' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatDefault'].message).toEqual(
           '`some` is not a valid enum value for path `chatDefault`.',
@@ -298,16 +298,16 @@ describe('Licensee', () => {
     })
 
     describe('chatUrl', () => {
-      it('is not required if not chatDefault', () => {
+      it('is not required if not chatDefault', async () => {
         const licensee = new Licensee({ chatDefault: '', chatUrl: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatUrl']).not.toBeDefined()
       })
 
-      it('is required if chatDefault', () => {
+      it('is required if chatDefault', async () => {
         const licensee = new Licensee({ chatDefault: 'dialog', chatUrl: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatUrl'].message).toEqual(
           'URL do Chat: deve ser preenchido quando tiver um plugin configurado',
@@ -316,16 +316,16 @@ describe('Licensee', () => {
     })
 
     describe('chatKey', () => {
-      it('is not required', () => {
+      it('is not required', async () => {
         const licensee = new Licensee({ chatDefault: '', chatUrl: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatUrl']).not.toBeDefined()
       })
 
-      it('is required if chatDefault is crisp', () => {
+      it('is required if chatDefault is crisp', async () => {
         const licensee = new Licensee({ chatDefault: 'crisp', chatUrl: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatKey'].message).toEqual(
           'API Key do Chat: deve ser preenchido quando o plugin de chat for crisp ou chatwoot',
@@ -334,16 +334,16 @@ describe('Licensee', () => {
     })
 
     describe('chatIdentifier', () => {
-      it('is not required', () => {
+      it('is not required', async () => {
         const licensee = new Licensee({ chatDefault: '', chatUrl: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatUrl']).not.toBeDefined()
       })
 
-      it('is required if chatDefault is crisp', () => {
+      it('is required if chatDefault is crisp', async () => {
         const licensee = new Licensee({ chatDefault: 'crisp', chatUrl: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['chatIdentifier'].message).toEqual(
           'Identifier (Conta) do Chat: deve ser preenchido quando o plugin de chat for crisp ou chatwoot',
@@ -352,93 +352,93 @@ describe('Licensee', () => {
     })
 
     describe('kind', () => {
-      it('accepts "individual", "company" and blank values', () => {
+      it('accepts "individual", "company" and blank values', async () => {
         let validation
         const licensee = new Licensee()
 
         licensee.kind = 'individual'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['kind']).not.toBeDefined()
 
         licensee.kind = 'company'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['kind']).not.toBeDefined()
 
         licensee.kind = ''
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['kind']).not.toBeDefined()
       })
 
-      it('does not accepts another values', () => {
+      it('does not accepts another values', async () => {
         const licensee = new Licensee({ kind: 'some' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['kind'].message).toEqual('`some` is not a valid enum value for path `kind`.')
       })
     })
 
     describe('bank', () => {
-      it('accepts blank value', () => {
+      it('accepts blank value', async () => {
         const licensee = new Licensee({ bank: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['bank']).not.toBeDefined()
       })
 
-      it('accepts value with 3 chars', () => {
+      it('accepts value with 3 chars', async () => {
         const licensee = new Licensee({ bank: '001' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['bank']).not.toBeDefined()
       })
 
-      it('does not accept value less than 3 chars', () => {
+      it('does not accept value less than 3 chars', async () => {
         let validation
         const licensee = new Licensee({ bank: '0' })
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['bank'].message).toEqual('Banco: Informe um valor com 3 caracteres! Atual: 0')
 
         licensee.bank = '00'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['bank'].message).toEqual('Banco: Informe um valor com 3 caracteres! Atual: 00')
       })
 
-      it('does not accept value greather than 3 chars', () => {
+      it('does not accept value greather than 3 chars', async () => {
         let validation
         const licensee = new Licensee({ bank: '0011' })
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['bank'].message).toEqual('Banco: Informe um valor com 3 caracteres! Atual: 0011')
 
         licensee.bank = '00111'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['bank'].message).toEqual('Banco: Informe um valor com 3 caracteres! Atual: 00111')
       })
     })
 
     describe('branch_number', () => {
-      it('accepts blank value', () => {
+      it('accepts blank value', async () => {
         const licensee = new Licensee({ branch_number: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['branch_number']).not.toBeDefined()
       })
 
-      it('less than 4 characters', () => {
+      it('less than 4 characters', async () => {
         let validation
         const licensee = new Licensee({ branch_number: 'abc' })
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['kind']).not.toBeDefined()
 
         licensee.branch_number = 'abcde'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['branch_number'].message).toEqual(
           'Agência: Informe um valor com até 4 caracteres! Atual: abcde',
@@ -447,24 +447,24 @@ describe('Licensee', () => {
     })
 
     describe('branch_check_digit', () => {
-      it('accepts blank value', () => {
+      it('accepts blank value', async () => {
         const licensee = new Licensee({ branch_check_digit: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['branch_check_digit']).not.toBeDefined()
       })
 
-      it('accepts value with 1 chars', () => {
+      it('accepts value with 1 chars', async () => {
         const licensee = new Licensee({ branch_check_digit: '1' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['branch_check_digit']).not.toBeDefined()
       })
 
-      it('does not accept value greather than 1 chars', () => {
+      it('does not accept value greather than 1 chars', async () => {
         let validation
         const licensee = new Licensee({ branch_check_digit: '01' })
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['branch_check_digit'].message).toEqual(
           'Dígito Agência: Informe um valor com até 1 caracter! Atual: 01',
@@ -473,22 +473,22 @@ describe('Licensee', () => {
     })
 
     describe('account_number', () => {
-      it('accepts blank value', () => {
+      it('accepts blank value', async () => {
         const licensee = new Licensee({ account_number: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['account_number']).not.toBeDefined()
       })
 
-      it('less than 13 characters', () => {
+      it('less than 13 characters', async () => {
         let validation
         const licensee = new Licensee({ account_number: '1234567890123' })
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['account_number']).not.toBeDefined()
 
         licensee.account_number = '12345678901234'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['account_number'].message).toEqual(
           'Conta: Informe um valor com até 13 caracteres! Atual: 12345678901234',
@@ -497,24 +497,24 @@ describe('Licensee', () => {
     })
 
     describe('account_check_digit', () => {
-      it('accepts blank value', () => {
+      it('accepts blank value', async () => {
         const licensee = new Licensee({ account_check_digit: '' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['account_check_digit']).not.toBeDefined()
       })
 
-      it('accepts value with 1 chars', () => {
+      it('accepts value with 1 chars', async () => {
         const licensee = new Licensee({ account_check_digit: '1' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['account_check_digit']).not.toBeDefined()
       })
 
-      it('does not accept value greather than 1 chars', () => {
+      it('does not accept value greather than 1 chars', async () => {
         let validation
         const licensee = new Licensee({ account_check_digit: '01' })
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['account_check_digit'].message).toEqual(
           'Dígito Conta: Informe um valor com até 1 caracter! Atual: 01',
@@ -523,29 +523,29 @@ describe('Licensee', () => {
     })
 
     describe('holder_kind', () => {
-      it('accepts "individual", "company" and blank values', () => {
+      it('accepts "individual", "company" and blank values', async () => {
         let validation
         const licensee = new Licensee()
 
         licensee.holder_kind = 'individual'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['holder_kind']).not.toBeDefined()
 
         licensee.holder_kind = 'company'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['holder_kind']).not.toBeDefined()
 
         licensee.holder_kind = ''
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['holder_kind']).not.toBeDefined()
       })
 
-      it('does not accepts another values', () => {
+      it('does not accepts another values', async () => {
         const licensee = new Licensee({ holder_kind: 'some' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['holder_kind'].message).toEqual(
           '`some` is not a valid enum value for path `holder_kind`.',
@@ -554,29 +554,29 @@ describe('Licensee', () => {
     })
 
     describe('account_type', () => {
-      it('accepts "checking", "company" and blank values', () => {
+      it('accepts "checking", "company" and blank values', async () => {
         let validation
         const licensee = new Licensee()
 
         licensee.account_type = 'checking'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['account_type']).not.toBeDefined()
 
         licensee.account_type = 'savings'
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['account_type']).not.toBeDefined()
 
         licensee.account_type = ''
-        validation = licensee.validateSync()
+        validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['account_type']).not.toBeDefined()
       })
 
-      it('does not accepts another values', () => {
+      it('does not accepts another values', async () => {
         const licensee = new Licensee({ account_type: 'some' })
-        const validation = licensee.validateSync()
+        const validation = await licensee.validate().catch((e: any) => e)
 
         expect(validation.errors['account_type'].message).toEqual(
           '`some` is not a valid enum value for path `account_type`.',

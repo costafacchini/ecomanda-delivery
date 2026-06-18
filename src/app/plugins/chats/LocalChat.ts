@@ -22,16 +22,26 @@ class LocalChat extends ChatsBase {
       room = await this._roomRepository.create({
         contact: message.contact._id,
         status: 'pending',
+        sector: message.sector ?? null,
       })
     }
 
+    message.room = room._id
     message.sended = true
     await this.messageRepository.save(message)
 
     emitToLicensee(this.licensee._id, 'new-room-message', {
-      roomId: room._id,
-      messageId: message._id,
-      licenseeId: this.licensee._id,
+      roomId: room._id.toString(),
+      messageId: message._id.toString(),
+      licenseeId: this.licensee._id.toString(),
+      text: message.text ?? null,
+      kind: message.kind,
+      destination: message.destination,
+      createdAt: message.createdAt instanceof Date ? message.createdAt.toISOString() : message.createdAt,
+      sended: message.sended,
+      contact: message.contact
+        ? { id: message.contact._id?.toString() ?? message.contact.id, name: message.contact.name }
+        : null,
     })
   }
 

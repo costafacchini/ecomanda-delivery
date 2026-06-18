@@ -2,7 +2,7 @@ import('../app/repositories/index')
 
 import createError from 'http-errors'
 import express from 'express'
-import { setIo } from '../app/services/socketEmitter'
+import { createAdapter } from '@socket.io/redis-adapter'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import logger from 'morgan'
@@ -13,9 +13,11 @@ import { routes } from './routes'
 import { helmetConfig } from './security'
 import http from 'http'
 import { Server } from 'socket.io'
+import { redisConnection } from './redis'
 import Rollbar from 'rollbar'
 import { frontendDistDir } from './frontend-paths'
 import { expressErrorHandler } from '@appsignal/nodejs'
+import jwt from 'jsonwebtoken'
 
 const app = express()
 
@@ -57,10 +59,33 @@ if (process.env.ROLLBAR_ACCESS_TOKEN) {
   })
 }
 
+const SECRET = process.env.SECRET as string
+
+const OBJECT_ID_REGEX = /^[a-f0-9]{24}$/
+
 const server = http.createServer(app)
 
 const io = new Server(server)
-io.on('connection', (_) => {})
-setIo(io)
+
+// Sub client must be a separate connection — subscribe mode blocks other commands
+const subClient = redisConnection.duplicate()
+io.adapter(createAdapter(redisConnection, subClient))
+
+io.use((socket, next) => {
+  const token = socket.handshake.auth?.token
+  if (!token) return next(new Error('Authentication required'))
+  jwt.verify(token, SECRET, (err: any) => {
+    if (err) return next(new Error('Invalid token'))
+    next()
+  })
+})
+
+io.on('connection', (socket) => {
+  socket.on('join-licensee', (licenseeId: string) => {
+    if (typeof licenseeId === 'string' && OBJECT_ID_REGEX.test(licenseeId)) {
+      socket.join(`licensee:${licenseeId}`)
+    }
+  })
+})
 
 export { server, io }

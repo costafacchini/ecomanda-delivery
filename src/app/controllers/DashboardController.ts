@@ -175,12 +175,13 @@ class DashboardController {
               ...msgFilter,
               ...EXCLUDE_SYSTEM_CLOSE,
               sended: false,
+              ignored: { $ne: true },
               createdAt: { $gte: startDate, $lt: endDate },
             })
             .countDocuments(),
           this.messageRepository
             .model()
-            .where({ ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sended: false })
+            .where({ ...msgFilter, ...EXCLUDE_SYSTEM_CLOSE, sended: false, ignored: { $ne: true } })
             .countDocuments(),
         ])
 
@@ -362,6 +363,7 @@ class DashboardController {
               licensee: user.licensee,
               ...EXCLUDE_SYSTEM_CLOSE,
               sended: false,
+              ignored: { $ne: true },
               createdAt: { $gte: startDate, $lt: endDate },
             })
             .countDocuments(),

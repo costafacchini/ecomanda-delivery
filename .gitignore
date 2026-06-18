@@ -8,6 +8,8 @@ yarn-error.log
 /tmp
 newrelic_agent.log
 /client/coverage
+**/hook.cache.json
+**/.impeccable/config.local.json
 /client/build
 /client/package-lock.json
 docs/kb/sessions/*.md

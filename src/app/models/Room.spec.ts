@@ -96,9 +96,9 @@ describe('Room', () => {
 
   describe('validations', () => {
     describe('contact', () => {
-      it('is required', () => {
+      it('is required', async () => {
         const room = new Room({})
-        const validation = room.validateSync()
+        const validation = await room.validate().catch((e: any) => e)
 
         expect(validation.errors['contact'].message).toEqual('Contato: Você deve preencher o campo')
       })

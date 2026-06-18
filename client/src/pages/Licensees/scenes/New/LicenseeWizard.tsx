@@ -39,9 +39,9 @@ const licenseeInitialValues: ILicenseeFormValues = {
 
 const STEPS = [
   { id: 'identity', title: 'Identidade' },
+  { id: 'whatsapp', title: 'WhatsApp' },
   { id: 'chat',     title: 'Chat' },
   { id: 'chatbot',  title: 'ChatBot' },
-  { id: 'whatsapp', title: 'WhatsApp' },
 ]
 
 const identitySchema = Yup.object().shape({
@@ -55,7 +55,10 @@ const identitySchema = Yup.object().shape({
 
 const chatSchema = Yup.object().shape({
   chatDefault: Yup.string().required('Chat padrão é obrigatório'),
-  chatUrl:     Yup.string().required('URL do chat é obrigatória'),
+  chatUrl: Yup.string().when('chatDefault', {
+    is: (v: string) => ['rocketchat', 'crisp', 'chatwoot', 'cuboup'].includes(v),
+    then: (s: Yup.StringSchema) => s.required('URL do chat é obrigatória'),
+  }),
   chatIdentifier: Yup.string().when('chatDefault', {
     is: (v: string) => ['crisp', 'chatwoot'].includes(v),
     then: (s: Yup.StringSchema) => s.required('Identifier é obrigatório'),
@@ -95,49 +98,46 @@ interface IdentityStepProps {
   handleBlur: React.FocusEventHandler<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
 }
 
+function Required() {
+  return <span className='text-danger ms-1' aria-hidden='true'>*</span>
+}
+
 function IdentityStep({ values, errors, touched, handleChange, handleBlur }: IdentityStepProps) {
   return (
     <>
-      <div className='row'>
-        <div className='form-group col-5'>
-          <label htmlFor='name'>Nome</label>
+      <div className='row mb-3'>
+        <div className='form-group col-8'>
+          <label htmlFor='name'>Nome<Required /></label>
           <FieldWithError id='name' type='text' name='name'
             value={values.name} onChange={handleChange} onBlur={handleBlur} />
         </div>
-        <div className='form-group col-5'>
-          <div className='form-check mt-4'>
-            <input checked={values.active} onChange={handleChange} onBlur={handleBlur}
-              type='checkbox' className='form-check-input' id='active' />
-            <label className='form-check-label' htmlFor='active'>Ativo</label>
-          </div>
-        </div>
       </div>
-      <div className='row'>
+      <div className='row mb-3'>
         <div className='form-group col-2'>
-          <label htmlFor='kind'>Tipo</label>
+          <label htmlFor='kind'>Tipo<Required /></label>
           <select value={values.kind} className='form-select' id='kind'
             onChange={handleChange} onBlur={handleBlur}>
-            <option value=''></option>
+            <option value=''>Selecione</option>
             <option value='company'>Jurídica</option>
             <option value='individual'>Física</option>
           </select>
         </div>
-        <div className='form-group col-3'>
-          <label htmlFor='document'>Documento</label>
+        <div className='form-group col-4'>
+          <label htmlFor='document'>Documento<Required /></label>
           <FieldWithError id='document' name='document' type='text'
             value={values.document} onChange={handleChange} onBlur={handleBlur} />
         </div>
       </div>
-      <div className='row'>
-        <div className='form-group col-5'>
-          <label htmlFor='email'>E-mail</label>
+      <div className='row mb-3'>
+        <div className='form-group col-8'>
+          <label htmlFor='email'>E-mail<Required /></label>
           <FieldWithError id='email' name='email' type='text'
             value={values.email} onChange={handleChange} onBlur={handleBlur} />
         </div>
       </div>
-      <div className='row'>
-        <div className='form-group col-5'>
-          <label htmlFor='licenseKind'>Licença</label>
+      <div className='row mb-3'>
+        <div className='form-group col-8'>
+          <label htmlFor='licenseKind'>Licença<Required /></label>
           <select value={values.licenseKind} className='form-select' id='licenseKind'
             onChange={handleChange} onBlur={handleBlur}>
             <option value='demo'>Demonstração</option>
@@ -146,9 +146,9 @@ function IdentityStep({ values, errors, touched, handleChange, handleBlur }: Ide
           </select>
         </div>
       </div>
-      <div className='row mt-3'>
-        <div className='form-group col-5'>
-          <label htmlFor='phone'>Telefone</label>
+      <div className='row mb-3'>
+        <div className='form-group col-8'>
+          <label htmlFor='phone'>Telefone<Required /></label>
           <FieldWithError id='phone' name='phone' type='text'
             value={values.phone} onChange={handleChange} onBlur={handleBlur} />
         </div>
@@ -230,6 +230,7 @@ function LicenseeWizard({ onSubmit, errors: backendErrors }: LicenseeWizardProps
 
   return (
     <Formik initialValues={licenseeInitialValues} validationSchema={Yup.object()} onSubmit={(values) => {
+        if (currentStep !== totalSteps - 1) return
         const cleaned = { ...values }
         if (!useChat) {
           cleaned.chatDefault = ''
@@ -255,9 +256,10 @@ function LicenseeWizard({ onSubmit, errors: backendErrors }: LicenseeWizardProps
         onSubmit(cleaned)
       }}>
       {(formik) => (
-        <form onSubmit={formik.handleSubmit}>
+        <form>
           <h3>Criar Licenciado</h3>
-          <p className='text-muted'>Passo {currentStep + 1} de {totalSteps} — {step.title}</p>
+          <p className='text-muted mb-1'>Passo {currentStep + 1} de {totalSteps} — {step.title}</p>
+          <p className='text-muted small mb-3'>Campos marcados com <span className='text-danger'>*</span> são obrigatórios.</p>
 
           <div className='progress mb-4' style={{ height: '6px' }}>
             <div
@@ -302,7 +304,7 @@ function LicenseeWizard({ onSubmit, errors: backendErrors }: LicenseeWizardProps
               <>
                 <YesNoGate
                   label='Deseja integrar com uma Plataforma de ChatBot?'
-                  isYes={formik.values.useChatbot || null}
+                  isYes={typeof formik.values.useChatbot === 'boolean' ? formik.values.useChatbot : null}
                   onChange={(val: boolean) => formik.setFieldValue('useChatbot', val)}
                 />
                 {formik.values.useChatbot && (
@@ -371,7 +373,7 @@ function LicenseeWizard({ onSubmit, errors: backendErrors }: LicenseeWizardProps
                   Próximo →
                 </button>
               ) : (
-                <button type='submit' className='btn btn-success'>Salvar</button>
+                <button type='button' className='btn btn-success' onClick={() => formik.submitForm()}>Salvar</button>
               )}
             </div>
           </div>

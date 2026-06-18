@@ -10,6 +10,7 @@ export default function SuperQueueCard({ licensee }: { licensee?: string }) {
   const [data, setData] = useState<IDashboardQueue | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [retryCount, setRetryCount] = useState(0)
 
   useEffect(() => {
     setLoading(true)
@@ -18,7 +19,7 @@ export default function SuperQueueCard({ licensee }: { licensee?: string }) {
       .then((res) => setData(res.data as IDashboardQueue))
       .catch(() => setError('Erro ao carregar dados.'))
       .finally(() => setLoading(false))
-  }, [licensee, startDate, endDate])
+  }, [licensee, startDate, endDate, retryCount])
 
   return (
     <div className="card">
@@ -30,6 +31,7 @@ export default function SuperQueueCard({ licensee }: { licensee?: string }) {
               type="date"
               className="form-control form-control-sm"
               value={startDate}
+              aria-label="Data inicial"
               onChange={(e) => setStartDate(e.target.value)}
             />
             <span className="text-muted small">até</span>
@@ -37,14 +39,27 @@ export default function SuperQueueCard({ licensee }: { licensee?: string }) {
               type="date"
               className="form-control form-control-sm"
               value={endDate}
+              aria-label="Data final"
               onChange={(e) => setEndDate(e.target.value)}
             />
           </div>
         </div>
       </div>
       <div className="card-body">
-        {loading && <p>Carregando...</p>}
-        {error && <p className="text-danger">{error}</p>}
+        {loading && (
+          <p className="text-muted">
+            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
+            Carregando...
+          </p>
+        )}
+        {error && (
+          <div>
+            <p className="text-danger mb-2">{error}</p>
+            <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => setRetryCount((c) => c + 1)}>
+              Tentar novamente
+            </button>
+          </div>
+        )}
         {data && (
           <div className="d-flex gap-4">
             <div>

@@ -39,6 +39,18 @@ describe('<Navbar>', () => {
     expect(screen.getByText(/Relatórios/i)).toBeInTheDocument()
   })
 
+  describe('Chat nav link', () => {
+    it('is NOT rendered when chatDefault is not "local"', () => {
+      renderWithContext(<Navbar currentUser={{ role: 'agent', licensee: { chatDefault: 'dialog360' } }} />)
+      expect(screen.queryByText(/^Chat$/i)).not.toBeInTheDocument()
+    })
+
+    it('is rendered when effectiveLicensee.chatDefault === "local"', () => {
+      renderWithContext(<Navbar currentUser={{ role: 'agent', licensee: { chatDefault: 'local' } }} />)
+      expect(screen.getByText(/^Chat$/i)).toBeInTheDocument()
+    })
+  })
+
   describe('Setores nav item', () => {
     it('is hidden when useSetores is false', () => {
       renderWithContext(<Navbar currentUser={{ role: 'admin', licensee: { useSectors: false } }} />)

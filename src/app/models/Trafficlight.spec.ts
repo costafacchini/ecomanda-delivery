@@ -31,27 +31,27 @@ describe('Trafficlight', () => {
 
   describe('validations', () => {
     describe('key', () => {
-      it('is required', () => {
+      it('is required', async () => {
         const trafficlight = new Trafficlight()
-        const validation = trafficlight.validateSync()
+        const validation = await trafficlight.validate().catch((e: any) => e)
 
         expect(validation.errors['key'].message).toEqual('Key: Você deve preencher o campo')
       })
     })
 
     describe('token', () => {
-      it('is required', () => {
+      it('is required', async () => {
         const trafficlight = new Trafficlight()
-        const validation = trafficlight.validateSync()
+        const validation = await trafficlight.validate().catch((e: any) => e)
 
         expect(validation.errors['token'].message).toEqual('Token: Você deve preencher o campo')
       })
     })
 
     describe('expiresAt', () => {
-      it('is required', () => {
+      it('is required', async () => {
         const trafficlight = new Trafficlight()
-        const validation = trafficlight.validateSync()
+        const validation = await trafficlight.validate().catch((e: any) => e)
 
         expect(validation.errors['expiresAt'].message).toEqual('Data de Expiração: Você deve preencher o campo')
       })

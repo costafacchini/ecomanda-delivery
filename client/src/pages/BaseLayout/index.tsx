@@ -3,7 +3,7 @@ import Navbar from '../Navbar'
 import SelectLicenseeModal from '../../components/SelectLicenseeModal'
 import { useApp } from '../../contexts/App'
 
-export default function BaseLayout({ children }: any) {
+export default function BaseLayout({ children }: { children: React.ReactNode }) {
   const { currentUser, activeLicensee, updateActiveLicensee, licenseeModalSeen, markLicenseeModalSeen } = useApp()
 
   const showModal =

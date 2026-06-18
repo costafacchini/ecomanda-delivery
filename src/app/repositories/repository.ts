@@ -217,7 +217,7 @@ class RepositoryMemory extends Repository {
   }
 
   async create(fields: any = {}) {
-    const record = this.prepareRecord(fields)
+    const record = await this.prepareRecord(fields)
     this.items.push(record)
 
     return await Promise.resolve(this.hydrate(record))
@@ -227,7 +227,7 @@ class RepositoryMemory extends Repository {
     const record = this.items.find((item) => matchValue(item?._id, id))
 
     if (record) {
-      const nextRecord = this.prepareRecord({ ...record, ...(fields ?? {}) }, { existingRecord: record })
+      const nextRecord = await this.prepareRecord({ ...record, ...(fields ?? {}) }, { existingRecord: record })
       Object.assign(record, nextRecord)
     }
 
@@ -235,12 +235,10 @@ class RepositoryMemory extends Repository {
   }
 
   async updateMany(params: any = {}, fields: any = {}) {
-    this.items
-      .filter((item) => matchesFilter(item, params ?? {}))
-      .forEach((item) => {
-        const nextRecord = this.prepareRecord({ ...item, ...(fields ?? {}) }, { existingRecord: item })
-        Object.assign(item, nextRecord)
-      })
+    for (const item of this.items.filter((item) => matchesFilter(item, params ?? {}))) {
+      const nextRecord = await this.prepareRecord({ ...item, ...(fields ?? {}) }, { existingRecord: item })
+      Object.assign(item, nextRecord)
+    }
 
     return await Promise.resolve({ acknowledged: true })
   }
@@ -266,7 +264,7 @@ class RepositoryMemory extends Repository {
 
   async save(document: any) {
     const existingRecord = this.items.find((item) => matchValue(item?._id, document?._id))
-    const storedRecord = this.prepareRecord(document, { existingRecord })
+    const storedRecord = await this.prepareRecord(document, { existingRecord })
     const index = this.items.findIndex((item) => matchValue(item?._id, storedRecord._id))
 
     if (index >= 0) {
@@ -278,7 +276,7 @@ class RepositoryMemory extends Repository {
     return await Promise.resolve(this.hydrate(storedRecord))
   }
 
-  prepareRecord(fields: any = {}, { existingRecord = null }: { existingRecord?: any } = {}) {
+  async prepareRecord(fields: any = {}, { existingRecord = null }: { existingRecord?: any } = {}) {
     if (!this.modelClass) {
       if (existingRecord) {
         return {
@@ -300,11 +298,7 @@ class RepositoryMemory extends Repository {
       createdAt: payload?.createdAt ?? existingRecord?.createdAt ?? now,
       updatedAt: now,
     })
-    const validationError = document.validateSync()
-
-    if (validationError) {
-      throw validationError
-    }
+    await document.validate()
 
     const record = this.serializeInput(document)
     record.createdAt = payload?.createdAt ?? existingRecord?.createdAt ?? record.createdAt ?? now

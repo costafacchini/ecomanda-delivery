@@ -24,15 +24,19 @@ interface UserFormProps {
   errors?: IFormError[] | null
   initialValues?: Partial<IUserFormValues>
   currentUser?: IUser | null
+  isNew?: boolean
+  saving?: boolean
 }
 
 const ROLES_WITHOUT_LICENSEE: UserRole[] = ['admin', 'super']
 
-function buildSchema(isSuperUser: boolean) {
+function buildSchema(isSuperUser: boolean, isNew: boolean) {
   return Yup.object().shape({
-    name: Yup.string(),
-    email: Yup.string().email().max(60),
-    password: Yup.string(),
+    name: Yup.string().required('Nome é obrigatório'),
+    email: Yup.string().email('E-mail inválido').max(60).required('E-mail é obrigatório'),
+    password: isNew
+      ? Yup.string().required('Senha é obrigatória')
+      : Yup.string(),
     licensee: isSuperUser
       ? Yup.string().when('role', {
           is: (role: string) => !ROLES_WITHOUT_LICENSEE.includes(role as UserRole),
@@ -51,11 +55,11 @@ const userInitialValues: IUserFormValues = {
   role: 'agent',
 }
 
-function UserForm({ onSubmit, errors, initialValues, currentUser }: UserFormProps) {
-  let navigate = useNavigate()
+function UserForm({ onSubmit, errors, initialValues, currentUser, isNew = false, saving = false }: UserFormProps) {
+  const navigate = useNavigate()
 
   const isSuperUser = currentUser?.role === 'super'
-  const schema = useMemo(() => buildSchema(isSuperUser), [isSuperUser])
+  const schema = useMemo(() => buildSchema(isSuperUser, isNew), [isSuperUser, isNew])
 
   return (
     <div>
@@ -68,10 +72,10 @@ function UserForm({ onSubmit, errors, initialValues, currentUser }: UserFormProp
       >
         {(formik) => (
           <form onSubmit={formik.handleSubmit}>
-            <fieldset className='pb-4'>
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='name'>Nome</label>
+            <fieldset className='mb-4'>
+              <div className='row mb-3'>
+                <div className='form-group col-8'>
+                  <label htmlFor='name'>Nome <span className='text-danger'>*</span></label>
                   <FieldWithError
                     id='name'
                     type='text'
@@ -81,9 +85,13 @@ function UserForm({ onSubmit, errors, initialValues, currentUser }: UserFormProp
                     name='name'
                   />
                 </div>
-                <div className='form-group col-5'>
-                  <div className='form-check mt-4'>
+              </div>
+
+              <div className='row mb-3'>
+                <div className='col-8'>
+                  <div className='form-check'>
                     <input
+                      name='active'
                       checked={formik.values.active}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
@@ -96,9 +104,9 @@ function UserForm({ onSubmit, errors, initialValues, currentUser }: UserFormProp
                 </div>
               </div>
 
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='email'>E-email</label>
+              <div className='row mb-3'>
+                <div className='form-group col-8'>
+                  <label htmlFor='email'>E-mail <span className='text-danger'>*</span></label>
                   <FieldWithError
                     id='email'
                     name='email'
@@ -106,13 +114,16 @@ function UserForm({ onSubmit, errors, initialValues, currentUser }: UserFormProp
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.email}
+                    placeholder='usuario@email.com'
                   />
                 </div>
               </div>
 
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='password'>Senha</label>
+              <div className='row mb-3'>
+                <div className='form-group col-8'>
+                  <label htmlFor='password'>
+                    Senha {isNew && <span className='text-danger'>*</span>}
+                  </label>
                   <FieldWithError
                     id='password'
                     type='password'
@@ -121,13 +132,14 @@ function UserForm({ onSubmit, errors, initialValues, currentUser }: UserFormProp
                     value={formik.values.password}
                     name='password'
                     autoComplete='new-password'
+                    placeholder={isNew ? 'Crie uma senha' : 'Deixe em branco para não alterar'}
                   />
                 </div>
               </div>
 
               {currentUser && ['admin', 'super'].includes(currentUser.role) && (
-                <div className='row pb-2'>
-                  <div className='form-group col-5'>
+                <div className='row mb-3'>
+                  <div className='form-group col-8'>
                     <label htmlFor='role'>Perfil</label>
                     <select
                       className='form-select'
@@ -147,14 +159,17 @@ function UserForm({ onSubmit, errors, initialValues, currentUser }: UserFormProp
               )}
 
               {isSuperUser && !ROLES_WITHOUT_LICENSEE.includes(formik.values.role) && (
-                <div className='row'>
-                  <div className='form-group col-5'>
+                <div className='row mb-3'>
+                  <div className='form-group col-8'>
                     <label htmlFor='licensee'>Licenciado <span className='text-danger'>*</span></label>
-                    <SelectLicenseesWithFilter selectedItem={typeof formik.values.licensee === 'string' ? null : formik.values.licensee} onChange={(e: any) => {
-                      const inputValue = e && e.value ? e.value : null
-                      formik.setFieldValue('licensee', inputValue, true)
-                    }} />
-                    <ErrorMessage name='licensee' />
+                    <SelectLicenseesWithFilter
+                      selectedItem={typeof formik.values.licensee === 'string' ? null : formik.values.licensee}
+                      onChange={(e: { value?: string } | null) => {
+                        const inputValue = e && e.value ? e.value : null
+                        formik.setFieldValue('licensee', inputValue, true)
+                      }}
+                    />
+                    <ErrorMessage name='licensee' component='div' className='text-danger small mt-1' />
                   </div>
                 </div>
               )}
@@ -162,17 +177,24 @@ function UserForm({ onSubmit, errors, initialValues, currentUser }: UserFormProp
 
             {errors && (
               <div className='alert alert-danger'>
-                <ul>
-                  {errors.map((error: any) => (<li key={error.message}>{error.message}</li>))}
+                <ul className='mb-0'>
+                  {errors.map((error) => (<li key={error.message}>{error.message}</li>))}
                 </ul>
               </div>
             )}
 
             <div className='row'>
-              <div className='col-5'>
+              <div className='col-8'>
                 <div className='mt-4 d-flex justify-content-between'>
                   <button onClick={() => navigate('/users')} className='btn btn-secondary' type='button'>Voltar</button>
-                  <button className='btn btn-success' type='submit'>Salvar</button>
+                  <button className='btn btn-success' type='submit' disabled={saving}>
+                    {saving ? (
+                      <>
+                        <span className='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true' />
+                        Salvando...
+                      </>
+                    ) : 'Salvar'}
+                  </button>
                 </div>
               </div>
             </div>

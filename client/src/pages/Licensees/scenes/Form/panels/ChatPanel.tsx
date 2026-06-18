@@ -11,12 +11,23 @@ interface ChatPanelProps {
   handleBlur: React.FocusEventHandler<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
 }
 
+function Required() {
+  return <span className='text-danger ms-1' aria-hidden='true'>*</span>
+}
+
+const PLATFORM_NAMES: Record<string, string> = {
+  crisp: 'Crisp',
+  chatwoot: 'Chatwoot',
+}
+
 function ChatPanel({ values, errors, touched, handleChange, handleBlur }: ChatPanelProps) {
+  const platformName = PLATFORM_NAMES[values.chatDefault] ?? ''
+
   return (
     <>
-      <div className='row'>
+      <div className='row mb-3'>
         <div className='form-group col-5'>
-          <label htmlFor='chatDefault'>Chat padrão</label>
+          <label htmlFor='chatDefault'>Chat padrão<Required /></label>
           <select
             value={values.chatDefault}
             className='form-select'
@@ -24,7 +35,7 @@ function ChatPanel({ values, errors, touched, handleChange, handleBlur }: ChatPa
             onChange={handleChange}
             onBlur={handleBlur}
           >
-            <option value=''></option>
+            <option value=''>Nenhum</option>
             <option value='rocketchat'>Rocketchat</option>
             <option value='crisp'>Crisp</option>
             <option value='cuboup'>CuboUp</option>
@@ -36,9 +47,9 @@ function ChatPanel({ values, errors, touched, handleChange, handleBlur }: ChatPa
 
       {['rocketchat', 'crisp', 'chatwoot', 'cuboup'].includes(values.chatDefault) && (
         <>
-          <div className='row'>
-            <div className='form-group col-5'>
-              <label htmlFor='chatUrl'>Url do chat</label>
+          <div className='row mb-3'>
+            <div className='form-group col-8'>
+              <label htmlFor='chatUrl'>URL do chat<Required /></label>
               <FieldWithError
                 id='chatUrl'
                 name='chatUrl'
@@ -50,8 +61,8 @@ function ChatPanel({ values, errors, touched, handleChange, handleBlur }: ChatPa
             </div>
           </div>
 
-          <div className='row pb-2'>
-            <div className='col-3'>
+          <div className='row mb-3'>
+            <div className='col-8'>
               <div className='form-check'>
                 <input
                   type='checkbox'
@@ -72,9 +83,12 @@ function ChatPanel({ values, errors, touched, handleChange, handleBlur }: ChatPa
 
       {['crisp', 'chatwoot'].includes(values.chatDefault) && (
         <>
-          <div className='row'>
-            <div className='form-group col-5'>
-              <label htmlFor='chatIdentifier'>Identifier</label>
+          <div className='row mb-3'>
+            <div className='form-group col-8'>
+              <label htmlFor='chatIdentifier'>
+                Identifier{platformName && <span className='text-muted fw-normal ms-1 small'>({platformName} Website ID)</span>}
+                <Required />
+              </label>
               <FieldWithError
                 id='chatIdentifier'
                 name='chatIdentifier'
@@ -86,9 +100,12 @@ function ChatPanel({ values, errors, touched, handleChange, handleBlur }: ChatPa
             </div>
           </div>
 
-          <div className='row'>
-            <div className='form-group col-5'>
-              <label htmlFor='chatKey'>Key</label>
+          <div className='row mb-3'>
+            <div className='form-group col-8'>
+              <label htmlFor='chatKey'>
+                Key{platformName && <span className='text-muted fw-normal ms-1 small'>({platformName} Token de acesso)</span>}
+                <Required />
+              </label>
               <FieldWithError
                 id='chatKey'
                 name='chatKey'

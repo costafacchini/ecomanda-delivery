@@ -7,7 +7,9 @@ import type { IUser } from '../../../../types'
 import type { ILicensee } from '../../../../types'
 
 const SignupSchema = Yup.object().shape({
-  name: Yup.string()
+  name: Yup.string().required('Nome é obrigatório'),
+  number: Yup.string().required('Telefone é obrigatório'),
+  email: Yup.string().email('E-mail inválido')
 });
 
 const contactInitialValues: Partial<IContact> & {
@@ -25,13 +27,13 @@ const contactInitialValues: Partial<IContact> & {
   licensee: '',
   waId: '',
   landbotId: '',
+  ud: '',
   address: '',
   address_number: '',
   address_complement: '',
   neighborhood: '',
   city: '',
   cep: '',
-  ud: '',
   delivery_tax: 0,
   plugin_cart_id: ''
 }
@@ -52,6 +54,7 @@ interface IContactFormValues {
   licensee: string | null
   waId: string
   landbotId: string
+  ud: string
   address: string
   address_number: string
   address_complement: string
@@ -59,7 +62,6 @@ interface IContactFormValues {
   city: string
   cep: string
   uf?: string
-  ud: string
   delivery_tax: number
   plugin_cart_id: string
   [key: string]: unknown
@@ -80,10 +82,10 @@ function ContactForm(props: ContactFormProps) {
       >
         {(formProps) => (
           <form onSubmit={formProps.handleSubmit}>
-            <fieldset className='pb-4'>
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='name'>Nome</label>
+            <fieldset className='mb-4'>
+              <div className='row mb-3'>
+                <div className='form-group col-8'>
+                  <label htmlFor='name'>Nome <span className='text-danger'>*</span></label>
                   <FieldWithError
                     id='name'
                     type='text'
@@ -91,13 +93,14 @@ function ContactForm(props: ContactFormProps) {
                     onBlur={formProps.handleBlur}
                     value={formProps.values.name}
                     name='name'
+                    placeholder='Nome do contato'
                   />
                 </div>
               </div>
 
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='email'>E-email</label>
+              <div className='row mb-3'>
+                <div className='form-group col-8'>
+                  <label htmlFor='email'>E-mail</label>
                   <FieldWithError
                     id='email'
                     name='email'
@@ -105,13 +108,14 @@ function ContactForm(props: ContactFormProps) {
                     onChange={formProps.handleChange}
                     onBlur={formProps.handleBlur}
                     value={formProps.values.email}
+                    placeholder='contato@email.com'
                   />
                 </div>
               </div>
 
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='number'>Telefone</label>
+              <div className='row mb-3'>
+                <div className='form-group col-8'>
+                  <label htmlFor='number'>Telefone <span className='text-danger'>*</span></label>
                   <FieldWithError
                     id='number'
                     type='text'
@@ -119,12 +123,13 @@ function ContactForm(props: ContactFormProps) {
                     onBlur={formProps.handleBlur}
                     value={formProps.values.number}
                     name='number'
+                    placeholder='Ex: 5511999999999'
                   />
                 </div>
               </div>
 
-              <div className='row pb-2'>
-                <div className='col-3'>
+              <div className='row mb-3'>
+                <div className='col-8'>
                   <div className='form-check'>
                     <input
                       type='checkbox'
@@ -140,9 +145,9 @@ function ContactForm(props: ContactFormProps) {
               </div>
 
               {currentUser && currentUser.role === 'super' && !activeLicensee && (
-                <div className='row'>
-                  <div className='form-group col-5'>
-                    <label htmlFor='waId'>Licenciado</label>
+                <div className='row mb-3'>
+                  <div className='form-group col-8'>
+                    <label htmlFor='licensee'>Licenciado</label>
                     <SelectLicenseesWithFilter selectedItem={typeof formProps.values.licensee === 'string' ? null : formProps.values.licensee} onChange={(e: { value?: string } | null) => {
                       const inputValue = e && e.value ? e.value : null
                       formProps.setFieldValue('licensee', inputValue, false)
@@ -151,9 +156,9 @@ function ContactForm(props: ContactFormProps) {
                 </div>
               )}
 
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='waId'>ID da API oficial do whatsapp</label>
+              <div className='row mb-3'>
+                <div className='form-group col-8'>
+                  <label htmlFor='waId'>ID da API oficial do WhatsApp</label>
                   <FieldWithError
                     id='waId'
                     name='waId'
@@ -161,13 +166,14 @@ function ContactForm(props: ContactFormProps) {
                     onChange={formProps.handleChange}
                     onBlur={formProps.handleBlur}
                     value={formProps.values.waId}
+                    placeholder='ID fornecido pela API'
                   />
                 </div>
               </div>
 
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='landbotId'>ID do contato na landbot</label>
+              <div className='row mb-3'>
+                <div className='form-group col-8'>
+                  <label htmlFor='landbotId'>ID do contato na Landbot</label>
                   <FieldWithError
                     id='landbotId'
                     name='landbotId'
@@ -175,15 +181,32 @@ function ContactForm(props: ContactFormProps) {
                     onChange={formProps.handleChange}
                     onBlur={formProps.handleBlur}
                     value={formProps.values.landbotId}
+                    placeholder='ID do contato na Landbot'
+                  />
+                </div>
+              </div>
+
+              <div className='row mb-3'>
+                <div className='form-group col-8'>
+                  <label htmlFor='ud'>UD</label>
+                  <FieldWithError
+                    id='ud'
+                    name='ud'
+                    type='text'
+                    onChange={formProps.handleChange}
+                    onBlur={formProps.handleBlur}
+                    value={formProps.values.ud}
                   />
                 </div>
               </div>
             </fieldset>
 
-            <fieldset className='pb-4'>
-              <div className='row'>
+            <fieldset className='mb-4'>
+              <legend className='fs-6 fw-semibold text-muted mb-3'>Endereço</legend>
+
+              <div className='row mb-3'>
                 <div className='form-group col-3'>
-                  <label htmlFor='cep'>Cep</label>
+                  <label htmlFor='cep'>CEP</label>
                   <FieldWithError
                     id='cep'
                     name='cep'
@@ -191,12 +214,13 @@ function ContactForm(props: ContactFormProps) {
                     onChange={formProps.handleChange}
                     onBlur={formProps.handleBlur}
                     value={formProps.values.cep}
+                    placeholder='Ex: 01310-100'
                   />
                 </div>
               </div>
 
-              <div className='row'>
-                <div className='form-group col-4'>
+              <div className='row mb-3'>
+                <div className='form-group col-5'>
                   <label htmlFor='city'>Cidade</label>
                   <FieldWithError
                     id='city'
@@ -208,7 +232,7 @@ function ContactForm(props: ContactFormProps) {
                   />
                 </div>
 
-                <div className='form-group col-1'>
+                <div className='form-group col-2'>
                   <label htmlFor='uf'>UF</label>
                   <FieldWithError
                     id='uf'
@@ -217,12 +241,13 @@ function ContactForm(props: ContactFormProps) {
                     onChange={formProps.handleChange}
                     onBlur={formProps.handleBlur}
                     value={formProps.values.uf}
+                    placeholder='SP'
                   />
                 </div>
               </div>
 
-              <div className='row'>
-                <div className='form-group col-5'>
+              <div className='row mb-3'>
+                <div className='form-group col-6'>
                   <label htmlFor='address'>Endereço</label>
                   <FieldWithError
                     id='address'
@@ -233,9 +258,7 @@ function ContactForm(props: ContactFormProps) {
                     value={formProps.values.address}
                   />
                 </div>
-              </div>
 
-              <div className='row'>
                 <div className='form-group col-2'>
                   <label htmlFor='address_number'>Número</label>
                   <FieldWithError
@@ -249,8 +272,8 @@ function ContactForm(props: ContactFormProps) {
                 </div>
               </div>
 
-              <div className='row'>
-                <div className='form-group col-5'>
+              <div className='row mb-3'>
+                <div className='form-group col-8'>
                   <label htmlFor='address_complement'>Complemento</label>
                   <FieldWithError
                     id='address_complement'
@@ -263,8 +286,8 @@ function ContactForm(props: ContactFormProps) {
                 </div>
               </div>
 
-              <div className='row'>
-                <div className='form-group col-5'>
+              <div className='row mb-3'>
+                <div className='form-group col-8'>
                   <label htmlFor='neighborhood'>Bairro</label>
                   <FieldWithError
                     id='neighborhood'
@@ -276,9 +299,13 @@ function ContactForm(props: ContactFormProps) {
                   />
                 </div>
               </div>
+            </fieldset>
 
-              <div className='row'>
-                <div className='form-group col-5'>
+            <fieldset className='mb-4'>
+              <legend className='fs-6 fw-semibold text-muted mb-3'>Entrega</legend>
+
+              <div className='row mb-3'>
+                <div className='form-group col-4'>
                   <label htmlFor='delivery_tax'>Taxa de entrega</label>
                   <FieldWithError
                     id='delivery_tax'
@@ -291,9 +318,9 @@ function ContactForm(props: ContactFormProps) {
                 </div>
               </div>
 
-              <div className='row'>
-                <div className='form-group col-5'>
-                  <label htmlFor='plugin_cart_id'>Id no plugin de carrinho</label>
+              <div className='row mb-3'>
+                <div className='form-group col-8'>
+                  <label htmlFor='plugin_cart_id'>ID no plugin de carrinho</label>
                   <FieldWithError
                     id='plugin_cart_id'
                     name='plugin_cart_id'
@@ -308,14 +335,14 @@ function ContactForm(props: ContactFormProps) {
 
             {errors && (
               <div className='alert alert-danger'>
-                <ul>
+                <ul className='mb-0'>
                   {errors.map((error) => (<li key={error.message}>{error.message}</li>))}
                 </ul>
               </div>
             )}
 
             <div className='row'>
-              <div className='col-5'>
+              <div className='col-8'>
                 <div className='mt-4 d-flex justify-content-between'>
                   <button onClick={() => navigate('/contacts')} className='btn btn-secondary' type='button'>Voltar</button>
                   <button className='btn btn-success' type='submit'>Salvar</button>
