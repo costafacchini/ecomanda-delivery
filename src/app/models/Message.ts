@@ -89,6 +89,7 @@ const messageSchema = new Schema(
     deliveredAt: Date,
     messageChatId: String,
     error: String,
+    ignored: { type: Boolean, default: false },
     payload: String,
     replyMessageId: String,
   },

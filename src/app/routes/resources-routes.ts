@@ -9,6 +9,8 @@ import { MessagesController } from '../controllers/MessagesController'
 import { TemplatesController } from '../controllers/TemplatesController'
 import { DashboardController } from '../controllers/DashboardController'
 import { RoomsController } from '../controllers/RoomsController'
+import { ChatRoomsController } from '../controllers/ChatRoomsController'
+import { IngestChatMessage } from '../usecases/webhooks/IngestChatMessage'
 import { queueServer } from '../../config/queue'
 import { redisConnection } from '../../config/redis'
 import { LicenseesQuery } from '../queries/LicenseesQuery'
@@ -42,6 +44,7 @@ const {
   templateRepository,
   messageRepository,
   roomRepository,
+  bodyRepository,
   whatsappSessionRepository,
   sectorRepository,
   createMessengerPlugin,
@@ -112,6 +115,11 @@ const roomsController = new RoomsController({
   messageRepository,
   sectorRepository,
   contactRepository,
+})
+const chatRoomsController = new ChatRoomsController({
+  userRepository,
+  roomRepository,
+  ingestChatMessage: new IngestChatMessage({ chatRepository: bodyRepository, jobQueue: queueServer }),
 })
 const templatesController = new TemplatesController({
   templateRepository,
@@ -196,6 +204,7 @@ router.post('/sectors/:id/baileys-sync', authorize('admin', 'super'), sectorsCon
 router.get('/messages', messagesController.index)
 router.post('/messages', messagesController.create)
 router.post('/messages/:id/resend', messagesController.resend)
+router.post('/messages/:id/ignore', messagesController.ignore)
 
 router.get('/dashboard/licensees', dashboardController.licensees)
 router.get('/dashboard/message-volume', dashboardController.messageVolume)
@@ -211,5 +220,7 @@ router.post('/dashboard/rooms/:roomId/close', dashboardController.closeRoom)
 router.get('/rooms', (req, res) => roomsController.index(req, res))
 router.post('/rooms', (req, res) => roomsController.create(req, res))
 router.get('/rooms/:roomId/messages', (req, res) => roomsController.messages(req, res))
+router.post('/rooms/:roomId/messages', (req, res) => chatRoomsController.replyToRoom(req, res))
+router.post('/rooms/:roomId/close', (req, res) => roomsController.closeRoom(req, res))
 
 export default router

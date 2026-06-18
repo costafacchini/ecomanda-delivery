@@ -23,6 +23,7 @@ class MessagesController {
     this.index = this.index.bind(this)
     this.create = this.create.bind(this)
     this.resend = this.resend.bind(this)
+    this.ignore = this.ignore.bind(this)
   }
 
   async index(req: any, res: any) {
@@ -109,6 +110,30 @@ class MessagesController {
       await this.messageRepository.save(message)
 
       await this.queueServer.addJob('send-message-to-messenger', { messageId: message._id })
+
+      return res.status(200).json(message)
+    } catch (err: any) {
+      return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
+    }
+  }
+  async ignore(req: any, res: any) {
+    try {
+      const [user, message] = await Promise.all([
+        this.userRepository.findFirst({ _id: req.userId }),
+        this.messageRepository.findFirst({ _id: req.params.id }),
+      ])
+
+      if (!message) return res.status(404).json({ errors: { message: 'Message not found' } })
+      if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
+
+      if (user.role !== 'super') {
+        if (message.licensee.toString() !== user.licensee.toString()) {
+          return res.status(403).json({ errors: { message: 'Forbidden' } })
+        }
+      }
+
+      message.ignored = true
+      await this.messageRepository.save(message)
 
       return res.status(200).json(message)
     } catch (err: any) {

@@ -17,14 +17,20 @@ function ContactsIndex({ currentUser }: ContactsIndexProps) {
   const { addPage } = cache
   const contactFilters = filters as IContactFilters | undefined
   const [expression, setExpression] = useState(contactFilters?.expression ?? '')
+  const [loading, setLoading] = useState(false)
 
   const onFilter = useCallback(
     async (changedFilters: Partial<IContactFilters>) => {
       const newFilters: IContactFilters = { ...contactFilters, ...changedFilters }
       setFilters(newFilters)
-      const { data: contacts } = await getContacts(newFilters)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      addPage(contacts as any, newFilters)
+      setLoading(true)
+      try {
+        const { data: contacts } = await getContacts(newFilters)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        addPage(contacts as any, newFilters)
+      } finally {
+        setLoading(false)
+      }
     },
     [contactFilters, setFilters, addPage]
   )
@@ -76,10 +82,10 @@ function ContactsIndex({ currentUser }: ContactsIndexProps) {
       <div className='row'>
         <div className='d-flex justify-content-between pb-2'>
           <div className=''>
-            <h3 className='pr-3'>Contatos</h3>
+            <h3 className='pe-3'>Contatos</h3>
           </div>
           <div className=''>
-            <Link to='/contacts/new' className='btn btn-primary'>Criar +</Link>
+            <Link to='/contacts/new' className='btn btn-primary'>Novo Contato</Link>
           </div>
         </div>
       </div>
@@ -112,7 +118,7 @@ function ContactsIndex({ currentUser }: ContactsIndexProps) {
               className={`btn btn-sm ${contactFilters?.isGroup ? 'btn-primary' : 'btn-outline-secondary'}`}
               onClick={toggleGroupFilter}
             >
-              {contactFilters?.isGroup ? 'Apenas Grupos' : 'Todos os Contatos'}
+              {contactFilters?.isGroup ? 'Ver Todos' : 'Ver Grupos'}
             </button>
           </div>
           <div className=''>
@@ -124,15 +130,23 @@ function ContactsIndex({ currentUser }: ContactsIndexProps) {
                 value={expression}
                 placeholder='Digite a expressão'
                 onChange={changeExpression}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    onFilter({ ...contactFilters, expression, page: 1 })
+                  }
+                }}
               />
-              <div className='input-group-append'>
-                <button className='btn btn-primary' title='Filtre pelo contato' onClick={() => {
+              <button
+                className='btn btn-primary'
+                title='Filtre pelo contato'
+                aria-label='Pesquisar contatos'
+                onClick={() => {
                   const newFilters: IContactFilters = { ...contactFilters, expression: expression, page: 1 }
                   onFilter(newFilters)
-                }}>
-                  <i className='bi bi-search'></i>
-                </button>
-              </div>
+                }}
+              >
+                <i className='bi bi-search'></i>
+              </button>
             </div>
           </div>
         </div>
@@ -149,13 +163,30 @@ function ContactsIndex({ currentUser }: ContactsIndexProps) {
             </tr>
           </thead>
           <tbody>
-            {(cache.records as unknown as IContact[]).map((contact) => (
+            {loading ? (
+              <tr>
+                <td colSpan={5} className='text-center text-muted py-4'>
+                  <span className='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true' />
+                  Carregando...
+                </td>
+              </tr>
+            ) : (cache.records as unknown as IContact[]).length === 0 ? (
+              <tr>
+                <td colSpan={5} className='text-center text-muted py-4'>
+                  Nenhum contato encontrado.
+                </td>
+              </tr>
+            ) : (cache.records as unknown as IContact[]).map((contact) => (
               <tr key={contact.id}>
                 <td>{contact.name}</td>
                 <td>{contact.number}</td>
-                <td>{(contact as any).type}</td>
+                <td>{contact.type}</td>
                 <td>{contact.email}</td>
-                <td><Link to={`/contacts/${contact.id}`}><i className='bi bi-pencil' /></Link></td>
+                <td>
+                  <Link to={`/contacts/${contact.id}`} aria-label={`Editar ${contact.name}`}>
+                    <i className='bi bi-pencil' />
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -171,8 +202,14 @@ function ContactsIndex({ currentUser }: ContactsIndexProps) {
                   type='button'
                   className='btn btn-outline-primary d-print-none'
                   onClick={nextPage}
+                  disabled={loading}
                 >
-                  Carregar mais
+                  {loading ? (
+                    <>
+                      <span className='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true' />
+                      Carregando...
+                    </>
+                  ) : 'Carregar mais'}
                 </button>
               </div>
             </div>

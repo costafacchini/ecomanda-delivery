@@ -60,9 +60,9 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
 
   return (
     <>
-      <div className='row'>
-        <div className='form-group col-5'>
-          <label htmlFor='whatsappDefault'>Whatsapp padrão</label>
+      <div className='row mb-3'>
+        <div className='form-group col-8'>
+          <label htmlFor='whatsappDefault'>WhatsApp padrão</label>
           <select
             value={values.whatsappDefault}
             className='form-select'
@@ -70,7 +70,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
             onChange={handleChange}
             onBlur={handleBlur}
           >
-            <option value=''></option>
+            <option value=''>Nenhum</option>
             <option value='utalk'>Utalk</option>
             <option value='dialog'>Dialog360</option>
             <option value='ycloud'>YCloud</option>
@@ -80,12 +80,12 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
         </div>
       </div>
 
-      <fieldset className='pb-4' disabled={values.whatsappDefault === ''}>
+      {values.whatsappDefault !== '' && <fieldset>
         {values.whatsappDefault !== 'baileys' && (
           <>
-            <div className='row'>
-              <div className='form-group col-5'>
-                <label htmlFor='whatsappToken'>Token do whatsapp</label>
+            <div className='row mb-3'>
+              <div className='form-group col-8'>
+                <label htmlFor='whatsappToken'>Token do WhatsApp</label>
                 <FieldWithError
                   id='whatsappToken'
                   name='whatsappToken'
@@ -97,9 +97,9 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
               </div>
             </div>
 
-            <div className='row pb-4'>
-              <div className='form-group col-5'>
-                <label htmlFor='whatsappUrl'>Url do whatsapp</label>
+            <div className='row mb-3'>
+              <div className='form-group col-8'>
+                <label htmlFor='whatsappUrl'>URL do WhatsApp</label>
                 <FieldWithError
                   id='whatsappUrl'
                   name='whatsappUrl'
@@ -114,8 +114,8 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
         )}
 
         {values.whatsappDefault === 'ycloud' && (
-          <div className='row pb-2'>
-            <div className='col-3'>
+          <div className='row mb-3'>
+            <div className='col-8'>
               <div className='form-check'>
                 <input
                   type='checkbox'
@@ -135,7 +135,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
 
         {(values.whatsappDefault === 'dialog' || values.whatsappDefault === 'ycloud') &&
           values.apiToken && (
-            <div className='row pb-4'>
+            <div className='row mb-3'>
               <div className='form-group col-3'>
                 <button
                   onClick={async (event) => {
@@ -163,8 +163,8 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
           )}
 
         {values.whatsappDefault === 'baileys' && (
-          <div className='row pb-2'>
-            <div className='col-5'>
+          <div className='row mb-3'>
+            <div className='col-8'>
               <div className='form-check'>
                 <input
                   type='checkbox'
@@ -184,7 +184,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
         )}
 
         {values.whatsappDefault === 'baileys' && (
-          <div className='row mt-3 pb-4'>
+          <div className='row mb-3'>
             {baileysChecking && (
               <div className='form-group col-12'>
                 <span className='text-muted'>Verificando conexão...</span>
@@ -308,7 +308,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
             )}
           </div>
         )}
-      </fieldset>
+      </fieldset>}
     </>
   )
 }

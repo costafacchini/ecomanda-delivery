@@ -10,6 +10,7 @@ import TemplatesRoutes from './Templates/routes'
 import MessagesRoutes from './Messages/routes'
 import ReportsRoutes from './Reports/routes'
 import Dashboard from './Dashboard'
+import ChatPage from './Chat'
 import { isAuthenticated, fetchLoggedUser } from '../services/auth'
 import BaseLayout from './BaseLayout/index'
 import PrivateRoute from './PrivateRoute/index'
@@ -99,6 +100,14 @@ function RootRoutes() {
           element={
             <PrivateRoute redirectTo='/'>
               <ReportsRoutes />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path='/chat'
+          element={
+            <PrivateRoute redirectTo='/signin' noLayout>
+              <ChatPage />
             </PrivateRoute>
           }
         />

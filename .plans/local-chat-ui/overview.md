@@ -1,6 +1,6 @@
 # Plan: Local Chat UI
 
-**Status**: not-started
+**Status**: complete
 **Created**: 2026-06-15
 **Last Updated**: 2026-06-17
 **Assigned Dev**: Alan Costa Facchini

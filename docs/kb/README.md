@@ -36,6 +36,7 @@ Load ONLY documents relevant to your current task.
 |----------|--------------|
 | [bl-v7-bufferliststream-upgrade](integrations/bl-v7-bufferliststream-upgrade.md) | Upgrading `bl` to v7 in this repo or fixing backup/archive code that Jest loads |
 | [cra-to-vite-migration](integrations/cra-to-vite-migration.md) | Migrating from CRA (`react-scripts`) to Vite/Vitest, or debugging JSX parse errors / mock failures in Vitest on a `.js`-extension codebase |
+| [socketio-jwt-licensee-rooms](integrations/socketio-jwt-licensee-rooms.md) | Adding Socket.IO real-time events, wiring client-side socket subscriptions, or extending the `join-licensee` mechanism |
 
 ### API
 
