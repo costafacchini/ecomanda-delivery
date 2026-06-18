@@ -14,6 +14,14 @@ import BaileysSetupCard from './cards/BaileysSetupCard'
 export default function Dashboard() {
   const { currentUser, activeLicensee } = useApp()
 
+  const licenseeObj = currentUser?.licensee as { id?: string; whatsappDefault?: string } | string | null | undefined
+  const needsBaileysSetup =
+    currentUser?.role === 'admin' &&
+    typeof licenseeObj === 'object' &&
+    licenseeObj !== null &&
+    licenseeObj.whatsappDefault === 'baileys'
+  const [showBaileysCard, setShowBaileysCard] = useState(needsBaileysSetup)
+
   if (!currentUser) return <p>Carregando...</p>
 
   if (currentUser.role === 'super' && !activeLicensee) {
@@ -33,10 +41,7 @@ export default function Dashboard() {
 
   if (currentUser.role === 'super' || currentUser.role === 'admin') {
     const licenseeId = activeLicensee?.id
-    const licenseeObj = currentUser.licensee as { id?: string; whatsappDefault?: string } | string | null
     const licenseeObjId = typeof licenseeObj === 'object' && licenseeObj !== null ? licenseeObj.id : undefined
-    const needsBaileysSetup = currentUser.role === 'admin' && (typeof licenseeObj === 'object' && licenseeObj !== null ? licenseeObj.whatsappDefault === 'baileys' : false)
-    const [showBaileysCard, setShowBaileysCard] = useState(needsBaileysSetup)
     return (
       <>
         <div className="row g-3">

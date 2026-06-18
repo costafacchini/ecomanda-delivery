@@ -83,7 +83,13 @@ export default function Navbar({ currentUser }: any) {
                 </li>
               )}
             </ul>
-            <div className='dropdown'>
+            <div className='d-flex align-items-center gap-3'>
+              {effectiveLicensee?.name && (
+                <span className='d-none d-lg-block text-white-50' style={{ fontSize: '0.85rem' }}>
+                  {effectiveLicensee.name}
+                </span>
+              )}
+              <div className='dropdown'>
               <button className='btn btn-primary dropdown-toggle' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
                 <i className='bi bi-person-circle'></i>{currentUser?.name ? ` ${currentUser.name}` : ''}
               </button>
@@ -101,6 +107,7 @@ export default function Navbar({ currentUser }: any) {
               </ul>
             </div>
           </div>
+        </div>
         </div>
       </nav>
   )

@@ -8,7 +8,7 @@ export interface IUser {
   email: string
   active: boolean
   role: UserRole
-  licensee: Pick<ILicensee, 'id' | 'name'> | string | null
+  licensee: Pick<ILicensee, 'id' | 'name' | 'chatDefault'> | string | null
 }
 
 export interface IUserFilters {

@@ -5,7 +5,7 @@ export default function SelectLicenseeModal({ onSelect, required = true }: any) 
   const [selected, setSelected] = useState<any>(null)
 
   function handleConfirm() {
-    onSelect(selected ? { id: selected.value, _id: selected.value, name: selected.label } : null)
+    onSelect(selected ? { id: selected.value, _id: selected.value, name: selected.label, chatDefault: selected.chatDefault } : null)
   }
 
   return (
