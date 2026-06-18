@@ -1,5 +1,5 @@
 jest.mock('../../config/queue', () => ({ queueServer: {} }))
-jest.mock('../../config/redis', () => ({ redisConnection: {} }))
+jest.mock('../../config/redis', () => ({ redisConnection: { duplicate: jest.fn().mockReturnValue({}) } }))
 
 import { transformMessengerBody } from './MessengerMessage'
 import Body from '@models/Body'

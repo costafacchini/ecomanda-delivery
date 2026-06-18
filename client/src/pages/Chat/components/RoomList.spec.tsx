@@ -27,7 +27,7 @@ describe('<RoomList>', () => {
   it('shows "Nenhuma conversa." when rooms is empty', () => {
     render(<RoomList rooms={[]} selectedRoomId={undefined} onSelect={vi.fn()} onNewConversation={vi.fn()} />)
 
-    expect(screen.getByText('Nenhuma conversa.')).toBeInTheDocument()
+    expect(screen.getByText(/Nenhuma conversa/)).toBeInTheDocument()
   })
 
   it('"+" button calls onNewConversation', () => {
@@ -42,10 +42,10 @@ describe('<RoomList>', () => {
   it('passes isSelected=true to the correct room item', () => {
     render(<RoomList rooms={rooms} selectedRoomId='r1' onSelect={vi.fn()} onNewConversation={vi.fn()} />)
 
-    const alice = screen.getByText('Alice').closest('li')
-    const bob = screen.getByText('Bob').closest('li')
+    const aliceBtn = screen.getByText('Alice').closest('li')?.querySelector('button')
+    const bobBtn = screen.getByText('Bob').closest('li')?.querySelector('button')
 
-    expect(alice).toHaveClass('active')
-    expect(bob).not.toHaveClass('active')
+    expect(aliceBtn).toHaveAttribute('aria-current', 'true')
+    expect(bobBtn).not.toHaveAttribute('aria-current')
   })
 })

@@ -22,11 +22,11 @@ describe('<LicenseeNew />', () => {
   }
 
   async function fillIdentityStep() {
-    fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Licensee Test' } })
-    fireEvent.change(screen.getByLabelText('Tipo'), { target: { value: 'company' } })
-    fireEvent.change(screen.getByLabelText('Documento'), { target: { value: '12345678000195' } })
-    fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'test@test.com' } })
-    fireEvent.change(screen.getByLabelText('Telefone'), { target: { value: '48999999999' } })
+    fireEvent.change(screen.getByLabelText(/^Nome/), { target: { value: 'Licensee Test' } })
+    fireEvent.change(screen.getByLabelText(/^Tipo/), { target: { value: 'company' } })
+    fireEvent.change(screen.getByLabelText(/^Documento/), { target: { value: '12345678000195' } })
+    fireEvent.change(screen.getByLabelText(/^E-mail/), { target: { value: 'test@test.com' } })
+    fireEvent.change(screen.getByLabelText(/^Telefone/), { target: { value: '48999999999' } })
   }
 
   async function advanceThroughAllSteps() {
@@ -48,12 +48,12 @@ describe('<LicenseeNew />', () => {
   it('renders the wizard with Identity step on mount', () => {
     mount()
 
-    expect(screen.getByLabelText('Nome')).toBeInTheDocument()
-    expect(screen.getByLabelText('Tipo')).toBeInTheDocument()
-    expect(screen.getByLabelText('Documento')).toBeInTheDocument()
-    expect(screen.getByLabelText('E-mail')).toBeInTheDocument()
-    expect(screen.getByLabelText('Licença')).toBeInTheDocument()
-    expect(screen.getByLabelText('Telefone')).toBeInTheDocument()
+    expect(screen.getByLabelText(/^Nome/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^Tipo/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^Documento/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^E-mail/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^Licença/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^Telefone/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Próximo →' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Salvar' })).not.toBeInTheDocument()
   })
@@ -81,11 +81,15 @@ describe('<LicenseeNew />', () => {
     await fillIdentityStep()
     fireEvent.click(screen.getByRole('button', { name: 'Próximo →' }))
 
+    // Step 2 is WhatsApp — click Próximo to reach step 3 (Chat)
     await waitFor(() => expect(screen.getByText(/Passo 2/)).toBeInTheDocument())
+    fireEvent.click(screen.getByRole('button', { name: 'Próximo →' }))
+
+    await waitFor(() => expect(screen.getByText(/Passo 3/)).toBeInTheDocument())
 
     fireEvent.click(screen.getByRole('button', { name: 'Sim' }))
 
-    await waitFor(() => expect(screen.getByLabelText('Chat padrão')).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByLabelText(/^Chat padrão/)).toBeInTheDocument())
   })
 
   it('does not show Chat fields when Não is selected', async () => {
@@ -94,11 +98,15 @@ describe('<LicenseeNew />', () => {
     await fillIdentityStep()
     fireEvent.click(screen.getByRole('button', { name: 'Próximo →' }))
 
+    // Step 2 is WhatsApp — click Próximo to reach step 3 (Chat)
     await waitFor(() => expect(screen.getByText(/Passo 2/)).toBeInTheDocument())
+    fireEvent.click(screen.getByRole('button', { name: 'Próximo →' }))
+
+    await waitFor(() => expect(screen.getByText(/Passo 3/)).toBeInTheDocument())
 
     fireEvent.click(screen.getByRole('button', { name: 'Não' }))
 
-    expect(screen.queryByLabelText('Chat padrão')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/^Chat padrão/)).not.toBeInTheDocument()
   })
 
   it('creates a new licensee when all integration steps answered with Não', async () => {
@@ -139,7 +147,7 @@ describe('<LicenseeNew />', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '← Voltar' }))
 
-    await waitFor(() => expect(screen.getByLabelText('Nome')).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByLabelText(/^Nome/)).toBeInTheDocument())
     expect(screen.getByText(/Passo 1/)).toBeInTheDocument()
   })
 })

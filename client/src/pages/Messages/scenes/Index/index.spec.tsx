@@ -54,8 +54,8 @@ describe('<MessageIndex />', () => {
 
     expect(await screen.findByText('Contact')).toBeInTheDocument()
     expect(screen.getByText('First message')).toBeInTheDocument()
-    expect(screen.getByText('text')).toBeInTheDocument()
-    expect(screen.getByText('to-chat')).toBeInTheDocument()
+    expect(screen.getAllByText('Texto').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Chat').length).toBeGreaterThan(0)
     expect(screen.getByText('Sim')).toBeInTheDocument()
 
     expect(getMessages).toHaveBeenCalledWith(
@@ -128,6 +128,7 @@ describe('<MessageIndex />', () => {
 
       mount({ currentUser })
 
+      fireEvent.change(screen.getByLabelText('Data inicial'), { target: { value: '2012-12-12T10:00:00' } })
       fireEvent.change(screen.getByLabelText('Data final'), { target: { value: '2012-12-12T18:14:37' } })
 
       fireEvent.click(screen.getByText('Pesquisar'))
@@ -473,7 +474,7 @@ describe('<MessageIndex />', () => {
 
       fireEvent.click(screen.getByText('Pesquisar'))
 
-      expect(await screen.findByText('interactive')).toBeInTheDocument()
+      expect(await screen.findByText('Interativa')).toBeInTheDocument()
 
       const link = screen.getByText('Trigger')
 
@@ -506,7 +507,7 @@ describe('<MessageIndex />', () => {
 
       fireEvent.click(screen.getByText('Pesquisar'))
 
-      expect(await screen.findByText('interactive')).toBeInTheDocument()
+      expect(await screen.findByText('Interativa')).toBeInTheDocument()
 
       const link = screen.getByText('Trigger')
 

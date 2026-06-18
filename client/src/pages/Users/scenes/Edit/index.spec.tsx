@@ -29,13 +29,13 @@ describe('<UserEdit />', () => {
   })
 
   it('edits the user', async () => {
-    getUser.mockResolvedValue({ status: 201, data: { id: '1', name: 'Usuario', role: 'admin' } })
+    getUser.mockResolvedValue({ status: 201, data: { id: '1', name: 'Usuario', role: 'admin', email: 'usuario@test.com' } })
 
     mount()
 
     await screen.findByDisplayValue('Usuario')
 
-    fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'New Name' } })
+    fireEvent.change(screen.getByLabelText(/^Nome/), { target: { value: 'New Name' } })
 
     updateUser.mockResolvedValue({ status: 200, data: { id: '1', name: 'New Name' } })
 

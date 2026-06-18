@@ -35,7 +35,7 @@ describe('<LicenseeEdit />', () => {
 
     await screen.findByDisplayValue('Licenciado')
 
-    fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'New Name' } })
+    fireEvent.change(screen.getByLabelText(/^Nome/), { target: { value: 'New Name' } })
 
     updateLicensee.mockResolvedValue({ status: 200, data: { id: '1', name: 'New Name' } })
 

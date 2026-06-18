@@ -32,16 +32,22 @@ describe('<ContactNew />', () => {
     render(<Stub initialEntries={['/contacts/new']} />)
   }
 
+  function fillRequiredFields() {
+    fireEvent.change(screen.getByLabelText(/^Nome/), { target: { value: 'Test Contact' } })
+    fireEvent.change(screen.getByLabelText(/^Telefone/), { target: { value: '48999999999' } })
+  }
+
   it('creates a new contact when the backend returns success and user is not super', async () => {
     mount()
 
+    fillRequiredFields()
     createContact.mockResolvedValue({ status: 201 })
 
     fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
 
     await waitFor(() => expect(createContact).toHaveBeenCalledWith({
-      name: '',
-      number: '',
+      name: 'Test Contact',
+      number: '48999999999',
       email: '',
       talkingWithChatBot: false,
       licensee: 'id',
@@ -65,13 +71,14 @@ describe('<ContactNew />', () => {
     }
     mount()
 
+    fillRequiredFields()
     createContact.mockResolvedValue({ status: 201 })
 
     fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
 
     await waitFor(() => expect(createContact).toHaveBeenCalledWith({
-      name: '',
-      number: '',
+      name: 'Test Contact',
+      number: '48999999999',
       email: '',
       talkingWithChatBot: false,
       licensee: '',
@@ -92,6 +99,7 @@ describe('<ContactNew />', () => {
   it('renders the errors when the backend returns error', async () => {
     mount()
 
+    fillRequiredFields()
     createContact.mockResolvedValue({ status: 422, data: { errors: [{ message: 'This is an error' }] } })
 
     fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))

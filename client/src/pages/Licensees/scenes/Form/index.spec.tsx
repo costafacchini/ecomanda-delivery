@@ -19,30 +19,32 @@ describe('<LicenseeForm />', () => {
   }
 
   it('is rendered with the default initial values', () => {
-    mount()
+    // chatbotDefault must be non-empty for chatbot sub-fields to render
+    // whatsappDefault must be non-empty for whatsapp token/url fields to render
+    mount({ initialValues: { chatbotDefault: 'landbot', whatsappDefault: 'utalk' } })
 
-    expect(screen.getByLabelText('Nome')).toHaveValue('')
-    expect(screen.getByLabelText('Tipo')).toHaveValue('')
-    expect(screen.getByLabelText('Documento')).toHaveValue('')
-    expect(screen.getByLabelText('E-email')).toHaveValue('')
-    expect(screen.getByLabelText('Licença')).toHaveValue('demo')
-    expect(screen.getByLabelText('Telefone')).toHaveValue('')
+    expect(screen.getByLabelText(/^Nome/)).toHaveValue('')
+    expect(screen.getByLabelText(/^Tipo/)).toHaveValue('')
+    expect(screen.getByLabelText(/^Documento/)).toHaveValue('')
+    expect(screen.getByLabelText(/^E-mail/)).toHaveValue('')
+    expect(screen.getByLabelText(/^Licença/)).toHaveValue('demo')
+    expect(screen.getByLabelText(/^Telefone/)).toHaveValue('')
     expect(screen.getByLabelText('API token')).toHaveValue('')
     expect(screen.getByLabelText('Ativo')).not.toBeChecked()
-    expect(screen.getByLabelText('Chatbot padrão')).toHaveValue('')
+    expect(screen.getByLabelText('Chatbot padrão')).toHaveValue('landbot')
     expect(screen.getByLabelText('URL do chatbot')).toHaveValue('')
     expect(screen.getByLabelText('Token do chatbot')).toHaveValue('')
     expect(screen.getByLabelText('Token de acesso via API do chatbot')).toHaveValue('')
     expect(screen.getByLabelText('Mensagem de encerramento de chatbot abandonado')).toHaveValue('')
     expect(screen.getByLabelText('Mensagem de encerramento de chat')).toHaveValue('')
-    expect(screen.getByLabelText('Chat padrão')).toHaveValue('')
-    expect(screen.getByLabelText('Whatsapp padrão')).toHaveValue('')
-    expect(screen.getByLabelText('Token do whatsapp')).toHaveValue('')
-    expect(screen.getByLabelText('Url do whatsapp')).toHaveValue('')
+    expect(screen.getByLabelText(/^Chat padrão/)).toHaveValue('')
+    expect(screen.getByLabelText(/^WhatsApp padrão/)).toHaveValue('utalk')
+    expect(screen.getByLabelText(/^Token do WhatsApp/)).toHaveValue('')
+    expect(screen.getByLabelText(/^URL do WhatsApp/)).toHaveValue('')
     expect(screen.getByLabelText('URL para webhook de Chat')).toHaveValue('')
     expect(screen.getByLabelText('URL para webhook de Chatbot')).toHaveValue('')
     expect(screen.getByLabelText('URL de webhook para transferir do Chatbot para o Chat')).toHaveValue('')
-    expect(screen.getByLabelText('URL para webhook de whatsapp')).toHaveValue('')
+    expect(screen.getByLabelText('URL para webhook de WhatsApp')).toHaveValue('')
   })
 
   it('can receive initial values', () => {
@@ -78,32 +80,32 @@ describe('<LicenseeForm />', () => {
 
     mount({ initialValues: licensee })
 
-    expect(screen.getByLabelText('Nome')).toHaveValue('Name')
+    expect(screen.getByLabelText(/^Nome/)).toHaveValue('Name')
     expect(screen.getByLabelText('Ativo')).toBeChecked()
-    expect(screen.getByLabelText('Tipo')).toHaveValue('company')
-    expect(screen.getByLabelText('Documento')).toHaveValue('3692836715156')
-    expect(screen.getByLabelText('E-email')).toHaveValue('email@gmail.com')
-    expect(screen.getByLabelText('Telefone')).toHaveValue('48999999215')
+    expect(screen.getByLabelText(/^Tipo/)).toHaveValue('company')
+    expect(screen.getByLabelText(/^Documento/)).toHaveValue('3692836715156')
+    expect(screen.getByLabelText(/^E-mail/)).toHaveValue('email@gmail.com')
+    expect(screen.getByLabelText(/^Telefone/)).toHaveValue('48999999215')
     expect(screen.getByLabelText('API token')).toHaveValue('token')
-    expect(screen.getByLabelText('Licença')).toHaveValue('paid')
+    expect(screen.getByLabelText(/^Licença/)).toHaveValue('paid')
     expect(screen.getByLabelText('Usa o remetente no nome do chat?')).toBeChecked()
     expect(screen.getByLabelText('Chatbot padrão')).toHaveValue('landbot')
-    expect(screen.getByLabelText('Whatsapp padrão')).toHaveValue('utalk')
+    expect(screen.getByLabelText(/^WhatsApp padrão/)).toHaveValue('utalk')
     expect(screen.getByLabelText('URL do chatbot')).toHaveValue('URL chatbot')
     expect(screen.getByLabelText('Token do chatbot')).toHaveValue('token chatbot')
     expect(screen.getByLabelText('Token de acesso via API do chatbot')).toHaveValue('token api chatbot')
     expect(screen.getByLabelText('Mensagem de encerramento de chatbot abandonado')).toHaveValue('message')
     expect(screen.getByLabelText('Mensagem de encerramento de chat')).toHaveValue('on chat')
-    expect(screen.getByLabelText('Token do whatsapp')).toHaveValue('token whats')
-    expect(screen.getByLabelText('Url do whatsapp')).toHaveValue('URL do whats')
-    expect(screen.getByLabelText('Chat padrão')).toHaveValue('crisp')
-    expect(screen.getByLabelText('Url do chat')).toHaveValue('URL do chat')
-    expect(screen.getByLabelText('Identifier')).toHaveValue('identifier')
-    expect(screen.getByLabelText('Key')).toHaveValue('key')
+    expect(screen.getByLabelText(/^Token do WhatsApp/)).toHaveValue('token whats')
+    expect(screen.getByLabelText(/^URL do WhatsApp/)).toHaveValue('URL do whats')
+    expect(screen.getByLabelText(/^Chat padrão/)).toHaveValue('crisp')
+    expect(screen.getByDisplayValue('URL do chat')).toBeInTheDocument()
+    expect(screen.getByLabelText(/^Identifier/)).toHaveValue('identifier')
+    expect(screen.getByLabelText(/^Key/)).toHaveValue('key')
     expect(screen.getByLabelText('URL para webhook de Chat')).toHaveValue('URL para webhook de Chat')
     expect(screen.getByLabelText('URL para webhook de Chatbot')).toHaveValue('URL para webhook de Chatbot')
     expect(screen.getByLabelText('URL de webhook para transferir do Chatbot para o Chat')).toHaveValue('URL de webhook para transferir do Chatbot para o Chat')
-    expect(screen.getByLabelText('URL para webhook de whatsapp')).toHaveValue('URL para webhook de whatsapp')
+    expect(screen.getByLabelText('URL para webhook de WhatsApp')).toHaveValue('URL para webhook de whatsapp')
   })
 
   describe('fields', () => {
@@ -122,27 +124,28 @@ describe('<LicenseeForm />', () => {
     it('disables whatsapp fields if "Whatsapp padrão" is blank', () => {
       mount({ initialValues: { whatsappDefault: 'dialog' } })
 
-      expect(screen.getByLabelText('Token do whatsapp')).toBeEnabled()
-      expect(screen.getByLabelText('Url do whatsapp')).toBeEnabled()
+      expect(screen.getByLabelText(/^Token do WhatsApp/)).toBeEnabled()
+      expect(screen.getByLabelText(/^URL do WhatsApp/)).toBeEnabled()
 
       cleanup()
       mount({ initialValues: { whatsappDefault: '' } })
 
-      expect(screen.getByLabelText('Token do whatsapp')).toBeDisabled()
-      expect(screen.getByLabelText('Url do whatsapp')).toBeDisabled()
+      // fields are not rendered at all when whatsappDefault is blank
+      expect(screen.queryByLabelText(/^Token do WhatsApp/)).not.toBeInTheDocument()
+      expect(screen.queryByLabelText(/^URL do WhatsApp/)).not.toBeInTheDocument()
     })
 
     it('shows key and identifier fields if "Chat padrão" is crisp', () => {
       mount({ initialValues: { chatDefault: 'crisp' } })
 
-      expect(screen.getByLabelText('Identifier')).toBeVisible()
-      expect(screen.getByLabelText('Key')).toBeEnabled()
+      expect(screen.getByLabelText(/^Identifier/)).toBeVisible()
+      expect(screen.getByLabelText(/^Key/)).toBeEnabled()
 
       cleanup()
       mount({ initialValues: { chatDefault: 'rocketchat' } })
 
-      expect(screen.queryByLabelText('Identifier')).not.toBeInTheDocument()
-      expect(screen.queryByLabelText('Key')).not.toBeInTheDocument()
+      expect(screen.queryByLabelText(/^Identifier/)).not.toBeInTheDocument()
+      expect(screen.queryByLabelText(/^Key/)).not.toBeInTheDocument()
     })
 
     it('shows button set webhook if "Whatsapp padrão" is dialog and licensee has apiToken', () => {

@@ -18,10 +18,10 @@ describe('<UserForm />', () => {
   it('is rendered with the default initial values', () => {
     mount()
 
-    expect(screen.getByLabelText('Nome')).toHaveValue('')
+    expect(screen.getByLabelText(/^Nome/)).toHaveValue('')
     expect(screen.getByLabelText('Ativo')).toBeChecked()
-    expect(screen.getByLabelText('E-email')).toHaveValue('')
-    expect(screen.getByLabelText('Senha')).toHaveValue('')
+    expect(screen.getByLabelText(/^E-mail/)).toHaveValue('')
+    expect(screen.getByLabelText(/^Senha/)).toHaveValue('')
   })
 
   it('can receive initial values', () => {
@@ -38,10 +38,10 @@ describe('<UserForm />', () => {
     }
     mount({ initialValues: user, currentUser: currentUser })
 
-    expect(screen.getByLabelText('Nome')).toHaveValue('Name')
+    expect(screen.getByLabelText(/^Nome/)).toHaveValue('Name')
     expect(screen.getByLabelText('Ativo')).not.toBeChecked()
-    expect(screen.getByLabelText('E-email')).toHaveValue('email@gmail.com')
-    expect(screen.getByLabelText('Senha')).toHaveValue('12345')
+    expect(screen.getByLabelText(/^E-mail/)).toHaveValue('email@gmail.com')
+    expect(screen.getByLabelText(/^Senha/)).toHaveValue('12345')
     expect(screen.getByLabelText('Perfil')).toHaveValue('agent')
   })
 
@@ -126,14 +126,17 @@ describe('<UserForm />', () => {
 
       expect(onSubmit).not.toHaveBeenCalled()
 
+      fireEvent.change(screen.getByLabelText(/^Nome/), { target: { value: 'Test User' } })
+      fireEvent.change(screen.getByLabelText(/^E-mail/), { target: { value: 'test@test.com' } })
+
       fireEvent.click(screen.getByText('Salvar'))
 
       await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
       expect(onSubmit).toHaveBeenCalledWith({
-        name: '',
+        name: 'Test User',
         active: true,
-        email: '',
+        email: 'test@test.com',
         role: 'admin',
         licensee: '',
         password: '',

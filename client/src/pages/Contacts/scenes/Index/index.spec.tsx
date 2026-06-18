@@ -82,7 +82,7 @@ describe('<ContactsIndex />', () => {
 
       mount({ currentUser })
 
-      expect(await screen.findByRole('button', { name: 'Todos os Contatos' })).toBeInTheDocument()
+      expect(await screen.findByRole('button', { name: 'Ver Grupos' })).toBeInTheDocument()
     })
 
     it('sends isGroup=true filter when toggle is clicked', async () => {
@@ -90,11 +90,11 @@ describe('<ContactsIndex />', () => {
 
       mount({ currentUser })
 
-      await screen.findByRole('button', { name: 'Todos os Contatos' })
+      await screen.findByRole('button', { name: 'Ver Grupos' })
 
       getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'Group Contact' })] })
 
-      fireEvent.click(screen.getByRole('button', { name: 'Todos os Contatos' }))
+      fireEvent.click(screen.getByRole('button', { name: 'Ver Grupos' }))
 
       await screen.findByText('Group Contact')
 
@@ -106,13 +106,13 @@ describe('<ContactsIndex />', () => {
 
       mount({ currentUser })
 
-      await screen.findByRole('button', { name: 'Todos os Contatos' })
+      await screen.findByRole('button', { name: 'Ver Grupos' })
 
       getContacts.mockResolvedValue({ status: 201, data: [] })
 
-      fireEvent.click(screen.getByRole('button', { name: 'Todos os Contatos' }))
+      fireEvent.click(screen.getByRole('button', { name: 'Ver Grupos' }))
 
-      expect(await screen.findByRole('button', { name: 'Apenas Grupos' })).toBeInTheDocument()
+      expect(await screen.findByRole('button', { name: 'Ver Todos' })).toBeInTheDocument()
     })
 
     it('clears the isGroup filter when toggled again', async () => {
@@ -120,15 +120,15 @@ describe('<ContactsIndex />', () => {
 
       mount({ currentUser })
 
-      await screen.findByRole('button', { name: 'Todos os Contatos' })
+      await screen.findByRole('button', { name: 'Ver Grupos' })
 
       getContacts.mockResolvedValue({ status: 201, data: [] })
-      fireEvent.click(screen.getByRole('button', { name: 'Todos os Contatos' }))
+      fireEvent.click(screen.getByRole('button', { name: 'Ver Grupos' }))
 
-      await screen.findByRole('button', { name: 'Apenas Grupos' })
+      await screen.findByRole('button', { name: 'Ver Todos' })
 
       getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'All again' })] })
-      fireEvent.click(screen.getByRole('button', { name: 'Apenas Grupos' }))
+      fireEvent.click(screen.getByRole('button', { name: 'Ver Todos' }))
 
       await screen.findByText('All again')
 

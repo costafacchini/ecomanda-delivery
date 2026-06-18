@@ -109,8 +109,7 @@ class RoomsController {
         return res.status(200).json({ room: existingRoom })
       }
 
-      await this.roomRepository.create({ contact: contact._id, status: 'pending' })
-      const room = await this.roomRepository.findOpenForContact(contact._id)
+      const room = await this.roomRepository.create({ contact: contact._id, status: 'pending' })
       return res.status(201).json({ room })
     } catch (err: any) {
       return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })

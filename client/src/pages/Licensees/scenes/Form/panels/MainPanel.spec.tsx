@@ -38,30 +38,30 @@ describe('<MainPanel />', () => {
   it('renders nome, active checkbox, kind select, document, email, licenseKind select, phone, apiToken (disabled)', () => {
     mount()
 
-    expect(screen.getByLabelText('Nome')).toBeInTheDocument()
+    expect(screen.getByLabelText(/^Nome/)).toBeInTheDocument()
     expect(screen.getByLabelText('Ativo')).toBeInTheDocument()
-    expect(screen.getByLabelText('Tipo')).toBeInTheDocument()
-    expect(screen.getByLabelText('Documento')).toBeInTheDocument()
-    expect(screen.getByLabelText('E-email')).toBeInTheDocument()
-    expect(screen.getByLabelText('Licença')).toBeInTheDocument()
-    expect(screen.getByLabelText('Telefone')).toBeInTheDocument()
+    expect(screen.getByLabelText(/^Tipo/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^Documento/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^E-mail/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^Licença/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^Telefone/)).toBeInTheDocument()
     expect(screen.getByLabelText('API token')).toBeInTheDocument()
-    expect(screen.getByLabelText('API token')).toBeDisabled()
+    expect(screen.getByLabelText('API token')).toHaveAttribute('readonly')
   })
 
   it('renders webhook URL fields: urlChatWebhook, urlChatbotWebhook, urlChatbotTransfer, urlWhatsappWebhook (all disabled)', () => {
     mount()
 
     expect(screen.getByLabelText('URL para webhook de Chat')).toBeInTheDocument()
-    expect(screen.getByLabelText('URL para webhook de Chat')).toBeDisabled()
+    expect(screen.getByLabelText('URL para webhook de Chat')).toHaveAttribute('readonly')
 
     expect(screen.getByLabelText('URL para webhook de Chatbot')).toBeInTheDocument()
-    expect(screen.getByLabelText('URL para webhook de Chatbot')).toBeDisabled()
+    expect(screen.getByLabelText('URL para webhook de Chatbot')).toHaveAttribute('readonly')
 
     expect(screen.getByLabelText('URL de webhook para transferir do Chatbot para o Chat')).toBeInTheDocument()
-    expect(screen.getByLabelText('URL de webhook para transferir do Chatbot para o Chat')).toBeDisabled()
+    expect(screen.getByLabelText('URL de webhook para transferir do Chatbot para o Chat')).toHaveAttribute('readonly')
 
-    expect(screen.getByLabelText('URL para webhook de whatsapp')).toBeInTheDocument()
-    expect(screen.getByLabelText('URL para webhook de whatsapp')).toBeDisabled()
+    expect(screen.getByLabelText('URL para webhook de WhatsApp')).toBeInTheDocument()
+    expect(screen.getByLabelText('URL para webhook de WhatsApp')).toHaveAttribute('readonly')
   })
 })

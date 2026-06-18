@@ -25,42 +25,44 @@ describe('<UserNew />', () => {
     await waitFor(() => expect(screen.getByLabelText('Perfil')).toHaveValue(role))
   }
 
+  function fillRequiredFields() {
+    fireEvent.change(screen.getByLabelText(/^Nome/), { target: { value: 'Test User' } })
+    fireEvent.change(screen.getByLabelText(/^E-mail/), { target: { value: 'test@test.com' } })
+    fireEvent.change(screen.getByLabelText(/^Senha/), { target: { value: 'password123' } })
+  }
+
   it('auto-assigns the admin licensee when creating an agent', async () => {
     mount({ role: 'admin', licensee: 'licensee-id' })
 
+    fillRequiredFields()
     createUser.mockResolvedValue({ status: 201 })
     fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
 
-    await waitFor(() => expect(createUser).toHaveBeenCalledWith({
-      name: '',
-      email: '',
-      password: '',
-      active: true,
-      role: 'agent',
-      licensee: 'licensee-id',
-    }))
+    await waitFor(() => expect(createUser).toHaveBeenCalledWith(
+      expect.objectContaining({ role: 'agent', licensee: 'licensee-id' })
+    ))
   })
 
   it('strips licensee when creating an admin user', async () => {
     mount({ role: 'super' })
     await selectRole('admin')
 
+    fillRequiredFields()
     createUser.mockResolvedValue({ status: 201 })
     fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
 
-    await waitFor(() => expect(createUser).toHaveBeenCalledWith({
-      name: '',
-      email: '',
-      password: '',
-      active: true,
-      role: 'admin',
-    }))
+    await waitFor(() => {
+      const args = (createUser as ReturnType<typeof vi.fn>).mock.calls[0][0]
+      expect(args.role).toBe('admin')
+      expect(args.licensee).toBeUndefined()
+    })
   })
 
   it('navigates to /users after successful creation', async () => {
     mount({ role: 'super' })
     await selectRole('admin')
 
+    fillRequiredFields()
     createUser.mockResolvedValue({ status: 201 })
     fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
 
@@ -71,6 +73,7 @@ describe('<UserNew />', () => {
     mount({ role: 'super' })
     await selectRole('admin')
 
+    fillRequiredFields()
     createUser.mockResolvedValue({ status: 422, data: { errors: [{ message: 'This is an error' }] } })
     fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
 

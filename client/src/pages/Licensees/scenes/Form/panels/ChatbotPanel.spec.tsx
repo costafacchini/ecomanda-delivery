@@ -30,7 +30,7 @@ function mount(overrides = {}) {
 
 describe('<ChatbotPanel />', () => {
   it('renders chatbotDefault select, chatbotUrl, chatbotAuthorizationToken, chatbotApiToken, messageOnResetChatbot, messageOnCloseChat', () => {
-    mount()
+    mount({ chatbotDefault: 'landbot' })
 
     expect(screen.getByLabelText('Chatbot padrão')).toBeInTheDocument()
     expect(screen.getByLabelText('URL do chatbot')).toBeInTheDocument()

@@ -50,21 +50,21 @@ describe('<WhatsAppPanel />', () => {
   it('renders whatsappDefault select', () => {
     mount()
 
-    expect(screen.getByLabelText('Whatsapp padrão')).toBeInTheDocument()
+    expect(screen.getByLabelText(/^WhatsApp padrão/)).toBeInTheDocument()
   })
 
   it('shows whatsappToken and whatsappUrl fields when whatsappDefault is utalk', () => {
     mount({ whatsappDefault: 'utalk' })
 
-    expect(screen.getByLabelText('Token do whatsapp')).toBeInTheDocument()
-    expect(screen.getByLabelText('Url do whatsapp')).toBeInTheDocument()
+    expect(screen.getByLabelText(/^Token do WhatsApp/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^URL do WhatsApp/)).toBeInTheDocument()
   })
 
   it('does NOT show whatsappToken/whatsappUrl when whatsappDefault is baileys', () => {
     mount({ whatsappDefault: 'baileys' })
 
-    expect(screen.queryByLabelText('Token do whatsapp')).not.toBeInTheDocument()
-    expect(screen.queryByLabelText('Url do whatsapp')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/^Token do WhatsApp/)).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/^URL do WhatsApp/)).not.toBeInTheDocument()
   })
 
   it('shows useFileIDYcloud checkbox only when whatsappDefault is ycloud', () => {

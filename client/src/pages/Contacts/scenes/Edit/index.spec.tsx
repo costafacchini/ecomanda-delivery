@@ -36,13 +36,13 @@ describe('<ContactEdit />', () => {
   })
 
   it('edits the contact', async () => {
-    getContact.mockResolvedValue({ status: 201, data: { id: '1', name: 'Contato' } })
+    getContact.mockResolvedValue({ status: 201, data: { id: '1', name: 'Contato', number: '48999999999' } })
 
     mount()
 
     await screen.findByDisplayValue('Contato')
 
-    fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'New Name' } })
+    fireEvent.change(screen.getByLabelText(/^Nome/), { target: { value: 'New Name' } })
 
     updateContact.mockResolvedValue({ status: 200, data: { id: '1', name: 'New Name' } })
 

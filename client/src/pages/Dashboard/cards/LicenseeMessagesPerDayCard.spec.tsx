@@ -48,6 +48,6 @@ describe('<LicenseeMessagesPerDayCard />', () => {
     await screen.findByText('Mensagens por Dia')
 
     expect(screen.getByRole('table')).toBeInTheDocument()
-    expect(screen.queryByRole('cell')).not.toBeInTheDocument()
+    expect(screen.getByText('Nenhum dado para o período.')).toBeInTheDocument()
   })
 })
