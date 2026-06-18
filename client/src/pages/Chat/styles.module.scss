@@ -5,6 +5,8 @@
 
 $primary:         #fa5619;
 $primary-dark:    #e04d15;
+$primary-deep:    #b83f12;
+$primary-deeper:  #a0360f;
 $teal:            #18bc9c;
 $teal-dark:       #14a487;
 $signal-tint:     #fcefeb;
@@ -12,7 +14,7 @@ $fieldwork:       #52665a;
 $surface:         #f8f9fa;
 $cool-surface:    #f5f5f8;
 $border:          #dee2e6;
-$muted:           #6c757d;
+$muted:           #636c73;
 $ink:             #333333;
 $white:           #ffffff;
 $bubble-in-bg:    #f0f0f0;
@@ -31,6 +33,7 @@ $t-slide:           300ms $ease-out-quart;
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   background: $surface;
 }
@@ -95,8 +98,8 @@ $t-slide:           300ms $ease-out-quart;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: 1.5px solid $teal;
   background: transparent;
@@ -140,7 +143,11 @@ $t-slide:           300ms $ease-out-quart;
   gap: 12px;
   padding: 12px 16px;
   cursor: pointer;
+  border: none;
   border-bottom: 1px solid $border;
+  background: transparent;
+  width: 100%;
+  text-align: left;
   transition: background $t-fast;
   min-height: 72px;
 
@@ -156,18 +163,18 @@ $t-slide:           300ms $ease-out-quart;
 }
 
 .roomItemSelected {
-  background: $primary;
+  background: $primary-deep;
 
   &:hover {
-    background: $primary-dark;
+    background: $primary-deeper;
   }
 
   .roomName    { color: $white; }
-  .roomSub     { color: rgba(255, 255, 255, 0.78); }
-  .roomPreview { color: rgba(255, 255, 255, 0.70); }
-  .roomTime    { color: rgba(255, 255, 255, 0.65); }
+  .roomSub     { color: rgba(255, 255, 255, 0.90); }
+  .roomPreview { color: rgba(255, 255, 255, 0.90); }
+  .roomTime    { color: rgba(255, 255, 255, 0.85); }
   .roomAvatar  { background: rgba(255, 255, 255, 0.22); color: $white; }
-  .unreadBadge { background: $white; color: $primary; }
+  .unreadBadge { background: $white; color: $primary-deep; }
 }
 
 .roomAvatar {
@@ -319,8 +326,8 @@ $t-slide:           300ms $ease-out-quart;
   display: none;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border: none;
   background: transparent;
   color: $muted;
@@ -429,7 +436,7 @@ $t-slide:           300ms $ease-out-quart;
 
 .bubbleSent {
   background: $teal;
-  color: $white;
+  color: $ink;
   border-bottom-right-radius: 2px;
 }
 
@@ -451,7 +458,14 @@ $t-slide:           300ms $ease-out-quart;
   font-size: 0.625rem;
   margin-top: 3px;
   text-align: right;
-  opacity: 0.65;
+}
+
+.bubbleSent .bubbleTime {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.bubbleReceived .bubbleTime {
+  color: rgba(0, 0, 0, 0.60);
 }
 
 @keyframes bubbleIn {
@@ -538,6 +552,7 @@ $t-slide:           300ms $ease-out-quart;
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
   border-top: 1px solid $border;
   background: $white;
   flex-shrink: 0;
@@ -576,9 +591,9 @@ $t-slide:           300ms $ease-out-quart;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
   border-radius: 50%;
   border: none;
   background: $teal;

@@ -73,7 +73,7 @@ export default function ChatPage() {
   return (
     <div className={styles.chatPage}>
       <Navbar currentUser={currentUser} />
-      <div className={styles.chatLayout}>
+      <main className={styles.chatLayout}>
         <div className={`${styles.chatSidebar}${sidebarMobileHidden ? ` ${styles.chatSidebarMobileHidden}` : ''}`}>
           <RoomList
             rooms={rooms}
@@ -91,7 +91,7 @@ export default function ChatPage() {
             onBack={handleBack}
           />
         </div>
-      </div>
+      </main>
       <NewConversationModal
         show={showNewConvo}
         onClose={() => setShowNewConvo(false)}
