@@ -1,0 +1,253 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-17T00:00:00.000Z",
+  "title": "Design System: eComanda",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Signal Orange",
+        "canonical": "oklch(0.61 0.22 38)",
+        "tonalRamp": ["#2d0a00", "#511600", "#7d2200", "#b03300", "#e04d12", "#fa5619", "#fc8a60", "#fcd8c9"]
+      },
+      "clearline-teal": {
+        "role": "secondary",
+        "displayName": "Clearline Teal",
+        "canonical": "oklch(0.71 0.13 174)",
+        "tonalRamp": ["#003328", "#005a49", "#007f6c", "#009e88", "#0fb89a", "#18bc9c", "#6dd4c2", "#c8f0ea"]
+      },
+      "signal-tint": {
+        "role": "primary-surface",
+        "displayName": "Signal Tint",
+        "canonical": "oklch(0.95 0.03 38)",
+        "tonalRamp": ["#3d0e00", "#7a1c00", "#b82a00", "#e03810", "#fa5619", "#fc7845", "#fda98a", "#fcefeb"]
+      },
+      "fieldwork-gray": {
+        "role": "ink",
+        "displayName": "Fieldwork Gray",
+        "canonical": "oklch(0.44 0.03 152)",
+        "tonalRamp": ["#111a15", "#1e2e24", "#2d4234", "#3e5343", "#52665a", "#6d8075", "#9aaca3", "#d4dcd7"]
+      },
+      "neutral-surface": {
+        "role": "neutral",
+        "displayName": "Neutral Surface",
+        "canonical": "oklch(0.97 0.0 0)",
+        "tonalRamp": ["#1a1a1a", "#2e2e2e", "#444444", "#666666", "#888888", "#aaaaaa", "#d0d0d0", "#f8f9fa"]
+      },
+      "neutral-cool": {
+        "role": "neutral",
+        "displayName": "Neutral Cool",
+        "canonical": "oklch(0.96 0.005 260)",
+        "tonalRamp": ["#19191d", "#2c2c32", "#414148", "#5a5a62", "#7e7e88", "#a5a5b0", "#ccccda", "#f5f5f8"]
+      },
+      "neutral-border": {
+        "role": "neutral",
+        "displayName": "Neutral Border",
+        "canonical": "oklch(0.90 0.0 0)",
+        "tonalRamp": ["#1a1a1a", "#333333", "#555555", "#777777", "#999999", "#bbbbbb", "#cccccc", "#dee2e6"]
+      },
+      "neutral-muted": {
+        "role": "neutral",
+        "displayName": "Neutral Muted",
+        "canonical": "oklch(0.55 0.02 255)",
+        "tonalRamp": ["#1a1a1f", "#2c2c35", "#3f3f4e", "#535366", "#6c757d", "#8f9099", "#b8bdc5", "#e0e3e8"]
+      },
+      "neutral-ink": {
+        "role": "ink",
+        "displayName": "Neutral Ink",
+        "canonical": "oklch(0.27 0.0 0)",
+        "tonalRamp": ["#111111", "#1a1a1a", "#222222", "#292929", "#333333", "#555555", "#888888", "#cccccc"]
+      },
+      "semantic-success": {
+        "role": "semantic",
+        "displayName": "Success Green",
+        "canonical": "oklch(0.68 0.15 150)",
+        "tonalRamp": ["#00260f", "#004a1e", "#006d2e", "#009040", "#0ab454", "#11ad66", "#5ed49a", "#c2f0d8"]
+      },
+      "semantic-warning": {
+        "role": "semantic",
+        "displayName": "Warning Amber",
+        "canonical": "oklch(0.72 0.17 65)",
+        "tonalRamp": ["#2a1600", "#542c00", "#804400", "#ab5c00", "#d07400", "#fa9819", "#fcc066", "#feecd0"]
+      },
+      "semantic-danger": {
+        "role": "semantic",
+        "displayName": "Danger Red",
+        "canonical": "oklch(0.51 0.22 12)",
+        "tonalRamp": ["#2d000e", "#5a0020", "#870035", "#b4004a", "#de1656", "#f05080", "#f599b0", "#fce0e8"]
+      },
+      "semantic-info": {
+        "role": "semantic",
+        "displayName": "Info Cyan",
+        "canonical": "oklch(0.65 0.10 210)",
+        "tonalRamp": ["#002a35", "#004d62", "#00708f", "#0094bc", "#17a2b8", "#4bc0d4", "#90dcee", "#d0f2fa"]
+      }
+    },
+    "typographyMeta": {
+      "body":  { "displayName": "Body",  "purpose": "All prose, descriptive text, form field values. Max line-length 65–75ch on desktop." },
+      "title": { "displayName": "Title", "purpose": "Section headings, card headers, modal titles. Used sparingly." },
+      "label": { "displayName": "Label", "purpose": "Button text, form labels, nav links, table headers, badge text." },
+      "code":  { "displayName": "Code",  "purpose": "Phone numbers in technical contexts, JSON viewers, API values." }
+    },
+    "shadows": [
+      {
+        "name": "focus-primary",
+        "value": "0 0 0 0.25rem rgba(250, 86, 25, 0.25)",
+        "purpose": "Focus ring on all primary-color interactive elements. The only permitted shadow in the base system."
+      },
+      {
+        "name": "ambient-float",
+        "value": "0 4px 16px rgba(0, 0, 0, 0.10)",
+        "purpose": "Reserved for floating panels (future use only): toasts, popovers. Not for cards or nav."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default easing for state transitions (hover, focus, active). 150–200ms."
+      },
+      {
+        "name": "duration-fast",
+        "value": "150ms",
+        "purpose": "Button hover, badge color change, focus ring appearance."
+      },
+      {
+        "name": "duration-standard",
+        "value": "200ms",
+        "purpose": "Panel slides, dropdown opens, modal entry."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm",  "value": "576px"  },
+      { "name": "md",  "value": "768px"  },
+      { "name": "lg",  "value": "992px"  },
+      { "name": "xl",  "value": "1200px" },
+      { "name": "xxl", "value": "1400px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main call-to-action. Signal Orange background. Nav bar and form submit contexts.",
+      "html": "<button class=\"ds-btn-primary\">Entrar</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; font-family: 'Jost', system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; line-height: 1.4; color: #ffffff; background-color: #fa5619; border: 1px solid #fa5619; border-radius: 4px; padding: 6px 16px; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4,0,0.2,1), border-color 150ms cubic-bezier(0.4,0,0.2,1); } .ds-btn-primary:hover { background-color: #e04d15; border-color: #e04d15; } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 0.25rem rgba(250,86,25,0.25); } .ds-btn-primary:active { background-color: #c94410; border-color: #c94410; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Success Button (Send)",
+      "kind": "button",
+      "refersTo": "button-success",
+      "description": "Confirmation and send-message actions. Clearline Teal. Chat and modal confirm contexts.",
+      "html": "<button class=\"ds-btn-success\">Enviar</button>",
+      "css": ".ds-btn-success { display: inline-flex; align-items: center; justify-content: center; font-family: 'Jost', system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; line-height: 1.4; color: #ffffff; background-color: #18bc9c; border: 1px solid #18bc9c; border-radius: 4px; padding: 6px 16px; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4,0,0.2,1), border-color 150ms cubic-bezier(0.4,0,0.2,1); } .ds-btn-success:hover { background-color: #14a487; border-color: #14a487; } .ds-btn-success:focus-visible { outline: none; box-shadow: 0 0 0 0.25rem rgba(24,188,156,0.25); } .ds-btn-success:active { background-color: #108c72; border-color: #108c72; } .ds-btn-success:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Outline Success Button",
+      "kind": "button",
+      "refersTo": "button-outline-success",
+      "description": "Secondary action adjacent to a teal primary. E.g. 'Nova conversa' in the room list header.",
+      "html": "<button class=\"ds-btn-outline-success\">+ Nova conversa</button>",
+      "css": ".ds-btn-outline-success { display: inline-flex; align-items: center; justify-content: center; font-family: 'Jost', system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; line-height: 1.4; color: #18bc9c; background-color: transparent; border: 1px solid #18bc9c; border-radius: 4px; padding: 5px 12px; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4,0,0.2,1), color 150ms cubic-bezier(0.4,0,0.2,1); } .ds-btn-outline-success:hover { background-color: #18bc9c; color: #ffffff; } .ds-btn-outline-success:focus-visible { outline: none; box-shadow: 0 0 0 0.25rem rgba(24,188,156,0.25); } .ds-btn-outline-success:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "Standard form text field. White background, signal-orange focus ring.",
+      "html": "<div class=\"ds-input-wrap\"><input class=\"ds-input\" type=\"text\" placeholder=\"Digite uma mensagem...\" /></div>",
+      "css": ".ds-input-wrap { display: flex; flex: 1; } .ds-input { width: 100%; font-family: 'Jost', system-ui, sans-serif; font-size: 1rem; font-weight: 400; color: #52665a; background-color: #ffffff; border: 1px solid #dee2e6; border-radius: 4px; padding: 6px 12px; transition: border-color 150ms cubic-bezier(0.4,0,0.2,1), box-shadow 150ms cubic-bezier(0.4,0,0.2,1); } .ds-input::placeholder { color: #6c757d; } .ds-input:focus { outline: none; border-color: #fa5619; box-shadow: 0 0 0 0.25rem rgba(250,86,25,0.25); } .ds-input:disabled { background-color: #f5f5f8; opacity: 0.6; cursor: not-allowed; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Content container. Flat white on light-gray surface. No shadow.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-header\">Licenciados</div><div class=\"ds-card-body\"><p class=\"ds-card-text\">Conteúdo do card aqui.</p></div></div>",
+      "css": ".ds-card { background-color: #ffffff; border: 1px solid #dee2e6; border-radius: 4px; overflow: hidden; } .ds-card-header { padding: 12px 16px; background-color: #f8f9fa; border-bottom: 1px solid #dee2e6; font-family: 'Jost', system-ui, sans-serif; font-size: 0.875rem; font-weight: 600; color: #333333; } .ds-card-body { padding: 16px; } .ds-card-text { font-family: 'Jost', system-ui, sans-serif; font-size: 1rem; font-weight: 400; color: #52665a; margin: 0; }"
+    },
+    {
+      "name": "Room List Item",
+      "kind": "custom",
+      "refersTo": "room-list-item",
+      "description": "Signature component. Contact name, phone/preview, unread badge. Selected state uses Signal Orange.",
+      "html": "<ul class=\"ds-room-list\"><li class=\"ds-room-item ds-room-item--selected\"><div class=\"ds-room-item-body\"><div class=\"ds-room-item-name\">João Silva</div><div class=\"ds-room-item-sub\">(11) 99999-0001</div><div class=\"ds-room-item-preview\">Oi, preciso de ajuda com...</div></div><span class=\"ds-unread-badge\">3</span></li><li class=\"ds-room-item\"><div class=\"ds-room-item-body\"><div class=\"ds-room-item-name\">Maria Souza</div><div class=\"ds-room-item-sub\">(11) 98888-0002</div></div></li></ul>",
+      "css": ".ds-room-list { list-style: none; margin: 0; padding: 0; } .ds-room-item { display: flex; align-items: flex-start; justify-content: space-between; padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #dee2e6; transition: background-color 150ms cubic-bezier(0.4,0,0.2,1); } .ds-room-item:hover { background-color: #fcefeb; } .ds-room-item--selected { background-color: #fa5619; } .ds-room-item--selected .ds-room-item-name { color: #ffffff; } .ds-room-item--selected .ds-room-item-sub, .ds-room-item--selected .ds-room-item-preview { color: rgba(255,255,255,0.80); } .ds-room-item-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; } .ds-room-item-name { font-family: 'Jost', system-ui, sans-serif; font-size: 0.875rem; font-weight: 600; color: #333333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-room-item-sub { font-family: 'Jost', system-ui, sans-serif; font-size: 0.75rem; color: #6c757d; } .ds-room-item-preview { font-family: 'Jost', system-ui, sans-serif; font-size: 0.75rem; color: #6c757d; max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-unread-badge { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 6px; background-color: #18bc9c; color: #ffffff; font-family: 'Jost', system-ui, sans-serif; font-size: 0.7rem; font-weight: 600; border-radius: 50rem; margin-top: 2px; }"
+    },
+    {
+      "name": "Chat Bubble — Sent",
+      "kind": "custom",
+      "refersTo": "chat-bubble-sent",
+      "description": "Outbound message from the agent. Clearline Teal, right-aligned.",
+      "html": "<div class=\"ds-bubble-wrap ds-bubble-wrap--sent\"><div class=\"ds-bubble ds-bubble--sent\">Olá! Em que posso ajudar?</div></div>",
+      "css": ".ds-bubble-wrap { display: flex; padding: 2px 0; } .ds-bubble-wrap--sent { justify-content: flex-end; } .ds-bubble-wrap--received { justify-content: flex-start; } .ds-bubble { max-width: 70%; padding: 8px 12px; border-radius: 6px; font-family: 'Jost', system-ui, sans-serif; font-size: 0.9375rem; font-weight: 400; line-height: 1.45; word-break: break-word; } .ds-bubble--sent { background-color: #18bc9c; color: #ffffff; } .ds-bubble--received { background-color: #f0f0f0; color: #2c3e50; }"
+    },
+    {
+      "name": "Chat Bubble — Received",
+      "kind": "custom",
+      "refersTo": "chat-bubble-received",
+      "description": "Inbound message from the contact. Light gray, left-aligned.",
+      "html": "<div class=\"ds-bubble-wrap ds-bubble-wrap--received\"><div class=\"ds-bubble ds-bubble--received\">Oi, preciso de ajuda com meu pedido!</div></div>",
+      "css": ".ds-bubble-wrap { display: flex; padding: 2px 0; } .ds-bubble-wrap--sent { justify-content: flex-end; } .ds-bubble-wrap--received { justify-content: flex-start; } .ds-bubble { max-width: 70%; padding: 8px 12px; border-radius: 6px; font-family: 'Jost', system-ui, sans-serif; font-size: 0.9375rem; font-weight: 400; line-height: 1.45; word-break: break-word; } .ds-bubble--sent { background-color: #18bc9c; color: #ffffff; } .ds-bubble--received { background-color: #f0f0f0; color: #2c3e50; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Steady Operator",
+    "overview": "eComanda's visual system is built for people who are always on. Support agents cycle through dozens of conversations in a shift; admins configure a system that other people depend on. The design does not try to impress either of them — it tries to disappear. Flat surfaces, a restrained palette, and a single moment of orange energy at the top of the viewport: that's the whole idea. The interface should feel like a trusted tool that has been used for years, not a product demo.\n\nThe orange (#fa5619, Signal Orange) is the system's one committed voice. It anchors the navigation bar, marks primary actions, and then steps back completely. Everything else lives in warm neutral territory: the Fieldwork Gray body text (#52665a) carries a green undertone that stops it feeling cold, and the Clearline Teal (#18BC9C) handles confirmations and outbound chat messages — a functional accent, not a decorative one.\n\nThe system explicitly rejects cold, gray committee-built software and the performative polish of hyped SaaS products. eComanda is neither. It is warm without being casual. It is operational without being cold.",
+    "keyCharacteristics": [
+      "Flat surfaces — no drop shadows, tonal layering through background shifts only",
+      "Single accent strategy: Signal Orange for navigation and primary actions, Clearline Teal for confirmations and chat",
+      "Jost as the sole typeface — geometric-humanist, readable at small sizes, consistent across headings and data",
+      "Warm neutral body text, not gray — Fieldwork Gray's green undertone is the warmth carrier",
+      "Generous, considered component sizing — built for all-day use, not a demo"
+    ],
+    "rules": [
+      {
+        "name": "The One Voice Rule",
+        "body": "Signal Orange appears on ≤ 15% of any given screen. It lives in the nav bar and on primary buttons. Any other use — decorative borders, background fills, gradient accents — is prohibited. Its authority comes from its restraint.",
+        "section": "colors"
+      },
+      {
+        "name": "The Teal Ownership Rule",
+        "body": "Clearline Teal owns the chat send action and outbound message bubbles. Do not use it for non-chat primary buttons or as a general success color — that's what Semantic Success (#11ad66) is for.",
+        "section": "colors"
+      },
+      {
+        "name": "The Flat-By-Default Rule",
+        "body": "Surfaces are flat at rest. The only permitted shadow in the current system is Bootstrap's focus-ring. Do not add box-shadow to cards, nav bars, modals, or buttons as decoration.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Single Family Rule",
+        "body": "Jost is the only typeface in this system. Do not introduce a display serif, a decorative script, or a second sans for headings. Hierarchy lives in weight (400/500/600) and size, not in family contrast.",
+        "section": "typography"
+      },
+      {
+        "name": "The Label Weight Rule",
+        "body": "Interactive elements — buttons, nav links, form labels — always render at weight 500 (Label level). Weight 400 (Body) in a button reads as a UI bug, not a design choice.",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "Do reserve Signal Orange for the navigation bar and primary action buttons.",
+      "Do use Clearline Teal for the send button, sent message bubbles, and unread count badges.",
+      "Do use Fieldwork Gray (#52665a) for body text — don't replace it with a cooler gray.",
+      "Do keep surfaces flat — white on light gray, no shadows.",
+      "Do size interactive elements generously (minimum touch target 44×44px on mobile).",
+      "Do use semantic badges for conversation status (open / pending / closed).",
+      "Do load Jost via a <link> or @import — the CSS declaration without a source will silently fall back.",
+      "Do keep the chat sidebar at 30% width / 280px minimum."
+    ],
+    "donts": [
+      "Don't build cold, gray, committee-designed layouts (Salesforce/SAP pattern).",
+      "Don't add gradient fills, hero-metric templates, or performative surface polish (Intercom/Notion pattern).",
+      "Don't add box-shadow to cards, buttons, or panels as decoration — the system is flat.",
+      "Don't use Signal Orange outside the nav bar and primary action buttons.",
+      "Don't introduce a second typeface.",
+      "Don't use .text-muted (#6c757d) for primary body content — it fails 4.5:1 contrast on white.",
+      "Don't reinvent standard affordances — Bootstrap's controls are the vocabulary.",
+      "Don't default to modals — exhaust inline and progressive disclosure first."
+    ]
+  }
+}

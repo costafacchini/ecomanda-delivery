@@ -1,0 +1,80 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-radius",
+        "value": "2px",
+        "reason": "Intentional: directed corner on chat bubble tail (messaging UI convention)",
+        "createdAt": "2026-06-17T23:15:12.088Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(255, 255, 255, 0.78)",
+        "reason": "Intentional: white alpha on Signal Orange selected-room background",
+        "createdAt": "2026-06-17T23:15:12.122Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(255, 255, 255, 0.70)",
+        "reason": "Intentional: white alpha on Signal Orange background",
+        "createdAt": "2026-06-17T23:15:12.153Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(255, 255, 255, 0.65)",
+        "reason": "Intentional: white alpha on Signal Orange background",
+        "createdAt": "2026-06-17T23:15:12.189Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(255, 255, 255, 0.22)",
+        "reason": "Intentional: white alpha on Signal Orange background for avatar",
+        "createdAt": "2026-06-17T23:15:12.221Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(24, 188, 156, 0.12)",
+        "reason": "Intentional: Clearline Teal alpha for avatar background",
+        "createdAt": "2026-06-17T23:15:20.142Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(24, 188, 156, 0.25)",
+        "reason": "Intentional: Clearline Teal alpha focus ring",
+        "createdAt": "2026-06-17T23:15:20.178Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(24, 188, 156, 0.15)",
+        "reason": "Intentional: Clearline Teal alpha for badge bg and input focus ring",
+        "createdAt": "2026-06-17T23:15:20.212Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(24, 188, 156, 0.28)",
+        "reason": "Intentional: Clearline Teal alpha for send btn focus ring",
+        "createdAt": "2026-06-17T23:15:20.243Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(250, 86, 25, 0.20)",
+        "reason": "Intentional: Signal Orange alpha for back btn focus ring",
+        "createdAt": "2026-06-17T23:15:20.276Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(250, 152, 25, 0.15)",
+        "reason": "Intentional: Warning Amber alpha for pending badge background",
+        "createdAt": "2026-06-17T23:15:20.310Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(108, 117, 125, 0.12)",
+        "reason": "Intentional: Neutral Muted alpha for closed badge background",
+        "createdAt": "2026-06-17T23:15:20.341Z"
+      }
+    ]
+  }
+}
