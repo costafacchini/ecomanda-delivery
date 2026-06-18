@@ -67,33 +67,33 @@ describe('User', () => {
 
   describe('validations', () => {
     describe('role', () => {
-      it('is valid with allowed values', () => {
+      it('is valid with allowed values', async () => {
         for (const role of ['agent', 'supervisor', 'admin', 'super']) {
           const user = new User({ name: 'John Doe', email: 'john@doe.com', password: '12345678', role })
-          const validation = user.validateSync()
+          const validation = await user.validate().catch((e: any) => e)
           expect(validation?.errors['role']).toBeUndefined()
         }
       })
 
-      it('is invalid with unknown value', () => {
+      it('is invalid with unknown value', async () => {
         const user = new User({ name: 'John Doe', email: 'john@doe.com', password: '12345678', role: 'owner' })
-        const validation = user.validateSync()
+        const validation = await user.validate().catch((e: any) => e)
 
         expect(validation.errors['role']).toBeDefined()
       })
     })
 
     describe('name', () => {
-      it('is required', () => {
+      it('is required', async () => {
         const user = new User({ email: 'john@doe.com', password: '12345678', role: 'super' })
-        const validation = user.validateSync()
+        const validation = await user.validate().catch((e: any) => e)
 
         expect(validation.errors['name'].message).toEqual('Nome: Você deve preencher o campo')
       })
 
-      it('greater than 4 characters', () => {
+      it('greater than 4 characters', async () => {
         const user = new User({ name: 'abc', email: 'john@doe.com', password: '12345678', role: 'super' })
-        const validation = user.validateSync()
+        const validation = await user.validate().catch((e: any) => e)
 
         expect(validation.errors['name'].message).toEqual(
           'Nome: Informe um valor com mais que 4 caracteres! Atual: abc',
@@ -102,18 +102,18 @@ describe('User', () => {
     })
 
     describe('password', () => {
-      it('greater than 8 characters', () => {
+      it('greater than 8 characters', async () => {
         const user = new User({ name: 'John Doe', email: 'john@doe.com', password: '123456', role: 'super' })
-        const validation = user.validateSync()
+        const validation = await user.validate().catch((e: any) => e)
 
         expect(validation.errors['password'].message).toEqual('Senha: Informe um valor com mais que 8 caracteres!')
       })
     })
 
     describe('email', () => {
-      it('is required', () => {
+      it('is required', async () => {
         const user = new User({ name: 'John Doe', password: '12345678', role: 'super' })
-        const validation = user.validateSync()
+        const validation = await user.validate().catch((e: any) => e)
 
         expect(validation.errors['email'].message).toEqual('Email: Você deve preencher o campo')
       })
@@ -145,18 +145,18 @@ describe('User', () => {
     })
 
     describe('licensee', () => {
-      it('is not required for admin or super roles', () => {
+      it('is not required for admin or super roles', async () => {
         for (const role of ['admin', 'super']) {
           const user = new User({ role })
-          const validation = user.validateSync()
+          const validation = await user.validate().catch((e: any) => e)
           expect(validation?.errors['licensee']).not.toBeDefined()
         }
       })
 
-      it('is required for agent and supervisor roles', () => {
+      it('is required for agent and supervisor roles', async () => {
         for (const role of ['agent', 'supervisor']) {
           const user = new User({ role })
-          const validation = user.validateSync()
+          const validation = await user.validate().catch((e: any) => e)
           expect(validation.errors['licensee'].message).toEqual('Licensee: Você deve preencher o campo')
         }
       })

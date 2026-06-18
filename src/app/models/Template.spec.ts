@@ -44,18 +44,18 @@ describe('Template', () => {
 
   describe('validations', () => {
     describe('name', () => {
-      it('is required', () => {
+      it('is required', async () => {
         const template = new Template({})
-        const validation = template.validateSync()
+        const validation = await template.validate().catch((e: any) => e)
 
         expect(validation.errors['name'].message).toEqual('Nome: Você deve preencher o campo')
       })
     })
 
     describe('licensee', () => {
-      it('is required', () => {
+      it('is required', async () => {
         const template = new Template({ number: '7849342387' })
-        const validation = template.validateSync()
+        const validation = await template.validate().catch((e: any) => e)
 
         expect(validation.errors['licensee'].message).toEqual('Licensee: Você deve preencher o campo')
       })

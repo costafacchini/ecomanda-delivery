@@ -44,34 +44,34 @@ describe('Trigger', () => {
 
   describe('validations', () => {
     describe('expression', () => {
-      it('is required', () => {
+      it('is required', async () => {
         const trigger = new Trigger({ name: 'Trigger' })
-        const validation = trigger.validateSync()
+        const validation = await trigger.validate().catch((e: any) => e)
 
         expect(validation.errors['expression'].message).toEqual('Expressão: Você deve preencher o campo')
       })
     })
 
     describe('licensee', () => {
-      it('is required', () => {
+      it('is required', async () => {
         const trigger = new Trigger({ number: '7849342387' })
-        const validation = trigger.validateSync()
+        const validation = await trigger.validate().catch((e: any) => e)
 
         expect(validation.errors['licensee'].message).toEqual('Licensee: Você deve preencher o campo')
       })
     })
 
     describe('catalogMulti', () => {
-      it('is not required if triggerKind is not multi_product', () => {
+      it('is not required if triggerKind is not multi_product', async () => {
         const trigger = new Trigger({ triggerKind: 'single_product', catalogMulti: '' })
-        const validation = trigger.validateSync()
+        const validation = await trigger.validate().catch((e: any) => e)
 
         expect(validation.errors['catalogMulti']).not.toBeDefined()
       })
 
-      it('is required if triggerKind is multi_product', () => {
+      it('is required if triggerKind is multi_product', async () => {
         const trigger = new Trigger({ triggerKind: 'multi_product', catalogMulti: '' })
-        const validation = trigger.validateSync()
+        const validation = await trigger.validate().catch((e: any) => e)
 
         expect(validation.errors['catalogMulti'].message).toEqual(
           'Catalogo: deve ser preenchido quando o gatilho é do tipo vários produtos',
@@ -80,16 +80,16 @@ describe('Trigger', () => {
     })
 
     describe('catalogId', () => {
-      it('is not required if triggerKind is not multi_product', () => {
+      it('is not required if triggerKind is not multi_product', async () => {
         const trigger = new Trigger({ triggerKind: 'single_product', catalogId: '' })
-        const validation = trigger.validateSync()
+        const validation = await trigger.validate().catch((e: any) => e)
 
         expect(validation.errors['catalogId']).not.toBeDefined()
       })
 
-      it('is required if triggerKind is multi_product', () => {
+      it('is required if triggerKind is multi_product', async () => {
         const trigger = new Trigger({ triggerKind: 'multi_product', catalogId: '' })
-        const validation = trigger.validateSync()
+        const validation = await trigger.validate().catch((e: any) => e)
 
         expect(validation.errors['catalogId'].message).toEqual(
           'Id Catalogo: deve ser preenchido quando o gatilho é do tipo vários produtos',
@@ -98,16 +98,16 @@ describe('Trigger', () => {
     })
 
     describe('catalogSingle', () => {
-      it('is not required if triggerKind is not single_product', () => {
+      it('is not required if triggerKind is not single_product', async () => {
         const trigger = new Trigger({ triggerKind: 'multi_product', catalogSingle: '' })
-        const validation = trigger.validateSync()
+        const validation = await trigger.validate().catch((e: any) => e)
 
         expect(validation.errors['catalogSingle']).not.toBeDefined()
       })
 
-      it('is required if triggerKind is single_product', () => {
+      it('is required if triggerKind is single_product', async () => {
         const trigger = new Trigger({ triggerKind: 'single_product', catalogSingle: '' })
-        const validation = trigger.validateSync()
+        const validation = await trigger.validate().catch((e: any) => e)
 
         expect(validation.errors['catalogSingle'].message).toEqual(
           'Catalogo: deve ser preenchido quando o gatilho é do tipo produto único',
@@ -116,16 +116,16 @@ describe('Trigger', () => {
     })
 
     describe('textReplyButton', () => {
-      it('is not required if triggerKind is not reply_button', () => {
+      it('is not required if triggerKind is not reply_button', async () => {
         const trigger = new Trigger({ triggerKind: 'multi_product', textReplyButton: '' })
-        const validation = trigger.validateSync()
+        const validation = await trigger.validate().catch((e: any) => e)
 
         expect(validation.errors['textReplyButton']).not.toBeDefined()
       })
 
-      it('is required if triggerKind is reply_button', () => {
+      it('is required if triggerKind is reply_button', async () => {
         const trigger = new Trigger({ triggerKind: 'reply_button', textReplyButton: '' })
-        const validation = trigger.validateSync()
+        const validation = await trigger.validate().catch((e: any) => e)
 
         expect(validation.errors['textReplyButton'].message).toEqual(
           'Script: deve ser preenchido quando o gatilho é do tipo botões de resposta',
@@ -134,16 +134,16 @@ describe('Trigger', () => {
     })
 
     describe('messagesList', () => {
-      it('is not required if triggerKind is not list_message', () => {
+      it('is not required if triggerKind is not list_message', async () => {
         const trigger = new Trigger({ triggerKind: 'multi_product', messagesList: '' })
-        const validation = trigger.validateSync()
+        const validation = await trigger.validate().catch((e: any) => e)
 
         expect(validation.errors['messagesList']).not.toBeDefined()
       })
 
-      it('is required if triggerKind is list_message', () => {
+      it('is required if triggerKind is list_message', async () => {
         const trigger = new Trigger({ triggerKind: 'list_message', messagesList: '' })
-        const validation = trigger.validateSync()
+        const validation = await trigger.validate().catch((e: any) => e)
 
         expect(validation.errors['messagesList'].message).toEqual(
           'Mensagens: deve ser preenchido quando o gatilho é do tipo lista de mensagens',
@@ -152,16 +152,16 @@ describe('Trigger', () => {
     })
 
     describe('text', () => {
-      it('is not required if triggerKind is not text', () => {
+      it('is not required if triggerKind is not text', async () => {
         const trigger = new Trigger({ triggerKind: 'multi_product', text: '' })
-        const validation = trigger.validateSync()
+        const validation = await trigger.validate().catch((e: any) => e)
 
         expect(validation.errors['text']).not.toBeDefined()
       })
 
-      it('is required if triggerKind is text', () => {
+      it('is required if triggerKind is text', async () => {
         const trigger = new Trigger({ triggerKind: 'text', text: '' })
-        const validation = trigger.validateSync()
+        const validation = await trigger.validate().catch((e: any) => e)
 
         expect(validation.errors['text'].message).toEqual('Texto: deve ser preenchido quando o gatilho é do tipo texto')
       })

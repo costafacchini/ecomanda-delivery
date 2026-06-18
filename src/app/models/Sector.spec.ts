@@ -66,34 +66,34 @@ describe('Sector', () => {
   })
 
   describe('validations', () => {
-    it('fails when name is missing', () => {
+    it('fails when name is missing', async () => {
       const sector = new Sector({ licensee: new mongoose.Types.ObjectId(), users: [new mongoose.Types.ObjectId()] })
-      const error = sector.validateSync()
+      const error = await sector.validate().catch((e: any) => e)
 
       expect(error?.errors['name']).toBeDefined()
     })
 
-    it('fails when licensee is missing', () => {
+    it('fails when licensee is missing', async () => {
       const sector = new Sector({ name: 'Vendas', users: [new mongoose.Types.ObjectId()] })
-      const error = sector.validateSync()
+      const error = await sector.validate().catch((e: any) => e)
 
       expect(error?.errors['licensee']).toBeDefined()
     })
 
-    it('fails when users array is empty', () => {
+    it('fails when users array is empty', async () => {
       const sector = new Sector({ name: 'Vendas', licensee: new mongoose.Types.ObjectId(), users: [] })
-      const error = sector.validateSync()
+      const error = await sector.validate().catch((e: any) => e)
 
       expect(error?.errors['users']).toBeDefined()
     })
 
-    it('passes with name, licensee and at least one user', () => {
+    it('passes with name, licensee and at least one user', async () => {
       const sector = new Sector({
         name: 'Vendas',
         licensee: new mongoose.Types.ObjectId(),
         users: [new mongoose.Types.ObjectId()],
       })
-      const error = sector.validateSync()
+      const error = await sector.validate().catch((e: any) => e)
 
       expect(error).toBeUndefined()
     })

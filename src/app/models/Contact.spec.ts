@@ -59,9 +59,9 @@ describe('Contact', () => {
 
   describe('validations', () => {
     describe('number', () => {
-      it('is required', () => {
+      it('is required', async () => {
         const contact = new Contact({ name: 'Contact' })
-        const validation = contact.validateSync()
+        const validation = await contact.validate().catch((e: any) => e)
 
         expect(validation.errors['number'].message).toEqual('Numero: Você deve preencher o campo')
       })
@@ -75,18 +75,18 @@ describe('Contact', () => {
     })
 
     describe('licensee', () => {
-      it('is required', () => {
+      it('is required', async () => {
         const contact = new Contact({ number: '7849342387' })
-        const validation = contact.validateSync()
+        const validation = await contact.validate().catch((e: any) => e)
 
         expect(validation.errors['licensee'].message).toEqual('Licensee: Você deve preencher o campo')
       })
     })
 
     describe('talkingWithChatBot', () => {
-      it('is required', () => {
+      it('is required', async () => {
         const contact = new Contact({ number: '7849342387' })
-        const validation = contact.validateSync()
+        const validation = await contact.validate().catch((e: any) => e)
 
         expect(validation.errors['talkingWithChatBot'].message).toEqual(
           'Talking with chatbot: Você deve preencher o campo',

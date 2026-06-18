@@ -97,7 +97,11 @@ describe('LocalChat plugin', () => {
       expect(socketEmitter.emitToLicensee).toHaveBeenCalledWith(
         licensee._id,
         'new-room-message',
-        expect.objectContaining({ messageId: message._id, licenseeId: licensee._id }),
+        expect.objectContaining({
+          messageId: message._id.toString(),
+          licenseeId: licensee._id.toString(),
+          contact: { id: contact._id.toString(), name: contact.name },
+        }),
       )
     })
 
