@@ -1,9 +1,9 @@
 # Status: SendMessageToMessenger — skip web contacts
 
-**Current Status**: not-started
+**Current Status**: in-progress
 **Last Updated**: 2026-06-22
-**Agent**: —
-**Branch**: —
+**Agent**: implementer
+**Branch**: chat-widget-phase3-task07-web-contact-guard
 **PR**: —
 
 ## Status History

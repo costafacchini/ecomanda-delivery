@@ -80,4 +80,40 @@ describe('sendMessageToMessenger', () => {
 
     expect(dialogSendMessageSpy).toHaveBeenCalledWith(message._id, 'https://waba.360dialog.io/', 'licensee-token')
   })
+
+  it('skips messenger plugin and marks message as sent when contact type is web', async () => {
+    const licenseeRepository = new LicenseeRepositoryDatabase()
+    const licensee = await licenseeRepository.create(
+      licenseeFactory.build({
+        whatsappDefault: 'dialog',
+        whatsappUrl: 'https://chat.url',
+        whatsappToken: 'token',
+      }),
+    )
+
+    const contactRepository = new ContactRepositoryDatabase()
+    const contact = await contactRepository.create(
+      contactFactory.build({
+        licensee,
+        number: '00000000000',
+        type: 'web',
+        talkingWithChatBot: false,
+      }),
+    )
+
+    const messageRepository = new MessageRepositoryDatabase()
+    const message = await messageRepository.create(
+      messageFactory.build({
+        contact,
+        licensee,
+      }),
+    )
+
+    await sendMessageToMessenger({ messageId: message._id }, dependencies)
+
+    expect(dialogSendMessageSpy).not.toHaveBeenCalled()
+
+    const savedMessage = await messageRepository.findFirst({ _id: message._id }, [])
+    expect(savedMessage.sended).toBe(true)
+  })
 })
