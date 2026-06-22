@@ -24,6 +24,7 @@ Git-native Markdown plans for multi-step work.
 |---|------|--------|--------|-------------|
 | 2 | [MongoDB → PostgreSQL](./mongo-to-postgres/overview.md) | `mongo-to-postgres/` | not-started | Migrate all persistent data from MongoDB/Mongoose to PostgreSQL/Prisma using dual-write strategy; prerequisite: remove-pdv complete |
 | 3 | [Backend Type Narrowing](./type-backend/overview.md) | `type-backend/` | not-started | Replace `any` with interfaces across models, repositories, use cases, controllers, and plugins — 3 phases, 11 tasks |
+| 4 | [Chat Widget](./chat-widget/overview.md) | `chat-widget/` | not-started | Embeddable Intercom-style widget for external sites; React+Vite IIFE bundle, 3 public API endpoints, polling replies, LocalChat integration — 4 phases, 11 tasks |
 
 ---
 
