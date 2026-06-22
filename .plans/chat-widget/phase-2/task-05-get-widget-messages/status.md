@@ -1,9 +1,9 @@
 # Status: Use Case — GetWidgetMessages
 
-**Current Status**: not-started
+**Current Status**: in-progress
 **Last Updated**: 2026-06-22
-**Agent**: —
-**Branch**: —
+**Agent**: implementer
+**Branch**: chat-widget-phase2-task05-get-widget-messages
 **PR**: —
 
 ## Status History
