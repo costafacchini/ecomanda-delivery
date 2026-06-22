@@ -55,6 +55,44 @@ describe('Contact', () => {
       expect(contact.number).toEqual('5511902837-4598687665')
       expect(contact.type).toEqual('@g.us')
     })
+
+    describe('web type', () => {
+      it('saves number unchanged when type is web', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({ licensee, number: '11999990000', type: 'web', talkingWithChatBot: false }),
+        )
+
+        expect(contact.number).toEqual('11999990000')
+        expect(contact.type).toEqual('web')
+      })
+
+      it('saves without error for any number when type is web', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({ licensee, number: '00000000000', type: 'web', talkingWithChatBot: false }),
+        )
+
+        expect(contact.number).toEqual('00000000000')
+        expect(contact.type).toEqual('web')
+      })
+
+      it('persists widgetSessionToken when provided', async () => {
+        const token = 'abc-session-token-123'
+        const contact = await Contact.create(
+          contactFactory.build({ licensee, type: 'web', talkingWithChatBot: false, widgetSessionToken: token }),
+        )
+
+        expect(contact.widgetSessionToken).toEqual(token)
+      })
+
+      it('still normalizes phone and type for regular whatsapp contacts (regression)', async () => {
+        const contact = await Contact.create(
+          contactFactory.build({ licensee, number: '5511990283745@c.us', type: 'g.us' }),
+        )
+
+        expect(contact.number).toEqual('5511990283745')
+        expect(contact.type).toEqual('@c.us')
+      })
+    })
   })
 
   describe('validations', () => {

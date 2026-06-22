@@ -49,6 +49,10 @@ const contactSchema = new Schema(
     customer_id: String,
     credit_card_id: String,
     credit_cards: [cardsSchema],
+    widgetSessionToken: {
+      type: String,
+      sparse: true,
+    },
   },
   { timestamps: true },
 )
