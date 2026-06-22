@@ -61,6 +61,7 @@ const usersController = new UsersController({
 })
 const licenseesController = new LicenseesController({
   licenseeRepository,
+  userRepository,
   createLicenseesQuery: () => new LicenseesQuery({ licenseeRepository }),
   createLicensee: new CreateLicensee({ licenseeRepository }),
   updateLicensee: new UpdateLicensee({ licenseeRepository }),
