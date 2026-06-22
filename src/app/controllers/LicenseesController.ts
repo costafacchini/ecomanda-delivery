@@ -6,6 +6,7 @@ import { SyncBaileysDirectory } from '../usecases/licensees/SyncBaileysDirectory
 
 class LicenseesController {
   licenseeRepository: any
+  userRepository: any
   createLicenseesQuery: any
   createLicensee: any
   updateLicensee: any
@@ -16,6 +17,7 @@ class LicenseesController {
 
   constructor({
     licenseeRepository,
+    userRepository,
     createLicenseesQuery,
     createLicensee,
     updateLicensee,
@@ -27,6 +29,7 @@ class LicenseesController {
     socketManager,
   }: Record<string, any> = {}) {
     this.licenseeRepository = licenseeRepository
+    this.userRepository = userRepository
     this.createLicenseesQuery = createLicenseesQuery
     this.createLicensee = createLicensee
     this.updateLicensee = updateLicensee
@@ -143,6 +146,11 @@ class LicenseesController {
 
       if (req.query.active) {
         licenseesQuery.filterByActive()
+      }
+
+      const user = await this.userRepository.findFirst({ _id: req.userId })
+      if (user?.blockedLicensees?.length) {
+        licenseesQuery.filterExcludeLicensees(user.blockedLicensees)
       }
 
       const licensees = await licenseesQuery.all()

@@ -48,6 +48,10 @@ const userSchema = new Schema(
         'Licensee: Você deve preencher o campo',
       ],
     },
+    blockedLicensees: {
+      type: [{ type: ObjectId, ref: 'Licensee' }],
+      default: [],
+    },
   },
   { timestamps: true },
 )
