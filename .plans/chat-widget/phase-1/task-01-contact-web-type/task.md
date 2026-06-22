@@ -23,7 +23,7 @@ Widget visitors provide name + email (required) and optionally a phone. The cont
 - `email` = visitor email (field already exists in the schema)
 - `type` = `'web'`
 
-Since `type: 'web'` is set explicitly before saving, both guards must short-circuit when `type === 'web'` to prevent NormalizePhone from mangling the number.
+Since `type: 'web'` is always set explicitly before saving, the existing condition `number.includes('@') || !type` already evaluates to `false` — NormalizePhone never runs for web contacts. No additional bypass guards are needed in the pre-save hook or the memory repository.
 
 The `widgetSessionToken` is a UUID stored on the Contact and returned to the widget's localStorage. It acts as the session identifier for all subsequent widget API calls.
 
@@ -38,14 +38,14 @@ The `widgetSessionToken` is a UUID stored on the Contact and returned to the wid
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/models/Contact.ts` | modify | Add `widgetSessionToken` field; guard pre-save hook |
+| `src/app/models/Contact.ts` | modify | Add `widgetSessionToken` field |
 | `src/app/models/Contact.spec.ts` | modify | Add specs for web type and widgetSessionToken |
-| `src/app/repositories/contact.ts` | modify | Guard `normalizeContactFields` for `type === 'web'` |
 
 ### Do NOT Modify
 
+- `src/app/repositories/contact.ts` — no bypass guard needed; existing condition already handles `type === 'web'`
 - `src/app/repositories/message.ts` — owned by phase-1/task-02-message-findbyroom
-- `src/app/helpers/NormalizePhone.ts` — no changes needed; guards go in callers
+- `src/app/helpers/NormalizePhone.ts` — no changes needed
 
 ## Implementation Steps
 
@@ -62,47 +62,7 @@ widgetSessionToken: {
 
 `sparse: true` allows multiple documents to have `null`/undefined while still enforcing uniqueness among set values if you add `unique: true` (optional for MVP — add if desired).
 
-### Step 2: Guard the pre-save hook
-
-In the same file, update the pre-save hook to skip normalization for web contacts:
-
-```ts
-contactSchema.pre('save', function () {
-  const contact = this
-
-  if (!contact._id) {
-    contact._id = new mongoose.Types.ObjectId()
-  }
-
-  // Web contacts store phone (or placeholder) as-is — skip normalization
-  if (contact.type === 'web') return
-
-  if (contact.number.includes('@') || !contact.type) {
-    const normalizedPhone = new NormalizePhone(contact.number)
-    contact.number = normalizedPhone.number
-    contact.type = normalizedPhone.type
-  }
-})
-```
-
-### Step 3: Guard ContactRepositoryMemory.normalizeContactFields
-
-In `src/app/repositories/contact.ts`, update the normalization block:
-
-```ts
-// Web contacts store phone (or placeholder) as-is — skip normalization
-if (normalizedFields.type === 'web') return normalizedFields
-
-if (normalizedFields.number?.includes('@') || !normalizedFields.type) {
-  const normalizedPhone = new NormalizePhone(normalizedFields.number)
-  normalizedFields.number = normalizedPhone.number
-  normalizedFields.type = normalizedPhone.type
-}
-```
-
-The guard must be placed immediately before the existing `if (normalizedFields.number?.includes('@')` block.
-
-### Step 4: Add specs
+### Step 2: Add specs
 
 In `src/app/models/Contact.spec.ts`, add a describe block covering:
 - A web contact created with `{ number: '11999990000', type: 'web', talkingWithChatBot: false, licensee }` saves with number unchanged (no normalization)
@@ -126,7 +86,6 @@ No KB/doc updates required — this is a model field addition; the pattern is st
 
 - [ ] `web` type saves without NormalizePhone clobbering the number
 - [ ] `widgetSessionToken` field present in schema
-- [ ] Memory repo normalization guard in place
 - [ ] New specs pass; existing tests unaffected
 - [ ] Status updated to `complete` in `status.md`
 
