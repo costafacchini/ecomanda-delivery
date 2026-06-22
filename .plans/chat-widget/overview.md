@@ -17,7 +17,9 @@ Build an embeddable chat widget that visitors on external client websites can us
 - Three public backend endpoints (session, send message, poll messages) under `/widget/:apiToken/*`
 - Guard in `SendMessageToMessenger` to skip messenger delivery for web contacts
 - React + Vite widget bundle (IIFE) served as `/widget.js` from Express static
-- Visitor identification via name + email form shown on first open
+- **Mode 1 — Anonymous (landing page)**: visitor fills name + email + optional phone form before chatting
+- **Mode 2 — Authenticated (support)**: host page calls `EcomandaWidget.init({ name, email, phone? })` after login; session is created automatically and the form is skipped
+- `window.EcomandaWidget.init()` buffered API — safe to call before or after the async script loads
 - Reply delivery to widget via polling (GET every 5 seconds)
 
 ### Out of Scope
@@ -26,6 +28,7 @@ Build an embeddable chat widget that visitors on external client websites can us
 - Branding customisation by licensee (colours, logo) — not in this iteration
 - Conversation history across sessions (beyond current open room) — cleared on new session
 - Mobile-specific optimisations for the widget popup
+- Auto-opening the widget when `init()` is called — session is pre-created silently; user must click the button
 
 ## Kill Criteria
 
@@ -91,7 +94,9 @@ Base branch: `main`
 ## Success Criteria
 
 - [ ] Widget loads via `<script src="/widget.js" data-licensee="TOKEN">` on any HTML page
-- [ ] Visitor submits name + email → session persists in localStorage
+- [ ] **Mode 1**: Visitor submits name + email (+ optional phone) → session persists in localStorage, chat opens
+- [ ] **Mode 2**: Calling `EcomandaWidget.init({ name, email, phone? })` after page load skips the form and pre-creates the session silently
+- [ ] Mode 2 is safe to call before or after the widget script finishes loading (buffered)
 - [ ] Visitor sends message → appears in agent's LocalChat dashboard within 2s
 - [ ] Agent replies in dashboard → appears in widget within 10s (polling interval)
 - [ ] Web contacts do NOT trigger a WhatsApp messenger send attempt

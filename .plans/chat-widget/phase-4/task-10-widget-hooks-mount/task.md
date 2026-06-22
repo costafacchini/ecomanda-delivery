@@ -9,38 +9,62 @@
 
 ## Objective
 
-Implement the three hooks (`useWidgetSession`, `useWidgetMessages`, `useWidgetSend`) that connect the UI to the backend API, then write the `main.tsx` IIFE mount script that reads `data-licensee` from the `<script>` tag and renders the widget into a Shadow DOM host element.
+Implement the three hooks (`useWidgetSession`, `useWidgetMessages`, `useWidgetSend`) that connect the UI to the backend API, then write the `main.tsx` IIFE mount script. The script mounts the widget into a Shadow DOM, exposes a global `window.EcomandaWidget.init()` API for authenticated (support) mode, and falls back to the SessionForm in anonymous (landing page) mode.
 
 ## Context
 
-**Hooks**:
+### Two operating modes
 
-`useWidgetSession(apiToken)` — manages session in localStorage
-- On first render, checks `localStorage.getItem('ecomanda_session_<apiToken>')` for an existing token
-- Exposes `createSession(name, email, phone?)` which POSTs to `/widget/:apiToken/session` (omits `phone` from body when undefined), stores the result in localStorage
+**Mode 1 — Anonymous (landing page)**
+- No data provided at embed time
+- Widget shows a SessionForm (name + email + optional phone) on first open
+- Session stored in `localStorage` after form submission
+
+**Mode 2 — Authenticated (support)**
+- Host page calls `EcomandaWidget.init({ name, email, phone? })` after the user logs in
+- Widget creates the session silently in the background
+- Floating button is available; clicking opens the chat directly (no form)
+
+### Global API: `window.EcomandaWidget`
+
+The IIFE bundle sets `window.EcomandaWidget` **before** React mounts. The object starts with a pending-call buffer to handle the race between the `async` script loading and the host page calling `init()`:
+
+```ts
+window.EcomandaWidget = {
+  init(data) {
+    if (this._handler) {
+      this._handler(data)   // React already mounted — call directly
+    } else {
+      this._pending = data  // buffer until React mounts
+    }
+  },
+  _handler: null,
+  _pending: null,
+}
+```
+
+`WidgetRoot` registers `_handler` on mount and processes `_pending` if it exists.
+
+### Hooks
+
+`useWidgetSession(apiToken)` — session lifecycle
+- On init: reads `localStorage.getItem('ecomanda_session_<apiToken>')` for existing token
+- `createSession(name, email, phone?)` POSTs to `/widget/:apiToken/session`, stores result in localStorage
 - Returns `{ session, createSession, loading }`
 
-`useWidgetMessages(apiToken, session)` — polling loop
-- `setInterval` every 5 seconds calling `GET /widget/:apiToken/messages?sessionToken=...&since=...`
-- Tracks the latest `createdAt` to use as `since` on next poll
-- Merges new messages into state (no duplicates — use `_id` as key)
+`useWidgetMessages(baseUrl, apiToken, session)` — polling
+- `setInterval` every 5 s calling `GET /widget/:apiToken/messages?sessionToken=...&since=...`
+- Tracks `lastSeenAt` ref — send as `since` on next poll for incremental updates
+- Merges into state by `_id` (no duplicates)
+- Starts only when `session` is non-null; clears interval on unmount
 - Returns `{ messages }`
 
-`useWidgetSend(apiToken, session)` — send a message
+`useWidgetSend(baseUrl, apiToken, session)` — send
 - POSTs to `/widget/:apiToken/messages`
-- After successful send, triggers an immediate poll (call poll function once)
+- Exposes `triggerPoll` ref so it can immediately refresh after sending
 - Returns `{ send, sending }`
 
-**Base URL**: The widget bundle is served from the same origin as the ecomanda server. The script tag URL (`document.currentScript.src`) gives us the origin — extract it to build API URLs dynamically.
-
-**Mount script** (`widget/src/main.tsx`):
-1. Read `data-licensee` from the `<script>` tag via `document.currentScript`
-2. Create a `div` host element and append to `document.body`
-3. Attach a Shadow DOM root to it
-4. Inject minimal CSS reset into shadow root
-5. Render `<WidgetRoot>` (stateful wrapper around `App`) into the shadow root via `ReactDOM.createRoot`
-
-**WidgetRoot** lives in `main.tsx` and holds all `useState` + the three hooks.
+**Base URL** is derived from `document.currentScript.src` — same origin as the ecomanda server.
 
 ## Before You Start
 
@@ -53,7 +77,7 @@ Implement the three hooks (`useWidgetSession`, `useWidgetMessages`, `useWidgetSe
 
 | File | Action | Notes |
 |------|--------|-------|
-| `widget/src/main.tsx` | modify | Replace placeholder with IIFE mount |
+| `widget/src/main.tsx` | modify | Replace placeholder; Shadow DOM mount + global API |
 | `widget/src/hooks/useWidgetSession.ts` | create | Session management + localStorage |
 | `widget/src/hooks/useWidgetMessages.ts` | create | Polling hook |
 | `widget/src/hooks/useWidgetSend.ts` | create | Send message hook |
@@ -68,15 +92,48 @@ Implement the three hooks (`useWidgetSession`, `useWidgetMessages`, `useWidgetSe
 
 ### Step 1: Create widget/src/api.ts
 
-Encapsulates all HTTP calls. Accepts `baseUrl` (derived from script src):
+Thin `fetch()` wrappers — no external HTTP library:
 
 ```ts
-export async function createSession(baseUrl: string, apiToken: string, name: string, email: string, phone?: string) { ... }
-export async function sendMessage(baseUrl: string, apiToken: string, widgetSessionToken: string, text: string) { ... }
-export async function fetchMessages(baseUrl: string, apiToken: string, widgetSessionToken: string, since?: string) { ... }
-```
+export async function createSession(
+  baseUrl: string, apiToken: string,
+  name: string, email: string, phone?: string,
+) {
+  const body: Record<string, string> = { name, email }
+  if (phone) body.phone = phone
+  const res = await fetch(`${baseUrl}/widget/${apiToken}/session`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) throw new Error(`Session error ${res.status}`)
+  return res.json()
+}
 
-All functions use `fetch()` — no external HTTP library needed.
+export async function sendMessage(
+  baseUrl: string, apiToken: string,
+  widgetSessionToken: string, text: string,
+) {
+  const res = await fetch(`${baseUrl}/widget/${apiToken}/messages`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ widgetSessionToken, text }),
+  })
+  if (!res.ok) throw new Error(`Send error ${res.status}`)
+  return res.json()
+}
+
+export async function fetchMessages(
+  baseUrl: string, apiToken: string,
+  widgetSessionToken: string, since?: string,
+) {
+  const params = new URLSearchParams({ sessionToken: widgetSessionToken })
+  if (since) params.set('since', since)
+  const res = await fetch(`${baseUrl}/widget/${apiToken}/messages?${params}`)
+  if (!res.ok) throw new Error(`Fetch error ${res.status}`)
+  return res.json() as Promise<{ messages: any[] }>
+}
+```
 
 ### Step 2: Create useWidgetSession
 
@@ -84,8 +141,9 @@ All functions use `fetch()` — no external HTTP library needed.
 const SESSION_KEY = (token: string) => `ecomanda_session_${token}`
 ```
 
-- Read from `localStorage` on init
-- `createSession(name, email, phone?)` calls `api.createSession` — `phone` passed through if provided, omitted if undefined — stores JSON result, updates state
+- Read from `localStorage` on init (parse JSON, fall back to `null`)
+- `createSession(name, email, phone?)` calls `api.createSession`, stores result as JSON string, updates state
+- Returns `{ session, createSession, loading }`
 
 ### Step 3: Create useWidgetMessages
 
@@ -93,36 +151,71 @@ const SESSION_KEY = (token: string) => `ecomanda_session_${token}`
 const POLL_INTERVAL_MS = 5000
 ```
 
-- `useEffect` starts interval when `session` is not null
-- Clears interval on unmount
-- Tracks `lastSeenAt` ref (ISO string) — update after each poll with the max `createdAt` of returned messages
-- Handles empty response gracefully
+- `useEffect` with `session` dependency — starts interval only when `session !== null`
+- `lastSeenAt` via `useRef<string | undefined>` — updated to max `createdAt` after each poll
+- Merges new messages into state: `prev => [...prev, ...newOnes]` after deduplication by `_id`
+- Cleanup: `clearInterval` on unmount / session change
 
 ### Step 4: Create useWidgetSend
 
-- Sets `sending` state while POST in-flight
-- On success, returns from send call and lets polling pick up the new message (or triggers one immediate poll via a callback)
+- `sending` boolean state
+- `pollNow` ref (a function set by `useWidgetMessages` via a shared ref) — call after successful send for immediate refresh
+- Returns `{ send, sending }`
 
 ### Step 5: Write main.tsx
 
 ```tsx
 import ReactDOM from 'react-dom/client'
+import { useState, useEffect } from 'react'
 import { App } from './App'
 import { useWidgetSession } from './hooks/useWidgetSession'
 import { useWidgetMessages } from './hooks/useWidgetMessages'
 import { useWidgetSend } from './hooks/useWidgetSend'
-import { useState } from 'react'
+import type { WidgetSession } from './types'
 
-// Resolve base URL from script tag src
+// Capture script context before async rendering
 const scriptEl = document.currentScript as HTMLScriptElement | null
 const baseUrl = scriptEl ? new URL(scriptEl.src).origin : ''
 const apiToken = scriptEl?.dataset.licensee ?? ''
+
+// Expose global API surface with pending-call buffer
+type InitData = { name: string; email: string; phone?: string }
+interface EcomandaWidgetAPI {
+  init: (data: InitData) => void
+  _handler: ((data: InitData) => void) | null
+  _pending: InitData | null
+}
+
+;(window as any).EcomandaWidget = {
+  init(data: InitData) {
+    if (this._handler) {
+      this._handler(data)
+    } else {
+      this._pending = data
+    }
+  },
+  _handler: null,
+  _pending: null,
+} as EcomandaWidgetAPI
 
 function WidgetRoot() {
   const [isOpen, setIsOpen] = useState(false)
   const { session, createSession, loading: sessionLoading } = useWidgetSession(apiToken)
   const { messages } = useWidgetMessages(baseUrl, apiToken, session)
   const { send, sending } = useWidgetSend(baseUrl, apiToken, session)
+
+  // Register init handler and process any buffered call
+  useEffect(() => {
+    const api = (window as any).EcomandaWidget as EcomandaWidgetAPI
+    api._handler = ({ name, email, phone }) => {
+      createSession(name, email, phone)
+    }
+    if (api._pending) {
+      const { name, email, phone } = api._pending
+      api._pending = null
+      createSession(name, email, phone)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <App
@@ -139,7 +232,7 @@ function WidgetRoot() {
   )
 }
 
-// Mount into Shadow DOM to isolate from host page styles
+// Mount into Shadow DOM to isolate widget styles from host page
 const host = document.createElement('div')
 host.id = 'ecomanda-widget-host'
 document.body.appendChild(host)
@@ -156,28 +249,59 @@ ReactDOM.createRoot(mountPoint).render(<WidgetRoot />)
 cd widget && yarn build
 ```
 
-Open a minimal HTML page that loads the built `widget.js` with a real `data-licensee` token. Verify:
-- Floating button appears
-- Clicking opens popup
-- SessionForm submits and stores in localStorage
-- Sending a message routes to the backend
-- Polling shows replies after agent responds
+**Mode 1 test** — anonymous, open a minimal HTML page:
+```html
+<script src="http://localhost:5001/widget.js" data-licensee="YOUR_TOKEN" async></script>
+```
+- Floating button appears → click → SessionForm shown → submit → chat opens
+
+**Mode 2 test** — authenticated, same page with extra script:
+```html
+<script src="http://localhost:5001/widget.js" data-licensee="YOUR_TOKEN" async></script>
+<script>
+  // Simulates calling init() after login — may run before or after widget script
+  setTimeout(() => {
+    EcomandaWidget.init({ name: 'Test User', email: 'test@example.com' })
+  }, 500)
+</script>
+```
+- Floating button appears → click → **no form**, chat opens directly
+
+**Buffered init test** — call `EcomandaWidget.init()` synchronously before async script finishes:
+```html
+<script>
+  window.EcomandaWidget = window.EcomandaWidget || { _pending: null, _handler: null }
+  window.EcomandaWidget.init = function(d) { this._pending = d }
+  EcomandaWidget.init({ name: 'Early User', email: 'early@example.com' })
+</script>
+<script src="http://localhost:5001/widget.js" data-licensee="YOUR_TOKEN" async></script>
+```
+- Widget mounts and processes the buffered call — form still skipped
 
 ## Testing
 
-- [ ] `cd widget && yarn build` succeeds
-- [ ] Manual smoke: widget loads on a test HTML page, form submits, message round-trip works
-- [ ] `localStorage` key persists session across page reload
+- [ ] `cd widget && yarn build` succeeds with no TS errors
+- [ ] Mode 1 smoke: form shown for anonymous visitor, session stored in localStorage
+- [ ] Mode 2 smoke: `init()` called after script load skips form, session created silently
+- [ ] Buffered smoke: `init()` called before script load still works after mount
+- [ ] `localStorage` key persists session across page reload (both modes)
+- [ ] Polling picks up agent reply within 10s
 
 ## Documentation / KB Updates
 
-After this task completes, run `document-solution` to capture the IIFE Shadow DOM mount pattern and the widget API integration.
+After this task completes, run `document-solution` to create `docs/kb/features/chat-widget.md` covering:
+- Two modes (anonymous vs authenticated)
+- `EcomandaWidget.init()` API and buffering pattern
+- IIFE Shadow DOM mount
+- Backend API endpoints
+- Web contact guard
 
 ## Completion Criteria
 
 - [ ] Three hooks implemented and connected to App via WidgetRoot
+- [ ] `window.EcomandaWidget.init()` works in both call-order scenarios (before and after mount)
 - [ ] IIFE mount reads `data-licensee` from script tag
 - [ ] Shadow DOM isolates widget styles from host page
 - [ ] `yarn build` succeeds
-- [ ] Manual smoke test confirms end-to-end flow
+- [ ] All three smoke tests pass
 - [ ] Status updated to `complete` in `status.md`
