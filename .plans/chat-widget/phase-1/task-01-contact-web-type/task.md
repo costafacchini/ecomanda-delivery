@@ -9,7 +9,7 @@
 
 ## Objective
 
-Add `web` as a valid Contact type and introduce a `widgetSessionToken` field. Patch both the Mongoose pre-save hook and the in-memory repository's normalization helper so that email-address numbers are not passed through `NormalizePhone` for web contacts.
+Add `web` as a valid Contact type and introduce a `widgetSessionToken` field. Patch both the Mongoose pre-save hook and the in-memory repository's normalization helper so that web contacts bypass `NormalizePhone` entirely — their `number` is a raw phone string (or `'00000000000'` when the visitor didn't provide one) and must not be reformatted.
 
 ## Context
 
@@ -18,7 +18,12 @@ Add `web` as a valid Contact type and introduce a `widgetSessionToken` field. Pa
 1. **`src/app/models/Contact.ts` pre-save hook** — runs `NormalizePhone` when `number.includes('@') || !type`.
 2. **`src/app/repositories/contact.ts` `ContactRepositoryMemory.normalizeContactFields`** — same condition.
 
-Widget visitors are identified by email (their `number` will be an email string like `user@example.com`). Since email contains `@`, both guards currently trigger `NormalizePhone`, which would clobber the intended `type: 'web'`. Both places must short-circuit when `type === 'web'` is already set.
+Widget visitors provide name + email (required) and optionally a phone. The contact is stored as:
+- `number` = visitor phone if provided, else `'00000000000'` (placeholder that satisfies the required field without triggering a real WhatsApp lookup)
+- `email` = visitor email (field already exists in the schema)
+- `type` = `'web'`
+
+Since `type: 'web'` is set explicitly before saving, both guards must short-circuit when `type === 'web'` to prevent NormalizePhone from mangling the number.
 
 The `widgetSessionToken` is a UUID stored on the Contact and returned to the widget's localStorage. It acts as the session identifier for all subsequent widget API calls.
 
@@ -69,7 +74,7 @@ contactSchema.pre('save', function () {
     contact._id = new mongoose.Types.ObjectId()
   }
 
-  // Web contacts use email as number — skip phone normalization
+  // Web contacts store phone (or placeholder) as-is — skip normalization
   if (contact.type === 'web') return
 
   if (contact.number.includes('@') || !contact.type) {
@@ -85,7 +90,7 @@ contactSchema.pre('save', function () {
 In `src/app/repositories/contact.ts`, update the normalization block:
 
 ```ts
-// Web contacts use email as number — skip phone normalization
+// Web contacts store phone (or placeholder) as-is — skip normalization
 if (normalizedFields.type === 'web') return normalizedFields
 
 if (normalizedFields.number?.includes('@') || !normalizedFields.type) {
@@ -100,13 +105,14 @@ The guard must be placed immediately before the existing `if (normalizedFields.n
 ### Step 4: Add specs
 
 In `src/app/models/Contact.spec.ts`, add a describe block covering:
-- A web contact created with `{ number: 'user@example.com', type: 'web', talkingWithChatBot: false, licensee }` saves successfully without normalizing the number
+- A web contact created with `{ number: '11999990000', type: 'web', talkingWithChatBot: false, licensee }` saves with number unchanged (no normalization)
+- A web contact created with `{ number: '00000000000', type: 'web', ... }` saves without error
 - `widgetSessionToken` can be set and retrieved
-- A phone-type contact still normalizes correctly (regression)
+- A regular phone contact still normalizes correctly (regression guard)
 
 ## Testing
 
-- [ ] New specs pass: web contact saves with email as `number`, type remains `'web'`
+- [ ] New specs pass: web contact saves with `number` unchanged, `type` remains `'web'`
 - [ ] `widgetSessionToken` field persists on save
 - [ ] Existing Contact specs still pass (no regression on phone normalization)
 - [ ] `yarn test src/app/models/Contact.spec.ts` green
@@ -118,9 +124,9 @@ No KB/doc updates required — this is a model field addition; the pattern is st
 
 ## Completion Criteria
 
-- [ ] `web` type saves without NormalizePhone clobbering email number
+- [ ] `web` type saves without NormalizePhone clobbering the number
 - [ ] `widgetSessionToken` field present in schema
-- [ ] Memory repo normalization guards in place
+- [ ] Memory repo normalization guard in place
 - [ ] New specs pass; existing tests unaffected
 - [ ] Status updated to `complete` in `status.md`
 

@@ -33,7 +33,7 @@ Pattern to follow: `src/app/routes/v1/v1-routes.ts` — composition root, use ca
 
 Use `express-validator`. Already installed and used in `v1-routes.ts`.
 
-POST `/session`: `body('name').notEmpty()`, `body('email').isEmail()`
+POST `/session`: `body('name').notEmpty()`, `body('email').isEmail()`, `body('phone').optional().isMobilePhone('any')`
 POST `/messages`: `body('widgetSessionToken').notEmpty()`, `body('text').notEmpty()`
 GET `/messages`: `query('sessionToken').notEmpty()`
 
@@ -104,6 +104,7 @@ router.post(
         apiToken: req.params.apiToken,
         name: req.body.name,
         email: req.body.email,
+        phone: req.body.phone,   // optional — undefined if not sent
       })
       return res.status(200).json(result)
     } catch (err: any) {

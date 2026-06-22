@@ -17,7 +17,7 @@ Implement the three hooks (`useWidgetSession`, `useWidgetMessages`, `useWidgetSe
 
 `useWidgetSession(apiToken)` — manages session in localStorage
 - On first render, checks `localStorage.getItem('ecomanda_session_<apiToken>')` for an existing token
-- Exposes `createSession(name, email)` which POSTs to `/widget/:apiToken/session`, stores the result in localStorage
+- Exposes `createSession(name, email, phone?)` which POSTs to `/widget/:apiToken/session` (omits `phone` from body when undefined), stores the result in localStorage
 - Returns `{ session, createSession, loading }`
 
 `useWidgetMessages(apiToken, session)` — polling loop
@@ -71,7 +71,7 @@ Implement the three hooks (`useWidgetSession`, `useWidgetMessages`, `useWidgetSe
 Encapsulates all HTTP calls. Accepts `baseUrl` (derived from script src):
 
 ```ts
-export async function createSession(baseUrl: string, apiToken: string, name: string, email: string) { ... }
+export async function createSession(baseUrl: string, apiToken: string, name: string, email: string, phone?: string) { ... }
 export async function sendMessage(baseUrl: string, apiToken: string, widgetSessionToken: string, text: string) { ... }
 export async function fetchMessages(baseUrl: string, apiToken: string, widgetSessionToken: string, since?: string) { ... }
 ```
@@ -85,7 +85,7 @@ const SESSION_KEY = (token: string) => `ecomanda_session_${token}`
 ```
 
 - Read from `localStorage` on init
-- `createSession` calls `api.createSession`, stores JSON stringified result, updates state
+- `createSession(name, email, phone?)` calls `api.createSession` — `phone` passed through if provided, omitted if undefined — stores JSON result, updates state
 
 ### Step 3: Create useWidgetMessages
 

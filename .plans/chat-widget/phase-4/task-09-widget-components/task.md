@@ -40,7 +40,7 @@ The widget renders inside a Shadow DOM root (created in task-10) to isolate its 
 
 `FloatingButton`: `{ onClick: () => void; isOpen: boolean }`
 `ChatPopup`: `{ children: ReactNode }`
-`SessionForm`: `{ onSubmit: (name: string, email: string) => void; loading: boolean }`
+`SessionForm`: `{ onSubmit: (name: string, email: string, phone?: string) => void; loading: boolean }`
 `MessageList`: `{ messages: WidgetMessage[] }`
 `MessageInput`: `{ onSend: (text: string) => void; disabled: boolean }`
 
@@ -129,7 +129,7 @@ Fixed-position card, 360×500px, bottom-right above the button. Use inline style
 
 ### Step 4: SessionForm
 
-Two text inputs (name, email) + a submit button. Show a loading spinner while `loading` is true. Validate email format client-side before calling `onSubmit`.
+Three inputs: name (required), email (required), phone (optional, labeled "Telefone (opcional)") + a submit button. Show a loading spinner while `loading` is true. Validate email format client-side before calling `onSubmit`. Pass `phone` as `undefined` (not empty string) when the field is blank.
 
 ### Step 5: MessageList
 
@@ -154,7 +154,7 @@ interface AppProps {
   isOpen: boolean
   onToggle: () => void
   session: WidgetSession | null
-  onSessionCreate: (name: string, email: string) => void
+  onSessionCreate: (name: string, email: string, phone?: string) => void
   messages: WidgetMessage[]
   onSend: (text: string) => void
   sessionLoading: boolean
