@@ -7,7 +7,9 @@ import { message as messageFactory } from '@factories/message'
 import { triggerText } from '@factories/trigger'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
-import { MessageRepositoryDatabase } from '@repositories/message'
+import { MessageRepositoryDatabase, MessageRepositoryMemory } from '@repositories/message'
+import { RoomRepositoryDatabase } from '@repositories/room'
+import { room as roomFactory } from '@factories/room'
 
 jest.mock('uuid', () => ({ v4: () => '150bdb15-4c55-42ac-bc6c-970d620fdb6d' }))
 import { createRuntimeDependencies } from '../runtime/dependencies'
@@ -110,6 +112,158 @@ describe('message repository', () => {
 
       let result = await messageRepository.find({ text: 'Hello world' })
       expect(result.length).toEqual(2)
+    })
+  })
+
+  describe('#findByRoom', () => {
+    describe('MessageRepositoryDatabase', () => {
+      it('returns messages for the room in ascending createdAt order', async () => {
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
+
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
+
+        const roomRepository = new RoomRepositoryDatabase()
+        const room = await roomRepository.create(roomFactory.build({ contact: contact._id }))
+
+        const messageRepository = new MessageRepositoryDatabase({ parseText: dependencies.parseText })
+        const msg1 = await messageRepository.create(
+          messageFactory.build({ licensee, contact, room: room._id, text: 'first', createdAt: new Date('2024-01-01T10:00:00Z') }),
+        )
+        const msg2 = await messageRepository.create(
+          messageFactory.build({ licensee, contact, room: room._id, text: 'second', createdAt: new Date('2024-01-01T11:00:00Z') }),
+        )
+
+        const result = await messageRepository.findByRoom(room._id)
+
+        expect(result.length).toEqual(2)
+        expect(result[0]._id.toString()).toEqual(msg1._id.toString())
+        expect(result[1]._id.toString()).toEqual(msg2._id.toString())
+      })
+
+      it('returns empty array when no messages exist for the room', async () => {
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
+
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
+
+        const roomRepository = new RoomRepositoryDatabase()
+        const room = await roomRepository.create(roomFactory.build({ contact: contact._id }))
+
+        const messageRepository = new MessageRepositoryDatabase({ parseText: dependencies.parseText })
+
+        const result = await messageRepository.findByRoom(room._id)
+
+        expect(result).toEqual([])
+      })
+
+      it('does not return messages from a different room', async () => {
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
+
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
+
+        const roomRepository = new RoomRepositoryDatabase()
+        const roomA = await roomRepository.create(roomFactory.build({ contact: contact._id }))
+        const roomB = await roomRepository.create(roomFactory.build({ contact: contact._id }))
+
+        const messageRepository = new MessageRepositoryDatabase({ parseText: dependencies.parseText })
+        await messageRepository.create(messageFactory.build({ licensee, contact, room: roomA._id, text: 'room A message' }))
+
+        const result = await messageRepository.findByRoom(roomB._id)
+
+        expect(result).toEqual([])
+      })
+
+      it('filters messages by since option', async () => {
+        const licenseeRepository = new LicenseeRepositoryDatabase()
+        const licensee = await licenseeRepository.create(licenseeFactory.build())
+
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(contactFactory.build({ licensee: licensee._id }))
+
+        const roomRepository = new RoomRepositoryDatabase()
+        const room = await roomRepository.create(roomFactory.build({ contact: contact._id }))
+
+        const messageRepository = new MessageRepositoryDatabase({ parseText: dependencies.parseText })
+        await messageRepository.create(
+          messageFactory.build({ licensee, contact, room: room._id, text: 'old', createdAt: new Date('2024-01-01T09:00:00Z') }),
+        )
+        const recentMsg = await messageRepository.create(
+          messageFactory.build({ licensee, contact, room: room._id, text: 'recent', createdAt: new Date('2024-01-01T11:00:00Z') }),
+        )
+
+        const result = await messageRepository.findByRoom(room._id, { since: new Date('2024-01-01T10:00:00Z') })
+
+        expect(result.length).toEqual(1)
+        expect(result[0]._id.toString()).toEqual(recentMsg._id.toString())
+      })
+    })
+
+    describe('MessageRepositoryMemory', () => {
+      it('returns messages for the room in ascending createdAt order', async () => {
+        const roomId = { _id: { toString: () => 'room-1', _bsontype: undefined } }
+        const otherRoomId = { _id: { toString: () => 'room-2', _bsontype: undefined } }
+
+        const mongoose = require('mongoose')
+        const rid = new mongoose.Types.ObjectId()
+        const otherRid = new mongoose.Types.ObjectId()
+
+        const msg1 = { _id: new mongoose.Types.ObjectId(), room: rid, text: 'first', createdAt: new Date('2024-01-01T10:00:00Z') }
+        const msg2 = { _id: new mongoose.Types.ObjectId(), room: rid, text: 'second', createdAt: new Date('2024-01-01T11:00:00Z') }
+        const msg3 = { _id: new mongoose.Types.ObjectId(), room: otherRid, text: 'other', createdAt: new Date('2024-01-01T09:00:00Z') }
+
+        const messageRepository = new MessageRepositoryMemory({ items: [msg2, msg1, msg3] })
+
+        const result = await messageRepository.findByRoom(rid)
+
+        expect(result.length).toEqual(2)
+        expect(result[0]._id.toString()).toEqual(msg1._id.toString())
+        expect(result[1]._id.toString()).toEqual(msg2._id.toString())
+      })
+
+      it('returns empty array when no messages exist for the room', async () => {
+        const mongoose = require('mongoose')
+        const rid = new mongoose.Types.ObjectId()
+        const otherRid = new mongoose.Types.ObjectId()
+
+        const msg = { _id: new mongoose.Types.ObjectId(), room: otherRid, text: 'other', createdAt: new Date() }
+        const messageRepository = new MessageRepositoryMemory({ items: [msg] })
+
+        const result = await messageRepository.findByRoom(rid)
+
+        expect(result).toEqual([])
+      })
+
+      it('does not return messages from a different room', async () => {
+        const mongoose = require('mongoose')
+        const roomA = new mongoose.Types.ObjectId()
+        const roomB = new mongoose.Types.ObjectId()
+
+        const msg = { _id: new mongoose.Types.ObjectId(), room: roomA, text: 'room A', createdAt: new Date() }
+        const messageRepository = new MessageRepositoryMemory({ items: [msg] })
+
+        const result = await messageRepository.findByRoom(roomB)
+
+        expect(result).toEqual([])
+      })
+
+      it('filters messages by since option', async () => {
+        const mongoose = require('mongoose')
+        const rid = new mongoose.Types.ObjectId()
+
+        const oldMsg = { _id: new mongoose.Types.ObjectId(), room: rid, text: 'old', createdAt: new Date('2024-01-01T09:00:00Z') }
+        const recentMsg = { _id: new mongoose.Types.ObjectId(), room: rid, text: 'recent', createdAt: new Date('2024-01-01T11:00:00Z') }
+        const messageRepository = new MessageRepositoryMemory({ items: [oldMsg, recentMsg] })
+
+        const result = await messageRepository.findByRoom(rid, { since: new Date('2024-01-01T10:00:00Z') })
+
+        expect(result.length).toEqual(1)
+        expect(result[0]._id.toString()).toEqual(recentMsg._id.toString())
+      })
     })
   })
 
