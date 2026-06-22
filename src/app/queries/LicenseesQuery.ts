@@ -9,7 +9,7 @@ class LicenseesQuery {
   whatsappClause: any
   expressionClause: any
   expressionActive: any
-  excludedIdsClause: any[]
+  excludedIdsClause: any[] | undefined
 
   constructor({ licenseeRepository }: { licenseeRepository?: any } = {}) {
     this.licenseeRepository = licenseeRepository
