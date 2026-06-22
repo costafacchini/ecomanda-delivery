@@ -20,6 +20,7 @@ async function runValidations(controller, req) {
 
 function buildController() {
   const licenseeRepository = new LicenseeRepositoryMemory()
+  const userRepository = { findFirst: jest.fn().mockResolvedValue({ blockedLicensees: [] }) }
   const licenseesQueryInstance = {
     page: jest.fn(),
     limit: jest.fn(),
@@ -28,6 +29,7 @@ function buildController() {
     filterByWhatsappDefault: jest.fn(),
     filterByExpression: jest.fn(),
     filterByActive: jest.fn(),
+    filterExcludeLicensees: jest.fn(),
     all: jest.fn(),
   }
   const createLicenseesQuery = jest.fn().mockReturnValue(licenseesQueryInstance)
@@ -43,6 +45,7 @@ function buildController() {
 
   const controller = new LicenseesController({
     licenseeRepository,
+    userRepository,
     createLicenseesQuery,
     createLicensee,
     updateLicensee,
@@ -52,6 +55,7 @@ function buildController() {
   return {
     controller,
     licenseeRepository,
+    userRepository,
     createLicenseesQuery,
     licenseesQueryInstance,
     createLicensee,
@@ -233,7 +237,7 @@ describe('LicenseesController delegation', () => {
     const licensees = [{ _id: 'licensee-id' }]
     licenseesQueryInstance.all.mockResolvedValue(licensees)
 
-    const req = { query: { page: '1', limit: '3', expression: 'Alca' } }
+    const req = { query: { page: '1', limit: '3', expression: 'Alca' }, userId: 'user-id' }
     const res = buildResponse()
 
     await controller.index(req, res)
@@ -243,6 +247,32 @@ describe('LicenseesController delegation', () => {
     expect(licenseesQueryInstance.filterByExpression).toHaveBeenCalledWith('Alca')
     expect(res.status).toHaveBeenCalledWith(200)
     expect(res.send).toHaveBeenCalledWith(licensees)
+  })
+
+  it('applies filterExcludeLicensees when user has blockedLicensees', async () => {
+    const { controller, licenseesQueryInstance, userRepository } = buildController()
+    const blockedId = 'blocked-licensee-id'
+    userRepository.findFirst.mockResolvedValue({ blockedLicensees: [blockedId] })
+    licenseesQueryInstance.all.mockResolvedValue([])
+
+    const req = { query: {}, userId: 'user-id' }
+    const res = buildResponse()
+
+    await controller.index(req, res)
+
+    expect(licenseesQueryInstance.filterExcludeLicensees).toHaveBeenCalledWith([blockedId])
+  })
+
+  it('does not call filterExcludeLicensees when user has no blockedLicensees', async () => {
+    const { controller, licenseesQueryInstance } = buildController()
+    licenseesQueryInstance.all.mockResolvedValue([])
+
+    const req = { query: {}, userId: 'user-id' }
+    const res = buildResponse()
+
+    await controller.index(req, res)
+
+    expect(licenseesQueryInstance.filterExcludeLicensees).not.toHaveBeenCalled()
   })
 
   it('delegates setDialogWebhook to the use case and returns status 200', async () => {

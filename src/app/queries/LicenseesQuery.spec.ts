@@ -222,4 +222,34 @@ describe('LicenseesQuery', () => {
       expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: licenseeInactive._id })]))
     })
   })
+
+  describe('filterExcludeLicensees', () => {
+    it('excludes licensees whose ids are in the blocked list', async () => {
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      const licensee1 = await licenseeRepository.create(licenseeFactory.build())
+      const licensee2 = await licenseeRepository.create(licenseeFactory.build())
+      const licensee3 = await licenseeRepository.create(licenseeFactory.build())
+
+      const licenseesQuery = buildLicenseesQuery()
+      licenseesQuery.filterExcludeLicensees([licensee2._id])
+      const records = await licenseesQuery.all()
+
+      expect(records.length).toEqual(2)
+      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: licensee1._id })]))
+      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: licensee3._id })]))
+      expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: licensee2._id })]))
+    })
+
+    it('returns all licensees when the excluded list is empty', async () => {
+      const licenseeRepository = new LicenseeRepositoryDatabase()
+      await licenseeRepository.create(licenseeFactory.build())
+      await licenseeRepository.create(licenseeFactory.build())
+
+      const licenseesQuery = buildLicenseesQuery()
+      licenseesQuery.filterExcludeLicensees([])
+      const records = await licenseesQuery.all()
+
+      expect(records.length).toEqual(2)
+    })
+  })
 })

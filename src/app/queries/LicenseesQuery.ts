@@ -9,6 +9,7 @@ class LicenseesQuery {
   whatsappClause: any
   expressionClause: any
   expressionActive: any
+  excludedIdsClause: any[]
 
   constructor({ licenseeRepository }: { licenseeRepository?: any } = {}) {
     this.licenseeRepository = licenseeRepository
@@ -42,6 +43,10 @@ class LicenseesQuery {
     this.expressionActive = true
   }
 
+  filterExcludeLicensees(ids: any[]) {
+    this.excludedIdsClause = ids
+  }
+
   async all() {
     const query = new QueryBuilder(this.licenseeRepository.model())
     query.sortBy('createdAt', 1)
@@ -58,7 +63,13 @@ class LicenseesQuery {
 
     if (this.expressionClause) query.filterByExpression(['name', 'email', 'phone'], this.expressionClause)
 
-    return await query.getQuery().exec()
+    const mongooseQuery = query.getQuery()
+
+    if (this.excludedIdsClause?.length) {
+      mongooseQuery.where('_id').nin(this.excludedIdsClause)
+    }
+
+    return await mongooseQuery.exec()
   }
 }
 

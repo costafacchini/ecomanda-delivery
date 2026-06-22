@@ -53,6 +53,7 @@ describe('User', () => {
       const user = new User()
 
       expect(user.active).toEqual(true)
+      expect(user.blockedLicensees).toEqual([])
     })
   })
 
