@@ -3,6 +3,7 @@ import { router as loginRoutes } from '../app/routes/login-route'
 import resourcesRoutes from '../app/routes/resources-routes'
 import apiRoutes from '../app/routes/api-routes'
 import bullboardRoute from '../app/routes/bull-board-route'
+import widgetRoutes from '../app/routes/widget-routes'
 import { frontendIndexFile } from './frontend-paths'
 
 const SECRET = process.env.SECRET as string
@@ -20,6 +21,7 @@ function requireCookieAuth(req: any, res: any, next: any) {
 function routes(app: any) {
   app.use('/resources', resourcesRoutes)
   app.use('/api', apiRoutes)
+  app.use('/widget', widgetRoutes)
   app.use('/login', loginRoutes)
   app.use('/queue', requireCookieAuth, bullboardRoute)
   app.get(/.*/, (req: any, res: any) => {
