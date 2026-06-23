@@ -23,5 +23,6 @@ export function helmetConfig() {
     },
     strictTransportSecurity: isDev ? false : { maxAge: 31536000, includeSubDomains: true },
     crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
   }
 }
