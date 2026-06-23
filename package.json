@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node --require source-map-support/register --require './appsignal.cjs' dist/server.js",
-    "build": "tsc && echo '{\"type\":\"commonjs\"}' > dist/package.json && cp appsignal.cjs dist/appsignal.cjs && cd client && yarn install --production=false && yarn run build && cd ../widget && yarn install --frozen-lockfile && yarn build",
+    "build": "tsc && echo '{\"type\":\"commonjs\"}' > dist/package.json && cp appsignal.cjs dist/appsignal.cjs && cd client && yarn install --production=false && yarn run build && cd ../widget && yarn install --frozen-lockfile --production=false && yarn build",
     "dev": "npm-run-all -p dev:*",
     "dev:server": "nodemon --exec tsx server.ts",
     "dev:worker": "nodemon --exec tsx worker.ts",
