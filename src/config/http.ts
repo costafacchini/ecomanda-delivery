@@ -15,7 +15,7 @@ import http from 'http'
 import { Server } from 'socket.io'
 import { redisConnection } from './redis'
 import Rollbar from 'rollbar'
-import { frontendDistDir } from './frontend-paths'
+import { frontendDistDir, widgetDistDir } from './frontend-paths'
 import { expressErrorHandler } from '@appsignal/nodejs'
 import jwt from 'jsonwebtoken'
 
@@ -32,6 +32,11 @@ app.use(logger('dev'))
 connect()
 
 app.use(express.static(frontendDistDir))
+app.use(
+  express.static(widgetDistDir, {
+    setHeaders: (res) => res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin'),
+  }),
+)
 enableCors(app)
 routes(app)
 

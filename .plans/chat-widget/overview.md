@@ -1,6 +1,6 @@
 # Plan: Chat Widget
 
-**Status**: not-started
+**Status**: complete
 **Created**: 2026-06-22
 **Last Updated**: 2026-06-22
 **Assigned Dev**: Alan Costa Facchini

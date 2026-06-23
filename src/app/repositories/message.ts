@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import Repository, { RepositoryMemory } from './repository'
+import Repository, { RepositoryMemory, comparableValue, sortRecords } from './repository'
 import Message from '../models/Message'
 import Trigger from '../models/Trigger'
 import { replace } from '../helpers/Emoji'
@@ -38,6 +38,14 @@ class MessageRepositoryDatabase extends Repository {
 
   async find(params: any = {}) {
     return await Message.find(params)
+  }
+
+  async findByRoom(roomId: any, options: { since?: Date } = {}) {
+    const query: Record<string, any> = { room: roomId }
+    if (options.since) {
+      query.createdAt = { $gt: options.since }
+    }
+    return await Message.find(query).sort({ createdAt: 1 })
   }
 
   async createInteractiveMessages(fields: any) {
@@ -120,6 +128,18 @@ class MessageRepositoryMemory extends RepositoryMemory {
 
   async create(fields: any = {}) {
     return await super.create({ number: uuidv4(), ...(fields ?? {}) })
+  }
+
+  findByRoom(roomId: any, options: { since?: Date } = {}) {
+    const messages = this.items.filter((m: any) => {
+      const roomMatch = comparableValue(m.room) === comparableValue(roomId)
+      if (!roomMatch) return false
+      if (options.since && m.createdAt) {
+        return new Date(m.createdAt) > options.since
+      }
+      return true
+    })
+    return sortRecords(messages, { createdAt: 'asc' })
   }
 
   async createInteractiveMessages(fields: any) {
