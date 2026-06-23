@@ -22,16 +22,21 @@ function validate(req: any, res: any, next: any) {
 
 // Composition root. Called once at module load time in production;
 // replaced via jest.mock in tests so no live DB connection is needed.
-const {
+const { licenseeRepository, contactRepository, messageRepository, roomRepository } = createRuntimeDependencies()
+
+const createWidgetSession = new CreateWidgetSession({ licenseeRepository, contactRepository })
+const sendWidgetMessage = new SendWidgetMessage({
   licenseeRepository,
   contactRepository,
   messageRepository,
   roomRepository,
-} = createRuntimeDependencies()
-
-const createWidgetSession = new CreateWidgetSession({ licenseeRepository, contactRepository })
-const sendWidgetMessage = new SendWidgetMessage({ licenseeRepository, contactRepository, messageRepository, roomRepository })
-const getWidgetMessages = new GetWidgetMessages({ licenseeRepository, contactRepository, roomRepository, messageRepository })
+})
+const getWidgetMessages = new GetWidgetMessages({
+  licenseeRepository,
+  contactRepository,
+  roomRepository,
+  messageRepository,
+})
 
 // POST /:apiToken/session — create or resume a widget session for the visitor
 router.post(
@@ -70,22 +75,17 @@ router.post(
 )
 
 // GET /:apiToken/messages — poll messages for the widget visitor since a given timestamp
-router.get(
-  '/:apiToken/messages',
-  [query('sessionToken').notEmpty()],
-  validate,
-  async (req: any, res: any) => {
-    const { apiToken } = req.params
-    const { sessionToken, since } = req.query as { sessionToken: string; since?: string }
-    const sinceDate = since ? new Date(since) : undefined
-    try {
-      const messages = await getWidgetMessages.execute({ apiToken, widgetSessionToken: sessionToken, since: sinceDate })
-      return res.status(200).json({ messages })
-    } catch (err: any) {
-      if (err.message?.includes('not found')) return res.status(404).json({ message: err.message })
-      return res.status(500).json({ message: err.message })
-    }
-  },
-)
+router.get('/:apiToken/messages', [query('sessionToken').notEmpty()], validate, async (req: any, res: any) => {
+  const { apiToken } = req.params
+  const { sessionToken, since } = req.query as { sessionToken: string; since?: string }
+  const sinceDate = since ? new Date(since) : undefined
+  try {
+    const messages = await getWidgetMessages.execute({ apiToken, widgetSessionToken: sessionToken, since: sinceDate })
+    return res.status(200).json({ messages })
+  } catch (err: any) {
+    if (err.message?.includes('not found')) return res.status(404).json({ message: err.message })
+    return res.status(500).json({ message: err.message })
+  }
+})
 
 export default router

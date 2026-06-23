@@ -32,7 +32,11 @@ app.use(logger('dev'))
 connect()
 
 app.use(express.static(frontendDistDir))
-app.use(express.static(widgetDistDir))
+app.use(
+  express.static(widgetDistDir, {
+    setHeaders: (res) => res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin'),
+  }),
+)
 enableCors(app)
 routes(app)
 

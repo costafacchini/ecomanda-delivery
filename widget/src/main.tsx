@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom/client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { App } from './App'
 import { useWidgetSession } from './hooks/useWidgetSession'
 import { useWidgetMessages } from './hooks/useWidgetMessages'
@@ -12,7 +12,9 @@ const apiToken = scriptEl?.dataset.licensee ?? ''
 type InitData = { name: string; email: string; phone?: string }
 interface EcomandaWidgetAPI {
   init: (data: InitData) => void
+  reset: () => void
   _handler: ((data: InitData) => void) | null
+  _resetHandler: (() => void) | null
   _pending: InitData | null
 }
 
@@ -24,25 +26,34 @@ interface EcomandaWidgetAPI {
       this._pending = data
     }
   },
+  reset(this: EcomandaWidgetAPI) {
+    this._resetHandler?.()
+  },
   _handler: null,
+  _resetHandler: null,
   _pending: null,
 } as EcomandaWidgetAPI
 
 function WidgetRoot() {
   const [isOpen, setIsOpen] = useState(false)
-  const { session, createSession, loading: sessionLoading } = useWidgetSession(baseUrl, apiToken)
+  const { session, createSession, clearSession, loading: sessionLoading } = useWidgetSession(baseUrl, apiToken)
   const { messages, triggerPoll } = useWidgetMessages(baseUrl, apiToken, session)
   const { send, sending } = useWidgetSend(baseUrl, apiToken, session, triggerPoll)
 
+  // Refs keep _handler and _resetHandler pointing at the latest closures
+  const createSessionRef = useRef(createSession)
+  const clearSessionRef = useRef(clearSession)
+  createSessionRef.current = createSession
+  clearSessionRef.current = clearSession
+
   useEffect(() => {
     const api = (window as any).EcomandaWidget as EcomandaWidgetAPI
-    api._handler = ({ name, email, phone }) => {
-      createSession(name, email, phone)
-    }
+    api._handler = (data) => createSessionRef.current(data.name, data.email, data.phone)
+    api._resetHandler = () => clearSessionRef.current()
     if (api._pending) {
       const { name, email, phone } = api._pending
       api._pending = null
-      createSession(name, email, phone)
+      createSessionRef.current(name, email, phone)
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 

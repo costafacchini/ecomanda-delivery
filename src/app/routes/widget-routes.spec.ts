@@ -77,18 +77,14 @@ describe('POST /widget/:token/session', () => {
   })
 
   it('returns 422 when email is missing', async () => {
-    const res = await request(app)
-      .post(`/widget/${API_TOKEN}/session`)
-      .send({ name: 'Alan' })
+    const res = await request(app).post(`/widget/${API_TOKEN}/session`).send({ name: 'Alan' })
 
     expect(res.status).toBe(422)
     expect(res.body).toMatchObject({ errors: expect.arrayContaining([{ message: expect.any(String) }]) })
   })
 
   it('returns 422 when name is missing', async () => {
-    const res = await request(app)
-      .post(`/widget/${API_TOKEN}/session`)
-      .send({ email: 'alan@example.com' })
+    const res = await request(app).post(`/widget/${API_TOKEN}/session`).send({ email: 'alan@example.com' })
 
     expect(res.status).toBe(422)
     expect(res.body.errors[0]).toHaveProperty('message')
@@ -122,18 +118,14 @@ describe('POST /widget/:token/messages', () => {
   })
 
   it('returns 422 when widgetSessionToken is missing', async () => {
-    const res = await request(app)
-      .post(`/widget/${API_TOKEN}/messages`)
-      .send({ text: 'Hello' })
+    const res = await request(app).post(`/widget/${API_TOKEN}/messages`).send({ text: 'Hello' })
 
     expect(res.status).toBe(422)
     expect(res.body).toMatchObject({ errors: expect.arrayContaining([{ message: expect.any(String) }]) })
   })
 
   it('returns 422 when text is missing', async () => {
-    const res = await request(app)
-      .post(`/widget/${API_TOKEN}/messages`)
-      .send({ widgetSessionToken: 'tok-123' })
+    const res = await request(app).post(`/widget/${API_TOKEN}/messages`).send({ widgetSessionToken: 'tok-123' })
 
     expect(res.status).toBe(422)
   })
@@ -146,17 +138,14 @@ describe('GET /widget/:token/messages', () => {
   it('returns 200 with messages array when sessionToken is provided', async () => {
     mockGetMessages.mockResolvedValue([])
 
-    const res = await request(app)
-      .get(`/widget/${API_TOKEN}/messages`)
-      .query({ sessionToken: 'tok-123' })
+    const res = await request(app).get(`/widget/${API_TOKEN}/messages`).query({ sessionToken: 'tok-123' })
 
     expect(res.status).toBe(200)
     expect(res.body).toEqual({ messages: [] })
   })
 
   it('returns 422 when sessionToken query param is missing', async () => {
-    const res = await request(app)
-      .get(`/widget/${API_TOKEN}/messages`)
+    const res = await request(app).get(`/widget/${API_TOKEN}/messages`)
 
     expect(res.status).toBe(422)
     expect(res.body).toMatchObject({ errors: expect.arrayContaining([{ message: expect.any(String) }]) })
@@ -165,9 +154,7 @@ describe('GET /widget/:token/messages', () => {
   it('returns 404 when use case throws a not-found error', async () => {
     mockGetMessages.mockRejectedValue(new Error('Widget session not found: bad-tok'))
 
-    const res = await request(app)
-      .get(`/widget/${API_TOKEN}/messages`)
-      .query({ sessionToken: 'bad-tok' })
+    const res = await request(app).get(`/widget/${API_TOKEN}/messages`).query({ sessionToken: 'bad-tok' })
 
     expect(res.status).toBe(404)
   })

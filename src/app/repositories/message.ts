@@ -130,7 +130,7 @@ class MessageRepositoryMemory extends RepositoryMemory {
     return await super.create({ number: uuidv4(), ...(fields ?? {}) })
   }
 
-  async findByRoom(roomId: any, options: { since?: Date } = {}) {
+  findByRoom(roomId: any, options: { since?: Date } = {}) {
     const messages = this.items.filter((m: any) => {
       const roomMatch = comparableValue(m.room) === comparableValue(roomId)
       if (!roomMatch) return false

@@ -13,7 +13,15 @@ class SendWidgetMessage {
     this.roomRepository = roomRepository
   }
 
-  async execute({ apiToken, widgetSessionToken, text }: { apiToken: string; widgetSessionToken: string; text: string }) {
+  async execute({
+    apiToken,
+    widgetSessionToken,
+    text,
+  }: {
+    apiToken: string
+    widgetSessionToken: string
+    text: string
+  }) {
     const licensee = await this.licenseeRepository.findFirst({ apiToken })
     if (!licensee) throw new Error(`Licensee not found for token: ${apiToken}`)
 

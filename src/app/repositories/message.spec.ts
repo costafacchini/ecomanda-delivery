@@ -129,10 +129,22 @@ describe('message repository', () => {
 
         const messageRepository = new MessageRepositoryDatabase({ parseText: dependencies.parseText })
         const msg1 = await messageRepository.create(
-          messageFactory.build({ licensee, contact, room: room._id, text: 'first', createdAt: new Date('2024-01-01T10:00:00Z') }),
+          messageFactory.build({
+            licensee,
+            contact,
+            room: room._id,
+            text: 'first',
+            createdAt: new Date('2024-01-01T10:00:00Z'),
+          }),
         )
         const msg2 = await messageRepository.create(
-          messageFactory.build({ licensee, contact, room: room._id, text: 'second', createdAt: new Date('2024-01-01T11:00:00Z') }),
+          messageFactory.build({
+            licensee,
+            contact,
+            room: room._id,
+            text: 'second',
+            createdAt: new Date('2024-01-01T11:00:00Z'),
+          }),
         )
 
         const result = await messageRepository.findByRoom(room._id)
@@ -171,7 +183,9 @@ describe('message repository', () => {
         const roomB = await roomRepository.create(roomFactory.build({ contact: contact._id }))
 
         const messageRepository = new MessageRepositoryDatabase({ parseText: dependencies.parseText })
-        await messageRepository.create(messageFactory.build({ licensee, contact, room: roomA._id, text: 'room A message' }))
+        await messageRepository.create(
+          messageFactory.build({ licensee, contact, room: roomA._id, text: 'room A message' }),
+        )
 
         const result = await messageRepository.findByRoom(roomB._id)
 
@@ -190,10 +204,22 @@ describe('message repository', () => {
 
         const messageRepository = new MessageRepositoryDatabase({ parseText: dependencies.parseText })
         await messageRepository.create(
-          messageFactory.build({ licensee, contact, room: room._id, text: 'old', createdAt: new Date('2024-01-01T09:00:00Z') }),
+          messageFactory.build({
+            licensee,
+            contact,
+            room: room._id,
+            text: 'old',
+            createdAt: new Date('2024-01-01T09:00:00Z'),
+          }),
         )
         const recentMsg = await messageRepository.create(
-          messageFactory.build({ licensee, contact, room: room._id, text: 'recent', createdAt: new Date('2024-01-01T11:00:00Z') }),
+          messageFactory.build({
+            licensee,
+            contact,
+            room: room._id,
+            text: 'recent',
+            createdAt: new Date('2024-01-01T11:00:00Z'),
+          }),
         )
 
         const result = await messageRepository.findByRoom(room._id, { since: new Date('2024-01-01T10:00:00Z') })
@@ -212,9 +238,24 @@ describe('message repository', () => {
         const rid = new mongoose.Types.ObjectId()
         const otherRid = new mongoose.Types.ObjectId()
 
-        const msg1 = { _id: new mongoose.Types.ObjectId(), room: rid, text: 'first', createdAt: new Date('2024-01-01T10:00:00Z') }
-        const msg2 = { _id: new mongoose.Types.ObjectId(), room: rid, text: 'second', createdAt: new Date('2024-01-01T11:00:00Z') }
-        const msg3 = { _id: new mongoose.Types.ObjectId(), room: otherRid, text: 'other', createdAt: new Date('2024-01-01T09:00:00Z') }
+        const msg1 = {
+          _id: new mongoose.Types.ObjectId(),
+          room: rid,
+          text: 'first',
+          createdAt: new Date('2024-01-01T10:00:00Z'),
+        }
+        const msg2 = {
+          _id: new mongoose.Types.ObjectId(),
+          room: rid,
+          text: 'second',
+          createdAt: new Date('2024-01-01T11:00:00Z'),
+        }
+        const msg3 = {
+          _id: new mongoose.Types.ObjectId(),
+          room: otherRid,
+          text: 'other',
+          createdAt: new Date('2024-01-01T09:00:00Z'),
+        }
 
         const messageRepository = new MessageRepositoryMemory({ items: [msg2, msg1, msg3] })
 
@@ -255,8 +296,18 @@ describe('message repository', () => {
         const mongoose = require('mongoose')
         const rid = new mongoose.Types.ObjectId()
 
-        const oldMsg = { _id: new mongoose.Types.ObjectId(), room: rid, text: 'old', createdAt: new Date('2024-01-01T09:00:00Z') }
-        const recentMsg = { _id: new mongoose.Types.ObjectId(), room: rid, text: 'recent', createdAt: new Date('2024-01-01T11:00:00Z') }
+        const oldMsg = {
+          _id: new mongoose.Types.ObjectId(),
+          room: rid,
+          text: 'old',
+          createdAt: new Date('2024-01-01T09:00:00Z'),
+        }
+        const recentMsg = {
+          _id: new mongoose.Types.ObjectId(),
+          room: rid,
+          text: 'recent',
+          createdAt: new Date('2024-01-01T11:00:00Z'),
+        }
         const messageRepository = new MessageRepositoryMemory({ items: [oldMsg, recentMsg] })
 
         const result = await messageRepository.findByRoom(rid, { since: new Date('2024-01-01T10:00:00Z') })

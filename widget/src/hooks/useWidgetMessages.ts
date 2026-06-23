@@ -31,6 +31,8 @@ export function useWidgetMessages(baseUrl: string, apiToken: string, session: Wi
   pollRef.current = poll
 
   useEffect(() => {
+    setMessages([])
+    lastSeenAt.current = undefined
     if (!session) return
     poll()
     const id = setInterval(() => pollRef.current?.(), POLL_INTERVAL_MS)

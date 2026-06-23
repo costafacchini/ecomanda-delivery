@@ -20,5 +20,10 @@ export function useWidgetSession(baseUrl: string, apiToken: string) {
     }
   }
 
-  return { session, createSession, loading }
+  function clearSession() {
+    localStorage.removeItem(SESSION_KEY(apiToken))
+    setSession(null)
+  }
+
+  return { session, createSession, clearSession, loading }
 }
