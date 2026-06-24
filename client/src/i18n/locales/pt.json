@@ -10,7 +10,99 @@
     "loginError": "Erro ao fazer login",
     "accountCreated": "Conta criada com sucesso! Faça login para continuar."
   },
-  "onboarding": {},
+  "onboarding": {
+    "modalTitle": "Criar conta",
+    "steps": {
+      "identity": "Dados da Empresa",
+      "integrations": "Integrações",
+      "chat": "Plataforma de Chat",
+      "whatsapp": "Plataforma de WhatsApp",
+      "user": "Seus Dados"
+    },
+    "buttons": {
+      "next": "Próximo →",
+      "back": "← Voltar",
+      "cancel": "Cancelar",
+      "submit": "Criar conta",
+      "submitting": "Criando..."
+    },
+    "yesNo": {
+      "yes": "Sim",
+      "no": "Não"
+    },
+    "identity": {
+      "companyNameLabel": "Nome da empresa",
+      "companyNameRequired": "Nome da empresa é obrigatório",
+      "kindLabel": "Tipo",
+      "kindRequired": "Tipo é obrigatório",
+      "kindSelectPlaceholder": "Selecione...",
+      "kindCompany": "Jurídica",
+      "kindIndividual": "Física",
+      "documentLabel": "Documento",
+      "documentRequired": "Documento é obrigatório",
+      "documentPlaceholder": "ex: 12.345.678/0001-90 ou 123.456.789-01",
+      "phoneLabel": "Telefone",
+      "phoneRequired": "Telefone é obrigatório",
+      "phonePlaceholder": "ex: (11) 99999-9999",
+      "licenseeEmailLabel": "E-mail da empresa",
+      "licenseeEmailRequired": "E-mail da empresa é obrigatório",
+      "emailInvalid": "E-mail inválido"
+    },
+    "integrations": {
+      "chatGateLabel": "Deseja integrar com uma Plataforma de Chat?",
+      "whatsappGateLabel": "Deseja integrar com uma Plataforma de WhatsApp?",
+      "answerBothRequired": "Por favor, responda as duas perguntas antes de continuar."
+    },
+    "chat": {
+      "chatDefaultLabel": "Chat padrão",
+      "chatDefaultRequired": "Chat padrão é obrigatório",
+      "selectPlaceholder": "Selecione...",
+      "chatUrlLabel": "URL do chat",
+      "chatUrlRequired": "URL do chat é obrigatória",
+      "chatUrlPlaceholder": "ex: https://sua-instancia.chatwoot.com",
+      "chatUrlHint": "URL base da sua instância do provedor.",
+      "chatIdentifierLabel": "Identifier",
+      "chatIdentifierRequired": "Identifier é obrigatório",
+      "chatIdentifierPlaceholder": "ID ou identificador do workspace",
+      "chatIdentifierHint": "Encontrado nas configurações do seu workspace no painel do provedor.",
+      "chatKeyLabel": "Key",
+      "chatKeyRequired": "Key é obrigatória",
+      "chatKeyPlaceholder": "Chave de API do provedor",
+      "chatKeyHint": "Chave de autenticação da API. Encontrada nas configurações de integração."
+    },
+    "whatsapp": {
+      "whatsappDefaultLabel": "WhatsApp padrão",
+      "whatsappDefaultRequired": "WhatsApp padrão é obrigatório",
+      "selectPlaceholder": "Selecione...",
+      "useSectorsLabel": "Usar setores",
+      "useSectorsHint": "Múltiplos departamentos com números de WhatsApp separados.",
+      "whatsappTokenLabel": "Token do WhatsApp",
+      "whatsappTokenRequired": "Token do WhatsApp é obrigatório",
+      "whatsappTokenPlaceholder": "Token de autenticação da API",
+      "whatsappTokenHint": "Fornecido pelo provedor no painel de credenciais da API.",
+      "whatsappUrlLabel": "URL do WhatsApp",
+      "whatsappUrlRequired": "URL do WhatsApp é obrigatória",
+      "whatsappUrlPlaceholder": "ex: https://api.utalk.io",
+      "whatsappUrlHint": "Endpoint base da API do provedor."
+    },
+    "user": {
+      "userNameLabel": "Seu nome",
+      "userNameRequired": "Nome é obrigatório",
+      "userNameMin": "Nome deve ter no mínimo 4 caracteres",
+      "userEmailLabel": "Seu e-mail",
+      "userEmailRequired": "E-mail é obrigatório",
+      "userEmailInvalid": "E-mail inválido",
+      "passwordLabel": "Senha",
+      "passwordRequired": "Senha é obrigatória",
+      "passwordMin": "Senha deve ter no mínimo 8 caracteres",
+      "confirmPasswordLabel": "Confirmar senha",
+      "confirmPasswordRequired": "Confirmação de senha é obrigatória",
+      "passwordsMismatch": "Senhas não conferem"
+    },
+    "errors": {
+      "createAccountFailed": "Erro ao criar conta (status {{status}})"
+    }
+  },
   "navbar": {},
   "licensees": {},
   "users": {},
