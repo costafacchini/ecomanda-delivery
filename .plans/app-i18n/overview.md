@@ -38,7 +38,7 @@ Add Portuguese/English language selection throughout the app. Users choose their
 |-------|------|-------|--------------|-------------|
 | 1 | Infrastructure | task-01, task-02 | None | i18n client setup + backend language field (parallel) |
 | 2 | Public Entry Points | task-03, task-04 | Phase 1 | Login page + onboarding wizard (sequential — both write to locale files) |
-| 3 | Full App Translation | task-05 → task-08 | Phase 2 | Navbar, all authenticated pages (sequential chain — all write to locale files) |
+| 3 | Full App Translation | task-05 → task-09 | Phase 2 | Navbar, all authenticated pages, chat widget (task-05→08 sequential chain; task-09 independent) |
 
 ## Task Summary
 
@@ -52,8 +52,9 @@ Add Portuguese/English language selection throughout the app. Users choose their
 | phase-3/task-06-licensees | Licensees Pages i18n | 3 | not-started | phase-3/task-05-navbar-layout |
 | phase-3/task-07-users-sectors-dashboard | Users + Sectors + Dashboard i18n | 3 | not-started | phase-3/task-06-licensees |
 | phase-3/task-08-remaining-pages | Contacts + Templates + Triggers + Messages + Chat + Reports i18n | 3 | not-started | phase-3/task-07-users-sectors-dashboard |
+| phase-3/task-09-widget-i18n | Chat Widget i18n (translations map + language prop threading) | 3 | not-started | phase-1/task-01-i18n-setup |
 
-> **Note on phase-3 sequencing**: Tasks 05–08 form a sequential chain even though they are all in Phase 3. They cannot run in parallel because all of them append to `pt.json` and `en.json`. Each task must complete before the next starts to avoid merge conflicts in the locale files.
+> **Note on phase-3 sequencing**: Tasks 05–08 form a sequential chain because all of them append to `pt.json` and `en.json` — they cannot run in parallel. Task-09 is independent (owns only `widget/src/`) and can run alongside any of tasks 05–08.
 
 ## Branch Convention
 
@@ -81,6 +82,8 @@ Base branch: `main`
 | `src/app/models/User.ts` | Add `language` field (task-02) |
 | `src/app/controllers/OnboardingController.ts` | Accept + persist `language` in POST /login/onboarding (task-02) |
 | `scripts/migrate-user-language.js` | MongoDB shell script — backfill `language: 'pt'` (task-02) |
+| `widget/src/translations.ts` | New file — lightweight `{ pt, en }` string map (no react-i18next) — task-09 |
+| `widget/src/main.tsx` | Add `language` to `InitData`, read `data-language` from script tag — task-09 |
 
 ## Risks
 
@@ -99,6 +102,8 @@ Base branch: `main`
 - [ ] All user-facing strings across the app are translated in both `pt.json` and `en.json`
 - [ ] No hardcoded Portuguese strings remain in `client/src/`
 - [ ] MongoDB migration script provided and documented
+- [ ] Chat widget renders in PT/EN via `data-language` and `EcomandaWidget.init({ language })`
+- [ ] No i18n library added to `widget/package.json`
 - [ ] All pre-existing Vitest tests pass
 - [ ] New i18n logic and LanguageSwitcher component have test coverage
 - [ ] `pre-commit-check` passes on final commit
