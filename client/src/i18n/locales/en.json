@@ -10,7 +10,99 @@
     "loginError": "Login error",
     "accountCreated": "Account created successfully! Sign in to continue."
   },
-  "onboarding": {},
+  "onboarding": {
+    "modalTitle": "Create account",
+    "steps": {
+      "identity": "Company Details",
+      "integrations": "Integrations",
+      "chat": "Chat Platform",
+      "whatsapp": "WhatsApp Platform",
+      "user": "Your Details"
+    },
+    "buttons": {
+      "next": "Next →",
+      "back": "← Back",
+      "cancel": "Cancel",
+      "submit": "Create account",
+      "submitting": "Creating..."
+    },
+    "yesNo": {
+      "yes": "Yes",
+      "no": "No"
+    },
+    "identity": {
+      "companyNameLabel": "Company name",
+      "companyNameRequired": "Company name is required",
+      "kindLabel": "Type",
+      "kindRequired": "Type is required",
+      "kindSelectPlaceholder": "Select...",
+      "kindCompany": "Company",
+      "kindIndividual": "Individual",
+      "documentLabel": "Document",
+      "documentRequired": "Document is required",
+      "documentPlaceholder": "e.g. 12.345.678/0001-90 or 123.456.789-01",
+      "phoneLabel": "Phone",
+      "phoneRequired": "Phone is required",
+      "phonePlaceholder": "e.g. (11) 99999-9999",
+      "licenseeEmailLabel": "Company e-mail",
+      "licenseeEmailRequired": "Company e-mail is required",
+      "emailInvalid": "Invalid e-mail"
+    },
+    "integrations": {
+      "chatGateLabel": "Would you like to integrate a Chat Platform?",
+      "whatsappGateLabel": "Would you like to integrate a WhatsApp Platform?",
+      "answerBothRequired": "Please answer both questions before continuing."
+    },
+    "chat": {
+      "chatDefaultLabel": "Default chat",
+      "chatDefaultRequired": "Default chat is required",
+      "selectPlaceholder": "Select...",
+      "chatUrlLabel": "Chat URL",
+      "chatUrlRequired": "Chat URL is required",
+      "chatUrlPlaceholder": "e.g. https://your-instance.chatwoot.com",
+      "chatUrlHint": "Base URL of your provider instance.",
+      "chatIdentifierLabel": "Identifier",
+      "chatIdentifierRequired": "Identifier is required",
+      "chatIdentifierPlaceholder": "Workspace ID or identifier",
+      "chatIdentifierHint": "Found in your workspace settings in the provider dashboard.",
+      "chatKeyLabel": "Key",
+      "chatKeyRequired": "Key is required",
+      "chatKeyPlaceholder": "Provider API key",
+      "chatKeyHint": "API authentication key. Found in the integration settings."
+    },
+    "whatsapp": {
+      "whatsappDefaultLabel": "Default WhatsApp",
+      "whatsappDefaultRequired": "Default WhatsApp is required",
+      "selectPlaceholder": "Select...",
+      "useSectorsLabel": "Use sectors",
+      "useSectorsHint": "Multiple departments with separate WhatsApp numbers.",
+      "whatsappTokenLabel": "WhatsApp token",
+      "whatsappTokenRequired": "WhatsApp token is required",
+      "whatsappTokenPlaceholder": "API authentication token",
+      "whatsappTokenHint": "Provided by the provider in the API credentials panel.",
+      "whatsappUrlLabel": "WhatsApp URL",
+      "whatsappUrlRequired": "WhatsApp URL is required",
+      "whatsappUrlPlaceholder": "e.g. https://api.utalk.io",
+      "whatsappUrlHint": "Provider API base endpoint."
+    },
+    "user": {
+      "userNameLabel": "Your name",
+      "userNameRequired": "Name is required",
+      "userNameMin": "Name must be at least 4 characters",
+      "userEmailLabel": "Your e-mail",
+      "userEmailRequired": "E-mail is required",
+      "userEmailInvalid": "Invalid e-mail",
+      "passwordLabel": "Password",
+      "passwordRequired": "Password is required",
+      "passwordMin": "Password must be at least 8 characters",
+      "confirmPasswordLabel": "Confirm password",
+      "confirmPasswordRequired": "Password confirmation is required",
+      "passwordsMismatch": "Passwords do not match"
+    },
+    "errors": {
+      "createAccountFailed": "Error creating account (status {{status}})"
+    }
+  },
   "navbar": {},
   "licensees": {},
   "users": {},

@@ -13,10 +13,11 @@ export interface OnboardingFields {
   whatsappDefault?: string
   whatsappToken?: string
   whatsappUrl?: string
-  useSetores?: boolean
+  useSectors?: boolean
   userName: string
   userEmail: string
   password: string
+  language?: 'pt' | 'en'
 }
 
 export function createAccount(fields: OnboardingFields) {
