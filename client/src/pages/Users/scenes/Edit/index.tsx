@@ -71,7 +71,7 @@ function UserEdit({ currentUser }: UserEditProps) {
             }
             setSaving(true)
             try {
-              const response = await updateUser({ ...values, id: user.id } as IUser)
+              const response = await updateUser({ ...values, id: user.id, language: user.language } as IUser)
 
               if (response.status === 200) {
                 toast.success('Usuário atualizado com sucesso!');
