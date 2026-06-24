@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { QRCodeSVG } from 'qrcode.react'
 import { getSectorBaileysStatus, getSectorBaileysQr, syncSectorBaileys } from '../../../../services/sector'
 
@@ -19,6 +20,7 @@ interface BaileysQrResponse {
 }
 
 function SectorBaileysPanel({ sectorId, isActive }: Props) {
+  const { t } = useTranslation()
   const [baileysQr, setBaileysQr] = useState<any>(null)
   const [baileysStatus, setBaileysStatus] = useState<any>(null)
   const [baileysConnected, setBaileysConnected] = useState<boolean | null>(null)
@@ -45,15 +47,15 @@ function SectorBaileysPanel({ sectorId, isActive }: Props) {
 
   return (
     <div className='mt-4'>
-      <h5>Conexão Baileys</h5>
+      <h5>{t('sectors.baileys.title')}</h5>
 
       {baileysChecking && (
-        <span className='text-muted'>Verificando conexão...</span>
+        <span className='text-muted'>{t('sectors.baileys.checking')}</span>
       )}
 
       {!baileysChecking && baileysConnected && (
         <div className='d-flex align-items-center gap-3'>
-          <span className='text-success fw-semibold'>&#10003; Conectado</span>
+          <span className='text-success fw-semibold'>&#10003; {t('sectors.baileys.connected')}</span>
           <button
             onClick={async (event) => {
               event.preventDefault()
@@ -66,12 +68,12 @@ function SectorBaileysPanel({ sectorId, isActive }: Props) {
                 setBaileysQr(qrData.qr)
                 setBaileysConnected(false)
               } else {
-                setBaileysStatus(qrData?.message ?? 'Erro ao gerar QR')
+                setBaileysStatus(qrData?.message ?? t('sectors.baileys.qrError'))
               }
             }}
             className='btn btn-outline-secondary btn-sm'
           >
-            Reconectar
+            {t('sectors.baileys.reconnect')}
           </button>
           <button
             onClick={async (event) => {
@@ -83,7 +85,7 @@ function SectorBaileysPanel({ sectorId, isActive }: Props) {
                 const response = await syncSectorBaileys({ id: sectorId })
                 setSyncResult(response.data)
               } catch {
-                setSyncError('Erro ao sincronizar grupos')
+                setSyncError(t('sectors.baileys.syncError'))
               } finally {
                 setSyncLoading(false)
               }
@@ -91,7 +93,7 @@ function SectorBaileysPanel({ sectorId, isActive }: Props) {
             className='btn btn-outline-primary btn-sm'
             disabled={syncLoading}
           >
-            {syncLoading ? 'Sincronizando...' : 'Sincronizar Grupos'}
+            {syncLoading ? t('sectors.baileys.syncing') : t('sectors.baileys.syncGroups')}
           </button>
         </div>
       )}
@@ -99,7 +101,7 @@ function SectorBaileysPanel({ sectorId, isActive }: Props) {
       {syncResult && (
         <div className='mt-2'>
           <span className='text-muted small'>
-            Grupos importados: {syncResult.importedGroups} | Grupos atualizados: {syncResult.updatedGroups}
+            {t('sectors.baileys.syncResult', { imported: syncResult.importedGroups, updated: syncResult.updatedGroups })}
           </span>
         </div>
       )}
@@ -124,12 +126,12 @@ function SectorBaileysPanel({ sectorId, isActive }: Props) {
               } else if (qrData?.connected) {
                 setBaileysConnected(true)
               } else {
-                setBaileysStatus(qrData?.message ?? 'Erro ao gerar QR')
+                setBaileysStatus(qrData?.message ?? t('sectors.baileys.qrError'))
               }
             }}
             className='btn btn-info'
           >
-            Gerar QR Code
+            {t('sectors.baileys.generateQr')}
           </button>
         </div>
       )}

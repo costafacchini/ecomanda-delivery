@@ -1,17 +1,19 @@
 import Form from '../Form'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { createSector } from '../../../../services/sector'
 import { useNavigate } from 'react-router'
 
 function SectorNew({ currentUser }: any) {
+  const { t } = useTranslation()
   let navigate = useNavigate()
   const [errors, setErrors] = useState(null)
 
   return (
     <div className='row'>
       <div className='col'>
-        <h3>Setor criando</h3>
+        <h3>{t('sectors.newSectorTitle')}</h3>
         <Form
           errors={errors}
           currentUser={currentUser}
@@ -23,13 +25,13 @@ function SectorNew({ currentUser }: any) {
             const response = await createSector(payload)
 
             if (response.status === 201) {
-              toast.success('Setor criado com sucesso!')
+              toast.success(t('sectors.toast.createSuccess'))
               navigate('/sectors')
               setErrors(null)
             } else {
               // @ts-ignore — Sectors not in type-narrowing plan scope
               setErrors((response.data as any).errors)
-              toast.error('Ops! Não foi possível criar o setor.')
+              toast.error(t('sectors.toast.createError'))
             }
           }}
         />

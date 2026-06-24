@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getDashboardDeliveryRate } from '../../../services/dashboard'
 import FailedMessagesModal from './FailedMessagesModal'
 import type { IDashboardDeliveryRate } from '../../../types'
@@ -10,6 +11,7 @@ const firstDayOfMonth = () => {
 }
 
 export default function SuperDeliveryRateCard({ licensee }: { licensee?: string }) {
+  const { t } = useTranslation()
   const [startDate, setStartDate] = useState(firstDayOfMonth)
   const [endDate, setEndDate] = useState(today)
   const [data, setData] = useState<IDashboardDeliveryRate | null>(null)
@@ -23,9 +25,9 @@ export default function SuperDeliveryRateCard({ licensee }: { licensee?: string 
     setError(null)
     getDashboardDeliveryRate({ ...(licensee ? { licensee } : {}), startDate, endDate })
       .then((res) => setData(res.data as IDashboardDeliveryRate))
-      .catch(() => setError('Erro ao carregar dados.'))
+      .catch(() => setError(t('dashboard.loadError')))
       .finally(() => setLoading(false))
-  }, [licensee, startDate, endDate, retryCount])
+  }, [licensee, startDate, endDate, retryCount, t])
 
   function handleResendSuccess() {
     setData((prev) => prev ? ({
@@ -46,21 +48,21 @@ export default function SuperDeliveryRateCard({ licensee }: { licensee?: string 
       <div className="card">
         <div className="card-header">
           <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <span>Taxa de Entrega</span>
+            <span>{t('dashboard.deliveryRate.cardTitle')}</span>
             <div className="d-flex gap-2 align-items-center">
               <input
                 type="date"
                 className="form-control form-control-sm"
                 value={startDate}
-                aria-label="Data inicial"
+                aria-label={t('dashboard.dateFrom')}
                 onChange={(e) => setStartDate(e.target.value)}
               />
-              <span className="text-muted small">até</span>
+              <span className="text-muted small">{t('dashboard.dateUntil')}</span>
               <input
                 type="date"
                 className="form-control form-control-sm"
                 value={endDate}
-                aria-label="Data final"
+                aria-label={t('dashboard.dateTo')}
                 onChange={(e) => setEndDate(e.target.value)}
               />
             </div>
@@ -70,14 +72,14 @@ export default function SuperDeliveryRateCard({ licensee }: { licensee?: string 
           {loading && (
             <p className="text-muted">
               <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
-              Carregando...
+              {t('common.loading')}
             </p>
           )}
           {error && (
             <div>
               <p className="text-danger mb-2">{error}</p>
               <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => setRetryCount((c) => c + 1)}>
-                Tentar novamente
+                {t('dashboard.retry')}
               </button>
             </div>
           )}
@@ -85,11 +87,11 @@ export default function SuperDeliveryRateCard({ licensee }: { licensee?: string 
             <div className="d-flex gap-4 align-items-end">
               <div>
                 <div className="fs-4 fw-bold text-success">{data.sent_today}</div>
-                <div className="text-muted small">Enviadas ({data.sent_pct}%)</div>
+                <div className="text-muted small">{t('dashboard.deliveryRate.sentLabel', { pct: data.sent_pct })}</div>
               </div>
               <div>
                 <div className="fs-4 fw-bold text-danger">{data.failed_today}</div>
-                <div className="text-muted small">Falhas no período ({data.failed_pct}%)</div>
+                <div className="text-muted small">{t('dashboard.deliveryRate.failedLabel', { pct: data.failed_pct })}</div>
               </div>
               {(data.failed_today ?? 0) > 0 && (
                 <div className="ms-auto">
@@ -97,7 +99,7 @@ export default function SuperDeliveryRateCard({ licensee }: { licensee?: string 
                     className="btn btn-sm btn-outline-danger"
                     onClick={() => setModalOpen(true)}
                   >
-                    Mensagens Falhas ({data.failed_today})
+                    {t('dashboard.deliveryRate.failedButton', { count: data.failed_today })}
                   </button>
                 </div>
               )}

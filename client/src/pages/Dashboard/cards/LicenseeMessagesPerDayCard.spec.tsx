@@ -3,6 +3,12 @@ import LicenseeMessagesPerDayCard from './LicenseeMessagesPerDayCard'
 import { getDashboardMessagesPerDay } from '../../../services/dashboard'
 
 vi.mock('../../../services/dashboard')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 describe('<LicenseeMessagesPerDayCard />', () => {
   it('shows loading state while the request is in flight', () => {
@@ -10,7 +16,7 @@ describe('<LicenseeMessagesPerDayCard />', () => {
 
     render(<LicenseeMessagesPerDayCard />)
 
-    expect(screen.getByText('Carregando...')).toBeInTheDocument()
+    expect(screen.getByText('common.loading')).toBeInTheDocument()
   })
 
   it('shows an error message when the request fails', async () => {
@@ -18,7 +24,7 @@ describe('<LicenseeMessagesPerDayCard />', () => {
 
     render(<LicenseeMessagesPerDayCard />)
 
-    expect(await screen.findByText('Erro ao carregar dados.')).toBeInTheDocument()
+    expect(await screen.findByText('dashboard.loadError')).toBeInTheDocument()
   })
 
   it('renders a row per day with date and count on success', async () => {
@@ -37,7 +43,7 @@ describe('<LicenseeMessagesPerDayCard />', () => {
     expect(screen.getByText('110')).toBeInTheDocument()
     expect(screen.getByText('2026-05-06')).toBeInTheDocument()
     expect(screen.getByText('95')).toBeInTheDocument()
-    expect(screen.getByText('Mensagens por Dia')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.messagesPerDay.cardTitle')).toBeInTheDocument()
   })
 
   it('renders an empty table when per_day is absent', async () => {
@@ -45,9 +51,9 @@ describe('<LicenseeMessagesPerDayCard />', () => {
 
     render(<LicenseeMessagesPerDayCard />)
 
-    await screen.findByText('Mensagens por Dia')
+    await screen.findByText('dashboard.messagesPerDay.cardTitle')
 
     expect(screen.getByRole('table')).toBeInTheDocument()
-    expect(screen.getByText('Nenhum dado para o período.')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.noData')).toBeInTheDocument()
   })
 })

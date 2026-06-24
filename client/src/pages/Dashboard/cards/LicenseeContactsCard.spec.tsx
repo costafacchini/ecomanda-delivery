@@ -3,6 +3,12 @@ import LicenseeContactsCard from './LicenseeContactsCard'
 import { getDashboardContacts } from '../../../services/dashboard'
 
 vi.mock('../../../services/dashboard')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 describe('<LicenseeContactsCard />', () => {
   it('shows loading state while the request is in flight', () => {
@@ -10,7 +16,7 @@ describe('<LicenseeContactsCard />', () => {
 
     render(<LicenseeContactsCard />)
 
-    expect(screen.getByText('Carregando...')).toBeInTheDocument()
+    expect(screen.getByText('common.loading')).toBeInTheDocument()
   })
 
   it('shows an error message when the request fails', async () => {
@@ -18,7 +24,7 @@ describe('<LicenseeContactsCard />', () => {
 
     render(<LicenseeContactsCard />)
 
-    expect(await screen.findByText('Erro ao carregar dados.')).toBeInTheDocument()
+    expect(await screen.findByText('dashboard.loadError')).toBeInTheDocument()
   })
 
   it('renders total and chatbot contact counts on success', async () => {
@@ -30,8 +36,8 @@ describe('<LicenseeContactsCard />', () => {
 
     expect(await screen.findByText('500')).toBeInTheDocument()
     expect(screen.getByText('120')).toBeInTheDocument()
-    expect(screen.getByText('Contatos')).toBeInTheDocument()
-    expect(screen.getByText('Total')).toBeInTheDocument()
-    expect(screen.getByText('No Chatbot')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.contacts.cardTitle')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.contacts.total')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.contacts.inChatbot')).toBeInTheDocument()
   })
 })

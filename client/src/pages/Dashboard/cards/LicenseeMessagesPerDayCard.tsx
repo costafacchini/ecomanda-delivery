@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getDashboardMessagesPerDay } from '../../../services/dashboard'
 import type { IDashboardMessagesPerDay } from '../../../types'
 
 export default function LicenseeMessagesPerDayCard() {
+  const { t } = useTranslation()
   const [data, setData] = useState<IDashboardMessagesPerDay | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -13,15 +15,15 @@ export default function LicenseeMessagesPerDayCard() {
     setError(null)
     getDashboardMessagesPerDay()
       .then((res) => setData(res.data as IDashboardMessagesPerDay))
-      .catch(() => setError('Erro ao carregar dados.'))
+      .catch(() => setError(t('dashboard.loadError')))
       .finally(() => setLoading(false))
-  }, [retryCount])
+  }, [retryCount, t])
 
   if (loading) return (
     <div className="card">
       <div className="card-body text-center py-4 text-muted">
         <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
-        Carregando...
+        {t('common.loading')}
       </div>
     </div>
   )
@@ -31,7 +33,7 @@ export default function LicenseeMessagesPerDayCard() {
       <div className="card-body text-center py-3">
         <p className="text-danger mb-2">{error}</p>
         <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => setRetryCount((c) => c + 1)}>
-          Tentar novamente
+          {t('dashboard.retry')}
         </button>
       </div>
     </div>
@@ -41,19 +43,19 @@ export default function LicenseeMessagesPerDayCard() {
 
   return (
     <div className="card">
-      <div className="card-header">Mensagens por Dia</div>
+      <div className="card-header">{t('dashboard.messagesPerDay.cardTitle')}</div>
       <div className="card-body">
         <table className="table table-sm mb-0">
           <thead>
             <tr>
-              <th>Data</th>
-              <th>Total</th>
+              <th>{t('dashboard.messagesPerDay.colDate')}</th>
+              <th>{t('dashboard.messagesPerDay.colTotal')}</th>
             </tr>
           </thead>
           <tbody>
             {(data.per_day || []).length === 0 ? (
               <tr>
-                <td colSpan={2} className="text-center text-muted">Nenhum dado para o período.</td>
+                <td colSpan={2} className="text-center text-muted">{t('dashboard.noData')}</td>
               </tr>
             ) : (data.per_day || []).map((row) => (
               <tr key={row.date}>
