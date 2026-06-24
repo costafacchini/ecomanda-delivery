@@ -5,6 +5,17 @@ import { createRoutesStub } from 'react-router';
 
 vi.mock('../../../../services/licensee')
 
+vi.mock('react-i18next', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-i18next')>()
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: (k: string) => k,
+      i18n: { language: 'pt', changeLanguage: vi.fn() },
+    }),
+  }
+})
+
 describe('<LicenseeEdit />', () => {
   function mount() {
     const Stub = createRoutesStub([
@@ -35,11 +46,11 @@ describe('<LicenseeEdit />', () => {
 
     await screen.findByDisplayValue('Licenciado')
 
-    fireEvent.change(screen.getByLabelText(/^Nome/), { target: { value: 'New Name' } })
+    fireEvent.change(screen.getByLabelText(/^licensees\.form\.nameLabel/), { target: { value: 'New Name' } })
 
     updateLicensee.mockResolvedValue({ status: 200, data: { id: '1', name: 'New Name' } })
 
-    fireEvent.click(screen.getByRole('button', { name: "Salvar" }))
+    fireEvent.click(screen.getByRole('button', { name: 'common.save' }))
 
     await waitFor(() => expect(updateLicensee).toHaveBeenCalledWith(expect.objectContaining({ name: 'New Name' })))
   })

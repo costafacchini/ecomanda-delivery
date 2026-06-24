@@ -1,6 +1,7 @@
 import Form from '../Form'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getLicensee, updateLicensee } from '../../../../services/licensee'
 import { useNavigate, useParams } from 'react-router'
 import { useEffect } from 'react'
@@ -15,6 +16,7 @@ interface ApiError {
 }
 
 function LicenseeEdit({ currentUser }: LicenseeEditProps) {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   let { id } = useParams()
   const [errors, setErrors] = useState<ApiError[] | null>(null)
@@ -35,7 +37,7 @@ function LicenseeEdit({ currentUser }: LicenseeEditProps) {
     return (
       <div className='d-flex justify-content-center mt-5'>
         <div className='spinner-border text-primary' role='status'>
-          <span className='visually-hidden'>Carregando...</span>
+          <span className='visually-hidden'>{t('common.loading')}</span>
         </div>
       </div>
     )
@@ -44,7 +46,7 @@ function LicenseeEdit({ currentUser }: LicenseeEditProps) {
   return (
     <div className='row'>
       <div className='col'>
-        <h3>Editando: {licensee.name}</h3>
+        <h3>{t('licensees.edit.heading', { name: licensee.name })}</h3>
         <Form
           initialValues={licensee}
           errors={errors}
@@ -53,13 +55,13 @@ function LicenseeEdit({ currentUser }: LicenseeEditProps) {
             const response = await updateLicensee({ ...values, id: licensee.id } as ILicensee)
 
             if (response.status === 200) {
-              toast.success('Licenciado atualizado com sucesso!')
+              toast.success(t('licensees.edit.updateSuccess'))
               navigate('/licensees')
               setErrors(null)
             } else {
               const errorData = response.data as { errors: ApiError[] }
               setErrors(errorData.errors)
-              toast.error('Ops! Não foi possível atualizar o licenciado.')
+              toast.error(t('licensees.edit.updateError'))
             }
           }}
         />

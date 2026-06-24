@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
+import { useTranslation } from 'react-i18next'
 import { FieldWithError } from '../../../../components/form'
 import ChatPanel from '../Form/panels/ChatPanel'
 import ChatbotPanel from '../Form/panels/ChatbotPanel'
@@ -37,59 +38,6 @@ const licenseeInitialValues: ILicenseeFormValues = {
   useSectors: false,
 }
 
-const STEPS = [
-  { id: 'identity', title: 'Identidade' },
-  { id: 'whatsapp', title: 'WhatsApp' },
-  { id: 'chat',     title: 'Chat' },
-  { id: 'chatbot',  title: 'ChatBot' },
-]
-
-const identitySchema = Yup.object().shape({
-  name:        Yup.string().required('Nome é obrigatório'),
-  kind:        Yup.string().required('Tipo é obrigatório'),
-  document:    Yup.string().required('Documento é obrigatório'),
-  email:       Yup.string().email('E-mail inválido').required('E-mail é obrigatório'),
-  licenseKind: Yup.string().required('Licença é obrigatória'),
-  phone:       Yup.string().required('Telefone é obrigatório'),
-})
-
-const chatSchema = Yup.object().shape({
-  chatDefault: Yup.string().required('Chat padrão é obrigatório'),
-  chatUrl: Yup.string().when('chatDefault', {
-    is: (v: string) => ['rocketchat', 'crisp', 'chatwoot', 'cuboup'].includes(v),
-    then: (s: Yup.StringSchema) => s.required('URL do chat é obrigatória'),
-  }),
-  chatIdentifier: Yup.string().when('chatDefault', {
-    is: (v: string) => ['crisp', 'chatwoot'].includes(v),
-    then: (s: Yup.StringSchema) => s.required('Identifier é obrigatório'),
-  }),
-  chatKey: Yup.string().when('chatDefault', {
-    is: (v: string) => ['crisp', 'chatwoot'].includes(v),
-    then: (s: Yup.StringSchema) => s.required('Key é obrigatória'),
-  }),
-})
-
-const chatbotSchema = Yup.object().shape({
-  chatbotDefault:            Yup.string().required('Chatbot padrão é obrigatório'),
-  chatbotUrl:                Yup.string().required('URL do chatbot é obrigatória'),
-  chatbotAuthorizationToken: Yup.string().required('Token do chatbot é obrigatório'),
-  chatbotApiToken:           Yup.string().required('Token de API é obrigatório'),
-  messageOnResetChatbot:     Yup.string().required('Mensagem de reset é obrigatória'),
-  messageOnCloseChat:        Yup.string().required('Mensagem de encerramento é obrigatória'),
-})
-
-const whatsappSchema = Yup.object().shape({
-  whatsappDefault: Yup.string().required('WhatsApp padrão é obrigatório'),
-  whatsappToken: Yup.string().when('whatsappDefault', {
-    is: (v: string) => !!v && v !== 'baileys',
-    then: (s: Yup.StringSchema) => s.required('Token do WhatsApp é obrigatório'),
-  }),
-  whatsappUrl: Yup.string().when('whatsappDefault', {
-    is: (v: string) => !!v && v !== 'baileys',
-    then: (s: Yup.StringSchema) => s.required('URL do WhatsApp é obrigatória'),
-  }),
-})
-
 interface IdentityStepProps {
   values: ILicenseeFormValues
   errors: FormikErrors<ILicenseeFormValues>
@@ -103,52 +51,54 @@ function Required() {
 }
 
 function IdentityStep({ values, errors, touched, handleChange, handleBlur }: IdentityStepProps) {
+  const { t } = useTranslation()
+
   return (
     <>
       <div className='row mb-3'>
         <div className='form-group col-8'>
-          <label htmlFor='name'>Nome<Required /></label>
+          <label htmlFor='name'>{t('licensees.wizard.identity.nameLabel')}<Required /></label>
           <FieldWithError id='name' type='text' name='name'
             value={values.name} onChange={handleChange} onBlur={handleBlur} />
         </div>
       </div>
       <div className='row mb-3'>
         <div className='form-group col-2'>
-          <label htmlFor='kind'>Tipo<Required /></label>
+          <label htmlFor='kind'>{t('licensees.wizard.identity.kindLabel')}<Required /></label>
           <select value={values.kind} className='form-select' id='kind'
             onChange={handleChange} onBlur={handleBlur}>
-            <option value=''>Selecione</option>
-            <option value='company'>Jurídica</option>
-            <option value='individual'>Física</option>
+            <option value=''>{t('licensees.wizard.identity.kindSelectPlaceholder')}</option>
+            <option value='company'>{t('licensees.wizard.identity.kindCompany')}</option>
+            <option value='individual'>{t('licensees.wizard.identity.kindIndividual')}</option>
           </select>
         </div>
         <div className='form-group col-4'>
-          <label htmlFor='document'>Documento<Required /></label>
+          <label htmlFor='document'>{t('licensees.wizard.identity.documentLabel')}<Required /></label>
           <FieldWithError id='document' name='document' type='text'
             value={values.document} onChange={handleChange} onBlur={handleBlur} />
         </div>
       </div>
       <div className='row mb-3'>
         <div className='form-group col-8'>
-          <label htmlFor='email'>E-mail<Required /></label>
+          <label htmlFor='email'>{t('licensees.wizard.identity.emailLabel')}<Required /></label>
           <FieldWithError id='email' name='email' type='text'
             value={values.email} onChange={handleChange} onBlur={handleBlur} />
         </div>
       </div>
       <div className='row mb-3'>
         <div className='form-group col-8'>
-          <label htmlFor='licenseKind'>Licença<Required /></label>
+          <label htmlFor='licenseKind'>{t('licensees.wizard.identity.licenseKindLabel')}<Required /></label>
           <select value={values.licenseKind} className='form-select' id='licenseKind'
             onChange={handleChange} onBlur={handleBlur}>
-            <option value='demo'>Demonstração</option>
-            <option value='free'>Grátis</option>
-            <option value='paid'>Pago</option>
+            <option value='demo'>{t('licensees.wizard.identity.licenseKindDemo')}</option>
+            <option value='free'>{t('licensees.wizard.identity.licenseKindFree')}</option>
+            <option value='paid'>{t('licensees.wizard.identity.licenseKindPaid')}</option>
           </select>
         </div>
       </div>
       <div className='row mb-3'>
         <div className='form-group col-8'>
-          <label htmlFor='phone'>Telefone<Required /></label>
+          <label htmlFor='phone'>{t('licensees.wizard.identity.phoneLabel')}<Required /></label>
           <FieldWithError id='phone' name='phone' type='text'
             value={values.phone} onChange={handleChange} onBlur={handleBlur} />
         </div>
@@ -164,6 +114,8 @@ interface YesNoGateProps {
 }
 
 function YesNoGate({ label, isYes, onChange }: YesNoGateProps) {
+  const { t } = useTranslation()
+
   return (
     <div className='mb-3'>
       <p className='fw-semibold'>{label}</p>
@@ -173,14 +125,14 @@ function YesNoGate({ label, isYes, onChange }: YesNoGateProps) {
           className={`btn ${isYes === true ? 'btn-primary' : 'btn-outline-primary'}`}
           onClick={() => onChange(true)}
         >
-          Sim
+          {t('common.yes')}
         </button>
         <button
           type='button'
           className={`btn ${isYes === false ? 'btn-secondary' : 'btn-outline-secondary'}`}
           onClick={() => onChange(false)}
         >
-          Não
+          {t('common.no')}
         </button>
       </div>
     </div>
@@ -197,11 +149,65 @@ interface LicenseeWizardProps {
 }
 
 function LicenseeWizard({ onSubmit, errors: backendErrors }: LicenseeWizardProps) {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(0)
   const [stepErrors, setStepErrors] = useState<string[] | null>(null)
   const [useChat,     setUseChat]     = useState<boolean | null>(null)
   const [useWhatsapp, setUseWhatsapp] = useState<boolean | null>(null)
+
+  const STEPS = useMemo(() => [
+    { id: 'identity', title: t('licensees.wizard.stepIdentity') },
+    { id: 'whatsapp', title: t('licensees.wizard.stepWhatsApp') },
+    { id: 'chat',     title: t('licensees.wizard.stepChat') },
+    { id: 'chatbot',  title: t('licensees.wizard.stepChatBot') },
+  ], [t])
+
+  const identitySchema = useMemo(() => Yup.object().shape({
+    name:        Yup.string().required(t('licensees.wizard.identity.nameRequired')),
+    kind:        Yup.string().required(t('licensees.wizard.identity.kindRequired')),
+    document:    Yup.string().required(t('licensees.wizard.identity.documentRequired')),
+    email:       Yup.string().email(t('licensees.wizard.identity.emailInvalid')).required(t('licensees.wizard.identity.emailRequired')),
+    licenseKind: Yup.string().required(t('licensees.wizard.identity.licenseKindRequired')),
+    phone:       Yup.string().required(t('licensees.wizard.identity.phoneRequired')),
+  }), [t])
+
+  const chatSchema = useMemo(() => Yup.object().shape({
+    chatDefault: Yup.string().required(t('licensees.wizard.chat.chatDefaultRequired')),
+    chatUrl: Yup.string().when('chatDefault', {
+      is: (v: string) => ['rocketchat', 'crisp', 'chatwoot', 'cuboup'].includes(v),
+      then: (s: Yup.StringSchema) => s.required(t('licensees.wizard.chat.chatUrlRequired')),
+    }),
+    chatIdentifier: Yup.string().when('chatDefault', {
+      is: (v: string) => ['crisp', 'chatwoot'].includes(v),
+      then: (s: Yup.StringSchema) => s.required(t('licensees.wizard.chat.identifierRequired')),
+    }),
+    chatKey: Yup.string().when('chatDefault', {
+      is: (v: string) => ['crisp', 'chatwoot'].includes(v),
+      then: (s: Yup.StringSchema) => s.required(t('licensees.wizard.chat.keyRequired')),
+    }),
+  }), [t])
+
+  const chatbotSchema = useMemo(() => Yup.object().shape({
+    chatbotDefault:            Yup.string().required(t('licensees.wizard.chatbot.chatbotDefaultRequired')),
+    chatbotUrl:                Yup.string().required(t('licensees.wizard.chatbot.chatbotUrlRequired')),
+    chatbotAuthorizationToken: Yup.string().required(t('licensees.wizard.chatbot.chatbotTokenRequired')),
+    chatbotApiToken:           Yup.string().required(t('licensees.wizard.chatbot.chatbotApiTokenRequired')),
+    messageOnResetChatbot:     Yup.string().required(t('licensees.wizard.chatbot.messageOnResetRequired')),
+    messageOnCloseChat:        Yup.string().required(t('licensees.wizard.chatbot.messageOnCloseRequired')),
+  }), [t])
+
+  const whatsappSchema = useMemo(() => Yup.object().shape({
+    whatsappDefault: Yup.string().required(t('licensees.wizard.whatsapp.whatsappDefaultRequired')),
+    whatsappToken: Yup.string().when('whatsappDefault', {
+      is: (v: string) => !!v && v !== 'baileys',
+      then: (s: Yup.StringSchema) => s.required(t('licensees.wizard.whatsapp.whatsappTokenRequired')),
+    }),
+    whatsappUrl: Yup.string().when('whatsappDefault', {
+      is: (v: string) => !!v && v !== 'baileys',
+      then: (s: Yup.StringSchema) => s.required(t('licensees.wizard.whatsapp.whatsappUrlRequired')),
+    }),
+  }), [t])
 
   const totalSteps = STEPS.length
   const step = STEPS[currentStep]
@@ -257,9 +263,15 @@ function LicenseeWizard({ onSubmit, errors: backendErrors }: LicenseeWizardProps
       }}>
       {(formik) => (
         <form>
-          <h3>Criar Licenciado</h3>
-          <p className='text-muted mb-1'>Passo {currentStep + 1} de {totalSteps} — {step.title}</p>
-          <p className='text-muted small mb-3'>Campos marcados com <span className='text-danger'>*</span> são obrigatórios.</p>
+          <h3>{t('licensees.wizard.title')}</h3>
+          <p className='text-muted mb-1'>
+            {t('licensees.wizard.stepIndicator', { current: currentStep + 1, total: totalSteps, title: step.title })}
+          </p>
+          <p className='text-muted small mb-3'>
+            {t('licensees.wizard.requiredHint').split('*')[0]}
+            <span className='text-danger'>*</span>
+            {t('licensees.wizard.requiredHint').split('*')[1]}
+          </p>
 
           <div className='progress mb-4' style={{ height: '6px' }}>
             <div
@@ -285,7 +297,7 @@ function LicenseeWizard({ onSubmit, errors: backendErrors }: LicenseeWizardProps
             {step.id === 'chat' && (
               <>
                 <YesNoGate
-                  label='Deseja integrar com uma Plataforma de Chat?'
+                  label={t('licensees.wizard.chatGateLabel')}
                   isYes={useChat}
                   onChange={setUseChat}
                 />
@@ -303,7 +315,7 @@ function LicenseeWizard({ onSubmit, errors: backendErrors }: LicenseeWizardProps
             {step.id === 'chatbot' && (
               <>
                 <YesNoGate
-                  label='Deseja integrar com uma Plataforma de ChatBot?'
+                  label={t('licensees.wizard.chatbotGateLabel')}
                   isYes={typeof formik.values.useChatbot === 'boolean' ? formik.values.useChatbot : null}
                   onChange={(val: boolean) => formik.setFieldValue('useChatbot', val)}
                 />
@@ -321,7 +333,7 @@ function LicenseeWizard({ onSubmit, errors: backendErrors }: LicenseeWizardProps
             {step.id === 'whatsapp' && (
               <>
                 <YesNoGate
-                  label='Deseja integrar com uma Plataforma de WhatsApp?'
+                  label={t('licensees.wizard.whatsappGateLabel')}
                   isYes={useWhatsapp}
                   onChange={setUseWhatsapp}
                 />
@@ -349,7 +361,7 @@ function LicenseeWizard({ onSubmit, errors: backendErrors }: LicenseeWizardProps
 
           <div className='d-flex justify-content-between mt-4'>
             <button type='button' className='btn btn-secondary' onClick={() => navigate('/licensees')}>
-              Cancelar
+              {t('common.cancel')}
             </button>
             <div className='d-flex gap-2'>
               {currentStep > 0 && (
@@ -358,7 +370,7 @@ function LicenseeWizard({ onSubmit, errors: backendErrors }: LicenseeWizardProps
                   className='btn btn-outline-secondary'
                   onClick={() => { setStepErrors(null); setCurrentStep(s => s - 1) }}
                 >
-                  ← Voltar
+                  {t('licensees.wizard.backButton')}
                 </button>
               )}
               {!isLastStep ? (
@@ -370,10 +382,12 @@ function LicenseeWizard({ onSubmit, errors: backendErrors }: LicenseeWizardProps
                     if (valid) { setStepErrors(null); setCurrentStep(s => s + 1) }
                   }}
                 >
-                  Próximo →
+                  {t('licensees.wizard.nextButton')}
                 </button>
               ) : (
-                <button type='button' className='btn btn-success' onClick={() => formik.submitForm()}>Salvar</button>
+                <button type='button' className='btn btn-success' onClick={() => formik.submitForm()}>
+                  {t('common.save')}
+                </button>
               )}
             </div>
           </div>

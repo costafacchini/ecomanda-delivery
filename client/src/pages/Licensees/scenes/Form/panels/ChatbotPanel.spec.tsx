@@ -2,6 +2,17 @@ import { render, screen } from '@testing-library/react'
 import { Formik } from 'formik'
 import ChatbotPanel from './ChatbotPanel'
 
+vi.mock('react-i18next', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-i18next')>()
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: (k: string) => k,
+      i18n: { language: 'pt', changeLanguage: vi.fn() },
+    }),
+  }
+})
+
 const noop = () => {}
 
 const defaultValues = {
@@ -32,11 +43,11 @@ describe('<ChatbotPanel />', () => {
   it('renders chatbotDefault select, chatbotUrl, chatbotAuthorizationToken, chatbotApiToken, messageOnResetChatbot, messageOnCloseChat', () => {
     mount({ chatbotDefault: 'landbot' })
 
-    expect(screen.getByLabelText('Chatbot padrão')).toBeInTheDocument()
-    expect(screen.getByLabelText('URL do chatbot')).toBeInTheDocument()
-    expect(screen.getByLabelText('Token do chatbot')).toBeInTheDocument()
-    expect(screen.getByLabelText('Token de acesso via API do chatbot')).toBeInTheDocument()
-    expect(screen.getByLabelText('Mensagem de encerramento de chatbot abandonado')).toBeInTheDocument()
-    expect(screen.getByLabelText('Mensagem de encerramento de chat')).toBeInTheDocument()
+    expect(screen.getByLabelText('licensees.form.chatbot.chatbotDefaultLabel')).toBeInTheDocument()
+    expect(screen.getByLabelText('licensees.form.chatbot.chatbotUrlLabel')).toBeInTheDocument()
+    expect(screen.getByLabelText('licensees.form.chatbot.chatbotTokenLabel')).toBeInTheDocument()
+    expect(screen.getByLabelText('licensees.form.chatbot.chatbotApiTokenLabel')).toBeInTheDocument()
+    expect(screen.getByLabelText('licensees.form.chatbot.messageOnResetLabel')).toBeInTheDocument()
+    expect(screen.getByLabelText('licensees.form.chatbot.messageOnCloseLabel')).toBeInTheDocument()
   })
 })

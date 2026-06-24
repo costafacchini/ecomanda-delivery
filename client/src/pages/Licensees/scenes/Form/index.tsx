@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Form } from '../../../../components/form'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import MainPanel from './panels/MainPanel'
 import ChatPanel from './panels/ChatPanel'
 import ChatbotPanel from './panels/ChatbotPanel'
@@ -60,6 +61,7 @@ interface LicenseeFormProps {
 
 function LicenseeForm(props: LicenseeFormProps) {
   const { onSubmit, errors, initialValues, currentUser } = props
+  const { t } = useTranslation()
   let navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('principal')
 
@@ -74,7 +76,11 @@ function LicenseeForm(props: LicenseeFormProps) {
       >
         {(props: FormikProps<LicenseeEditFormValues>) => (
           <form onSubmit={props.handleSubmit}>
-            <p className='text-muted small mb-3'>Campos marcados com <span className='text-danger'>*</span> são obrigatórios.</p>
+            <p className='text-muted small mb-3'>
+              {t('licensees.form.requiredHint').split('*')[0]}
+              <span className='text-danger'>*</span>
+              {t('licensees.form.requiredHint').split('*')[1]}
+            </p>
             <ul className="nav nav-tabs mb-3">
               <li className="nav-item">
                 <button
@@ -82,7 +88,7 @@ function LicenseeForm(props: LicenseeFormProps) {
                   className={`nav-link ${activeTab === 'principal' ? 'active' : ''}`}
                   onClick={() => setActiveTab('principal')}
                 >
-                  Principal
+                  {t('licensees.form.tabPrincipal')}
                 </button>
               </li>
               <li className="nav-item">
@@ -91,7 +97,7 @@ function LicenseeForm(props: LicenseeFormProps) {
                   className={`nav-link ${activeTab === 'whatsapp' ? 'active' : ''}`}
                   onClick={() => setActiveTab('whatsapp')}
                 >
-                  WhatsApp
+                  {t('licensees.form.tabWhatsApp')}
                 </button>
               </li>
               <li className="nav-item">
@@ -100,7 +106,7 @@ function LicenseeForm(props: LicenseeFormProps) {
                   className={`nav-link ${activeTab === 'chat' ? 'active' : ''}`}
                   onClick={() => setActiveTab('chat')}
                 >
-                  Chat
+                  {t('licensees.form.tabChat')}
                 </button>
               </li>
               <li className="nav-item">
@@ -109,7 +115,7 @@ function LicenseeForm(props: LicenseeFormProps) {
                   className={`nav-link ${activeTab === 'chatbot' ? 'active' : ''}`}
                   onClick={() => setActiveTab('chatbot')}
                 >
-                  ChatBot
+                  {t('licensees.form.tabChatBot')}
                 </button>
               </li>
             </ul>
@@ -169,10 +175,10 @@ function LicenseeForm(props: LicenseeFormProps) {
               <div className='col-8'>
                 <div className='mt-4 d-flex justify-content-between'>
                   <button onClick={() => navigate('/licensees')} className='btn btn-secondary' type='button'>
-                    Voltar
+                    {t('common.cancel')}
                   </button>
                   <button className='btn btn-success' type='submit'>
-                    Salvar
+                    {t('common.save')}
                   </button>
                 </div>
               </div>

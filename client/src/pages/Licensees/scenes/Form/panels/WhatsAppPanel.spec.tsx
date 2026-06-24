@@ -2,6 +2,17 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { Formik } from 'formik'
 import WhatsAppPanel from './WhatsAppPanel'
 
+vi.mock('react-i18next', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-i18next')>()
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: (k: string) => k,
+      i18n: { language: 'pt', changeLanguage: vi.fn() },
+    }),
+  }
+})
+
 vi.mock('../../../../../services/licensee', () => ({
   setLicenseeWebhook: vi.fn(),
   getBaileysQr: vi.fn(),
@@ -50,64 +61,64 @@ describe('<WhatsAppPanel />', () => {
   it('renders whatsappDefault select', () => {
     mount()
 
-    expect(screen.getByLabelText(/^WhatsApp padrão/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^licensees\.form\.whatsapp\.whatsappDefaultLabel/)).toBeInTheDocument()
   })
 
   it('shows whatsappToken and whatsappUrl fields when whatsappDefault is utalk', () => {
     mount({ whatsappDefault: 'utalk' })
 
-    expect(screen.getByLabelText(/^Token do WhatsApp/)).toBeInTheDocument()
-    expect(screen.getByLabelText(/^URL do WhatsApp/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^licensees\.form\.whatsapp\.whatsappTokenLabel/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^licensees\.form\.whatsapp\.whatsappUrlLabel/)).toBeInTheDocument()
   })
 
   it('does NOT show whatsappToken/whatsappUrl when whatsappDefault is baileys', () => {
     mount({ whatsappDefault: 'baileys' })
 
-    expect(screen.queryByLabelText(/^Token do WhatsApp/)).not.toBeInTheDocument()
-    expect(screen.queryByLabelText(/^URL do WhatsApp/)).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/^licensees\.form\.whatsapp\.whatsappTokenLabel/)).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/^licensees\.form\.whatsapp\.whatsappUrlLabel/)).not.toBeInTheDocument()
   })
 
   it('shows useFileIDYcloud checkbox only when whatsappDefault is ycloud', () => {
     mount({ whatsappDefault: 'ycloud' })
 
-    expect(screen.getByLabelText('Usar ID no YCloud ao invés de URL?')).toBeInTheDocument()
+    expect(screen.getByLabelText('licensees.form.whatsapp.useFileIDYcloudLabel')).toBeInTheDocument()
   })
 
   it('does NOT show useFileIDYcloud when whatsappDefault is utalk', () => {
     mount({ whatsappDefault: 'utalk' })
 
-    expect(screen.queryByLabelText('Usar ID no YCloud ao invés de URL?')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('licensees.form.whatsapp.useFileIDYcloudLabel')).not.toBeInTheDocument()
   })
 
   it('shows "Gerar QR Code" button when whatsappDefault is baileys', () => {
     mount({ whatsappDefault: 'baileys' })
 
-    expect(screen.getByRole('button', { name: 'Gerar QR Code' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'licensees.form.whatsapp.generateQrButton' })).toBeInTheDocument()
   })
 
   it('does NOT show "Gerar QR Code" when whatsappDefault is utalk', () => {
     mount({ whatsappDefault: 'utalk' })
 
-    expect(screen.queryByRole('button', { name: 'Gerar QR Code' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'licensees.form.whatsapp.generateQrButton' })).not.toBeInTheDocument()
   })
 
   it('shows "Configurar Webhook no provedor" button when whatsappDefault is dialog AND apiToken is set', () => {
     mount({ whatsappDefault: 'dialog', apiToken: 'my-token' })
 
-    expect(screen.getByRole('button', { name: 'Configurar Webhook no provedor' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'licensees.form.whatsapp.setWebhookButton' })).toBeInTheDocument()
   })
 
   it('does NOT show "Configurar Webhook no provedor" when apiToken is empty', () => {
     mount({ whatsappDefault: 'dialog', apiToken: '' })
 
-    expect(screen.queryByRole('button', { name: 'Configurar Webhook no provedor' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'licensees.form.whatsapp.setWebhookButton' })).not.toBeInTheDocument()
   })
 
   it('shows QR code after clicking "Gerar QR Code" when service returns qr data', async () => {
     getBaileysQr.mockResolvedValue({ data: { qr: 'abc123' } })
     mount({ whatsappDefault: 'baileys' })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Gerar QR Code' }))
+    fireEvent.click(screen.getByRole('button', { name: 'licensees.form.whatsapp.generateQrButton' }))
 
     await waitFor(() => {
       expect(screen.getByTestId('qr-code')).toBeInTheDocument()
@@ -119,7 +130,7 @@ describe('<WhatsAppPanel />', () => {
     getBaileysQr.mockResolvedValue({ data: { message: 'Sessão ativa' } })
     mount({ whatsappDefault: 'baileys' })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Gerar QR Code' }))
+    fireEvent.click(screen.getByRole('button', { name: 'licensees.form.whatsapp.generateQrButton' }))
 
     await waitFor(() => {
       expect(screen.getByText('Sessão ativa')).toBeInTheDocument()
@@ -132,7 +143,7 @@ describe('<WhatsAppPanel />', () => {
       mount({ whatsappDefault: 'baileys', id: 'abc123' }, { isActive: true })
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: 'Sincronizar Grupos' })).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: 'licensees.form.whatsapp.syncGroupsButton' })).toBeInTheDocument()
       })
     })
 
@@ -141,7 +152,7 @@ describe('<WhatsAppPanel />', () => {
       mount({ whatsappDefault: 'baileys' }, { isActive: true })
 
       await waitFor(() => {
-        expect(screen.queryByRole('button', { name: 'Sincronizar Grupos' })).not.toBeInTheDocument()
+        expect(screen.queryByRole('button', { name: 'licensees.form.whatsapp.syncGroupsButton' })).not.toBeInTheDocument()
       })
     })
 
@@ -150,11 +161,11 @@ describe('<WhatsAppPanel />', () => {
       syncBaileysDirectory.mockResolvedValue({ data: { importedGroups: 3, updatedGroups: 1 } })
       mount({ whatsappDefault: 'baileys', id: 'abc123' }, { isActive: true })
 
-      fireEvent.click(await screen.findByRole('button', { name: 'Sincronizar Grupos' }))
+      fireEvent.click(await screen.findByRole('button', { name: 'licensees.form.whatsapp.syncGroupsButton' }))
 
       await waitFor(() => {
-        expect(screen.getByText(/Grupos importados: 3/)).toBeInTheDocument()
-        expect(screen.getByText(/Grupos atualizados: 1/)).toBeInTheDocument()
+        // The t() mock returns the key, so syncResult renders the key with interpolation un-resolved
+        expect(screen.getByText('licensees.form.whatsapp.syncResult')).toBeInTheDocument()
       })
     })
 
@@ -163,10 +174,10 @@ describe('<WhatsAppPanel />', () => {
       syncBaileysDirectory.mockRejectedValue(new Error('Network error'))
       mount({ whatsappDefault: 'baileys', id: 'abc123' }, { isActive: true })
 
-      fireEvent.click(await screen.findByRole('button', { name: 'Sincronizar Grupos' }))
+      fireEvent.click(await screen.findByRole('button', { name: 'licensees.form.whatsapp.syncGroupsButton' }))
 
       await waitFor(() => {
-        expect(screen.getByText('Erro ao sincronizar grupos')).toBeInTheDocument()
+        expect(screen.getByText('licensees.form.whatsapp.syncError')).toBeInTheDocument()
       })
     })
   })
