@@ -19,6 +19,7 @@ class OnboardingController {
       check('userName', 'Nome do usuário deve ser preenchido').notEmpty(),
       check('userEmail', 'Email do usuário deve ser um e-mail válido').isEmail(),
       check('password', 'Senha deve ter no mínimo 8 caracteres').isLength({ min: 8 }),
+      check('language').optional().isIn(['pt', 'en']).withMessage('language must be pt or en'),
     ]
   }
 

@@ -50,6 +50,7 @@ class OnboardAccount {
       role: 'admin',
       active: true,
       licensee: createdLicensee._id,
+      language: fields.language ?? 'pt',
     }
 
     try {
