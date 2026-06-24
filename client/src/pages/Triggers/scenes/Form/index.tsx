@@ -1,9 +1,11 @@
 import { FieldWithError, Form } from '../../../../components/form'
 import * as Yup from 'yup'
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 import styles from './styles.module.scss'
 import type { IUser, TriggerKind } from '../../../../types'
+import { useTranslation } from 'react-i18next'
 
 interface ITriggerFormValues {
   name: string
@@ -31,10 +33,6 @@ interface TriggerFormProps {
   activeLicensee?: { _id: string } | null
 }
 
-const SignupSchema = Yup.object().shape({
-  name: Yup.string()
-});
-
 const triggerInitialValues: ITriggerFormValues = {
   name: '',
   triggerKind: 'multi_product',
@@ -49,12 +47,19 @@ const triggerInitialValues: ITriggerFormValues = {
 }
 
 function TriggerForm({ onSubmit, errors, initialValues, currentUser, activeLicensee }: TriggerFormProps) {
+  const { t } = useTranslation()
   let navigate = useNavigate()
+
+  const validationSchema = useMemo(
+    () => Yup.object().shape({ name: Yup.string() }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t]
+  )
 
   return (
     <div>
       <Form
-        validationSchema={SignupSchema}
+        validationSchema={validationSchema}
         initialValues={{...triggerInitialValues, ...initialValues}}
         onSubmit={(values) => {
           onSubmit(values)
@@ -65,7 +70,7 @@ function TriggerForm({ onSubmit, errors, initialValues, currentUser, activeLicen
             <fieldset className='pb-4'>
               <div className='row'>
                 <div className='form-group col-4'>
-                  <label htmlFor='name'>Nome</label>
+                  <label htmlFor='name'>{t('triggers.nameLabel')}</label>
                   <FieldWithError
                     id='name'
                     type='text'
@@ -77,7 +82,7 @@ function TriggerForm({ onSubmit, errors, initialValues, currentUser, activeLicen
                 </div>
 
                 <div className='form-group col-1'>
-                  <label htmlFor='order'>Ordem</label>
+                  <label htmlFor='order'>{t('triggers.orderLabel')}</label>
                   <FieldWithError
                     id='order'
                     type='number'
@@ -91,7 +96,7 @@ function TriggerForm({ onSubmit, errors, initialValues, currentUser, activeLicen
 
               <div className='row'>
                 <div className='form-group col-5'>
-                  <label htmlFor='expression'>Expressão</label>
+                  <label htmlFor='expression'>{t('triggers.expressionLabel')}</label>
                   <FieldWithError
                     id='expression'
                     name='expression'
@@ -106,7 +111,7 @@ function TriggerForm({ onSubmit, errors, initialValues, currentUser, activeLicen
               {currentUser && currentUser.role === 'super' && !activeLicensee && (
                 <div className='row'>
                   <div className='form-group col-5'>
-                    <label htmlFor='licensee'>Licenciado</label>
+                    <label htmlFor='licensee'>{t('triggers.licenseeFilter')}</label>
                     <SelectLicenseesWithFilter selectedItem={typeof formik.values.licensee === 'string' ? null : formik.values.licensee} onChange={(e: any) => (
                       formik.setFieldValue('licensee', e?.value ?? null, false)
                     )} />
@@ -116,7 +121,7 @@ function TriggerForm({ onSubmit, errors, initialValues, currentUser, activeLicen
 
               <div className='row'>
                 <div className='form-group col-5'>
-                  <label htmlFor='triggerKind'>Tipo</label>
+                  <label htmlFor='triggerKind'>{t('triggers.kindLabel')}</label>
                   <select
                     value={formik.values.triggerKind}
                     className='form-select'
@@ -124,11 +129,11 @@ function TriggerForm({ onSubmit, errors, initialValues, currentUser, activeLicen
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                   >
-                    <option value='multi_product'>Multiplos produtos</option>
-                    <option value='single_product'>Único produto</option>
-                    <option value='reply_button'>Botões de resposta</option>
-                    <option value='list_message'>Lista de opções (mensagens)</option>
-                    <option value='text'>Texto</option>
+                    <option value='multi_product'>{t('triggers.kindMultiProduct')}</option>
+                    <option value='single_product'>{t('triggers.kindSingleProduct')}</option>
+                    <option value='reply_button'>{t('triggers.kindReplyButton')}</option>
+                    <option value='list_message'>{t('triggers.kindListMessage')}</option>
+                    <option value='text'>{t('triggers.kindText')}</option>
                   </select>
                 </div>
               </div>
@@ -137,7 +142,7 @@ function TriggerForm({ onSubmit, errors, initialValues, currentUser, activeLicen
                 <>
                   <div className='row'>
                     <div className='form-group col-5'>
-                      <label htmlFor='catalogId'>Id do catálogo</label>
+                      <label htmlFor='catalogId'>{t('triggers.catalogIdLabel')}</label>
                       <FieldWithError
                         id='catalogId'
                         type='text'
@@ -151,7 +156,7 @@ function TriggerForm({ onSubmit, errors, initialValues, currentUser, activeLicen
 
                   <div className='row'>
                     <div className='form-group col-5'>
-                      <label htmlFor='catalogMulti'>Catálogo</label>
+                      <label htmlFor='catalogMulti'>{t('triggers.catalogLabel')}</label>
                       <div className='pb-2'>
                         <textarea
                           id='catalogMulti'
@@ -171,7 +176,7 @@ function TriggerForm({ onSubmit, errors, initialValues, currentUser, activeLicen
               {formik.values.triggerKind === 'single_product' && (
                 <div className='row'>
                   <div className='form-group col-5'>
-                    <label htmlFor='catalogSingle'>Catálogo</label>
+                    <label htmlFor='catalogSingle'>{t('triggers.catalogLabel')}</label>
                     <div className='pb-2'>
                       <textarea
                         id='catalogSingle'
@@ -190,7 +195,7 @@ function TriggerForm({ onSubmit, errors, initialValues, currentUser, activeLicen
               {formik.values.triggerKind === 'reply_button' && (
                 <div className='row'>
                   <div className='form-group col-5'>
-                    <label htmlFor='textReplyButton'>Script</label>
+                    <label htmlFor='textReplyButton'>{t('triggers.scriptLabel')}</label>
                     <div className='pb-2'>
                       <textarea
                         id='textReplyButton'
@@ -209,7 +214,7 @@ function TriggerForm({ onSubmit, errors, initialValues, currentUser, activeLicen
               {formik.values.triggerKind === 'list_message' && (
                 <div className='row'>
                   <div className='form-group col-5'>
-                    <label htmlFor='messagesList'>Mensagens</label>
+                    <label htmlFor='messagesList'>{t('triggers.messagesLabel')}</label>
                     <div className='pb-2'>
                       <textarea
                         id='messagesList'
@@ -228,7 +233,7 @@ function TriggerForm({ onSubmit, errors, initialValues, currentUser, activeLicen
               {formik.values.triggerKind === 'text' && (
                 <div className='row'>
                   <div className='form-group col-5'>
-                    <label htmlFor='text'>Texto</label>
+                    <label htmlFor='text'>{t('triggers.textLabel')}</label>
                     <div className='pb-2'>
                       <textarea
                         id='text'
@@ -241,12 +246,12 @@ function TriggerForm({ onSubmit, errors, initialValues, currentUser, activeLicen
                       />
                     </div>
                     <div className={`${styles.textHelp}`}>
-                      <span>O campo de texto aceita algumas palavras reservadas:</span>
+                      <span>{t('triggers.textHelpTitle')}</span>
                       <ul>
-                        <li>$last_cart_resume - carrinho do contato</li>
-                        <li>$contact_name - nome do contato</li>
-                        <li>$contact_number - número de telefone do contato</li>
-                        <li>$contact_address_complete - endereço completo do contato</li>
+                        <li>{t('triggers.textHelpCartResume')}</li>
+                        <li>{t('triggers.textHelpContactName')}</li>
+                        <li>{t('triggers.textHelpContactNumber')}</li>
+                        <li>{t('triggers.textHelpContactAddress')}</li>
                       </ul>
                     </div>
                   </div>
@@ -265,8 +270,8 @@ function TriggerForm({ onSubmit, errors, initialValues, currentUser, activeLicen
             <div className='row'>
               <div className='col-5'>
                 <div className='mt-4 d-flex justify-content-between'>
-                  <button onClick={() => navigate('/triggers')} className='btn btn-secondary' type='button'>Voltar</button>
-                  <button className='btn btn-success' type='submit'>Salvar</button>
+                  <button onClick={() => navigate('/triggers')} className='btn btn-secondary' type='button'>{t('common.back')}</button>
+                  <button className='btn btn-success' type='submit'>{t('common.save')}</button>
                 </div>
               </div>
             </div>

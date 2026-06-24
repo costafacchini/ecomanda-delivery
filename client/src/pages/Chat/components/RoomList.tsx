@@ -1,6 +1,7 @@
 import type { IRoom } from '../../../types'
 import RoomItem from './RoomItem'
 import styles from '../styles.module.scss'
+import { useTranslation } from 'react-i18next'
 
 interface RoomListProps {
   rooms: IRoom[]
@@ -10,16 +11,18 @@ interface RoomListProps {
 }
 
 export default function RoomList({ rooms, selectedRoomId, onSelect, onNewConversation }: RoomListProps) {
+  const { t } = useTranslation()
+
   return (
     <>
       <div className={styles.sidebarHeader}>
-        <span className={styles.sidebarTitle}>Conversas</span>
+        <span className={styles.sidebarTitle}>{t('chat.conversationsTitle')}</span>
         <button
           type='button'
           className={styles.newConvoBtn}
           onClick={onNewConversation}
-          aria-label='Nova conversa'
-          title='Nova conversa'
+          aria-label={t('chat.newConversationAriaLabel')}
+          title={t('chat.newConversationAriaLabel')}
         >
           <i className='bi bi-plus' aria-hidden='true' />
         </button>
@@ -28,10 +31,10 @@ export default function RoomList({ rooms, selectedRoomId, onSelect, onNewConvers
       {rooms.length === 0 ? (
         <div className={styles.sidebarEmpty} role='status'>
           <i className='bi bi-chat-dots' aria-hidden='true' />
-          <p>Nenhuma conversa ainda. Crie uma nova conversa para começar.</p>
+          <p>{t('chat.noConversations')}</p>
         </div>
       ) : (
-        <ul className={styles.roomList} role='list' aria-label='Lista de conversas'>
+        <ul className={styles.roomList} role='list' aria-label={t('chat.conversationsTitle')}>
           {rooms.map((room) => (
             <RoomItem
               key={room._id}

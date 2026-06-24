@@ -4,6 +4,12 @@ import { createRoom } from '../../../services/rooms'
 import { AppContext } from '../../../contexts/App'
 
 vi.mock('../../../services/rooms')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 vi.mock('../../../components/SelectContactsWithFilter', () => ({
   default: ({ onChange }: { onChange: (value: { value: string; label: string }) => void }) => (
     <button
@@ -38,13 +44,13 @@ describe('<NewConversationModal>', () => {
   it('modal not visible when show=false', () => {
     renderModal(false)
 
-    expect(screen.queryByText('Nova conversa')).not.toBeInTheDocument()
+    expect(screen.queryByText('chat.newConversationModalTitle')).not.toBeInTheDocument()
   })
 
   it('modal visible when show=true', () => {
     renderModal(true)
 
-    expect(screen.getByText('Nova conversa')).toBeInTheDocument()
+    expect(screen.getByText('chat.newConversationModalTitle')).toBeInTheDocument()
   })
 
   it('calls createRoom when a contact is selected', async () => {
@@ -88,6 +94,6 @@ describe('<NewConversationModal>', () => {
 
     fireEvent.click(screen.getAllByTestId('mock-select-contact')[1])
 
-    expect(await screen.findByText(/erro ao criar conversa/i)).toBeInTheDocument()
+    expect(await screen.findByText('chat.createRoomError')).toBeInTheDocument()
   })
 })

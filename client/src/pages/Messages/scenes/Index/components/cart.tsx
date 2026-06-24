@@ -1,9 +1,6 @@
 import styles from './styles.module.scss'
 import type { ICart, ICartProduct } from '../../../../../types'
-
-function concludedDescription(concluded: boolean) {
-  return concluded ? 'Sim' : 'Não'
-}
+import { useTranslation } from 'react-i18next'
 
 function formatNumber(value: number, decimal = 2) {
   return '$' + value.toFixed(decimal).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
@@ -22,6 +19,10 @@ interface CartDescriptionProps {
 }
 
 function CartDescription({ cart }: CartDescriptionProps) {
+  const { t } = useTranslation()
+
+  const concludedLabel = cart.concluded ? t('common.yes') : t('common.no')
+
   return (
     <div className={`${styles.cartDescription}`}>
       {cart.products.length > 0 && (
@@ -29,16 +30,16 @@ function CartDescription({ cart }: CartDescriptionProps) {
           {productsDescription(cart.products)}
         </ul>
       )}
-      <p>{`Taxa Entrega: ${formatNumber(cart.delivery_tax)}`}</p>
-      <p>{`Total: ${formatNumber(cart.total)}`}</p>
-      <p>{`Concluído: ${concludedDescription(cart.concluded)}`}</p>
+      <p>{`${t('messages.cartDeliveryTax')}: ${formatNumber(cart.delivery_tax)}`}</p>
+      <p>{`${t('messages.cartTotal')}: ${formatNumber(cart.total)}`}</p>
+      <p>{`${t('messages.cartConcluded')}: ${concludedLabel}`}</p>
       {cart.address && (
         <>
-          <p>{`Entrega: ${cart.address}, ${cart.address_number} - ${cart.address_complement}`}</p>
+          <p>{`${t('messages.cartDelivery')}: ${cart.address}, ${cart.address_number} - ${cart.address_complement}`}</p>
           <p>{`         ${cart.neighborhood} - ${cart.city}/${cart.uf} - ${cart.cep}`}</p>
         </>
       )}
-      {cart.note && (<p>{`Obs: ${cart.note}`}</p>)}
+      {cart.note && (<p>{`${t('messages.cartNote')}: ${cart.note}`}</p>)}
     </div>
   )
 }

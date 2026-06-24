@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import styles from './styles.module.scss'
 import { io } from 'socket.io-client'
 import moment from 'moment'
+import { useTranslation } from 'react-i18next'
 
 interface IMessageReportFilters {
   initialDate: string
@@ -27,6 +28,7 @@ function totalMessages(licensees: IReportLicensee[]) {
 }
 
 function MessageIndex() {
+  const { t } = useTranslation()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [records, setRecords] = useState<IReportLicensee[]>([])
   const [filters, setFilters] = useState<IMessageReportFilters>({ initialDate: '', endDate: '' })
@@ -57,14 +59,14 @@ function MessageIndex() {
     <>
       <div className='d-flex justify-content-between pb-2'>
         <div className=''>
-          <h3 className='pr-3'>Mensagens</h3>
+          <h3 className='pr-3'>{t('reports.title')}</h3>
         </div>
       </div>
 
       <div className='row'>
         <div className='col-3'>
           <div className='form-group'>
-            <label htmlFor='initialDate'>Data inicial</label>
+            <label htmlFor='initialDate'>{t('reports.startDateLabel')}</label>
             <input
               value={filters.initialDate}
               onChange={handleChange}
@@ -77,7 +79,7 @@ function MessageIndex() {
         </div>
         <div className='col-3'>
           <div className='form-group'>
-            <label htmlFor='endDate'>Data final</label>
+            <label htmlFor='endDate'>{t('reports.endDateLabel')}</label>
             <input
               value={filters.endDate}
               onChange={handleChange}
@@ -93,7 +95,7 @@ function MessageIndex() {
       <div className='row justify-content-end'>
         <div className='col-1'>
           <button type='button' disabled={isSubmitting} className='btn btn-primary' onClick={handleSubmitSearch}>
-            Pesquisar
+            {t('reports.searchButton')}
           </button>
         </div>
       </div>
@@ -102,7 +104,7 @@ function MessageIndex() {
         <table className={`${styles.stickyHeader} table table-striped table-hover table table-bordered`}>
           <thead>
             <tr>
-              <th scope='col'>Licenciado</th>
+              <th scope='col'>{t('reports.columnLicensee')}</th>
               {records.length > 0 && records[0].days.map((day) => (
                 <th key={day.date} scope='col'>
                   {moment(day.date).format('DD/MM')}
@@ -125,7 +127,7 @@ function MessageIndex() {
               <td></td>
               <td></td>
               <td></td>
-              <td>Total de Mensagens</td>
+              <td>{t('reports.totalMessages')}</td>
               <td>{totalMessages(records)}</td>
             </tr>
           </tbody>

@@ -1,6 +1,13 @@
 import { render, screen } from '@testing-library/react'
 import CartDescription from './cart'
 
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
+
 describe('<CartDescription />', () => {
   function mount({ cart }) {
     render(
@@ -39,12 +46,12 @@ describe('<CartDescription />', () => {
 
     expect(screen.getByText('1 - 107435 - $20.10')).toBeInTheDocument()
     expect(screen.getByText('1 - 93546 - $5.22')).toBeInTheDocument()
-    expect(screen.getByText('Taxa Entrega: $100.12')).toBeInTheDocument()
-    expect(screen.getByText('Total: $200.34')).toBeInTheDocument()
-    expect(screen.getByText('Concluído: Sim')).toBeInTheDocument()
-    expect(screen.getByText('Entrega: Rua Teste, 123 - Apto 123')).toBeInTheDocument()
+    expect(screen.getByText('messages.cartDeliveryTax: $100.12')).toBeInTheDocument()
+    expect(screen.getByText('messages.cartTotal: $200.34')).toBeInTheDocument()
+    expect(screen.getByText('messages.cartConcluded: common.yes')).toBeInTheDocument()
+    expect(screen.getByText('messages.cartDelivery: Rua Teste, 123 - Apto 123')).toBeInTheDocument()
     expect(screen.getByText('Centro - São Paulo/SP - 12345-678')).toBeInTheDocument()
-    expect(screen.getByText('Obs: Annotation')).toBeInTheDocument()
+    expect(screen.getByText('messages.cartNote: Annotation')).toBeInTheDocument()
   })
 
   it('shows the cart description without address if address does not filled', () => {
@@ -69,8 +76,8 @@ describe('<CartDescription />', () => {
 
     mount({ cart })
 
-    expect(screen.getByText('Taxa Entrega: $100.12')).toBeInTheDocument()
-    expect(screen.queryByText('Entrega:')).not.toBeInTheDocument()
+    expect(screen.getByText('messages.cartDeliveryTax: $100.12')).toBeInTheDocument()
+    expect(screen.queryByText(/^messages\.cartDelivery:/)).not.toBeInTheDocument()
   })
 
   it('shows the cart description without note if note does not filled', () => {
@@ -94,8 +101,8 @@ describe('<CartDescription />', () => {
 
     mount({ cart })
 
-    expect(screen.getByText('Taxa Entrega: $100.12')).toBeInTheDocument()
-    expect(screen.queryByText('Obs:')).not.toBeInTheDocument()
+    expect(screen.getByText('messages.cartDeliveryTax: $100.12')).toBeInTheDocument()
+    expect(screen.queryByText(/^messages\.cartNote/)).not.toBeInTheDocument()
   })
 
   it('shows the cart description without products if products does not filled', () => {
@@ -108,7 +115,7 @@ describe('<CartDescription />', () => {
 
     mount({ cart })
 
-    expect(screen.getByText('Taxa Entrega: $100.12')).toBeInTheDocument()
+    expect(screen.getByText('messages.cartDeliveryTax: $100.12')).toBeInTheDocument()
     expect(screen.queryByText('1 - 107435 - $20.10')).not.toBeInTheDocument()
   })
 })

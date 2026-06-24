@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import styles from '../styles.module.scss'
+import { useTranslation } from 'react-i18next'
 
 interface MessageInputProps {
   onSend: (text: string) => void
@@ -7,6 +8,7 @@ interface MessageInputProps {
 }
 
 export default function MessageInput({ onSend, disabled }: MessageInputProps) {
+  const { t } = useTranslation()
   const [text, setText] = useState('')
 
   function handleSend() {
@@ -23,16 +25,16 @@ export default function MessageInput({ onSend, disabled }: MessageInputProps) {
   }
 
   return (
-    <div className={styles.messageFooter} role='form' aria-label='Enviar mensagem'>
+    <div className={styles.messageFooter} role='form' aria-label={t('chat.sendFormAriaLabel')}>
       <input
         type='text'
         className={styles.messageInput}
         value={text}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder='Digite uma mensagem...'
+        placeholder={t('chat.messagePlaceholder')}
         disabled={disabled}
-        aria-label='Mensagem'
+        aria-label={t('chat.messageInputAriaLabel')}
         autoComplete='off'
       />
       <button
@@ -40,7 +42,7 @@ export default function MessageInput({ onSend, disabled }: MessageInputProps) {
         className={styles.sendBtn}
         onClick={handleSend}
         disabled={disabled || !text.trim()}
-        aria-label='Enviar'
+        aria-label={t('chat.sendAriaLabel')}
       >
         {disabled
           ? <i className='bi bi-hourglass-split' aria-hidden='true' />

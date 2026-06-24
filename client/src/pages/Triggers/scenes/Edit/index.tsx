@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router'
 import { useEffect } from 'react'
 import { useApp } from '../../../../contexts/App'
 import type { IUser, ITrigger } from '../../../../types'
+import { useTranslation } from 'react-i18next'
 
 interface IFormError {
   message: string
@@ -16,6 +17,7 @@ interface TriggerEditProps {
 }
 
 function TriggerEdit({ currentUser }: TriggerEditProps) {
+  const { t } = useTranslation()
   const { activeLicensee } = useApp()
   const navigate = useNavigate()
   let { id } = useParams()
@@ -49,7 +51,7 @@ function TriggerEdit({ currentUser }: TriggerEditProps) {
   return (
     <div className='row'>
       <div className='col'>
-        <h3>Gatilho editando</h3>
+        <h3>{t('triggers.editTitle')}</h3>
         <Form
           initialValues={trigger}
           currentUser={currentUser}
@@ -59,13 +61,13 @@ function TriggerEdit({ currentUser }: TriggerEditProps) {
             const response = await updateTrigger({ ...values, id: trigger.id } as ITrigger)
 
             if (response.status === 200) {
-              toast.success('Gatilho atualizado com sucesso!');
+              toast.success(t('triggers.toast.updateSuccess'));
               navigate('/triggers')
               setErrors(null)
             } else {
               const data = response.data as { errors: IFormError[] }
               setErrors(data.errors)
-              toast.error('Ops! Não foi possível atualizar o gatilho.');
+              toast.error(t('triggers.toast.updateError'));
             }
           }}
         />

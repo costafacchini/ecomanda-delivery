@@ -6,12 +6,14 @@ import { useSimpleCrud } from '../../../../contexts/SimpleCrud'
 import { useApp } from '../../../../contexts/App'
 import isEmpty from 'lodash/isEmpty'
 import type { IContact, IContactFilters, IUser } from '../../../../types'
+import { useTranslation } from 'react-i18next'
 
 interface ContactsIndexProps {
   currentUser: IUser | null | undefined
 }
 
 function ContactsIndex({ currentUser }: ContactsIndexProps) {
+  const { t } = useTranslation()
   const { activeLicensee } = useApp()
   const { filters, setFilters, cache } = useSimpleCrud()
   const { addPage } = cache
@@ -82,10 +84,10 @@ function ContactsIndex({ currentUser }: ContactsIndexProps) {
       <div className='row'>
         <div className='d-flex justify-content-between pb-2'>
           <div className=''>
-            <h3 className='pe-3'>Contatos</h3>
+            <h3 className='pe-3'>{t('contacts.title')}</h3>
           </div>
           <div className=''>
-            <Link to='/contacts/new' className='btn btn-primary'>Novo Contato</Link>
+            <Link to='/contacts/new' className='btn btn-primary'>{t('contacts.newContact')}</Link>
           </div>
         </div>
       </div>
@@ -94,7 +96,7 @@ function ContactsIndex({ currentUser }: ContactsIndexProps) {
           <div className='flex-column w-50'>
             {currentUser && currentUser.role === 'super' && !activeLicensee && (
               <div className='form-group'>
-                <label htmlFor='licensee' id='licensee'>Licenciado</label>
+                <label htmlFor='licensee' id='licensee'>{t('contacts.licenseeFilter')}</label>
                 <SelectLicenseesWithFilter
                   name='licensee'
                   aria-labelledby='licensee'
@@ -118,7 +120,7 @@ function ContactsIndex({ currentUser }: ContactsIndexProps) {
               className={`btn btn-sm ${contactFilters?.isGroup ? 'btn-primary' : 'btn-outline-secondary'}`}
               onClick={toggleGroupFilter}
             >
-              {contactFilters?.isGroup ? 'Ver Todos' : 'Ver Grupos'}
+              {contactFilters?.isGroup ? t('contacts.viewAll') : t('contacts.viewGroups')}
             </button>
           </div>
           <div className=''>
@@ -128,7 +130,7 @@ function ContactsIndex({ currentUser }: ContactsIndexProps) {
                 name='expression'
                 type='text'
                 value={expression}
-                placeholder='Digite a expressão'
+                placeholder={t('contacts.expressionPlaceholder')}
                 onChange={changeExpression}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
@@ -138,8 +140,8 @@ function ContactsIndex({ currentUser }: ContactsIndexProps) {
               />
               <button
                 className='btn btn-primary'
-                title='Filtre pelo contato'
-                aria-label='Pesquisar contatos'
+                title={t('contacts.filterButtonTitle')}
+                aria-label={t('contacts.filterButtonAriaLabel')}
                 onClick={() => {
                   const newFilters: IContactFilters = { ...contactFilters, expression: expression, page: 1 }
                   onFilter(newFilters)
@@ -155,10 +157,10 @@ function ContactsIndex({ currentUser }: ContactsIndexProps) {
         <table className='table'>
           <thead>
             <tr>
-              <th scope='col'>Nome</th>
-              <th scope='col'>Número</th>
-              <th scope='col'>Tipo</th>
-              <th scope='col'>E-mail</th>
+              <th scope='col'>{t('contacts.columnName')}</th>
+              <th scope='col'>{t('contacts.columnNumber')}</th>
+              <th scope='col'>{t('contacts.columnType')}</th>
+              <th scope='col'>{t('contacts.columnEmail')}</th>
               <th scope='col'></th>
             </tr>
           </thead>
@@ -167,13 +169,13 @@ function ContactsIndex({ currentUser }: ContactsIndexProps) {
               <tr>
                 <td colSpan={5} className='text-center text-muted py-4'>
                   <span className='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true' />
-                  Carregando...
+                  {t('common.loading')}
                 </td>
               </tr>
             ) : (cache.records as unknown as IContact[]).length === 0 ? (
               <tr>
                 <td colSpan={5} className='text-center text-muted py-4'>
-                  Nenhum contato encontrado.
+                  {t('contacts.noContactsFound')}
                 </td>
               </tr>
             ) : (cache.records as unknown as IContact[]).map((contact) => (
@@ -183,7 +185,7 @@ function ContactsIndex({ currentUser }: ContactsIndexProps) {
                 <td>{contact.type}</td>
                 <td>{contact.email}</td>
                 <td>
-                  <Link to={`/contacts/${contact.id}`} aria-label={`Editar ${contact.name}`}>
+                  <Link to={`/contacts/${contact.id}`} aria-label={t('contacts.editAriaLabel', { name: contact.name })}>
                     <i className='bi bi-pencil' />
                   </Link>
                 </td>
@@ -207,9 +209,9 @@ function ContactsIndex({ currentUser }: ContactsIndexProps) {
                   {loading ? (
                     <>
                       <span className='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true' />
-                      Carregando...
+                      {t('common.loading')}
                     </>
-                  ) : 'Carregar mais'}
+                  ) : t('common.loadMore')}
                 </button>
               </div>
             </div>

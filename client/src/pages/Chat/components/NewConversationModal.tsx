@@ -4,6 +4,7 @@ import { createRoom } from '../../../services/rooms'
 import type { IRoom } from '../../../types'
 import { useApp } from '../../../contexts/App'
 import SelectContactsWithFilter from '../../../components/SelectContactsWithFilter'
+import { useTranslation } from 'react-i18next'
 
 interface IContactOption {
   value: string
@@ -18,6 +19,7 @@ interface NewConversationModalProps {
 }
 
 export default function NewConversationModal({ show, onClose, onRoomCreated }: NewConversationModalProps) {
+  const { t } = useTranslation()
   const { currentUser, activeLicensee } = useApp()
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -34,7 +36,7 @@ export default function NewConversationModal({ show, onClose, onRoomCreated }: N
       onRoomCreated(res.data.room)
       onClose()
     } catch (_) {
-      setError('Erro ao criar conversa. Tente novamente.')
+      setError(t('chat.createRoomError'))
     } finally {
       setLoading(false)
     }
@@ -53,12 +55,12 @@ export default function NewConversationModal({ show, onClose, onRoomCreated }: N
       <div className='modal-dialog' role='document'>
         <div className='modal-content'>
           <div className='modal-header'>
-            <h5 className='modal-title'>Nova conversa</h5>
-            <button type='button' className='btn-close' onClick={onClose} aria-label='Fechar' />
+            <h5 className='modal-title'>{t('chat.newConversationModalTitle')}</h5>
+            <button type='button' className='btn-close' onClick={onClose} aria-label={t('chat.closeModalAriaLabel')} />
           </div>
           <div className='modal-body'>
             {error && <div className='alert alert-danger'>{error}</div>}
-            <label className='form-label'>Selecione um contato</label>
+            <label className='form-label'>{t('chat.selectContactLabel')}</label>
             <SelectContactsWithFilter
               onChange={handleContactChange}
               licensee={effectiveLicenseeId}

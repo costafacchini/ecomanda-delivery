@@ -2,6 +2,13 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { createRoutesStub } from 'react-router'
 import ContactForm from './'
 
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
+
 describe('<ContactForm />', () => {
   const onSubmit = vi.fn()
 
@@ -18,21 +25,21 @@ describe('<ContactForm />', () => {
   it('is rendered with the default initial values', () => {
     mount()
 
-    expect(screen.getByLabelText(/^Nome/)).toHaveValue('')
-    expect(screen.getByLabelText('E-mail')).toHaveValue('')
-    expect(screen.getByLabelText(/^Telefone/)).toHaveValue('')
-    expect(screen.getByLabelText('Conversando com chatbot?')).not.toBeChecked()
-    expect(screen.getByLabelText(/^ID da API oficial do WhatsApp/)).toHaveValue('')
-    expect(screen.getByLabelText(/^ID do contato na Landbot/)).toHaveValue('')
-    expect(screen.getByLabelText('CEP')).toHaveValue('')
-    expect(screen.getByLabelText('Cidade')).toHaveValue('')
-    expect(screen.getByLabelText('UF')).toHaveValue('')
-    expect(screen.getByLabelText('Endereço')).toHaveValue('')
-    expect(screen.getByLabelText('Número')).toHaveValue('')
-    expect(screen.getByLabelText('Complemento')).toHaveValue('')
-    expect(screen.getByLabelText('Bairro')).toHaveValue('')
-    expect(screen.getByLabelText('Taxa de entrega')).toHaveValue(0)
-    expect(screen.getByLabelText(/^ID no plugin de carrinho/)).toHaveValue('')
+    expect(screen.getByLabelText(/^contacts.nameLabel/)).toHaveValue('')
+    expect(screen.getByLabelText('common.email')).toHaveValue('')
+    expect(screen.getByLabelText(/^contacts.phoneLabel/)).toHaveValue('')
+    expect(screen.getByLabelText('contacts.chatbotLabel')).not.toBeChecked()
+    expect(screen.getByLabelText(/^contacts.waIdLabel/)).toHaveValue('')
+    expect(screen.getByLabelText(/^contacts.landbotIdLabel/)).toHaveValue('')
+    expect(screen.getByLabelText('contacts.cepLabel')).toHaveValue('')
+    expect(screen.getByLabelText('contacts.cityLabel')).toHaveValue('')
+    expect(screen.getByLabelText('contacts.ufLabel')).toHaveValue('')
+    expect(screen.getByLabelText('contacts.addressLabel')).toHaveValue('')
+    expect(screen.getByLabelText('contacts.addressNumberLabel')).toHaveValue('')
+    expect(screen.getByLabelText('contacts.complementLabel')).toHaveValue('')
+    expect(screen.getByLabelText('contacts.neighborhoodLabel')).toHaveValue('')
+    expect(screen.getByLabelText('contacts.deliveryTaxLabel')).toHaveValue(0)
+    expect(screen.getByLabelText(/^contacts.pluginCartIdLabel/)).toHaveValue('')
   })
 
   it('can receive initial values', () => {
@@ -56,21 +63,21 @@ describe('<ContactForm />', () => {
 
     mount({ initialValues: contact })
 
-    expect(screen.getByLabelText(/^Nome/)).toHaveValue('Name')
-    expect(screen.getByLabelText('E-mail')).toHaveValue('email@gmail.com')
-    expect(screen.getByLabelText(/^Telefone/)).toHaveValue('48999999215')
-    expect(screen.getByLabelText('Conversando com chatbot?')).toBeChecked()
-    expect(screen.getByLabelText(/^ID da API oficial do WhatsApp/)).toHaveValue('waId')
-    expect(screen.getByLabelText(/^ID do contato na Landbot/)).toHaveValue('landbotId')
-    expect(screen.getByLabelText('CEP')).toHaveValue('65810970')
-    expect(screen.getByLabelText('Cidade')).toHaveValue('Alto Parnaíba')
-    expect(screen.getByLabelText('UF')).toHaveValue('MA')
-    expect(screen.getByLabelText('Endereço')).toHaveValue('Avenida Coronel Adolfo Lustosa 475')
-    expect(screen.getByLabelText('Número')).toHaveValue('784')
-    expect(screen.getByLabelText('Complemento')).toHaveValue('Próximo ao centro')
-    expect(screen.getByLabelText('Bairro')).toHaveValue('Centro')
-    expect(screen.getByLabelText('Taxa de entrega')).toHaveValue(14.6)
-    expect(screen.getByLabelText(/^ID no plugin de carrinho/)).toHaveValue('12356')
+    expect(screen.getByLabelText(/^contacts.nameLabel/)).toHaveValue('Name')
+    expect(screen.getByLabelText('common.email')).toHaveValue('email@gmail.com')
+    expect(screen.getByLabelText(/^contacts.phoneLabel/)).toHaveValue('48999999215')
+    expect(screen.getByLabelText('contacts.chatbotLabel')).toBeChecked()
+    expect(screen.getByLabelText(/^contacts.waIdLabel/)).toHaveValue('waId')
+    expect(screen.getByLabelText(/^contacts.landbotIdLabel/)).toHaveValue('landbotId')
+    expect(screen.getByLabelText('contacts.cepLabel')).toHaveValue('65810970')
+    expect(screen.getByLabelText('contacts.cityLabel')).toHaveValue('Alto Parnaíba')
+    expect(screen.getByLabelText('contacts.ufLabel')).toHaveValue('MA')
+    expect(screen.getByLabelText('contacts.addressLabel')).toHaveValue('Avenida Coronel Adolfo Lustosa 475')
+    expect(screen.getByLabelText('contacts.addressNumberLabel')).toHaveValue('784')
+    expect(screen.getByLabelText('contacts.complementLabel')).toHaveValue('Próximo ao centro')
+    expect(screen.getByLabelText('contacts.neighborhoodLabel')).toHaveValue('Centro')
+    expect(screen.getByLabelText('contacts.deliveryTaxLabel')).toHaveValue(14.6)
+    expect(screen.getByLabelText(/^contacts.pluginCartIdLabel/)).toHaveValue('12356')
   })
 
   describe('submit', () => {
@@ -79,10 +86,10 @@ describe('<ContactForm />', () => {
 
       expect(onSubmit).not.toHaveBeenCalled()
 
-      fireEvent.change(screen.getByLabelText(/^Nome/), { target: { value: 'Test Contact' } })
-      fireEvent.change(screen.getByLabelText(/^Telefone/), { target: { value: '48999999999' } })
+      fireEvent.change(screen.getByLabelText(/^contacts.nameLabel/), { target: { value: 'Test Contact' } })
+      fireEvent.change(screen.getByLabelText(/^contacts.phoneLabel/), { target: { value: '48999999999' } })
 
-      fireEvent.click(screen.getByText('Salvar'))
+      fireEvent.click(screen.getByText('common.save'))
 
       await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 

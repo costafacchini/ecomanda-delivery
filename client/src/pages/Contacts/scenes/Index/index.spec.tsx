@@ -9,6 +9,12 @@ import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/contact')
 vi.mock('../../../../services/licensee')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 describe('<ContactsIndex />', () => {
   const currentUser = { role: 'super' }
@@ -51,7 +57,7 @@ describe('<ContactsIndex />', () => {
 
     getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'Contact from new page' })] })
 
-    fireEvent.click(await screen.findByText('Carregar mais'))
+    fireEvent.click(await screen.findByText('common.loadMore'))
 
     expect(await screen.findByText('Contact from new page')).toBeInTheDocument()
 
@@ -67,9 +73,9 @@ describe('<ContactsIndex />', () => {
 
     getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'A contact filtered by expression' })] })
 
-    fireEvent.change(screen.getByPlaceholderText('Digite a expressão'), { target: { value: 'expression' } })
+    fireEvent.change(screen.getByPlaceholderText('contacts.expressionPlaceholder'), { target: { value: 'expression' } })
 
-    fireEvent.click(screen.getByTitle('Filtre pelo contato'))
+    fireEvent.click(screen.getByTitle('contacts.filterButtonTitle'))
 
     expect(await screen.findByText('A contact filtered by expression')).toBeInTheDocument()
 
@@ -82,7 +88,7 @@ describe('<ContactsIndex />', () => {
 
       mount({ currentUser })
 
-      expect(await screen.findByRole('button', { name: 'Ver Grupos' })).toBeInTheDocument()
+      expect(await screen.findByRole('button', { name: 'contacts.viewGroups' })).toBeInTheDocument()
     })
 
     it('sends isGroup=true filter when toggle is clicked', async () => {
@@ -90,11 +96,11 @@ describe('<ContactsIndex />', () => {
 
       mount({ currentUser })
 
-      await screen.findByRole('button', { name: 'Ver Grupos' })
+      await screen.findByRole('button', { name: 'contacts.viewGroups' })
 
       getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'Group Contact' })] })
 
-      fireEvent.click(screen.getByRole('button', { name: 'Ver Grupos' }))
+      fireEvent.click(screen.getByRole('button', { name: 'contacts.viewGroups' }))
 
       await screen.findByText('Group Contact')
 
@@ -106,13 +112,13 @@ describe('<ContactsIndex />', () => {
 
       mount({ currentUser })
 
-      await screen.findByRole('button', { name: 'Ver Grupos' })
+      await screen.findByRole('button', { name: 'contacts.viewGroups' })
 
       getContacts.mockResolvedValue({ status: 201, data: [] })
 
-      fireEvent.click(screen.getByRole('button', { name: 'Ver Grupos' }))
+      fireEvent.click(screen.getByRole('button', { name: 'contacts.viewGroups' }))
 
-      expect(await screen.findByRole('button', { name: 'Ver Todos' })).toBeInTheDocument()
+      expect(await screen.findByRole('button', { name: 'contacts.viewAll' })).toBeInTheDocument()
     })
 
     it('clears the isGroup filter when toggled again', async () => {
@@ -120,15 +126,15 @@ describe('<ContactsIndex />', () => {
 
       mount({ currentUser })
 
-      await screen.findByRole('button', { name: 'Ver Grupos' })
+      await screen.findByRole('button', { name: 'contacts.viewGroups' })
 
       getContacts.mockResolvedValue({ status: 201, data: [] })
-      fireEvent.click(screen.getByRole('button', { name: 'Ver Grupos' }))
+      fireEvent.click(screen.getByRole('button', { name: 'contacts.viewGroups' }))
 
-      await screen.findByRole('button', { name: 'Ver Todos' })
+      await screen.findByRole('button', { name: 'contacts.viewAll' })
 
       getContacts.mockResolvedValue({ status: 201, data: [contactFactory.build({ name: 'All again' })] })
-      fireEvent.click(screen.getByRole('button', { name: 'Ver Todos' }))
+      fireEvent.click(screen.getByRole('button', { name: 'contacts.viewAll' }))
 
       await screen.findByText('All again')
 
@@ -145,11 +151,11 @@ describe('<ContactsIndex />', () => {
 
       mount({ currentUser })
 
-      await screen.findByText('Contatos')
+      await screen.findByText('contacts.title')
 
       await screen.findByText('Contact')
 
-      expect(screen.queryByLabelText('Licenciado')).not.toBeInTheDocument()
+      expect(screen.queryByLabelText('contacts.licenseeFilter')).not.toBeInTheDocument()
     })
 
     it('includes the user licensee in the initial fetch for non-super users', async () => {
@@ -172,11 +178,11 @@ describe('<ContactsIndex />', () => {
 
       mount({ currentUser })
 
-      await screen.findByText('Contatos')
+      await screen.findByText('contacts.title')
 
-      await screen.findByText('Licenciado')
+      await screen.findByText('contacts.licenseeFilter')
 
-      fireEvent.change(screen.getByLabelText('Licenciado'), { target: { value: 'alca' } })
+      fireEvent.change(screen.getByLabelText('contacts.licenseeFilter'), { target: { value: 'alca' } })
 
       fireEvent.click(await screen.findByText('Alcateia'))
 

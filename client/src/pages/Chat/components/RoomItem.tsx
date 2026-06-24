@@ -1,5 +1,6 @@
 import type { IRoom } from '../../../types'
 import styles from '../styles.module.scss'
+import { useTranslation } from 'react-i18next'
 
 interface RoomItemProps {
   room: IRoom
@@ -7,21 +8,23 @@ interface RoomItemProps {
   onClick: () => void
 }
 
-function formatRoomTime(iso?: string): string | null {
-  if (!iso) return null
-  const d = new Date(iso)
-  const now = new Date()
-  const diffMs = now.getTime() - d.getTime()
-  const diffDays = Math.floor(diffMs / 86400000)
-  if (diffDays === 0) return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-  if (diffDays === 1) return 'ontem'
-  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
-}
-
 export default function RoomItem({ room, isSelected, onClick }: RoomItemProps) {
+  const { t, i18n } = useTranslation()
   const initial = room.contact.name.charAt(0).toUpperCase()
-  const time = formatRoomTime(room.lastMessage?.createdAt)
   const unread = room.unreadCount ?? 0
+
+  function formatRoomTime(iso?: string): string | null {
+    if (!iso) return null
+    const d = new Date(iso)
+    const now = new Date()
+    const diffMs = now.getTime() - d.getTime()
+    const diffDays = Math.floor(diffMs / 86400000)
+    if (diffDays === 0) return d.toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' })
+    if (diffDays === 1) return t('common.yesterday', 'yesterday')
+    return d.toLocaleDateString(i18n.language, { day: '2-digit', month: '2-digit' })
+  }
+
+  const time = formatRoomTime(room.lastMessage?.createdAt)
 
   return (
     <li>
