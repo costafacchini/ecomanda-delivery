@@ -2,6 +2,17 @@ import { render, screen } from '@testing-library/react'
 import { Formik } from 'formik'
 import MainPanel from './MainPanel'
 
+vi.mock('react-i18next', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-i18next')>()
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: (k: string) => k,
+      i18n: { language: 'pt', changeLanguage: vi.fn() },
+    }),
+  }
+})
+
 const noop = () => {}
 
 const defaultValues = {
@@ -38,30 +49,30 @@ describe('<MainPanel />', () => {
   it('renders nome, active checkbox, kind select, document, email, licenseKind select, phone, apiToken (disabled)', () => {
     mount()
 
-    expect(screen.getByLabelText(/^Nome/)).toBeInTheDocument()
-    expect(screen.getByLabelText('Ativo')).toBeInTheDocument()
-    expect(screen.getByLabelText(/^Tipo/)).toBeInTheDocument()
-    expect(screen.getByLabelText(/^Documento/)).toBeInTheDocument()
-    expect(screen.getByLabelText(/^E-mail/)).toBeInTheDocument()
-    expect(screen.getByLabelText(/^Licença/)).toBeInTheDocument()
-    expect(screen.getByLabelText(/^Telefone/)).toBeInTheDocument()
-    expect(screen.getByLabelText('API token')).toBeInTheDocument()
-    expect(screen.getByLabelText('API token')).toHaveAttribute('readonly')
+    expect(screen.getByLabelText(/^licensees\.form\.nameLabel/)).toBeInTheDocument()
+    expect(screen.getByLabelText('licensees.form.activeLabel')).toBeInTheDocument()
+    expect(screen.getByLabelText(/^licensees\.form\.kindLabel/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^licensees\.form\.documentLabel/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^licensees\.form\.emailLabel/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^licensees\.form\.licenseKindLabel/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^licensees\.form\.phoneLabel/)).toBeInTheDocument()
+    expect(screen.getByLabelText('licensees.form.apiTokenLabel')).toBeInTheDocument()
+    expect(screen.getByLabelText('licensees.form.apiTokenLabel')).toHaveAttribute('readonly')
   })
 
   it('renders webhook URL fields: urlChatWebhook, urlChatbotWebhook, urlChatbotTransfer, urlWhatsappWebhook (all disabled)', () => {
     mount()
 
-    expect(screen.getByLabelText('URL para webhook de Chat')).toBeInTheDocument()
-    expect(screen.getByLabelText('URL para webhook de Chat')).toHaveAttribute('readonly')
+    expect(screen.getByLabelText('licensees.form.webhookChatLabel')).toBeInTheDocument()
+    expect(screen.getByLabelText('licensees.form.webhookChatLabel')).toHaveAttribute('readonly')
 
-    expect(screen.getByLabelText('URL para webhook de Chatbot')).toBeInTheDocument()
-    expect(screen.getByLabelText('URL para webhook de Chatbot')).toHaveAttribute('readonly')
+    expect(screen.getByLabelText('licensees.form.webhookChatbotLabel')).toBeInTheDocument()
+    expect(screen.getByLabelText('licensees.form.webhookChatbotLabel')).toHaveAttribute('readonly')
 
-    expect(screen.getByLabelText('URL de webhook para transferir do Chatbot para o Chat')).toBeInTheDocument()
-    expect(screen.getByLabelText('URL de webhook para transferir do Chatbot para o Chat')).toHaveAttribute('readonly')
+    expect(screen.getByLabelText('licensees.form.webhookChatbotTransferLabel')).toBeInTheDocument()
+    expect(screen.getByLabelText('licensees.form.webhookChatbotTransferLabel')).toHaveAttribute('readonly')
 
-    expect(screen.getByLabelText('URL para webhook de WhatsApp')).toBeInTheDocument()
-    expect(screen.getByLabelText('URL para webhook de WhatsApp')).toHaveAttribute('readonly')
+    expect(screen.getByLabelText('licensees.form.webhookWhatsappLabel')).toBeInTheDocument()
+    expect(screen.getByLabelText('licensees.form.webhookWhatsappLabel')).toHaveAttribute('readonly')
   })
 })

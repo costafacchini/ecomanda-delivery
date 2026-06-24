@@ -1,9 +1,9 @@
 # Status: Licensees Pages i18n
 
-**Current Status**: not-started
+**Current Status**: in-progress
 **Last Updated**: 2026-06-24
-**Agent**: —
-**Branch**: —
+**Agent**: agent-abb587e4f81944aac
+**Branch**: plan/app-i18n-phase-3-task-06-licensees
 **PR**: —
 
 ## Status History

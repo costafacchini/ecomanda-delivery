@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { FieldWithError } from '../../../../../components/form'
 import type { ILicenseeFormValues } from '../../../../../types'
 import type { FormikErrors, FormikTouched } from 'formik'
@@ -21,13 +22,14 @@ const PLATFORM_NAMES: Record<string, string> = {
 }
 
 function ChatPanel({ values, errors, touched, handleChange, handleBlur }: ChatPanelProps) {
+  const { t } = useTranslation()
   const platformName = PLATFORM_NAMES[values.chatDefault] ?? ''
 
   return (
     <>
       <div className='row mb-3'>
         <div className='form-group col-5'>
-          <label htmlFor='chatDefault'>Chat padrão<Required /></label>
+          <label htmlFor='chatDefault'>{t('licensees.form.chat.chatDefaultLabel')}<Required /></label>
           <select
             value={values.chatDefault}
             className='form-select'
@@ -35,7 +37,7 @@ function ChatPanel({ values, errors, touched, handleChange, handleBlur }: ChatPa
             onChange={handleChange}
             onBlur={handleBlur}
           >
-            <option value=''>Nenhum</option>
+            <option value=''>{t('licensees.form.chat.noneOption')}</option>
             <option value='rocketchat'>Rocketchat</option>
             <option value='crisp'>Crisp</option>
             <option value='cuboup'>CuboUp</option>
@@ -49,7 +51,7 @@ function ChatPanel({ values, errors, touched, handleChange, handleBlur }: ChatPa
         <>
           <div className='row mb-3'>
             <div className='form-group col-8'>
-              <label htmlFor='chatUrl'>URL do chat<Required /></label>
+              <label htmlFor='chatUrl'>{t('licensees.form.chat.chatUrlLabel')}<Required /></label>
               <FieldWithError
                 id='chatUrl'
                 name='chatUrl'
@@ -73,7 +75,7 @@ function ChatPanel({ values, errors, touched, handleChange, handleBlur }: ChatPa
                   checked={values.useSenderName}
                 />
                 <label className='form-check-label' htmlFor='useSenderName'>
-                  Usa o remetente no nome do chat?
+                  {t('licensees.form.chat.useSenderNameLabel')}
                 </label>
               </div>
             </div>
@@ -86,7 +88,12 @@ function ChatPanel({ values, errors, touched, handleChange, handleBlur }: ChatPa
           <div className='row mb-3'>
             <div className='form-group col-8'>
               <label htmlFor='chatIdentifier'>
-                Identifier{platformName && <span className='text-muted fw-normal ms-1 small'>({platformName} Website ID)</span>}
+                {t('licensees.form.chat.identifierLabel')}
+                {platformName && (
+                  <span className='text-muted fw-normal ms-1 small'>
+                    ({t('licensees.form.chat.identifierPlatformHint', { platform: platformName })})
+                  </span>
+                )}
                 <Required />
               </label>
               <FieldWithError
@@ -103,7 +110,12 @@ function ChatPanel({ values, errors, touched, handleChange, handleBlur }: ChatPa
           <div className='row mb-3'>
             <div className='form-group col-8'>
               <label htmlFor='chatKey'>
-                Key{platformName && <span className='text-muted fw-normal ms-1 small'>({platformName} Token de acesso)</span>}
+                {t('licensees.form.chat.keyLabel')}
+                {platformName && (
+                  <span className='text-muted fw-normal ms-1 small'>
+                    ({t('licensees.form.chat.keyPlatformHint', { platform: platformName })})
+                  </span>
+                )}
                 <Required />
               </label>
               <FieldWithError

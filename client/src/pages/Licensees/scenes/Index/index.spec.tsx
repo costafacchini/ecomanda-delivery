@@ -7,6 +7,17 @@ import { SimpleCrudContextProvider } from '../../../../contexts/SimpleCrud'
 
 vi.mock('../../../../services/licensee')
 
+vi.mock('react-i18next', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-i18next')>()
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: (k: string) => k,
+      i18n: { language: 'pt', changeLanguage: vi.fn() },
+    }),
+  }
+})
+
 describe('<LicenseeIndex />', () => {
   const currentUser = {
     isPedidos10: false
@@ -48,7 +59,7 @@ describe('<LicenseeIndex />', () => {
 
     getLicensees.mockResolvedValue({ status: 201, data: [licenseeFactory.build({ name: 'Licensee from new page' })] })
 
-    fireEvent.click(await screen.findByText('Carregar mais'))
+    fireEvent.click(await screen.findByText('licensees.index.loadMore'))
 
     expect(await screen.findByText('Licensee from new page')).toBeInTheDocument()
 
@@ -67,9 +78,9 @@ describe('<LicenseeIndex />', () => {
 
     getLicensees.mockResolvedValue({ status: 201, data: [licenseeFactory.build({ name: 'A licensee filtered by expression' })] })
 
-    fireEvent.change(screen.getByPlaceholderText('Digite a expressão'), { target: { value: 'expression' } })
+    fireEvent.change(screen.getByPlaceholderText('licensees.index.searchPlaceholder'), { target: { value: 'expression' } })
 
-    fireEvent.click(screen.getByTitle('Filtre pelo licenciado'))
+    fireEvent.click(screen.getByTitle('licensees.index.searchTitle'))
 
     expect(await screen.findByText('A licensee filtered by expression')).toBeInTheDocument()
 
