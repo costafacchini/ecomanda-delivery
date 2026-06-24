@@ -1,3 +1,5 @@
+export type Language = 'pt' | 'en'
+
 export interface WidgetMessage {
   _id: string
   text: string

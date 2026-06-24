@@ -1,9 +1,9 @@
 # Status: Chat Widget i18n
 
-**Current Status**: not-started
+**Current Status**: in-progress
 **Last Updated**: 2026-06-24
-**Agent**: —
-**Branch**: —
+**Agent**: claude-sonnet-4-6
+**Branch**: plan/app-i18n-phase-3-task-09-widget-i18n
 **PR**: —
 
 ## Status History
@@ -11,6 +11,7 @@
 | Timestamp | Status | Agent | Notes |
 |-----------|--------|-------|-------|
 | 2026-06-24 | not-started | — | Task created |
+| 2026-06-24 | in-progress | claude-sonnet-4-6 | Implementation started |
 
 ## Blockers
 
