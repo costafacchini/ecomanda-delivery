@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
 import { importTriggerMultiProduct } from '../../../../services/trigger'
+import { useTranslation } from 'react-i18next'
 
 interface IImportationFormValues {
   text: string
@@ -22,6 +23,7 @@ const triggerInitialValues: IImportationFormValues = {
 }
 
 function TriggerImportation() {
+  const { t } = useTranslation()
   let navigate = useNavigate()
   let { id } = useParams()
   const [errors, setErrors] = useState<IFormError[] | null>(null)
@@ -33,7 +35,7 @@ function TriggerImportation() {
   return (
     <div className='row'>
       <div className='col'>
-        <h3>Gatilho importando catálogo</h3>
+        <h3>{t('triggers.importTitle')}</h3>
         <div>
           <Form
             validationSchema={SignupSchema}
@@ -42,13 +44,13 @@ function TriggerImportation() {
               const response = await importTriggerMultiProduct(triggerId, values)
 
               if (response.status === 201) {
-                toast.success('Catálogo importado com sucesso!');
+                toast.success(t('triggers.toast.importSuccess'));
                 navigate('/triggers')
                 setErrors(null)
               } else {
                 const data = response.data as { errors: IFormError[] }
                 setErrors(data.errors)
-                toast.error('Ops! Não foi possível importar a catálogo.');
+                toast.error(t('triggers.toast.importError'));
               }
             }}
           >
@@ -57,7 +59,7 @@ function TriggerImportation() {
                 <fieldset className='pb-4'>
                   <div className='row'>
                     <div className='form-group'>
-                      <label htmlFor='text'>Catálogo</label>
+                      <label htmlFor='text'>{t('triggers.catalogLabel')}</label>
                       <div className='pb-2'>
                         <textarea
                           id='text'
@@ -84,8 +86,8 @@ function TriggerImportation() {
                 <div className='row'>
                   <div className='col-5'>
                     <div className='mt-4 d-flex justify-content-between'>
-                      <button onClick={() => navigate('/triggers')} className='btn btn-secondary' type='button'>Voltar</button>
-                      <button className='btn btn-success' type='submit'>Importar</button>
+                      <button onClick={() => navigate('/triggers')} className='btn btn-secondary' type='button'>{t('common.back')}</button>
+                      <button className='btn btn-success' type='submit'>{t('triggers.importButton')}</button>
                     </div>
                   </div>
                 </div>

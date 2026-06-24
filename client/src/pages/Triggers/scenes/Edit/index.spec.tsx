@@ -5,6 +5,12 @@ import { createRoutesStub } from 'react-router'
 import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/trigger')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 describe('<TriggerEdit />', () => {
   const appContextValue = { activeLicensee: null, updateActiveLicensee: vi.fn() }
@@ -42,11 +48,11 @@ describe('<TriggerEdit />', () => {
 
     await screen.findByDisplayValue('Gatilho')
 
-    fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'New Name' } })
+    fireEvent.change(screen.getByLabelText('triggers.nameLabel'), { target: { value: 'New Name' } })
 
     updateTrigger.mockResolvedValue({ status: 200, data: { id: '1', name: 'New Name' } })
 
-    fireEvent.click(screen.getByRole('button', { name: "Salvar" }))
+    fireEvent.click(screen.getByRole('button', { name: 'common.save' }))
 
     await waitFor(() => expect(updateTrigger).toHaveBeenCalledWith(expect.objectContaining({ name: 'New Name' })))
   })

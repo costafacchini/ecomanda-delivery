@@ -5,6 +5,12 @@ import { createContact } from '../../../../services/contact'
 import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/contact')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 describe('<ContactNew />', () => {
   let currentUser: any = {
@@ -33,8 +39,8 @@ describe('<ContactNew />', () => {
   }
 
   function fillRequiredFields() {
-    fireEvent.change(screen.getByLabelText(/^Nome/), { target: { value: 'Test Contact' } })
-    fireEvent.change(screen.getByLabelText(/^Telefone/), { target: { value: '48999999999' } })
+    fireEvent.change(screen.getByLabelText(/^contacts.nameLabel/), { target: { value: 'Test Contact' } })
+    fireEvent.change(screen.getByLabelText(/^contacts.phoneLabel/), { target: { value: '48999999999' } })
   }
 
   it('creates a new contact when the backend returns success and user is not super', async () => {
@@ -43,7 +49,7 @@ describe('<ContactNew />', () => {
     fillRequiredFields()
     createContact.mockResolvedValue({ status: 201 })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
+    fireEvent.click(screen.getByRole('button', { name: 'common.save' }))
 
     await waitFor(() => expect(createContact).toHaveBeenCalledWith({
       name: 'Test Contact',
@@ -74,7 +80,7 @@ describe('<ContactNew />', () => {
     fillRequiredFields()
     createContact.mockResolvedValue({ status: 201 })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
+    fireEvent.click(screen.getByRole('button', { name: 'common.save' }))
 
     await waitFor(() => expect(createContact).toHaveBeenCalledWith({
       name: 'Test Contact',
@@ -102,7 +108,7 @@ describe('<ContactNew />', () => {
     fillRequiredFields()
     createContact.mockResolvedValue({ status: 422, data: { errors: [{ message: 'This is an error' }] } })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
+    fireEvent.click(screen.getByRole('button', { name: 'common.save' }))
 
     await waitFor(() => {
       expect(screen.getByText('This is an error')).toBeInTheDocument()

@@ -5,6 +5,12 @@ import { createRoutesStub } from 'react-router';
 import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/contact')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 describe('<ContactEdit />', () => {
   const appContextValue = { activeLicensee: null, updateActiveLicensee: vi.fn() }
@@ -42,11 +48,11 @@ describe('<ContactEdit />', () => {
 
     await screen.findByDisplayValue('Contato')
 
-    fireEvent.change(screen.getByLabelText(/^Nome/), { target: { value: 'New Name' } })
+    fireEvent.change(screen.getByLabelText(/^contacts.nameLabel/), { target: { value: 'New Name' } })
 
     updateContact.mockResolvedValue({ status: 200, data: { id: '1', name: 'New Name' } })
 
-    fireEvent.click(screen.getByRole('button', { name: "Salvar" }))
+    fireEvent.click(screen.getByRole('button', { name: 'common.save' }))
 
     await waitFor(() => expect(updateContact).toHaveBeenCalledWith(expect.objectContaining({ name: 'New Name' })))
   })

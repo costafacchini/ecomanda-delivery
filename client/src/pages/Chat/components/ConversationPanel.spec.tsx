@@ -1,5 +1,12 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import ConversationPanel from './ConversationPanel'
+
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 import type { IRoom } from '../../../types'
 import type { IMessage } from '../../../types'
 
@@ -52,7 +59,7 @@ describe('<ConversationPanel>', () => {
   it('shows "Selecione uma conversa." when room is null', () => {
     render(<ConversationPanel room={null} messages={[]} onSend={vi.fn()} onBack={vi.fn()} onClose={vi.fn()} />)
 
-    expect(screen.getByText('Selecione uma conversa na lista ao lado.')).toBeInTheDocument()
+    expect(screen.getByText('chat.selectConversation')).toBeInTheDocument()
   })
 
   it('renders contact name when room is provided', () => {
@@ -72,8 +79,8 @@ describe('<ConversationPanel>', () => {
     const handleSend = vi.fn()
     render(<ConversationPanel room={room} messages={[]} onSend={handleSend} onBack={vi.fn()} onClose={vi.fn()} />)
 
-    fireEvent.change(screen.getByPlaceholderText(/digite uma mensagem/i), { target: { value: 'Nova mensagem' } })
-    fireEvent.click(screen.getByRole('button', { name: /enviar/i }))
+    fireEvent.change(screen.getByPlaceholderText('chat.messagePlaceholder'), { target: { value: 'Nova mensagem' } })
+    fireEvent.click(screen.getByRole('button', { name: 'chat.sendAriaLabel' }))
 
     expect(handleSend).toHaveBeenCalledWith('Nova mensagem')
   })
@@ -81,14 +88,14 @@ describe('<ConversationPanel>', () => {
   it('shows "Concluir" button when room is open', () => {
     render(<ConversationPanel room={room} messages={[]} onSend={vi.fn()} onBack={vi.fn()} onClose={vi.fn()} />)
 
-    expect(screen.getByRole('button', { name: /concluir conversa/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'chat.concludeAriaLabel' })).toBeInTheDocument()
   })
 
   it('calls onClose when "Concluir" is clicked', () => {
     const handleClose = vi.fn()
     render(<ConversationPanel room={room} messages={[]} onSend={vi.fn()} onBack={vi.fn()} onClose={handleClose} />)
 
-    fireEvent.click(screen.getByRole('button', { name: /concluir conversa/i }))
+    fireEvent.click(screen.getByRole('button', { name: 'chat.concludeAriaLabel' }))
 
     expect(handleClose).toHaveBeenCalledTimes(1)
   })
@@ -97,13 +104,13 @@ describe('<ConversationPanel>', () => {
     const closedRoom = { ...room, status: 'closed' as const, closed: true }
     render(<ConversationPanel room={closedRoom} messages={[]} onSend={vi.fn()} onBack={vi.fn()} onClose={vi.fn()} />)
 
-    expect(screen.queryByRole('button', { name: /concluir conversa/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'chat.concludeAriaLabel' })).not.toBeInTheDocument()
   })
 
   it('disables message input when room is closed', () => {
     const closedRoom = { ...room, status: 'closed' as const, closed: true }
     render(<ConversationPanel room={closedRoom} messages={[]} onSend={vi.fn()} onBack={vi.fn()} onClose={vi.fn()} />)
 
-    expect(screen.getByPlaceholderText(/digite uma mensagem/i)).toBeDisabled()
+    expect(screen.getByPlaceholderText('chat.messagePlaceholder')).toBeDisabled()
   })
 })

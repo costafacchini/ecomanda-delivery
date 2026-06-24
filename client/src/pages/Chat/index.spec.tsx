@@ -4,6 +4,12 @@ import { getRooms, getRoomMessages, sendRoomMessage } from '../../services/rooms
 import { AppContext } from '../../contexts/App'
 
 vi.mock('../../services/rooms')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 vi.mock('./components/NewConversationModal', () => ({
   default: () => null,
 }))
@@ -79,8 +85,8 @@ describe('<ChatPage>', () => {
 
     await waitFor(() => expect(getRoomMessages).toHaveBeenCalled())
 
-    fireEvent.change(screen.getByPlaceholderText(/digite uma mensagem/i), { target: { value: 'Oi!' } })
-    fireEvent.click(screen.getByRole('button', { name: /enviar/i }))
+    fireEvent.change(screen.getByPlaceholderText('chat.messagePlaceholder'), { target: { value: 'Oi!' } })
+    fireEvent.click(screen.getByRole('button', { name: 'chat.sendAriaLabel' }))
 
     await waitFor(() => {
       expect(sendRoomMessage).toHaveBeenCalledWith('r1', 'Oi!')

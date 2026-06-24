@@ -10,6 +10,12 @@ import { AppContext } from '../../../../contexts/App'
 vi.mock('../../../../services/message')
 vi.mock('../../../../services/licensee')
 vi.mock('../../../../services/contact')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 describe('<MessageIndex />', () => {
   const currentUser = { role: 'super' }
@@ -50,13 +56,13 @@ describe('<MessageIndex />', () => {
 
     mount({ currentUser })
 
-    fireEvent.click(screen.getByText('Pesquisar'))
+    fireEvent.click(screen.getByText('messages.searchButton'))
 
     expect(await screen.findByText('Contact')).toBeInTheDocument()
     expect(screen.getByText('First message')).toBeInTheDocument()
-    expect(screen.getAllByText('Texto').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Chat').length).toBeGreaterThan(0)
-    expect(screen.getByText('Sim')).toBeInTheDocument()
+    expect(screen.getAllByText('messages.kindText').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('messages.destinationChat').length).toBeGreaterThan(0)
+    expect(screen.getByText('messages.sentYes')).toBeInTheDocument()
 
     expect(getMessages).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -78,11 +84,11 @@ describe('<MessageIndex />', () => {
 
       mount({ currentUser })
 
-      fireEvent.click(screen.getByText('Pesquisar'))
-      expect(await screen.findByText('Carregar mais')).toBeInTheDocument()
+      fireEvent.click(screen.getByText('messages.searchButton'))
+      expect(await screen.findByText('common.loadMore')).toBeInTheDocument()
 
       getMessages.mockResolvedValue({ status: 201, data: [messageFactory.build({ text: 'Message from new page' })] })
-      fireEvent.click(await screen.findByText('Carregar mais'))
+      fireEvent.click(await screen.findByText('common.loadMore'))
 
       expect(await screen.findByText('Message from new page')).toBeInTheDocument()
 
@@ -104,9 +110,9 @@ describe('<MessageIndex />', () => {
 
       mount({ currentUser })
 
-      fireEvent.change(screen.getByLabelText('Data inicial'), { target: { value: '2012-12-12T10:25:12' } })
+      fireEvent.change(screen.getByLabelText('messages.startDateLabel'), { target: { value: '2012-12-12T10:25:12' } })
 
-      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(screen.getByText('messages.searchButton'))
 
       await screen.findByText('Contact')
 
@@ -128,10 +134,10 @@ describe('<MessageIndex />', () => {
 
       mount({ currentUser })
 
-      fireEvent.change(screen.getByLabelText('Data inicial'), { target: { value: '2012-12-12T10:00:00' } })
-      fireEvent.change(screen.getByLabelText('Data final'), { target: { value: '2012-12-12T18:14:37' } })
+      fireEvent.change(screen.getByLabelText('messages.startDateLabel'), { target: { value: '2012-12-12T10:00:00' } })
+      fireEvent.change(screen.getByLabelText('messages.endDateLabel'), { target: { value: '2012-12-12T18:14:37' } })
 
-      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(screen.getByText('messages.searchButton'))
 
       await screen.findByText('Contact')
 
@@ -145,9 +151,9 @@ describe('<MessageIndex />', () => {
 
       mount({ currentUser })
 
-      fireEvent.change(screen.getByLabelText('Tipo'), { target: { value: 'text' } })
+      fireEvent.change(screen.getByLabelText('messages.kindLabel'), { target: { value: 'text' } })
 
-      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(screen.getByText('messages.searchButton'))
 
       await screen.findByText('Contact')
 
@@ -161,9 +167,9 @@ describe('<MessageIndex />', () => {
 
       mount({ currentUser })
 
-      fireEvent.change(screen.getByLabelText('Destino'), { target: { value: 'to-chat' } })
+      fireEvent.change(screen.getByLabelText('messages.destinationLabel'), { target: { value: 'to-chat' } })
 
-      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(screen.getByText('messages.searchButton'))
 
       await screen.findByText('Contact')
 
@@ -177,9 +183,9 @@ describe('<MessageIndex />', () => {
 
       mount({ currentUser })
 
-      await screen.findByLabelText('Contato')
+      await screen.findByLabelText('messages.contactFilter')
 
-      expect(screen.queryByLabelText('Licenciado')).not.toBeInTheDocument()
+      expect(screen.queryByLabelText('messages.licenseeFilter')).not.toBeInTheDocument()
     })
 
     it('changes the filters to get the messages', async () => {
@@ -189,15 +195,15 @@ describe('<MessageIndex />', () => {
 
       mount({ currentUser })
 
-      await screen.findByLabelText('Contato')
+      await screen.findByLabelText('messages.contactFilter')
 
-      fireEvent.change(screen.getByLabelText('Licenciado'), { target: { value: 'alca' } })
+      fireEvent.change(screen.getByLabelText('messages.licenseeFilter'), { target: { value: 'alca' } })
 
       fireEvent.click(await screen.findByText('Alcateia'))
 
       await screen.findByText('Alcateia')
 
-      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(screen.getByText('messages.searchButton'))
 
       await screen.findByText('Contact')
 
@@ -213,11 +219,11 @@ describe('<MessageIndex />', () => {
 
       mount({ currentUser })
 
-      fireEvent.change(screen.getByLabelText('Contato'), { target: { value: 'john' } })
+      fireEvent.change(screen.getByLabelText('messages.contactFilter'), { target: { value: 'john' } })
 
       fireEvent.click(await screen.findByText('John Doe | 12345'))
 
-      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(screen.getByText('messages.searchButton'))
 
       await screen.findByText('John Doe')
 
@@ -254,9 +260,9 @@ describe('<MessageIndex />', () => {
       })
 
       mount({ currentUser })
-      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(screen.getByText('messages.searchButton'))
 
-      expect(await screen.findByRole('button', { name: 'Reenviar' })).toBeInTheDocument()
+      expect(await screen.findByRole('button', { name: 'messages.resend' })).toBeInTheDocument()
     })
 
     it('does not show the retry button when a message has no error', async () => {
@@ -266,11 +272,11 @@ describe('<MessageIndex />', () => {
       })
 
       mount({ currentUser })
-      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(screen.getByText('messages.searchButton'))
 
       await screen.findByText('Contact')
 
-      expect(screen.queryByRole('button', { name: 'Reenviar' })).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'messages.resend' })).not.toBeInTheDocument()
     })
 
     it('calls resendMessage with the message id on click', async () => {
@@ -281,8 +287,8 @@ describe('<MessageIndex />', () => {
       resendMessage.mockResolvedValue({})
 
       mount({ currentUser })
-      fireEvent.click(screen.getByText('Pesquisar'))
-      fireEvent.click(await screen.findByRole('button', { name: 'Reenviar' }))
+      fireEvent.click(screen.getByText('messages.searchButton'))
+      fireEvent.click(await screen.findByRole('button', { name: 'messages.resend' }))
 
       expect(resendMessage).toHaveBeenCalledWith('msg1')
     })
@@ -295,10 +301,10 @@ describe('<MessageIndex />', () => {
       resendMessage.mockResolvedValue({})
 
       mount({ currentUser })
-      fireEvent.click(screen.getByText('Pesquisar'))
-      fireEvent.click(await screen.findByRole('button', { name: 'Reenviar' }))
+      fireEvent.click(screen.getByText('messages.searchButton'))
+      fireEvent.click(await screen.findByRole('button', { name: 'messages.resend' }))
 
-      expect(await screen.findByText('Reenviado!')).toBeInTheDocument()
+      expect(await screen.findByText('messages.resendSuccess')).toBeInTheDocument()
     })
 
     it('shows error feedback after a failed retry', async () => {
@@ -309,10 +315,10 @@ describe('<MessageIndex />', () => {
       resendMessage.mockRejectedValue(new Error('network error'))
 
       mount({ currentUser })
-      fireEvent.click(screen.getByText('Pesquisar'))
-      fireEvent.click(await screen.findByRole('button', { name: 'Reenviar' }))
+      fireEvent.click(screen.getByText('messages.searchButton'))
+      fireEvent.click(await screen.findByRole('button', { name: 'messages.resend' }))
 
-      expect(await screen.findByText('Erro ao reenviar.')).toBeInTheDocument()
+      expect(await screen.findByText('messages.resendError')).toBeInTheDocument()
     })
   })
 
@@ -335,7 +341,7 @@ describe('<MessageIndex />', () => {
 
       mount({ currentUser })
 
-      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(screen.getByText('messages.searchButton'))
 
       const error = await screen.findByText('This is an error')
 
@@ -359,7 +365,7 @@ describe('<MessageIndex />', () => {
 
       mount({ currentUser })
 
-      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(screen.getByText('messages.searchButton'))
 
       await screen.findByText('Contact')
 
@@ -388,7 +394,7 @@ describe('<MessageIndex />', () => {
 
       mount({ currentUser })
 
-      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(screen.getByText('messages.searchButton'))
 
       const link = await screen.findByText('File name')
 
@@ -412,7 +418,7 @@ describe('<MessageIndex />', () => {
 
       mount({ currentUser })
 
-      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(screen.getByText('messages.searchButton'))
 
       await screen.findByText('Contact')
 
@@ -439,7 +445,7 @@ describe('<MessageIndex />', () => {
 
       mount({ currentUser })
 
-      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(screen.getByText('messages.searchButton'))
 
       expect(await screen.findByText('(-25.5617048, -49.3086837)')).toBeInTheDocument()
 
@@ -472,9 +478,9 @@ describe('<MessageIndex />', () => {
 
       mount({ currentUser })
 
-      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(screen.getByText('messages.searchButton'))
 
-      expect(await screen.findByText('Interativa')).toBeInTheDocument()
+      expect(await screen.findByText('messages.kindInteractive')).toBeInTheDocument()
 
       const link = screen.getByText('Trigger')
 
@@ -505,9 +511,9 @@ describe('<MessageIndex />', () => {
 
       mount({ currentUser })
 
-      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(screen.getByText('messages.searchButton'))
 
-      expect(await screen.findByText('Interativa')).toBeInTheDocument()
+      expect(await screen.findByText('messages.kindInteractive')).toBeInTheDocument()
 
       const link = screen.getByText('Trigger')
 
@@ -529,7 +535,7 @@ describe('<MessageIndex />', () => {
       })
 
       mount({ currentUser })
-      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(screen.getByText('messages.searchButton'))
 
       expect(await screen.findByText('Vendas')).toBeInTheDocument()
     })
@@ -547,7 +553,7 @@ describe('<MessageIndex />', () => {
       })
 
       mount({ currentUser })
-      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(screen.getByText('messages.searchButton'))
 
       await screen.findByText('Contact')
 
@@ -566,7 +572,7 @@ describe('<MessageIndex />', () => {
       })
 
       mount({ currentUser })
-      fireEvent.click(screen.getByText('Pesquisar'))
+      fireEvent.click(screen.getByText('messages.searchButton'))
 
       await screen.findByText('Contact')
 

@@ -6,12 +6,14 @@ import { useSimpleCrud } from '../../../../contexts/SimpleCrud'
 import { useApp } from '../../../../contexts/App'
 import isEmpty from 'lodash/isEmpty'
 import type { IUser, ITriggerFilters } from '../../../../types'
+import { useTranslation } from 'react-i18next'
 
 interface TriggersIndexProps {
   currentUser?: IUser | null
 }
 
 function TriggersIndex({ currentUser }: TriggersIndexProps) {
+  const { t } = useTranslation()
   const { activeLicensee } = useApp()
   const { filters, setFilters, cache } = useSimpleCrud()
   const { addPage } = cache
@@ -72,10 +74,10 @@ function TriggersIndex({ currentUser }: TriggersIndexProps) {
       <div className='row'>
         <div className='d-flex justify-content-between pb-2'>
           <div className=''>
-            <h3 className='pr-3'>Gatilhos</h3>
+            <h3 className='pr-3'>{t('triggers.title')}</h3>
           </div>
           <div className=''>
-            <Link to='/triggers/new' className='btn btn-primary'>Criar +</Link>
+            <Link to='/triggers/new' className='btn btn-primary'>{t('triggers.createButton')}</Link>
           </div>
         </div>
       </div>
@@ -84,7 +86,7 @@ function TriggersIndex({ currentUser }: TriggersIndexProps) {
           <div className='flex-column w-50'>
             {currentUser && currentUser.role === 'super' && !activeLicensee && (
               <div className='form-group'>
-                <label htmlFor='licensee' id='licensee'>Licenciado</label>
+                <label htmlFor='licensee' id='licensee'>{t('triggers.licenseeFilter')}</label>
                 <SelectLicenseesWithFilter
                   name='licensee'
                   aria-labelledby='licensee'
@@ -111,11 +113,11 @@ function TriggersIndex({ currentUser }: TriggersIndexProps) {
                 name='expression'
                 type='text'
                 value={expression}
-                placeholder='Digite a expressão'
+                placeholder={t('triggers.expressionPlaceholder')}
                 onChange={changeExpression}
               />
               <div className='input-group-append'>
-                <button className='btn btn-primary' title='Filtre pelo gatilho' onClick={() => {
+                <button className='btn btn-primary' title={t('triggers.filterButtonTitle')} onClick={() => {
                   const newFilters = { ...triggerFilters, expression: expression, page: 1 }
                   onFilter(newFilters)
                 }}>
@@ -130,11 +132,11 @@ function TriggersIndex({ currentUser }: TriggersIndexProps) {
         <table className='table'>
           <thead>
             <tr>
-              <th scope='col'>Nome</th>
-              <th scope='col'>Expressão</th>
-              <th scope='col'>Ordem</th>
-              <th scope='col'>Tipo</th>
-              <th scope='col'>Conteúdo</th>
+              <th scope='col'>{t('triggers.columnName')}</th>
+              <th scope='col'>{t('triggers.columnExpression')}</th>
+              <th scope='col'>{t('triggers.columnOrder')}</th>
+              <th scope='col'>{t('triggers.columnType')}</th>
+              <th scope='col'>{t('triggers.columnContent')}</th>
               <th scope='col'></th>
             </tr>
           </thead>
@@ -170,7 +172,7 @@ function TriggersIndex({ currentUser }: TriggersIndexProps) {
                   className='btn btn-outline-primary d-print-none'
                   onClick={nextPage}
                 >
-                  Carregar mais
+                  {t('common.loadMore')}
                 </button>
               </div>
             </div>

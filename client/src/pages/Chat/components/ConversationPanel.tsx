@@ -2,6 +2,7 @@ import { useRef, useEffect } from 'react'
 import type { IRoom, IMessage } from '../../../types'
 import styles from '../styles.module.scss'
 import MessageInput from './MessageInput'
+import { useTranslation } from 'react-i18next'
 
 interface ConversationPanelProps {
   room: IRoom | null
@@ -12,24 +13,25 @@ interface ConversationPanelProps {
   onClose: () => void
 }
 
-const STATUS_LABEL: Record<string, string> = {
-  pending: 'Pendente',
-  open: 'Aberta',
-  closed: 'Encerrada',
-}
-
-const STATUS_CLASS: Record<string, string> = {
-  pending: styles.statusPending,
-  open: styles.statusOpen,
-  closed: styles.statusClosed,
-}
-
 function formatMsgTime(iso: string): string {
   return new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
 }
 
 export default function ConversationPanel({ room, messages, onSend, loading, onBack, onClose }: ConversationPanelProps) {
+  const { t } = useTranslation()
   const bottomRef = useRef<HTMLDivElement>(null)
+
+  const STATUS_LABEL: Record<string, string> = {
+    pending: t('chat.statusPending'),
+    open: t('chat.statusOpen'),
+    closed: t('chat.statusClosed'),
+  }
+
+  const STATUS_CLASS: Record<string, string> = {
+    pending: styles.statusPending,
+    open: styles.statusOpen,
+    closed: styles.statusClosed,
+  }
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -37,9 +39,9 @@ export default function ConversationPanel({ room, messages, onSend, loading, onB
 
   if (!room) {
     return (
-      <div className={styles.conversationEmpty} role='status' aria-label='Nenhuma conversa selecionada'>
+      <div className={styles.conversationEmpty} role='status' aria-label={t('chat.noRoomAriaLabel')}>
         <i className='bi bi-chat-left-text' aria-hidden='true' />
-        <p>Selecione uma conversa na lista ao lado.</p>
+        <p>{t('chat.selectConversation')}</p>
       </div>
     )
   }
@@ -54,14 +56,14 @@ export default function ConversationPanel({ room, messages, onSend, loading, onB
           type='button'
           className={styles.backBtn}
           onClick={onBack}
-          aria-label='Voltar para lista de conversas'
+          aria-label={t('chat.backAriaLabel')}
         >
           <i className='bi bi-chevron-left' aria-hidden='true' />
         </button>
 
         <div className={styles.convHeaderInfo}>
           <span className={styles.convContactName}>{room.contact.name}</span>
-          <span className={`${styles.convStatusBadge} ${statusClass}`} aria-label={`Status: ${statusLabel}`}>
+          <span className={`${styles.convStatusBadge} ${statusClass}`} aria-label={`${t('common.status')}: ${statusLabel}`}>
             {statusLabel}
           </span>
         </div>
@@ -71,21 +73,21 @@ export default function ConversationPanel({ room, messages, onSend, loading, onB
             type='button'
             className={styles.closeRoomBtn}
             onClick={onClose}
-            aria-label='Concluir conversa'
+            aria-label={t('chat.concludeAriaLabel')}
           >
-            Concluir
+            {t('chat.concludeButton')}
           </button>
         )}
       </div>
 
       {loading ? (
-        <div className={styles.skeletonList} role='status' aria-label='Carregando mensagens'>
+        <div className={styles.skeletonList} role='status' aria-label={t('chat.loadingMessagesAriaLabel')}>
           <div className={`${styles.skeletonBubble} ${styles.in}`} />
           <div className={`${styles.skeletonBubble} ${styles.out}`} />
           <div className={`${styles.skeletonBubble} ${styles.in}`} />
         </div>
       ) : (
-        <div className={styles.messageList} role='log' aria-label='Mensagens' aria-live='polite'>
+        <div className={styles.messageList} role='log' aria-label={t('chat.messagesAriaLabel')} aria-live='polite'>
           {messages.map((message) => {
             const fromMe = message.destination === 'to-messenger'
             return (

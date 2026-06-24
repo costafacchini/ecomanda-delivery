@@ -5,6 +5,12 @@ import { createTrigger } from '../../../../services/trigger'
 import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/trigger')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 describe('<TriggerNew />', () => {
   let currentUser: any = {
@@ -37,7 +43,7 @@ describe('<TriggerNew />', () => {
 
     createTrigger.mockResolvedValue({ status: 201 })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
+    fireEvent.click(screen.getByRole('button', { name: 'common.save' }))
 
     await waitFor(() => expect(createTrigger).toHaveBeenCalledWith({
       name: '',
@@ -62,7 +68,7 @@ describe('<TriggerNew />', () => {
 
     createTrigger.mockResolvedValue({ status: 201 })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
+    fireEvent.click(screen.getByRole('button', { name: 'common.save' }))
 
     await waitFor(() => expect(createTrigger).toHaveBeenCalledWith({
       name: '',
@@ -84,7 +90,7 @@ describe('<TriggerNew />', () => {
 
     createTrigger.mockResolvedValue({ status: 422, data: { errors: [{ message: 'This is an error' }] } })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
+    fireEvent.click(screen.getByRole('button', { name: 'common.save' }))
 
     await waitFor(() => {
       expect(screen.getByText('This is an error')).toBeInTheDocument()

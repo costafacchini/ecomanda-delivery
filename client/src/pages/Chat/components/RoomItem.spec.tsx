@@ -1,5 +1,12 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import RoomItem from './RoomItem'
+
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 import type { IRoom } from '../../../types'
 
 function makeRoom(overrides: Partial<IRoom> = {}): IRoom {

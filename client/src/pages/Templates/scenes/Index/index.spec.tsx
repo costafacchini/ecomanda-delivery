@@ -9,6 +9,12 @@ import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/template')
 vi.mock('../../../../services/licensee')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 describe('<TemplatesIndex />', () => {
   const currentUser = { role: 'super' }
@@ -39,7 +45,7 @@ describe('<TemplatesIndex />', () => {
 
     await waitFor(() => expect(getTemplates).toHaveBeenCalled())
 
-    await screen.findByText('Templates')
+    await screen.findByText('templates.title')
 
     expect(getTemplates).toHaveBeenCalledWith({ page: 1 })
 
@@ -51,11 +57,11 @@ describe('<TemplatesIndex />', () => {
 
     mount({ currentUser })
 
-    await screen.findByText('Templates')
+    await screen.findByText('templates.title')
 
     getTemplates.mockResolvedValue({ status: 201, data: [templateFactory.build({ name: 'Template from new page' })] })
 
-    fireEvent.click(await screen.findByText('Carregar mais'))
+    fireEvent.click(await screen.findByText('common.loadMore'))
 
     expect(await screen.findByText('Template from new page')).toBeInTheDocument()
 
@@ -71,9 +77,9 @@ describe('<TemplatesIndex />', () => {
 
     getTemplates.mockResolvedValue({ status: 201, data: [templateFactory.build({ name: 'A template filtered by expression' })] })
 
-    fireEvent.change(screen.getByPlaceholderText('Digite a expressão'), { target: { value: 'expression' } })
+    fireEvent.change(screen.getByPlaceholderText('templates.expressionPlaceholder'), { target: { value: 'expression' } })
 
-    fireEvent.click(screen.getByTitle('Filtre pelo template'))
+    fireEvent.click(screen.getByTitle('templates.filterButtonTitle'))
 
     expect(await screen.findByText('A template filtered by expression')).toBeInTheDocument()
 
@@ -88,11 +94,11 @@ describe('<TemplatesIndex />', () => {
 
       mount({ currentUser })
 
-      await screen.findByText('Templates')
+      await screen.findByText('templates.title')
 
       await screen.findByText('Template')
 
-      expect(screen.queryByLabelText('Licenciado')).not.toBeInTheDocument()
+      expect(screen.queryByLabelText('templates.licenseeFilter')).not.toBeInTheDocument()
     })
 
     it('changes the filters to get the templates', async () => {
@@ -103,11 +109,11 @@ describe('<TemplatesIndex />', () => {
 
       mount({ currentUser })
 
-      await screen.findByText('Templates')
+      await screen.findByText('templates.title')
 
-      await screen.findByText('Licenciado')
+      await screen.findByText('templates.licenseeFilter')
 
-      fireEvent.change(screen.getByLabelText('Licenciado'), { target: { value: 'alca' } })
+      fireEvent.change(screen.getByLabelText('templates.licenseeFilter'), { target: { value: 'alca' } })
 
       fireEvent.click(await screen.findByText('Alcateia'))
 

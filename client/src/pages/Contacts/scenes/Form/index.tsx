@@ -1,16 +1,12 @@
 import { FieldWithError, Form } from '../../../../components/form'
 import * as Yup from 'yup'
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 import type { IContact } from '../../../../types'
 import type { IUser } from '../../../../types'
 import type { ILicensee } from '../../../../types'
-
-const SignupSchema = Yup.object().shape({
-  name: Yup.string().required('Nome é obrigatório'),
-  number: Yup.string().required('Telefone é obrigatório'),
-  email: Yup.string().email('E-mail inválido')
-});
+import { useTranslation } from 'react-i18next'
 
 const contactInitialValues: Partial<IContact> & {
   talkingWithChatBot: boolean
@@ -69,12 +65,23 @@ interface IContactFormValues {
 
 function ContactForm(props: ContactFormProps) {
   const { onSubmit, errors, initialValues, currentUser, activeLicensee } = props
+  const { t } = useTranslation()
   const navigate = useNavigate()
+
+  const validationSchema = useMemo(
+    () =>
+      Yup.object().shape({
+        name: Yup.string().required(t('contacts.validation.nameRequired')),
+        number: Yup.string().required(t('contacts.validation.phoneRequired')),
+        email: Yup.string().email(t('contacts.validation.emailInvalid')),
+      }),
+    [t]
+  )
 
   return (
     <div>
       <Form
-        validationSchema={SignupSchema}
+        validationSchema={validationSchema}
         initialValues={{...contactInitialValues, ...initialValues} as IContactFormValues}
         onSubmit={(values: IContactFormValues) => {
           onSubmit(values)
@@ -85,7 +92,7 @@ function ContactForm(props: ContactFormProps) {
             <fieldset className='mb-4'>
               <div className='row mb-3'>
                 <div className='form-group col-8'>
-                  <label htmlFor='name'>Nome <span className='text-danger'>*</span></label>
+                  <label htmlFor='name'>{t('contacts.nameLabel')} <span className='text-danger'>*</span></label>
                   <FieldWithError
                     id='name'
                     type='text'
@@ -93,14 +100,14 @@ function ContactForm(props: ContactFormProps) {
                     onBlur={formProps.handleBlur}
                     value={formProps.values.name}
                     name='name'
-                    placeholder='Nome do contato'
+                    placeholder={t('contacts.namePlaceholder')}
                   />
                 </div>
               </div>
 
               <div className='row mb-3'>
                 <div className='form-group col-8'>
-                  <label htmlFor='email'>E-mail</label>
+                  <label htmlFor='email'>{t('common.email')}</label>
                   <FieldWithError
                     id='email'
                     name='email'
@@ -108,14 +115,14 @@ function ContactForm(props: ContactFormProps) {
                     onChange={formProps.handleChange}
                     onBlur={formProps.handleBlur}
                     value={formProps.values.email}
-                    placeholder='contato@email.com'
+                    placeholder={t('contacts.emailPlaceholder')}
                   />
                 </div>
               </div>
 
               <div className='row mb-3'>
                 <div className='form-group col-8'>
-                  <label htmlFor='number'>Telefone <span className='text-danger'>*</span></label>
+                  <label htmlFor='number'>{t('contacts.phoneLabel')} <span className='text-danger'>*</span></label>
                   <FieldWithError
                     id='number'
                     type='text'
@@ -123,7 +130,7 @@ function ContactForm(props: ContactFormProps) {
                     onBlur={formProps.handleBlur}
                     value={formProps.values.number}
                     name='number'
-                    placeholder='Ex: 5511999999999'
+                    placeholder={t('contacts.phonePlaceholder')}
                   />
                 </div>
               </div>
@@ -139,7 +146,7 @@ function ContactForm(props: ContactFormProps) {
                       onBlur={formProps.handleBlur}
                       checked={formProps.values.talkingWithChatBot}
                     />
-                    <label className='form-check-label' htmlFor='talkingWithChatBot'>Conversando com chatbot?</label>
+                    <label className='form-check-label' htmlFor='talkingWithChatBot'>{t('contacts.chatbotLabel')}</label>
                   </div>
                 </div>
               </div>
@@ -147,7 +154,7 @@ function ContactForm(props: ContactFormProps) {
               {currentUser && currentUser.role === 'super' && !activeLicensee && (
                 <div className='row mb-3'>
                   <div className='form-group col-8'>
-                    <label htmlFor='licensee'>Licenciado</label>
+                    <label htmlFor='licensee'>{t('contacts.licenseeFilter')}</label>
                     <SelectLicenseesWithFilter selectedItem={typeof formProps.values.licensee === 'string' ? null : formProps.values.licensee} onChange={(e: { value?: string } | null) => {
                       const inputValue = e && e.value ? e.value : null
                       formProps.setFieldValue('licensee', inputValue, false)
@@ -158,7 +165,7 @@ function ContactForm(props: ContactFormProps) {
 
               <div className='row mb-3'>
                 <div className='form-group col-8'>
-                  <label htmlFor='waId'>ID da API oficial do WhatsApp</label>
+                  <label htmlFor='waId'>{t('contacts.waIdLabel')}</label>
                   <FieldWithError
                     id='waId'
                     name='waId'
@@ -166,14 +173,14 @@ function ContactForm(props: ContactFormProps) {
                     onChange={formProps.handleChange}
                     onBlur={formProps.handleBlur}
                     value={formProps.values.waId}
-                    placeholder='ID fornecido pela API'
+                    placeholder={t('contacts.waIdPlaceholder')}
                   />
                 </div>
               </div>
 
               <div className='row mb-3'>
                 <div className='form-group col-8'>
-                  <label htmlFor='landbotId'>ID do contato na Landbot</label>
+                  <label htmlFor='landbotId'>{t('contacts.landbotIdLabel')}</label>
                   <FieldWithError
                     id='landbotId'
                     name='landbotId'
@@ -181,14 +188,14 @@ function ContactForm(props: ContactFormProps) {
                     onChange={formProps.handleChange}
                     onBlur={formProps.handleBlur}
                     value={formProps.values.landbotId}
-                    placeholder='ID do contato na Landbot'
+                    placeholder={t('contacts.landbotIdPlaceholder')}
                   />
                 </div>
               </div>
 
               <div className='row mb-3'>
                 <div className='form-group col-8'>
-                  <label htmlFor='ud'>UD</label>
+                  <label htmlFor='ud'>{t('contacts.udLabel')}</label>
                   <FieldWithError
                     id='ud'
                     name='ud'
@@ -202,11 +209,11 @@ function ContactForm(props: ContactFormProps) {
             </fieldset>
 
             <fieldset className='mb-4'>
-              <legend className='fs-6 fw-semibold text-muted mb-3'>Endereço</legend>
+              <legend className='fs-6 fw-semibold text-muted mb-3'>{t('contacts.addressSection')}</legend>
 
               <div className='row mb-3'>
                 <div className='form-group col-3'>
-                  <label htmlFor='cep'>CEP</label>
+                  <label htmlFor='cep'>{t('contacts.cepLabel')}</label>
                   <FieldWithError
                     id='cep'
                     name='cep'
@@ -214,14 +221,14 @@ function ContactForm(props: ContactFormProps) {
                     onChange={formProps.handleChange}
                     onBlur={formProps.handleBlur}
                     value={formProps.values.cep}
-                    placeholder='Ex: 01310-100'
+                    placeholder={t('contacts.cepPlaceholder')}
                   />
                 </div>
               </div>
 
               <div className='row mb-3'>
                 <div className='form-group col-5'>
-                  <label htmlFor='city'>Cidade</label>
+                  <label htmlFor='city'>{t('contacts.cityLabel')}</label>
                   <FieldWithError
                     id='city'
                     name='city'
@@ -233,7 +240,7 @@ function ContactForm(props: ContactFormProps) {
                 </div>
 
                 <div className='form-group col-2'>
-                  <label htmlFor='uf'>UF</label>
+                  <label htmlFor='uf'>{t('contacts.ufLabel')}</label>
                   <FieldWithError
                     id='uf'
                     name='uf'
@@ -248,7 +255,7 @@ function ContactForm(props: ContactFormProps) {
 
               <div className='row mb-3'>
                 <div className='form-group col-6'>
-                  <label htmlFor='address'>Endereço</label>
+                  <label htmlFor='address'>{t('contacts.addressLabel')}</label>
                   <FieldWithError
                     id='address'
                     name='address'
@@ -260,7 +267,7 @@ function ContactForm(props: ContactFormProps) {
                 </div>
 
                 <div className='form-group col-2'>
-                  <label htmlFor='address_number'>Número</label>
+                  <label htmlFor='address_number'>{t('contacts.addressNumberLabel')}</label>
                   <FieldWithError
                     id='address_number'
                     name='address_number'
@@ -274,7 +281,7 @@ function ContactForm(props: ContactFormProps) {
 
               <div className='row mb-3'>
                 <div className='form-group col-8'>
-                  <label htmlFor='address_complement'>Complemento</label>
+                  <label htmlFor='address_complement'>{t('contacts.complementLabel')}</label>
                   <FieldWithError
                     id='address_complement'
                     name='address_complement'
@@ -288,7 +295,7 @@ function ContactForm(props: ContactFormProps) {
 
               <div className='row mb-3'>
                 <div className='form-group col-8'>
-                  <label htmlFor='neighborhood'>Bairro</label>
+                  <label htmlFor='neighborhood'>{t('contacts.neighborhoodLabel')}</label>
                   <FieldWithError
                     id='neighborhood'
                     name='neighborhood'
@@ -302,11 +309,11 @@ function ContactForm(props: ContactFormProps) {
             </fieldset>
 
             <fieldset className='mb-4'>
-              <legend className='fs-6 fw-semibold text-muted mb-3'>Entrega</legend>
+              <legend className='fs-6 fw-semibold text-muted mb-3'>{t('contacts.deliverySection')}</legend>
 
               <div className='row mb-3'>
                 <div className='form-group col-4'>
-                  <label htmlFor='delivery_tax'>Taxa de entrega</label>
+                  <label htmlFor='delivery_tax'>{t('contacts.deliveryTaxLabel')}</label>
                   <FieldWithError
                     id='delivery_tax'
                     name='delivery_tax'
@@ -320,7 +327,7 @@ function ContactForm(props: ContactFormProps) {
 
               <div className='row mb-3'>
                 <div className='form-group col-8'>
-                  <label htmlFor='plugin_cart_id'>ID no plugin de carrinho</label>
+                  <label htmlFor='plugin_cart_id'>{t('contacts.pluginCartIdLabel')}</label>
                   <FieldWithError
                     id='plugin_cart_id'
                     name='plugin_cart_id'
@@ -344,8 +351,8 @@ function ContactForm(props: ContactFormProps) {
             <div className='row'>
               <div className='col-8'>
                 <div className='mt-4 d-flex justify-content-between'>
-                  <button onClick={() => navigate('/contacts')} className='btn btn-secondary' type='button'>Voltar</button>
-                  <button className='btn btn-success' type='submit'>Salvar</button>
+                  <button onClick={() => navigate('/contacts')} className='btn btn-secondary' type='button'>{t('common.back')}</button>
+                  <button className='btn btn-success' type='submit'>{t('common.save')}</button>
                 </div>
               </div>
             </div>

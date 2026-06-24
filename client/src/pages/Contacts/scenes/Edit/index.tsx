@@ -6,12 +6,14 @@ import { useNavigate, useParams } from 'react-router'
 import { useEffect } from 'react'
 import { useApp } from '../../../../contexts/App'
 import type { IContact, IUser } from '../../../../types'
+import { useTranslation } from 'react-i18next'
 
 interface ContactEditProps {
   currentUser?: IUser | null
 }
 
 function ContactEdit({ currentUser }: ContactEditProps) {
+  const { t } = useTranslation()
   const { activeLicensee } = useApp()
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
@@ -44,7 +46,7 @@ function ContactEdit({ currentUser }: ContactEditProps) {
     return (
       <div className='d-flex justify-content-center mt-5'>
         <div className='spinner-border text-primary' role='status'>
-          <span className='visually-hidden'>Carregando...</span>
+          <span className='visually-hidden'>{t('common.loading')}</span>
         </div>
       </div>
     )
@@ -53,7 +55,7 @@ function ContactEdit({ currentUser }: ContactEditProps) {
   return (
     <div className='row'>
       <div className='col'>
-        <h3>Editando: {contact.name}</h3>
+        <h3>{t('contacts.editingTitle', { name: contact.name })}</h3>
         <Form
           initialValues={contact}
           currentUser={currentUser}
@@ -63,13 +65,13 @@ function ContactEdit({ currentUser }: ContactEditProps) {
             const response = await updateContact({ ...values, id: contact.id } as IContact)
 
             if (response.status === 200) {
-              toast.success('Contato atualizado com sucesso!');
+              toast.success(t('contacts.toast.updateSuccess'));
               navigate('/contacts')
               setErrors(null)
             } else {
               const data = response.data as unknown as { errors: Array<{ message: string }> }
               setErrors(data.errors)
-              toast.error('Ops! Não foi possível atualizar o contato.');
+              toast.error(t('contacts.toast.updateError'));
             }
           }}
         />
