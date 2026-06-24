@@ -103,7 +103,27 @@
       "createAccountFailed": "Erro ao criar conta (status {{status}})"
     }
   },
-  "navbar": {},
+  "navbar": {
+    "dashboard": "Dashboard",
+    "admin": "Admin",
+    "licensees": "Licenciados",
+    "users": "Usuários",
+    "registrations": "Cadastros",
+    "contacts": "Contatos",
+    "sectors": "Setores",
+    "triggers": "Gatilhos",
+    "templates": "Templates",
+    "messages": "Mensagens",
+    "chat": "Chat",
+    "reports": "Relatórios",
+    "switchLicensee": "Trocar de licenciado",
+    "logout": "Sair",
+    "selectLicensee": "Selecione o licenciado",
+    "selectLicenseeRequired": "Selecione um licenciado para continuar.",
+    "selectLicenseeOptional": "Selecione um licenciado ou confirme para ver todos.",
+    "confirm": "Confirmar",
+    "notFound": "Essa página não existe."
+  },
   "licensees": {},
   "users": {},
   "sectors": {},
@@ -114,5 +134,24 @@
   "messages": {},
   "chat": {},
   "reports": {},
-  "common": {}
+  "common": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "edit": "Editar",
+    "delete": "Excluir",
+    "new": "Novo",
+    "search": "Buscar",
+    "active": "Ativo",
+    "name": "Nome",
+    "email": "E-mail",
+    "loading": "Carregando...",
+    "error": "Erro",
+    "success": "Sucesso",
+    "yes": "Sim",
+    "no": "Não",
+    "actions": "Ações",
+    "status": "Status",
+    "required": "obrigatório"
+  }
 }

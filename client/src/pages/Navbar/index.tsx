@@ -1,9 +1,11 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { logout } from '../../services/auth'
 import { useApp } from '../../contexts/App'
 import type { IUser } from '../../types'
 
 export default function Navbar({ currentUser }: { currentUser?: IUser | null }) {
+  const { t } = useTranslation()
   const { resetLicenseeModal, activeLicensee } = useApp()
 
   const effectiveLicensee = activeLicensee ?? (typeof currentUser?.licensee === 'object' ? currentUser.licensee : null)
@@ -21,65 +23,65 @@ export default function Navbar({ currentUser }: { currentUser?: IUser | null }) 
           <div className='collapse navbar-collapse' id='navbarSupportedContent'>
             <ul className='navbar-nav me-auto mb-2 mb-lg-0'>
               <li className='nav-item'>
-                <a className='nav-link active' aria-current='page' href='/#/'>Dashboard</a>
+                <a className='nav-link active' aria-current='page' href='/#/'>{t('navbar.dashboard')}</a>
               </li>
               {currentUser && ['admin', 'super'].includes(currentUser.role) && (
                 <li className='nav-item dropdown'>
                   <button className='nav-link dropdown-toggle' type='button' data-bs-toggle='dropdown' id='admin-dropdown' aria-expanded='false'>
-                    Admin
+                    {t('navbar.admin')}
                   </button>
 
                   <div className='dropdown-menu' aria-labelledby='admin-dropdown'>
                     <a href='/#/licensees' className='dropdown-item'>
-                      Licenciados
+                      {t('navbar.licensees')}
                     </a>
 
                     <a href='/#/users' className='dropdown-item'>
-                      Usuários
+                      {t('navbar.users')}
                     </a>
                   </div>
                 </li>
               )}
               <li className='nav-item dropdown'>
                 <button className='nav-link dropdown-toggle' type='button' data-bs-toggle='dropdown' id='cadastros-dropdown' aria-expanded='false'>
-                  Cadastros
+                  {t('navbar.registrations')}
                 </button>
 
                 <div className='dropdown-menu' aria-labelledby='cadastros-dropdown'>
                   <a className='dropdown-item' href='/#/contacts'>
-                    Contatos
+                    {t('navbar.contacts')}
                   </a>
 
                   {currentUser && ['super', 'admin', 'supervisor'].includes(currentUser.role) && effectiveLicensee?.useSectors && (
                     <a className='dropdown-item' href='/#/sectors'>
-                      Setores
+                      {t('navbar.sectors')}
                     </a>
                   )}
 
                   <a className='dropdown-item' href='/#/triggers'>
-                    Gatilhos
+                    {t('navbar.triggers')}
                   </a>
 
                   <a className='dropdown-item' href='/#/templates'>
-                    Templates
+                    {t('navbar.templates')}
                   </a>
                 </div>
               </li>
               <li className='nav-item'>
-                <a className='nav-link' href='/#/messages'>Mensagens</a>
+                <a className='nav-link' href='/#/messages'>{t('navbar.messages')}</a>
               </li>
               {effectiveLicensee?.chatDefault === 'local' && (
                 <li className='nav-item'>
-                  <a className='nav-link' href='/#/chat'>Chat</a>
+                  <a className='nav-link' href='/#/chat'>{t('navbar.chat')}</a>
                 </li>
               )}
               {currentUser && currentUser.role === 'super' && (
                 <li className='nav-item dropdown'>
                   <button className='nav-link dropdown-toggle' type='button' id='reports-menu' data-bs-toggle='dropdown' aria-expanded='false'>
-                    Relatórios
+                    {t('navbar.reports')}
                   </button>
                   <div className='dropdown-menu' aria-labelledby='reports-menu'>
-                    <a className='dropdown-item' href='/#/reports/message'>Mensagens</a>
+                    <a className='dropdown-item' href='/#/reports/message'>{t('navbar.messages')}</a>
                   </div>
                 </li>
               )}
@@ -98,12 +100,12 @@ export default function Navbar({ currentUser }: { currentUser?: IUser | null }) 
                 {currentUser && !currentUser?.licensee && ['super', 'admin'].includes(currentUser.role) && (
                   <li>
                     <button className='dropdown-item' onClick={handleSwitchLicensee}>
-                      Trocar de licenciado
+                      {t('navbar.switchLicensee')}
                     </button>
                   </li>
                 )}
                 <li>
-                  <a className='dropdown-item' href='/' onClick={logout}>Sair</a>
+                  <a className='dropdown-item' href='/' onClick={logout}>{t('navbar.logout')}</a>
                 </li>
               </ul>
             </div>

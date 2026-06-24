@@ -103,7 +103,27 @@
       "createAccountFailed": "Error creating account (status {{status}})"
     }
   },
-  "navbar": {},
+  "navbar": {
+    "dashboard": "Dashboard",
+    "admin": "Admin",
+    "licensees": "Licensees",
+    "users": "Users",
+    "registrations": "Registrations",
+    "contacts": "Contacts",
+    "sectors": "Sectors",
+    "triggers": "Triggers",
+    "templates": "Templates",
+    "messages": "Messages",
+    "chat": "Chat",
+    "reports": "Reports",
+    "switchLicensee": "Switch licensee",
+    "logout": "Sign out",
+    "selectLicensee": "Select licensee",
+    "selectLicenseeRequired": "Select a licensee to continue.",
+    "selectLicenseeOptional": "Select a licensee or confirm to see all.",
+    "confirm": "Confirm",
+    "notFound": "This page does not exist."
+  },
   "licensees": {},
   "users": {},
   "sectors": {},
@@ -114,5 +134,24 @@
   "messages": {},
   "chat": {},
   "reports": {},
-  "common": {}
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "edit": "Edit",
+    "delete": "Delete",
+    "new": "New",
+    "search": "Search",
+    "active": "Active",
+    "name": "Name",
+    "email": "E-mail",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "yes": "Yes",
+    "no": "No",
+    "actions": "Actions",
+    "status": "Status",
+    "required": "required"
+  }
 }
