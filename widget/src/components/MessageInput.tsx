@@ -2,10 +2,13 @@
 // Enter submits; Shift+Enter inserts a newline. Clears after send.
 // Uses inline styles only — the widget is isolated from host page CSS.
 import React, { useState, useRef } from 'react'
+import type { Language } from '../types'
+import { useWidgetStrings } from '../translations'
 
 interface MessageInputProps {
   onSend: (text: string) => void
   disabled: boolean
+  language: Language
 }
 
 const containerStyle: React.CSSProperties = {
@@ -63,9 +66,10 @@ function SendIcon(): React.ReactElement {
   )
 }
 
-export function MessageInput({ onSend, disabled }: MessageInputProps): React.ReactElement {
+export function MessageInput({ onSend, disabled, language }: MessageInputProps): React.ReactElement {
   const [text, setText] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const strings = useWidgetStrings(language)
 
   function submit(): void {
     const trimmed = text.trim()
@@ -104,15 +108,15 @@ export function MessageInput({ onSend, disabled }: MessageInputProps): React.Rea
         value={text}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        placeholder="Digite uma mensagem..."
+        placeholder={strings.messageInput.placeholder}
         disabled={disabled}
-        aria-label="Mensagem"
+        aria-label={strings.messageInput.ariaLabel}
       />
       <button
         style={isSendDisabled ? sendButtonDisabledStyle : sendButtonStyle}
         onClick={submit}
         disabled={isSendDisabled}
-        aria-label="Enviar mensagem"
+        aria-label={strings.messageInput.sendAriaLabel}
       >
         <SendIcon />
       </button>

@@ -2,10 +2,13 @@
 // Validates email format client-side before surfacing to caller.
 // Uses inline styles only — the widget is isolated from host page CSS.
 import React, { useState } from 'react'
+import type { Language } from '../types'
+import { useWidgetStrings } from '../translations'
 
 interface SessionFormProps {
   onSubmit: (name: string, email: string, phone?: string) => void
   loading: boolean
+  language: Language
 }
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -87,17 +90,18 @@ const buttonDisabledStyle: React.CSSProperties = {
   cursor: 'not-allowed',
 }
 
-export function SessionForm({ onSubmit, loading }: SessionFormProps): React.ReactElement {
+export function SessionForm({ onSubmit, loading, language }: SessionFormProps): React.ReactElement {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [emailError, setEmailError] = useState('')
+  const strings = useWidgetStrings(language)
 
   function handleSubmit(e: React.FormEvent): void {
     e.preventDefault()
 
     if (!EMAIL_REGEX.test(email)) {
-      setEmailError('Informe um e-mail válido.')
+      setEmailError(strings.sessionForm.emailError)
       return
     }
 
@@ -108,12 +112,12 @@ export function SessionForm({ onSubmit, loading }: SessionFormProps): React.Reac
   return (
     <form style={containerStyle} onSubmit={handleSubmit} noValidate>
       <div>
-        <p style={headingStyle}>Iniciar conversa</p>
-        <p style={subheadingStyle}>Preencha seus dados para começar o atendimento.</p>
+        <p style={headingStyle}>{strings.sessionForm.heading}</p>
+        <p style={subheadingStyle}>{strings.sessionForm.subheading}</p>
       </div>
 
       <div style={fieldGroupStyle}>
-        <label style={labelStyle} htmlFor="widget-name">Nome</label>
+        <label style={labelStyle} htmlFor="widget-name">{strings.sessionForm.nameLabel}</label>
         <input
           id="widget-name"
           style={inputStyle}
@@ -121,13 +125,13 @@ export function SessionForm({ onSubmit, loading }: SessionFormProps): React.Reac
           value={name}
           onChange={e => setName(e.target.value)}
           required
-          placeholder="Seu nome"
+          placeholder={strings.sessionForm.namePlaceholder}
           disabled={loading}
         />
       </div>
 
       <div style={fieldGroupStyle}>
-        <label style={labelStyle} htmlFor="widget-email">E-mail</label>
+        <label style={labelStyle} htmlFor="widget-email">{strings.sessionForm.emailLabel}</label>
         <input
           id="widget-email"
           style={emailError ? inputErrorStyle : inputStyle}
@@ -135,21 +139,21 @@ export function SessionForm({ onSubmit, loading }: SessionFormProps): React.Reac
           value={email}
           onChange={e => { setEmail(e.target.value); setEmailError('') }}
           required
-          placeholder="seu@email.com"
+          placeholder={strings.sessionForm.emailPlaceholder}
           disabled={loading}
         />
         {emailError && <p style={errorTextStyle}>{emailError}</p>}
       </div>
 
       <div style={fieldGroupStyle}>
-        <label style={labelStyle} htmlFor="widget-phone">Telefone (opcional)</label>
+        <label style={labelStyle} htmlFor="widget-phone">{strings.sessionForm.phoneLabel}</label>
         <input
           id="widget-phone"
           style={inputStyle}
           type="tel"
           value={phone}
           onChange={e => setPhone(e.target.value)}
-          placeholder="(00) 00000-0000"
+          placeholder={strings.sessionForm.phonePlaceholder}
           disabled={loading}
         />
       </div>
@@ -159,7 +163,7 @@ export function SessionForm({ onSubmit, loading }: SessionFormProps): React.Reac
         style={loading ? buttonDisabledStyle : buttonStyle}
         disabled={loading || !name.trim() || !email.trim()}
       >
-        {loading ? 'Aguarde...' : 'Iniciar conversa'}
+        {loading ? strings.sessionForm.loadingButton : strings.sessionForm.submitButton}
       </button>
     </form>
   )
