@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import moment from 'moment-timezone'
 import { getDashboardOpenRooms, closeDashboardRoom } from '../../../services/dashboard'
 import type { IDashboardOpenRoom, IDashboardOpenRoomsResponse } from '../../../types'
@@ -13,6 +14,7 @@ function formatDate(value: string | undefined): string {
 const LIMIT = 10
 
 export default function SuperOpenRoomsCard({ licensee }: { licensee?: string }) {
+  const { t } = useTranslation()
   const [rooms, setRooms] = useState<IDashboardOpenRoom[]>([])
   const [hasMore, setHasMore] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -31,7 +33,7 @@ export default function SuperOpenRoomsCard({ licensee }: { licensee?: string }) 
       getDashboardOpenRooms({ ...(licensee ? { licensee } : {}), page: pageNum, limit: LIMIT })
         .then((res) => {
           if (res.status !== 200) {
-            setError('Erro ao carregar conversas.')
+            setError(t('dashboard.openRooms.loadError'))
             return
           }
           const { rooms: newRooms = [], hasMore: more = false } = (res.data as IDashboardOpenRoomsResponse) || {}
@@ -40,13 +42,13 @@ export default function SuperOpenRoomsCard({ licensee }: { licensee?: string }) 
           setHasMore(more)
           pageRef.current = pageNum + 1
         })
-        .catch(() => setError('Erro ao carregar conversas.'))
+        .catch(() => setError(t('dashboard.openRooms.loadError')))
         .finally(() => {
           setLoading(false)
           isFetchingRef.current = false
         })
     },
-    [licensee],
+    [licensee, t],
   )
 
   // Reset and initial load when licensee changes
@@ -78,29 +80,29 @@ export default function SuperOpenRoomsCard({ licensee }: { licensee?: string }) 
   }, [fetchRooms])
 
   function handleClose(roomId: string) {
-    if (!window.confirm('Fechar esta conversa? Esta ação não pode ser desfeita.')) return
+    if (!window.confirm(t('dashboard.openRooms.confirmClose'))) return
     closeDashboardRoom(roomId)
       .then(() => setRooms((prev) => prev.filter((r) => r._id !== roomId)))
-      .catch(() => setError('Erro ao fechar conversa.'))
+      .catch(() => setError(t('dashboard.openRooms.closeError')))
   }
 
   return (
     <div className="card">
-      <div className="card-header">Conversas Abertas</div>
+      <div className="card-header">{t('dashboard.openRooms.cardTitle')}</div>
       <div ref={containerRef} className="card-body pb-0" style={{ maxHeight: 480, overflowY: 'auto' }}>
         {error && <p className="text-danger p-3 mb-0">{error}</p>}
         {rooms.length === 0 && !loading && !error && (
-          <p className="text-muted p-3 mb-0">Nenhuma conversa aberta.</p>
+          <p className="text-muted p-3 mb-0">{t('dashboard.openRooms.noRooms')}</p>
         )}
         {rooms.length > 0 && (
           <table className="table table-sm mb-0">
             <thead className="sticky-top bg-white">
               <tr>
-                <th>Contato</th>
-                <th>Número</th>
-                <th>Abertura</th>
-                <th>Última mensagem</th>
-                <th>Mensagem</th>
+                <th>{t('dashboard.openRooms.colContact')}</th>
+                <th>{t('dashboard.openRooms.colNumber')}</th>
+                <th>{t('dashboard.openRooms.colOpened')}</th>
+                <th>{t('dashboard.openRooms.colLastMessage')}</th>
+                <th>{t('dashboard.openRooms.colMessage')}</th>
                 <th></th>
               </tr>
             </thead>
@@ -118,10 +120,10 @@ export default function SuperOpenRoomsCard({ licensee }: { licensee?: string }) 
                     <button
                       type="button"
                       className="btn btn-sm btn-outline-danger"
-                      aria-label={`Fechar conversa de ${room.contact?.name || room.contact?.number || 'contato'}`}
+                      aria-label={t('dashboard.openRooms.closeRoomAriaLabel', { name: room.contact?.name || room.contact?.number || 'contato' })}
                       onClick={() => handleClose(room._id)}
                     >
-                      Fechar
+                      {t('dashboard.openRooms.closeButton')}
                     </button>
                   </td>
                 </tr>
@@ -133,10 +135,10 @@ export default function SuperOpenRoomsCard({ licensee }: { licensee?: string }) 
           {loading && (
             <>
               <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
-              Carregando...
+              {t('common.loading')}
             </>
           )}
-          {!loading && !hasMore && rooms.length > 0 && 'Fim da lista.'}
+          {!loading && !hasMore && rooms.length > 0 && t('dashboard.endOfList')}
         </div>
       </div>
     </div>

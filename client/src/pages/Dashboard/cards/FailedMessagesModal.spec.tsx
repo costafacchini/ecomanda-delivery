@@ -3,6 +3,12 @@ import FailedMessagesModal from './FailedMessagesModal'
 import { getMessages, resendMessage } from '../../../services/message'
 
 vi.mock('../../../services/message')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 const noop = () => {}
 
@@ -10,7 +16,7 @@ describe('<FailedMessagesModal />', () => {
   it('does not render anything when isOpen is false', () => {
     render(<FailedMessagesModal isOpen={false} onClose={noop} onResendSuccess={noop} />)
 
-    expect(screen.queryByText('Mensagens com Falha')).not.toBeInTheDocument()
+    expect(screen.queryByText('dashboard.failedMessages.modalTitle')).not.toBeInTheDocument()
   })
 
   it('fetches failed messages on open and renders them in the table', async () => {
@@ -27,8 +33,8 @@ describe('<FailedMessagesModal />', () => {
     expect(screen.getByText('Hello world')).toBeInTheDocument()
     expect(screen.getByText('timeout')).toBeInTheDocument()
     expect(screen.getByText('5511999990002')).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: 'Data/Hora' })).toBeInTheDocument()
-    expect(screen.getAllByRole('button', { name: 'Reenviar' })).toHaveLength(2)
+    expect(screen.getByRole('columnheader', { name: 'dashboard.failedMessages.colDateTime' })).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: 'dashboard.failedMessages.resendButton' })).toHaveLength(2)
 
     expect(getMessages).toHaveBeenCalledWith({ sended: false, limit: 50 })
   })
@@ -45,7 +51,7 @@ describe('<FailedMessagesModal />', () => {
       />
     )
 
-    await screen.findByText('Nenhuma mensagem com falha.')
+    await screen.findByText('dashboard.failedMessages.noMessages')
 
     expect(getMessages).toHaveBeenCalledWith(
       expect.objectContaining({ licensee: 'licensee-abc', sended: false })
@@ -57,7 +63,7 @@ describe('<FailedMessagesModal />', () => {
 
     render(<FailedMessagesModal isOpen={true} onClose={noop} onResendSuccess={noop} />)
 
-    await screen.findByText('Nenhuma mensagem com falha.')
+    await screen.findByText('dashboard.failedMessages.noMessages')
 
     const call = (getMessages as ReturnType<typeof vi.fn>).mock.calls[0][0]
     expect(call).not.toHaveProperty('licensee')
@@ -68,7 +74,7 @@ describe('<FailedMessagesModal />', () => {
 
     render(<FailedMessagesModal isOpen={true} onClose={noop} onResendSuccess={noop} />)
 
-    expect(await screen.findByText('Nenhuma mensagem com falha.')).toBeInTheDocument()
+    expect(await screen.findByText('dashboard.failedMessages.noMessages')).toBeInTheDocument()
   })
 
   it('shows a fetch error when getMessages rejects', async () => {
@@ -76,7 +82,7 @@ describe('<FailedMessagesModal />', () => {
 
     render(<FailedMessagesModal isOpen={true} onClose={noop} onResendSuccess={noop} />)
 
-    expect(await screen.findByText('Erro ao carregar mensagens falhas.')).toBeInTheDocument()
+    expect(await screen.findByText('dashboard.failedMessages.fetchError')).toBeInTheDocument()
   })
 
   it('removes the row and calls onResendSuccess when resend succeeds', async () => {
@@ -90,9 +96,9 @@ describe('<FailedMessagesModal />', () => {
 
     render(<FailedMessagesModal isOpen={true} onClose={noop} onResendSuccess={onResendSuccess} />)
 
-    fireEvent.click(await screen.findByRole('button', { name: 'Reenviar' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'dashboard.failedMessages.resendButton' }))
 
-    await screen.findByText('Nenhuma mensagem com falha.')
+    await screen.findByText('dashboard.failedMessages.noMessages')
 
     expect(resendMessage).toHaveBeenCalledWith('msg1')
     expect(onResendSuccess).toHaveBeenCalledTimes(1)
@@ -109,9 +115,9 @@ describe('<FailedMessagesModal />', () => {
 
     render(<FailedMessagesModal isOpen={true} onClose={noop} onResendSuccess={noop} />)
 
-    fireEvent.click(await screen.findByRole('button', { name: 'Reenviar' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'dashboard.failedMessages.resendButton' }))
 
-    expect(await screen.findByText('Erro ao reenviar.')).toBeInTheDocument()
+    expect(await screen.findByText('dashboard.failedMessages.resendError')).toBeInTheDocument()
     expect(screen.getByText('5511111111111')).toBeInTheDocument()
   })
 
@@ -122,7 +128,7 @@ describe('<FailedMessagesModal />', () => {
 
     render(<FailedMessagesModal isOpen={true} onClose={noop} onResendSuccess={noop} />)
 
-    await screen.findByRole('button', { name: 'Reenviar' })
+    await screen.findByRole('button', { name: 'dashboard.failedMessages.resendButton' })
 
     expect(screen.getAllByText('—').length).toBeGreaterThanOrEqual(3)
   })

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { QRCodeSVG } from 'qrcode.react'
 import { getBaileysQr, getBaileysStatus } from '../../../services/licensee'
 import type { IBaileysStatusResponse, IBaileysQrResponse } from '../../../types'
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export default function BaileysSetupCard({ licenseeId, onConnected }: Props) {
+  const { t } = useTranslation()
   const [qr, setQr] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [statusMessage, setStatusMessage] = useState('')
@@ -44,7 +46,7 @@ export default function BaileysSetupCard({ licenseeId, onConnected }: Props) {
     if (qrData?.qr) {
       setQr(qrData.qr)
     } else {
-      setStatusMessage(qrData?.message || 'Erro ao gerar QR Code')
+      setStatusMessage(qrData?.message || t('dashboard.baileys.qrError'))
     }
   }
 
@@ -66,18 +68,19 @@ export default function BaileysSetupCard({ licenseeId, onConnected }: Props) {
   return (
     <div className='card border-warning'>
       <div className='card-header bg-warning text-dark fw-semibold'>
-        Conectar WhatsApp
+        {t('dashboard.baileys.cardTitle')}
       </div>
       <div className='card-body text-center'>
-        {loading && <p className='text-muted'>Gerando QR Code...</p>}
+        {loading && <p className='text-muted'>{t('dashboard.baileys.generatingQr')}</p>}
 
         {!loading && qr && (
           <>
-            <p className='text-muted small mb-3'>
-              Abra o WhatsApp no seu celular, vá em <strong>Aparelhos conectados</strong> e escaneie o código abaixo.
-            </p>
+            <p
+              className='text-muted small mb-3'
+              dangerouslySetInnerHTML={{ __html: t('dashboard.baileys.scanInstruction') }}
+            />
             <QRCodeSVG value={qr} size={200} />
-            <p className='text-muted small mt-3'>Aguardando conexão...</p>
+            <p className='text-muted small mt-3'>{t('dashboard.baileys.waitingConnection')}</p>
           </>
         )}
 
@@ -87,7 +90,7 @@ export default function BaileysSetupCard({ licenseeId, onConnected }: Props) {
 
         {!loading && (
           <button className='btn btn-outline-warning btn-sm mt-3' onClick={generateQr}>
-            Gerar novo QR Code
+            {t('dashboard.baileys.generateNewQr')}
           </button>
         )}
       </div>

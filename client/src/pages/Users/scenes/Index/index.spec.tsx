@@ -8,6 +8,12 @@ import { SimpleCrudContextProvider } from '../../../../contexts/SimpleCrud'
 
 vi.mock('../../../../services/user')
 vi.mock('../../../../services/licensee')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 describe('<UsersIndex />', () => {
   const currentUser = { role: 'super' }
@@ -45,7 +51,7 @@ describe('<UsersIndex />', () => {
 
     getUsers.mockResolvedValue({ status: 201, data: [userFactory.build({ name: 'User from new page' })] })
 
-    fireEvent.click(await screen.findByText('Carregar mais'))
+    fireEvent.click(await screen.findByText('common.loadMore'))
 
     expect(await screen.findByText('User from new page')).toBeInTheDocument()
 
@@ -61,9 +67,9 @@ describe('<UsersIndex />', () => {
 
     getUsers.mockResolvedValue({ status: 201, data: [userFactory.build({ name: 'A user filtered by expression' })] })
 
-    fireEvent.change(screen.getByPlaceholderText('Digite a expressão'), { target: { value: 'expression' } })
+    fireEvent.change(screen.getByPlaceholderText('users.expressionPlaceholder'), { target: { value: 'expression' } })
 
-    fireEvent.click(screen.getByTitle('Filtre pelo usuário'))
+    fireEvent.click(screen.getByTitle('users.filterButtonTitle'))
 
     expect(await screen.findByText('A user filtered by expression')).toBeInTheDocument()
 
@@ -78,11 +84,11 @@ describe('<UsersIndex />', () => {
 
       mount({ currentUser })
 
-      await screen.findByText('Usuários')
+      await screen.findByText('users.title')
 
       await screen.findByText('User')
 
-      expect(screen.queryByLabelText('Licenciado')).not.toBeInTheDocument()
+      expect(screen.queryByLabelText('users.licenseeFilter')).not.toBeInTheDocument()
     })
 
     it('changes the filters to get the users', async () => {
@@ -93,11 +99,11 @@ describe('<UsersIndex />', () => {
 
       mount({ currentUser })
 
-      await screen.findByText('Usuários')
+      await screen.findByText('users.title')
 
-      await screen.findByText('Licenciado')
+      await screen.findByText('users.licenseeFilter')
 
-      fireEvent.change(screen.getByLabelText('Licenciado'), { target: { value: 'ros' } })
+      fireEvent.change(screen.getByLabelText('users.licenseeFilter'), { target: { value: 'ros' } })
 
       fireEvent.click(await screen.findByText('Rosa'))
 

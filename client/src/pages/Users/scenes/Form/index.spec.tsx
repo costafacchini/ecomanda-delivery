@@ -2,6 +2,13 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { createRoutesStub } from 'react-router'
 import UserForm from './'
 
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
+
 describe('<UserForm />', () => {
   const onSubmit = vi.fn()
 
@@ -18,10 +25,10 @@ describe('<UserForm />', () => {
   it('is rendered with the default initial values', () => {
     mount()
 
-    expect(screen.getByLabelText(/^Nome/)).toHaveValue('')
-    expect(screen.getByLabelText('Ativo')).toBeChecked()
-    expect(screen.getByLabelText(/^E-mail/)).toHaveValue('')
-    expect(screen.getByLabelText(/^Senha/)).toHaveValue('')
+    expect(screen.getByLabelText(/^common.name/)).toHaveValue('')
+    expect(screen.getByLabelText('common.active')).toBeChecked()
+    expect(screen.getByLabelText(/^common.email/)).toHaveValue('')
+    expect(screen.getByLabelText(/^users.passwordLabel/)).toHaveValue('')
   })
 
   it('can receive initial values', () => {
@@ -38,83 +45,83 @@ describe('<UserForm />', () => {
     }
     mount({ initialValues: user, currentUser: currentUser })
 
-    expect(screen.getByLabelText(/^Nome/)).toHaveValue('Name')
-    expect(screen.getByLabelText('Ativo')).not.toBeChecked()
-    expect(screen.getByLabelText(/^E-mail/)).toHaveValue('email@gmail.com')
-    expect(screen.getByLabelText(/^Senha/)).toHaveValue('12345')
-    expect(screen.getByLabelText('Perfil')).toHaveValue('agent')
+    expect(screen.getByLabelText(/^common.name/)).toHaveValue('Name')
+    expect(screen.getByLabelText('common.active')).not.toBeChecked()
+    expect(screen.getByLabelText(/^common.email/)).toHaveValue('email@gmail.com')
+    expect(screen.getByLabelText(/^users.passwordLabel/)).toHaveValue('12345')
+    expect(screen.getByLabelText('users.columnProfile')).toHaveValue('agent')
   })
 
   describe('role', () => {
     it('is not rendered when currentUser has no role or is agent', () => {
       mount()
 
-      expect(screen.queryByLabelText('Perfil')).not.toBeInTheDocument()
+      expect(screen.queryByLabelText('users.columnProfile')).not.toBeInTheDocument()
 
       cleanup()
 
       mount({ currentUser: { role: 'agent' } })
 
-      expect(screen.queryByLabelText('Perfil')).not.toBeInTheDocument()
+      expect(screen.queryByLabelText('users.columnProfile')).not.toBeInTheDocument()
     })
 
     it('is rendered when currentUser is admin', () => {
       mount({ currentUser: { role: 'admin' } })
 
-      expect(screen.getByLabelText('Perfil')).toBeInTheDocument()
-      expect(screen.queryByText('Super')).not.toBeInTheDocument()
+      expect(screen.getByLabelText('users.columnProfile')).toBeInTheDocument()
+      expect(screen.queryByText('users.roles.super')).not.toBeInTheDocument()
     })
 
     it('shows super option when currentUser is super', () => {
       mount({ currentUser: { role: 'super' } })
 
-      expect(screen.getByLabelText('Perfil')).toBeInTheDocument()
-      expect(screen.getByText('Super')).toBeInTheDocument()
+      expect(screen.getByLabelText('users.columnProfile')).toBeInTheDocument()
+      expect(screen.getByText('users.roles.super')).toBeInTheDocument()
     })
   })
 
   describe('licensee', () => {
     it('is only visible to super users for agent and supervisor roles', () => {
       mount({ currentUser: { role: 'admin' }, initialValues: { role: 'agent' } })
-      expect(screen.queryByText(/Licenciado/)).not.toBeInTheDocument()
+      expect(screen.queryByText(/users.licenseeFilter/)).not.toBeInTheDocument()
 
       cleanup()
 
       mount({ currentUser: { role: 'super' }, initialValues: { role: 'agent' } })
-      expect(screen.getByText(/Licenciado/)).toBeInTheDocument()
+      expect(screen.getByText(/users.licenseeFilter/)).toBeInTheDocument()
 
       cleanup()
 
       mount({ currentUser: { role: 'super' }, initialValues: { role: 'supervisor' } })
-      expect(screen.getByText(/Licenciado/)).toBeInTheDocument()
+      expect(screen.getByText(/users.licenseeFilter/)).toBeInTheDocument()
     })
 
     it('is hidden for super users when role is admin or super', () => {
       mount({ currentUser: { role: 'super' }, initialValues: { role: 'admin' } })
-      expect(screen.queryByText(/Licenciado/)).not.toBeInTheDocument()
+      expect(screen.queryByText(/users.licenseeFilter/)).not.toBeInTheDocument()
 
       cleanup()
 
       mount({ currentUser: { role: 'super' }, initialValues: { role: 'super' } })
-      expect(screen.queryByText(/Licenciado/)).not.toBeInTheDocument()
+      expect(screen.queryByText(/users.licenseeFilter/)).not.toBeInTheDocument()
     })
 
     it('hides when super user changes selected role to admin', async () => {
       mount({ currentUser: { role: 'super' }, initialValues: { role: 'agent' } })
 
-      expect(screen.getByText(/Licenciado/)).toBeInTheDocument()
+      expect(screen.getByText(/users.licenseeFilter/)).toBeInTheDocument()
 
-      fireEvent.change(screen.getByLabelText('Perfil'), { target: { value: 'admin' } })
+      fireEvent.change(screen.getByLabelText('users.columnProfile'), { target: { value: 'admin' } })
 
-      await waitFor(() => expect(screen.queryByText(/Licenciado/)).not.toBeInTheDocument())
+      await waitFor(() => expect(screen.queryByText(/users.licenseeFilter/)).not.toBeInTheDocument())
     })
 
     it('does not submit when licensee is empty and currentUser is super with agent role', async () => {
       mount({ currentUser: { role: 'super' }, initialValues: { role: 'agent' } })
 
-      fireEvent.click(screen.getByText('Salvar'))
+      fireEvent.click(screen.getByText('common.save'))
 
-      await waitFor(() => expect(screen.getByText('Licenciado é obrigatório')).toBeInTheDocument())
+      await waitFor(() => expect(screen.getByText('users.validation.licenseeRequired')).toBeInTheDocument())
 
       expect(onSubmit).not.toHaveBeenCalled()
     })
@@ -126,10 +133,10 @@ describe('<UserForm />', () => {
 
       expect(onSubmit).not.toHaveBeenCalled()
 
-      fireEvent.change(screen.getByLabelText(/^Nome/), { target: { value: 'Test User' } })
-      fireEvent.change(screen.getByLabelText(/^E-mail/), { target: { value: 'test@test.com' } })
+      fireEvent.change(screen.getByLabelText(/^common.name/), { target: { value: 'Test User' } })
+      fireEvent.change(screen.getByLabelText(/^common.email/), { target: { value: 'test@test.com' } })
 
-      fireEvent.click(screen.getByText('Salvar'))
+      fireEvent.click(screen.getByText('common.save'))
 
       await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 

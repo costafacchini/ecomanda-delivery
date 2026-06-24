@@ -125,9 +125,176 @@
     "notFound": "This page does not exist."
   },
   "licensees": {},
-  "users": {},
-  "sectors": {},
-  "dashboard": {},
+  "users": {
+    "title": "Users",
+    "newUser": "New User",
+    "editingUser": "Editing: {{name}}",
+    "licenseeFilter": "Licensee",
+    "expressionPlaceholder": "Enter expression",
+    "filterButtonTitle": "Filter by user",
+    "filterButtonAriaLabel": "Search users",
+    "noUsersFound": "No users found.",
+    "columnProfile": "Role",
+    "passwordLabel": "Password",
+    "passwordPlaceholderNew": "Create a password",
+    "passwordPlaceholderEdit": "Leave blank to keep unchanged",
+    "emailPlaceholder": "user@email.com",
+    "roles": {
+      "agent": "Agent",
+      "supervisor": "Supervisor",
+      "admin": "Administrator",
+      "super": "Super"
+    },
+    "validation": {
+      "nameRequired": "Name is required",
+      "emailInvalid": "Invalid e-mail",
+      "emailRequired": "E-mail is required",
+      "passwordRequired": "Password is required",
+      "licenseeRequired": "Licensee is required"
+    },
+    "toast": {
+      "createSuccess": "User created successfully!",
+      "createError": "Oops! Could not create user.",
+      "updateSuccess": "User updated successfully!",
+      "updateError": "Oops! Could not update user."
+    }
+  },
+  "sectors": {
+    "title": "Sectors",
+    "createButton": "Create +",
+    "newSectorTitle": "New sector",
+    "editSectorTitle": "Edit sector",
+    "usersLabel": "Users",
+    "usersPlaceholder": "Select users...",
+    "deleteSectorTitle": "Delete sector",
+    "confirmDelete": "Are you sure you want to delete this sector?",
+    "validation": {
+      "nameRequired": "Name is required"
+    },
+    "toast": {
+      "createSuccess": "Sector created successfully!",
+      "createError": "Oops! Could not create sector.",
+      "updateSuccess": "Sector updated successfully!",
+      "updateError": "Oops! Could not update sector.",
+      "deleteSuccess": "Sector deleted successfully!",
+      "deleteError": "Oops! Could not delete sector."
+    },
+    "baileys": {
+      "title": "Baileys Connection",
+      "checking": "Checking connection...",
+      "connected": "Connected",
+      "reconnect": "Reconnect",
+      "syncGroups": "Sync Groups",
+      "syncing": "Syncing...",
+      "generateQr": "Generate QR Code",
+      "syncResult": "Imported groups: {{imported}} | Updated groups: {{updated}}",
+      "syncError": "Error syncing groups",
+      "qrError": "Error generating QR"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "loading": "Loading...",
+    "loadError": "Error loading data.",
+    "retry": "Try again",
+    "noData": "No data for the period.",
+    "endOfList": "End of list.",
+    "dateFrom": "Start date",
+    "dateTo": "End date",
+    "dateUntil": "to",
+    "licensees": {
+      "cardTitle": "Licensees",
+      "total": "Total",
+      "active": "Active",
+      "kindType": "Type",
+      "kindQuantity": "Quantity",
+      "kindDemo": "Demo",
+      "kindFree": "Free",
+      "kindPaid": "Paid"
+    },
+    "messageVolume": {
+      "cardTitle": "Message Volume",
+      "peakLabel": "Peak (msg/hour)",
+      "avgLabel": "Average (msg/hour)",
+      "perDayTitle": "Per Day",
+      "perHourTitle": "Per Hour (top 10)",
+      "colDate": "Date",
+      "colTotal": "Total",
+      "colHour": "Hour",
+      "colAvg": "Average"
+    },
+    "deliveryRate": {
+      "cardTitle": "Delivery Rate",
+      "sentLabel": "Sent ({{pct}}%)",
+      "failedLabel": "Failures in period ({{pct}}%)",
+      "failedButton": "Failed Messages ({{count}})"
+    },
+    "queue": {
+      "cardTitle": "Message Queue",
+      "pendingLabel": "Pending",
+      "avgTimeLabel": "Average queue time"
+    },
+    "conversations": {
+      "cardTitle": "Conversations",
+      "startedLabel": "Started",
+      "endedLabel": "Ended",
+      "avgMsgLabel": "Avg msg/conversation",
+      "avgDurationLabel": "Average duration"
+    },
+    "openRooms": {
+      "cardTitle": "Open Conversations",
+      "noRooms": "No open conversations.",
+      "colContact": "Contact",
+      "colNumber": "Number",
+      "colOpened": "Opened",
+      "colLastMessage": "Last message",
+      "colMessage": "Message",
+      "closeButton": "Close",
+      "closeRoomAriaLabel": "Close conversation with {{name}}",
+      "confirmClose": "Close this conversation? This action cannot be undone.",
+      "closeError": "Error closing conversation.",
+      "loadError": "Error loading conversations."
+    },
+    "contacts": {
+      "cardTitle": "Contacts",
+      "total": "Total",
+      "inChatbot": "In Chatbot"
+    },
+    "messagesToday": {
+      "cardTitle": "Messages Today",
+      "sentLabel": "Sent ({{pct}}%)",
+      "failedLabel": "Failures ({{pct}}%)"
+    },
+    "messagesPerDay": {
+      "cardTitle": "Messages per Day",
+      "colDate": "Date",
+      "colTotal": "Total"
+    },
+    "baileys": {
+      "cardTitle": "Connect WhatsApp",
+      "generatingQr": "Generating QR Code...",
+      "scanInstruction": "Open WhatsApp on your phone, go to <strong>Linked Devices</strong> and scan the code below.",
+      "waitingConnection": "Waiting for connection...",
+      "generateNewQr": "Generate new QR Code",
+      "qrError": "Error generating QR Code"
+    },
+    "failedMessages": {
+      "modalTitle": "Failed Messages",
+      "closeButton": "Close",
+      "noMessages": "No failed messages.",
+      "fetchError": "Error loading failed messages.",
+      "colContact": "Contact",
+      "colDateTime": "Date/Time",
+      "colMessage": "Message",
+      "colError": "Error",
+      "resendButton": "Resend",
+      "resending": "Resending...",
+      "ignoreButton": "Ignore",
+      "ignoring": "Ignoring...",
+      "resendError": "Error resending.",
+      "ignoreError": "Error ignoring."
+    }
+  },
   "contacts": {},
   "templates": {},
   "triggers": {},
@@ -152,6 +319,9 @@
     "no": "No",
     "actions": "Actions",
     "status": "Status",
-    "required": "required"
+    "required": "required",
+    "loadMore": "Load more",
+    "back": "Back",
+    "saving": "Saving..."
   }
 }

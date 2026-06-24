@@ -5,6 +5,12 @@ import { createRoutesStub } from 'react-router'
 import { sectorFactory } from '../../../../factories/sector'
 
 vi.mock('../../../../services/sector')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 describe('<SectorsIndex />', () => {
   const currentUser = {
@@ -58,7 +64,7 @@ describe('<SectorsIndex />', () => {
 
     await screen.findByText('TI')
 
-    fireEvent.click(screen.getByTitle('Excluir setor'))
+    fireEvent.click(screen.getByTitle('sectors.deleteSectorTitle'))
 
     await waitFor(() => expect(deleteSector).toHaveBeenCalledWith('10'))
   })

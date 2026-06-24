@@ -5,6 +5,16 @@ import { getMessages } from '../../../services/message'
 
 vi.mock('../../../services/dashboard')
 vi.mock('../../../services/message')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string, opts?: Record<string, unknown>) => {
+      if (opts && typeof opts.pct !== 'undefined') return `${k}:${opts.pct}`
+      if (opts && typeof opts.count !== 'undefined') return `${k}:${opts.count}`
+      return k
+    },
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 describe('<SuperDeliveryRateCard />', () => {
   it('shows loading state while the request is in flight', () => {
@@ -12,7 +22,7 @@ describe('<SuperDeliveryRateCard />', () => {
 
     render(<SuperDeliveryRateCard />)
 
-    expect(screen.getByText('Carregando...')).toBeInTheDocument()
+    expect(screen.getByText('common.loading')).toBeInTheDocument()
   })
 
   it('shows an error message when the request fails', async () => {
@@ -20,7 +30,7 @@ describe('<SuperDeliveryRateCard />', () => {
 
     render(<SuperDeliveryRateCard />)
 
-    expect(await screen.findByText('Erro ao carregar dados.')).toBeInTheDocument()
+    expect(await screen.findByText('dashboard.loadError')).toBeInTheDocument()
   })
 
   it('renders sent and failed counts with percentages on success', async () => {
@@ -36,10 +46,10 @@ describe('<SuperDeliveryRateCard />', () => {
     render(<SuperDeliveryRateCard />)
 
     expect(await screen.findByText('950')).toBeInTheDocument()
-    expect(screen.getByText('Enviadas (95%)')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.deliveryRate.sentLabel:95')).toBeInTheDocument()
     expect(screen.getByText('50')).toBeInTheDocument()
-    expect(screen.getByText('Falhas no período (5%)')).toBeInTheDocument()
-    expect(screen.getByText('Taxa de Entrega')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.deliveryRate.failedLabel:5')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.deliveryRate.cardTitle')).toBeInTheDocument()
   })
 
   it('opens FailedMessagesModal when the failed count is clicked', async () => {
@@ -50,8 +60,8 @@ describe('<SuperDeliveryRateCard />', () => {
 
     render(<SuperDeliveryRateCard />)
 
-    fireEvent.click(await screen.findByText('Mensagens Falhas (10)'))
+    fireEvent.click(await screen.findByText('dashboard.deliveryRate.failedButton:10'))
 
-    expect(await screen.findByText('Mensagens com Falha')).toBeInTheDocument()
+    expect(await screen.findByText('dashboard.failedMessages.modalTitle')).toBeInTheDocument()
   })
 })

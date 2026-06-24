@@ -125,9 +125,176 @@
     "notFound": "Essa página não existe."
   },
   "licensees": {},
-  "users": {},
-  "sectors": {},
-  "dashboard": {},
+  "users": {
+    "title": "Usuários",
+    "newUser": "Novo Usuário",
+    "editingUser": "Editando: {{name}}",
+    "licenseeFilter": "Licenciado",
+    "expressionPlaceholder": "Digite a expressão",
+    "filterButtonTitle": "Filtre pelo usuário",
+    "filterButtonAriaLabel": "Pesquisar usuários",
+    "noUsersFound": "Nenhum usuário encontrado.",
+    "columnProfile": "Perfil",
+    "passwordLabel": "Senha",
+    "passwordPlaceholderNew": "Crie uma senha",
+    "passwordPlaceholderEdit": "Deixe em branco para não alterar",
+    "emailPlaceholder": "usuario@email.com",
+    "roles": {
+      "agent": "Agente",
+      "supervisor": "Supervisor",
+      "admin": "Administrador",
+      "super": "Super"
+    },
+    "validation": {
+      "nameRequired": "Nome é obrigatório",
+      "emailInvalid": "E-mail inválido",
+      "emailRequired": "E-mail é obrigatório",
+      "passwordRequired": "Senha é obrigatória",
+      "licenseeRequired": "Licenciado é obrigatório"
+    },
+    "toast": {
+      "createSuccess": "Usuário criado com sucesso!",
+      "createError": "Ops! Não foi possível criar o usuário.",
+      "updateSuccess": "Usuário atualizado com sucesso!",
+      "updateError": "Ops! Não foi possível atualizar o usuário."
+    }
+  },
+  "sectors": {
+    "title": "Setores",
+    "createButton": "Criar +",
+    "newSectorTitle": "Setor criando",
+    "editSectorTitle": "Setor editando",
+    "usersLabel": "Usuários",
+    "usersPlaceholder": "Selecione os usuários...",
+    "deleteSectorTitle": "Excluir setor",
+    "confirmDelete": "Deseja realmente excluir este setor?",
+    "validation": {
+      "nameRequired": "Nome é obrigatório"
+    },
+    "toast": {
+      "createSuccess": "Setor criado com sucesso!",
+      "createError": "Ops! Não foi possível criar o setor.",
+      "updateSuccess": "Setor atualizado com sucesso!",
+      "updateError": "Ops! Não foi possível atualizar o setor.",
+      "deleteSuccess": "Setor excluído com sucesso!",
+      "deleteError": "Ops! Não foi possível excluir o setor."
+    },
+    "baileys": {
+      "title": "Conexão Baileys",
+      "checking": "Verificando conexão...",
+      "connected": "Conectado",
+      "reconnect": "Reconectar",
+      "syncGroups": "Sincronizar Grupos",
+      "syncing": "Sincronizando...",
+      "generateQr": "Gerar QR Code",
+      "syncResult": "Grupos importados: {{imported}} | Grupos atualizados: {{updated}}",
+      "syncError": "Erro ao sincronizar grupos",
+      "qrError": "Erro ao gerar QR"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "loading": "Carregando...",
+    "loadError": "Erro ao carregar dados.",
+    "retry": "Tentar novamente",
+    "noData": "Nenhum dado para o período.",
+    "endOfList": "Fim da lista.",
+    "dateFrom": "Data inicial",
+    "dateTo": "Data final",
+    "dateUntil": "até",
+    "licensees": {
+      "cardTitle": "Licenciados",
+      "total": "Total",
+      "active": "Ativos",
+      "kindType": "Tipo",
+      "kindQuantity": "Quantidade",
+      "kindDemo": "Demo",
+      "kindFree": "Grátis",
+      "kindPaid": "Pago"
+    },
+    "messageVolume": {
+      "cardTitle": "Volume de Mensagens",
+      "peakLabel": "Pico (msg/hora)",
+      "avgLabel": "Média (msg/hora)",
+      "perDayTitle": "Por Dia",
+      "perHourTitle": "Por Hora (top 10)",
+      "colDate": "Data",
+      "colTotal": "Total",
+      "colHour": "Hora",
+      "colAvg": "Média"
+    },
+    "deliveryRate": {
+      "cardTitle": "Taxa de Entrega",
+      "sentLabel": "Enviadas ({{pct}}%)",
+      "failedLabel": "Falhas no período ({{pct}}%)",
+      "failedButton": "Mensagens Falhas ({{count}})"
+    },
+    "queue": {
+      "cardTitle": "Fila de Mensagens",
+      "pendingLabel": "Pendentes",
+      "avgTimeLabel": "Tempo médio na fila"
+    },
+    "conversations": {
+      "cardTitle": "Conversas",
+      "startedLabel": "Iniciadas",
+      "endedLabel": "Encerradas",
+      "avgMsgLabel": "Média msg/conversa",
+      "avgDurationLabel": "Duração média"
+    },
+    "openRooms": {
+      "cardTitle": "Conversas Abertas",
+      "noRooms": "Nenhuma conversa aberta.",
+      "colContact": "Contato",
+      "colNumber": "Número",
+      "colOpened": "Abertura",
+      "colLastMessage": "Última mensagem",
+      "colMessage": "Mensagem",
+      "closeButton": "Fechar",
+      "closeRoomAriaLabel": "Fechar conversa de {{name}}",
+      "confirmClose": "Fechar esta conversa? Esta ação não pode ser desfeita.",
+      "closeError": "Erro ao fechar conversa.",
+      "loadError": "Erro ao carregar conversas."
+    },
+    "contacts": {
+      "cardTitle": "Contatos",
+      "total": "Total",
+      "inChatbot": "No Chatbot"
+    },
+    "messagesToday": {
+      "cardTitle": "Mensagens Hoje",
+      "sentLabel": "Enviadas ({{pct}}%)",
+      "failedLabel": "Falhas ({{pct}}%)"
+    },
+    "messagesPerDay": {
+      "cardTitle": "Mensagens por Dia",
+      "colDate": "Data",
+      "colTotal": "Total"
+    },
+    "baileys": {
+      "cardTitle": "Conectar WhatsApp",
+      "generatingQr": "Gerando QR Code...",
+      "scanInstruction": "Abra o WhatsApp no seu celular, vá em <strong>Aparelhos conectados</strong> e escaneie o código abaixo.",
+      "waitingConnection": "Aguardando conexão...",
+      "generateNewQr": "Gerar novo QR Code",
+      "qrError": "Erro ao gerar QR Code"
+    },
+    "failedMessages": {
+      "modalTitle": "Mensagens com Falha",
+      "closeButton": "Fechar",
+      "noMessages": "Nenhuma mensagem com falha.",
+      "fetchError": "Erro ao carregar mensagens falhas.",
+      "colContact": "Contato",
+      "colDateTime": "Data/Hora",
+      "colMessage": "Mensagem",
+      "colError": "Erro",
+      "resendButton": "Reenviar",
+      "resending": "Reenviando...",
+      "ignoreButton": "Ignorar",
+      "ignoring": "Ignorando...",
+      "resendError": "Erro ao reenviar.",
+      "ignoreError": "Erro ao ignorar."
+    }
+  },
   "contacts": {},
   "templates": {},
   "triggers": {},
@@ -152,6 +319,9 @@
     "no": "Não",
     "actions": "Ações",
     "status": "Status",
-    "required": "obrigatório"
+    "required": "obrigatório",
+    "loadMore": "Carregar mais",
+    "back": "Voltar",
+    "saving": "Salvando..."
   }
 }

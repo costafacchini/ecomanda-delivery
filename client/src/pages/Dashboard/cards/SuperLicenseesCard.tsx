@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getDashboardLicensees } from '../../../services/dashboard'
 import type { IDashboardLicensees } from '../../../types'
 
 export default function SuperLicenseesCard() {
+  const { t } = useTranslation()
   const [data, setData] = useState<IDashboardLicensees | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -13,15 +15,15 @@ export default function SuperLicenseesCard() {
     setError(null)
     getDashboardLicensees()
       .then((res) => setData(res.data as IDashboardLicensees))
-      .catch(() => setError('Erro ao carregar dados.'))
+      .catch(() => setError(t('dashboard.loadError')))
       .finally(() => setLoading(false))
-  }, [retryCount])
+  }, [retryCount, t])
 
   if (loading) return (
     <div className="card">
       <div className="card-body text-center py-4 text-muted">
         <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
-        Carregando...
+        {t('common.loading')}
       </div>
     </div>
   )
@@ -31,7 +33,7 @@ export default function SuperLicenseesCard() {
       <div className="card-body text-center py-3">
         <p className="text-danger mb-2">{error}</p>
         <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => setRetryCount((c) => c + 1)}>
-          Tentar novamente
+          {t('dashboard.retry')}
         </button>
       </div>
     </div>
@@ -41,36 +43,36 @@ export default function SuperLicenseesCard() {
 
   return (
     <div className="card">
-      <div className="card-header">Licenciados</div>
+      <div className="card-header">{t('dashboard.licensees.cardTitle')}</div>
       <div className="card-body">
         <div className="d-flex gap-4 mb-3">
           <div>
             <div className="fs-4 fw-bold">{data.total}</div>
-            <div className="text-muted small">Total</div>
+            <div className="text-muted small">{t('dashboard.licensees.total')}</div>
           </div>
           <div>
             <div className="fs-4 fw-bold text-success">{data.active}</div>
-            <div className="text-muted small">Ativos</div>
+            <div className="text-muted small">{t('dashboard.licensees.active')}</div>
           </div>
         </div>
         <table className="table table-sm mb-0">
           <thead>
             <tr>
-              <th>Tipo</th>
-              <th>Quantidade</th>
+              <th>{t('dashboard.licensees.kindType')}</th>
+              <th>{t('dashboard.licensees.kindQuantity')}</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>Demo</td>
+              <td>{t('dashboard.licensees.kindDemo')}</td>
               <td>{data.by_kind?.demo ?? 0}</td>
             </tr>
             <tr>
-              <td>Grátis</td>
+              <td>{t('dashboard.licensees.kindFree')}</td>
               <td>{data.by_kind?.free ?? 0}</td>
             </tr>
             <tr>
-              <td>Pago</td>
+              <td>{t('dashboard.licensees.kindPaid')}</td>
               <td>{data.by_kind?.paid ?? 0}</td>
             </tr>
           </tbody>

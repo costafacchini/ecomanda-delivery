@@ -6,6 +6,12 @@ import { createRoutesStub } from 'react-router'
 
 vi.mock('../../../../services/sector')
 vi.mock('../../../../services/user')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 describe('<SectorEdit />', () => {
   const currentUser = {
@@ -51,11 +57,11 @@ describe('<SectorEdit />', () => {
 
     await screen.findByDisplayValue('Suporte')
 
-    fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'TI' } })
+    fireEvent.change(screen.getByLabelText('common.name'), { target: { value: 'TI' } })
 
     ;(updateSector as any).mockResolvedValue({ status: 200 })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Salvar' }))
+    fireEvent.click(screen.getByRole('button', { name: 'common.save' }))
 
     await waitFor(() =>
       expect(updateSector).toHaveBeenCalledWith(expect.objectContaining({ name: 'TI' }))

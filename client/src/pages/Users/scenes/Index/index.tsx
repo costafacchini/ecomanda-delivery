@@ -1,23 +1,18 @@
 import { useEffect, useState, useCallback } from 'react'
 import { Link } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import { getUsers } from '../../../../services/user'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 import { useSimpleCrud } from '../../../../contexts/SimpleCrud'
 import isEmpty from 'lodash/isEmpty'
 import type { IUser, IUserFilters } from '../../../../types'
 
-const ROLE_LABELS: Record<string, string> = {
-  agent: 'Agente',
-  supervisor: 'Supervisor',
-  admin: 'Administrador',
-  super: 'Super',
-}
-
 interface UsersIndexProps {
   currentUser?: IUser | null
 }
 
 function UsersIndex({ currentUser }: UsersIndexProps) {
+  const { t } = useTranslation()
   const { filters, setFilters, cache } = useSimpleCrud()
   const { addPage } = cache
   const userFilters = filters as IUserFilters | undefined
@@ -83,10 +78,10 @@ function UsersIndex({ currentUser }: UsersIndexProps) {
       <div className='row'>
         <div className='d-flex justify-content-between pb-2'>
           <div className=''>
-            <h3 className='pe-3'>Usuários</h3>
+            <h3 className='pe-3'>{t('users.title')}</h3>
           </div>
           <div className=''>
-            <Link to='/users/new' className='btn btn-primary'>Novo Usuário</Link>
+            <Link to='/users/new' className='btn btn-primary'>{t('users.newUser')}</Link>
           </div>
         </div>
       </div>
@@ -95,7 +90,7 @@ function UsersIndex({ currentUser }: UsersIndexProps) {
           <div className='flex-column w-50'>
             {currentUser && currentUser.role === 'super' && (
               <div className='form-group'>
-                <label htmlFor='licensee' id='licensee'>Licenciado</label>
+                <label htmlFor='licensee' id='licensee'>{t('users.licenseeFilter')}</label>
                 <SelectLicenseesWithFilter
                   name='licensee'
                   aria-labelledby='licensee'
@@ -119,7 +114,7 @@ function UsersIndex({ currentUser }: UsersIndexProps) {
               name='expression'
               type='text'
               value={expression}
-              placeholder='Digite a expressão'
+              placeholder={t('users.expressionPlaceholder')}
               onChange={changeExpression}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
@@ -129,8 +124,8 @@ function UsersIndex({ currentUser }: UsersIndexProps) {
             />
             <button
               className='btn btn-primary'
-              title='Filtre pelo usuário'
-              aria-label='Pesquisar usuários'
+              title={t('users.filterButtonTitle')}
+              aria-label={t('users.filterButtonAriaLabel')}
               onClick={() => {
                 onFilter({ ...userFilters, expression, page: 1 })
               }}
@@ -144,10 +139,10 @@ function UsersIndex({ currentUser }: UsersIndexProps) {
         <table className='table'>
           <thead>
             <tr>
-              <th scope='col'>Nome</th>
-              <th scope='col'>E-mail</th>
-              <th scope='col'>Perfil</th>
-              <th scope='col'>Ativo</th>
+              <th scope='col'>{t('common.name')}</th>
+              <th scope='col'>{t('common.email')}</th>
+              <th scope='col'>{t('users.columnProfile')}</th>
+              <th scope='col'>{t('common.active')}</th>
               <th scope='col'></th>
             </tr>
           </thead>
@@ -156,21 +151,21 @@ function UsersIndex({ currentUser }: UsersIndexProps) {
               <tr>
                 <td colSpan={5} className='text-center text-muted py-4'>
                   <span className='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true' />
-                  Carregando...
+                  {t('common.loading')}
                 </td>
               </tr>
             ) : (cache.records as unknown as IUser[]).length === 0 ? (
               <tr>
                 <td colSpan={5} className='text-center text-muted py-4'>
-                  Nenhum usuário encontrado.
+                  {t('users.noUsersFound')}
                 </td>
               </tr>
             ) : (cache.records as unknown as IUser[]).map((user) => (
               <tr key={user.id}>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
-                <td>{ROLE_LABELS[user.role] ?? user.role}</td>
-                <td>{user.active ? 'Sim' : 'Não'}</td>
+                <td>{t(`users.roles.${user.role}`, { defaultValue: user.role })}</td>
+                <td>{user.active ? t('common.yes') : t('common.no')}</td>
                 <td>
                   <Link to={`/users/${user.id}`} aria-label={`Editar ${user.name}`}>
                     <i className='bi bi-pencil' />
@@ -196,9 +191,9 @@ function UsersIndex({ currentUser }: UsersIndexProps) {
                   {loading ? (
                     <>
                       <span className='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true' />
-                      Carregando...
+                      {t('common.loading')}
                     </>
-                  ) : 'Carregar mais'}
+                  ) : t('common.loadMore')}
                 </button>
               </div>
             </div>
