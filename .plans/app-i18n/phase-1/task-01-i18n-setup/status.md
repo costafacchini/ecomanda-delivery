@@ -1,9 +1,9 @@
 # Status: i18n Client Infrastructure
 
-**Current Status**: not-started
+**Current Status**: in-progress
 **Last Updated**: 2026-06-24
-**Agent**: —
-**Branch**: —
+**Agent**: claude-sonnet-4-6
+**Branch**: plan/app-i18n-phase-1-task-01-i18n-setup
 **PR**: —
 
 ## Status History
