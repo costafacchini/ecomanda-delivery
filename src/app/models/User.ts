@@ -38,6 +38,11 @@ const userSchema = new Schema(
       enum: ['agent', 'supervisor', 'admin', 'super'],
       default: 'agent',
     },
+    language: {
+      type: String,
+      enum: ['pt', 'en'],
+      default: 'pt',
+    },
     licensee: {
       type: ObjectId,
       ref: 'Licensee',

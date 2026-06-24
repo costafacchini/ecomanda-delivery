@@ -98,6 +98,18 @@ describe('OnboardAccount', () => {
     expect(result.licensee.useSectors).toBeFalsy()
   })
 
+  it('creates user with language: en when provided', async () => {
+    const result = await onboardAccount.execute({ ...validInput, language: 'en' })
+
+    expect(result.user.language).toEqual('en')
+  })
+
+  it('creates user with language: pt when language is omitted', async () => {
+    const result = await onboardAccount.execute(validInput)
+
+    expect(result.user.language).toEqual('pt')
+  })
+
   it('deletes the orphaned licensee and re-throws when user creation fails', async () => {
     jest.spyOn(userRepository, 'create').mockRejectedValueOnce(new Error('user creation failed'))
     const deleteSpy = jest.spyOn(licenseeRepository, 'delete')
