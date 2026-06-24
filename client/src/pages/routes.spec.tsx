@@ -18,7 +18,7 @@ describe('<RootRoutes>', () => {
     )
 
     const title = screen.getByText(/e-comanda/i)
-    const emailField = screen.getByText(/email/i)
+    const emailField = screen.getByText(/e-mail/i)
     const passwordField = screen.getByText(/senha/i)
     const loginButton = screen.getByText(/entrar/i)
 

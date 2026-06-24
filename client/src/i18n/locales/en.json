@@ -1,5 +1,15 @@
 {
-  "login": {},
+  "login": {
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Password",
+    "submitButton": "Sign in",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create account",
+    "emptyFieldsError": "Please enter your email and password to continue.",
+    "loginError": "Login error",
+    "accountCreated": "Account created successfully! Sign in to continue."
+  },
   "onboarding": {},
   "navbar": {},
   "licensees": {},

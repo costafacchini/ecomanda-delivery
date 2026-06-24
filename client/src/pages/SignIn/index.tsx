@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import api from '../../services/api'
 import { login, fetchLoggedUser } from '../../services/auth'
 import styles from './index.module.scss'
 import { useApp } from '../../contexts/App'
+import { LanguageSwitcher } from '../../components/LanguageSwitcher'
 import OnboardingModal from './OnboardingModal'
 
 interface ILoginResponse {
@@ -19,17 +21,18 @@ function SignIn() {
   const [successMessage, setSuccessMessage] = useState('')
   let navigate = useNavigate()
   const { setCurrentUser } = useApp()
+  const { t, i18n } = useTranslation()
 
   function handleOnboardingSuccess() {
     setIsOnboardingOpen(false)
-    setSuccessMessage('Conta criada com sucesso! Faça login para continuar.')
+    setSuccessMessage(t('login.accountCreated'))
   }
 
   async function handleSignIn(e: React.FormEvent | React.MouseEvent) {
     e.preventDefault()
 
     if (!email || !password) {
-      setError('Preencha e-mail e senha para continuar!')
+      setError(t('login.emptyFieldsError'))
     } else {
       const body = { email, password }
       const response = await api().post<ILoginResponse>('/login', { body })
@@ -38,12 +41,13 @@ function SignIn() {
 
         fetchLoggedUser().then(user => {
           setCurrentUser(user ?? undefined)
+          if (user?.language) i18n.changeLanguage(user.language)
         })
 
         navigate('/#/')
       } else {
         console.log(response)
-        setError(response.data.message ?? 'Erro ao fazer login')
+        setError(response.data.message ?? t('login.loginError'))
       }
     }
   }
@@ -57,8 +61,10 @@ function SignIn() {
               <div className='h-100 px-4 d-flex justify-content-center flex-column'>
                 <h3 className='text-center mb-4'>e-comanda</h3>
 
+                <LanguageSwitcher className="mb-3" />
+
                 <div className="">
-                  <label htmlFor="email" className="form-label">email</label>
+                  <label htmlFor="email" className="form-label">{t('login.emailLabel')}</label>
                   <div className="input-group mb-3">
                     <div className="input-group-prepend">
                       <span style={{ fontSize: '1.1rem' }} className="input-group-text"><i className="bi bi-person-fill" /></span>
@@ -67,14 +73,14 @@ function SignIn() {
                       type="email"
                       className="form-control"
                       id="email"
-                      placeholder="nome@exemplo.com"
+                      placeholder={t('login.emailPlaceholder')}
                       onChange={e => setEmail(e.target.value)}
                     />
                   </div>
                 </div>
 
                 <div className="mt-2">
-                  <label htmlFor="password" className="form-label">senha</label>
+                  <label htmlFor="password" className="form-label">{t('login.passwordLabel')}</label>
                   <div className="input-group mb-3">
                     <div className="input-group-prepend">
                       <span style={{ fontSize: '1.1rem' }} className="input-group-text"><i className="bi bi-key-fill"></i></span>
@@ -99,17 +105,17 @@ function SignIn() {
                 <button
                   className='btn btn-primary mt-4 w-100'
                   onClick={handleSignIn}>
-                  Entrar
+                  {t('login.submitButton')}
                 </button>
 
                 <div className="text-center mt-3 d-flex justify-content-center align-items-center">
-                  <span>Não tem uma conta?</span>
+                  <span>{t('login.noAccount')}</span>
                   <button
                     type="button"
                     className="btn btn-link p-0 ms-2"
                     onClick={() => setIsOnboardingOpen(true)}
                   >
-                    Criar conta
+                    {t('login.createAccount')}
                   </button>
                 </div>
               </div>

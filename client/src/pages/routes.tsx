@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { HashRouter, Route, Routes } from 'react-router'
+import i18n from '../i18n'
 import SignIn from './SignIn'
 import LicenseesRoutes from './Licensees/routes'
 import UsersRoutes from './Users/routes'
@@ -23,6 +24,7 @@ function RootRoutes() {
     if (isAuthenticated() && !currentUser) {
       fetchLoggedUser().then(user => {
         setCurrentUser(user ?? undefined)
+        if (user?.language) i18n.changeLanguage(user.language)
       })
     }
   }, [currentUser, setCurrentUser])
