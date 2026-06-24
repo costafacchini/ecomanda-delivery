@@ -1,6 +1,6 @@
 # Plan: App Internationalization (PT/EN)
 
-**Status**: not-started
+**Status**: complete
 **Created**: 2026-06-24
 **Last Updated**: 2026-06-24
 **Assigned Dev**: Alan Costa Facchini
