@@ -10,6 +10,34 @@ import { AppContext } from '../../../../contexts/App'
 vi.mock('../../../../services/message')
 vi.mock('../../../../services/licensee')
 vi.mock('../../../../services/contact')
+vi.mock('moment-timezone', () => {
+  const pad = (n: number) => String(n).padStart(2, '0')
+
+  function fmt(date: Date, format: string): string {
+    return format
+      .replace('YYYY', String(date.getUTCFullYear()))
+      .replace('MM', pad(date.getUTCMonth() + 1))
+      .replace('DD', pad(date.getUTCDate()))
+      .replace('HH', pad(date.getUTCHours()))
+      .replace('mm', pad(date.getUTCMinutes()))
+      .replace('ss', pad(date.getUTCSeconds()))
+  }
+
+  const chain = (date: Date) => ({
+    tz: () => chain(date),
+    utc: () => chain(date),
+    format: (f?: string) => f ? fmt(date, f) : date.toISOString(),
+    startOf: (unit?: string) => { const d = new Date(date); if (unit === 'day') d.setUTCHours(0, 0, 0, 0); return chain(d) },
+    endOf: (unit?: string) => { const d = new Date(date); if (unit === 'day') d.setUTCHours(23, 59, 59, 999); return chain(d) },
+    subtract: (n?: number, unit?: string) => { const d = new Date(date); if (unit === 'hours' && n) d.setUTCHours(d.getUTCHours() - n); return chain(d) },
+    toISOString: () => date.toISOString(),
+  })
+
+  const parse = (val?: string) => val ? new Date(val.endsWith('Z') || val.includes('+') ? val : `${val}Z`) : new Date()
+  const momentFn = (val?: string) => chain(parse(val))
+  momentFn.tz = (val: string) => chain(parse(val))
+  return { default: momentFn }
+})
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (k: string) => k,
