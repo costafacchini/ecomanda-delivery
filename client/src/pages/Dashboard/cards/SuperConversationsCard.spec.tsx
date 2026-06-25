@@ -3,6 +3,12 @@ import SuperConversationsCard from './SuperConversationsCard'
 import { getDashboardConversations } from '../../../services/dashboard'
 
 vi.mock('../../../services/dashboard')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 describe('<SuperConversationsCard />', () => {
   it('shows loading state while the request is in flight', () => {
@@ -10,7 +16,7 @@ describe('<SuperConversationsCard />', () => {
 
     render(<SuperConversationsCard />)
 
-    expect(screen.getByText('Carregando...')).toBeInTheDocument()
+    expect(screen.getByText('common.loading')).toBeInTheDocument()
   })
 
   it('shows an error message when the request fails', async () => {
@@ -18,7 +24,7 @@ describe('<SuperConversationsCard />', () => {
 
     render(<SuperConversationsCard />)
 
-    expect(await screen.findByText('Erro ao carregar dados.')).toBeInTheDocument()
+    expect(await screen.findByText('dashboard.loadError')).toBeInTheDocument()
   })
 
   it('renders conversation metrics on success', async () => {
@@ -37,10 +43,10 @@ describe('<SuperConversationsCard />', () => {
     expect(screen.getByText('60')).toBeInTheDocument()
     expect(screen.getByText('5')).toBeInTheDocument()
     expect(screen.getByText('2m')).toBeInTheDocument()
-    expect(screen.getByText('Conversas')).toBeInTheDocument()
-    expect(screen.getByText('Iniciadas')).toBeInTheDocument()
-    expect(screen.getByText('Encerradas')).toBeInTheDocument()
-    expect(screen.getByText('Média msg/conversa')).toBeInTheDocument()
-    expect(screen.getByText('Duração média')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.conversations.cardTitle')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.conversations.startedLabel')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.conversations.endedLabel')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.conversations.avgMsgLabel')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.conversations.avgDurationLabel')).toBeInTheDocument()
   })
 })

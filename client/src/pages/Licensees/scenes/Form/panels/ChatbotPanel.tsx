@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { FieldWithError } from '../../../../../components/form'
 import type { ILicenseeFormValues } from '../../../../../types'
 import type { FormikErrors, FormikTouched } from 'formik'
@@ -12,11 +13,13 @@ interface ChatbotPanelProps {
 }
 
 function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }: ChatbotPanelProps) {
+  const { t } = useTranslation()
+
   return (
     <>
       <div className='row mb-3'>
         <div className='form-group col-8'>
-          <label htmlFor='chatbotDefault'>Chatbot padrão</label>
+          <label htmlFor='chatbotDefault'>{t('licensees.form.chatbot.chatbotDefaultLabel')}</label>
           <select
             value={values.chatbotDefault}
             className='form-select'
@@ -24,7 +27,7 @@ function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }: Cha
             onChange={handleChange}
             onBlur={handleBlur}
           >
-            <option value=''>Nenhum</option>
+            <option value=''>{t('licensees.form.chatbot.noneOption')}</option>
             <option value='landbot'>Landbot</option>
           </select>
         </div>
@@ -33,7 +36,7 @@ function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }: Cha
       {values.chatbotDefault !== '' && <>
       <div className='row mb-3'>
         <div className='form-group col-8'>
-          <label htmlFor='chatbotUrl'>URL do chatbot</label>
+          <label htmlFor='chatbotUrl'>{t('licensees.form.chatbot.chatbotUrlLabel')}</label>
           <FieldWithError
             id='chatbotUrl'
             name='chatbotUrl'
@@ -47,7 +50,7 @@ function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }: Cha
 
       <div className='row mb-3'>
         <div className='form-group col-8'>
-          <label htmlFor='chatbotAuthorizationToken'>Token do chatbot</label>
+          <label htmlFor='chatbotAuthorizationToken'>{t('licensees.form.chatbot.chatbotTokenLabel')}</label>
           <FieldWithError
             id='chatbotAuthorizationToken'
             name='chatbotAuthorizationToken'
@@ -61,7 +64,7 @@ function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }: Cha
 
       <div className='row mb-3'>
         <div className='form-group col-8'>
-          <label htmlFor='chatbotApiToken'>Token de acesso via API do chatbot</label>
+          <label htmlFor='chatbotApiToken'>{t('licensees.form.chatbot.chatbotApiTokenLabel')}</label>
           <FieldWithError
             id='chatbotApiToken'
             name='chatbotApiToken'
@@ -75,7 +78,7 @@ function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }: Cha
 
       <div className='row mb-3'>
         <div className='form-group col-8'>
-          <label htmlFor='messageOnResetChatbot'>Mensagem de encerramento de chatbot abandonado</label>
+          <label htmlFor='messageOnResetChatbot'>{t('licensees.form.chatbot.messageOnResetLabel')}</label>
           <textarea
             className='form-control'
             rows={4}
@@ -90,7 +93,7 @@ function ChatbotPanel({ values, errors, touched, handleChange, handleBlur }: Cha
 
       <div className='row mb-3'>
         <div className='form-group col-8'>
-          <label htmlFor='messageOnCloseChat'>Mensagem de encerramento de chat</label>
+          <label htmlFor='messageOnCloseChat'>{t('licensees.form.chatbot.messageOnCloseLabel')}</label>
           <textarea
             className='form-control'
             rows={4}

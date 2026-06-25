@@ -3,6 +3,12 @@ import SuperMessageVolumeCard from './SuperMessageVolumeCard'
 import { getDashboardMessageVolume } from '../../../services/dashboard'
 
 vi.mock('../../../services/dashboard')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 describe('<SuperMessageVolumeCard />', () => {
   it('shows loading state while the request is in flight', () => {
@@ -10,7 +16,7 @@ describe('<SuperMessageVolumeCard />', () => {
 
     render(<SuperMessageVolumeCard />)
 
-    expect(screen.getByText('Carregando...')).toBeInTheDocument()
+    expect(screen.getByText('common.loading')).toBeInTheDocument()
   })
 
   it('shows an error message when the request fails', async () => {
@@ -18,7 +24,7 @@ describe('<SuperMessageVolumeCard />', () => {
 
     render(<SuperMessageVolumeCard />)
 
-    expect(await screen.findByText('Erro ao carregar dados.')).toBeInTheDocument()
+    expect(await screen.findByText('dashboard.loadError')).toBeInTheDocument()
   })
 
   it('renders throughput metrics and per-day/per-hour rows on success', async () => {
@@ -45,7 +51,7 @@ describe('<SuperMessageVolumeCard />', () => {
     expect(screen.getByText('2026-05-02')).toBeInTheDocument()
     expect(screen.getByText('09h')).toBeInTheDocument()
     expect(screen.getByText('10h')).toBeInTheDocument()
-    expect(screen.getByText('Volume de Mensagens')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.messageVolume.cardTitle')).toBeInTheDocument()
   })
 
   it('renders empty tables when per_day and per_hour are absent', async () => {
@@ -55,9 +61,9 @@ describe('<SuperMessageVolumeCard />', () => {
 
     render(<SuperMessageVolumeCard />)
 
-    await screen.findByText('Volume de Mensagens')
+    await screen.findByText('dashboard.messageVolume.cardTitle')
 
-    expect(screen.getByText('Por Dia')).toBeInTheDocument()
-    expect(screen.getByText('Por Hora (top 10)')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.messageVolume.perDayTitle')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.messageVolume.perHourTitle')).toBeInTheDocument()
   })
 })

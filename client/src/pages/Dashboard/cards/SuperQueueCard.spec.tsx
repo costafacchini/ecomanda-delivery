@@ -3,6 +3,12 @@ import SuperQueueCard from './SuperQueueCard'
 import { getDashboardQueue } from '../../../services/dashboard'
 
 vi.mock('../../../services/dashboard')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 describe('<SuperQueueCard />', () => {
   it('shows loading state while the request is in flight', () => {
@@ -10,7 +16,7 @@ describe('<SuperQueueCard />', () => {
 
     render(<SuperQueueCard />)
 
-    expect(screen.getByText('Carregando...')).toBeInTheDocument()
+    expect(screen.getByText('common.loading')).toBeInTheDocument()
   })
 
   it('shows an error message when the request fails', async () => {
@@ -18,7 +24,7 @@ describe('<SuperQueueCard />', () => {
 
     render(<SuperQueueCard />)
 
-    expect(await screen.findByText('Erro ao carregar dados.')).toBeInTheDocument()
+    expect(await screen.findByText('dashboard.loadError')).toBeInTheDocument()
   })
 
   it('renders pending messages and average queue time on success', async () => {
@@ -30,8 +36,8 @@ describe('<SuperQueueCard />', () => {
 
     expect(await screen.findByText('14')).toBeInTheDocument()
     expect(screen.getByText('3s')).toBeInTheDocument()
-    expect(screen.getByText('Fila de Mensagens')).toBeInTheDocument()
-    expect(screen.getByText('Pendentes')).toBeInTheDocument()
-    expect(screen.getByText('Tempo médio na fila')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.queue.cardTitle')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.queue.pendingLabel')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.queue.avgTimeLabel')).toBeInTheDocument()
   })
 })

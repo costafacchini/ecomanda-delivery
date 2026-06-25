@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useApp } from '../../contexts/App'
 import SuperLicenseesCard from './cards/SuperLicenseesCard'
 import SuperMessageVolumeCard from './cards/SuperMessageVolumeCard'
@@ -12,6 +13,7 @@ import LicenseeMessagesPerDayCard from './cards/LicenseeMessagesPerDayCard'
 import BaileysSetupCard from './cards/BaileysSetupCard'
 
 export default function Dashboard() {
+  const { t } = useTranslation()
   const { currentUser, activeLicensee } = useApp()
 
   const licenseeObj = currentUser?.licensee as { id?: string; whatsappDefault?: string; chatDefault?: string } | string | null | undefined
@@ -21,7 +23,7 @@ export default function Dashboard() {
     return (
       <div className="d-flex justify-content-center py-5 text-muted">
         <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
-        Carregando...
+        {t('common.loading')}
       </div>
     )
   }
@@ -85,7 +87,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <h3 className="mb-3">Dashboard</h3>
+      <h3 className="mb-3">{t('dashboard.title')}</h3>
       {renderCards()}
     </>
   )

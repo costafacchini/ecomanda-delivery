@@ -3,6 +3,17 @@ import RootRoutes from '../pages/routes'
 import * as auth from '../services/auth'
 import { AppContextProvider } from '../contexts/App'
 
+vi.mock('react-i18next', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-i18next')>()
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: (k: string) => k,
+      i18n: { language: 'pt', changeLanguage: vi.fn() },
+    }),
+  }
+})
+
 describe('<RootRoutes>', () => {
   beforeEach(() => { vi.clearAllMocks() })
 
@@ -18,9 +29,9 @@ describe('<RootRoutes>', () => {
     )
 
     const title = screen.getByText(/e-comanda/i)
-    const emailField = screen.getByText(/email/i)
-    const passwordField = screen.getByText(/senha/i)
-    const loginButton = screen.getByText(/entrar/i)
+    const emailField = screen.getByText('login.emailLabel')
+    const passwordField = screen.getByText('login.passwordLabel')
+    const loginButton = screen.getByText('login.submitButton')
 
     expect(title).toBeInTheDocument()
     expect(emailField).toBeInTheDocument()
@@ -38,7 +49,7 @@ describe('<RootRoutes>', () => {
       </AppContextProvider>
     )
 
-    await screen.findByText('Contatos')
+    await screen.findByText('navbar.contacts')
 
     const navbar = screen.getByRole('navigation')
 

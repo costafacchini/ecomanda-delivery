@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { FieldWithError } from '../../../../../components/form'
 import type { ILicenseeFormValues } from '../../../../../types'
 import type { FormikErrors, FormikTouched } from 'formik'
@@ -31,11 +32,13 @@ function MainPanel({
   handleChange,
   handleBlur,
 }: MainPanelProps) {
+  const { t } = useTranslation()
+
   return (
     <>
       <div className='row mb-3'>
         <div className='form-group col-8'>
-          <label htmlFor='name'>Nome<Required /></label>
+          <label htmlFor='name'>{t('licensees.form.nameLabel')}<Required /></label>
           <FieldWithError
             id='name'
             type='text'
@@ -56,7 +59,7 @@ function MainPanel({
               id='active'
             />
             <label className='form-check-label' htmlFor='active'>
-              Ativo
+              {t('licensees.form.activeLabel')}
             </label>
           </div>
         </div>
@@ -64,7 +67,7 @@ function MainPanel({
 
       <div className='row mb-3'>
         <div className='form-group col-2'>
-          <label htmlFor='kind'>Tipo<Required /></label>
+          <label htmlFor='kind'>{t('licensees.form.kindLabel')}<Required /></label>
           <select
             value={values.kind}
             className='form-select'
@@ -72,14 +75,14 @@ function MainPanel({
             onChange={handleChange}
             onBlur={handleBlur}
           >
-            <option value=''>Selecione</option>
-            <option value='company'>Jurídica</option>
-            <option value='individual'>Física</option>
+            <option value=''>{t('licensees.form.kindSelectPlaceholder')}</option>
+            <option value='company'>{t('licensees.form.kindCompany')}</option>
+            <option value='individual'>{t('licensees.form.kindIndividual')}</option>
           </select>
         </div>
 
         <div className='form-group col-3'>
-          <label htmlFor='document'>Documento<Required /></label>
+          <label htmlFor='document'>{t('licensees.form.documentLabel')}<Required /></label>
           <FieldWithError
             id='document'
             name='document'
@@ -93,7 +96,7 @@ function MainPanel({
 
       <div className='row mb-3'>
         <div className='form-group col-8'>
-          <label htmlFor='email'>E-mail<Required /></label>
+          <label htmlFor='email'>{t('licensees.form.emailLabel')}<Required /></label>
           <FieldWithError
             id='email'
             name='email'
@@ -107,7 +110,7 @@ function MainPanel({
 
       <div className='row mb-3'>
         <div className='form-group col-8'>
-          <label htmlFor='licenseKind'>Licença<Required /></label>
+          <label htmlFor='licenseKind'>{t('licensees.form.licenseKindLabel')}<Required /></label>
           <select
             value={values.licenseKind}
             className='form-select'
@@ -115,16 +118,16 @@ function MainPanel({
             onChange={handleChange}
             onBlur={handleBlur}
           >
-            <option value='demo'>Demonstração</option>
-            <option value='free'>Grátis</option>
-            <option value='paid'>Pago</option>
+            <option value='demo'>{t('licensees.form.licenseKindDemo')}</option>
+            <option value='free'>{t('licensees.form.licenseKindFree')}</option>
+            <option value='paid'>{t('licensees.form.licenseKindPaid')}</option>
           </select>
         </div>
       </div>
 
       <div className='row mb-3'>
         <div className='form-group col-8'>
-          <label htmlFor='phone'>Telefone<Required /></label>
+          <label htmlFor='phone'>{t('licensees.form.phoneLabel')}<Required /></label>
           <FieldWithError
             id='phone'
             type='text'
@@ -138,7 +141,7 @@ function MainPanel({
 
       <div className='row mb-3'>
         <div className='form-group col-8'>
-          <label htmlFor='apiToken'>API token</label>
+          <label htmlFor='apiToken'>{t('licensees.form.apiTokenLabel')}</label>
           <FieldWithError
             readOnly
             id='apiToken'
@@ -153,13 +156,13 @@ function MainPanel({
 
       <details className='mt-2'>
         <summary className='text-muted small' style={{ cursor: 'pointer', userSelect: 'none' }}>
-          URLs de webhook (somente leitura)
+          {t('licensees.form.webhookSectionSummary')}
         </summary>
         <fieldset className='mt-2'>
-          <legend className='visually-hidden'>URLs de webhook geradas pelo sistema</legend>
+          <legend className='visually-hidden'>{t('licensees.form.webhookSectionLegend')}</legend>
           <div className='row mb-3'>
             <div className='form-group col-8'>
-              <label htmlFor='urlChatWebhook'>URL para webhook de Chat</label>
+              <label htmlFor='urlChatWebhook'>{t('licensees.form.webhookChatLabel')}</label>
               <FieldWithError
                 readOnly
                 id='urlChatWebhook'
@@ -174,7 +177,7 @@ function MainPanel({
 
           <div className='row mb-3'>
             <div className='form-group col-8'>
-              <label htmlFor='urlChatbotWebhook'>URL para webhook de Chatbot</label>
+              <label htmlFor='urlChatbotWebhook'>{t('licensees.form.webhookChatbotLabel')}</label>
               <FieldWithError
                 readOnly
                 id='urlChatbotWebhook'
@@ -189,7 +192,7 @@ function MainPanel({
 
           <div className='row mb-3'>
             <div className='form-group col-8'>
-              <label htmlFor='urlChatbotTransfer'>URL de webhook para transferir do Chatbot para o Chat</label>
+              <label htmlFor='urlChatbotTransfer'>{t('licensees.form.webhookChatbotTransferLabel')}</label>
               <FieldWithError
                 readOnly
                 id='urlChatbotTransfer'
@@ -204,7 +207,7 @@ function MainPanel({
 
           <div className='row mb-3'>
             <div className='form-group col-8'>
-              <label htmlFor='urlWhatsappWebhook'>URL para webhook de WhatsApp</label>
+              <label htmlFor='urlWhatsappWebhook'>{t('licensees.form.webhookWhatsappLabel')}</label>
               <FieldWithError
                 readOnly
                 id='urlWhatsappWebhook'

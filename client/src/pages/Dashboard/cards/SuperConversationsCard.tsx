@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getDashboardConversations } from '../../../services/dashboard'
 import type { IDashboardConversations } from '../../../types'
 
@@ -16,6 +17,7 @@ const firstDayOfMonth = () => {
 }
 
 export default function SuperConversationsCard({ licensee }: { licensee?: string }) {
+  const { t } = useTranslation()
   const [startDate, setStartDate] = useState(firstDayOfMonth)
   const [endDate, setEndDate] = useState(today)
   const [data, setData] = useState<IDashboardConversations | null>(null)
@@ -28,29 +30,29 @@ export default function SuperConversationsCard({ licensee }: { licensee?: string
     setError(null)
     getDashboardConversations({ ...(licensee ? { licensee } : {}), startDate, endDate })
       .then((res) => setData(res.data as IDashboardConversations))
-      .catch(() => setError('Erro ao carregar dados.'))
+      .catch(() => setError(t('dashboard.loadError')))
       .finally(() => setLoading(false))
-  }, [licensee, startDate, endDate, retryCount])
+  }, [licensee, startDate, endDate, retryCount, t])
 
   return (
     <div className="card">
       <div className="card-header">
         <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
-          <span>Conversas</span>
+          <span>{t('dashboard.conversations.cardTitle')}</span>
           <div className="d-flex gap-2 align-items-center">
             <input
               type="date"
               className="form-control form-control-sm"
               value={startDate}
-              aria-label="Data inicial"
+              aria-label={t('dashboard.dateFrom')}
               onChange={(e) => setStartDate(e.target.value)}
             />
-            <span className="text-muted small">até</span>
+            <span className="text-muted small">{t('dashboard.dateUntil')}</span>
             <input
               type="date"
               className="form-control form-control-sm"
               value={endDate}
-              aria-label="Data final"
+              aria-label={t('dashboard.dateTo')}
               onChange={(e) => setEndDate(e.target.value)}
             />
           </div>
@@ -60,14 +62,14 @@ export default function SuperConversationsCard({ licensee }: { licensee?: string
         {loading && (
           <p className="text-muted">
             <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
-            Carregando...
+            {t('common.loading')}
           </p>
         )}
         {error && (
           <div>
             <p className="text-danger mb-2">{error}</p>
             <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => setRetryCount((c) => c + 1)}>
-              Tentar novamente
+              {t('dashboard.retry')}
             </button>
           </div>
         )}
@@ -75,19 +77,19 @@ export default function SuperConversationsCard({ licensee }: { licensee?: string
           <div className="d-flex gap-4">
             <div>
               <div className="fs-4 fw-bold text-success">{data.started_today}</div>
-              <div className="text-muted small">Iniciadas</div>
+              <div className="text-muted small">{t('dashboard.conversations.startedLabel')}</div>
             </div>
             <div>
               <div className="fs-4 fw-bold">{data.ended_today}</div>
-              <div className="text-muted small">Encerradas</div>
+              <div className="text-muted small">{t('dashboard.conversations.endedLabel')}</div>
             </div>
             <div>
               <div className="fs-4 fw-bold">{data.avg_messages_per_conversation}</div>
-              <div className="text-muted small">Média msg/conversa</div>
+              <div className="text-muted small">{t('dashboard.conversations.avgMsgLabel')}</div>
             </div>
             <div>
               <div className="fs-4 fw-bold">{formatDuration(data.avg_duration_seconds ?? 0)}</div>
-              <div className="text-muted small">Duração média</div>
+              <div className="text-muted small">{t('dashboard.conversations.avgDurationLabel')}</div>
             </div>
           </div>
         )}

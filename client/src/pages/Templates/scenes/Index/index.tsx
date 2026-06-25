@@ -6,12 +6,14 @@ import { useSimpleCrud } from '../../../../contexts/SimpleCrud'
 import { useApp } from '../../../../contexts/App'
 import isEmpty from 'lodash/isEmpty'
 import type { IUser, ITemplateFilters } from '../../../../types'
+import { useTranslation } from 'react-i18next'
 
 interface TemplatesIndexProps {
   currentUser?: IUser | null
 }
 
 function TemplatesIndex({ currentUser }: TemplatesIndexProps) {
+  const { t } = useTranslation()
   const { activeLicensee } = useApp()
   const { filters, setFilters, cache } = useSimpleCrud()
   const { addPage } = cache
@@ -72,7 +74,7 @@ function TemplatesIndex({ currentUser }: TemplatesIndexProps) {
       <div className='row'>
         <div className='d-flex justify-content-between pb-2'>
           <div className=''>
-            <h3 className='pr-3'>Templates</h3>
+            <h3 className='pr-3'>{t('templates.title')}</h3>
           </div>
         </div>
       </div>
@@ -81,7 +83,7 @@ function TemplatesIndex({ currentUser }: TemplatesIndexProps) {
           <div className='flex-column w-50'>
             {currentUser && currentUser.role === 'super' && !activeLicensee && (
               <div className='form-group'>
-                <label htmlFor='licensee' id='licensee'>Licenciado</label>
+                <label htmlFor='licensee' id='licensee'>{t('templates.licenseeFilter')}</label>
                 <SelectLicenseesWithFilter
                   name='licensee'
                   aria-labelledby='licensee'
@@ -108,11 +110,11 @@ function TemplatesIndex({ currentUser }: TemplatesIndexProps) {
                 name='expression'
                 type='text'
                 value={expression}
-                placeholder='Digite a expressão'
+                placeholder={t('templates.expressionPlaceholder')}
                 onChange={changeExpression}
               />
               <div className='input-group-append'>
-                <button className='btn btn-primary' title='Filtre pelo template' onClick={() => {
+                <button className='btn btn-primary' title={t('templates.filterButtonTitle')} onClick={() => {
                   const newFilters = { ...templateFilters, expression: expression, page: 1 }
                   onFilter(newFilters)
                 }}>
@@ -127,8 +129,8 @@ function TemplatesIndex({ currentUser }: TemplatesIndexProps) {
         <table className='table'>
           <thead>
             <tr>
-              <th scope='col'>Nome</th>
-              <th scope='col'>Namespace</th>
+              <th scope='col'>{t('common.name')}</th>
+              <th scope='col'>{t('templates.namespaceLabel')}</th>
               <th scope='col'></th>
             </tr>
           </thead>
@@ -156,7 +158,7 @@ function TemplatesIndex({ currentUser }: TemplatesIndexProps) {
                   className='btn btn-outline-primary d-print-none'
                   onClick={nextPage}
                 >
-                  Carregar mais
+                  {t('common.loadMore')}
                 </button>
               </div>
             </div>

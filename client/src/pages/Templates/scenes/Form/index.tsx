@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router'
 import SelectLicenseesWithFilter from '../../../../components/SelectLicenseesWithFilter'
 import type { IUser } from '../../../../types'
 import type { ITemplateParam } from '../../../../types'
+import { useTranslation } from 'react-i18next'
 
 interface ITemplateFormValues {
   name: string
@@ -38,6 +39,7 @@ const templateInitialValues: ITemplateFormValues = {
 }
 
 function TemplateForm({ onSubmit, errors, initialValues, currentUser, activeLicensee }: TemplateFormProps) {
+  const { t } = useTranslation()
   let navigate = useNavigate()
 
   return (
@@ -54,7 +56,7 @@ function TemplateForm({ onSubmit, errors, initialValues, currentUser, activeLice
             <fieldset className='pb-4' disabled={true}>
               <div className='row'>
                 <div className='form-group col-4'>
-                  <label htmlFor='name'>Nome</label>
+                  <label htmlFor='name'>{t('templates.nameLabel')}</label>
                   <FieldWithError
                     id='name'
                     type='text'
@@ -68,7 +70,7 @@ function TemplateForm({ onSubmit, errors, initialValues, currentUser, activeLice
 
               <div className='row'>
                 <div className='form-group col-5'>
-                  <label htmlFor='namespace'>Namespace</label>
+                  <label htmlFor='namespace'>{t('templates.namespaceLabel')}</label>
                   <FieldWithError
                     id='namespace'
                     name='namespace'
@@ -83,7 +85,7 @@ function TemplateForm({ onSubmit, errors, initialValues, currentUser, activeLice
               {currentUser && currentUser.role === 'super' && !activeLicensee && (
                 <div className='row'>
                   <div className='form-group col-5'>
-                    <label htmlFor='licensee'>Licenciado</label>
+                    <label htmlFor='licensee'>{t('templates.licenseeFilter')}</label>
                     <SelectLicenseesWithFilter selectedItem={typeof formik.values.licensee === 'string' ? null : formik.values.licensee} isDisabled={true} onChange={(e: any) => (
                       formik.setFieldValue('licensee', e?.value ?? null, false)
                     )} />
@@ -91,7 +93,7 @@ function TemplateForm({ onSubmit, errors, initialValues, currentUser, activeLice
                 </div>
               )}
 
-              <label htmlFor='headerParams'>Parâmetros do Header</label>
+              <label htmlFor='headerParams'>{t('templates.headerParamsLabel')}</label>
               <FieldArray
                 name='headerParams'
                 render={() => (
@@ -113,7 +115,7 @@ function TemplateForm({ onSubmit, errors, initialValues, currentUser, activeLice
                 )}
               />
 
-              <label htmlFor='bodyParams'>Parâmetros do Body</label>
+              <label htmlFor='bodyParams'>{t('templates.bodyParamsLabel')}</label>
               <FieldArray
                 name='bodyParams'
                 render={() => (
@@ -135,7 +137,7 @@ function TemplateForm({ onSubmit, errors, initialValues, currentUser, activeLice
                 )}
               />
 
-              <label htmlFor='footerParams'>Parâmetros do Footer</label>
+              <label htmlFor='footerParams'>{t('templates.footerParamsLabel')}</label>
               <FieldArray
                 name='footerParams'
                 render={() => (
@@ -169,7 +171,7 @@ function TemplateForm({ onSubmit, errors, initialValues, currentUser, activeLice
             <div className='row'>
               <div className='col-5'>
                 <div className='mt-4 d-flex justify-content-between'>
-                  <button onClick={() => navigate('/templates')} className='btn btn-secondary' type='button'>Voltar</button>
+                  <button onClick={() => navigate('/templates')} className='btn btn-secondary' type='button'>{t('common.back')}</button>
                 </div>
               </div>
             </div>

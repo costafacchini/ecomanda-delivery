@@ -1,14 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { FieldWithError, Form } from '../../../../components/form'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router'
 import Select from 'react-select'
 import { getUsers } from '../../../../services/user'
 import SectorBaileysPanel from '../Edit/SectorBaileysPanel'
-
-const sectorSchema = Yup.object().shape({
-  name: Yup.string().required('Nome é obrigatório'),
-})
 
 const sectorInitialValues = {
   name: '',
@@ -18,8 +15,17 @@ const sectorInitialValues = {
 
 function SectorForm(props: any) {
   const { onSubmit, errors, initialValues, currentUser, sectorId } = props
+  const { t } = useTranslation()
   let navigate = useNavigate()
   const [userOptions, setUserOptions] = useState<{ value: string; label: string }[]>([])
+
+  const sectorSchema = useMemo(
+    () =>
+      Yup.object().shape({
+        name: Yup.string().required(t('sectors.validation.nameRequired')),
+      }),
+    [t]
+  )
 
   useEffect(() => {
     async function fetchUsers() {
@@ -52,7 +58,7 @@ function SectorForm(props: any) {
               <fieldset className='pb-4'>
                 <div className='row'>
                   <div className='form-group col-5'>
-                    <label htmlFor='name'>Nome</label>
+                    <label htmlFor='name'>{t('common.name')}</label>
                     <FieldWithError
                       id='name'
                       type='text'
@@ -73,14 +79,14 @@ function SectorForm(props: any) {
                         id='active'
                         name='active'
                       />
-                      <label className='form-check-label' htmlFor='active'>Ativo</label>
+                      <label className='form-check-label' htmlFor='active'>{t('common.active')}</label>
                     </div>
                   </div>
                 </div>
 
                 <div className='row'>
                   <div className='form-group col-8'>
-                    <label htmlFor='users'>Usuários</label>
+                    <label htmlFor='users'>{t('sectors.usersLabel')}</label>
                     <Select
                       inputId='users'
                       isMulti
@@ -90,7 +96,7 @@ function SectorForm(props: any) {
                         const ids = selected ? selected.map((opt: any) => opt.value) : []
                         formikProps.setFieldValue('users', ids)
                       }}
-                      placeholder='Selecione os usuários...'
+                      placeholder={t('sectors.usersPlaceholder')}
                     />
                   </div>
                 </div>
@@ -109,8 +115,8 @@ function SectorForm(props: any) {
               <div className='row'>
                 <div className='col-5'>
                   <div className='mt-4 d-flex justify-content-between'>
-                    <button onClick={() => navigate('/sectors')} className='btn btn-secondary' type='button'>Voltar</button>
-                    <button className='btn btn-success' type='submit'>Salvar</button>
+                    <button onClick={() => navigate('/sectors')} className='btn btn-secondary' type='button'>{t('common.back')}</button>
+                    <button className='btn btn-success' type='submit'>{t('common.save')}</button>
                   </div>
                 </div>
               </div>

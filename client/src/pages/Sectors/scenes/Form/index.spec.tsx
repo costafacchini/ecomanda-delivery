@@ -4,6 +4,12 @@ import SectorForm from './'
 import { getUsers } from '../../../../services/user'
 
 vi.mock('../../../../services/user')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 describe('<SectorForm />', () => {
   const onSubmit = vi.fn()
@@ -27,31 +33,31 @@ describe('<SectorForm />', () => {
   it('renders with default initial values', () => {
     mount()
 
-    expect(screen.getByLabelText('Nome')).toHaveValue('')
-    expect(screen.getByLabelText('Ativo')).toBeChecked()
+    expect(screen.getByLabelText('common.name')).toHaveValue('')
+    expect(screen.getByLabelText('common.active')).toBeChecked()
   })
 
   it('can receive initial values', () => {
     mount({ initialValues: { name: 'Suporte', active: false } })
 
-    expect(screen.getByLabelText('Nome')).toHaveValue('Suporte')
-    expect(screen.getByLabelText('Ativo')).not.toBeChecked()
+    expect(screen.getByLabelText('common.name')).toHaveValue('Suporte')
+    expect(screen.getByLabelText('common.active')).not.toBeChecked()
   })
 
   it('validates that name is required', async () => {
     mount()
 
-    fireEvent.click(screen.getByText('Salvar'))
+    fireEvent.click(screen.getByText('common.save'))
 
-    await waitFor(() => expect(screen.getByText('Nome é obrigatório')).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText('sectors.validation.nameRequired')).toBeInTheDocument())
     expect(onSubmit).not.toHaveBeenCalled()
   })
 
   it('submits with valid values', async () => {
     mount()
 
-    fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Suporte' } })
-    fireEvent.click(screen.getByText('Salvar'))
+    fireEvent.change(screen.getByLabelText('common.name'), { target: { value: 'Suporte' } })
+    fireEvent.click(screen.getByText('common.save'))
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ name: 'Suporte', active: true })))
   })

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getDashboardMessageVolume } from '../../../services/dashboard'
 import type { IDashboardMessageVolume, IDashboardMessageVolumeRow } from '../../../types'
 
@@ -24,6 +25,7 @@ function buildHourAverages(perHour: IDashboardMessageVolumeRow[]) {
 }
 
 export default function SuperMessageVolumeCard({ licensee }: { licensee?: string }) {
+  const { t } = useTranslation()
   const [startDate, setStartDate] = useState(firstDayOfMonth)
   const [endDate, setEndDate] = useState(today)
   const [data, setData] = useState<IDashboardMessageVolume | null>(null)
@@ -36,9 +38,9 @@ export default function SuperMessageVolumeCard({ licensee }: { licensee?: string
     setError(null)
     getDashboardMessageVolume({ ...(licensee ? { licensee } : {}), startDate, endDate })
       .then((res) => setData(res.data as IDashboardMessageVolume))
-      .catch(() => setError('Erro ao carregar dados.'))
+      .catch(() => setError(t('dashboard.loadError')))
       .finally(() => setLoading(false))
-  }, [licensee, startDate, endDate, retryCount])
+  }, [licensee, startDate, endDate, retryCount, t])
 
   const hourAverages = useMemo(() => buildHourAverages(data?.per_hour || []), [data])
 
@@ -46,21 +48,21 @@ export default function SuperMessageVolumeCard({ licensee }: { licensee?: string
     <div className="card">
       <div className="card-header">
         <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
-          <span>Volume de Mensagens</span>
+          <span>{t('dashboard.messageVolume.cardTitle')}</span>
           <div className="d-flex gap-2 align-items-center">
             <input
               type="date"
               className="form-control form-control-sm"
               value={startDate}
-              aria-label="Data inicial"
+              aria-label={t('dashboard.dateFrom')}
               onChange={(e) => setStartDate(e.target.value)}
             />
-            <span className="text-muted small">até</span>
+            <span className="text-muted small">{t('dashboard.dateUntil')}</span>
             <input
               type="date"
               className="form-control form-control-sm"
               value={endDate}
-              aria-label="Data final"
+              aria-label={t('dashboard.dateTo')}
               onChange={(e) => setEndDate(e.target.value)}
             />
           </div>
@@ -70,14 +72,14 @@ export default function SuperMessageVolumeCard({ licensee }: { licensee?: string
         {loading && (
           <p className="text-muted">
             <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
-            Carregando...
+            {t('common.loading')}
           </p>
         )}
         {error && (
           <div>
             <p className="text-danger mb-2">{error}</p>
             <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => setRetryCount((c) => c + 1)}>
-              Tentar novamente
+              {t('dashboard.retry')}
             </button>
           </div>
         )}
@@ -86,28 +88,28 @@ export default function SuperMessageVolumeCard({ licensee }: { licensee?: string
             <div className="d-flex gap-4 mb-3">
               <div>
                 <div className="fs-4 fw-bold">{data.peak_throughput}</div>
-                <div className="text-muted small">Pico (msg/hora)</div>
+                <div className="text-muted small">{t('dashboard.messageVolume.peakLabel')}</div>
               </div>
               <div>
                 <div className="fs-4 fw-bold">{data.avg_transfer_rate}</div>
-                <div className="text-muted small">Média (msg/hora)</div>
+                <div className="text-muted small">{t('dashboard.messageVolume.avgLabel')}</div>
               </div>
             </div>
 
             <div className="row">
               <div className="col-6">
-                <div className="fw-semibold mb-1 small">Por Dia</div>
+                <div className="fw-semibold mb-1 small">{t('dashboard.messageVolume.perDayTitle')}</div>
                 <table className="table table-sm mb-0">
                   <thead>
                     <tr>
-                      <th>Data</th>
-                      <th>Total</th>
+                      <th>{t('dashboard.messageVolume.colDate')}</th>
+                      <th>{t('dashboard.messageVolume.colTotal')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {(data.per_day || []).length === 0 ? (
                       <tr>
-                        <td colSpan={2} className="text-center text-muted">Nenhum dado para o período.</td>
+                        <td colSpan={2} className="text-center text-muted">{t('dashboard.noData')}</td>
                       </tr>
                     ) : (data.per_day || []).map((row: IDashboardMessageVolumeRow) => (
                       <tr key={row._id}>
@@ -119,12 +121,12 @@ export default function SuperMessageVolumeCard({ licensee }: { licensee?: string
                 </table>
               </div>
               <div className="col-6">
-                <div className="fw-semibold mb-1 small">Por Hora (top 10)</div>
+                <div className="fw-semibold mb-1 small">{t('dashboard.messageVolume.perHourTitle')}</div>
                 <table className="table table-sm mb-0">
                   <thead>
                     <tr>
-                      <th>Hora</th>
-                      <th>Média</th>
+                      <th>{t('dashboard.messageVolume.colHour')}</th>
+                      <th>{t('dashboard.messageVolume.colAvg')}</th>
                     </tr>
                   </thead>
                   <tbody>

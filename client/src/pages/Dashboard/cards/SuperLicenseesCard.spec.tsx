@@ -3,6 +3,12 @@ import SuperLicenseesCard from './SuperLicenseesCard'
 import { getDashboardLicensees } from '../../../services/dashboard'
 
 vi.mock('../../../services/dashboard')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 describe('<SuperLicenseesCard />', () => {
   it('shows loading state while the request is in flight', () => {
@@ -10,7 +16,7 @@ describe('<SuperLicenseesCard />', () => {
 
     render(<SuperLicenseesCard />)
 
-    expect(screen.getByText('Carregando...')).toBeInTheDocument()
+    expect(screen.getByText('common.loading')).toBeInTheDocument()
   })
 
   it('shows an error message when the request fails', async () => {
@@ -18,7 +24,7 @@ describe('<SuperLicenseesCard />', () => {
 
     render(<SuperLicenseesCard />)
 
-    expect(await screen.findByText('Erro ao carregar dados.')).toBeInTheDocument()
+    expect(await screen.findByText('dashboard.loadError')).toBeInTheDocument()
   })
 
   it('renders licensee totals and kind breakdown on success', async () => {
@@ -37,7 +43,7 @@ describe('<SuperLicenseesCard />', () => {
     expect(screen.getByText('5')).toBeInTheDocument()
     expect(screen.getByText('10')).toBeInTheDocument()
     expect(screen.getByText('27')).toBeInTheDocument()
-    expect(screen.getByText('Licenciados')).toBeInTheDocument()
+    expect(screen.getByText('dashboard.licensees.cardTitle')).toBeInTheDocument()
   })
 
   it('falls back to 0 when by_kind values are absent', async () => {
@@ -47,7 +53,7 @@ describe('<SuperLicenseesCard />', () => {
 
     render(<SuperLicenseesCard />)
 
-    await screen.findByText('Licenciados')
+    await screen.findByText('dashboard.licensees.cardTitle')
 
     const zeroCells = screen.getAllByText('0')
     expect(zeroCells.length).toBeGreaterThanOrEqual(3)

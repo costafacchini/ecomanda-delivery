@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { HashRouter, Route, Routes } from 'react-router'
+import i18n from '../i18n'
 import SignIn from './SignIn'
 import LicenseesRoutes from './Licensees/routes'
 import UsersRoutes from './Users/routes'
@@ -16,6 +18,11 @@ import BaseLayout from './BaseLayout/index'
 import PrivateRoute from './PrivateRoute/index'
 import { useApp } from '../contexts/App'
 
+function NotFoundPage() {
+  const { t } = useTranslation()
+  return <h1>{t('navbar.notFound')}</h1>
+}
+
 function RootRoutes() {
   const { currentUser, setCurrentUser } = useApp()
 
@@ -23,6 +30,7 @@ function RootRoutes() {
     if (isAuthenticated() && !currentUser) {
       fetchLoggedUser().then(user => {
         setCurrentUser(user ?? undefined)
+        if (user?.language) i18n.changeLanguage(user.language)
       })
     }
   }, [currentUser, setCurrentUser])
@@ -115,7 +123,7 @@ function RootRoutes() {
           path='*'
           element={
             <BaseLayout>
-              <h1>Essa página não existe.</h1>
+              <NotFoundPage />
             </BaseLayout>
           }
         />

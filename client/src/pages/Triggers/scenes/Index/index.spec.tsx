@@ -9,6 +9,12 @@ import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/trigger')
 vi.mock('../../../../services/licensee')
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 
 describe('<TriggersIndex />', () => {
   const currentUser = { role: 'super' }
@@ -50,7 +56,7 @@ describe('<TriggersIndex />', () => {
 
     await waitFor(() => expect(getTriggers).toHaveBeenCalled())
 
-    await screen.findByText('Gatilhos')
+    await screen.findByText('triggers.title')
 
     expect(getTriggers).toHaveBeenCalledWith({ page: 1 })
 
@@ -74,11 +80,11 @@ describe('<TriggersIndex />', () => {
 
     mount({ currentUser })
 
-    await screen.findByText('Gatilhos')
+    await screen.findByText('triggers.title')
 
     getTriggers.mockResolvedValue({ status: 201, data: [triggerFactory.build({ name: 'Trigger from new page' })] })
 
-    fireEvent.click(await screen.findByText('Carregar mais'))
+    fireEvent.click(await screen.findByText('common.loadMore'))
 
     expect(await screen.findByText('Trigger from new page')).toBeInTheDocument()
 
@@ -94,9 +100,9 @@ describe('<TriggersIndex />', () => {
 
     getTriggers.mockResolvedValue({ status: 201, data: [triggerFactory.build({ name: 'A trigger filtered by expression' })] })
 
-    fireEvent.change(screen.getByPlaceholderText('Digite a expressão'), { target: { value: 'expression' } })
+    fireEvent.change(screen.getByPlaceholderText('triggers.expressionPlaceholder'), { target: { value: 'expression' } })
 
-    fireEvent.click(screen.getByTitle('Filtre pelo gatilho'))
+    fireEvent.click(screen.getByTitle('triggers.filterButtonTitle'))
 
     expect(await screen.findByText('A trigger filtered by expression')).toBeInTheDocument()
 
@@ -111,11 +117,11 @@ describe('<TriggersIndex />', () => {
 
       mount({ currentUser })
 
-      await screen.findByText('Gatilhos')
+      await screen.findByText('triggers.title')
 
       await screen.findByText('Trigger')
 
-      expect(screen.queryByLabelText('Licenciado')).not.toBeInTheDocument()
+      expect(screen.queryByLabelText('triggers.licenseeFilter')).not.toBeInTheDocument()
     })
 
     it('changes the filters to get the triggers', async () => {
@@ -126,11 +132,11 @@ describe('<TriggersIndex />', () => {
 
       mount({ currentUser })
 
-      await screen.findByText('Gatilhos')
+      await screen.findByText('triggers.title')
 
-      await screen.findByText('Licenciado')
+      await screen.findByText('triggers.licenseeFilter')
 
-      fireEvent.change(screen.getByLabelText('Licenciado'), { target: { value: 'alca' } })
+      fireEvent.change(screen.getByLabelText('triggers.licenseeFilter'), { target: { value: 'alca' } })
 
       fireEvent.click(await screen.findByText('Alcateia'))
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import moment from 'moment-timezone'
 import { getMessages, resendMessage, ignoreMessage } from '../../../services/message'
 
@@ -21,13 +22,14 @@ interface FailedMessagesModalProps {
   isOpen: boolean
   onClose: () => void
   onResendSuccess: () => void
-  onIgnoreSuccess: () => void
+  onIgnoreSuccess?: () => void
   startDate?: string
   endDate?: string
   licensee?: string
 }
 
 export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, onIgnoreSuccess, startDate, endDate, licensee }: FailedMessagesModalProps) {
+  const { t } = useTranslation()
   const [messages, setMessages] = useState<IFailedMessage[]>([])
   const [loading, setLoading] = useState(false)
   const [fetchError, setFetchError] = useState<string | null>(null)
@@ -49,9 +51,9 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, 
 
     getMessages(params)
       .then((res) => setMessages(res.data as unknown as IFailedMessage[]))
-      .catch(() => setFetchError('Erro ao carregar mensagens falhas.'))
+      .catch(() => setFetchError(t('dashboard.failedMessages.fetchError')))
       .finally(() => setLoading(false))
-  }, [isOpen, startDate, endDate, licensee])
+  }, [isOpen, startDate, endDate, licensee, t])
 
   function handleResend(id: string) {
     setResendingIds((prev) => new Set(prev).add(id))
@@ -68,7 +70,7 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, 
       })
       .catch(() => {
         setResendingIds((prev) => { const next = new Set(prev); next.delete(id); return next })
-        setRowErrors((prev) => ({ ...prev, [id]: 'Erro ao reenviar.' }))
+        setRowErrors((prev) => ({ ...prev, [id]: t('dashboard.failedMessages.resendError') }))
       })
   }
 
@@ -83,11 +85,11 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, 
           delete next[id]
           return next
         })
-        onIgnoreSuccess()
+        onIgnoreSuccess?.()
       })
       .catch(() => {
         setIgnoringIds((prev) => { const next = new Set(prev); next.delete(id); return next })
-        setRowErrors((prev) => ({ ...prev, [id]: 'Erro ao ignorar.' }))
+        setRowErrors((prev) => ({ ...prev, [id]: t('dashboard.failedMessages.ignoreError') }))
       })
   }
 
@@ -104,28 +106,28 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, 
       <div className="modal-dialog modal-xl" role="document">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Mensagens com Falha</h5>
-            <button type="button" className="btn-close" onClick={onClose} aria-label="Fechar" />
+            <h5 className="modal-title">{t('dashboard.failedMessages.modalTitle')}</h5>
+            <button type="button" className="btn-close" onClick={onClose} aria-label={t('dashboard.failedMessages.closeButton')} />
           </div>
           <div className="modal-body">
             {loading && (
               <p className="text-muted">
                 <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
-                Carregando...
+                {t('common.loading')}
               </p>
             )}
             {fetchError && <p className="text-danger">{fetchError}</p>}
             {!loading && !fetchError && messages.length === 0 && (
-              <p className="text-muted">Nenhuma mensagem com falha.</p>
+              <p className="text-muted">{t('dashboard.failedMessages.noMessages')}</p>
             )}
             {!loading && !fetchError && messages.length > 0 && (
               <table className="table table-sm">
                 <thead>
                   <tr>
-                    <th>Contato</th>
-                    <th>Data/Hora</th>
-                    <th>Mensagem</th>
-                    <th>Erro</th>
+                    <th>{t('dashboard.failedMessages.colContact')}</th>
+                    <th>{t('dashboard.failedMessages.colDateTime')}</th>
+                    <th>{t('dashboard.failedMessages.colMessage')}</th>
+                    <th>{t('dashboard.failedMessages.colError')}</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -149,9 +151,9 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, 
                           {resendingIds.has(msg._id) ? (
                             <>
                               <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" />
-                              Reenviando...
+                              {t('dashboard.failedMessages.resending')}
                             </>
-                          ) : 'Reenviar'}
+                          ) : t('dashboard.failedMessages.resendButton')}
                         </button>
                         <button
                           type="button"
@@ -162,9 +164,9 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, 
                           {ignoringIds.has(msg._id) ? (
                             <>
                               <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" />
-                              Ignorando...
+                              {t('dashboard.failedMessages.ignoring')}
                             </>
-                          ) : 'Ignorar'}
+                          ) : t('dashboard.failedMessages.ignoreButton')}
                         </button>
                       </td>
                     </tr>
@@ -175,7 +177,7 @@ export default function FailedMessagesModal({ isOpen, onClose, onResendSuccess, 
           </div>
           <div className="modal-footer">
             <button type="button" className="btn btn-secondary" onClick={onClose}>
-              Fechar
+              {t('dashboard.failedMessages.closeButton')}
             </button>
           </div>
         </div>

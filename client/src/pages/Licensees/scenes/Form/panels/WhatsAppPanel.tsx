@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
+import { useTranslation } from 'react-i18next'
 import { FieldWithError } from '../../../../../components/form'
 import { setLicenseeWebhook, getBaileysQr, getBaileysStatus, importLicenseeTemplate, syncBaileysDirectory } from '../../../../../services/licensee'
 import type { ILicenseeFormValues } from '../../../../../types'
@@ -34,6 +35,7 @@ interface IBaileysStatusResponse {
 }
 
 function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isActive }: WhatsAppPanelProps) {
+  const { t } = useTranslation()
   const [baileysQr, setBaileysQr] = useState<string | null>(null)
   const [baileysStatus, setBaileysStatus] = useState<string | null>(null)
   const [baileysConnected, setBaileysConnected] = useState<boolean | null>(null)
@@ -62,7 +64,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
     <>
       <div className='row mb-3'>
         <div className='form-group col-8'>
-          <label htmlFor='whatsappDefault'>WhatsApp padrão</label>
+          <label htmlFor='whatsappDefault'>{t('licensees.form.whatsapp.whatsappDefaultLabel')}</label>
           <select
             value={values.whatsappDefault}
             className='form-select'
@@ -70,7 +72,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
             onChange={handleChange}
             onBlur={handleBlur}
           >
-            <option value=''>Nenhum</option>
+            <option value=''>{t('licensees.form.whatsapp.noneOption')}</option>
             <option value='utalk'>Utalk</option>
             <option value='dialog'>Dialog360</option>
             <option value='ycloud'>YCloud</option>
@@ -85,7 +87,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
           <>
             <div className='row mb-3'>
               <div className='form-group col-8'>
-                <label htmlFor='whatsappToken'>Token do WhatsApp</label>
+                <label htmlFor='whatsappToken'>{t('licensees.form.whatsapp.whatsappTokenLabel')}</label>
                 <FieldWithError
                   id='whatsappToken'
                   name='whatsappToken'
@@ -99,7 +101,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
 
             <div className='row mb-3'>
               <div className='form-group col-8'>
-                <label htmlFor='whatsappUrl'>URL do WhatsApp</label>
+                <label htmlFor='whatsappUrl'>{t('licensees.form.whatsapp.whatsappUrlLabel')}</label>
                 <FieldWithError
                   id='whatsappUrl'
                   name='whatsappUrl'
@@ -126,7 +128,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                   checked={values.useFileIDYcloud}
                 />
                 <label className='form-check-label' htmlFor='useFileIDYcloud'>
-                  Usar ID no YCloud ao invés de URL?
+                  {t('licensees.form.whatsapp.useFileIDYcloudLabel')}
                 </label>
               </div>
             </div>
@@ -144,7 +146,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                   }}
                   className='btn btn-info'
                 >
-                  Configurar Webhook no provedor
+                  {t('licensees.form.whatsapp.setWebhookButton')}
                 </button>
               </div>
 
@@ -156,7 +158,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                   }}
                   className='btn btn-info'
                 >
-                  Importar templates
+                  {t('licensees.form.whatsapp.importTemplatesButton')}
                 </button>
               </div>
             </div>
@@ -176,7 +178,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                   checked={values.useSectors ?? false}
                 />
                 <label className='form-check-label' htmlFor='useSectors'>
-                  Usar setores (múltiplos departamentos com números de WhatsApp separados)
+                  {t('licensees.form.whatsapp.useSectorsLabel')}
                 </label>
               </div>
             </div>
@@ -187,13 +189,13 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
           <div className='row mb-3'>
             {baileysChecking && (
               <div className='form-group col-12'>
-                <span className='text-muted'>Verificando conexão...</span>
+                <span className='text-muted'>{t('licensees.form.whatsapp.checkingConnection')}</span>
               </div>
             )}
 
             {!baileysChecking && baileysConnected && (
               <div className='form-group col-12 d-flex align-items-center gap-3'>
-                <span className='text-success fw-semibold'>&#10003; Conectado</span>
+                <span className='text-success fw-semibold'>{t('licensees.form.whatsapp.connected')}</span>
                 <button
                   onClick={async (event) => {
                     event.preventDefault()
@@ -206,12 +208,12 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                       setBaileysQr(qrData.qr)
                       setBaileysConnected(false)
                     } else {
-                      setBaileysStatus(qrData?.message ?? 'Erro ao gerar QR')
+                      setBaileysStatus(qrData?.message ?? t('licensees.form.whatsapp.generateQrError'))
                     }
                   }}
                   className='btn btn-outline-secondary btn-sm'
                 >
-                  Reconectar
+                  {t('licensees.form.whatsapp.reconnectButton')}
                 </button>
                 {values.id && (
                   <button
@@ -224,7 +226,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                         const response = await syncBaileysDirectory(values as any)
                         setSyncResult(response.data as SyncResult)
                       } catch {
-                        setSyncError('Erro ao sincronizar grupos')
+                        setSyncError(t('licensees.form.whatsapp.syncError'))
                       } finally {
                         setSyncLoading(false)
                       }
@@ -232,7 +234,7 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                     className='btn btn-outline-primary btn-sm'
                     disabled={syncLoading}
                   >
-                    {syncLoading ? 'Sincronizando...' : 'Sincronizar Grupos'}
+                    {syncLoading ? t('licensees.form.whatsapp.syncingButton') : t('licensees.form.whatsapp.syncGroupsButton')}
                   </button>
                 )}
               </div>
@@ -241,7 +243,10 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
             {syncResult && (
               <div className='form-group col-12 mt-2'>
                 <span className='text-muted small'>
-                  Grupos importados: {syncResult.importedGroups} | Grupos atualizados: {syncResult.updatedGroups}
+                  {t('licensees.form.whatsapp.syncResult', {
+                    imported: syncResult.importedGroups,
+                    updated: syncResult.updatedGroups,
+                  })}
                 </span>
               </div>
             )}
@@ -264,12 +269,12 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                     if (qrData?.qr) {
                       setBaileysQr(qrData.qr)
                     } else {
-                      setBaileysStatus(qrData?.message ?? 'Erro ao gerar QR')
+                      setBaileysStatus(qrData?.message ?? t('licensees.form.whatsapp.generateQrError'))
                     }
                   }}
                   className='btn btn-info'
                 >
-                  Gerar QR Code
+                  {t('licensees.form.whatsapp.generateQrButton')}
                 </button>
               </div>
             )}
@@ -286,12 +291,12 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                     if (qrData?.qr) {
                       setBaileysQr(qrData.qr)
                     } else {
-                      setBaileysStatus(qrData?.message ?? 'Erro ao gerar QR')
+                      setBaileysStatus(qrData?.message ?? t('licensees.form.whatsapp.generateQrError'))
                     }
                   }}
                   className='btn btn-info'
                 >
-                  Gerar QR Code
+                  {t('licensees.form.whatsapp.generateQrButton')}
                 </button>
               </div>
             )}

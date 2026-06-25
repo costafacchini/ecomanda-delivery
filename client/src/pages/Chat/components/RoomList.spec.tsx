@@ -1,5 +1,12 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import RoomList from './RoomList'
+
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
 import type { IRoom } from '../../../types'
 
 function makeRoom(id: string, name: string): IRoom {
@@ -27,14 +34,14 @@ describe('<RoomList>', () => {
   it('shows "Nenhuma conversa." when rooms is empty', () => {
     render(<RoomList rooms={[]} selectedRoomId={undefined} onSelect={vi.fn()} onNewConversation={vi.fn()} />)
 
-    expect(screen.getByText(/Nenhuma conversa/)).toBeInTheDocument()
+    expect(screen.getByText('chat.noConversations')).toBeInTheDocument()
   })
 
   it('"+" button calls onNewConversation', () => {
     const handleNewConversation = vi.fn()
     render(<RoomList rooms={rooms} selectedRoomId={undefined} onSelect={vi.fn()} onNewConversation={handleNewConversation} />)
 
-    fireEvent.click(screen.getByRole('button', { name: /nova conversa/i }))
+    fireEvent.click(screen.getByRole('button', { name: 'chat.newConversationAriaLabel' }))
 
     expect(handleNewConversation).toHaveBeenCalledTimes(1)
   })

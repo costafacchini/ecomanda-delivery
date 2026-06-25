@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { FieldWithError, Form } from '../../../../components/form'
 import { ErrorMessage } from 'formik'
 import * as Yup from 'yup'
@@ -30,22 +31,6 @@ interface UserFormProps {
 
 const ROLES_WITHOUT_LICENSEE: UserRole[] = ['admin', 'super']
 
-function buildSchema(isSuperUser: boolean, isNew: boolean) {
-  return Yup.object().shape({
-    name: Yup.string().required('Nome é obrigatório'),
-    email: Yup.string().email('E-mail inválido').max(60).required('E-mail é obrigatório'),
-    password: isNew
-      ? Yup.string().required('Senha é obrigatória')
-      : Yup.string(),
-    licensee: isSuperUser
-      ? Yup.string().when('role', {
-          is: (role: string) => !ROLES_WITHOUT_LICENSEE.includes(role as UserRole),
-          then: (schema) => schema.required('Licenciado é obrigatório'),
-        })
-      : Yup.string(),
-  })
-}
-
 const userInitialValues: IUserFormValues = {
   name: '',
   email: '',
@@ -56,10 +41,28 @@ const userInitialValues: IUserFormValues = {
 }
 
 function UserForm({ onSubmit, errors, initialValues, currentUser, isNew = false, saving = false }: UserFormProps) {
+  const { t } = useTranslation()
   const navigate = useNavigate()
 
   const isSuperUser = currentUser?.role === 'super'
-  const schema = useMemo(() => buildSchema(isSuperUser, isNew), [isSuperUser, isNew])
+
+  const schema = useMemo(
+    () =>
+      Yup.object().shape({
+        name: Yup.string().required(t('users.validation.nameRequired')),
+        email: Yup.string().email(t('users.validation.emailInvalid')).max(60).required(t('users.validation.emailRequired')),
+        password: isNew
+          ? Yup.string().required(t('users.validation.passwordRequired'))
+          : Yup.string(),
+        licensee: isSuperUser
+          ? Yup.string().when('role', {
+              is: (role: string) => !ROLES_WITHOUT_LICENSEE.includes(role as UserRole),
+              then: (s) => s.required(t('users.validation.licenseeRequired')),
+            })
+          : Yup.string(),
+      }),
+    [t, isSuperUser, isNew]
+  )
 
   return (
     <div>
@@ -75,7 +78,7 @@ function UserForm({ onSubmit, errors, initialValues, currentUser, isNew = false,
             <fieldset className='mb-4'>
               <div className='row mb-3'>
                 <div className='form-group col-8'>
-                  <label htmlFor='name'>Nome <span className='text-danger'>*</span></label>
+                  <label htmlFor='name'>{t('common.name')} <span className='text-danger'>*</span></label>
                   <FieldWithError
                     id='name'
                     type='text'
@@ -99,14 +102,14 @@ function UserForm({ onSubmit, errors, initialValues, currentUser, isNew = false,
                       className='form-check-input'
                       id='active'
                     />
-                    <label className='form-check-label' htmlFor='active'>Ativo</label>
+                    <label className='form-check-label' htmlFor='active'>{t('common.active')}</label>
                   </div>
                 </div>
               </div>
 
               <div className='row mb-3'>
                 <div className='form-group col-8'>
-                  <label htmlFor='email'>E-mail <span className='text-danger'>*</span></label>
+                  <label htmlFor='email'>{t('common.email')} <span className='text-danger'>*</span></label>
                   <FieldWithError
                     id='email'
                     name='email'
@@ -114,7 +117,7 @@ function UserForm({ onSubmit, errors, initialValues, currentUser, isNew = false,
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.email}
-                    placeholder='usuario@email.com'
+                    placeholder={t('users.emailPlaceholder')}
                   />
                 </div>
               </div>
@@ -122,7 +125,7 @@ function UserForm({ onSubmit, errors, initialValues, currentUser, isNew = false,
               <div className='row mb-3'>
                 <div className='form-group col-8'>
                   <label htmlFor='password'>
-                    Senha {isNew && <span className='text-danger'>*</span>}
+                    {t('users.passwordLabel')} {isNew && <span className='text-danger'>*</span>}
                   </label>
                   <FieldWithError
                     id='password'
@@ -132,7 +135,7 @@ function UserForm({ onSubmit, errors, initialValues, currentUser, isNew = false,
                     value={formik.values.password}
                     name='password'
                     autoComplete='new-password'
-                    placeholder={isNew ? 'Crie uma senha' : 'Deixe em branco para não alterar'}
+                    placeholder={isNew ? t('users.passwordPlaceholderNew') : t('users.passwordPlaceholderEdit')}
                   />
                 </div>
               </div>
@@ -140,7 +143,7 @@ function UserForm({ onSubmit, errors, initialValues, currentUser, isNew = false,
               {currentUser && ['admin', 'super'].includes(currentUser.role) && (
                 <div className='row mb-3'>
                   <div className='form-group col-8'>
-                    <label htmlFor='role'>Perfil</label>
+                    <label htmlFor='role'>{t('users.columnProfile')}</label>
                     <select
                       className='form-select'
                       id='role'
@@ -149,10 +152,10 @@ function UserForm({ onSubmit, errors, initialValues, currentUser, isNew = false,
                       onBlur={formik.handleBlur}
                       value={formik.values.role}
                     >
-                      <option value='agent'>Agente</option>
-                      <option value='supervisor'>Supervisor</option>
-                      <option value='admin'>Administrador</option>
-                      {currentUser.role === 'super' && <option value='super'>Super</option>}
+                      <option value='agent'>{t('users.roles.agent')}</option>
+                      <option value='supervisor'>{t('users.roles.supervisor')}</option>
+                      <option value='admin'>{t('users.roles.admin')}</option>
+                      {currentUser.role === 'super' && <option value='super'>{t('users.roles.super')}</option>}
                     </select>
                   </div>
                 </div>
@@ -161,7 +164,7 @@ function UserForm({ onSubmit, errors, initialValues, currentUser, isNew = false,
               {isSuperUser && !ROLES_WITHOUT_LICENSEE.includes(formik.values.role) && (
                 <div className='row mb-3'>
                   <div className='form-group col-8'>
-                    <label htmlFor='licensee'>Licenciado <span className='text-danger'>*</span></label>
+                    <label htmlFor='licensee'>{t('users.licenseeFilter')} <span className='text-danger'>*</span></label>
                     <SelectLicenseesWithFilter
                       selectedItem={typeof formik.values.licensee === 'string' ? null : formik.values.licensee}
                       onChange={(e: { value?: string } | null) => {
@@ -186,14 +189,14 @@ function UserForm({ onSubmit, errors, initialValues, currentUser, isNew = false,
             <div className='row'>
               <div className='col-8'>
                 <div className='mt-4 d-flex justify-content-between'>
-                  <button onClick={() => navigate('/users')} className='btn btn-secondary' type='button'>Voltar</button>
+                  <button onClick={() => navigate('/users')} className='btn btn-secondary' type='button'>{t('common.back')}</button>
                   <button className='btn btn-success' type='submit' disabled={saving}>
                     {saving ? (
                       <>
                         <span className='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true' />
-                        Salvando...
+                        {t('common.saving')}
                       </>
-                    ) : 'Salvar'}
+                    ) : t('common.save')}
                   </button>
                 </div>
               </div>

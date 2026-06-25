@@ -5,12 +5,14 @@ import { useParams } from 'react-router'
 import { useEffect } from 'react'
 import { useApp } from '../../../../contexts/App'
 import type { IUser, ITemplate } from '../../../../types'
+import { useTranslation } from 'react-i18next'
 
 interface TemplateShowProps {
   currentUser?: IUser | null
 }
 
 function TemplateShow({ currentUser }: TemplateShowProps) {
+  const { t } = useTranslation()
   const { activeLicensee } = useApp()
   let { id } = useParams()
   const [template, setTemplate] = useState<ITemplate | null>(null)
@@ -42,7 +44,7 @@ function TemplateShow({ currentUser }: TemplateShowProps) {
   return (
     <div className='row'>
       <div className='col'>
-        <h3>Template consultando</h3>
+        <h3>{t('templates.viewTitle')}</h3>
         <Form
           initialValues={template}
           currentUser={currentUser}

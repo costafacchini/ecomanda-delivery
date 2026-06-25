@@ -1,6 +1,7 @@
 import Form, { IUserFormValues } from '../Form'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getUser, updateUser } from '../../../../services/user'
 import { useNavigate, useParams } from 'react-router'
 import { useEffect } from 'react'
@@ -15,6 +16,7 @@ interface UserEditProps {
 }
 
 function UserEdit({ currentUser }: UserEditProps) {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { id } = useParams()
   const [errors, setErrors] = useState<IFormError[] | null>(null)
@@ -47,7 +49,7 @@ function UserEdit({ currentUser }: UserEditProps) {
     return (
       <div className='d-flex justify-content-center mt-5'>
         <div className='spinner-border text-primary' role='status'>
-          <span className='visually-hidden'>Carregando...</span>
+          <span className='visually-hidden'>{t('common.loading')}</span>
         </div>
       </div>
     )
@@ -56,7 +58,7 @@ function UserEdit({ currentUser }: UserEditProps) {
   return (
     <div className='row'>
       <div className='col'>
-        <h3>Editando: {user.name}</h3>
+        <h3>{t('users.editingUser', { name: user.name })}</h3>
         <Form
           initialValues={user as Partial<IUserFormValues>}
           currentUser={currentUser}
@@ -71,16 +73,16 @@ function UserEdit({ currentUser }: UserEditProps) {
             }
             setSaving(true)
             try {
-              const response = await updateUser({ ...values, id: user.id } as IUser)
+              const response = await updateUser({ ...values, id: user.id, language: user.language } as IUser)
 
               if (response.status === 200) {
-                toast.success('Usuário atualizado com sucesso!');
+                toast.success(t('users.toast.updateSuccess'))
                 navigate('/users')
                 setErrors(null)
               } else {
                 const data = response.data as { errors: IFormError[] }
                 setErrors(data.errors)
-                toast.error('Ops! Não foi possível atualizar o usuário.');
+                toast.error(t('users.toast.updateError'))
               }
             } finally {
               setSaving(false)

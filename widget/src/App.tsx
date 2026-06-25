@@ -4,7 +4,7 @@ import { ChatPopup } from './components/ChatPopup'
 import { SessionForm } from './components/SessionForm'
 import { MessageList } from './components/MessageList'
 import { MessageInput } from './components/MessageInput'
-import type { WidgetMessage, WidgetSession } from './types'
+import type { Language, WidgetMessage, WidgetSession } from './types'
 
 interface AppProps {
   licenseeApiToken: string
@@ -16,6 +16,7 @@ interface AppProps {
   onSend: (text: string) => void
   sessionLoading: boolean
   sendDisabled: boolean
+  language: Language
 }
 
 export function App({
@@ -27,6 +28,7 @@ export function App({
   onSend,
   sessionLoading,
   sendDisabled,
+  language,
 }: AppProps): React.ReactElement {
   return (
     <>
@@ -34,11 +36,11 @@ export function App({
       {isOpen && (
         <ChatPopup>
           {!session
-            ? <SessionForm onSubmit={onSessionCreate} loading={sessionLoading} />
+            ? <SessionForm onSubmit={onSessionCreate} loading={sessionLoading} language={language} />
             : (
               <>
                 <MessageList messages={messages} />
-                <MessageInput onSend={onSend} disabled={sendDisabled} />
+                <MessageInput onSend={onSend} disabled={sendDisabled} language={language} />
               </>
             )
           }

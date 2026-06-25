@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { Link } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import { getLicensees } from '../../../../services/licensee'
 import { useSimpleCrud } from '../../../../contexts/SimpleCrud'
 import isEmpty from 'lodash/isEmpty'
@@ -16,17 +17,18 @@ interface LicenseesIndexProps {
   currentUser?: IUser | null
 }
 
-const LICENSE_KIND_LABELS: Record<string, string> = {
-  demo: 'Demonstração',
-  free: 'Grátis',
-  paid: 'Pago',
-}
-
 function LicenseesIndex({ currentUser }: LicenseesIndexProps) {
+  const { t } = useTranslation()
   const { filters, setFilters, cache } = useSimpleCrud()
   const { addPage } = cache
   const licenseeFilters = filters as LicenseeFilters | undefined
   const [expression, setExpression] = useState<string>(licenseeFilters?.expression || '')
+
+  const licenseKindLabel: Record<string, string> = {
+    demo: t('licensees.index.licenseKindDemo'),
+    free: t('licensees.index.licenseKindFree'),
+    paid: t('licensees.index.licenseKindPaid'),
+  }
 
   const onFilter = useCallback(
     async (changedFilters: LicenseeFilters) => {
@@ -71,11 +73,11 @@ function LicenseesIndex({ currentUser }: LicenseesIndexProps) {
       <div className='row'>
         <div className='d-flex justify-content-between pb-2'>
           <div className=''>
-            <h3 className='pe-3'>Licenciados</h3>
+            <h3 className='pe-3'>{t('licensees.index.title')}</h3>
           </div>
           <div className=''>
             <Link to='/licensees/new' className='btn btn-primary'>
-              Novo Licenciado
+              {t('licensees.index.newButton')}
             </Link>
           </div>
         </div>
@@ -90,13 +92,13 @@ function LicenseesIndex({ currentUser }: LicenseesIndexProps) {
                 name='expression'
                 type='text'
                 value={expression}
-                placeholder='Digite a expressão'
+                placeholder={t('licensees.index.searchPlaceholder')}
                 onChange={changeExpression}
               />
               <button
                 className='btn btn-primary'
-                title='Filtre pelo licenciado'
-                aria-label='Pesquisar licenciados'
+                title={t('licensees.index.searchTitle')}
+                aria-label={t('licensees.index.searchAriaLabel')}
                 onClick={() => {
                   const newFilters: LicenseeFilters = { ...licenseeFilters, expression: expression, page: 1 }
                   onFilter(newFilters)
@@ -112,11 +114,11 @@ function LicenseesIndex({ currentUser }: LicenseesIndexProps) {
         <table className='table'>
           <thead>
             <tr>
-              <th scope='col'>Nome</th>
-              <th scope='col'>E-mail</th>
-              <th scope='col'>Licença</th>
-              <th scope='col'>Telefone</th>
-              <th scope='col'>API Token</th>
+              <th scope='col'>{t('licensees.index.tableHeaderName')}</th>
+              <th scope='col'>{t('licensees.index.tableHeaderEmail')}</th>
+              <th scope='col'>{t('licensees.index.tableHeaderLicense')}</th>
+              <th scope='col'>{t('licensees.index.tableHeaderPhone')}</th>
+              <th scope='col'>{t('licensees.index.tableHeaderApiToken')}</th>
               <th scope='col'></th>
             </tr>
           </thead>
@@ -124,18 +126,18 @@ function LicenseesIndex({ currentUser }: LicenseesIndexProps) {
             {(cache.records as unknown as ILicensee[]).length === 0 ? (
               <tr>
                 <td colSpan={6} className='text-center text-muted py-4'>
-                  Nenhum licenciado encontrado.
+                  {t('licensees.index.emptyState')}
                 </td>
               </tr>
             ) : (cache.records as unknown as ILicensee[]).map((licensee) => (
               <tr key={licensee.id}>
                 <td>{licensee.name}</td>
                 <td>{licensee.email}</td>
-                <td>{LICENSE_KIND_LABELS[licensee.licenseKind] ?? licensee.licenseKind}</td>
+                <td>{licenseKindLabel[licensee.licenseKind] ?? licensee.licenseKind}</td>
                 <td>{licensee.phone}</td>
                 <td>{licensee.apiToken}</td>
                 <td>
-                  <Link to={`/licensees/${licensee.id}`} aria-label={`Editar ${licensee.name}`}>
+                  <Link to={`/licensees/${licensee.id}`} aria-label={t('licensees.index.editAriaLabel', { name: licensee.name })}>
                     <i className='bi bi-pencil' />
                   </Link>
                 </td>
@@ -151,7 +153,7 @@ function LicenseesIndex({ currentUser }: LicenseesIndexProps) {
             <div className='row'>
               <div className='col text-center mt-3'>
                 <button type='button' className='btn btn-outline-primary d-print-none' onClick={nextPage}>
-                  Carregar mais
+                  {t('licensees.index.loadMore')}
                 </button>
               </div>
             </div>

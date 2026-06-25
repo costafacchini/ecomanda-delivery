@@ -10,27 +10,13 @@ import { toast } from 'react-toastify'
 import { useApp } from '../../../../contexts/App'
 import type { IMessage, IMessageFilters } from '../../../../types'
 import type { IUser } from '../../../../types'
+import { useTranslation } from 'react-i18next'
 
 interface MessagesIndexProps {
   currentUser: IUser | null | undefined
 }
 
 type RetryStatus = 'idle' | 'loading' | 'success' | 'error'
-
-const KIND_LABELS: Record<string, string> = {
-  text: 'Texto',
-  file: 'Arquivo',
-  location: 'Localização',
-  interactive: 'Interativa',
-  cart: 'Carrinho',
-}
-
-const DESTINATION_LABELS: Record<string, string> = {
-  'to-chatbot': 'Chatbot',
-  'to-chat': 'Chat',
-  'to-messenger': 'WhatsApp',
-  'to-transfer': 'Transferência',
-}
 
 function getInitialFilters(): IMessageFilters {
   return {
@@ -46,6 +32,7 @@ function getInitialFilters(): IMessageFilters {
 }
 
 function MessagesIndex({ currentUser }: MessagesIndexProps) {
+  const { t } = useTranslation()
   const { activeLicensee } = useApp()
   const [filters, setFilters] = useState<IMessageFilters>(getInitialFilters)
 
@@ -56,6 +43,21 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
   const [retryState, setRetryState] = useState<Record<string, RetryStatus>>({})
 
   const showLicenseeFilter = currentUser?.role === 'super' && !activeLicensee
+
+  const KIND_LABELS: Record<string, string> = {
+    text: t('messages.kindText'),
+    file: t('messages.kindFile'),
+    location: t('messages.kindLocation'),
+    interactive: t('messages.kindInteractive'),
+    cart: t('messages.kindCart'),
+  }
+
+  const DESTINATION_LABELS: Record<string, string> = {
+    'to-chatbot': t('messages.destinationChatbot'),
+    'to-chat': t('messages.destinationChat'),
+    'to-messenger': t('messages.destinationWhatsapp'),
+    'to-transfer': t('messages.destinationTransfer'),
+  }
 
   function handleRetry(id: string) {
     setRetryState((prev) => ({ ...prev, [id]: 'loading' }))
@@ -95,12 +97,12 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
         setHasSearched(true)
       } catch (error: unknown) {
         if (error instanceof Error && error.name === 'AbortError') return
-        toast.error('Erro ao carregar mensagens. Tente novamente.')
+        toast.error(t('messages.loadError'))
       } finally {
         setLoading(false)
       }
     },
-    [filters, setFilters, addPage]
+    [filters, setFilters, addPage, t]
   )
 
   useEffect(() => {
@@ -142,7 +144,7 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
     e.preventDefault()
 
     if (filters.startDate && filters.endDate && filters.startDate > filters.endDate) {
-      toast.error('A data inicial não pode ser posterior à data final.')
+      toast.error(t('messages.dateError'))
       return
     }
 
@@ -165,14 +167,14 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
     <>
       <div className='d-flex justify-content-between pb-2'>
         <div className=''>
-          <h3 className='pe-3'>Mensagens</h3>
+          <h3 className='pe-3'>{t('messages.title')}</h3>
         </div>
       </div>
 
       <div className='row mb-3'>
         <div className='col-3'>
           <div className='form-group'>
-            <label htmlFor='startDate'>Data inicial</label>
+            <label htmlFor='startDate'>{t('messages.startDateLabel')}</label>
             <input
               value={filters.startDate}
               onChange={handleChange}
@@ -186,7 +188,7 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
 
         <div className='col-3'>
           <div className='form-group'>
-            <label htmlFor='endDate'>Data final</label>
+            <label htmlFor='endDate'>{t('messages.endDateLabel')}</label>
             <input
               value={filters.endDate}
               onChange={handleChange}
@@ -199,19 +201,19 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
         </div>
 
         <div className='form-group col-3'>
-          <label htmlFor='kind'>Tipo</label>
+          <label htmlFor='kind'>{t('messages.kindLabel')}</label>
           <select value={filters.kind} name='kind' id='kind' className='form-select' onChange={handleChange}>
-            <option value=''>Todos</option>
-            <option value='text'>Texto</option>
-            <option value='file'>Arquivo</option>
-            <option value='location'>Localização</option>
-            <option value='interactive'>Interativa</option>
-            <option value='cart'>Carrinho</option>
+            <option value=''>{t('common.actions')}</option>
+            <option value='text'>{t('messages.kindText')}</option>
+            <option value='file'>{t('messages.kindFile')}</option>
+            <option value='location'>{t('messages.kindLocation')}</option>
+            <option value='interactive'>{t('messages.kindInteractive')}</option>
+            <option value='cart'>{t('messages.kindCart')}</option>
           </select>
         </div>
 
         <div className='form-group col-3'>
-          <label htmlFor='destination'>Destino</label>
+          <label htmlFor='destination'>{t('messages.destinationLabel')}</label>
           <select
             value={filters.destination}
             name='destination'
@@ -219,11 +221,11 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
             className='form-select'
             onChange={handleChange}
           >
-            <option value=''>Todos</option>
-            <option value='to-chatbot'>Chatbot</option>
-            <option value='to-chat'>Chat</option>
-            <option value='to-messenger'>WhatsApp</option>
-            <option value='to-transfer'>Transferência</option>
+            <option value=''>{t('common.actions')}</option>
+            <option value='to-chatbot'>{t('messages.destinationChatbot')}</option>
+            <option value='to-chat'>{t('messages.destinationChat')}</option>
+            <option value='to-messenger'>{t('messages.destinationWhatsapp')}</option>
+            <option value='to-transfer'>{t('messages.destinationTransfer')}</option>
           </select>
         </div>
       </div>
@@ -233,7 +235,7 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
           <div className='col-6'>
             <div className='form-group'>
               <label htmlFor='licensee' id='licensee'>
-                Licenciado
+                {t('messages.licenseeFilter')}
               </label>
               <SelectLicenseesWithFilter
                 name='licensee'
@@ -253,7 +255,7 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
         <div className={showLicenseeFilter ? 'col-6' : 'col-12'}>
           <div className='form-group'>
             <label htmlFor='contact' id='contact'>
-              Contato
+              {t('messages.contactFilter')}
             </label>
             <SelectContactsWithFilter
               name='contact'
@@ -280,7 +282,7 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
               id='onlyErrors'
             />
             <label className='form-check-label' htmlFor='onlyErrors'>
-              Apenas mensagens de erro
+              {t('messages.onlyErrorsLabel')}
             </label>
           </div>
         </div>
@@ -293,21 +295,21 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
             className='btn btn-outline-secondary me-2'
             onClick={handleReset}
           >
-            Limpar filtros
+            {t('messages.clearFilters')}
           </button>
           <button
             type='button'
             className='btn btn-primary'
-            aria-label='Pesquisar mensagens'
+            aria-label={t('messages.searchButton')}
             onClick={handleSubmitSearch}
             disabled={loading}
           >
             {loading ? (
               <>
                 <span className='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true' />
-                Pesquisando...
+                {t('messages.searching')}
               </>
-            ) : 'Pesquisar'}
+            ) : t('messages.searchButton')}
           </button>
         </div>
       </div>
@@ -316,12 +318,12 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
         <table className={`${styles.stickyHeader} table table-striped table-hover table-bordered`}>
           <thead>
             <tr>
-              <th scope='col'>Contato</th>
-              <th scope='col'>Texto</th>
-              <th scope='col'>Tipo</th>
-              <th scope='col'>Destino</th>
-              <th scope='col'>Data</th>
-              <th scope='col'>Enviada</th>
+              <th scope='col'>{t('messages.columnContact')}</th>
+              <th scope='col'>{t('messages.columnText')}</th>
+              <th scope='col'>{t('messages.columnType')}</th>
+              <th scope='col'>{t('messages.columnDestination')}</th>
+              <th scope='col'>{t('messages.columnDate')}</th>
+              <th scope='col'>{t('messages.columnSent')}</th>
             </tr>
           </thead>
           <tbody>
@@ -329,15 +331,15 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
               <tr>
                 <td colSpan={6} className='text-center text-muted py-4'>
                   <span className='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true' />
-                  Carregando...
+                  {t('common.loading')}
                 </td>
               </tr>
             ) : records.length === 0 ? (
               <tr>
                 <td colSpan={6} className='text-center text-muted py-4'>
                   {hasSearched
-                    ? 'Nenhuma mensagem encontrada.'
-                    : 'Aplique os filtros e clique em Pesquisar para ver as mensagens.'}
+                    ? t('messages.noMessagesFound')
+                    : t('messages.applyFiltersPrompt')}
                 </td>
               </tr>
             ) : records.map((message) => (
@@ -350,7 +352,7 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
                   {message.error && (
                     <div>
                       <details className='mt-1'>
-                        <summary className='text-muted'>Visualizar erro</summary>
+                        <summary className='text-muted'>{t('messages.viewError')}</summary>
                         <p className='mb-0'>{message.error}</p>
                       </details>
                       <div className='mt-1'>
@@ -360,13 +362,13 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
                           disabled={retryState[message.id] === 'loading'}
                           onClick={() => handleRetry(message.id)}
                         >
-                          {retryState[message.id] === 'loading' ? 'Reenviando...' : 'Reenviar'}
+                          {retryState[message.id] === 'loading' ? t('messages.resending') : t('messages.resend')}
                         </button>
                         {retryState[message.id] === 'success' && (
-                          <span className='text-success small ms-2'>Reenviado!</span>
+                          <span className='text-success small ms-2'>{t('messages.resendSuccess')}</span>
                         )}
                         {retryState[message.id] === 'error' && (
-                          <span className='text-danger small ms-2'>Erro ao reenviar.</span>
+                          <span className='text-danger small ms-2'>{t('messages.resendError')}</span>
                         )}
                       </div>
                     </div>
@@ -406,7 +408,7 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
                 </td>
                 <td>{DESTINATION_LABELS[message.destination] ?? message.destination}</td>
                 <td>{moment(message.createdAt).tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format('DD/MM/YYYY HH:mm:ss')}</td>
-                <td>{message.sended ? 'Sim' : 'Não'}</td>
+                <td>{message.sended ? t('messages.sentYes') : t('messages.sentNo')}</td>
               </tr>
             ))}
           </tbody>
@@ -427,9 +429,9 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
                     {loading ? (
                       <>
                         <span className='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true' />
-                        Carregando...
+                        {t('common.loading')}
                       </>
-                    ) : 'Carregar mais'}
+                    ) : t('common.loadMore')}
                   </button>
                 </div>
               </div>

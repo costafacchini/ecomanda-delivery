@@ -2,6 +2,13 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { createRoutesStub } from 'react-router'
 import TriggerForm from './'
 
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
+
 describe('<TriggerForm />', () => {
   const onSubmit = vi.fn()
 
@@ -18,17 +25,17 @@ describe('<TriggerForm />', () => {
   it('is rendered with the default initial values', () => {
     mount()
 
-    expect(screen.getByLabelText('Nome')).toHaveValue('')
-    expect(screen.getByLabelText('Ordem')).toHaveValue(1)
-    expect(screen.getByLabelText('Expressão')).toHaveValue('')
-    expect(screen.getByLabelText('Tipo')).toHaveValue('multi_product')
-    expect(screen.getByLabelText('Catálogo')).toHaveValue('')
+    expect(screen.getByLabelText('triggers.nameLabel')).toHaveValue('')
+    expect(screen.getByLabelText('triggers.orderLabel')).toHaveValue(1)
+    expect(screen.getByLabelText('triggers.expressionLabel')).toHaveValue('')
+    expect(screen.getByLabelText('triggers.kindLabel')).toHaveValue('multi_product')
+    expect(screen.getByLabelText('triggers.catalogLabel')).toHaveValue('')
 
-    expect(screen.queryByText('O campo de texto aceita algumas palavras reservadas:')).not.toBeInTheDocument()
-    expect(screen.queryByText('$last_cart_resume - carrinho do contato')).not.toBeInTheDocument()
-    expect(screen.queryByText('$contact_name - nome do contato')).not.toBeInTheDocument()
-    expect(screen.queryByText('$contact_number - número de telefone do contato')).not.toBeInTheDocument()
-    expect(screen.queryByText('$contact_address_complete - endereço completo do contato')).not.toBeInTheDocument()
+    expect(screen.queryByText('triggers.textHelpTitle')).not.toBeInTheDocument()
+    expect(screen.queryByText('triggers.textHelpCartResume')).not.toBeInTheDocument()
+    expect(screen.queryByText('triggers.textHelpContactName')).not.toBeInTheDocument()
+    expect(screen.queryByText('triggers.textHelpContactNumber')).not.toBeInTheDocument()
+    expect(screen.queryByText('triggers.textHelpContactAddress')).not.toBeInTheDocument()
   })
 
   it('can receive initial values', () => {
@@ -42,11 +49,11 @@ describe('<TriggerForm />', () => {
 
     mount({ initialValues: trigger })
 
-    expect(screen.getByLabelText('Nome')).toHaveValue('Name')
-    expect(screen.getByLabelText('Ordem')).toHaveValue(2)
-    expect(screen.getByLabelText('Expressão')).toHaveValue('multiple-products')
-    expect(screen.getByLabelText('Tipo')).toHaveValue('multi_product')
-    expect(screen.getByLabelText('Catálogo')).toHaveValue('products')
+    expect(screen.getByLabelText('triggers.nameLabel')).toHaveValue('Name')
+    expect(screen.getByLabelText('triggers.orderLabel')).toHaveValue(2)
+    expect(screen.getByLabelText('triggers.expressionLabel')).toHaveValue('multiple-products')
+    expect(screen.getByLabelText('triggers.kindLabel')).toHaveValue('multi_product')
+    expect(screen.getByLabelText('triggers.catalogLabel')).toHaveValue('products')
   })
 
   describe('fields', () => {
@@ -59,9 +66,9 @@ describe('<TriggerForm />', () => {
 
       mount({ initialValues: trigger })
 
-      expect(screen.getByLabelText('Tipo')).toHaveValue('multi_product')
-      expect(screen.getByLabelText('Catálogo')).toHaveValue('product')
-      expect(screen.getByLabelText('Id do catálogo')).toHaveValue('123457')
+      expect(screen.getByLabelText('triggers.kindLabel')).toHaveValue('multi_product')
+      expect(screen.getByLabelText('triggers.catalogLabel')).toHaveValue('product')
+      expect(screen.getByLabelText('triggers.catalogIdLabel')).toHaveValue('123457')
     })
 
     it('renders fields if kind is single_product', () => {
@@ -72,8 +79,8 @@ describe('<TriggerForm />', () => {
 
       mount({ initialValues: trigger })
 
-      expect(screen.getByLabelText('Tipo')).toHaveValue('single_product')
-      expect(screen.getByLabelText('Catálogo')).toHaveValue('product')
+      expect(screen.getByLabelText('triggers.kindLabel')).toHaveValue('single_product')
+      expect(screen.getByLabelText('triggers.catalogLabel')).toHaveValue('product')
     })
 
     it('renders fields if kind is reply_button', () => {
@@ -84,8 +91,8 @@ describe('<TriggerForm />', () => {
 
       mount({ initialValues: trigger })
 
-      expect(screen.getByLabelText('Tipo')).toHaveValue('reply_button')
-      expect(screen.getByLabelText('Script')).toHaveValue('buttons')
+      expect(screen.getByLabelText('triggers.kindLabel')).toHaveValue('reply_button')
+      expect(screen.getByLabelText('triggers.scriptLabel')).toHaveValue('buttons')
     })
 
     it('renders fields if kind is list_message', () => {
@@ -96,8 +103,8 @@ describe('<TriggerForm />', () => {
 
       mount({ initialValues: trigger })
 
-      expect(screen.getByLabelText('Tipo')).toHaveValue('list_message')
-      expect(screen.getByLabelText('Mensagens')).toHaveValue('messages')
+      expect(screen.getByLabelText('triggers.kindLabel')).toHaveValue('list_message')
+      expect(screen.getByLabelText('triggers.messagesLabel')).toHaveValue('messages')
     })
 
     it('renders fields if kind is text', () => {
@@ -108,13 +115,13 @@ describe('<TriggerForm />', () => {
 
       mount({ initialValues: trigger })
 
-      expect(screen.getByLabelText('Tipo')).toHaveValue('text')
-      expect(screen.getByLabelText('Texto')).toHaveValue('messages')
-      expect(screen.getByText('O campo de texto aceita algumas palavras reservadas:')).toBeInTheDocument()
-      expect(screen.getByText('$last_cart_resume - carrinho do contato')).toBeInTheDocument()
-      expect(screen.getByText('$contact_name - nome do contato')).toBeInTheDocument()
-      expect(screen.getByText('$contact_number - número de telefone do contato')).toBeInTheDocument()
-      expect(screen.getByText('$contact_address_complete - endereço completo do contato')).toBeInTheDocument()
+      expect(screen.getByLabelText('triggers.kindLabel')).toHaveValue('text')
+      expect(screen.getByLabelText('triggers.textLabel')).toHaveValue('messages')
+      expect(screen.getByText('triggers.textHelpTitle')).toBeInTheDocument()
+      expect(screen.getByText('triggers.textHelpCartResume')).toBeInTheDocument()
+      expect(screen.getByText('triggers.textHelpContactName')).toBeInTheDocument()
+      expect(screen.getByText('triggers.textHelpContactNumber')).toBeInTheDocument()
+      expect(screen.getByText('triggers.textHelpContactAddress')).toBeInTheDocument()
     })
   })
 
@@ -124,7 +131,7 @@ describe('<TriggerForm />', () => {
 
       expect(onSubmit).not.toHaveBeenCalled()
 
-      fireEvent.click(screen.getByText('Salvar'))
+      fireEvent.click(screen.getByText('common.save'))
 
       await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
