@@ -91,7 +91,7 @@
     "mongodb": "7.3.0",
     "mongoose": "9.7.2",
     "morgan": "1.11.0",
-    "newrelic": "14.1.1",
+    "newrelic": "14.1.2",
     "node-notifier": "10.0.1",
     "nodemon": "3.1.14",
     "rate-limit-redis": "5.0.0",
