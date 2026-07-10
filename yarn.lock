@@ -1389,29 +1389,29 @@
   resolved "https://registry.yarnpkg.com/@borewit/text-codec/-/text-codec-0.2.2.tgz#75025f735c0983b3a871668804a57387e3649375"
   integrity sha512-DDaRehssg1aNrH4+2hnj1B7vnUGEjU6OIlyRdkMd0aUdIUvKXrJfXsy8LVtXAy7DRvYVluWbMspsRhz2lcW0mQ==
 
-"@bull-board/api@8.0.2", "@bull-board/api@^8.0.0":
-  version "8.0.2"
-  resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-8.0.2.tgz#55cb32dec3a9c2d4aa1f5cdc2baa37de741dac12"
-  integrity sha512-b+AfdwFK/9u105Jj9P/Jj+pIC4hY/hNqrqvdhvRFFV7ThusTTy0QUQCS+GO/XwxztZkqNDxyt/djhWbirTIN1w==
+"@bull-board/api@8.1.2", "@bull-board/api@^8.0.0":
+  version "8.1.2"
+  resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-8.1.2.tgz#85cdbbf0baa4c8967d86a59ec00aa7e410fa9379"
+  integrity sha512-6NGYCIRhHJmmoCwAFA1z4lPpR/D/BdOjyERd2MMeG4Samu05FSjzKKdN55S3ga30EcXeENfYzmNn6IDmVz5OTg==
   dependencies:
     redis-info "^3.1.0"
 
 "@bull-board/express@^8.0.0":
-  version "8.0.2"
-  resolved "https://registry.yarnpkg.com/@bull-board/express/-/express-8.0.2.tgz#f8b96666a8f0ff8d140543c8f4e866f7f570c0c9"
-  integrity sha512-SUVm61x6fzrnUhdX6qSOpWx4YJF/FiNF+wmmEB6z7hq7QZgWupl88G4VkFjFqhYmTJg0AUsOkGV2v7+RLFsAfw==
+  version "8.1.2"
+  resolved "https://registry.yarnpkg.com/@bull-board/express/-/express-8.1.2.tgz#416e93ce730218773b5f98a80abc392580a7e371"
+  integrity sha512-IldpQLXlezJRzk1BVNJjH+Oi3NBRcBopq9bI2ndLs0R+ySK1ux+TtGDUW+eX2fl0wEHwSpuUgPBAJID695zohA==
   dependencies:
-    "@bull-board/api" "8.0.2"
-    "@bull-board/ui" "8.0.2"
+    "@bull-board/api" "8.1.2"
+    "@bull-board/ui" "8.1.2"
     ejs "^6.0.1"
     express "^5.2.1"
 
-"@bull-board/ui@8.0.2", "@bull-board/ui@^8.0.0":
-  version "8.0.2"
-  resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-8.0.2.tgz#656acb9ee958ac77ac3702353e0cb6497cb96227"
-  integrity sha512-kFthFARLKt9z1SHH1qTUTglVex8NoKQgBKKvb2GjqEMw6kQBw98ZV5sWW5dOzJlW+gdQaWyVyupJb/778sbtCQ==
+"@bull-board/ui@8.1.2", "@bull-board/ui@^8.0.0":
+  version "8.1.2"
+  resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-8.1.2.tgz#e375f2514c832940b7180595edbc7da310570595"
+  integrity sha512-gC5u9XUSiRile4/VC+WHXtaPvfZV4Mrrz8MSvPe32Hjl2MXStfSuEOb+9Tw/WMpNSZ442tGpFZLz0RDh1Yo3jg==
   dependencies:
-    "@bull-board/api" "8.0.2"
+    "@bull-board/api" "8.1.2"
 
 "@cacheable/memory@^2.0.8":
   version "2.0.9"
@@ -5884,9 +5884,9 @@ iconv-lite@^0.6.2:
     safer-buffer ">= 2.1.2 < 3.0.0"
 
 iconv-lite@^0.7.2, iconv-lite@~0.7.0:
-  version "0.7.2"
-  resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.7.2.tgz#d0bdeac3f12b4835b7359c2ad89c422a4d1cc72e"
-  integrity sha512-im9DjEDQ55s9fL4EYzOAv0yMqmMBSZp6G0VvFyTMPKWxiSBHUj9NW/qqLmXUwXrrM7AvqSlTCfvqRb0cM8yYqw==
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.7.3.tgz#84ee12f963e7de50bc01a13e160a078b3b0f415f"
+  integrity sha512-IKXpvIzjnC9XTAUbVBcMfGS0EPaIXtW6v+zr+RRp+hqULEpo0owZax6wyRwPOJbWbzjYspQwusTsfVr0ifh4uQ==
   dependencies:
     safer-buffer ">= 2.1.2 < 3.0.0"
 
