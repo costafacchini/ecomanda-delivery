@@ -22,7 +22,7 @@ class LocalChat extends ChatsBase {
       room = await this._roomRepository.create({
         contact: message.contact._id,
         status: 'pending',
-        sector: message.sector ?? null,
+        department: message.department ?? null,
       })
     }
 

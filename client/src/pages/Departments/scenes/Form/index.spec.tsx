@@ -49,7 +49,7 @@ describe('<SectorForm />', () => {
 
     fireEvent.click(screen.getByText('common.save'))
 
-    await waitFor(() => expect(screen.getByText('sectors.validation.nameRequired')).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText('departments.validation.nameRequired')).toBeInTheDocument())
     expect(onSubmit).not.toHaveBeenCalled()
   })
 

@@ -34,18 +34,18 @@ describe('MessengersController delegation', () => {
     expect(ingestMessengerMessage.execute).toHaveBeenCalledWith({
       body: req.body,
       licenseeId: 'licensee-id',
-      sectorId: null,
+      departmentId: null,
     })
     expect(res.status).toHaveBeenCalledWith(200)
     expect(res.send).toHaveBeenCalledWith({ body: 'Solicitação de mensagem para a plataforma de messenger agendado' })
   })
 
-  it('forwards sectorId from req.sector when sector is present', async () => {
+  it('forwards departmentId from req.department when department is present', async () => {
     const { controller, ingestMessengerMessage } = buildController()
     const req = {
       body: { field: 'test' },
       licensee: { _id: 'licensee-id' },
-      sector: { _id: 'sector-id' },
+      department: { _id: 'department-id' },
     }
     const res = buildResponse()
 
@@ -56,7 +56,7 @@ describe('MessengersController delegation', () => {
     expect(ingestMessengerMessage.execute).toHaveBeenCalledWith({
       body: req.body,
       licenseeId: 'licensee-id',
-      sectorId: 'sector-id',
+      departmentId: 'department-id',
     })
     expect(res.status).toHaveBeenCalledWith(200)
   })

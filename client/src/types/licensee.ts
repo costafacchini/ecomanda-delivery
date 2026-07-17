@@ -24,7 +24,7 @@ export interface ILicensee {
   messageOnCloseChat: string
   useSenderName: boolean
   useFileIDYcloud: boolean
-  useSectors: boolean
+  useDepartments: boolean
   // Read-only webhook URLs returned by the API
   urlChatWebhook?: string
   urlChatbotWebhook?: string
@@ -58,7 +58,7 @@ export interface ILicenseeFormValues {
   document: string
   kind: string
   useSenderName: boolean
-  useSectors: boolean
+  useDepartments: boolean
 }
 
 export interface ILicenseeFilters {

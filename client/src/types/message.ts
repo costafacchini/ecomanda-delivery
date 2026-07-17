@@ -5,7 +5,7 @@ export interface IMessageTriggerRef {
   name: string
 }
 
-export interface IMessageSectorRef {
+export interface IMessageDepartmentRef {
   _id: string
   name: string
 }
@@ -26,7 +26,7 @@ export interface IMessage {
   createdAt: string
   contact: Pick<IContact, 'id' | 'name'> | null
   trigger: IMessageTriggerRef | null
-  sector: IMessageSectorRef | null
+  sector: IMessageDepartmentRef | null
 }
 
 export interface IMessageFilters {

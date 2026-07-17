@@ -105,29 +105,29 @@ describe('LocalChat plugin', () => {
       )
     })
 
-    it("creates a room with the message's sector when no open room exists", async () => {
-      const sectorId = new mongoose.Types.ObjectId()
+    it("creates a room with the message's department when no open room exists", async () => {
+      const departmentId = new mongoose.Types.ObjectId()
       const message = await messageRepository.create(
-        messageFactory.build({ contact, licensee, sended: false, sector: sectorId }),
+        messageFactory.build({ contact, licensee, sended: false, department: departmentId }),
       )
 
       await plugin.sendMessage(message._id)
 
       const room = await roomRepository.findFirst({ contact: contact._id, closed: false })
       expect(room).not.toBeNull()
-      expect(room.sector.toString()).toEqual(sectorId.toString())
+      expect(room.department.toString()).toEqual(departmentId.toString())
     })
 
-    it('creates a room with sector null when message has no sector', async () => {
+    it('creates a room with department null when message has no department', async () => {
       const message = await messageRepository.create(
-        messageFactory.build({ contact, licensee, sended: false, sector: undefined }),
+        messageFactory.build({ contact, licensee, sended: false, department: undefined }),
       )
 
       await plugin.sendMessage(message._id)
 
       const room = await roomRepository.findFirst({ contact: contact._id, closed: false })
       expect(room).not.toBeNull()
-      expect(room.sector).toBeNull()
+      expect(room.department).toBeNull()
     })
   })
 
@@ -167,9 +167,9 @@ describe('LocalChat plugin', () => {
   })
 
   describe('#responseToMessages', () => {
-    it('sets sector on message when room has a sector', async () => {
-      const sectorId = new mongoose.Types.ObjectId()
-      const room = await roomRepository.create({ contact: contact._id, status: 'open', sector: sectorId })
+    it('sets department on message when room has a department', async () => {
+      const departmentId = new mongoose.Types.ObjectId()
+      const room = await roomRepository.create({ contact: contact._id, status: 'open', department: departmentId })
       const fullPlugin = new LocalChat(licensee, {
         messageRepository,
         roomRepository,
@@ -180,10 +180,10 @@ describe('LocalChat plugin', () => {
 
       const saved = await messageRepository.findFirst({ contact: contact._id })
       expect(saved).not.toBeNull()
-      expect(saved.sector?.toString()).toEqual(sectorId.toString())
+      expect(saved.department?.toString()).toEqual(departmentId.toString())
     })
 
-    it('sets sector null on message when room has no sector', async () => {
+    it('sets department null on message when room has no department', async () => {
       const room = await roomRepository.create({ contact: contact._id, status: 'open' })
       const fullPlugin = new LocalChat(licensee, {
         messageRepository,
@@ -195,7 +195,7 @@ describe('LocalChat plugin', () => {
 
       const saved = await messageRepository.findFirst({ contact: contact._id })
       expect(saved).not.toBeNull()
-      expect(saved.sector).toBeNull()
+      expect(saved.department).toBeNull()
     })
   })
 

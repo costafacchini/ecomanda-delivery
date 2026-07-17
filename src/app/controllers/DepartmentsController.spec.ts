@@ -1,5 +1,5 @@
-import { SectorRepositoryMemory } from '@repositories/sector'
-import { SectorsController } from './SectorsController'
+import { DepartmentRepositoryMemory } from '@repositories/department'
+import { DepartmentsController } from './DepartmentsController'
 
 function buildResponse() {
   return {
@@ -10,17 +10,17 @@ function buildResponse() {
 }
 
 function buildController() {
-  const sectorRepository = new SectorRepositoryMemory()
+  const departmentRepository = new DepartmentRepositoryMemory()
 
-  const controller = new SectorsController({ sectorRepository })
+  const controller = new DepartmentsController({ departmentRepository })
 
-  return { controller, sectorRepository }
+  return { controller, departmentRepository }
 }
 
-describe('SectorsController', () => {
+describe('DepartmentsController', () => {
   describe('#create', () => {
-    it('returns 201 with the created sector', async () => {
-      const { controller, sectorRepository } = buildController()
+    it('returns 201 with the created department', async () => {
+      const { controller, departmentRepository } = buildController()
       const licenseeId = 'license-id'
       const userId = 'user-id'
       const req = { body: { name: 'Vendas', licensee: licenseeId, users: [userId] } }
@@ -30,16 +30,16 @@ describe('SectorsController', () => {
 
       expect(res.status).toHaveBeenCalledWith(201)
       expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ name: 'Vendas' }))
-      expect(sectorRepository.items).toHaveLength(1)
+      expect(departmentRepository.items).toHaveLength(1)
     })
 
     it('returns 422 when users array is empty', async () => {
-      const sectorRepository = {
+      const departmentRepository = {
         create: jest
           .fn()
           .mockRejectedValue({ errors: { users: { message: 'Usuários: Informe ao menos um usuário' } } }),
       }
-      const controller = new SectorsController({ sectorRepository })
+      const controller = new DepartmentsController({ departmentRepository })
       const req = { body: { name: 'Vendas', licensee: 'license-id', users: [] } }
       const res = buildResponse()
 
@@ -50,10 +50,10 @@ describe('SectorsController', () => {
     })
 
     it('returns 422 when name is missing', async () => {
-      const sectorRepository = {
+      const departmentRepository = {
         create: jest.fn().mockRejectedValue({ errors: { name: { message: 'Nome: Você deve preencher o campo' } } }),
       }
-      const controller = new SectorsController({ sectorRepository })
+      const controller = new DepartmentsController({ departmentRepository })
       const req = { body: { licensee: 'license-id', users: ['user-id'] } }
       const res = buildResponse()
 
@@ -64,14 +64,14 @@ describe('SectorsController', () => {
   })
 
   describe('#index', () => {
-    it('returns all sectors filtered by licensee', async () => {
-      const { controller, sectorRepository } = buildController()
+    it('returns all departments filtered by licensee', async () => {
+      const { controller, departmentRepository } = buildController()
       const licenseeId = 'license-id'
       const otherLicenseeId = 'other-licensee-id'
       const userId = 'user-id'
 
-      await sectorRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
-      await sectorRepository.create({ name: 'Suporte', licensee: otherLicenseeId, users: [userId] })
+      await departmentRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
+      await departmentRepository.create({ name: 'Suporte', licensee: otherLicenseeId, users: [userId] })
 
       const req = { query: { licensee: licenseeId.toString() } }
       const res = buildResponse()
@@ -84,13 +84,13 @@ describe('SectorsController', () => {
       expect(sent[0].name).toEqual('Vendas')
     })
 
-    it('returns all sectors when no licensee filter', async () => {
-      const { controller, sectorRepository } = buildController()
+    it('returns all departments when no licensee filter', async () => {
+      const { controller, departmentRepository } = buildController()
       const licenseeId = 'license-id'
       const userId = 'user-id'
 
-      await sectorRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
-      await sectorRepository.create({ name: 'Suporte', licensee: licenseeId, users: [userId] })
+      await departmentRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
+      await departmentRepository.create({ name: 'Suporte', licensee: licenseeId, users: [userId] })
 
       const req = { query: {} }
       const res = buildResponse()
@@ -102,10 +102,10 @@ describe('SectorsController', () => {
     })
 
     it('returns 500 when repository throws an unexpected error', async () => {
-      const sectorRepository = {
+      const departmentRepository = {
         find: jest.fn().mockRejectedValue(new Error('connection lost')),
       }
-      const controller = new SectorsController({ sectorRepository })
+      const controller = new DepartmentsController({ departmentRepository })
       const req = { query: {} }
       const res = buildResponse()
 
@@ -116,41 +116,41 @@ describe('SectorsController', () => {
     })
 
     it('populates licensee so webhookUrl virtual resolves', async () => {
-      const sectorRepository = {
+      const departmentRepository = {
         find: jest.fn().mockResolvedValue([]),
       }
-      const controller = new SectorsController({ sectorRepository })
+      const controller = new DepartmentsController({ departmentRepository })
       const req = { query: { licensee: 'lic-id' } }
       const res = buildResponse()
 
       await controller.index(req, res)
 
-      expect(sectorRepository.find).toHaveBeenCalledWith({ licensee: 'lic-id' }, ['licensee', 'users'])
+      expect(departmentRepository.find).toHaveBeenCalledWith({ licensee: 'lic-id' }, ['licensee', 'users'])
     })
   })
 
   describe('#destroy', () => {
-    it('removes the sector and returns 204', async () => {
-      const { controller, sectorRepository } = buildController()
+    it('removes the department and returns 204', async () => {
+      const { controller, departmentRepository } = buildController()
       const licenseeId = 'license-id'
       const userId = 'user-id'
 
-      const sector = await sectorRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
+      const department = await departmentRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
 
-      const req = { params: { id: sector._id } }
+      const req = { params: { id: department._id } }
       const res = buildResponse()
 
       await controller.destroy(req, res)
 
       expect(res.status).toHaveBeenCalledWith(204)
-      expect(sectorRepository.items).toHaveLength(0)
+      expect(departmentRepository.items).toHaveLength(0)
     })
 
     it('returns 500 when repository throws an unexpected error', async () => {
-      const sectorRepository = {
+      const departmentRepository = {
         delete: jest.fn().mockRejectedValue(new Error('disk failure')),
       }
-      const controller = new SectorsController({ sectorRepository })
+      const controller = new DepartmentsController({ departmentRepository })
       const req = { params: { id: 'some-id' } }
       const res = buildResponse()
 
@@ -162,14 +162,14 @@ describe('SectorsController', () => {
   })
 
   describe('#show', () => {
-    it('returns the sector by id', async () => {
-      const { controller, sectorRepository } = buildController()
+    it('returns the department by id', async () => {
+      const { controller, departmentRepository } = buildController()
       const licenseeId = 'license-id'
       const userId = 'user-id'
 
-      const sector = await sectorRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
+      const department = await departmentRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
 
-      const req = { params: { id: sector._id } }
+      const req = { params: { id: department._id } }
       const res = buildResponse()
 
       await controller.show(req, res)
@@ -179,33 +179,33 @@ describe('SectorsController', () => {
     })
 
     it('populates licensee so webhookUrl virtual resolves', async () => {
-      const sectorData = {
+      const departmentData = {
         name: 'Vendas',
-        webhookUrl: 'https://clave-digital.herokuapp.com/api/v1/messenger/message/?token=abc&sector=xyz',
+        webhookUrl: 'https://clave-digital.herokuapp.com/api/v1/messenger/message/?token=abc&department=xyz',
       }
-      const sectorRepository = {
-        findFirst: jest.fn().mockResolvedValue(sectorData),
+      const departmentRepository = {
+        findFirst: jest.fn().mockResolvedValue(departmentData),
       }
-      const controller = new SectorsController({ sectorRepository })
-      const req = { params: { id: 'sector-id' } }
+      const controller = new DepartmentsController({ departmentRepository })
+      const req = { params: { id: 'department-id' } }
       const res = buildResponse()
 
       await controller.show(req, res)
 
-      expect(sectorRepository.findFirst).toHaveBeenCalledWith({ _id: 'sector-id' }, ['licensee', 'users'])
+      expect(departmentRepository.findFirst).toHaveBeenCalledWith({ _id: 'department-id' }, ['licensee', 'users'])
       expect(res.status).toHaveBeenCalledWith(200)
     })
   })
 
   describe('#update', () => {
-    it('returns 200 with the updated sector', async () => {
-      const { controller, sectorRepository } = buildController()
+    it('returns 200 with the updated department', async () => {
+      const { controller, departmentRepository } = buildController()
       const licenseeId = 'license-id'
       const userId = 'user-id'
 
-      const sector = await sectorRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
+      const department = await departmentRepository.create({ name: 'Vendas', licensee: licenseeId, users: [userId] })
 
-      const req = { params: { id: sector._id }, body: { name: 'Suporte' } }
+      const req = { params: { id: department._id }, body: { name: 'Suporte' } }
       const res = buildResponse()
 
       await controller.update(req, res)
@@ -215,11 +215,11 @@ describe('SectorsController', () => {
     })
 
     it('returns 422 when validation error occurs', async () => {
-      const sectorRepository = {
+      const departmentRepository = {
         update: jest.fn().mockRejectedValue({ errors: { name: { message: 'Nome: Você deve preencher o campo' } } }),
         findFirst: jest.fn(),
       }
-      const controller = new SectorsController({ sectorRepository })
+      const controller = new DepartmentsController({ departmentRepository })
       const req = { params: { id: 'some-id' }, body: { name: '' } }
       const res = buildResponse()
 
@@ -236,12 +236,12 @@ describe('SectorsController', () => {
       const qrResponse = { qr: 'data:image/png;base64,abc123' }
       controller.getBaileysQrUseCase = { execute: jest.fn().mockResolvedValue(qrResponse) }
 
-      const req = { params: { id: 'sector-id' } }
+      const req = { params: { id: 'department-id' } }
       const res = buildResponse()
 
       await controller.getBaileysQr(req, res)
 
-      expect(controller.getBaileysQrUseCase.execute).toHaveBeenCalledWith('sector-id')
+      expect(controller.getBaileysQrUseCase.execute).toHaveBeenCalledWith('department-id')
       expect(res.status).toHaveBeenCalledWith(200)
       expect(res.send).toHaveBeenCalledWith(qrResponse)
     })
@@ -250,7 +250,7 @@ describe('SectorsController', () => {
       const { controller } = buildController()
       controller.getBaileysQrUseCase = { execute: jest.fn().mockRejectedValue(new Error('timeout')) }
 
-      const req = { params: { id: 'sector-id' } }
+      const req = { params: { id: 'department-id' } }
       const res = buildResponse()
 
       await controller.getBaileysQr(req, res)
@@ -266,12 +266,12 @@ describe('SectorsController', () => {
       const statusResponse = { status: 'connected' }
       controller.getBaileysStatusUseCase = { execute: jest.fn().mockResolvedValue(statusResponse) }
 
-      const req = { params: { id: 'sector-id' } }
+      const req = { params: { id: 'department-id' } }
       const res = buildResponse()
 
       await controller.getBaileysStatus(req, res)
 
-      expect(controller.getBaileysStatusUseCase.execute).toHaveBeenCalledWith('sector-id')
+      expect(controller.getBaileysStatusUseCase.execute).toHaveBeenCalledWith('department-id')
       expect(res.status).toHaveBeenCalledWith(200)
       expect(res.send).toHaveBeenCalledWith(statusResponse)
     })
@@ -280,7 +280,7 @@ describe('SectorsController', () => {
       const { controller } = buildController()
       controller.getBaileysStatusUseCase = { execute: jest.fn().mockRejectedValue(new Error('internal error')) }
 
-      const req = { params: { id: 'sector-id' } }
+      const req = { params: { id: 'department-id' } }
       const res = buildResponse()
 
       await controller.getBaileysStatus(req, res)
@@ -296,12 +296,12 @@ describe('SectorsController', () => {
       const syncResponse = { synced: true }
       controller.syncBaileysDirectoryUseCase = { execute: jest.fn().mockResolvedValue(syncResponse) }
 
-      const req = { params: { id: 'sector-id' } }
+      const req = { params: { id: 'department-id' } }
       const res = buildResponse()
 
       await controller.baileysSync(req, res)
 
-      expect(controller.syncBaileysDirectoryUseCase.execute).toHaveBeenCalledWith('sector-id')
+      expect(controller.syncBaileysDirectoryUseCase.execute).toHaveBeenCalledWith('department-id')
       expect(res.status).toHaveBeenCalledWith(200)
       expect(res.send).toHaveBeenCalledWith(syncResponse)
     })
@@ -310,7 +310,7 @@ describe('SectorsController', () => {
       const { controller } = buildController()
       controller.syncBaileysDirectoryUseCase = { execute: jest.fn().mockRejectedValue(new Error('sync failed')) }
 
-      const req = { params: { id: 'sector-id' } }
+      const req = { params: { id: 'department-id' } }
       const res = buildResponse()
 
       await controller.baileysSync(req, res)

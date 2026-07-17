@@ -33,7 +33,7 @@ jest.mock('@whiskeysockets/baileys', () => ({
 }))
 
 function makeSession(overrides: Record<string, any> = {}) {
-  return { _id: 'session-id-1', licensee: 'licensee-id-1', sector: null, creds: {}, keys: {}, ...overrides }
+  return { _id: 'session-id-1', licensee: 'licensee-id-1', department: null, creds: {}, keys: {}, ...overrides }
 }
 
 function makeLicensee(overrides: Record<string, any> = {}) {
@@ -220,48 +220,48 @@ describe('BaileysSocketManager', () => {
       expect(manager.isConnectedForLicensee('licensee-id-1', null)).toBe(false)
     })
 
-    it('returns true for the main session (sector=null) after connection opens', async () => {
+    it('returns true for the main session (department=null) after connection opens', async () => {
       await manager.start(session, licensee, {})
       fireEvent('connection.update', { connection: 'open' })
 
       expect(manager.isConnectedForLicensee('licensee-id-1', null)).toBe(true)
     })
 
-    it('returns true for a sector session after connection opens', async () => {
-      const sectorId = 'sector-id-abc'
-      const sectorSession = makeSession({ _id: 'session-id-2', sector: sectorId })
-      await manager.start(sectorSession, licensee, {})
+    it('returns true for a department session after connection opens', async () => {
+      const departmentId = 'department-id-abc'
+      const departmentSession = makeSession({ _id: 'session-id-2', department: departmentId })
+      await manager.start(departmentSession, licensee, {})
       fireEvent('connection.update', { connection: 'open' })
 
-      expect(manager.isConnectedForLicensee('licensee-id-1', sectorId)).toBe(true)
+      expect(manager.isConnectedForLicensee('licensee-id-1', departmentId)).toBe(true)
     })
 
-    it('does not confuse main session with sector session', async () => {
-      const sectorId = 'sector-id-abc'
+    it('does not confuse main session with department session', async () => {
+      const departmentId = 'department-id-abc'
       // Only main session connected
       await manager.start(session, licensee, {})
       fireEvent('connection.update', { connection: 'open' })
 
       expect(manager.isConnectedForLicensee('licensee-id-1', null)).toBe(true)
-      expect(manager.isConnectedForLicensee('licensee-id-1', sectorId)).toBe(false)
+      expect(manager.isConnectedForLicensee('licensee-id-1', departmentId)).toBe(false)
     })
 
     it('stores two sessions for the same licensee under different keys', async () => {
-      const sectorId = 'sector-id-abc'
-      const sectorSession = makeSession({ _id: 'session-id-2', sector: sectorId })
+      const departmentId = 'department-id-abc'
+      const departmentSession = makeSession({ _id: 'session-id-2', department: departmentId })
 
       await manager.start(session, licensee, {})
       // Clear handlers before starting second session so events go to correct handlers
       for (const key of Object.keys(socketEventHandlers)) {
         delete socketEventHandlers[key]
       }
-      await manager.start(sectorSession, licensee, {})
+      await manager.start(departmentSession, licensee, {})
       fireEvent('connection.update', { connection: 'open' })
 
       // The second session is now open; first was opened in previous call
       // Verify both are tracked independently
       expect(manager.isConnected(session._id)).toBe(false) // not yet opened (handler cleared)
-      expect(manager.isConnected(sectorSession._id)).toBe(true)
+      expect(manager.isConnected(departmentSession._id)).toBe(true)
     })
   })
 })

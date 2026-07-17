@@ -38,7 +38,7 @@ const sampleRooms = [
 ]
 
 const sampleMessages = [
-  { id: 'm1', kind: 'text', destination: 'to-chat', text: 'Hello', url: '', fileName: '', latitude: 0, longitude: 0, sended: true, error: null, cart: null, createdAt: '2026-06-17T10:00:00.000Z', contact: null, trigger: null, sector: null },
+  { id: 'm1', kind: 'text', destination: 'to-chat', text: 'Hello', url: '', fileName: '', latitude: 0, longitude: 0, sended: true, error: null, cart: null, createdAt: '2026-06-17T10:00:00.000Z', contact: null, trigger: null, department: null },
 ]
 
 describe('<ChatPage>', () => {

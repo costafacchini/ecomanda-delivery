@@ -13,8 +13,8 @@ async function sendMessageToMessenger(
   }
 
   const extras: any = {}
-  if (message.sector) {
-    extras.sector = message.sector
+  if (message.department) {
+    extras.department = message.department
   }
   const messegnerPlugin = createMessengerPlugin(licensee, extras)
 

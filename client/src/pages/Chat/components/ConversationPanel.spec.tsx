@@ -34,7 +34,7 @@ const messages: IMessage[] = [
     createdAt: '2026-06-17T10:00:00.000Z',
     contact: null,
     trigger: null,
-    sector: null,
+    department: null,
   },
   {
     id: 'msg-2',
@@ -51,7 +51,7 @@ const messages: IMessage[] = [
     createdAt: '2026-06-17T10:01:00.000Z',
     contact: null,
     trigger: null,
-    sector: null,
+    department: null,
   },
 ]
 

@@ -64,23 +64,23 @@ describe('<Navbar>', () => {
 
   describe('Setores nav item', () => {
     it('is hidden when useSetores is false', () => {
-      renderWithContext(<Navbar currentUser={{ role: 'admin', licensee: { useSectors: false } }} />)
-      expect(screen.queryByText('navbar.sectors')).not.toBeInTheDocument()
+      renderWithContext(<Navbar currentUser={{ role: 'admin', licensee: { useDepartments: false } }} />)
+      expect(screen.queryByText('navbar.departments')).not.toBeInTheDocument()
     })
 
     it('is hidden when role is agent', () => {
-      renderWithContext(<Navbar currentUser={{ role: 'agent', licensee: { useSectors: true } }} />)
-      expect(screen.queryByText('navbar.sectors')).not.toBeInTheDocument()
+      renderWithContext(<Navbar currentUser={{ role: 'agent', licensee: { useDepartments: true } }} />)
+      expect(screen.queryByText('navbar.departments')).not.toBeInTheDocument()
     })
 
     it('is visible for admin with useSetores enabled', () => {
-      renderWithContext(<Navbar currentUser={{ role: 'admin', licensee: { useSectors: true } }} />)
-      expect(screen.getByText('navbar.sectors')).toBeInTheDocument()
+      renderWithContext(<Navbar currentUser={{ role: 'admin', licensee: { useDepartments: true } }} />)
+      expect(screen.getByText('navbar.departments')).toBeInTheDocument()
     })
 
     it('is visible for supervisor with useSetores enabled', () => {
-      renderWithContext(<Navbar currentUser={{ role: 'supervisor', licensee: { useSectors: true } }} />)
-      expect(screen.getByText('navbar.sectors')).toBeInTheDocument()
+      renderWithContext(<Navbar currentUser={{ role: 'supervisor', licensee: { useDepartments: true } }} />)
+      expect(screen.getByText('navbar.departments')).toBeInTheDocument()
     })
   })
 })

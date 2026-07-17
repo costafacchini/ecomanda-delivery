@@ -52,9 +52,9 @@ export default function Navbar({ currentUser }: { currentUser?: IUser | null }) 
                     {t('navbar.contacts')}
                   </a>
 
-                  {currentUser && ['super', 'admin', 'supervisor'].includes(currentUser.role) && effectiveLicensee?.useSectors && (
-                    <a className='dropdown-item' href='/#/sectors'>
-                      {t('navbar.sectors')}
+                  {currentUser && ['super', 'admin', 'supervisor'].includes(currentUser.role) && effectiveLicensee?.useDepartments && (
+                    <a className='dropdown-item' href='/#/departments'>
+                      {t('navbar.departments')}
                     </a>
                   )}
 

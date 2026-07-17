@@ -1,41 +1,44 @@
-class GetBaileysStatusForSector {
-  sectorRepository: any
+class GetBaileysStatusForDepartment {
+  departmentRepository: any
   licenseeRepository: any
   whatsappSessionRepository: any
   startBaileysSocket: any
   socketManager: any
 
   constructor({
-    sectorRepository,
+    departmentRepository,
     licenseeRepository,
     whatsappSessionRepository,
     startBaileysSocket,
     socketManager,
   }: Record<string, any> = {}) {
-    this.sectorRepository = sectorRepository
+    this.departmentRepository = departmentRepository
     this.licenseeRepository = licenseeRepository
     this.whatsappSessionRepository = whatsappSessionRepository
     this.startBaileysSocket = startBaileysSocket
     this.socketManager = socketManager
   }
 
-  async execute(sectorId: any) {
-    const sector = await this.sectorRepository.findFirst({ _id: sectorId })
-    if (!sector) {
+  async execute(departmentId: any) {
+    const department = await this.departmentRepository.findFirst({ _id: departmentId })
+    if (!department) {
       return { connected: false }
     }
 
-    const licensee = await this.licenseeRepository.findFirst({ _id: sector.licensee })
+    const licensee = await this.licenseeRepository.findFirst({ _id: department.licensee })
     if (!licensee || licensee.whatsappDefault !== 'baileys') {
       return { connected: false }
     }
 
-    const session = await this.whatsappSessionRepository.findFirst({ licensee: licensee._id, sector: sector._id })
+    const session = await this.whatsappSessionRepository.findFirst({
+      licensee: licensee._id,
+      department: department._id,
+    })
     const connected = !!(session?.creds && Object.keys(session.creds).length > 0)
 
     if (connected && process.env.ENABLE_BAILEYS_SOCKET === 'true' && this.startBaileysSocket) {
-      if (!this.socketManager?.isConnectedForLicensee(licensee._id, sector._id)) {
-        this.startBaileysSocket(licensee, sector).catch(() => {})
+      if (!this.socketManager?.isConnectedForLicensee(licensee._id, department._id)) {
+        this.startBaileysSocket(licensee, department).catch(() => {})
       }
     }
 
@@ -43,4 +46,4 @@ class GetBaileysStatusForSector {
   }
 }
 
-export { GetBaileysStatusForSector }
+export { GetBaileysStatusForDepartment }

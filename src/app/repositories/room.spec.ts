@@ -3,11 +3,11 @@ import Room from '@models/Room'
 import { RoomRepositoryDatabase } from '@repositories/room'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { contact as contactFactory } from '@factories/contact'
-import { sector as sectorFactory } from '@factories/sector'
+import { department as sectorFactory } from '@factories/department'
 import { user as userFactory } from '@factories/user'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
 import { ContactRepositoryDatabase } from '@repositories/contact'
-import { SectorRepositoryDatabase } from '@repositories/sector'
+import { DepartmentRepositoryDatabase } from '@repositories/department'
 import { UserRepositoryDatabase } from '@repositories/user'
 
 describe('room repository', () => {
@@ -113,7 +113,7 @@ describe('room repository', () => {
   })
 
   describe('#findForAgent', () => {
-    it('returns only rooms matching the provided sectorIds', async () => {
+    it('returns only rooms matching the provided departmentIds', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
 
@@ -123,21 +123,21 @@ describe('room repository', () => {
       const userRepository = new UserRepositoryDatabase()
       const user = await userRepository.create(userFactory.build({ licensee }))
 
-      const sectorRepository = new SectorRepositoryDatabase()
-      const sector = await sectorRepository.create(sectorFactory.build({ licensee, users: [user] }))
-      const otherSector = await sectorRepository.create(sectorFactory.build({ licensee, users: [user] }))
+      const departmentRepository = new DepartmentRepositoryDatabase()
+      const department = await departmentRepository.create(sectorFactory.build({ licensee, users: [user] }))
+      const otherSector = await departmentRepository.create(sectorFactory.build({ licensee, users: [user] }))
 
       const roomRepository = new RoomRepositoryDatabase()
-      await roomRepository.create({ contact, sector: sector })
-      await roomRepository.create({ contact, sector: otherSector })
+      await roomRepository.create({ contact, department: department })
+      await roomRepository.create({ contact, department: otherSector })
 
-      const rooms = await roomRepository.findForAgent(null, licensee._id, [sector._id])
+      const rooms = await roomRepository.findForAgent(null, licensee._id, [department._id])
 
       expect(rooms.length).toEqual(1)
-      expect(rooms[0].sector.toString()).toEqual(sector._id.toString())
+      expect(rooms[0].department.toString()).toEqual(department._id.toString())
     })
 
-    it('returns all rooms when sectorIds is empty', async () => {
+    it('returns all rooms when departmentIds is empty', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
 
@@ -147,11 +147,11 @@ describe('room repository', () => {
       const userRepository = new UserRepositoryDatabase()
       const user = await userRepository.create(userFactory.build({ licensee }))
 
-      const sectorRepository = new SectorRepositoryDatabase()
-      const sector = await sectorRepository.create(sectorFactory.build({ licensee, users: [user] }))
+      const departmentRepository = new DepartmentRepositoryDatabase()
+      const department = await departmentRepository.create(sectorFactory.build({ licensee, users: [user] }))
 
       const roomRepository = new RoomRepositoryDatabase()
-      await roomRepository.create({ contact, sector: sector })
+      await roomRepository.create({ contact, department: department })
       await roomRepository.create({ contact })
 
       const rooms = await roomRepository.findForAgent(null, licensee._id, [])

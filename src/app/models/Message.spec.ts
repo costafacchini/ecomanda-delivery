@@ -219,11 +219,11 @@ describe('Message', () => {
     })
   })
 
-  describe('sector field', () => {
+  describe('department field', () => {
     it('defaults to undefined', () => {
       const message = new Message()
 
-      expect(message.sector).toBeUndefined()
+      expect(message.department).toBeUndefined()
     })
   })
 })

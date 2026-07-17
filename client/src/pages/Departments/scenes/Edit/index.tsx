@@ -2,7 +2,7 @@ import Form from '../Form'
 import { toast } from 'react-toastify'
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { getSector, updateSector } from '../../../../services/sector'
+import { getDepartment, updateDepartment } from '../../../../services/department'
 import { useNavigate, useParams } from 'react-router'
 
 function SectorEdit({ currentUser }: any) {
@@ -10,14 +10,14 @@ function SectorEdit({ currentUser }: any) {
   const navigate = useNavigate()
   let { id } = useParams()
   const [errors, setErrors] = useState(null)
-  const [sector, setSector] = useState<any>(null)
+  const [department, setSector] = useState<any>(null)
 
   useEffect(() => {
     let abortController = new AbortController()
 
     async function fetchSector() {
       try {
-        const { data } = await getSector(id)
+        const { data } = await getDepartment(id)
         setSector(data)
       } catch (error: any) {
         if (error.name === 'AbortError') {
@@ -32,28 +32,28 @@ function SectorEdit({ currentUser }: any) {
     }
   }, [id])
 
-  if (!sector) return null
+  if (!department) return null
 
   return (
     <div className='row'>
       <div className='col'>
-        <h3>{t('sectors.editSectorTitle')}</h3>
+        <h3>{t('departments.editSectorTitle')}</h3>
         <Form
-          initialValues={sector}
+          initialValues={department}
           currentUser={currentUser}
           errors={errors}
-          sectorId={sector.id}
+          departmentId={department.id}
           onSubmit={async (values: any) => {
-            const response = await updateSector({ ...values, id: sector.id })
+            const response = await updateDepartment({ ...values, id: department.id })
 
             if (response.status === 200) {
-              toast.success(t('sectors.toast.updateSuccess'))
-              navigate('/sectors')
+              toast.success(t('departments.toast.updateSuccess'))
+              navigate('/departments')
               setErrors(null)
             } else {
-              // @ts-ignore — Sectors not in type-narrowing plan scope
+              // @ts-ignore — Departments not in type-narrowing plan scope
               setErrors((response.data as any).errors)
-              toast.error(t('sectors.toast.updateError'))
+              toast.error(t('departments.toast.updateError'))
             }
           }}
         />

@@ -146,8 +146,8 @@ describe('Baileys plugin', () => {
       })
     })
 
-    describe('sector propagation', () => {
-      it('sets sector on message when sectorId is provided', async () => {
+    describe('department propagation', () => {
+      it('sets department on message when departmentId is provided', async () => {
         const contactRepository = new ContactRepositoryDatabase()
         await contactRepository.create(
           contactFactory.build({
@@ -160,21 +160,21 @@ describe('Baileys plugin', () => {
           }),
         )
         const mongoose = await import('mongoose')
-        const sectorId = new mongoose.default.Types.ObjectId()
+        const departmentId = new mongoose.default.Types.ObjectId()
         const body = {
           key: { remoteJid: REMOTE_JID, id: 'BAILEYS-MSG-SECTOR-001' },
           pushName: 'John Doe',
-          message: { conversation: 'Hello with sector' },
+          message: { conversation: 'Hello with department' },
         }
 
         const baileys = new Baileys(licensee, dependencies)
-        const messages = await baileys.responseToMessages(body, { sectorId })
+        const messages = await baileys.responseToMessages(body, { departmentId })
 
         expect(messages.length).toEqual(1)
-        expect(messages[0].sector?.toString()).toEqual(sectorId.toString())
+        expect(messages[0].department?.toString()).toEqual(departmentId.toString())
       })
 
-      it('does not set sector when sectorId is not provided', async () => {
+      it('does not set department when departmentId is not provided', async () => {
         const contactRepository = new ContactRepositoryDatabase()
         await contactRepository.create(
           contactFactory.build({
@@ -189,14 +189,14 @@ describe('Baileys plugin', () => {
         const body = {
           key: { remoteJid: REMOTE_JID, id: 'BAILEYS-MSG-NOSECTOR-001' },
           pushName: 'John Doe',
-          message: { conversation: 'Hello without sector' },
+          message: { conversation: 'Hello without department' },
         }
 
         const baileys = new Baileys(licensee, dependencies)
         const messages = await baileys.responseToMessages(body)
 
         expect(messages.length).toEqual(1)
-        expect(messages[0].sector).toBeUndefined()
+        expect(messages[0].department).toBeUndefined()
       })
     })
 

@@ -2,11 +2,11 @@ import { Factory } from 'fishery'
 import { licensee } from './licensee'
 import { user } from './user'
 
-const sector = Factory.define(() => ({
+const department = Factory.define(() => ({
   active: true,
-  name: 'Sector',
+  name: 'Department',
   users: [user.build()],
   licensee: licensee.build(),
 }))
 
-export { sector }
+export { department }

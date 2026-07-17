@@ -7,10 +7,10 @@ function buildResponse() {
   }
 }
 
-function buildSectorModelAdapter(sectors: any[] = []) {
+function buildDepartmentModelAdapter(departments: any[] = []) {
   const chain = {
     select: jest.fn().mockReturnThis(),
-    lean: jest.fn().mockResolvedValue(sectors),
+    lean: jest.fn().mockResolvedValue(departments),
   }
   return {
     find: jest.fn().mockReturnValue(chain),
@@ -35,7 +35,7 @@ function buildMessageModelAdapter({ aggregateResult = [] as any[], countResult =
 
 function buildController({
   user = null as any,
-  sectorModelAdapter = null as any,
+  departmentModelAdapter = null as any,
   messageModelAdapter = null as any,
   roomRepository = null as any,
   contactRepository = null as any,
@@ -43,8 +43,8 @@ function buildController({
   const userRepository = {
     findFirst: jest.fn().mockResolvedValue(user),
   }
-  const sectorRepository = {
-    model: jest.fn().mockReturnValue(sectorModelAdapter ?? buildSectorModelAdapter()),
+  const departmentRepository = {
+    model: jest.fn().mockReturnValue(departmentModelAdapter ?? buildDepartmentModelAdapter()),
   }
   const msgAdapter = messageModelAdapter ?? buildMessageModelAdapter()
   const messageRepository = {
@@ -64,14 +64,14 @@ function buildController({
     userRepository,
     roomRepository: roomRepository ?? defaultRoomRepository,
     messageRepository,
-    sectorRepository,
+    departmentRepository,
     contactRepository: contactRepository ?? defaultContactRepository,
   })
 
   return {
     controller,
     userRepository,
-    sectorRepository,
+    departmentRepository,
     messageRepository,
     roomRepository: roomRepository ?? defaultRoomRepository,
     contactRepository: contactRepository ?? defaultContactRepository,
@@ -138,9 +138,9 @@ describe('RoomsController', () => {
       expect(result.rooms).toHaveLength(2)
     })
 
-    it('returns only rooms in agent sectors when agent belongs to sectors', async () => {
-      const sectors = [{ _id: 'sector-1' }]
-      const sectorAdapter = buildSectorModelAdapter(sectors)
+    it('returns only rooms in agent departments when agent belongs to departments', async () => {
+      const departments = [{ _id: 'department-1' }]
+      const departmentAdapter = buildDepartmentModelAdapter(departments)
       const roomRepository = {
         findForLicensee: jest.fn().mockResolvedValue([]),
         findOpenForContact: jest.fn(),
@@ -149,7 +149,7 @@ describe('RoomsController', () => {
       }
       const { controller } = buildController({
         user: AGENT_USER,
-        sectorModelAdapter: sectorAdapter,
+        departmentModelAdapter: departmentAdapter,
         roomRepository,
       })
       const req = { userId: 'user-id', query: {} }
@@ -159,12 +159,12 @@ describe('RoomsController', () => {
 
       expect(roomRepository.findForLicensee).toHaveBeenCalledWith(
         'licensee-id',
-        expect.objectContaining({ sectorIds: ['sector-1'] }),
+        expect.objectContaining({ departmentIds: ['department-1'] }),
       )
     })
 
-    it('passes empty sectorIds when agent has no sectors', async () => {
-      const sectorAdapter = buildSectorModelAdapter([])
+    it('passes empty departmentIds when agent has no departments', async () => {
+      const departmentAdapter = buildDepartmentModelAdapter([])
       const roomRepository = {
         findForLicensee: jest.fn().mockResolvedValue([]),
         findOpenForContact: jest.fn(),
@@ -173,7 +173,7 @@ describe('RoomsController', () => {
       }
       const { controller } = buildController({
         user: AGENT_USER,
-        sectorModelAdapter: sectorAdapter,
+        departmentModelAdapter: departmentAdapter,
         roomRepository,
       })
       const req = { userId: 'user-id', query: {} }
@@ -183,7 +183,7 @@ describe('RoomsController', () => {
 
       expect(roomRepository.findForLicensee).toHaveBeenCalledWith(
         'licensee-id',
-        expect.objectContaining({ sectorIds: [] }),
+        expect.objectContaining({ departmentIds: [] }),
       )
     })
 

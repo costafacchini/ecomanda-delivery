@@ -92,7 +92,7 @@ class MessagesQuery {
       .populate('contact')
       .populate('cart')
       .populate('trigger')
-      .populate('sector', 'name')
+      .populate('department', 'name')
       .exec()
   }
 
