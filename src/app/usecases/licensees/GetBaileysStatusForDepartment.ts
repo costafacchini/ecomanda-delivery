@@ -30,7 +30,10 @@ class GetBaileysStatusForDepartment {
       return { connected: false }
     }
 
-    const session = await this.whatsappSessionRepository.findFirst({ licensee: licensee._id, department: department._id })
+    const session = await this.whatsappSessionRepository.findFirst({
+      licensee: licensee._id,
+      department: department._id,
+    })
     const connected = !!(session?.creds && Object.keys(session.creds).length > 0)
 
     if (connected && process.env.ENABLE_BAILEYS_SOCKET === 'true' && this.startBaileysSocket) {

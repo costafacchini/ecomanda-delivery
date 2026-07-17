@@ -73,7 +73,10 @@ describe('StartBaileysSocket', () => {
 
     await useCase.execute(licensee, department)
 
-    expect(whatsappSessionRepository.findFirst).toHaveBeenCalledWith({ licensee: licensee._id, department: department._id })
+    expect(whatsappSessionRepository.findFirst).toHaveBeenCalledWith({
+      licensee: licensee._id,
+      department: department._id,
+    })
   })
 
   it('creates a new session when none is found', async () => {

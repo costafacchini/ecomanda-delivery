@@ -50,7 +50,9 @@ describe('Department', () => {
       const department = await Department.create({ name: 'Vendas', licensee, users: [userId] })
       const populated = await Department.findById(department._id).populate('licensee')
 
-      expect(populated!.webhookUrl).toMatch(new RegExp(`token=${licensee.apiToken}&department=${department.departmentToken}`))
+      expect(populated!.webhookUrl).toMatch(
+        new RegExp(`token=${licensee.apiToken}&department=${department.departmentToken}`),
+      )
     })
 
     it('returns null when licensee is not populated', async () => {
@@ -67,7 +69,10 @@ describe('Department', () => {
 
   describe('validations', () => {
     it('fails when name is missing', async () => {
-      const department = new Department({ licensee: new mongoose.Types.ObjectId(), users: [new mongoose.Types.ObjectId()] })
+      const department = new Department({
+        licensee: new mongoose.Types.ObjectId(),
+        users: [new mongoose.Types.ObjectId()],
+      })
       const error = await department.validate().catch((e: any) => e)
 
       expect(error?.errors['name']).toBeDefined()

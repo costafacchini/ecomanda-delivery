@@ -36,7 +36,9 @@ class BootBaileysSocketSessions {
           continue
         }
 
-        const department = session.department ? await this.departmentRepository.findFirst({ _id: session.department }) : null
+        const department = session.department
+          ? await this.departmentRepository.findFirst({ _id: session.department })
+          : null
 
         logger.info(`Baileys boot: iniciando socket para sessão ${session._id} (licensee ${licensee._id})`)
         await this.startBaileysSocket(licensee, department)
