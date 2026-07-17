@@ -1,10 +1,6 @@
 ---
 name: upgrade-framework
-description: >-
-  Updates the AI dev framework installation in a consumer repo. Compares the
-  installed skills against a source copy of ai-dev-framework, copies new and
-  updated skills, adds new skill entries to AGENTS.md without touching
-  project-specific customizations, syncs CLAUDE.md, and validates the result.
+description: Updates AI dev framework in a consumer repo. Copies updated skills, patches AGENTS.md without touching customizations, syncs CLAUDE.md.
 trigger: User says "upgrade framework", "update framework", "sync framework skills"
 auto: false
 argument-hint: "[--source <path-to-ai-dev-framework>]"
@@ -14,6 +10,15 @@ argument-hint: "[--source <path-to-ai-dev-framework>]"
 
 ## Context Required
 HIGH-CONTEXT: AGENTS.md, current skill state, framework changelog
+
+## Setup
+
+1. Load `.agents/memory/project-profile.md` (always)
+2. Load `.agents/memory/decisions.md` if this skill touches architecture
+3. Check `docs/kb/README.md`; read any matching doc before grepping code
+4. Explore codebase patterns only after steps 1–3
+
+Skip steps not relevant to this skill's scope.
 
 ## Triggers
 

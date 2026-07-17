@@ -1,16 +1,21 @@
 ---
 name: check-agent-drift
-description: >-
-  Verifies that AGENTS.md accurately reflects the current codebase state.
-  Use when user says "check for drift", "verify documentation", or during
-  periodic maintenance. Identifies stale paths, missing patterns, outdated
-  commands, and undocumented conventions. Suggests targeted fixes.
+description: Verifies AGENTS.md accurately reflects the codebase. Identifies stale paths, missing patterns, and outdated conventions.
 ---
 
 # Check Agent Drift
 
 ## Context Required
 FULL-CONTEXT: AGENTS.md + relevant KB
+
+## Setup
+
+1. Load `.agents/memory/project-profile.md` (always)
+2. Load `.agents/memory/decisions.md` if this skill touches architecture
+3. Check `docs/kb/README.md`; read any matching doc before grepping code
+4. Explore codebase patterns only after steps 1–3
+
+Skip steps not relevant to this skill's scope.
 
 ## Triggers
 

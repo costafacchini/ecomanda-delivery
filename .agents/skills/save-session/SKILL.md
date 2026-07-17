@@ -1,12 +1,21 @@
 ---
 name: save-session
-description: Creates a session handoff document for resuming work later
+description: Creates a typed session handoff document for resuming work later
 ---
 
 # Save Session
 
 ## Context Required
 MEDIUM-CONTEXT: Current task state, files changed, decisions made, remaining work
+
+## Setup
+
+1. Load `.agents/memory/project-profile.md` (always)
+2. Load `.agents/memory/decisions.md` if this skill touches architecture
+3. Check `docs/kb/README.md`; read any matching doc before grepping code
+4. Explore codebase patterns only after steps 1–3
+
+Skip steps not relevant to this skill's scope.
 
 ## Triggers
 
@@ -41,26 +50,34 @@ Offer proactively when:
 # Session: [Brief Description]
 
 **Date**: YYYY-MM-DD
-**Status**: In Progress / Blocked / Ready for Review
+**State**: in_progress | blocked | ready_for_review | completed
 
-## What We Were Working On
-[Description]
+## Summary
+[1-3 sentence description of what was being worked on and where things stand]
 
-## Decisions Made
-- [Decision and rationale]
-
-## Files Changed
-- `path/to/file` — what changed
+## Open Questions
+- [ ] [Unresolved question or uncertainty]
 
 ## Next Steps
-1. [Next thing]
+1. [Specific next action]
 2. [Then this]
 
-## Blockers
-- [Any blockers]
+## Files Touched
+- `path/to/file` — what changed and why
 
-## Resume Command
-Continue from docs/kb/sessions/YYYY-MM-DD_brief-description.md
+## Blockers
+- [Any blockers — or "none"]
+
+## Decisions Made
+- [Decision and rationale — or "none"]
+
+## Resume
+Read this file, then: [specific instruction to orient the next session]
 ```
 
-3. **Show path and resume command** to user
+3. **Append to `.agents/memory/log.md`**:
+```
+## [ISO8601] handoff_created | [Brief Description]
+```
+
+4. **Show path and resume instruction** to user

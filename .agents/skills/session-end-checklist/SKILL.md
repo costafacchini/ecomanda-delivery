@@ -8,6 +8,15 @@ description: End-of-session safety net
 ## Context Required
 LOW-CONTEXT: AGENTS.md only
 
+## Setup
+
+1. Load `.agents/memory/project-profile.md` (always)
+2. Load `.agents/memory/decisions.md` if this skill touches architecture
+3. Check `docs/kb/README.md`; read any matching doc before grepping code
+4. Explore codebase patterns only after steps 1–3
+
+Skip steps not relevant to this skill's scope.
+
 ## Triggers
 
 ### Automatic
@@ -34,6 +43,9 @@ Trigger when user says ANY of:
 4. **KB files modified?** — Run `check-kb-index`
 5. **Long session?** — 20+ turns mid-task? Offer `save-session`
 6. **Tests passing?** — If code was modified, suggest running tests
+7. **Audit log** — Append `session_end` event to `.agents/memory/log.md`:
+   `## [ISO8601] session_end | [one-line session summary]`
+8. **5+ sessions accumulated?** — Offer `consolidate-memory`
 
 ```
 ## Session End Checklist
@@ -42,4 +54,5 @@ Trigger when user says ANY of:
 - [x] Corrections logged
 - [x] KB index current
 - [x] Tests passing
+- [x] Audit log updated
 ```

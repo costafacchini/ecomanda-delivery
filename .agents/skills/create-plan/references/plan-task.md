@@ -6,6 +6,7 @@
 **Phase**: [Phase number]
 **Task ID (phase-local)**: task-{NN}
 **Task Path**: [task-path] (for example `task-01-db-schema` or `phase-1/task-01-db-schema`)
+**Spec References**: [Story N (PN), FR-XXX, FR-YYY] — which spec user stories and requirements this task implements
 **Depends On**: [{task-path}, {task-path}] or "None"
 **JIRA**: {JIRA-TICKET-KEY} or "N/A"
 
@@ -65,8 +66,18 @@
 
 ## Testing
 
-- [ ] [Test requirement 1]
-- [ ] [Test requirement 2]
+<!--
+  For each Acceptance Scenario in the spec stories this task references, there should be
+  a corresponding test stub (pending/skipped) generated during planning.
+  Fill in the stubs during implementation — do not delete them.
+-->
+
+**Spec scenarios covered**:
+- [ ] Scenario: Given [state] / When [action] / Then [outcome] — `[path/to/test_stub.rb:line]`
+- [ ] Scenario: Given [state] / When [action] / Then [outcome] — `[path/to/test_stub.rb:line]`
+
+**Additional verification**:
+- [ ] [Test requirement beyond spec scenarios]
 - [ ] Existing tests still pass
 - [ ] `pre-commit-check` passes
 
@@ -78,6 +89,7 @@
 
 ## Completion Criteria
 
+- [ ] All spec acceptance scenarios for this task's referenced stories pass (no pending stubs remain)
 - [ ] [Criterion 1]
 - [ ] [Criterion 2]
 - [ ] Documentation / KB updates completed or explicitly marked not needed

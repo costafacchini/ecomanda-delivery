@@ -1,11 +1,6 @@
 ---
 name: dev-environment
-description: >-
-  Two-phase dev environment skill. On first run (init), analyzes the actual
-  project dependencies to generate Docker configuration and concrete commands.
-  On subsequent runs, executes the concrete commands. Works with any language,
-  any framework, any dependency — because the AI reads the actual project files,
-  not a template.
+description: Two-phase dev environment: generates Docker config from project deps on first run, executes on subsequent runs.
 argument-hint: "[init | start | stop | reset | status | doctor | regenerate]"
 ---
 
@@ -13,6 +8,15 @@ argument-hint: "[init | start | stop | reset | status | doctor | regenerate]"
 
 ## Context Required
 HIGH-CONTEXT: AGENTS.md, KB index, relevant codebase files, and project conventions
+
+## Setup
+
+1. Load `.agents/memory/project-profile.md` (always)
+2. Load `.agents/memory/decisions.md` if this skill touches architecture
+3. Check `docs/kb/README.md`; read any matching doc before grepping code
+4. Explore codebase patterns only after steps 1–3
+
+Skip steps not relevant to this skill's scope.
 
 ## Triggers
 

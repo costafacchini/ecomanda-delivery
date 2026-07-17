@@ -8,6 +8,15 @@ description: Execute a single plan task. Loads context, branches, follows implem
 ## Context Required
 HIGH-CONTEXT: Plan overview, task definition, dependency status files, AGENTS.md
 
+## Setup
+
+1. Load `.agents/memory/project-profile.md` (always)
+2. Load `.agents/memory/decisions.md` if this skill touches architecture
+3. Check `docs/kb/README.md`; read any matching doc before grepping code
+4. Explore codebase patterns only after steps 1–3
+
+Skip steps not relevant to this skill's scope.
+
 ## Triggers
 
 ### Manual
@@ -102,10 +111,10 @@ Document all adaptations in status.md. Implement tests and KB/doc updates called
 
 ### Step 6: Run Verification
 
-1. Implement/update tests; document any gaps in status.md
+1. Implement/update tests. For each acceptance scenario stub listed under **Spec scenarios covered** in task.md: fill in the implementation — do not leave stubs pending.
 2. Run project tests (per AGENTS.md test command)
 3. Run `pre-commit-check`
-4. Verify completion criteria from task.md
+4. Verify completion criteria from task.md — including "All spec acceptance scenarios for this task's referenced stories pass"
 5. Update KB/docs if task changes documented behavior; run `document-solution` for new non-obvious patterns; run `check-kb-index` if KB files changed
 6. If KB/docs changed, re-run `pre-commit-check` on those files
 
