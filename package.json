@@ -55,7 +55,7 @@
     "npm-run-all2": "9.0.2",
     "prettier": "3.9.5",
     "supertest": "7.2.2",
-    "typescript": "6.0.3"
+    "typescript": "7.0.2"
   },
   "dependencies": {
     "@appsignal/nodejs": "^3.8.0",
