@@ -89,7 +89,7 @@ class MessengersBase {
     })
   }
 
-  async responseToMessages(responseBody: any, { sectorId = null }: { sectorId?: any } = {}) {
+  async responseToMessages(responseBody: any, { departmentId = null }: { departmentId?: any } = {}) {
     this.parseMessageStatus(responseBody)
     if (this.messageStatus) {
       const message = await this.messageRepository.findFirst({
@@ -159,7 +159,7 @@ class MessengersBase {
               destination: 'to-messenger',
               kind: 'interactive',
               trigger: trigger._id,
-              ...(sectorId && { sector: sectorId }),
+              ...(departmentId && { department: departmentId }),
             }),
           )
         }
@@ -172,7 +172,7 @@ class MessengersBase {
             contact: contact._id,
             destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
             text: this.messageData.interactive.expression,
-            ...(sectorId && { sector: sectorId }),
+            ...(departmentId && { department: departmentId }),
           }),
         )
       }
@@ -185,7 +185,7 @@ class MessengersBase {
         destination: contact.talkingWithChatBot ? 'to-chatbot' : 'to-chat',
         kind: this.messageData.kind,
         departament: this.messageData.departament,
-        ...(sectorId && { sector: sectorId }),
+        ...(departmentId && { department: departmentId }),
       }
 
       if (messageToSend.kind === 'text') {

@@ -35,7 +35,7 @@ const licenseeInitialValues: ILicenseeFormValues = {
   document: '',
   kind: '',
   useSenderName: false,
-  useSectors: false,
+  useDepartments: false,
 }
 
 interface IdentityStepProps {

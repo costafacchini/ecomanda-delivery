@@ -14,10 +14,10 @@ const SignupSchema = Yup.object().shape({
   name: Yup.string()
 });
 
-/** Form values include apiToken (read-only) and useSectors (edit form only) */
+/** Form values include apiToken (read-only) and useDepartments (edit form only) */
 interface LicenseeEditFormValues extends ILicenseeFormValues {
   apiToken: string
-  useSectors: boolean
+  useDepartments: boolean
   urlChatWebhook?: string
   urlChatbotWebhook?: string
   urlChatbotTransfer?: string
@@ -49,7 +49,7 @@ const licenseeInitialValues: LicenseeEditFormValues = {
   kind: '',
   useSenderName: false,
   useFileIDYcloud: false,
-  useSectors: false,
+  useDepartments: false,
 }
 
 interface LicenseeFormProps {

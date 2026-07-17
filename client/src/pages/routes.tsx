@@ -5,7 +5,7 @@ import i18n from '../i18n'
 import SignIn from './SignIn'
 import LicenseesRoutes from './Licensees/routes'
 import UsersRoutes from './Users/routes'
-import SectorsRoutes from './Sectors/routes'
+import DepartmentsRoutes from './Departments/routes'
 import ContactsRoutes from './Contacts/routes'
 import TriggersRoutes from './Triggers/routes'
 import TemplatesRoutes from './Templates/routes'
@@ -64,10 +64,10 @@ function RootRoutes() {
           }
         />
         <Route
-          path='/sectors/*'
+          path='/departments/*'
           element={
             <PrivateRoute redirectTo='/'>
-              <SectorsRoutes />
+              <DepartmentsRoutes />
             </PrivateRoute>
           }
         />

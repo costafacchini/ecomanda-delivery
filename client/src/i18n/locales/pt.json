@@ -74,8 +74,8 @@
       "whatsappDefaultLabel": "WhatsApp padrão",
       "whatsappDefaultRequired": "WhatsApp padrão é obrigatório",
       "selectPlaceholder": "Selecione...",
-      "useSectorsLabel": "Usar setores",
-      "useSectorsHint": "Múltiplos departamentos com números de WhatsApp separados.",
+      "useDepartmentsLabel": "Usar departamentos",
+      "useDepartmentsHint": "Múltiplos departamentos com números de WhatsApp separados.",
       "whatsappTokenLabel": "Token do WhatsApp",
       "whatsappTokenRequired": "Token do WhatsApp é obrigatório",
       "whatsappTokenPlaceholder": "Token de autenticação da API",
@@ -110,7 +110,7 @@
     "users": "Usuários",
     "registrations": "Cadastros",
     "contacts": "Contatos",
-    "sectors": "Setores",
+    "departments": "Departamentos",
     "triggers": "Gatilhos",
     "templates": "Templates",
     "messages": "Mensagens",
@@ -205,7 +205,7 @@
         "useFileIDYcloudLabel": "Usar ID no YCloud ao invés de URL?",
         "setWebhookButton": "Configurar Webhook no provedor",
         "importTemplatesButton": "Importar templates",
-        "useSectorsLabel": "Usar setores (múltiplos departamentos com números de WhatsApp separados)",
+        "useDepartmentsLabel": "Usar departamentos (múltiplos departamentos com números de WhatsApp separados)",
         "checkingConnection": "Verificando conexão...",
         "connected": "✓ Conectado",
         "reconnectButton": "Reconectar",
@@ -306,25 +306,25 @@
       "updateError": "Ops! Não foi possível atualizar o usuário."
     }
   },
-  "sectors": {
-    "title": "Setores",
+  "departments": {
+    "title": "Departamentos",
     "createButton": "Criar +",
-    "newSectorTitle": "Setor criando",
-    "editSectorTitle": "Setor editando",
+    "newDepartmentTitle": "Departamento criando",
+    "editDepartmentTitle": "Departamento editando",
     "usersLabel": "Usuários",
     "usersPlaceholder": "Selecione os usuários...",
-    "deleteSectorTitle": "Excluir setor",
-    "confirmDelete": "Deseja realmente excluir este setor?",
+    "deleteDepartmentTitle": "Excluir departamento",
+    "confirmDelete": "Deseja realmente excluir este departamento?",
     "validation": {
       "nameRequired": "Nome é obrigatório"
     },
     "toast": {
-      "createSuccess": "Setor criado com sucesso!",
-      "createError": "Ops! Não foi possível criar o setor.",
-      "updateSuccess": "Setor atualizado com sucesso!",
-      "updateError": "Ops! Não foi possível atualizar o setor.",
-      "deleteSuccess": "Setor excluído com sucesso!",
-      "deleteError": "Ops! Não foi possível excluir o setor."
+      "createSuccess": "Departamento criado com sucesso!",
+      "createError": "Ops! Não foi possível criar o departamento.",
+      "updateSuccess": "Departamento atualizado com sucesso!",
+      "updateError": "Ops! Não foi possível atualizar o departamento.",
+      "deleteSuccess": "Departamento excluído com sucesso!",
+      "deleteError": "Ops! Não foi possível excluir o departamento."
     },
     "baileys": {
       "title": "Conexão Baileys",

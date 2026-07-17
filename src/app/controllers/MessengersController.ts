@@ -11,7 +11,7 @@ class MessengersController {
     await this.ingestMessengerMessage.execute({
       body: req.body,
       licenseeId: req.licensee._id,
-      sectorId: req.sector?._id ?? null,
+      departmentId: req.department?._id ?? null,
     })
 
     res.status(200).send({ body: 'Solicitação de mensagem para a plataforma de messenger agendado' })

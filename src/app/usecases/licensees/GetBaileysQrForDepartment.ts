@@ -1,38 +1,38 @@
-class GetBaileysQrForSector {
-  sectorRepository: any
+class GetBaileysQrForDepartment {
+  departmentRepository: any
   licenseeRepository: any
   createMessengerPlugin: any
   startBaileysSocket: any
 
   constructor({
-    sectorRepository,
+    departmentRepository,
     licenseeRepository,
     createMessengerPlugin,
     startBaileysSocket,
   }: Record<string, any> = {}) {
-    this.sectorRepository = sectorRepository
+    this.departmentRepository = departmentRepository
     this.licenseeRepository = licenseeRepository
     this.createMessengerPlugin = createMessengerPlugin
     this.startBaileysSocket = startBaileysSocket
   }
 
-  async execute(sectorId: any) {
-    const sector = await this.sectorRepository.findFirst({ _id: sectorId })
-    if (!sector) {
-      return { message: 'Setor não encontrado' }
+  async execute(departmentId: any) {
+    const department = await this.departmentRepository.findFirst({ _id: departmentId })
+    if (!department) {
+      return { message: 'Departamento não encontrado' }
     }
 
-    const licensee = await this.licenseeRepository.findFirst({ _id: sector.licensee })
+    const licensee = await this.licenseeRepository.findFirst({ _id: department.licensee })
     if (!licensee || licensee.whatsappDefault !== 'baileys') {
       return { message: 'Licensee não usa Baileys' }
     }
 
-    const plugin = this.createMessengerPlugin(licensee, { sector })
+    const plugin = this.createMessengerPlugin(licensee, { department })
     const qr = await plugin.getQrCode()
 
     if (!qr) {
       if (process.env.ENABLE_BAILEYS_SOCKET === 'true') {
-        this.startBaileysSocket?.(licensee, sector).catch(() => {})
+        this.startBaileysSocket?.(licensee, department).catch(() => {})
       }
       return { connected: true, message: 'Já conectado' }
     }
@@ -41,4 +41,4 @@ class GetBaileysQrForSector {
   }
 }
 
-export { GetBaileysQrForSector }
+export { GetBaileysQrForDepartment }

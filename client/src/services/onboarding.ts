@@ -13,7 +13,7 @@ export interface OnboardingFields {
   whatsappDefault?: string
   whatsappToken?: string
   whatsappUrl?: string
-  useSectors?: boolean
+  useDepartments?: boolean
   userName: string
   userEmail: string
   password: string

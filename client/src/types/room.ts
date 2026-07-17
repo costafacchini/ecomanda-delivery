@@ -8,7 +8,7 @@ export interface IRoom {
     name: string
     number?: string
   }
-  sector?: string | null
+  department?: string | null
   status: 'pending' | 'open' | 'closed'
   closed: boolean
   unreadCount?: number

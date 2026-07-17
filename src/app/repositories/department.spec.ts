@@ -1,11 +1,11 @@
-import Sector from '@models/Sector'
+import Department from '@models/Department'
 import mongoServer from '../../../.jest/utils'
 import { licensee as licenseeFactory } from '@factories/licensee'
 import { LicenseeRepositoryDatabase } from '@repositories/licensee'
-import { SectorRepositoryDatabase } from '@repositories/sector'
+import { DepartmentRepositoryDatabase } from '@repositories/department'
 import mongoose from 'mongoose'
 
-describe('sector repository database', () => {
+describe('department repository database', () => {
   beforeEach(async () => {
     await mongoServer.connect()
     jest.clearAllMocks()
@@ -16,23 +16,23 @@ describe('sector repository database', () => {
   })
 
   describe('#model', () => {
-    it('returns the Sector model', () => {
-      const sectorRepository = new SectorRepositoryDatabase()
+    it('returns the Department model', () => {
+      const departmentRepository = new DepartmentRepositoryDatabase()
 
-      expect(sectorRepository.model()).toEqual(Sector)
+      expect(departmentRepository.model()).toEqual(Department)
     })
   })
 
   describe('#create', () => {
-    it('creates a sector', async () => {
+    it('creates a department', async () => {
       const licenseeRepository = new LicenseeRepositoryDatabase()
       const licensee = await licenseeRepository.create(licenseeFactory.build())
       const userId = new mongoose.Types.ObjectId()
 
-      const sectorRepository = new SectorRepositoryDatabase()
-      const sector = await sectorRepository.create({ name: 'Vendas', licensee, users: [userId], active: true })
+      const departmentRepository = new DepartmentRepositoryDatabase()
+      const department = await departmentRepository.create({ name: 'Vendas', licensee, users: [userId], active: true })
 
-      expect(sector).toEqual(
+      expect(department).toEqual(
         expect.objectContaining({
           name: 'Vendas',
           active: true,
@@ -48,14 +48,14 @@ describe('sector repository database', () => {
       const otherLicensee = await licenseeRepository.create(licenseeFactory.build())
       const userId = new mongoose.Types.ObjectId()
 
-      const sectorRepository = new SectorRepositoryDatabase()
-      await sectorRepository.create({ name: 'Vendas', licensee, users: [userId] })
-      await sectorRepository.create({ name: 'Suporte', licensee: otherLicensee, users: [userId] })
+      const departmentRepository = new DepartmentRepositoryDatabase()
+      await departmentRepository.create({ name: 'Vendas', licensee, users: [userId] })
+      await departmentRepository.create({ name: 'Suporte', licensee: otherLicensee, users: [userId] })
 
-      const sectors = await sectorRepository.find({ licensee: licensee._id })
+      const departments = await departmentRepository.find({ licensee: licensee._id })
 
-      expect(sectors).toHaveLength(1)
-      expect(sectors[0].name).toEqual('Vendas')
+      expect(departments).toHaveLength(1)
+      expect(departments[0].name).toEqual('Vendas')
     })
   })
 })

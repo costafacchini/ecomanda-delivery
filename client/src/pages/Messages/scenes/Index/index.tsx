@@ -250,7 +250,7 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
             </div>
           </div>
         )}
-        {/* TODO: sector filter for admin — deferred */}
+        {/* TODO: department filter for admin — deferred */}
 
         <div className={showLicenseeFilter ? 'col-6' : 'col-12'}>
           <div className='form-group'>
@@ -347,7 +347,7 @@ function MessagesIndex({ currentUser }: MessagesIndexProps) {
                 <td>
                   <div>
                     {message.contact?.name}
-                    {message.sector && <span className='badge bg-secondary ms-1'>{message.sector.name}</span>}
+                    {message.department && <span className='badge bg-secondary ms-1'>{message.department.name}</span>}
                   </div>
                   {message.error && (
                     <div>

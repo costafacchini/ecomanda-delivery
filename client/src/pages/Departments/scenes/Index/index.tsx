@@ -1,12 +1,12 @@
 import { useEffect, useState, useCallback } from 'react'
 import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
-import { getSectors, deleteSector } from '../../../../services/sector'
+import { getDepartments, deleteDepartment } from '../../../../services/department'
 import { toast } from 'react-toastify'
 
 function SectorsIndex({ currentUser }: any) {
   const { t } = useTranslation()
-  const [sectors, setSectors] = useState<any[]>([])
+  const [departments, setSectors] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
 
   const fetchSectors = useCallback(async () => {
@@ -14,7 +14,7 @@ function SectorsIndex({ currentUser }: any) {
 
     setLoading(true)
     try {
-      const { data } = await getSectors({ licensee: currentUser.licensee._id })
+      const { data } = await getDepartments({ licensee: currentUser.licensee._id })
       setSectors(Array.isArray(data) ? data : [])
     } finally {
       setLoading(false)
@@ -26,14 +26,14 @@ function SectorsIndex({ currentUser }: any) {
   }, [fetchSectors])
 
   async function handleDelete(id: string) {
-    if (!window.confirm(t('sectors.confirmDelete'))) return
+    if (!window.confirm(t('departments.confirmDelete'))) return
 
-    const response = await deleteSector(id)
+    const response = await deleteDepartment(id)
     if (response.status === 200) {
-      toast.success(t('sectors.toast.deleteSuccess'))
+      toast.success(t('departments.toast.deleteSuccess'))
       fetchSectors()
     } else {
-      toast.error(t('sectors.toast.deleteError'))
+      toast.error(t('departments.toast.deleteError'))
     }
   }
 
@@ -42,10 +42,10 @@ function SectorsIndex({ currentUser }: any) {
       <div className='row'>
         <div className='d-flex justify-content-between pb-2'>
           <div className=''>
-            <h3 className='pr-3'>{t('sectors.title')}</h3>
+            <h3 className='pr-3'>{t('departments.title')}</h3>
           </div>
           <div className=''>
-            <Link to='/sectors/new' className='btn btn-primary'>{t('sectors.createButton')}</Link>
+            <Link to='/departments/new' className='btn btn-primary'>{t('departments.createButton')}</Link>
           </div>
         </div>
       </div>
@@ -60,18 +60,18 @@ function SectorsIndex({ currentUser }: any) {
             </tr>
           </thead>
           <tbody>
-            {!loading && sectors.map((sector: any) => (
-              <tr key={sector.id}>
-                <td>{sector.name}</td>
-                <td>{sector.active ? t('common.yes') : t('common.no')}</td>
+            {!loading && departments.map((department: any) => (
+              <tr key={department.id}>
+                <td>{department.name}</td>
+                <td>{department.active ? t('common.yes') : t('common.no')}</td>
                 <td>
-                  <Link to={`/sectors/${sector.id}/edit`} className='me-2'>
+                  <Link to={`/departments/${department.id}/edit`} className='me-2'>
                     <i className='bi bi-pencil' />
                   </Link>
                   <button
                     className='btn btn-link p-0 text-danger'
-                    onClick={() => handleDelete(sector.id)}
-                    title={t('sectors.deleteSectorTitle')}
+                    onClick={() => handleDelete(department.id)}
+                    title={t('departments.deleteDepartmentTitle')}
                   >
                     <i className='bi bi-trash' />
                   </button>

@@ -171,14 +171,14 @@ function WhatsAppPanel({ values, errors, touched, handleChange, handleBlur, isAc
                 <input
                   type='checkbox'
                   className='form-check-input'
-                  id='useSectors'
-                  name='useSectors'
+                  id='useDepartments'
+                  name='useDepartments'
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  checked={values.useSectors ?? false}
+                  checked={values.useDepartments ?? false}
                 />
-                <label className='form-check-label' htmlFor='useSectors'>
-                  {t('licensees.form.whatsapp.useSectorsLabel')}
+                <label className='form-check-label' htmlFor='useDepartments'>
+                  {t('licensees.form.whatsapp.useDepartmentsLabel')}
                 </label>
               </div>
             </div>

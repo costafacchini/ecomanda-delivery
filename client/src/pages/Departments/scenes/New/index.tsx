@@ -2,7 +2,7 @@ import Form from '../Form'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { createSector } from '../../../../services/sector'
+import { createDepartment } from '../../../../services/department'
 import { useNavigate } from 'react-router'
 
 function SectorNew({ currentUser }: any) {
@@ -13,7 +13,7 @@ function SectorNew({ currentUser }: any) {
   return (
     <div className='row'>
       <div className='col'>
-        <h3>{t('sectors.newSectorTitle')}</h3>
+        <h3>{t('departments.newSectorTitle')}</h3>
         <Form
           errors={errors}
           currentUser={currentUser}
@@ -22,16 +22,16 @@ function SectorNew({ currentUser }: any) {
               ...values,
               licensee: currentUser?.licensee?._id || currentUser?.licensee,
             }
-            const response = await createSector(payload)
+            const response = await createDepartment(payload)
 
             if (response.status === 201) {
-              toast.success(t('sectors.toast.createSuccess'))
-              navigate('/sectors')
+              toast.success(t('departments.toast.createSuccess'))
+              navigate('/departments')
               setErrors(null)
             } else {
-              // @ts-ignore — Sectors not in type-narrowing plan scope
+              // @ts-ignore — Departments not in type-narrowing plan scope
               setErrors((response.data as any).errors)
-              toast.error(t('sectors.toast.createError'))
+              toast.error(t('departments.toast.createError'))
             }
           }}
         />

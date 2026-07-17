@@ -37,7 +37,7 @@ const initialValues = {
   whatsappDefault: '',
   whatsappToken:   '',
   whatsappUrl:     '',
-  useSectors:      false,
+  useDepartments:      false,
   userName:        '',
   userEmail:       '',
   password:        '',
@@ -248,7 +248,7 @@ function OnboardingModal({ isOpen, onClose, onSuccess }: Props) {
         whatsappDefault: values.whatsappDefault,
         whatsappToken:   values.whatsappToken,
         whatsappUrl:     values.whatsappUrl,
-        useSectors:      values.useSectors ?? false,
+        useDepartments:      values.useDepartments ?? false,
       } : {}),
     }
 
@@ -504,14 +504,14 @@ function OnboardingModal({ isOpen, onClose, onSuccess }: Props) {
               <input
                 type='checkbox'
                 className='form-check-input'
-                id='useSectors'
-                name='useSectors'
-                checked={formik.values.useSectors ?? false}
+                id='useDepartments'
+                name='useDepartments'
+                checked={formik.values.useDepartments ?? false}
                 onChange={formik.handleChange}
               />
-              <label className='form-check-label' htmlFor='useSectors'>
-                {t('onboarding.whatsapp.useSectorsLabel')}
-                <small className='text-muted d-block'>{t('onboarding.whatsapp.useSectorsHint')}</small>
+              <label className='form-check-label' htmlFor='useDepartments'>
+                {t('onboarding.whatsapp.useDepartmentsLabel')}
+                <small className='text-muted d-block'>{t('onboarding.whatsapp.useDepartmentsHint')}</small>
               </label>
             </div>
           )}

@@ -86,16 +86,16 @@ describe('OnboardAccount', () => {
     expect(result.licensee.whatsappDefault).toEqual('baileys')
   })
 
-  it('forwards useSectors to the licensee when provided', async () => {
-    const result = await onboardAccount.execute({ ...validInput, useSectors: true })
+  it('forwards useDepartments to the licensee when provided', async () => {
+    const result = await onboardAccount.execute({ ...validInput, useDepartments: true })
 
-    expect(result.licensee.useSectors).toEqual(true)
+    expect(result.licensee.useDepartments).toEqual(true)
   })
 
-  it('licensee defaults useSectors to false when not provided', async () => {
+  it('licensee defaults useDepartments to false when not provided', async () => {
     const result = await onboardAccount.execute(validInput)
 
-    expect(result.licensee.useSectors).toBeFalsy()
+    expect(result.licensee.useDepartments).toBeFalsy()
   })
 
   it('creates user with language: en when provided', async () => {

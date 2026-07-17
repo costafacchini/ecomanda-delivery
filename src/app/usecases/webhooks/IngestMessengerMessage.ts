@@ -10,12 +10,12 @@ class IngestMessengerMessage {
     this.jobQueue = jobQueue
   }
 
-  async execute({ body, licenseeId, sectorId = null }: Record<string, any> = {}) {
+  async execute({ body, licenseeId, departmentId = null }: Record<string, any> = {}) {
     const bodySaved = await this.messengerRepository.create({
       content: body,
       licensee: licenseeId,
       kind: MESSENGER_MESSAGE_KIND,
-      sector: sectorId,
+      department: departmentId,
     })
 
     await this.jobQueue.addJob(MESSENGER_MESSAGE_JOB, {

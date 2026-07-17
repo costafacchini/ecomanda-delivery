@@ -74,8 +74,8 @@
       "whatsappDefaultLabel": "Default WhatsApp",
       "whatsappDefaultRequired": "Default WhatsApp is required",
       "selectPlaceholder": "Select...",
-      "useSectorsLabel": "Use sectors",
-      "useSectorsHint": "Multiple departments with separate WhatsApp numbers.",
+      "useDepartmentsLabel": "Use departments",
+      "useDepartmentsHint": "Multiple departments with separate WhatsApp numbers.",
       "whatsappTokenLabel": "WhatsApp token",
       "whatsappTokenRequired": "WhatsApp token is required",
       "whatsappTokenPlaceholder": "API authentication token",
@@ -110,7 +110,7 @@
     "users": "Users",
     "registrations": "Registrations",
     "contacts": "Contacts",
-    "sectors": "Sectors",
+    "departments": "Departments",
     "triggers": "Triggers",
     "templates": "Templates",
     "messages": "Messages",
@@ -205,7 +205,7 @@
         "useFileIDYcloudLabel": "Use file ID in YCloud instead of URL?",
         "setWebhookButton": "Configure Webhook on provider",
         "importTemplatesButton": "Import templates",
-        "useSectorsLabel": "Use sectors (multiple departments with separate WhatsApp numbers)",
+        "useDepartmentsLabel": "Use departments (multiple departments with separate WhatsApp numbers)",
         "checkingConnection": "Checking connection...",
         "connected": "✓ Connected",
         "reconnectButton": "Reconnect",
@@ -306,25 +306,25 @@
       "updateError": "Oops! Could not update user."
     }
   },
-  "sectors": {
-    "title": "Sectors",
+  "departments": {
+    "title": "Departments",
     "createButton": "Create +",
-    "newSectorTitle": "New sector",
-    "editSectorTitle": "Edit sector",
+    "newDepartmentTitle": "New department",
+    "editDepartmentTitle": "Edit department",
     "usersLabel": "Users",
     "usersPlaceholder": "Select users...",
-    "deleteSectorTitle": "Delete sector",
-    "confirmDelete": "Are you sure you want to delete this sector?",
+    "deleteDepartmentTitle": "Delete department",
+    "confirmDelete": "Are you sure you want to delete this department?",
     "validation": {
       "nameRequired": "Name is required"
     },
     "toast": {
-      "createSuccess": "Sector created successfully!",
-      "createError": "Oops! Could not create sector.",
-      "updateSuccess": "Sector updated successfully!",
-      "updateError": "Oops! Could not update sector.",
-      "deleteSuccess": "Sector deleted successfully!",
-      "deleteError": "Oops! Could not delete sector."
+      "createSuccess": "Department created successfully!",
+      "createError": "Oops! Could not create department.",
+      "updateSuccess": "Department updated successfully!",
+      "updateError": "Oops! Could not update department.",
+      "deleteSuccess": "Department deleted successfully!",
+      "deleteError": "Oops! Could not delete department."
     },
     "baileys": {
       "title": "Baileys Connection",

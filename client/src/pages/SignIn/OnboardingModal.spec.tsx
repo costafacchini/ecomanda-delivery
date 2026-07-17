@@ -56,28 +56,28 @@ describe('<OnboardingModal />', () => {
     await screen.findByText('onboarding.whatsapp.whatsappDefaultLabel')
   }
 
-  describe('useSectors checkbox', () => {
-    it('does not show useSectors checkbox when baileys is not selected', async () => {
+  describe('useDepartments checkbox', () => {
+    it('does not show useDepartments checkbox when baileys is not selected', async () => {
       mount()
       await navigateToWhatsappStep()
 
       fireEvent.change(screen.getByLabelText('onboarding.whatsapp.whatsappDefaultLabel'), { target: { value: 'utalk' } })
 
-      expect(screen.queryByLabelText(/onboarding\.whatsapp\.useSectorsLabel/)).not.toBeInTheDocument()
+      expect(screen.queryByLabelText(/onboarding\.whatsapp\.useDepartmentsLabel/)).not.toBeInTheDocument()
     })
 
-    it('shows useSectors checkbox when baileys is selected', async () => {
+    it('shows useDepartments checkbox when baileys is selected', async () => {
       mount()
       await navigateToWhatsappStep()
 
       fireEvent.change(screen.getByLabelText('onboarding.whatsapp.whatsappDefaultLabel'), { target: { value: 'baileys' } })
 
-      expect(await screen.findByLabelText(/onboarding\.whatsapp\.useSectorsLabel/)).toBeInTheDocument()
+      expect(await screen.findByLabelText(/onboarding\.whatsapp\.useDepartmentsLabel/)).toBeInTheDocument()
     })
   })
 
   describe('onboarding payload', () => {
-    it('includes useSectors in the whatsapp submission payload', async () => {
+    it('includes useDepartments in the whatsapp submission payload', async () => {
       ;(createAccount as any).mockResolvedValue({ status: 201 })
 
       mount()
@@ -86,8 +86,8 @@ describe('<OnboardingModal />', () => {
       // Select baileys
       fireEvent.change(screen.getByLabelText('onboarding.whatsapp.whatsappDefaultLabel'), { target: { value: 'baileys' } })
 
-      // Check useSectors
-      const checkbox = await screen.findByLabelText(/onboarding\.whatsapp\.useSectorsLabel/)
+      // Check useDepartments
+      const checkbox = await screen.findByLabelText(/onboarding\.whatsapp\.useDepartmentsLabel/)
       fireEvent.click(checkbox)
 
       // Navigate to user step
@@ -103,7 +103,7 @@ describe('<OnboardingModal />', () => {
 
       await waitFor(() =>
         expect(createAccount).toHaveBeenCalledWith(
-          expect.objectContaining({ useSectors: true })
+          expect.objectContaining({ useDepartments: true })
         )
       )
     })

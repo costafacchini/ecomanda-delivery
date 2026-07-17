@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { QRCodeSVG } from 'qrcode.react'
-import { getSectorBaileysStatus, getSectorBaileysQr, syncSectorBaileys } from '../../../../services/sector'
+import { getDepartmentBaileysStatus, getDepartmentBaileysQr, syncDepartmentBaileys } from '../../../../services/department'
 
 interface Props {
-  sectorId: string
+  departmentId: string
   isActive: boolean
 }
 
-// Sectors not in type-narrowing plan scope — minimal local types for API responses
+// Departments not in type-narrowing plan scope — minimal local types for API responses
 interface BaileysStatusResponse {
   connected?: boolean
 }
@@ -19,7 +19,7 @@ interface BaileysQrResponse {
   message?: string
 }
 
-function SectorBaileysPanel({ sectorId, isActive }: Props) {
+function DepartmentBaileysPanel({ departmentId, isActive }: Props) {
   const { t } = useTranslation()
   const [baileysQr, setBaileysQr] = useState<any>(null)
   const [baileysStatus, setBaileysStatus] = useState<any>(null)
@@ -30,10 +30,10 @@ function SectorBaileysPanel({ sectorId, isActive }: Props) {
   const [syncError, setSyncError] = useState<any>(null)
 
   useEffect(() => {
-    if (!isActive || !sectorId) return
+    if (!isActive || !departmentId) return
 
     setBaileysChecking(true)
-    getSectorBaileysStatus({ id: sectorId })
+    getDepartmentBaileysStatus({ id: departmentId })
       .then((response) => {
         setBaileysConnected((response.data as BaileysStatusResponse)?.connected ?? false)
       })
@@ -43,37 +43,37 @@ function SectorBaileysPanel({ sectorId, isActive }: Props) {
       .finally(() => {
         setBaileysChecking(false)
       })
-  }, [isActive, sectorId])
+  }, [isActive, departmentId])
 
   return (
     <div className='mt-4'>
-      <h5>{t('sectors.baileys.title')}</h5>
+      <h5>{t('departments.baileys.title')}</h5>
 
       {baileysChecking && (
-        <span className='text-muted'>{t('sectors.baileys.checking')}</span>
+        <span className='text-muted'>{t('departments.baileys.checking')}</span>
       )}
 
       {!baileysChecking && baileysConnected && (
         <div className='d-flex align-items-center gap-3'>
-          <span className='text-success fw-semibold'>&#10003; {t('sectors.baileys.connected')}</span>
+          <span className='text-success fw-semibold'>&#10003; {t('departments.baileys.connected')}</span>
           <button
             onClick={async (event) => {
               event.preventDefault()
               setBaileysConnected(null)
               setBaileysQr(null)
               setBaileysStatus(null)
-              const response = await getSectorBaileysQr({ id: sectorId })
+              const response = await getDepartmentBaileysQr({ id: departmentId })
               const qrData = response.data as BaileysQrResponse
               if (qrData?.qr) {
                 setBaileysQr(qrData.qr)
                 setBaileysConnected(false)
               } else {
-                setBaileysStatus(qrData?.message ?? t('sectors.baileys.qrError'))
+                setBaileysStatus(qrData?.message ?? t('departments.baileys.qrError'))
               }
             }}
             className='btn btn-outline-secondary btn-sm'
           >
-            {t('sectors.baileys.reconnect')}
+            {t('departments.baileys.reconnect')}
           </button>
           <button
             onClick={async (event) => {
@@ -82,10 +82,10 @@ function SectorBaileysPanel({ sectorId, isActive }: Props) {
               setSyncError(null)
               setSyncLoading(true)
               try {
-                const response = await syncSectorBaileys({ id: sectorId })
+                const response = await syncDepartmentBaileys({ id: departmentId })
                 setSyncResult(response.data)
               } catch {
-                setSyncError(t('sectors.baileys.syncError'))
+                setSyncError(t('departments.baileys.syncError'))
               } finally {
                 setSyncLoading(false)
               }
@@ -93,7 +93,7 @@ function SectorBaileysPanel({ sectorId, isActive }: Props) {
             className='btn btn-outline-primary btn-sm'
             disabled={syncLoading}
           >
-            {syncLoading ? t('sectors.baileys.syncing') : t('sectors.baileys.syncGroups')}
+            {syncLoading ? t('departments.baileys.syncing') : t('departments.baileys.syncGroups')}
           </button>
         </div>
       )}
@@ -101,7 +101,7 @@ function SectorBaileysPanel({ sectorId, isActive }: Props) {
       {syncResult && (
         <div className='mt-2'>
           <span className='text-muted small'>
-            {t('sectors.baileys.syncResult', { imported: syncResult.importedGroups, updated: syncResult.updatedGroups })}
+            {t('departments.baileys.syncResult', { imported: syncResult.importedGroups, updated: syncResult.updatedGroups })}
           </span>
         </div>
       )}
@@ -119,19 +119,19 @@ function SectorBaileysPanel({ sectorId, isActive }: Props) {
               event.preventDefault()
               setBaileysQr(null)
               setBaileysStatus(null)
-              const response = await getSectorBaileysQr({ id: sectorId })
+              const response = await getDepartmentBaileysQr({ id: departmentId })
               const qrData = response.data as BaileysQrResponse
               if (qrData?.qr) {
                 setBaileysQr(qrData.qr)
               } else if (qrData?.connected) {
                 setBaileysConnected(true)
               } else {
-                setBaileysStatus(qrData?.message ?? t('sectors.baileys.qrError'))
+                setBaileysStatus(qrData?.message ?? t('departments.baileys.qrError'))
               }
             }}
             className='btn btn-info'
           >
-            {t('sectors.baileys.generateQr')}
+            {t('departments.baileys.generateQr')}
           </button>
         </div>
       )}
@@ -151,4 +151,4 @@ function SectorBaileysPanel({ sectorId, isActive }: Props) {
   )
 }
 
-export default SectorBaileysPanel
+export default DepartmentBaileysPanel

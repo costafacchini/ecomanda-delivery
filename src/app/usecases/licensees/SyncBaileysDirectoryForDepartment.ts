@@ -1,36 +1,36 @@
 const WHATSAPP_DEFAULT_BAILEYS = 'baileys'
 const NOT_BAILEYS_MESSAGE = 'Licensee não usa Baileys'
 
-class SyncBaileysDirectoryForSector {
-  sectorRepository: any
+class SyncBaileysDirectoryForDepartment {
+  departmentRepository: any
   licenseeRepository: any
   contactRepository: any
   createMessengerPlugin: any
 
   constructor({
-    sectorRepository,
+    departmentRepository,
     licenseeRepository,
     contactRepository,
     createMessengerPlugin,
   }: Record<string, any> = {}) {
-    this.sectorRepository = sectorRepository
+    this.departmentRepository = departmentRepository
     this.licenseeRepository = licenseeRepository
     this.contactRepository = contactRepository
     this.createMessengerPlugin = createMessengerPlugin
   }
 
-  async execute(sectorId: any) {
-    const sector = await this.sectorRepository.findFirst({ _id: sectorId })
-    if (!sector) {
-      return { message: 'Setor não encontrado' }
+  async execute(departmentId: any) {
+    const department = await this.departmentRepository.findFirst({ _id: departmentId })
+    if (!department) {
+      return { message: 'Departamento não encontrado' }
     }
 
-    const licensee = await this.licenseeRepository.findFirst({ _id: sector.licensee })
+    const licensee = await this.licenseeRepository.findFirst({ _id: department.licensee })
     if (!licensee || licensee.whatsappDefault !== WHATSAPP_DEFAULT_BAILEYS) {
       return { message: NOT_BAILEYS_MESSAGE }
     }
 
-    const plugin = this.createMessengerPlugin(licensee, { sector })
+    const plugin = this.createMessengerPlugin(licensee, { department })
 
     await this.contactRepository.deactivateGroupsForLicensee(licensee._id)
 
@@ -79,4 +79,4 @@ class SyncBaileysDirectoryForSector {
   }
 }
 
-export { SyncBaileysDirectoryForSector, NOT_BAILEYS_MESSAGE }
+export { SyncBaileysDirectoryForDepartment, NOT_BAILEYS_MESSAGE }

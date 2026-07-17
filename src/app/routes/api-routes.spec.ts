@@ -8,12 +8,12 @@ function buildResponse() {
 }
 
 describe('buildAuthenticateLicensee', () => {
-  describe('without sector param', () => {
+  describe('without department param', () => {
     it('sets req.licensee and calls next when token is valid', async () => {
       const licensee = { _id: 'lic-id', apiToken: 'valid-token' }
       const licenseeRepository = { findFirst: jest.fn().mockResolvedValue(licensee) }
-      const sectorRepository = { findFirst: jest.fn() }
-      const middleware = buildAuthenticateLicensee({ licenseeRepository, sectorRepository })
+      const departmentRepository = { findFirst: jest.fn() }
+      const middleware = buildAuthenticateLicensee({ licenseeRepository, departmentRepository })
 
       const req: any = { query: { token: 'valid-token' } }
       const res = buildResponse()
@@ -22,15 +22,15 @@ describe('buildAuthenticateLicensee', () => {
       await middleware(req, res, next)
 
       expect(req.licensee).toEqual(licensee)
-      expect(req.sector).toBeUndefined()
+      expect(req.department).toBeUndefined()
       expect(next).toHaveBeenCalled()
       expect(res.status).not.toHaveBeenCalled()
     })
 
     it('returns 401 when token is missing', async () => {
       const licenseeRepository = { findFirst: jest.fn() }
-      const sectorRepository = { findFirst: jest.fn() }
-      const middleware = buildAuthenticateLicensee({ licenseeRepository, sectorRepository })
+      const departmentRepository = { findFirst: jest.fn() }
+      const middleware = buildAuthenticateLicensee({ licenseeRepository, departmentRepository })
 
       const req: any = { query: {} }
       const res = buildResponse()
@@ -44,8 +44,8 @@ describe('buildAuthenticateLicensee', () => {
 
     it('returns 401 when token is invalid', async () => {
       const licenseeRepository = { findFirst: jest.fn().mockResolvedValue(null) }
-      const sectorRepository = { findFirst: jest.fn() }
-      const middleware = buildAuthenticateLicensee({ licenseeRepository, sectorRepository })
+      const departmentRepository = { findFirst: jest.fn() }
+      const middleware = buildAuthenticateLicensee({ licenseeRepository, departmentRepository })
 
       const req: any = { query: { token: 'bad-token' } }
       const res = buildResponse()
@@ -58,35 +58,35 @@ describe('buildAuthenticateLicensee', () => {
     })
   })
 
-  describe('with sector param', () => {
-    it('sets req.sector and calls next when sector token is valid and active', async () => {
+  describe('with department param', () => {
+    it('sets req.department and calls next when department token is valid and active', async () => {
       const licensee = { _id: 'lic-id', apiToken: 'valid-token' }
-      const sector = { _id: 'sec-id', sectorToken: 'valid-sector', active: true, licensee: 'lic-id' }
+      const department = { _id: 'sec-id', departmentToken: 'valid-department', active: true, licensee: 'lic-id' }
       const licenseeRepository = { findFirst: jest.fn().mockResolvedValue(licensee) }
-      const sectorRepository = { findFirst: jest.fn().mockResolvedValue(sector) }
-      const middleware = buildAuthenticateLicensee({ licenseeRepository, sectorRepository })
+      const departmentRepository = { findFirst: jest.fn().mockResolvedValue(department) }
+      const middleware = buildAuthenticateLicensee({ licenseeRepository, departmentRepository })
 
-      const req: any = { query: { token: 'valid-token', sector: 'valid-sector' } }
+      const req: any = { query: { token: 'valid-token', department: 'valid-department' } }
       const res = buildResponse()
       const next = jest.fn()
 
       await middleware(req, res, next)
 
-      expect(sectorRepository.findFirst).toHaveBeenCalledWith({
-        sectorToken: 'valid-sector',
+      expect(departmentRepository.findFirst).toHaveBeenCalledWith({
+        departmentToken: 'valid-department',
         licensee: 'lic-id',
       })
-      expect(req.sector).toEqual(sector)
+      expect(req.department).toEqual(department)
       expect(next).toHaveBeenCalled()
     })
 
-    it('returns 401 when sector token belongs to a different licensee', async () => {
+    it('returns 401 when department token belongs to a different licensee', async () => {
       const licensee = { _id: 'lic-id', apiToken: 'valid-token' }
       const licenseeRepository = { findFirst: jest.fn().mockResolvedValue(licensee) }
-      const sectorRepository = { findFirst: jest.fn().mockResolvedValue(null) }
-      const middleware = buildAuthenticateLicensee({ licenseeRepository, sectorRepository })
+      const departmentRepository = { findFirst: jest.fn().mockResolvedValue(null) }
+      const middleware = buildAuthenticateLicensee({ licenseeRepository, departmentRepository })
 
-      const req: any = { query: { token: 'valid-token', sector: 'other-sector' } }
+      const req: any = { query: { token: 'valid-token', department: 'other-department' } }
       const res = buildResponse()
       const next = jest.fn()
 
@@ -96,14 +96,14 @@ describe('buildAuthenticateLicensee', () => {
       expect(next).not.toHaveBeenCalled()
     })
 
-    it('returns 401 when sector is inactive', async () => {
+    it('returns 401 when department is inactive', async () => {
       const licensee = { _id: 'lic-id', apiToken: 'valid-token' }
-      const sector = { _id: 'sec-id', sectorToken: 'valid-sector', active: false, licensee: 'lic-id' }
+      const department = { _id: 'sec-id', departmentToken: 'valid-department', active: false, licensee: 'lic-id' }
       const licenseeRepository = { findFirst: jest.fn().mockResolvedValue(licensee) }
-      const sectorRepository = { findFirst: jest.fn().mockResolvedValue(sector) }
-      const middleware = buildAuthenticateLicensee({ licenseeRepository, sectorRepository })
+      const departmentRepository = { findFirst: jest.fn().mockResolvedValue(department) }
+      const middleware = buildAuthenticateLicensee({ licenseeRepository, departmentRepository })
 
-      const req: any = { query: { token: 'valid-token', sector: 'valid-sector' } }
+      const req: any = { query: { token: 'valid-token', department: 'valid-department' } }
       const res = buildResponse()
       const next = jest.fn()
 
@@ -113,13 +113,13 @@ describe('buildAuthenticateLicensee', () => {
       expect(next).not.toHaveBeenCalled()
     })
 
-    it('returns 401 when sector token is unknown', async () => {
+    it('returns 401 when department token is unknown', async () => {
       const licensee = { _id: 'lic-id', apiToken: 'valid-token' }
       const licenseeRepository = { findFirst: jest.fn().mockResolvedValue(licensee) }
-      const sectorRepository = { findFirst: jest.fn().mockResolvedValue(null) }
-      const middleware = buildAuthenticateLicensee({ licenseeRepository, sectorRepository })
+      const departmentRepository = { findFirst: jest.fn().mockResolvedValue(null) }
+      const middleware = buildAuthenticateLicensee({ licenseeRepository, departmentRepository })
 
-      const req: any = { query: { token: 'valid-token', sector: 'unknown' } }
+      const req: any = { query: { token: 'valid-token', department: 'unknown' } }
       const res = buildResponse()
       const next = jest.fn()
 

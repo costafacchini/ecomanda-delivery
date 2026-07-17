@@ -2,7 +2,7 @@ import express from 'express'
 import jwt from 'jsonwebtoken'
 import { UsersController } from '../controllers/UsersController'
 import { LicenseesController } from '../controllers/LicenseesController'
-import { SectorsController } from '../controllers/SectorsController'
+import { DepartmentsController } from '../controllers/DepartmentsController'
 import { ContactsController } from '../controllers/ContactsController'
 import { TriggersController } from '../controllers/TriggersController'
 import { MessagesController } from '../controllers/MessagesController'
@@ -46,7 +46,7 @@ const {
   roomRepository,
   bodyRepository,
   whatsappSessionRepository,
-  sectorRepository,
+  departmentRepository,
   createMessengerPlugin,
   createTemplatesImporter,
   startBaileysSocket,
@@ -92,8 +92,8 @@ const messagesController = new MessagesController({
   queueServer,
   createMessage: new CreateMessage({ messageRepository, contactRepository, jobQueue: queueServer }),
 })
-const sectorsController = new SectorsController({
-  sectorRepository,
+const departmentsController = new DepartmentsController({
+  departmentRepository,
   licenseeRepository,
   whatsappSessionRepository,
   contactRepository,
@@ -114,7 +114,7 @@ const roomsController = new RoomsController({
   userRepository,
   roomRepository,
   messageRepository,
-  sectorRepository,
+  departmentRepository,
   contactRepository,
 })
 const chatRoomsController = new ChatRoomsController({
@@ -193,14 +193,14 @@ router.get('/licensees/:id/baileys-status', licenseesController.getBaileysStatus
 router.post('/licensees/:id/baileys-qr', (req, res) => licenseesController.getBaileysQr(req, res))
 router.post('/licensees/:id/baileys-sync', licenseesController.baileysSync)
 
-router.get('/sectors', authorize('admin', 'super'), sectorsController.index)
-router.get('/sectors/:id', authorize('admin', 'super'), sectorsController.show)
-router.post('/sectors', authorize('admin', 'super'), sectorsController.create)
-router.post('/sectors/:id', authorize('admin', 'super'), sectorsController.update)
-router.delete('/sectors/:id', authorize('admin', 'super'), sectorsController.destroy)
-router.post('/sectors/:id/baileys-qr', authorize('admin', 'super'), sectorsController.getBaileysQr)
-router.get('/sectors/:id/baileys-status', authorize('admin', 'super'), sectorsController.getBaileysStatus)
-router.post('/sectors/:id/baileys-sync', authorize('admin', 'super'), sectorsController.baileysSync)
+router.get('/departments', authorize('admin', 'super'), departmentsController.index)
+router.get('/departments/:id', authorize('admin', 'super'), departmentsController.show)
+router.post('/departments', authorize('admin', 'super'), departmentsController.create)
+router.post('/departments/:id', authorize('admin', 'super'), departmentsController.update)
+router.delete('/departments/:id', authorize('admin', 'super'), departmentsController.destroy)
+router.post('/departments/:id/baileys-qr', authorize('admin', 'super'), departmentsController.getBaileysQr)
+router.get('/departments/:id/baileys-status', authorize('admin', 'super'), departmentsController.getBaileysStatus)
+router.post('/departments/:id/baileys-sync', authorize('admin', 'super'), departmentsController.baileysSync)
 
 router.get('/messages', messagesController.index)
 router.post('/messages', messagesController.create)

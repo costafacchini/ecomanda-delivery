@@ -14,25 +14,25 @@ class RoomRepositoryDatabase extends Repository {
     return this.findFirst({ contact: contactId, closed: false })
   }
 
-  findForAgent(_userId: any, _licenseeId: any, sectorIds: any[] = []) {
+  findForAgent(_userId: any, _licenseeId: any, departmentIds: any[] = []) {
     const query: any = {}
-    if (sectorIds.length > 0) {
-      query.sector = { $in: sectorIds }
+    if (departmentIds.length > 0) {
+      query.department = { $in: departmentIds }
     }
     return this.model().find(query)
   }
 
   async findForLicensee(
     licenseeId: any,
-    { sectorIds = [], page = 1, limit = 20 }: { sectorIds?: any[]; page?: number; limit?: number } = {},
+    { departmentIds = [], page = 1, limit = 20 }: { departmentIds?: any[]; page?: number; limit?: number } = {},
   ) {
     const contacts = await this.model().db.model('Contact').find({ licensee: licenseeId }).select('_id').lean()
     const contactIds = contacts.map((c: any) => c._id)
 
     const filter: any = { contact: { $in: contactIds }, closed: false }
 
-    if (sectorIds.length > 0) {
-      filter.sector = { $in: sectorIds }
+    if (departmentIds.length > 0) {
+      filter.department = { $in: departmentIds }
     }
 
     return this.model()

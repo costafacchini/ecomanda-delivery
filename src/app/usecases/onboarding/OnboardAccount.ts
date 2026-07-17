@@ -11,7 +11,7 @@ const ONBOARD_LICENSEE_FIELDS = [
   'whatsappDefault',
   'whatsappToken',
   'whatsappUrl',
-  'useSectors',
+  'useDepartments',
 ]
 
 function pickFields(fields: Record<string, any> = {}, keys: string[]) {

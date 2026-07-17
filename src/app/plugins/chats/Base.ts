@@ -61,7 +61,7 @@ class ChatsBase {
           licensee: this.licensee._id,
           contact: this.messageParsed.contact._id,
           room: this.messageParsed.room?._id || this.messageParsed.room,
-          sector: this.messageParsed.room?.sector ?? null,
+          department: this.messageParsed.room?.department ?? null,
           destination: 'to-messenger',
         }),
       )
@@ -84,7 +84,7 @@ class ChatsBase {
                   licensee: this.licensee._id,
                   contact: this.messageParsed.contact._id,
                   room: this.messageParsed.room?._id || this.messageParsed.room,
-                  sector: this.messageParsed.room?.sector ?? null,
+                  department: this.messageParsed.room?.department ?? null,
                   destination: 'to-messenger',
                   trigger: trigger._id,
                 }),
@@ -98,7 +98,7 @@ class ChatsBase {
               licensee: this.licensee._id,
               contact: this.messageParsed.contact._id,
               room: this.messageParsed.room?._id || this.messageParsed.room,
-              sector: this.messageParsed.room?.sector ?? null,
+              department: this.messageParsed.room?.department ?? null,
               destination: 'to-messenger',
               senderName: message.senderName,
             }
@@ -116,7 +116,7 @@ class ChatsBase {
             licensee: this.licensee._id,
             contact: this.messageParsed.contact._id,
             room: this.messageParsed.room?._id || this.messageParsed.room,
-            sector: this.messageParsed.room?.sector ?? null,
+            department: this.messageParsed.room?.department ?? null,
             destination: 'to-messenger',
             senderName: message.senderName,
           }
@@ -133,7 +133,7 @@ class ChatsBase {
             licensee: this.licensee._id,
             contact: this.messageParsed.contact._id,
             room: this.messageParsed.room?._id || this.messageParsed.room,
-            sector: this.messageParsed.room?.sector ?? null,
+            department: this.messageParsed.room?.department ?? null,
             destination: 'to-messenger',
             senderName: message.senderName,
           }

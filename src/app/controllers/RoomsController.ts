@@ -4,20 +4,20 @@ class RoomsController {
   userRepository: any
   roomRepository: any
   messageRepository: any
-  sectorRepository: any
+  departmentRepository: any
   contactRepository: any
 
   constructor({
     userRepository,
     roomRepository,
     messageRepository,
-    sectorRepository,
+    departmentRepository,
     contactRepository,
   }: Record<string, any> = {}) {
     this.userRepository = userRepository
     this.roomRepository = roomRepository
     this.messageRepository = messageRepository
-    this.sectorRepository = sectorRepository
+    this.departmentRepository = departmentRepository
     this.contactRepository = contactRepository
 
     this.index = this.index.bind(this)
@@ -49,17 +49,17 @@ class RoomsController {
         licenseeId = this._resolveLicenseeId(user)
       }
 
-      const agentSectors = await this.sectorRepository
+      const agentSectors = await this.departmentRepository
         .model()
         .find({ users: req.userId, licensee: licenseeId, active: true })
         .select('_id')
         .lean()
 
-      const sectorIds = agentSectors.map((s: any) => s._id)
+      const departmentIds = agentSectors.map((s: any) => s._id)
       const page = Math.max(1, parseInt(req.query.page as string) || 1)
       const limit = 20
 
-      const results = await this.roomRepository.findForLicensee(licenseeId, { sectorIds, page, limit })
+      const results = await this.roomRepository.findForLicensee(licenseeId, { departmentIds, page, limit })
 
       const hasMore = results.length > limit
       const rooms: any[] = hasMore ? results.slice(0, limit) : results

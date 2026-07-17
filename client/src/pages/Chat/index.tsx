@@ -73,7 +73,7 @@ export default function ChatPage() {
       createdAt: new Date().toISOString(),
       contact: null,
       trigger: null,
-      sector: null,
+      department: null,
     }
     setMessages(prev => [...prev, optimistic])
     try {
@@ -102,7 +102,7 @@ export default function ChatPage() {
         createdAt: ts,
         contact: contact ?? null,
         trigger: null,
-        sector: null,
+        department: null,
       }
       setMessages(prev => {
         if (prev.some(m => m.id === messageId)) return prev

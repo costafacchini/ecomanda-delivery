@@ -174,7 +174,7 @@ const licenseeSchema = new Schema(
     },
     card_information_url: String,
     useSenderName: { type: Boolean, default: false },
-    useSectors: { type: Boolean, default: false },
+    useDepartments: { type: Boolean, default: false },
     useFileIDYcloud: { type: Boolean, default: false },
   },
   { timestamps: true },

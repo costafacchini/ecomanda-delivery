@@ -5,7 +5,7 @@ import * as Yup from 'yup'
 import { useNavigate } from 'react-router'
 import Select from 'react-select'
 import { getUsers } from '../../../../services/user'
-import SectorBaileysPanel from '../Edit/SectorBaileysPanel'
+import DepartmentBaileysPanel from '../Edit/DepartmentBaileysPanel'
 
 const sectorInitialValues = {
   name: '',
@@ -14,7 +14,7 @@ const sectorInitialValues = {
 }
 
 function SectorForm(props: any) {
-  const { onSubmit, errors, initialValues, currentUser, sectorId } = props
+  const { onSubmit, errors, initialValues, currentUser, departmentId } = props
   const { t } = useTranslation()
   let navigate = useNavigate()
   const [userOptions, setUserOptions] = useState<{ value: string; label: string }[]>([])
@@ -22,7 +22,7 @@ function SectorForm(props: any) {
   const sectorSchema = useMemo(
     () =>
       Yup.object().shape({
-        name: Yup.string().required(t('sectors.validation.nameRequired')),
+        name: Yup.string().required(t('departments.validation.nameRequired')),
       }),
     [t]
   )
@@ -86,7 +86,7 @@ function SectorForm(props: any) {
 
                 <div className='row'>
                   <div className='form-group col-8'>
-                    <label htmlFor='users'>{t('sectors.usersLabel')}</label>
+                    <label htmlFor='users'>{t('departments.usersLabel')}</label>
                     <Select
                       inputId='users'
                       isMulti
@@ -96,7 +96,7 @@ function SectorForm(props: any) {
                         const ids = selected ? selected.map((opt: any) => opt.value) : []
                         formikProps.setFieldValue('users', ids)
                       }}
-                      placeholder={t('sectors.usersPlaceholder')}
+                      placeholder={t('departments.usersPlaceholder')}
                     />
                   </div>
                 </div>
@@ -110,12 +110,12 @@ function SectorForm(props: any) {
                 </div>
               )}
 
-              {sectorId && <SectorBaileysPanel sectorId={sectorId} isActive={initialValues.active} />}
+              {departmentId && <DepartmentBaileysPanel departmentId={departmentId} isActive={initialValues.active} />}
 
               <div className='row'>
                 <div className='col-5'>
                   <div className='mt-4 d-flex justify-content-between'>
-                    <button onClick={() => navigate('/sectors')} className='btn btn-secondary' type='button'>{t('common.back')}</button>
+                    <button onClick={() => navigate('/departments')} className='btn btn-secondary' type='button'>{t('common.back')}</button>
                     <button className='btn btn-success' type='submit'>{t('common.save')}</button>
                   </div>
                 </div>
