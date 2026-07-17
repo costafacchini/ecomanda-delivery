@@ -8,6 +8,15 @@ description: Structured self-review of changes before creating a PR
 ## Context Required
 HIGH-CONTEXT: Plan overview, task definition, dependency status files, AGENTS.md, recent commits, and relevant KB articles on coding standards and architecture
 
+## Setup
+
+1. Load `.agents/memory/project-profile.md` (always)
+2. Load `.agents/memory/decisions.md` if this skill touches architecture
+3. Check `docs/kb/README.md`; read any matching doc before grepping code
+4. Explore codebase patterns only after steps 1–3
+
+Skip steps not relevant to this skill's scope.
+
 ## Triggers
 
 ### Manual

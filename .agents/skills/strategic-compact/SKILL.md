@@ -6,6 +6,15 @@ auto: false
 
 # Strategic Compact
 
+## Setup
+
+1. Load `.agents/memory/project-profile.md` (always)
+2. Load `.agents/memory/decisions.md` if this skill touches architecture
+3. Check `docs/kb/README.md`; read any matching doc before grepping code
+4. Explore codebase patterns only after steps 1–3
+
+Skip steps not relevant to this skill's scope.
+
 ## Triggers
 
 ### Manual
@@ -68,21 +77,15 @@ The hint becomes the summary headline. Use it to carry forward the most importan
 4. **Don't compact mid-implementation** — preserve context for related changes in the same area
 5. **One compact per phase** — more than that and you're losing continuity unnecessarily
 
-## Optional Hook (Claude Code only)
+## Auto-Suggest Hook (Claude Code only)
 
-To get a suggestion after 50 tool calls, add to `~/.claude/settings.json`:
+The framework's `PostToolUse` hook (`template/.claude/hooks/post-tool-use.sh`) automatically tracks tool call count per session. When the count reaches **50**, it prints to the conversation:
 
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Edit",
-        "hooks": [{ "type": "command", "command": "node ~/.claude/skills/strategic-compact/suggest-compact.js" }]
-      }
-    ]
-  }
-}
+```
+Context pressure: 50 tool calls this session.
+Consider /strategic-compact at the next phase boundary.
 ```
 
-The script tracks tool calls and prints a suggestion when the threshold is reached — you still decide whether to compact.
+The reminder repeats every **10** calls after the threshold. The counter resets each hour (keyed by `YYYY-MM-DD-HH`), so it stays calibrated to active work blocks. The suggestion is advisory — you decide whether and when to compact.
+
+The hook is wired via `settings.local.json` (see `scripts/hooks-admin.js` to enable). No additional configuration needed once the hooks are active.

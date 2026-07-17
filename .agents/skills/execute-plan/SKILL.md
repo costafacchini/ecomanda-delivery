@@ -8,6 +8,15 @@ description: Run all remaining tasks in a plan. Dependency DAG, parallel agent s
 ## Context Required
 HIGH-CONTEXT: Full plan directory (.plans/{slug}/), AGENTS.md
 
+## Setup
+
+1. Load `.agents/memory/project-profile.md` (always)
+2. Load `.agents/memory/decisions.md` if this skill touches architecture
+3. Check `docs/kb/README.md`; read any matching doc before grepping code
+4. Explore codebase patterns only after steps 1–3
+
+Skip steps not relevant to this skill's scope.
+
 ## Triggers
 
 ### Automatic
@@ -104,13 +113,14 @@ If a task is blocked:
 After each wave/phase completes, verify before proceeding:
 
 1. All Phase N tasks are `complete` or `adapted`
-2. Required tests / verification for the completed tasks were added and run, or any intentional gaps are explicitly documented and approved
-3. CI is green for the completed work (or any failures are understood/flaky)
-4. No tasks required for the current phase or next ready wave remain `blocked`
-5. Contracts are still accurate (for cross-repo plans)
-6. Required KB / documentation updates for the completed tasks are merged or explicitly tracked before the next wave starts
-7. Any PR/review/merge follow-up is tracked and reported before the next wave starts; merge timing itself is not a gate unless the plan explicitly depends on it
-8. If the plan is GTM-flagged, verify each PR in the wave includes `GTM Plan: <plan-slug>` in the body and the `gtm-ship` label (apply via `gh` when available)
+2. **Spec scenario coverage**: For each task in this phase, all acceptance scenarios listed under its `Spec References` field must have passing tests — no pending/skipped stubs may remain. If a stub was intentionally left pending, document why in `status.md`.
+3. Required tests / verification for the completed tasks were added and run, or any intentional gaps are explicitly documented and approved
+4. CI is green for the completed work (or any failures are understood/flaky)
+5. No tasks required for the current phase or next ready wave remain `blocked`
+6. Contracts are still accurate (for cross-repo plans)
+7. Required KB / documentation updates for the completed tasks are merged or explicitly tracked before the next wave starts
+8. Any PR/review/merge follow-up is tracked and reported before the next wave starts; merge timing itself is not a gate unless the plan explicitly depends on it
+9. If the plan is GTM-flagged, verify each PR in the wave includes `GTM Plan: <plan-slug>` in the body and the `gtm-ship` label (apply via `gh` when available)
 
 If any gate check fails, report the issue and wait for resolution.
 
@@ -133,14 +143,15 @@ Read `PR Strategy` from `overview.md`:
 
 When all tasks are `complete` or `adapted` (or remaining are blocked and unresolvable):
 
-1. Update `.plans/{plan-slug}/overview.md` status to `complete`
-2. Move the plan from Active to Completed table in `.plans/README.md`
-3. Clean up worktrees (if parallel execution was used in Step 4):
+1. **Verify spec success criteria**: Read `spec.md` SC-XXX items. For each, confirm the outcome is met or document why it was adapted/deferred.
+2. Update `.plans/{plan-slug}/overview.md` status to `complete`
+3. Move the plan from Active to Completed table in `.plans/README.md`
+4. Clean up worktrees (if parallel execution was used in Step 4):
    - For each task worktree created during this plan:
      `git worktree remove .worktrees/{plan-slug}/{task-path} --force`
    - Verify: `git worktree list`
-4. **`single` PR strategy**: Open one final PR targeting `{base-branch}` that covers all task branches. Run the full test suite before opening.
-5. Report summary:
+5. **`single` PR strategy**: Open one final PR targeting `{base-branch}` that covers all task branches. Run the full test suite before opening.
+6. Report summary:
    - Total tasks completed vs adapted vs blocked
    - List of branches created
    - Test / verification and KB/doc follow-up status

@@ -8,6 +8,15 @@ description: Compress memory/KB/CLAUDE.md files to reduce input tokens. Preserve
 ## Context Required
 LOW-CONTEXT: just the target file path
 
+## Setup
+
+1. Load `.agents/memory/project-profile.md` (always)
+2. Load `.agents/memory/decisions.md` if this skill touches architecture
+3. Check `docs/kb/README.md`; read any matching doc before grepping code
+4. Explore codebase patterns only after steps 1–3
+
+Skip steps not relevant to this skill's scope.
+
 ## Triggers
 
 ### Manual

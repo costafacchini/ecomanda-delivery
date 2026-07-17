@@ -7,6 +7,7 @@
 **Last Updated**: [DATE]
 **Assigned Dev**: [NAME]
 **PR Strategy**: per-task | per-wave | single
+**Spec**: [spec.md](spec.md) — [N] user stories · [N] acceptance scenarios · [N] success criteria
 
 <!-- Status values: not-started | in-progress | complete -->
 <!-- A plan is in-progress when any task is in-progress. Complete when all tasks are complete or adapted, CI is green for completed work, any PR/review/merge follow-up is tracked, and required KB/doc follow-up is complete or explicitly marked not needed. -->

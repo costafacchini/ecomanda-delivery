@@ -1,9 +1,6 @@
 ---
 name: evolve-framework
-description: >-
-  Self-evolution skill. Audits the framework's health, detects improvement
-  opportunities from usage patterns, researches community updates, and
-  proposes concrete changes. Run periodically or when the framework feels stale.
+description: Self-evolution skill. Audits framework health, detects improvements from usage patterns, researches updates, and proposes concrete changes.
 argument-hint: "[audit | research | suggest | apply]"
 ---
 
@@ -11,6 +8,15 @@ argument-hint: "[audit | research | suggest | apply]"
 
 ## Context Required
 HIGH-CONTEXT: AGENTS.md, KB index, relevant codebase files, and project conventions
+
+## Setup
+
+1. Load `.agents/memory/project-profile.md` (always)
+2. Load `.agents/memory/decisions.md` if this skill touches architecture
+3. Check `docs/kb/README.md`; read any matching doc before grepping code
+4. Explore codebase patterns only after steps 1–3
+
+Skip steps not relevant to this skill's scope.
 
 ## Triggers
 

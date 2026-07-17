@@ -123,6 +123,10 @@ Update `.agents/memory/preferences.md` when you learn how the user works.
 | `verification-loop` | Full pre-PR check: build, types, lint, tests, security scan, diff review |
 | `strategic-compact` | Compact context at logical task boundaries, not mid-task |
 | `memory-compress` | manual | Compress memory/KB/CLAUDE.md files to reduce input tokens. Preserves a |
+| `bootstrap-memory` | manual | Seeds memory files from existing project history. Solves cold-start fo |
+| `consolidate-memory` | manual | LLM-rewrites accumulated session docs into memory files. Merges learni |
+| `framework` | manual | Framework management — evolve, upgrade, memory, hooks, session, list,  |
+| `hooks` | manual | Manage Claude Code hook lifecycle — status, enable, disable, audit log |
 
 ---
 

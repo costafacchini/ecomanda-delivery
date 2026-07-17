@@ -1,16 +1,21 @@
 ---
 name: add-defect
-description: >-
-  Adds a defect task to an existing plan. Use when QA, a reviewer, or a developer
-  finds a bug in a plan's deliverables that the plan must fix before it can ship.
-  Creates the defect task directory, updates the plan overview Defects table and
-  Task Summary, and commits to main. The defect can optionally block an existing task.
+description: Adds a defect task to an existing plan when a bug is found in deliverables. Updates plan overview and optionally blocks an existing task.
 ---
 
 # Add Defect
 
 ## Context Required
 MEDIUM-CONTEXT: Plan overview, existing task list, bug description from user
+
+## Setup
+
+1. Load `.agents/memory/project-profile.md` (always)
+2. Load `.agents/memory/decisions.md` if this skill touches architecture
+3. Check `docs/kb/README.md`; read any matching doc before grepping code
+4. Explore codebase patterns only after steps 1–3
+
+Skip steps not relevant to this skill's scope.
 
 ## Triggers
 
