@@ -219,7 +219,9 @@ describe('SyncBaileysDirectoryForDepartment', () => {
 
   it('delegates to syncBaileysDirectoryForInbox when department has a linked inbox', async () => {
     const inboxId = 'inbox-id-abc'
-    const syncBaileysDirectoryForInbox = { execute: jest.fn().mockResolvedValue({ importedGroups: 3, updatedGroups: 0 }) }
+    const syncBaileysDirectoryForInbox = {
+      execute: jest.fn().mockResolvedValue({ importedGroups: 3, updatedGroups: 0 }),
+    }
     const { departmentRepository, createMessengerPlugin, useCase } = buildUseCase({ syncBaileysDirectoryForInbox })
     const department = await departmentRepository.create({ name: 'Suporte', licensee: 'licensee-id-1', inbox: inboxId })
 

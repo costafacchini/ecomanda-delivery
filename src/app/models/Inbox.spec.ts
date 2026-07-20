@@ -47,9 +47,7 @@ describe('Inbox', () => {
       const inbox = await Inbox.create({ name: 'Suporte', licensee, kind: 'messenger' })
       const populated = await Inbox.findById(inbox._id).populate('licensee')
 
-      expect(populated!.webhookUrl).toMatch(
-        new RegExp(`token=${licensee.apiToken}&inbox=${inbox.inboxToken}`),
-      )
+      expect(populated!.webhookUrl).toMatch(new RegExp(`token=${licensee.apiToken}&inbox=${inbox.inboxToken}`))
     })
 
     it('returns null when licensee is not populated', async () => {

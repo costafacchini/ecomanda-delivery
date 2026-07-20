@@ -36,9 +36,7 @@ class BootBaileysSocketSessions {
           continue
         }
 
-        const inbox = session.inbox
-          ? await this.inboxRepository.findFirst({ _id: session.inbox })
-          : null
+        const inbox = session.inbox ? await this.inboxRepository.findFirst({ _id: session.inbox }) : null
 
         logger.info(`Baileys boot: iniciando socket para sessão ${session._id} (licensee ${licensee._id})`)
         await this.startBaileysSocket(licensee, inbox)

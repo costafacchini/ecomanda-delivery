@@ -43,7 +43,12 @@ describe('GetBaileysStatusForInbox', () => {
   it('returns { connected: false } when inbox does not use baileys', async () => {
     const { licenseeRepository, inboxRepository, useCase } = buildUseCase()
     const licensee = await licenseeRepository.create(licenseeCompleteFactory.build())
-    const inbox = await inboxRepository.create({ name: 'Suporte', licensee: licensee._id, kind: 'messenger', whatsappDefault: 'dialog' })
+    const inbox = await inboxRepository.create({
+      name: 'Suporte',
+      licensee: licensee._id,
+      kind: 'messenger',
+      whatsappDefault: 'dialog',
+    })
 
     const result = await useCase.execute(inbox._id)
 
@@ -52,7 +57,12 @@ describe('GetBaileysStatusForInbox', () => {
 
   it('returns { connected: false } when licensee is not found', async () => {
     const { inboxRepository, useCase } = buildUseCase()
-    const inbox = await inboxRepository.create({ name: 'Suporte', licensee: '000000000000000000000001', kind: 'messenger', whatsappDefault: 'baileys' })
+    const inbox = await inboxRepository.create({
+      name: 'Suporte',
+      licensee: '000000000000000000000001',
+      kind: 'messenger',
+      whatsappDefault: 'baileys',
+    })
 
     const result = await useCase.execute(inbox._id)
 
@@ -62,7 +72,12 @@ describe('GetBaileysStatusForInbox', () => {
   it('returns { connected: false } when no session exists for the inbox', async () => {
     const { licenseeRepository, inboxRepository, useCase } = buildUseCase()
     const licensee = await licenseeRepository.create(licenseeCompleteFactory.build())
-    const inbox = await inboxRepository.create({ name: 'Suporte', licensee: licensee._id, kind: 'messenger', whatsappDefault: 'baileys' })
+    const inbox = await inboxRepository.create({
+      name: 'Suporte',
+      licensee: licensee._id,
+      kind: 'messenger',
+      whatsappDefault: 'baileys',
+    })
 
     const result = await useCase.execute(inbox._id)
 
@@ -72,7 +87,12 @@ describe('GetBaileysStatusForInbox', () => {
   it('returns { connected: false } when inbox session exists but creds are empty', async () => {
     const { licenseeRepository, whatsappSessionRepository, inboxRepository, useCase } = buildUseCase()
     const licensee = await licenseeRepository.create(licenseeCompleteFactory.build())
-    const inbox = await inboxRepository.create({ name: 'Suporte', licensee: licensee._id, kind: 'messenger', whatsappDefault: 'baileys' })
+    const inbox = await inboxRepository.create({
+      name: 'Suporte',
+      licensee: licensee._id,
+      kind: 'messenger',
+      whatsappDefault: 'baileys',
+    })
     await whatsappSessionRepository.create({ licensee: licensee._id, inbox: inbox._id, creds: {}, keys: {} })
 
     const result = await useCase.execute(inbox._id)
@@ -83,7 +103,12 @@ describe('GetBaileysStatusForInbox', () => {
   it('returns { connected: true } when inbox session has non-empty creds', async () => {
     const { licenseeRepository, whatsappSessionRepository, inboxRepository, useCase } = buildUseCase()
     const licensee = await licenseeRepository.create(licenseeCompleteFactory.build())
-    const inbox = await inboxRepository.create({ name: 'Suporte', licensee: licensee._id, kind: 'messenger', whatsappDefault: 'baileys' })
+    const inbox = await inboxRepository.create({
+      name: 'Suporte',
+      licensee: licensee._id,
+      kind: 'messenger',
+      whatsappDefault: 'baileys',
+    })
     await whatsappSessionRepository.create({
       licensee: licensee._id,
       inbox: inbox._id,
@@ -104,7 +129,12 @@ describe('GetBaileysStatusForInbox', () => {
       socketManager,
     })
     const licensee = await licenseeRepository.create(licenseeCompleteFactory.build())
-    const inbox = await inboxRepository.create({ name: 'Suporte', licensee: licensee._id, kind: 'messenger', whatsappDefault: 'baileys' })
+    const inbox = await inboxRepository.create({
+      name: 'Suporte',
+      licensee: licensee._id,
+      kind: 'messenger',
+      whatsappDefault: 'baileys',
+    })
     await whatsappSessionRepository.create({
       licensee: licensee._id,
       inbox: inbox._id,
@@ -125,7 +155,12 @@ describe('GetBaileysStatusForInbox', () => {
       socketManager,
     })
     const licensee = await licenseeRepository.create(licenseeCompleteFactory.build())
-    const inbox = await inboxRepository.create({ name: 'Suporte', licensee: licensee._id, kind: 'messenger', whatsappDefault: 'baileys' })
+    const inbox = await inboxRepository.create({
+      name: 'Suporte',
+      licensee: licensee._id,
+      kind: 'messenger',
+      whatsappDefault: 'baileys',
+    })
     await whatsappSessionRepository.create({
       licensee: licensee._id,
       inbox: inbox._id,

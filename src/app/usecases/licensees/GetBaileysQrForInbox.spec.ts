@@ -40,7 +40,12 @@ describe('GetBaileysQrForInbox', () => {
   it('returns { message: "Inbox não usa Baileys" } when inbox does not use baileys', async () => {
     const { licenseeRepository, inboxRepository, createMessengerPlugin, useCase } = buildUseCase()
     const licensee = await licenseeRepository.create(licenseeCompleteFactory.build())
-    const inbox = await inboxRepository.create({ name: 'Suporte', licensee: licensee._id, kind: 'messenger', whatsappDefault: 'dialog' })
+    const inbox = await inboxRepository.create({
+      name: 'Suporte',
+      licensee: licensee._id,
+      kind: 'messenger',
+      whatsappDefault: 'dialog',
+    })
 
     const result = await useCase.execute(inbox._id)
 
@@ -50,7 +55,12 @@ describe('GetBaileysQrForInbox', () => {
 
   it('returns { message: "Inbox não usa Baileys" } when licensee is not found', async () => {
     const { inboxRepository, createMessengerPlugin, useCase } = buildUseCase()
-    const inbox = await inboxRepository.create({ name: 'Suporte', licensee: '000000000000000000000001', kind: 'messenger', whatsappDefault: 'baileys' })
+    const inbox = await inboxRepository.create({
+      name: 'Suporte',
+      licensee: '000000000000000000000001',
+      kind: 'messenger',
+      whatsappDefault: 'baileys',
+    })
 
     const result = await useCase.execute(inbox._id)
 
@@ -61,7 +71,12 @@ describe('GetBaileysQrForInbox', () => {
   it('returns { qr } when plugin.getQrCode() returns a QR string', async () => {
     const { licenseeRepository, inboxRepository, createMessengerPlugin, useCase } = buildUseCase()
     const licensee = await licenseeRepository.create(licenseeCompleteFactory.build())
-    const inbox = await inboxRepository.create({ name: 'Suporte', licensee: licensee._id, kind: 'messenger', whatsappDefault: 'baileys' })
+    const inbox = await inboxRepository.create({
+      name: 'Suporte',
+      licensee: licensee._id,
+      kind: 'messenger',
+      whatsappDefault: 'baileys',
+    })
     const plugin = { getQrCode: jest.fn().mockResolvedValue('qr-string-data') }
     createMessengerPlugin.mockReturnValue(plugin)
 
@@ -74,7 +89,12 @@ describe('GetBaileysQrForInbox', () => {
   it('returns { connected: true, message: "Já conectado" } when plugin.getQrCode() returns null', async () => {
     const { licenseeRepository, inboxRepository, createMessengerPlugin, useCase } = buildUseCase()
     const licensee = await licenseeRepository.create(licenseeCompleteFactory.build())
-    const inbox = await inboxRepository.create({ name: 'Suporte', licensee: licensee._id, kind: 'messenger', whatsappDefault: 'baileys' })
+    const inbox = await inboxRepository.create({
+      name: 'Suporte',
+      licensee: licensee._id,
+      kind: 'messenger',
+      whatsappDefault: 'baileys',
+    })
     const plugin = { getQrCode: jest.fn().mockResolvedValue(null) }
     createMessengerPlugin.mockReturnValue(plugin)
 
@@ -88,7 +108,12 @@ describe('GetBaileysQrForInbox', () => {
     const startBaileysSocket = jest.fn().mockResolvedValue(undefined)
     const { licenseeRepository, inboxRepository, createMessengerPlugin, useCase } = buildUseCase({ startBaileysSocket })
     const licensee = await licenseeRepository.create(licenseeCompleteFactory.build())
-    const inbox = await inboxRepository.create({ name: 'Suporte', licensee: licensee._id, kind: 'messenger', whatsappDefault: 'baileys' })
+    const inbox = await inboxRepository.create({
+      name: 'Suporte',
+      licensee: licensee._id,
+      kind: 'messenger',
+      whatsappDefault: 'baileys',
+    })
     const plugin = { getQrCode: jest.fn().mockResolvedValue(null) }
     createMessengerPlugin.mockReturnValue(plugin)
 
@@ -101,7 +126,12 @@ describe('GetBaileysQrForInbox', () => {
     const startBaileysSocket = jest.fn()
     const { licenseeRepository, inboxRepository, createMessengerPlugin, useCase } = buildUseCase({ startBaileysSocket })
     const licensee = await licenseeRepository.create(licenseeCompleteFactory.build())
-    const inbox = await inboxRepository.create({ name: 'Suporte', licensee: licensee._id, kind: 'messenger', whatsappDefault: 'baileys' })
+    const inbox = await inboxRepository.create({
+      name: 'Suporte',
+      licensee: licensee._id,
+      kind: 'messenger',
+      whatsappDefault: 'baileys',
+    })
     const plugin = { getQrCode: jest.fn().mockResolvedValue(null) }
     createMessengerPlugin.mockReturnValue(plugin)
 
