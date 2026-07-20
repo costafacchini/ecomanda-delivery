@@ -111,6 +111,7 @@
     "registrations": "Cadastros",
     "contacts": "Contatos",
     "departments": "Departamentos",
+    "inboxes": "Inboxes",
     "triggers": "Gatilhos",
     "templates": "Templates",
     "messages": "Mensagens",
@@ -304,6 +305,52 @@
       "createError": "Ops! Não foi possível criar o usuário.",
       "updateSuccess": "Usuário atualizado com sucesso!",
       "updateError": "Ops! Não foi possível atualizar o usuário."
+    }
+  },
+  "inboxes": {
+    "title": "Inboxes",
+    "newInbox": "Nova Inbox",
+    "editInbox": "Editar Inbox",
+    "deleteInboxTitle": "Excluir inbox",
+    "deleteInboxConfirm": "Tem certeza que deseja excluir esta inbox?",
+    "kindLabel": "Tipo",
+    "kind": {
+      "messenger": "Mensageiro (WhatsApp)",
+      "chat": "Chat"
+    },
+    "active": "Ativo",
+    "whatsappDefault": "WhatsApp padrão",
+    "whatsappToken": "Token do WhatsApp",
+    "whatsappUrl": "URL do WhatsApp",
+    "chatDefault": "Chat padrão",
+    "chatUrl": "URL do Chat",
+    "chatKey": "Chave do Chat",
+    "chatIdentifier": "Identificador do Chat",
+    "inboxToken": "Token da Inbox",
+    "webhookUrl": "URL do Webhook",
+    "validation": {
+      "nameRequired": "Nome é obrigatório",
+      "kindRequired": "Tipo é obrigatório"
+    },
+    "toast": {
+      "createSuccess": "Inbox criada com sucesso!",
+      "createError": "Ops! Não foi possível criar a inbox.",
+      "updateSuccess": "Inbox atualizada com sucesso!",
+      "updateError": "Ops! Não foi possível atualizar a inbox.",
+      "deleteSuccess": "Inbox excluída com sucesso!",
+      "deleteError": "Ops! Não foi possível excluir a inbox."
+    },
+    "baileys": {
+      "title": "Conexão Baileys",
+      "checking": "Verificando conexão...",
+      "connected": "Conectado",
+      "reconnect": "Reconectar",
+      "syncGroups": "Sincronizar Grupos",
+      "syncing": "Sincronizando...",
+      "generateQr": "Gerar QR Code",
+      "syncResult": "Grupos importados: {{imported}} | Grupos atualizados: {{updated}}",
+      "syncError": "Erro ao sincronizar grupos",
+      "qrError": "Erro ao gerar QR"
     }
   },
   "departments": {

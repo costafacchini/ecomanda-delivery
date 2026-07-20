@@ -6,6 +6,7 @@ import SignIn from './SignIn'
 import LicenseesRoutes from './Licensees/routes'
 import UsersRoutes from './Users/routes'
 import DepartmentsRoutes from './Departments/routes'
+import InboxesRoutes from './Inboxes/routes'
 import ContactsRoutes from './Contacts/routes'
 import TriggersRoutes from './Triggers/routes'
 import TemplatesRoutes from './Templates/routes'
@@ -68,6 +69,14 @@ function RootRoutes() {
           element={
             <PrivateRoute redirectTo='/'>
               <DepartmentsRoutes />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path='/inboxes/*'
+          element={
+            <PrivateRoute redirectTo='/'>
+              <InboxesRoutes />
             </PrivateRoute>
           }
         />
