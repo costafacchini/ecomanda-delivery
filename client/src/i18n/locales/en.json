@@ -111,6 +111,7 @@
     "registrations": "Registrations",
     "contacts": "Contacts",
     "departments": "Departments",
+    "inboxes": "Inboxes",
     "triggers": "Triggers",
     "templates": "Templates",
     "messages": "Messages",
@@ -304,6 +305,52 @@
       "createError": "Oops! Could not create user.",
       "updateSuccess": "User updated successfully!",
       "updateError": "Oops! Could not update user."
+    }
+  },
+  "inboxes": {
+    "title": "Inboxes",
+    "newInbox": "New Inbox",
+    "editInbox": "Edit Inbox",
+    "deleteInboxTitle": "Delete inbox",
+    "deleteInboxConfirm": "Are you sure you want to delete this inbox?",
+    "kindLabel": "Type",
+    "kind": {
+      "messenger": "Messenger (WhatsApp)",
+      "chat": "Chat"
+    },
+    "active": "Active",
+    "whatsappDefault": "Default WhatsApp",
+    "whatsappToken": "WhatsApp token",
+    "whatsappUrl": "WhatsApp URL",
+    "chatDefault": "Default chat",
+    "chatUrl": "Chat URL",
+    "chatKey": "Chat key",
+    "chatIdentifier": "Chat identifier",
+    "inboxToken": "Inbox token",
+    "webhookUrl": "Webhook URL",
+    "validation": {
+      "nameRequired": "Name is required",
+      "kindRequired": "Type is required"
+    },
+    "toast": {
+      "createSuccess": "Inbox created successfully!",
+      "createError": "Oops! Could not create inbox.",
+      "updateSuccess": "Inbox updated successfully!",
+      "updateError": "Oops! Could not update inbox.",
+      "deleteSuccess": "Inbox deleted successfully!",
+      "deleteError": "Oops! Could not delete inbox."
+    },
+    "baileys": {
+      "title": "Baileys Connection",
+      "checking": "Checking connection...",
+      "connected": "Connected",
+      "reconnect": "Reconnect",
+      "syncGroups": "Sync Groups",
+      "syncing": "Syncing...",
+      "generateQr": "Generate QR Code",
+      "syncResult": "Imported groups: {{imported}} | Updated groups: {{updated}}",
+      "syncError": "Error syncing groups",
+      "qrError": "Error generating QR"
     }
   },
   "departments": {
