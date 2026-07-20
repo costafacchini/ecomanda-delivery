@@ -326,6 +326,8 @@
       "deleteSuccess": "Departamento excluído com sucesso!",
       "deleteError": "Ops! Não foi possível excluir o departamento."
     },
+    "inbox": "Inbox (WhatsApp)",
+    "noInbox": "Nenhuma (usar config. padrão)",
     "baileys": {
       "title": "Conexão Baileys",
       "checking": "Verificando conexão...",
@@ -615,7 +617,9 @@
     "newConversationModalTitle": "Nova conversa",
     "selectContactLabel": "Selecione um contato",
     "closeModalAriaLabel": "Fechar",
-    "createRoomError": "Erro ao criar conversa. Tente novamente."
+    "createRoomError": "Erro ao criar conversa. Tente novamente.",
+    "selectInbox": "Selecione uma inbox",
+    "selectInboxDescription": "Esta conversa pertence a qual inbox?"
   },
   "reports": {
     "title": "Mensagens",
