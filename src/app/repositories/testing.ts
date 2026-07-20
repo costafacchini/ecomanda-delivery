@@ -8,6 +8,7 @@ import Trigger from '../models/Trigger'
 import User from '../models/User'
 import WhatsappSession from '../models/WhatsappSession'
 import Department from '../models/Department'
+import Inbox from '../models/Inbox'
 import { BodyRepositoryDatabase, BodyRepositoryMemory } from './body'
 import { ContactRepositoryDatabase, ContactRepositoryMemory } from './contact'
 import { LicenseeRepositoryDatabase, LicenseeRepositoryMemory } from './licensee'
@@ -19,6 +20,7 @@ import { TriggerRepositoryDatabase, TriggerRepositoryMemory } from './trigger'
 import { UserRepositoryDatabase, UserRepositoryMemory } from './user'
 import { WhatsappSessionRepositoryDatabase, WhatsappSessionRepositoryMemory } from './whatsappsession'
 import { DepartmentRepositoryDatabase, DepartmentRepositoryMemory } from './department'
+import { InboxRepositoryDatabase, InboxRepositoryMemory } from './inbox'
 import { RepositoryMemory, matchesFilter, sortRecords, comparableValue } from './repository'
 import { parseText as parseTextHelper } from '../helpers/ParseTriggerText'
 
@@ -53,6 +55,7 @@ function createMemoryRepositories() {
     users: [] as any[],
     whatsappSessions: [] as any[],
     departments: [] as any[],
+    inboxes: [] as any[],
   }
 
   const triggerRepository = new TriggerRepositoryMemory(state.triggers)
@@ -80,6 +83,7 @@ function createMemoryRepositories() {
     userRepository: new UserRepositoryMemory(state.users),
     whatsappSessionRepository: new WhatsappSessionRepositoryMemory(state.whatsappSessions),
     departmentRepository: new DepartmentRepositoryMemory(state.departments),
+    inboxRepository: new InboxRepositoryMemory(state.inboxes),
   }
 }
 
@@ -391,6 +395,7 @@ function installMemoryRepositories() {
   repositories.userRepository.modelClass = User
   repositories.whatsappSessionRepository.modelClass = WhatsappSession
   repositories.departmentRepository.modelClass = Department
+  repositories.inboxRepository.modelClass = Inbox
 
   repositories.bodyRepository.relationLoaders = {
     licensee: loadRelation(repositories.licenseeRepository),
@@ -423,6 +428,9 @@ function installMemoryRepositories() {
   repositories.departmentRepository.relationLoaders = {
     licensee: loadRelation(repositories.licenseeRepository),
   }
+  repositories.inboxRepository.relationLoaders = {
+    licensee: loadRelation(repositories.licenseeRepository),
+  }
 
   bindRepositoryPrototype(BodyRepositoryDatabase.prototype, repositories.bodyRepository, restores)
   bindRepositoryPrototype(ContactRepositoryDatabase.prototype, repositories.contactRepository, restores)
@@ -434,6 +442,7 @@ function installMemoryRepositories() {
   bindRepositoryPrototype(UserRepositoryDatabase.prototype, repositories.userRepository, restores)
   bindRepositoryPrototype(WhatsappSessionRepositoryDatabase.prototype, repositories.whatsappSessionRepository, restores)
   bindRepositoryPrototype(DepartmentRepositoryDatabase.prototype, repositories.departmentRepository, restores)
+  bindRepositoryPrototype(InboxRepositoryDatabase.prototype, repositories.inboxRepository, restores)
 
   patchMember(
     BodyRepositoryDatabase.prototype,
@@ -495,6 +504,12 @@ function installMemoryRepositories() {
     () => createMemoryModelAdapter(repositories.departmentRepository),
     restores,
   )
+  patchMember(
+    InboxRepositoryDatabase.prototype,
+    'model',
+    () => createMemoryModelAdapter(repositories.inboxRepository),
+    restores,
+  )
 
   bindModelToRepository(Body, repositories.bodyRepository, restores)
   bindModelToRepository(Contact, repositories.contactRepository, restores)
@@ -506,6 +521,7 @@ function installMemoryRepositories() {
   bindModelToRepository(User, repositories.userRepository, restores)
   bindModelToRepository(WhatsappSession, repositories.whatsappSessionRepository, restores)
   bindModelToRepository(Department, repositories.departmentRepository, restores)
+  bindModelToRepository(Inbox, repositories.inboxRepository, restores)
 
   patchMember(
     Room,
