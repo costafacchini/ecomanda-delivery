@@ -10,7 +10,7 @@ class IngestChatMessage {
     this.jobQueue = jobQueue
   }
 
-  async execute({ body, licenseeId }: Record<string, any> = {}) {
+  async execute({ body, licenseeId, inboxId = null }: Record<string, any> = {}) {
     // Remove crmData because of Rocketchat sending a higher history inside the body
     delete body['crmData']
 
@@ -18,6 +18,7 @@ class IngestChatMessage {
       content: body,
       licensee: licenseeId,
       kind: CHAT_MESSAGE_KIND,
+      inbox: inboxId,
     })
 
     await this.jobQueue.addJob(CHAT_MESSAGE_JOB, {

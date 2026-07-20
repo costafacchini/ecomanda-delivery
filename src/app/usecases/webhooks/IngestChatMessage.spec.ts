@@ -43,4 +43,43 @@ describe('IngestChatMessage', () => {
     expect(bodySaved.content).not.toHaveProperty('crmData')
     expect(bodySaved.content).toEqual({ message: 'hello' })
   })
+
+  it('saves inboxId on the Body record when inboxId is provided', async () => {
+    const chatRepository = new BodyRepositoryMemory()
+    const jobQueue = {
+      addJob: jest.fn().mockResolvedValue(undefined),
+    }
+    const ingestChatMessage = new IngestChatMessage({ chatRepository, jobQueue })
+
+    const bodySaved = await ingestChatMessage.execute({
+      body: { message: 'hello' },
+      licenseeId: 'licensee-id',
+      inboxId: 'inbox-456',
+    })
+
+    expect(bodySaved).toEqual(
+      expect.objectContaining({
+        inbox: 'inbox-456',
+      }),
+    )
+  })
+
+  it('saves null inbox on Body record when inboxId is not provided', async () => {
+    const chatRepository = new BodyRepositoryMemory()
+    const jobQueue = {
+      addJob: jest.fn().mockResolvedValue(undefined),
+    }
+    const ingestChatMessage = new IngestChatMessage({ chatRepository, jobQueue })
+
+    const bodySaved = await ingestChatMessage.execute({
+      body: { message: 'hello' },
+      licenseeId: 'licensee-id',
+    })
+
+    expect(bodySaved).toEqual(
+      expect.objectContaining({
+        inbox: null,
+      }),
+    )
+  })
 })
