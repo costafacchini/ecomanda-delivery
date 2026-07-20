@@ -21,54 +21,54 @@ describe('WhatsappSession', () => {
     await mongoServer.disconnect()
   })
 
-  describe('department field', () => {
-    it('defaults department to null', async () => {
+  describe('inbox field', () => {
+    it('defaults inbox to null', async () => {
       const session = await WhatsappSession.create({ licensee })
 
-      expect(session.department).toBeNull()
+      expect(session.inbox).toBeNull()
     })
 
-    it('accepts a department ObjectId', async () => {
+    it('accepts an inbox ObjectId', async () => {
       const userRepository = new UserRepositoryDatabase()
       const user = await userRepository.create(userFactory.build({ licensee }))
 
       const departmentRepository = new DepartmentRepositoryDatabase()
       const department = await departmentRepository.create(sectorFactory.build({ licensee, users: [user] }))
-      const session = await WhatsappSession.create({ licensee, department: department._id })
+      const session = await WhatsappSession.create({ licensee, inbox: department._id })
 
-      expect(session.department?.toString()).toEqual(department._id.toString())
+      expect(session.inbox?.toString()).toEqual(department._id.toString())
     })
   })
 
-  describe('compound unique index (licensee + department)', () => {
+  describe('compound unique index (licensee + inbox)', () => {
     beforeEach(async () => {
       await WhatsappSession.syncIndexes()
     })
 
-    it('allows two sessions for the same licensee when departments differ', async () => {
+    it('allows two sessions for the same licensee when inboxes differ', async () => {
       const userRepository = new UserRepositoryDatabase()
       const user = await userRepository.create(userFactory.build({ licensee }))
 
       const departmentRepository = new DepartmentRepositoryDatabase()
-      const departmentA = await departmentRepository.create(sectorFactory.build({ licensee, users: [user] }))
-      const departmentB = await departmentRepository.create(sectorFactory.build({ licensee, users: [user] }))
+      const inboxA = await departmentRepository.create(sectorFactory.build({ licensee, users: [user] }))
+      const inboxB = await departmentRepository.create(sectorFactory.build({ licensee, users: [user] }))
 
-      await WhatsappSession.create({ licensee, department: departmentA })
-      const second = await WhatsappSession.create({ licensee, department: departmentB })
+      await WhatsappSession.create({ licensee, inbox: inboxA })
+      const second = await WhatsappSession.create({ licensee, inbox: inboxB })
 
       expect(second._id).toBeDefined()
     })
 
-    it('rejects a duplicate (licensee + department) pair', async () => {
+    it('rejects a duplicate (licensee + inbox) pair', async () => {
       const userRepository = new UserRepositoryDatabase()
       const user = await userRepository.create(userFactory.build({ licensee }))
 
       const departmentRepository = new DepartmentRepositoryDatabase()
-      const department = await departmentRepository.create(sectorFactory.build({ licensee, users: [user] }))
+      const inbox = await departmentRepository.create(sectorFactory.build({ licensee, users: [user] }))
 
-      await WhatsappSession.create({ licensee, department: department })
+      await WhatsappSession.create({ licensee, inbox: inbox })
 
-      await expect(WhatsappSession.create({ licensee, department: department })).rejects.toThrow()
+      await expect(WhatsappSession.create({ licensee, inbox: inbox })).rejects.toThrow()
     })
   })
 })
