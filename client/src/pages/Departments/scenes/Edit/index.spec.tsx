@@ -24,7 +24,7 @@ describe('<SectorEdit />', () => {
   }
 
   beforeEach(() => {
-    ;(getInboxes as any).mockResolvedValue([])
+    ;(getInboxes as any).mockResolvedValue({ data: [] })
   })
 
   function mount() {
@@ -81,10 +81,12 @@ describe('<SectorEdit />', () => {
       status: 200,
       data: { id: '1', name: 'Suporte', active: true, users: [] },
     })
-    ;(getInboxes as any).mockResolvedValue([
-      { _id: 'i1', name: 'WhatsApp Principal', kind: 'messenger', inboxToken: 'tok-1', webhookUrl: null, active: true },
-      { _id: 'i2', name: 'WhatsApp Suporte', kind: 'messenger', inboxToken: 'tok-2', webhookUrl: null, active: true },
-    ])
+    ;(getInboxes as any).mockResolvedValue({
+      data: [
+        { _id: 'i1', name: 'WhatsApp Principal', kind: 'messenger', inboxToken: 'tok-1', webhookUrl: null, active: true },
+        { _id: 'i2', name: 'WhatsApp Suporte', kind: 'messenger', inboxToken: 'tok-2', webhookUrl: null, active: true },
+      ],
+    })
 
     mount()
 
@@ -100,9 +102,11 @@ describe('<SectorEdit />', () => {
       status: 200,
       data: { id: '1', name: 'Suporte', active: true, users: [], inbox: null },
     })
-    ;(getInboxes as any).mockResolvedValue([
-      { _id: 'i1', name: 'WhatsApp Principal', kind: 'messenger', inboxToken: 'tok-1', webhookUrl: null, active: true },
-    ])
+    ;(getInboxes as any).mockResolvedValue({
+      data: [
+        { _id: 'i1', name: 'WhatsApp Principal', kind: 'messenger', inboxToken: 'tok-1', webhookUrl: null, active: true },
+      ],
+    })
     ;(updateDepartment as any).mockResolvedValue({ status: 200 })
 
     mount()

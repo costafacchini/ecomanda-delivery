@@ -46,8 +46,8 @@ function SectorForm(props: any) {
     async function fetchMessengerInboxes() {
       const licenseeId = currentUser?.licensee?._id || currentUser?.licensee
       if (!licenseeId) return
-      const inboxes = await getInboxes({ licensee: licenseeId, kind: 'messenger' })
-      setMessengerInboxes(inboxes)
+      const { data } = await getInboxes({ licensee: licenseeId, kind: 'messenger' })
+      setMessengerInboxes(Array.isArray(data) ? data : [])
     }
     fetchMessengerInboxes()
   }, [currentUser])
