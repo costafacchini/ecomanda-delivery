@@ -10,14 +10,16 @@ function buildUseCase(overrides: Record<string, any> = {}) {
   const departmentRepository = overrides.departmentRepository ?? new DepartmentRepositoryMemory()
   const startBaileysSocket = overrides.startBaileysSocket
   const socketManager = overrides.socketManager
+  const getBaileysStatusForInbox = overrides.getBaileysStatusForInbox ?? { execute: jest.fn() }
   const useCase = new GetBaileysStatusForDepartment({
     licenseeRepository,
     whatsappSessionRepository,
     departmentRepository,
     startBaileysSocket,
     socketManager,
+    getBaileysStatusForInbox,
   })
-  return { licenseeRepository, whatsappSessionRepository, departmentRepository, useCase }
+  return { licenseeRepository, whatsappSessionRepository, departmentRepository, getBaileysStatusForInbox, useCase }
 }
 
 describe('GetBaileysStatusForDepartment', () => {
@@ -140,5 +142,17 @@ describe('GetBaileysStatusForDepartment', () => {
     await useCase.execute(department._id)
 
     expect(startBaileysSocket).not.toHaveBeenCalled()
+  })
+
+  it('delegates to getBaileysStatusForInbox when department has a linked inbox', async () => {
+    const inboxId = 'inbox-id-abc'
+    const { departmentRepository, getBaileysStatusForInbox, useCase } = buildUseCase()
+    const department = await departmentRepository.create({ name: 'Suporte', licensee: 'licensee-id-1', inbox: inboxId })
+    getBaileysStatusForInbox.execute.mockResolvedValue({ connected: true })
+
+    const result = await useCase.execute(department._id)
+
+    expect(getBaileysStatusForInbox.execute).toHaveBeenCalledWith(inboxId)
+    expect(result).toEqual({ connected: true })
   })
 })

@@ -20,20 +20,30 @@ const DEFAULT_GROUPS = [
   },
 ]
 
-function buildUseCase({ groups } = {}) {
+function buildUseCase({ groups, syncBaileysDirectoryForInbox }: Record<string, any> = {}) {
   const departmentRepository = new DepartmentRepositoryMemory()
   const licenseeRepository = new LicenseeRepositoryMemory()
   const contactRepository = new ContactRepositoryMemory()
   const resolvedGroups = groups !== undefined ? groups : DEFAULT_GROUPS
   const plugin = { fetchGroups: jest.fn().mockResolvedValue({ groups: resolvedGroups }) }
   const createMessengerPlugin = jest.fn().mockReturnValue(plugin)
+  const resolvedSyncForInbox = syncBaileysDirectoryForInbox ?? { execute: jest.fn() }
   const useCase = new SyncBaileysDirectoryForDepartment({
     departmentRepository,
     licenseeRepository,
     contactRepository,
     createMessengerPlugin,
+    syncBaileysDirectoryForInbox: resolvedSyncForInbox,
   })
-  return { departmentRepository, licenseeRepository, contactRepository, createMessengerPlugin, plugin, useCase }
+  return {
+    departmentRepository,
+    licenseeRepository,
+    contactRepository,
+    createMessengerPlugin,
+    plugin,
+    syncBaileysDirectoryForInbox: resolvedSyncForInbox,
+    useCase,
+  }
 }
 
 describe('SyncBaileysDirectoryForDepartment', () => {
@@ -205,5 +215,18 @@ describe('SyncBaileysDirectoryForDepartment', () => {
     const result = await useCase.execute(department._id)
 
     expect(result).toEqual({ importedContacts: 0, updatedContacts: 0, importedGroups: 0, updatedGroups: 0, skipped: 0 })
+  })
+
+  it('delegates to syncBaileysDirectoryForInbox when department has a linked inbox', async () => {
+    const inboxId = 'inbox-id-abc'
+    const syncBaileysDirectoryForInbox = { execute: jest.fn().mockResolvedValue({ importedGroups: 3, updatedGroups: 0 }) }
+    const { departmentRepository, createMessengerPlugin, useCase } = buildUseCase({ syncBaileysDirectoryForInbox })
+    const department = await departmentRepository.create({ name: 'Suporte', licensee: 'licensee-id-1', inbox: inboxId })
+
+    const result = await useCase.execute(department._id)
+
+    expect(syncBaileysDirectoryForInbox.execute).toHaveBeenCalledWith(inboxId)
+    expect(createMessengerPlugin).not.toHaveBeenCalled()
+    expect(result).toEqual({ importedGroups: 3, updatedGroups: 0 })
   })
 })
