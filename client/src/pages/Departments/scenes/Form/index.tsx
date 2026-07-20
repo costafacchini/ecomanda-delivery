@@ -5,12 +5,15 @@ import * as Yup from 'yup'
 import { useNavigate } from 'react-router'
 import Select from 'react-select'
 import { getUsers } from '../../../../services/user'
+import { getInboxes } from '../../../../services/inbox'
+import type { IInbox } from '../../../../types/inbox'
 import DepartmentBaileysPanel from '../Edit/DepartmentBaileysPanel'
 
 const sectorInitialValues = {
   name: '',
   users: [] as string[],
   active: true,
+  inbox: null as string | null,
 }
 
 function SectorForm(props: any) {
@@ -18,6 +21,7 @@ function SectorForm(props: any) {
   const { t } = useTranslation()
   let navigate = useNavigate()
   const [userOptions, setUserOptions] = useState<{ value: string; label: string }[]>([])
+  const [messengerInboxes, setMessengerInboxes] = useState<IInbox[]>([])
 
   const sectorSchema = useMemo(
     () =>
@@ -36,6 +40,16 @@ function SectorForm(props: any) {
       setUserOptions(users.map((u: any) => ({ value: u.id, label: u.name })))
     }
     fetchUsers()
+  }, [currentUser])
+
+  useEffect(() => {
+    async function fetchMessengerInboxes() {
+      const licenseeId = currentUser?.licensee?._id || currentUser?.licensee
+      if (!licenseeId) return
+      const inboxes = await getInboxes({ licensee: licenseeId, kind: 'messenger' })
+      setMessengerInboxes(inboxes)
+    }
+    fetchMessengerInboxes()
   }, [currentUser])
 
   const mergedInitialValues = { ...sectorInitialValues, ...initialValues }
@@ -98,6 +112,25 @@ function SectorForm(props: any) {
                       }}
                       placeholder={t('departments.usersPlaceholder')}
                     />
+                  </div>
+                </div>
+
+                <div className='row'>
+                  <div className='form-group col-5'>
+                    <label htmlFor='inbox'>{t('departments.inbox')}</label>
+                    <select
+                      id='inbox'
+                      className='form-select'
+                      value={formikProps.values.inbox ?? ''}
+                      onChange={(e) =>
+                        formikProps.setFieldValue('inbox', e.target.value || null)
+                      }
+                    >
+                      <option value=''>{t('departments.noInbox')}</option>
+                      {messengerInboxes.map(inbox => (
+                        <option key={inbox._id} value={inbox._id}>{inbox.name}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </fieldset>

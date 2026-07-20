@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useApp } from '../../contexts/App'
 import { getRooms, getRoomMessages, sendRoomMessage, closeRoom } from '../../services/rooms'
+import { getInboxes } from '../../services/inbox'
 import type { IRoom, IMessage } from '../../types'
+import type { IInbox } from '../../types/inbox'
 import styles from './styles.module.scss'
 import RoomList from './components/RoomList'
 import ConversationPanel from './components/ConversationPanel'
 import NewConversationModal from './components/NewConversationModal'
+import InboxPickerModal from './components/InboxPickerModal'
 import { useChatSocket } from '../../hooks/useChatSocket'
 import Navbar from '../Navbar'
 
@@ -19,6 +22,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<IMessage[]>([])
   const [messagesLoading, setMessagesLoading] = useState(false)
   const [showNewConvo, setShowNewConvo] = useState(false)
+  const [pendingChatInboxes, setPendingChatInboxes] = useState<IInbox[]>([])
   const [mobileView, setMobileView] = useState<'rooms' | 'conversation'>('rooms')
 
   useEffect(() => {
@@ -143,6 +147,29 @@ export default function ChatPage() {
     setMobileView('rooms')
   }
 
+  async function handleNewConversation() {
+    const licenseeId = effectiveLicenseeId
+    if (!licenseeId) {
+      setShowNewConvo(true)
+      return
+    }
+    const inboxes = await getInboxes({ licensee: licenseeId, kind: 'chat', active: true })
+    if (inboxes.length > 1) {
+      setPendingChatInboxes(inboxes)
+    } else {
+      setShowNewConvo(true)
+    }
+  }
+
+  function handleInboxSelected(_inbox: IInbox) {
+    setPendingChatInboxes([])
+    setShowNewConvo(true)
+  }
+
+  function handleInboxPickerDismiss() {
+    setPendingChatInboxes([])
+  }
+
   function handleRoomCreated(room: IRoom) {
     setRooms(prev => [room, ...prev.filter(r => r._id !== room._id)])
     handleRoomSelect(room)
@@ -161,7 +188,7 @@ export default function ChatPage() {
             rooms={rooms}
             selectedRoomId={selectedRoom?._id}
             onSelect={handleRoomSelect}
-            onNewConversation={() => setShowNewConvo(true)}
+            onNewConversation={handleNewConversation}
           />
         </div>
         <div className={`${styles.chatConversation}${conversationMobileVisible ? ` ${styles.chatConversationMobileVisible}` : ''}`}>
@@ -180,6 +207,13 @@ export default function ChatPage() {
         onClose={() => setShowNewConvo(false)}
         onRoomCreated={handleRoomCreated}
       />
+      {pendingChatInboxes.length > 0 && (
+        <InboxPickerModal
+          inboxes={pendingChatInboxes}
+          onSelect={handleInboxSelected}
+          onDismiss={handleInboxPickerDismiss}
+        />
+      )}
     </div>
   )
 }

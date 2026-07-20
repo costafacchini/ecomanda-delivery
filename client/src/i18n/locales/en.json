@@ -373,6 +373,8 @@
       "deleteSuccess": "Department deleted successfully!",
       "deleteError": "Oops! Could not delete department."
     },
+    "inbox": "Inbox (WhatsApp)",
+    "noInbox": "None (use default config)",
     "baileys": {
       "title": "Baileys Connection",
       "checking": "Checking connection...",
@@ -662,7 +664,9 @@
     "newConversationModalTitle": "New conversation",
     "selectContactLabel": "Select a contact",
     "closeModalAriaLabel": "Close",
-    "createRoomError": "Error creating conversation. Please try again."
+    "createRoomError": "Error creating conversation. Please try again.",
+    "selectInbox": "Select an inbox",
+    "selectInboxDescription": "Which inbox does this conversation belong to?"
   },
   "reports": {
     "title": "Messages",
