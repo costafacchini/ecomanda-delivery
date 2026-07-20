@@ -1,5 +1,6 @@
 import { WhatsappSessionRepositoryDatabase } from '../repositories/whatsappsession'
 import { DepartmentRepositoryDatabase } from '../repositories/department'
+import { InboxRepositoryDatabase } from '../repositories/inbox'
 import { BodyRepositoryDatabase } from '../repositories/body'
 import { ContactRepositoryDatabase } from '../repositories/contact'
 import { LicenseeRepositoryDatabase } from '../repositories/licensee'
@@ -31,6 +32,7 @@ function buildRuntimeDependencies({
   messageRepository,
   roomRepository,
   departmentRepository,
+  inboxRepository,
   templateRepository,
   trafficlightRepository,
   triggerRepository,
@@ -96,6 +98,7 @@ function buildRuntimeDependencies({
     messageRepository,
     roomRepository,
     departmentRepository,
+    inboxRepository,
     templateRepository,
     trafficlightRepository,
     triggerRepository,
@@ -129,6 +132,7 @@ function createRuntimeDependencies(overrides: Record<string, any> = {}) {
     triggerRepository,
     userRepository: overrides.userRepository ?? new UserRepositoryDatabase(),
     departmentRepository: overrides.departmentRepository ?? new DepartmentRepositoryDatabase(),
+    inboxRepository: overrides.inboxRepository ?? new InboxRepositoryDatabase(),
     whatsappSessionRepository: overrides.whatsappSessionRepository ?? new WhatsappSessionRepositoryDatabase(),
   })
 }
