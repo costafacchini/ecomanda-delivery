@@ -8,6 +8,7 @@ import { getUsers } from '../../../../services/user'
 import { getInboxes } from '../../../../services/inbox'
 import type { IInbox } from '../../../../types/inbox'
 import DepartmentBaileysPanel from '../Edit/DepartmentBaileysPanel'
+import { useApp } from '../../../../contexts/App'
 
 const sectorInitialValues = {
   name: '',
@@ -19,6 +20,7 @@ const sectorInitialValues = {
 function SectorForm(props: any) {
   const { onSubmit, errors, initialValues, currentUser, departmentId } = props
   const { t } = useTranslation()
+  const { activeLicensee } = useApp()
   let navigate = useNavigate()
   const [userOptions, setUserOptions] = useState<{ value: string; label: string }[]>([])
   const [messengerInboxes, setMessengerInboxes] = useState<IInbox[]>([])
@@ -33,24 +35,28 @@ function SectorForm(props: any) {
 
   useEffect(() => {
     async function fetchUsers() {
-      const licenseeId = currentUser?.licensee?._id || currentUser?.licensee
+      const licenseeId =
+        (typeof currentUser?.licensee === 'object' ? currentUser?.licensee?.id : currentUser?.licensee) ??
+        activeLicensee?.id
       if (!licenseeId) return
       const { data } = await getUsers({ licensee: licenseeId })
       const users = Array.isArray(data) ? data : []
       setUserOptions(users.map((u: any) => ({ value: u.id, label: u.name })))
     }
     fetchUsers()
-  }, [currentUser])
+  }, [currentUser, activeLicensee])
 
   useEffect(() => {
     async function fetchMessengerInboxes() {
-      const licenseeId = currentUser?.licensee?._id || currentUser?.licensee
+      const licenseeId =
+        (typeof currentUser?.licensee === 'object' ? currentUser?.licensee?.id : currentUser?.licensee) ??
+        activeLicensee?.id
       if (!licenseeId) return
       const { data } = await getInboxes({ licensee: licenseeId, kind: 'messenger' })
       setMessengerInboxes(Array.isArray(data) ? data : [])
     }
     fetchMessengerInboxes()
-  }, [currentUser])
+  }, [currentUser, activeLicensee])
 
   const mergedInitialValues = { ...sectorInitialValues, ...initialValues }
 

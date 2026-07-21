@@ -4,9 +4,11 @@ import { useNavigate } from 'react-router'
 import { toast } from 'react-toastify'
 import { createInbox } from '../../../../services/inbox'
 import InboxForm from '../Form'
+import { useApp } from '../../../../contexts/App'
 
 function InboxNew({ currentUser }: any) {
   const { t } = useTranslation()
+  const { activeLicensee } = useApp()
   const navigate = useNavigate()
   const [errors, setErrors] = useState<any[] | null>(null)
 
@@ -17,9 +19,13 @@ function InboxNew({ currentUser }: any) {
         <InboxForm
           errors={errors}
           onSubmit={async (values: any) => {
+            const licenseeId =
+              (typeof currentUser?.licensee === 'object' ? currentUser?.licensee?.id : currentUser?.licensee) ??
+              activeLicensee?.id ??
+              null
             const payload = {
               ...values,
-              licensee: currentUser?.licensee?._id || currentUser?.licensee,
+              licensee: licenseeId,
             }
             const response = await createInbox(payload)
 

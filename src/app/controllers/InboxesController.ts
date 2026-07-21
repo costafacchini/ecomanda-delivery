@@ -40,6 +40,7 @@ class InboxesController {
     })
 
     this.index = this.index.bind(this)
+    this.show = this.show.bind(this)
     this.create = this.create.bind(this)
     this.update = this.update.bind(this)
     this.destroy = this.destroy.bind(this)
@@ -55,6 +56,16 @@ class InboxesController {
 
       const inboxes = await this.inboxRepository.find(params, ['licensee'])
       return res.status(200).send(inboxes)
+    } catch (err: any) {
+      return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
+    }
+  }
+
+  async show(req: any, res: any) {
+    try {
+      const inbox = await this.inboxRepository.findFirst({ _id: req.params.id })
+      if (!inbox) return res.status(404).send({ errors: { message: 'Inbox não encontrada' } })
+      return res.status(200).send(inbox)
     } catch (err: any) {
       return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }

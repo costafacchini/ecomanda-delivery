@@ -216,6 +216,7 @@ router.post('/departments/:id/baileys-sync', authorize('admin', 'super'), depart
 
 router.get('/inboxes', authorize('admin', 'super'), inboxesController.index)
 router.post('/inboxes', authorize('admin', 'super'), inboxesController.create)
+router.get('/inboxes/:id', authorize('admin', 'super'), inboxesController.show)
 router.post('/inboxes/:id', authorize('admin', 'super'), inboxesController.update)
 router.delete('/inboxes/:id', authorize('admin', 'super'), inboxesController.destroy)
 router.post('/inboxes/:id/baileys-qr', authorize('admin', 'super'), inboxesController.baileysQr)

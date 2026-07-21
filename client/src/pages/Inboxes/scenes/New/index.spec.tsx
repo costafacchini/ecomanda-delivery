@@ -2,6 +2,7 @@ import InboxNew from './'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { createInbox } from '../../../../services/inbox'
 import { createRoutesStub } from 'react-router'
+import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/inbox')
 vi.mock('react-i18next', () => ({
@@ -14,14 +15,20 @@ vi.mock('react-i18next', () => ({
 describe('<InboxNew />', () => {
   const currentUser = {
     role: 'admin',
-    licensee: { _id: 'lic-1' },
+    licensee: { id: 'lic-1' },
   }
+
+  const appContextValue = { activeLicensee: null, updateActiveLicensee: vi.fn() }
 
   function mount() {
     const Stub = createRoutesStub([
       {
         path: '/inboxes/new',
-        Component: () => <InboxNew currentUser={currentUser} />,
+        Component: () => (
+          <AppContext.Provider value={appContextValue as any}>
+            <InboxNew currentUser={currentUser} />
+          </AppContext.Provider>
+        ),
       },
       {
         path: '/inboxes',

@@ -3,23 +3,28 @@ import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { getInboxes, deleteInbox } from '../../../../services/inbox'
 import { toast } from 'react-toastify'
+import { useApp } from '../../../../contexts/App'
 
 function InboxesIndex({ currentUser }: any) {
   const { t } = useTranslation()
+  const { activeLicensee } = useApp()
   const [inboxes, setInboxes] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
 
   const fetchInboxes = useCallback(async () => {
-    if (!currentUser?.licensee?._id) return
+    const licenseeId =
+      (typeof currentUser?.licensee === 'object' ? currentUser?.licensee?.id : currentUser?.licensee) ??
+      activeLicensee?.id
+    if (!licenseeId) return
 
     setLoading(true)
     try {
-      const { data } = await getInboxes({ licensee: currentUser.licensee._id })
+      const { data } = await getInboxes({ licensee: licenseeId })
       setInboxes(Array.isArray(data) ? data : [])
     } finally {
       setLoading(false)
     }
-  }, [currentUser])
+  }, [currentUser, activeLicensee])
 
   useEffect(() => {
     fetchInboxes()
@@ -55,7 +60,7 @@ function InboxesIndex({ currentUser }: any) {
           <thead>
             <tr>
               <th scope='col'>{t('common.name')}</th>
-              <th scope='col'>{t('inboxes.kind.label')}</th>
+              <th scope='col'>{t('inboxes.kindLabel')}</th>
               <th scope='col'>{t('common.active')}</th>
               <th scope='col'></th>
             </tr>

@@ -3,6 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { getInboxes, deleteInbox } from '../../../../services/inbox'
 import { createRoutesStub } from 'react-router'
 import { inboxFactory } from '../../../../factories/inbox'
+import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/inbox')
 vi.mock('react-i18next', () => ({
@@ -15,14 +16,20 @@ vi.mock('react-i18next', () => ({
 describe('<InboxesIndex />', () => {
   const currentUser = {
     role: 'admin',
-    licensee: { _id: 'lic-1', name: 'Acme' },
+    licensee: { id: 'lic-1', name: 'Acme' },
   }
+
+  const appContextValue = { activeLicensee: null, updateActiveLicensee: vi.fn() }
 
   function mount(user = currentUser) {
     const Stub = createRoutesStub([
       {
         path: '/inboxes',
-        Component: () => <InboxesIndex currentUser={user} />,
+        Component: () => (
+          <AppContext.Provider value={appContextValue as any}>
+            <InboxesIndex currentUser={user} />
+          </AppContext.Provider>
+        ),
       },
     ])
     render(<Stub initialEntries={['/inboxes']} />)

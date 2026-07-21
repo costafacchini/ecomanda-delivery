@@ -4,6 +4,7 @@ import { getDepartment, updateDepartment, getDepartmentBaileysStatus } from '../
 import { getUsers } from '../../../../services/user'
 import { getInboxes } from '../../../../services/inbox'
 import { createRoutesStub } from 'react-router'
+import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/department')
 vi.mock('../../../../services/user')
@@ -20,8 +21,10 @@ vi.mock('react-i18next', () => ({
 describe('<SectorEdit />', () => {
   const currentUser = {
     role: 'admin',
-    licensee: { _id: 'lic-1' },
+    licensee: { id: 'lic-1' },
   }
+
+  const appContextValue = { activeLicensee: null, updateActiveLicensee: vi.fn() }
 
   beforeEach(() => {
     ;(getInboxes as any).mockResolvedValue({ data: [] })
@@ -34,7 +37,11 @@ describe('<SectorEdit />', () => {
     const Stub = createRoutesStub([
       {
         path: '/departments/:id/edit',
-        Component: () => <SectorEdit currentUser={currentUser} />,
+        Component: () => (
+          <AppContext.Provider value={appContextValue as any}>
+            <SectorEdit currentUser={currentUser} />
+          </AppContext.Provider>
+        ),
       },
       {
         path: '/departments',
