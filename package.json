@@ -89,7 +89,7 @@
     "moment": "2.30.1",
     "moment-timezone": "0.6.3",
     "mongodb": "7.5.0",
-    "mongoose": "9.7.4",
+    "mongoose": "9.8.0",
     "morgan": "1.11.0",
     "newrelic": "14.3.3",
     "node-notifier": "10.0.1",
