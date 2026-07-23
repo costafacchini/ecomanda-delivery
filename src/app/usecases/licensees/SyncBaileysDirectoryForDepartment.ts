@@ -6,23 +6,30 @@ class SyncBaileysDirectoryForDepartment {
   licenseeRepository: any
   contactRepository: any
   createMessengerPlugin: any
+  syncBaileysDirectoryForInbox: any
 
   constructor({
     departmentRepository,
     licenseeRepository,
     contactRepository,
     createMessengerPlugin,
+    syncBaileysDirectoryForInbox,
   }: Record<string, any> = {}) {
     this.departmentRepository = departmentRepository
     this.licenseeRepository = licenseeRepository
     this.contactRepository = contactRepository
     this.createMessengerPlugin = createMessengerPlugin
+    this.syncBaileysDirectoryForInbox = syncBaileysDirectoryForInbox
   }
 
   async execute(departmentId: any) {
     const department = await this.departmentRepository.findFirst({ _id: departmentId })
     if (!department) {
       return { message: 'Departamento não encontrado' }
+    }
+
+    if (department.inbox) {
+      return this.syncBaileysDirectoryForInbox.execute(department.inbox)
     }
 
     const licensee = await this.licenseeRepository.findFirst({ _id: department.licensee })

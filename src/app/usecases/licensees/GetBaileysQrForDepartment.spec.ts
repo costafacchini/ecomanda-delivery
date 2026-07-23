@@ -8,13 +8,15 @@ function buildUseCase(overrides: Record<string, any> = {}) {
   const departmentRepository = overrides.departmentRepository ?? new DepartmentRepositoryMemory()
   const createMessengerPlugin = overrides.createMessengerPlugin ?? jest.fn()
   const startBaileysSocket = overrides.startBaileysSocket
+  const getBaileysQrForInbox = overrides.getBaileysQrForInbox ?? { execute: jest.fn() }
   const useCase = new GetBaileysQrForDepartment({
     licenseeRepository,
     departmentRepository,
     createMessengerPlugin,
     startBaileysSocket,
+    getBaileysQrForInbox,
   })
-  return { licenseeRepository, departmentRepository, createMessengerPlugin, useCase }
+  return { licenseeRepository, departmentRepository, createMessengerPlugin, getBaileysQrForInbox, useCase }
 }
 
 describe('GetBaileysQrForDepartment', () => {
@@ -102,5 +104,18 @@ describe('GetBaileysQrForDepartment', () => {
     await useCase.execute(department._id)
 
     expect(startBaileysSocket).not.toHaveBeenCalled()
+  })
+
+  it('delegates to getBaileysQrForInbox when department has a linked inbox', async () => {
+    const inboxId = 'inbox-id-abc'
+    const { departmentRepository, getBaileysQrForInbox, createMessengerPlugin, useCase } = buildUseCase()
+    const department = await departmentRepository.create({ name: 'Suporte', licensee: 'licensee-id-1', inbox: inboxId })
+    getBaileysQrForInbox.execute.mockResolvedValue({ qr: 'inbox-qr-data' })
+
+    const result = await useCase.execute(department._id)
+
+    expect(getBaileysQrForInbox.execute).toHaveBeenCalledWith(inboxId)
+    expect(createMessengerPlugin).not.toHaveBeenCalled()
+    expect(result).toEqual({ qr: 'inbox-qr-data' })
   })
 })

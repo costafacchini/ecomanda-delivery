@@ -24,7 +24,6 @@ Git-native Markdown plans for multi-step work.
 |---|------|--------|--------|-------------|
 | 2 | [MongoDB → PostgreSQL](./mongo-to-postgres/overview.md) | `mongo-to-postgres/` | not-started | Migrate all persistent data from MongoDB/Mongoose to PostgreSQL/Prisma using dual-write strategy; prerequisite: remove-pdv complete |
 | 3 | [Backend Type Narrowing](./type-backend/overview.md) | `type-backend/` | not-started | Replace `any` with interfaces across models, repositories, use cases, controllers, and plugins — 3 phases, 11 tasks |
-| 4 | [Inbox Concept](./inbox-concept/overview.md) | `inbox-concept/` | not-started | Introduce Inbox entity so licensees can operate multiple WhatsApp numbers and chat instances; departments link to messenger inboxes — 4 phases, 7 tasks |
 
 ---
 
@@ -52,6 +51,7 @@ Git-native Markdown plans for multi-step work.
 | 16 | [Local Chat UI](./local-chat-ui/overview.md) | `local-chat-ui/` | 2026-06-17 | Agent-facing full-screen chat page at /chat: rooms API, sector-aware filtering, Nova conversa, Socket.IO real-time updates |
 | 17 | [Chat Widget](./chat-widget/overview.md) | `chat-widget/` | 2026-06-22 | Embeddable Intercom-style widget for external sites; React+Vite IIFE bundle, 3 public API endpoints, polling replies, LocalChat integration — 4 phases, 11 tasks |
 | 18 | [App Internationalization (PT/EN)](./app-i18n/overview.md) | `app-i18n/` | 2026-06-24 | PT/EN language selection on login + onboarding, persisted in user.language, applied app-wide — 3 phases, 9 tasks |
+| 19 | [Inbox Concept](./inbox-concept/overview.md) | `inbox-concept/` | 2026-07-20 | Inbox entity so licensees can operate multiple WhatsApp numbers and chat instances independently; departments link to messenger inboxes — 4 phases, 7 tasks |
 
 ---
 

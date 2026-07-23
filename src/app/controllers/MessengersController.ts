@@ -12,6 +12,7 @@ class MessengersController {
       body: req.body,
       licenseeId: req.licensee._id,
       departmentId: req.department?._id ?? null,
+      inboxId: req.inbox?._id ?? null,
     })
 
     res.status(200).send({ body: 'Solicitação de mensagem para a plataforma de messenger agendado' })

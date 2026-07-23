@@ -1,8 +1,8 @@
 # Plan: Inbox Concept
 
-**Status**: not-started
+**Status**: complete
 **Created**: 2026-07-17
-**Last Updated**: 2026-07-17
+**Last Updated**: 2026-07-20
 **Assigned Dev**: Alan Costa Facchini
 **PR Strategy**: single
 **Spec**: [spec.md](spec.md) — 5 user stories · 17 acceptance scenarios · 6 success criteria
