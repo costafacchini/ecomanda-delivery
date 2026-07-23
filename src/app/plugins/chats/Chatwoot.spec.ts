@@ -751,6 +751,51 @@ describe('Chatwoot plugin', () => {
         expect(messageUpdated.messageChatId).toEqual('conversation_id')
       })
 
+      it('skips saving payload when Chatwoot response exceeds 1 MB', async () => {
+        const contactRepository = new ContactRepositoryDatabase()
+        const contact = await contactRepository.create(
+          contactFactory.build({
+            name: 'John Doe',
+            chatwootSourceId: 'source_123',
+            licensee,
+          }),
+        )
+
+        await Room.create(
+          roomFactory.build({
+            roomId: 'conversation_456',
+            contact,
+            closed: false,
+          }),
+        )
+
+        const messageRepository = new MessageRepositoryDatabase()
+        const message = await messageRepository.create(
+          messageFactory.build({
+            text: 'Message to send',
+            contact,
+            licensee,
+            sended: false,
+          }),
+        )
+
+        request.post.mockResolvedValue({
+          status: 200,
+          data: {
+            id: 'conversation_id',
+            history: 'x'.repeat(1_100_000),
+          },
+        })
+
+        const chatwoot = new Chatwoot(licensee, dependencies)
+        await chatwoot.sendMessage(message._id, 'https://api.chatwoot.com/api/v1/')
+
+        const messageUpdated = await messageRepository.findFirst({ _id: message._id })
+        expect(messageUpdated.sended).toEqual(true)
+        expect(messageUpdated.messageChatId).toEqual('conversation_id')
+        expect(messageUpdated.payload).toBeUndefined()
+      })
+
       it('adds in_reply_to when sending file replies', async () => {
         const contactRepository = new ContactRepositoryDatabase()
         const contact = await contactRepository.create(
