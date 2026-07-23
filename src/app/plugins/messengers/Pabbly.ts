@@ -416,7 +416,10 @@ class Pabbly extends MessengersBase {
       if (messageResponse.status === 200 || messageResponse.status === 201) {
         messageToSend.messageWaId = messageResponse.data?.data?.metaResponse?.messages[0]?.id
         messageToSend.sended = true
-        messageToSend.payload = JSON.stringify(messageResponse.data)
+        const serializedPayload = JSON.stringify(messageResponse.data)
+        if (serializedPayload.length <= 1_048_576) {
+          messageToSend.payload = serializedPayload
+        }
         await this.messageRepository.save(messageToSend)
       } else {
         messageToSend.error = JSON.stringify(messageResponse.data)
