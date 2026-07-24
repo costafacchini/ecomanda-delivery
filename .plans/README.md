@@ -25,6 +25,8 @@ Git-native Markdown plans for multi-step work.
 | 2 | [MongoDB → PostgreSQL](./mongo-to-postgres/overview.md) | `mongo-to-postgres/` | not-started | Migrate all persistent data from MongoDB/Mongoose to PostgreSQL/Prisma using dual-write strategy; prerequisite: remove-pdv complete |
 | 3 | [Backend Type Narrowing](./type-backend/overview.md) | `type-backend/` | not-started | Replace `any` with interfaces across models, repositories, use cases, controllers, and plugins — 3 phases, 11 tasks |
 | 4 | [Inbox Concept](./inbox-concept/overview.md) | `inbox-concept/` | not-started | Introduce Inbox entity so licensees can operate multiple WhatsApp numbers and chat instances; departments link to messenger inboxes — 4 phases, 7 tasks |
+| 5 | [Ecomanda Fly.io Deploy](./ecomanda-flyio/overview.md) | `ecomanda-flyio/` | not-started | Deploy on Fly.io single 1 GB VM (server + worker), replacing Heroku — 3 phases, 4 tasks |
+| 6 | [Ecomanda Docker](./ecomanda-docker/overview.md) | `ecomanda-docker/` | not-started | Dockerfile, local dev docker-compose, and LocalStorage provider as S3 alternative — 2 phases, 4 tasks |
 
 ---
 
