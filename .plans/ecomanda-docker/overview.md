@@ -42,9 +42,9 @@ Make ecomanda-delivery fully containerized: a production `Dockerfile` that works
 | Task Path | Title | Phase | Status | Depends On |
 |-----------|-------|-------|--------|------------|
 | phase-1/task-01-dockerfile | Create production Dockerfile | 1 | complete | — |
-| phase-1/task-02-local-storage | Implement LocalStorage provider | 1 | not-started | — |
-| phase-2/task-03-storage-factory | Wire storage factory in Base.ts | 2 | not-started | phase-1/task-02-local-storage |
-| phase-2/task-04-compose-dev | Add app service to docker-compose | 2 | not-started | phase-1/task-01-dockerfile |
+| phase-1/task-02-local-storage | Implement LocalStorage provider | 1 | complete | — |
+| phase-2/task-03-storage-factory | Wire storage factory in Base.ts | 2 | complete | phase-1/task-02-local-storage |
+| phase-2/task-04-compose-dev | Add app service to docker-compose | 2 | complete | phase-1/task-01-dockerfile |
 
 ## Branch Convention
 
