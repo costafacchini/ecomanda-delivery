@@ -2,8 +2,10 @@ import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { createRoutesStub } from 'react-router'
 import SectorForm from './'
 import { getUsers } from '../../../../services/user'
+import { AppContext } from '../../../../contexts/App'
 
 vi.mock('../../../../services/user')
+vi.mock('../../../../services/inbox', () => ({ getInboxes: vi.fn().mockResolvedValue({ data: [] }) }))
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (k: string) => k,
@@ -15,8 +17,10 @@ describe('<SectorForm />', () => {
   const onSubmit = vi.fn()
   const currentUser = {
     role: 'admin',
-    licensee: { _id: 'lic-1' },
+    licensee: { id: 'lic-1' },
   }
+
+  const appContextValue = { activeLicensee: null, updateActiveLicensee: vi.fn() }
 
   function mount(props: any = {}) {
     ;(getUsers as any).mockResolvedValue({ data: [{ id: 'u1', name: 'Alice' }] })
@@ -24,7 +28,11 @@ describe('<SectorForm />', () => {
     const Stub = createRoutesStub([
       {
         path: '/test',
-        Component: () => <SectorForm onSubmit={onSubmit} currentUser={currentUser} {...props} />,
+        Component: () => (
+          <AppContext.Provider value={appContextValue as any}>
+            <SectorForm onSubmit={onSubmit} currentUser={currentUser} {...props} />
+          </AppContext.Provider>
+        ),
       },
     ])
     render(<Stub initialEntries={['/test']} />)

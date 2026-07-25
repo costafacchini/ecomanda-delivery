@@ -25,6 +25,11 @@ const bodySchema = new Schema(
       ref: 'Department',
       default: null,
     },
+    inbox: {
+      type: ObjectId,
+      ref: 'Inbox',
+      default: null,
+    },
     concluded: { type: Boolean, default: false },
   },
   { timestamps: true },

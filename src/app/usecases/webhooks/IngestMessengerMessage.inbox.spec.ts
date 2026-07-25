@@ -1,10 +1,39 @@
-// Test stubs generated during planning for inbox-concept/phase-2/task-03-auth-routing
-// Extend the existing IngestMessengerMessage.spec.ts or add cases here
-// Implement these during task execution — do not delete pending stubs
+import { BodyRepositoryMemory } from '@repositories/body'
+import { IngestMessengerMessage } from './IngestMessengerMessage'
 
 describe('IngestMessengerMessage — inbox threading', () => {
-  // Story 3 / Scenario 1
-  it.todo('saves inboxId on the Body record when inboxId is provided')
-  // Story 3 / Scenario 2
-  it.todo('saves null inboxId on Body record when inboxId is not provided')
+  it('saves inboxId on the Body record when inboxId is provided', async () => {
+    const messengerRepository = new BodyRepositoryMemory()
+    const jobQueue = { addJob: jest.fn().mockResolvedValue(undefined) }
+    const ingestMessengerMessage = new IngestMessengerMessage({ messengerRepository, jobQueue })
+
+    const bodySaved = await ingestMessengerMessage.execute({
+      body: { message: 'hello' },
+      licenseeId: 'licensee-id',
+      inboxId: 'inbox-123',
+    })
+
+    expect(bodySaved).toEqual(
+      expect.objectContaining({
+        inbox: 'inbox-123',
+      }),
+    )
+  })
+
+  it('saves null inboxId on Body record when inboxId is not provided', async () => {
+    const messengerRepository = new BodyRepositoryMemory()
+    const jobQueue = { addJob: jest.fn().mockResolvedValue(undefined) }
+    const ingestMessengerMessage = new IngestMessengerMessage({ messengerRepository, jobQueue })
+
+    const bodySaved = await ingestMessengerMessage.execute({
+      body: { message: 'hello' },
+      licenseeId: 'licensee-id',
+    })
+
+    expect(bodySaved).toEqual(
+      expect.objectContaining({
+        inbox: null,
+      }),
+    )
+  })
 })

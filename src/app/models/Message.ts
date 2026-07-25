@@ -74,6 +74,11 @@ const messageSchema = new Schema(
       type: ObjectId,
       ref: 'Department',
     },
+    inbox: {
+      type: ObjectId,
+      ref: 'Inbox',
+      default: null,
+    },
     trigger: {
       type: ObjectId,
       ref: 'Trigger',

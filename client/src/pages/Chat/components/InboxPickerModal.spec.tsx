@@ -1,23 +1,73 @@
-// Test stubs generated during planning for inbox-concept/phase-4/task-07-frontend-inbox-picker
-// Implement these during task execution — do not delete pending stubs
+import { render, screen, fireEvent } from '@testing-library/react'
+import InboxPickerModal from './InboxPickerModal'
+import type { IInbox } from '../../../types/inbox'
+
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (k: string) => k,
+    i18n: { language: 'pt', changeLanguage: vi.fn() },
+  }),
+}))
+
+const sampleInboxes: IInbox[] = [
+  { _id: 'i1', name: 'Inbox Alpha', kind: 'chat', inboxToken: 'tok-1', webhookUrl: null, active: true },
+  { _id: 'i2', name: 'Inbox Beta', kind: 'chat', inboxToken: 'tok-2', webhookUrl: null, active: true },
+]
+
+function mount(overrides: Partial<React.ComponentProps<typeof InboxPickerModal>> = {}) {
+  const onSelect = vi.fn()
+  const onDismiss = vi.fn()
+  render(
+    <InboxPickerModal
+      inboxes={sampleInboxes}
+      onSelect={onSelect}
+      onDismiss={onDismiss}
+      {...overrides}
+    />
+  )
+  return { onSelect, onDismiss }
+}
 
 describe('<InboxPickerModal />', () => {
-  // Story 5 / Scenario 1
-  it.todo('renders a list of inbox names')
+  it('renders a list of inbox names', () => {
+    mount()
 
-  // Story 5 / Scenario 3
-  it.todo('calls onSelect with the chosen inbox when confirmed')
+    expect(screen.getByText('Inbox Alpha')).toBeInTheDocument()
+    expect(screen.getByText('Inbox Beta')).toBeInTheDocument()
+  })
 
-  it.todo('calls onDismiss when the modal is closed without selection')
-})
+  it('calls onSelect with the chosen inbox when confirmed', () => {
+    const { onSelect } = mount()
 
-describe('<Chat /> — Nova conversa inbox picker', () => {
-  // Story 5 / Scenario 1
-  it.todo('shows InboxPickerModal when licensee has more than one active chat inbox')
+    fireEvent.click(screen.getByText('Inbox Alpha'))
+    fireEvent.click(screen.getByRole('button', { name: 'common.confirm' }))
 
-  // Story 5 / Scenario 2
-  it.todo('skips inbox picker and auto-selects when licensee has exactly one chat inbox')
+    expect(onSelect).toHaveBeenCalledWith(sampleInboxes[0])
+  })
 
-  // Story 5 / Scenario 3
-  it.todo('passes selectedInbox id when creating the room after picker selection')
+  it('confirm button is disabled until an inbox is selected', () => {
+    mount()
+
+    expect(screen.getByRole('button', { name: 'common.confirm' })).toBeDisabled()
+
+    fireEvent.click(screen.getByText('Inbox Beta'))
+
+    expect(screen.getByRole('button', { name: 'common.confirm' })).not.toBeDisabled()
+  })
+
+  it('calls onDismiss when the cancel button is clicked', () => {
+    const { onDismiss } = mount()
+
+    fireEvent.click(screen.getByRole('button', { name: 'common.cancel' }))
+
+    expect(onDismiss).toHaveBeenCalled()
+  })
+
+  it('calls onDismiss when the close button is clicked', () => {
+    const { onDismiss } = mount()
+
+    fireEvent.click(screen.getByRole('button', { name: 'chat.closeModalAriaLabel' }))
+
+    expect(onDismiss).toHaveBeenCalled()
+  })
 })

@@ -1,9 +1,13 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import ChatPage from './index'
 import { getRooms, getRoomMessages, sendRoomMessage } from '../../services/rooms'
+import { getInboxes } from '../../services/inbox'
 import { AppContext } from '../../contexts/App'
 
 vi.mock('../../services/rooms')
+vi.mock('../../services/inbox', () => ({
+  getInboxes: vi.fn(),
+}))
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (k: string) => k,
@@ -90,6 +94,67 @@ describe('<ChatPage>', () => {
 
     await waitFor(() => {
       expect(sendRoomMessage).toHaveBeenCalledWith('r1', 'Oi!')
+    })
+  })
+})
+
+const chatInboxes = [
+  { _id: 'ci1', name: 'Chat Inbox 1', kind: 'chat', inboxToken: 'tok-1', webhookUrl: null, active: true },
+  { _id: 'ci2', name: 'Chat Inbox 2', kind: 'chat', inboxToken: 'tok-2', webhookUrl: null, active: true },
+]
+
+describe('<ChatPage> — Story 5: Nova conversa inbox picker', () => {
+  beforeEach(() => {
+    (getRooms as ReturnType<typeof vi.fn>).mockResolvedValue({ data: { rooms: [], hasMore: false } })
+  })
+
+  // Story 5 / Scenario 1
+  it('shows InboxPickerModal when licensee has more than one active chat inbox', async () => {
+    (getInboxes as ReturnType<typeof vi.fn>).mockResolvedValue(chatInboxes)
+
+    mount()
+
+    fireEvent.click(await screen.findByRole('button', { name: 'chat.newConversationAriaLabel' }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Chat Inbox 1')).toBeInTheDocument()
+      expect(screen.getByText('Chat Inbox 2')).toBeInTheDocument()
+    })
+  })
+
+  // Story 5 / Scenario 2
+  it('skips inbox picker and does not show it when licensee has exactly one chat inbox', async () => {
+    (getInboxes as ReturnType<typeof vi.fn>).mockResolvedValue([chatInboxes[0]])
+
+    mount()
+
+    fireEvent.click(await screen.findByRole('button', { name: 'chat.newConversationAriaLabel' }))
+
+    await waitFor(() => {
+      expect(getInboxes).toHaveBeenCalled()
+    })
+
+    expect(screen.queryByText('Chat Inbox 1')).not.toBeInTheDocument()
+    expect(screen.queryByText('chat.selectInbox')).not.toBeInTheDocument()
+  })
+
+  // Story 5 / Scenario 3
+  it('dismisses InboxPickerModal and opens NewConversationModal after inbox selection', async () => {
+    (getInboxes as ReturnType<typeof vi.fn>).mockResolvedValue(chatInboxes)
+
+    mount()
+
+    fireEvent.click(await screen.findByRole('button', { name: 'chat.newConversationAriaLabel' }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Chat Inbox 1')).toBeInTheDocument()
+    })
+
+    fireEvent.click(screen.getByText('Chat Inbox 1'))
+    fireEvent.click(screen.getByRole('button', { name: 'common.confirm' }))
+
+    await waitFor(() => {
+      expect(screen.queryByText('Chat Inbox 1')).not.toBeInTheDocument()
     })
   })
 })

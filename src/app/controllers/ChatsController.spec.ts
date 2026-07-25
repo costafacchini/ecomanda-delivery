@@ -32,9 +32,34 @@ describe('ChatsController delegation', () => {
 
     await controller.message(req, res)
 
-    expect(ingestChatMessage.execute).toHaveBeenCalledWith({ body: req.body, licenseeId: 'licensee-id' })
+    expect(ingestChatMessage.execute).toHaveBeenCalledWith({
+      body: req.body,
+      licenseeId: 'licensee-id',
+      inboxId: null,
+    })
     expect(res.status).toHaveBeenCalledWith(200)
     expect(res.send).toHaveBeenCalledWith({ body: 'Solicitação de mensagem para a plataforma de chat agendado' })
+  })
+
+  it('forwards inboxId from req.inbox when inbox is present', async () => {
+    const { controller, ingestChatMessage } = buildController()
+    const req = {
+      body: { field: 'test' },
+      licensee: { _id: 'licensee-id' },
+      inbox: { _id: 'inbox-id' },
+    }
+    const res = buildResponse()
+
+    ingestChatMessage.execute.mockResolvedValue({})
+
+    await controller.message(req, res)
+
+    expect(ingestChatMessage.execute).toHaveBeenCalledWith({
+      body: req.body,
+      licenseeId: 'licensee-id',
+      inboxId: 'inbox-id',
+    })
+    expect(res.status).toHaveBeenCalledWith(200)
   })
 
   it('enqueues reset-chats job and returns status 200 on reset', async () => {

@@ -4,8 +4,9 @@ import { Cuboup } from './Cuboup'
 import { Chatwoot } from './Chatwoot'
 import { LocalChat } from './LocalChat'
 
-function createChatPlugin(licensee: any, dependencies = {}) {
-  switch (licensee.chatDefault) {
+function createChatPlugin(licensee: any, dependencies = {}, inbox: any = null) {
+  const plugin = (inbox as any)?.chatDefault || licensee.chatDefault
+  switch (plugin) {
     case 'rocketchat':
       return new Rocketchat(licensee, dependencies)
     case 'crisp':
@@ -17,7 +18,7 @@ function createChatPlugin(licensee: any, dependencies = {}) {
     case 'local':
       return new LocalChat(licensee, dependencies)
     default:
-      throw `Plugin de chat não configurado: ${licensee.chatDefault}`
+      throw `Plugin de chat não configurado: ${plugin}`
   }
 }
 

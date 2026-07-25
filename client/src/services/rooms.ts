@@ -14,8 +14,8 @@ export function getRooms(params: { page?: number; licensee?: string } = {}) {
   return api().get<IRoomListResponse>(url, { headers: headers() })
 }
 
-export function createRoom(contactId: string) {
-  return api().post<{ room: IRoom }>('resources/rooms', { headers: headers(), body: { contactId } })
+export function createRoom(contactId: string, inboxId?: string) {
+  return api().post<{ room: IRoom }>('resources/rooms', { headers: headers(), body: { contactId, inboxId } })
 }
 
 export function getRoomMessages(roomId: string, params: { page?: number } = {}) {

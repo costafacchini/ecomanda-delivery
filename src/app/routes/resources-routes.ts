@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 import { UsersController } from '../controllers/UsersController'
 import { LicenseesController } from '../controllers/LicenseesController'
 import { DepartmentsController } from '../controllers/DepartmentsController'
+import { InboxesController } from '../controllers/InboxesController'
 import { ContactsController } from '../controllers/ContactsController'
 import { TriggersController } from '../controllers/TriggersController'
 import { MessagesController } from '../controllers/MessagesController'
@@ -47,6 +48,7 @@ const {
   bodyRepository,
   whatsappSessionRepository,
   departmentRepository,
+  inboxRepository,
   createMessengerPlugin,
   createTemplatesImporter,
   startBaileysSocket,
@@ -94,6 +96,16 @@ const messagesController = new MessagesController({
 })
 const departmentsController = new DepartmentsController({
   departmentRepository,
+  licenseeRepository,
+  whatsappSessionRepository,
+  contactRepository,
+  createMessengerPlugin,
+  startBaileysSocket,
+  socketManager,
+})
+
+const inboxesController = new InboxesController({
+  inboxRepository,
   licenseeRepository,
   whatsappSessionRepository,
   contactRepository,
@@ -201,6 +213,15 @@ router.delete('/departments/:id', authorize('admin', 'super'), departmentsContro
 router.post('/departments/:id/baileys-qr', authorize('admin', 'super'), departmentsController.getBaileysQr)
 router.get('/departments/:id/baileys-status', authorize('admin', 'super'), departmentsController.getBaileysStatus)
 router.post('/departments/:id/baileys-sync', authorize('admin', 'super'), departmentsController.baileysSync)
+
+router.get('/inboxes', authorize('admin', 'super'), inboxesController.index)
+router.post('/inboxes', authorize('admin', 'super'), inboxesController.create)
+router.get('/inboxes/:id', authorize('admin', 'super'), inboxesController.show)
+router.post('/inboxes/:id', authorize('admin', 'super'), inboxesController.update)
+router.delete('/inboxes/:id', authorize('admin', 'super'), inboxesController.destroy)
+router.post('/inboxes/:id/baileys-qr', authorize('admin', 'super'), inboxesController.baileysQr)
+router.get('/inboxes/:id/baileys-status', authorize('admin', 'super'), inboxesController.baileysStatus)
+router.post('/inboxes/:id/baileys-sync', authorize('admin', 'super'), inboxesController.baileysSync)
 
 router.get('/messages', messagesController.index)
 router.post('/messages', messagesController.create)

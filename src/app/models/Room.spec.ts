@@ -112,4 +112,12 @@ describe('Room', () => {
       expect(room.department).toBeNull()
     })
   })
+
+  describe('inbox field', () => {
+    it('defaults to null', () => {
+      const room = new Room({ contact })
+
+      expect(room.inbox).toBeNull()
+    })
+  })
 })

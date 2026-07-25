@@ -12,7 +12,7 @@ import { logger } from '../../helpers/logger'
 import { StartBaileysSocket } from './StartBaileysSocket'
 
 function makeSession(overrides: Record<string, any> = {}) {
-  return { _id: 'session-id-1', licensee: 'licensee-id-123', department: null, ...overrides }
+  return { _id: 'session-id-1', licensee: 'licensee-id-123', inbox: null, ...overrides }
 }
 
 function buildUseCase(overrides: Record<string, any> = {}) {
@@ -53,29 +53,29 @@ describe('StartBaileysSocket', () => {
     expect(socketManager.start).toHaveBeenCalledWith(session, licensee, expect.any(Object))
   })
 
-  it('looks up the session by licensee._id and department=null when no department given', async () => {
+  it('looks up the session by licensee._id and inbox=null when no inbox given', async () => {
     const { useCase, whatsappSessionRepository } = buildUseCase()
 
     await useCase.execute(licensee)
 
-    expect(whatsappSessionRepository.findFirst).toHaveBeenCalledWith({ licensee: licensee._id, department: null })
+    expect(whatsappSessionRepository.findFirst).toHaveBeenCalledWith({ licensee: licensee._id, inbox: null })
   })
 
-  it('looks up the session by licensee._id and department._id when department is given', async () => {
-    const department = { _id: 'department-id-abc' }
-    const departmentSession = makeSession({ _id: 'session-id-2', department: department._id })
+  it('looks up the session by licensee._id and inbox._id when inbox is given', async () => {
+    const inbox = { _id: 'inbox-id-abc' }
+    const inboxSession = makeSession({ _id: 'session-id-2', inbox: inbox._id })
     const { useCase, whatsappSessionRepository } = buildUseCase({
       whatsappSessionRepository: {
-        findFirst: jest.fn().mockResolvedValue(departmentSession),
-        create: jest.fn().mockResolvedValue(departmentSession),
+        findFirst: jest.fn().mockResolvedValue(inboxSession),
+        create: jest.fn().mockResolvedValue(inboxSession),
       },
     })
 
-    await useCase.execute(licensee, department)
+    await useCase.execute(licensee, inbox)
 
     expect(whatsappSessionRepository.findFirst).toHaveBeenCalledWith({
       licensee: licensee._id,
-      department: department._id,
+      inbox: inbox._id,
     })
   })
 
@@ -89,16 +89,16 @@ describe('StartBaileysSocket', () => {
 
     await useCase.execute(licensee)
 
-    expect(whatsappSessionRepository.create).toHaveBeenCalledWith({ licensee: licensee._id, department: null })
+    expect(whatsappSessionRepository.create).toHaveBeenCalledWith({ licensee: licensee._id, inbox: null })
     expect(socketManager.start).toHaveBeenCalledWith(session, licensee, expect.any(Object))
   })
 
-  it('passes departmentId in ingestMessengerMessage.execute when department is provided', async () => {
-    const department = { _id: 'department-id-abc' }
-    const departmentSession = makeSession({ _id: 'session-id-2', department: department._id })
+  it('passes inboxId in ingestMessengerMessage.execute when inbox is provided', async () => {
+    const inbox = { _id: 'inbox-id-abc' }
+    const inboxSession = makeSession({ _id: 'session-id-2', inbox: inbox._id })
     const whatsappSessionRepository = {
-      findFirst: jest.fn().mockResolvedValue(departmentSession),
-      create: jest.fn().mockResolvedValue(departmentSession),
+      findFirst: jest.fn().mockResolvedValue(inboxSession),
+      create: jest.fn().mockResolvedValue(inboxSession),
     }
     const socketManager = { start: jest.fn().mockResolvedValue(undefined) }
     const ingestMessengerMessage = { execute: jest.fn().mockResolvedValue(undefined) }
@@ -111,7 +111,7 @@ describe('StartBaileysSocket', () => {
       ingestMessengerMessage,
     })
 
-    await useCase.execute(licensee, department)
+    await useCase.execute(licensee, inbox)
 
     const { onMessage } = socketManager.start.mock.calls[0][2]
     const msg = { key: { id: 'msg-1' }, message: { conversation: 'hello' } }
@@ -120,7 +120,7 @@ describe('StartBaileysSocket', () => {
     expect(ingestMessengerMessage.execute).toHaveBeenCalledWith({
       body: msg,
       licenseeId: licensee._id,
-      departmentId: department._id,
+      inboxId: inbox._id,
     })
   })
 
@@ -137,7 +137,7 @@ describe('StartBaileysSocket', () => {
     expect(ingestMessengerMessage.execute).toHaveBeenCalledWith({
       body: msg,
       licenseeId: licensee._id,
-      departmentId: null,
+      inboxId: null,
     })
   })
 

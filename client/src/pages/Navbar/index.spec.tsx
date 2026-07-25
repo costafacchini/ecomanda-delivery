@@ -62,6 +62,23 @@ describe('<Navbar>', () => {
     })
   })
 
+  describe('Inboxes nav item', () => {
+    it('is hidden when role is agent', () => {
+      renderWithContext(<Navbar currentUser={{ role: 'agent' }} />)
+      expect(screen.queryByText('navbar.inboxes')).not.toBeInTheDocument()
+    })
+
+    it('is visible for admin', () => {
+      renderWithContext(<Navbar currentUser={{ role: 'admin' }} />)
+      expect(screen.getByText('navbar.inboxes')).toBeInTheDocument()
+    })
+
+    it('is visible for super', () => {
+      renderWithContext(<Navbar currentUser={{ role: 'super' }} />)
+      expect(screen.getByText('navbar.inboxes')).toBeInTheDocument()
+    })
+  })
+
   describe('Setores nav item', () => {
     it('is hidden when useSetores is false', () => {
       renderWithContext(<Navbar currentUser={{ role: 'admin', licensee: { useDepartments: false } }} />)

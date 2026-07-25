@@ -18,17 +18,17 @@ class StartBaileysSocket {
     this.ingestMessengerMessage = ingestMessengerMessage
   }
 
-  async execute(licensee: any, department: any = null) {
+  async execute(licensee: any, inbox: any = null) {
     const extras: any = {}
-    if (department) {
-      extras.department = department._id
+    if (inbox) {
+      extras.inbox = inbox
     }
     const plugin = this.createMessengerPlugin(licensee, extras)
 
-    const departmentId = department?._id ?? null
-    let session = await this.whatsappSessionRepository.findFirst({ licensee: licensee._id, department: departmentId })
+    const inboxId = inbox?._id ?? null
+    let session = await this.whatsappSessionRepository.findFirst({ licensee: licensee._id, inbox: inboxId })
     if (!session) {
-      session = await this.whatsappSessionRepository.create({ licensee: licensee._id, department: departmentId })
+      session = await this.whatsappSessionRepository.create({ licensee: licensee._id, inbox: inboxId })
     }
 
     await this.socketManager.start(session, licensee, {
@@ -36,7 +36,7 @@ class StartBaileysSocket {
         await this.ingestMessengerMessage.execute({
           body: msg,
           licenseeId: licensee._id,
-          departmentId,
+          inboxId,
         })
       },
       onReceiptUpdate: async (update: any) => {

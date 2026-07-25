@@ -58,6 +58,12 @@ export default function Navbar({ currentUser }: { currentUser?: IUser | null }) 
                     </a>
                   )}
 
+                  {currentUser && ['super', 'admin'].includes(currentUser.role) && (
+                    <a className='dropdown-item' href='/#/inboxes'>
+                      {t('navbar.inboxes')}
+                    </a>
+                  )}
+
                   <a className='dropdown-item' href='/#/triggers'>
                     {t('navbar.triggers')}
                   </a>

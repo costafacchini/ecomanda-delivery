@@ -13,7 +13,11 @@ class ChatsController {
   }
 
   async message(req: any, res: any) {
-    await this.ingestChatMessage.execute({ body: req.body, licenseeId: req.licensee._id })
+    await this.ingestChatMessage.execute({
+      body: req.body,
+      licenseeId: req.licensee._id,
+      inboxId: req.inbox?._id ?? null,
+    })
 
     res.status(200).send({ body: 'Solicitação de mensagem para a plataforma de chat agendado' })
   }

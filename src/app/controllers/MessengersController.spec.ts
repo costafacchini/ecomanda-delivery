@@ -35,6 +35,7 @@ describe('MessengersController delegation', () => {
       body: req.body,
       licenseeId: 'licensee-id',
       departmentId: null,
+      inboxId: null,
     })
     expect(res.status).toHaveBeenCalledWith(200)
     expect(res.send).toHaveBeenCalledWith({ body: 'Solicitação de mensagem para a plataforma de messenger agendado' })
@@ -57,6 +58,29 @@ describe('MessengersController delegation', () => {
       body: req.body,
       licenseeId: 'licensee-id',
       departmentId: 'department-id',
+      inboxId: null,
+    })
+    expect(res.status).toHaveBeenCalledWith(200)
+  })
+
+  it('forwards inboxId from req.inbox when inbox is present', async () => {
+    const { controller, ingestMessengerMessage } = buildController()
+    const req = {
+      body: { field: 'test' },
+      licensee: { _id: 'licensee-id' },
+      inbox: { _id: 'inbox-id' },
+    }
+    const res = buildResponse()
+
+    ingestMessengerMessage.execute.mockResolvedValue({})
+
+    await controller.message(req, res)
+
+    expect(ingestMessengerMessage.execute).toHaveBeenCalledWith({
+      body: req.body,
+      licenseeId: 'licensee-id',
+      departmentId: null,
+      inboxId: 'inbox-id',
     })
     expect(res.status).toHaveBeenCalledWith(200)
   })

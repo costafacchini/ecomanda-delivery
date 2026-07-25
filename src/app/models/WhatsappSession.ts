@@ -11,9 +11,9 @@ const whatsappSessionSchema = new Schema(
       ref: 'Licensee',
       required: [true, 'Licensee: Você deve preencher o campo'],
     },
-    department: {
+    inbox: {
       type: ObjectId,
-      ref: 'Department',
+      ref: 'Inbox',
       default: null,
     },
     creds: { type: Object },
@@ -22,7 +22,7 @@ const whatsappSessionSchema = new Schema(
   { timestamps: true },
 )
 
-whatsappSessionSchema.index({ licensee: 1, department: 1 }, { unique: true })
+whatsappSessionSchema.index({ licensee: 1, inbox: 1 }, { unique: true })
 
 whatsappSessionSchema.pre('save', function () {
   if (!this._id) {

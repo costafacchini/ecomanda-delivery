@@ -25,6 +25,11 @@ const roomSchema = new Schema(
       ref: 'Department',
       default: null,
     },
+    inbox: {
+      type: ObjectId,
+      ref: 'Inbox',
+      default: null,
+    },
     status: {
       type: String,
       enum: ['pending', 'open', 'closed'],

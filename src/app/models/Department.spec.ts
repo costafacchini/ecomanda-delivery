@@ -67,6 +67,21 @@ describe('Department', () => {
     })
   })
 
+  describe('inbox field', () => {
+    it('defaults inbox to null', () => {
+      const department = new Department({ name: 'Vendas' })
+
+      expect(department.inbox).toBeNull()
+    })
+
+    it('accepts an inbox ObjectId', () => {
+      const inboxId = new mongoose.Types.ObjectId()
+      const department = new Department({ name: 'Vendas', inbox: inboxId })
+
+      expect(department.inbox?.toString()).toEqual(inboxId.toString())
+    })
+  })
+
   describe('validations', () => {
     it('fails when name is missing', async () => {
       const department = new Department({

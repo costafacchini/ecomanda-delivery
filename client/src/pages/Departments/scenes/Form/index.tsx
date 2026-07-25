@@ -5,19 +5,25 @@ import * as Yup from 'yup'
 import { useNavigate } from 'react-router'
 import Select from 'react-select'
 import { getUsers } from '../../../../services/user'
+import { getInboxes } from '../../../../services/inbox'
+import type { IInbox } from '../../../../types/inbox'
 import DepartmentBaileysPanel from '../Edit/DepartmentBaileysPanel'
+import { useApp } from '../../../../contexts/App'
 
 const sectorInitialValues = {
   name: '',
   users: [] as string[],
   active: true,
+  inbox: null as string | null,
 }
 
 function SectorForm(props: any) {
   const { onSubmit, errors, initialValues, currentUser, departmentId } = props
   const { t } = useTranslation()
+  const { activeLicensee } = useApp()
   let navigate = useNavigate()
   const [userOptions, setUserOptions] = useState<{ value: string; label: string }[]>([])
+  const [messengerInboxes, setMessengerInboxes] = useState<IInbox[]>([])
 
   const sectorSchema = useMemo(
     () =>
@@ -29,14 +35,28 @@ function SectorForm(props: any) {
 
   useEffect(() => {
     async function fetchUsers() {
-      const licenseeId = currentUser?.licensee?._id || currentUser?.licensee
+      const licenseeId =
+        (typeof currentUser?.licensee === 'object' ? currentUser?.licensee?.id : currentUser?.licensee) ??
+        activeLicensee?.id
       if (!licenseeId) return
       const { data } = await getUsers({ licensee: licenseeId })
       const users = Array.isArray(data) ? data : []
       setUserOptions(users.map((u: any) => ({ value: u.id, label: u.name })))
     }
     fetchUsers()
-  }, [currentUser])
+  }, [currentUser, activeLicensee])
+
+  useEffect(() => {
+    async function fetchMessengerInboxes() {
+      const licenseeId =
+        (typeof currentUser?.licensee === 'object' ? currentUser?.licensee?.id : currentUser?.licensee) ??
+        activeLicensee?.id
+      if (!licenseeId) return
+      const { data } = await getInboxes({ licensee: licenseeId, kind: 'messenger' })
+      setMessengerInboxes(Array.isArray(data) ? data : [])
+    }
+    fetchMessengerInboxes()
+  }, [currentUser, activeLicensee])
 
   const mergedInitialValues = { ...sectorInitialValues, ...initialValues }
 
@@ -98,6 +118,25 @@ function SectorForm(props: any) {
                       }}
                       placeholder={t('departments.usersPlaceholder')}
                     />
+                  </div>
+                </div>
+
+                <div className='row'>
+                  <div className='form-group col-5'>
+                    <label htmlFor='inbox'>{t('departments.inbox')}</label>
+                    <select
+                      id='inbox'
+                      className='form-select'
+                      value={formikProps.values.inbox ?? ''}
+                      onChange={(e) =>
+                        formikProps.setFieldValue('inbox', e.target.value || null)
+                      }
+                    >
+                      <option value=''>{t('departments.noInbox')}</option>
+                      {messengerInboxes.map(inbox => (
+                        <option key={inbox._id} value={inbox._id}>{inbox.name}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </fieldset>

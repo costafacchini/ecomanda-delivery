@@ -25,6 +25,7 @@ const departmentSchema = new Schema(
     },
     active: { type: Boolean, default: true },
     departmentToken: { type: String, unique: true, default: uuidv4 },
+    inbox: { type: ObjectId, ref: 'Inbox', default: null },
   },
   { timestamps: true },
 )
