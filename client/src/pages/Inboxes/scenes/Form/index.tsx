@@ -18,6 +18,9 @@ const inboxInitialValues = {
   active: true,
 }
 
+const CHAT_PLATFORMS_WITH_URL = ['rocketchat', 'crisp', 'chatwoot', 'cuboup']
+const CHAT_PLATFORMS_WITH_KEY = ['crisp', 'chatwoot']
+
 interface InboxFormProps {
   onSubmit: (values: any) => void
   errors?: any[] | null
@@ -40,11 +43,6 @@ function InboxForm({ onSubmit, errors, initialValues, inboxId }: InboxFormProps)
 
   const mergedInitialValues = { ...inboxInitialValues, ...initialValues }
 
-  const isBaileysMessenger =
-    inboxId &&
-    mergedInitialValues.kind === 'messenger' &&
-    mergedInitialValues.whatsappDefault === 'baileys'
-
   return (
     <div>
       <Form
@@ -53,9 +51,14 @@ function InboxForm({ onSubmit, errors, initialValues, inboxId }: InboxFormProps)
         onSubmit={(values: any) => onSubmit(values)}
       >
         {(formikProps: any) => {
-          const selectedKind = formikProps.values.kind
-          const isMessenger = selectedKind === 'messenger'
-          const isChat = selectedKind === 'chat'
+          const { values, handleChange, handleBlur } = formikProps
+          const isMessenger = values.kind === 'messenger'
+          const isChat = values.kind === 'chat'
+          const isBaileys = values.whatsappDefault === 'baileys'
+          const showWhatsappCredentials = isMessenger && values.whatsappDefault !== '' && !isBaileys
+          const showChatUrl = isChat && CHAT_PLATFORMS_WITH_URL.includes(values.chatDefault)
+          const showChatKey = isChat && CHAT_PLATFORMS_WITH_KEY.includes(values.chatDefault)
+          const isBaileysMessenger = inboxId && isMessenger && isBaileys
 
           return (
             <form onSubmit={formikProps.handleSubmit}>
@@ -66,9 +69,9 @@ function InboxForm({ onSubmit, errors, initialValues, inboxId }: InboxFormProps)
                     <FieldWithError
                       id='name'
                       type='text'
-                      onChange={formikProps.handleChange}
-                      onBlur={formikProps.handleBlur}
-                      value={formikProps.values.name}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.name}
                       name='name'
                     />
                   </div>
@@ -79,9 +82,9 @@ function InboxForm({ onSubmit, errors, initialValues, inboxId }: InboxFormProps)
                       id='kind'
                       name='kind'
                       className='form-select'
-                      value={formikProps.values.kind}
-                      onChange={formikProps.handleChange}
-                      onBlur={formikProps.handleBlur}
+                      value={values.kind}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
                     >
                       <option value='messenger'>{t('inboxes.kind.messenger')}</option>
                       <option value='chat'>{t('inboxes.kind.chat')}</option>
@@ -91,9 +94,9 @@ function InboxForm({ onSubmit, errors, initialValues, inboxId }: InboxFormProps)
                   <div className='form-group col-4'>
                     <div className='form-check mt-4'>
                       <input
-                        checked={formikProps.values.active}
-                        onChange={formikProps.handleChange}
-                        onBlur={formikProps.handleBlur}
+                        checked={values.active}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
                         type='checkbox'
                         className='form-check-input'
                         id='active'
@@ -105,90 +108,123 @@ function InboxForm({ onSubmit, errors, initialValues, inboxId }: InboxFormProps)
                 </div>
 
                 {isMessenger && (
-                  <div className='row'>
-                    <div className='form-group col-4'>
-                      <label htmlFor='whatsappDefault'>{t('inboxes.whatsappDefault')}</label>
-                      <FieldWithError
-                        id='whatsappDefault'
-                        type='text'
-                        onChange={formikProps.handleChange}
-                        onBlur={formikProps.handleBlur}
-                        value={formikProps.values.whatsappDefault}
-                        name='whatsappDefault'
-                      />
+                  <>
+                    <div className='row'>
+                      <div className='form-group col-5'>
+                        <label htmlFor='whatsappDefault'>{t('inboxes.whatsappDefault')}</label>
+                        <select
+                          id='whatsappDefault'
+                          name='whatsappDefault'
+                          className='form-select'
+                          value={values.whatsappDefault}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        >
+                          <option value=''>{t('inboxes.noPlugin')}</option>
+                          <option value='utalk'>Utalk</option>
+                          <option value='dialog'>Dialog360</option>
+                          <option value='ycloud'>YCloud</option>
+                          <option value='pabbly'>Pabbly</option>
+                          <option value='baileys'>Baileys</option>
+                        </select>
+                      </div>
                     </div>
-                    <div className='form-group col-4'>
-                      <label htmlFor='whatsappToken'>{t('inboxes.whatsappToken')}</label>
-                      <FieldWithError
-                        id='whatsappToken'
-                        type='text'
-                        onChange={formikProps.handleChange}
-                        onBlur={formikProps.handleBlur}
-                        value={formikProps.values.whatsappToken}
-                        name='whatsappToken'
-                      />
-                    </div>
-                    <div className='form-group col-4'>
-                      <label htmlFor='whatsappUrl'>{t('inboxes.whatsappUrl')}</label>
-                      <FieldWithError
-                        id='whatsappUrl'
-                        type='text'
-                        onChange={formikProps.handleChange}
-                        onBlur={formikProps.handleBlur}
-                        value={formikProps.values.whatsappUrl}
-                        name='whatsappUrl'
-                      />
-                    </div>
-                  </div>
+
+                    {showWhatsappCredentials && (
+                      <div className='row'>
+                        <div className='form-group col-6'>
+                          <label htmlFor='whatsappToken'>{t('inboxes.whatsappToken')}</label>
+                          <FieldWithError
+                            id='whatsappToken'
+                            type='text'
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.whatsappToken}
+                            name='whatsappToken'
+                          />
+                        </div>
+                        <div className='form-group col-6'>
+                          <label htmlFor='whatsappUrl'>{t('inboxes.whatsappUrl')}</label>
+                          <FieldWithError
+                            id='whatsappUrl'
+                            type='text'
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.whatsappUrl}
+                            name='whatsappUrl'
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
 
                 {isChat && (
-                  <div className='row'>
-                    <div className='form-group col-3'>
-                      <label htmlFor='chatDefault'>{t('inboxes.chatDefault')}</label>
-                      <FieldWithError
-                        id='chatDefault'
-                        type='text'
-                        onChange={formikProps.handleChange}
-                        onBlur={formikProps.handleBlur}
-                        value={formikProps.values.chatDefault}
-                        name='chatDefault'
-                      />
+                  <>
+                    <div className='row'>
+                      <div className='form-group col-5'>
+                        <label htmlFor='chatDefault'>{t('inboxes.chatDefault')}</label>
+                        <select
+                          id='chatDefault'
+                          name='chatDefault'
+                          className='form-select'
+                          value={values.chatDefault}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        >
+                          <option value=''>{t('inboxes.noPlugin')}</option>
+                          <option value='rocketchat'>Rocketchat</option>
+                          <option value='crisp'>Crisp</option>
+                          <option value='cuboup'>CuboUp</option>
+                          <option value='chatwoot'>Chatwoot</option>
+                          <option value='local'>Local</option>
+                        </select>
+                      </div>
                     </div>
-                    <div className='form-group col-3'>
-                      <label htmlFor='chatUrl'>{t('inboxes.chatUrl')}</label>
-                      <FieldWithError
-                        id='chatUrl'
-                        type='text'
-                        onChange={formikProps.handleChange}
-                        onBlur={formikProps.handleBlur}
-                        value={formikProps.values.chatUrl}
-                        name='chatUrl'
-                      />
-                    </div>
-                    <div className='form-group col-3'>
-                      <label htmlFor='chatKey'>{t('inboxes.chatKey')}</label>
-                      <FieldWithError
-                        id='chatKey'
-                        type='text'
-                        onChange={formikProps.handleChange}
-                        onBlur={formikProps.handleBlur}
-                        value={formikProps.values.chatKey}
-                        name='chatKey'
-                      />
-                    </div>
-                    <div className='form-group col-3'>
-                      <label htmlFor='chatIdentifier'>{t('inboxes.chatIdentifier')}</label>
-                      <FieldWithError
-                        id='chatIdentifier'
-                        type='text'
-                        onChange={formikProps.handleChange}
-                        onBlur={formikProps.handleBlur}
-                        value={formikProps.values.chatIdentifier}
-                        name='chatIdentifier'
-                      />
-                    </div>
-                  </div>
+
+                    {showChatUrl && (
+                      <div className='row'>
+                        <div className='form-group col-8'>
+                          <label htmlFor='chatUrl'>{t('inboxes.chatUrl')}</label>
+                          <FieldWithError
+                            id='chatUrl'
+                            type='text'
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.chatUrl}
+                            name='chatUrl'
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {showChatKey && (
+                      <div className='row'>
+                        <div className='form-group col-6'>
+                          <label htmlFor='chatIdentifier'>{t('inboxes.chatIdentifier')}</label>
+                          <FieldWithError
+                            id='chatIdentifier'
+                            type='text'
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.chatIdentifier}
+                            name='chatIdentifier'
+                          />
+                        </div>
+                        <div className='form-group col-6'>
+                          <label htmlFor='chatKey'>{t('inboxes.chatKey')}</label>
+                          <FieldWithError
+                            id='chatKey'
+                            type='text'
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.chatKey}
+                            name='chatKey'
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
 
                 {inboxId && (
@@ -218,7 +254,7 @@ function InboxForm({ onSubmit, errors, initialValues, inboxId }: InboxFormProps)
               )}
 
               {isBaileysMessenger && (
-                <InboxBaileysPanel inboxId={inboxId} isActive={mergedInitialValues.active} />
+                <InboxBaileysPanel inboxId={inboxId} isActive={values.active} />
               )}
 
               <div className='row'>

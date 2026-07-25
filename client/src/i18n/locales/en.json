@@ -319,10 +319,11 @@
       "chat": "Chat"
     },
     "active": "Active",
-    "whatsappDefault": "Default WhatsApp",
+    "noPlugin": "None (no integration)",
+    "whatsappDefault": "WhatsApp plugin",
     "whatsappToken": "WhatsApp token",
     "whatsappUrl": "WhatsApp URL",
-    "chatDefault": "Default chat",
+    "chatDefault": "Chat plugin",
     "chatUrl": "Chat URL",
     "chatKey": "Chat key",
     "chatIdentifier": "Chat identifier",
