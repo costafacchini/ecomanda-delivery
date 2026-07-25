@@ -99,7 +99,8 @@ export async function migrate(): Promise<void> {
 }
 
 // Allow running directly: npx tsx src/setup/migrations/001-licensee-config-to-inboxes.ts
-const isMain = process.argv[1]?.endsWith('001-licensee-config-to-inboxes.ts') ||
+const isMain =
+  process.argv[1]?.endsWith('001-licensee-config-to-inboxes.ts') ||
   process.argv[1]?.endsWith('001-licensee-config-to-inboxes.js')
 if (isMain) {
   connectToDatabase()
