@@ -1,16 +1,16 @@
 // BEFORE RUNNING IN PRODUCTION:
 // 1. Take a MongoDB backup: mongodump --uri=<MONGO_URI> --out=backup-$(date +%Y%m%d)
-// 2. Run on staging first: npx ts-node src/setup/migrations/001-licensee-config-to-inboxes.ts
+// 2. Run on staging first: npx tsx src/setup/migrations/001-licensee-config-to-inboxes.ts
 // 3. Verify inbox counts: db.inboxes.count()
 // 4. Run in production with the same command
 //
 // IDEMPOTENT: Safe to run multiple times. Checks for existing inboxes before creating.
 
 import mongoose from 'mongoose'
-import Licensee from '@models/Licensee'
-import Inbox from '@models/Inbox'
-import Department from '@models/Department'
-import WhatsappSession from '@models/WhatsappSession'
+import Licensee from '../../app/models/Licensee'
+import Inbox from '../../app/models/Inbox'
+import Department from '../../app/models/Department'
+import WhatsappSession from '../../app/models/WhatsappSession'
 
 async function connectToDatabase(): Promise<void> {
   const uri = process.env.MONGODB_URI
@@ -98,8 +98,10 @@ export async function migrate(): Promise<void> {
   await migrateDeprecatedWhatsappSessions()
 }
 
-// Allow running directly via ts-node: npx ts-node src/setup/migrations/001-licensee-config-to-inboxes.ts
-if (require.main === module) {
+// Allow running directly: npx tsx src/setup/migrations/001-licensee-config-to-inboxes.ts
+const isMain = process.argv[1]?.endsWith('001-licensee-config-to-inboxes.ts') ||
+  process.argv[1]?.endsWith('001-licensee-config-to-inboxes.js')
+if (isMain) {
   connectToDatabase()
     .then(() => migrate())
     .then(() => {
