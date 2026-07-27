@@ -32,6 +32,7 @@ class LocalStorage {
     this._relativePath = getFilePath(contact.number, fileName)
   }
 
+  // eslint-disable-next-line require-await
   async uploadFile() {
     const fullPath = path.join(LOCAL_STORAGE_PATH, this._relativePath)
     fs.mkdirSync(path.dirname(fullPath), { recursive: true })
@@ -39,6 +40,7 @@ class LocalStorage {
     logger.info(`LocalStorage: arquivo salvo em ${fullPath}`)
   }
 
+  // eslint-disable-next-line require-await
   async presignedUrl(): Promise<string> {
     return `${APP_URL}/uploads/${this._relativePath}`
   }
