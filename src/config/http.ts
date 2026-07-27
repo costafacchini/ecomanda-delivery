@@ -37,6 +37,12 @@ app.use(
     setHeaders: (res) => res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin'),
   }),
 )
+
+if (process.env.STORAGE_PROVIDER === 'local') {
+  const localStoragePath = process.env.LOCAL_STORAGE_PATH ?? '/app/uploads'
+  app.use('/uploads', express.static(localStoragePath))
+}
+
 enableCors(app)
 routes(app)
 

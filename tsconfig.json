@@ -39,6 +39,7 @@
     "dist",
     "client",
     ".jest",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "src/setup/migrations/**"
   ]
 }

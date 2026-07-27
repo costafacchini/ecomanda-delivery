@@ -2,13 +2,20 @@ import Repository from '../../repositories/repository'
 import { logger } from '../../helpers/logger'
 import { v4 as uuidv4 } from 'uuid'
 import { S3 } from '../storage/S3'
+import { LocalStorage } from '../storage/Local'
 import { requireDependency } from '../../helpers/RequireDependency'
 
-const uploadFile = (licensee: any, contact: any, fileName: any, fileBase64: any) => {
-  const s3 = new S3(licensee, contact, fileName, fileBase64)
-  s3.uploadFile()
+const createStorageProvider = (licensee: any, contact: any, fileName: any, fileBase64: any) => {
+  if (process.env.STORAGE_PROVIDER === 'local') {
+    return new LocalStorage(licensee, contact, fileName, fileBase64)
+  }
+  return new S3(licensee, contact, fileName, fileBase64)
+}
 
-  return s3.presignedUrl()
+const uploadFile = (licensee: any, contact: any, fileName: any, fileBase64: any) => {
+  const storage = createStorageProvider(licensee, contact, fileName, fileBase64)
+  storage.uploadFile()
+  return storage.presignedUrl()
 }
 
 class MessengersBase {
