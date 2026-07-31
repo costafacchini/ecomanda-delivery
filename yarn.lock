@@ -91,9 +91,9 @@
     tslib "^2.6.2"
 
 "@aws-sdk/client-s3@^3.32.0":
-  version "3.1100.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.1100.0.tgz#8030bfab67ea677cc5de48708df41eeb3e1dce44"
-  integrity sha512-5IvIlW6kWOC9EPq2RM7VQUgfDF2QFHHFgQJ2DichmrYBDg5yiAmqMkDiHqUSkFYosVexXaXD/lV4yYxTyA27zw==
+  version "3.1101.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/client-s3/-/client-s3-3.1101.0.tgz#24391f5d133145f16cfcf9495a9d2ee9308dea70"
+  integrity sha512-16EFb1aTEBgPcfUAWAjjlB57IZCyn7B3rlfT+xqE7M6WoH8AMMU3vFZO0UOitwh/xvvzVx73YED1/n0PU4qBMw==
   dependencies:
     "@aws-sdk/checksums" "^3.1000.24"
     "@aws-sdk/core" "^3.977.4"
@@ -256,9 +256,9 @@
     tslib "^2.6.2"
 
 "@aws-sdk/s3-request-presigner@^3.32.0":
-  version "3.1100.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/s3-request-presigner/-/s3-request-presigner-3.1100.0.tgz#21d946540c65505b14566dd64fa7abb656bca6e8"
-  integrity sha512-YXl2CNTJi9sCWCZufz4efHgYUrLSHg+b6NnbLbUZKXjazlcPjYRE8liZ50ckj7ZSVaB6LHY3C8/8Sz7CcrLkmQ==
+  version "3.1101.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/s3-request-presigner/-/s3-request-presigner-3.1101.0.tgz#f21bade4a8eeae780d9e82c4abbf0815c7f60360"
+  integrity sha512-2raRfiex9qYrdQ60ATeEmOVVC7Do2GEDGSTnoPbgv+xyN3oB48tZeREVw0brI7AlRRvm9fygXTHmyRR0I/LskA==
   dependencies:
     "@aws-sdk/core" "^3.977.4"
     "@aws-sdk/signature-v4-multi-region" "^3.996.43"
