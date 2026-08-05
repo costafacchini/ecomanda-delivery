@@ -3,7 +3,6 @@ import('./src/app/models/index')
 
 import { appsignal } from './appsignal.cjs'
 
-import { redisConnection } from './src/config/redis'
 import { queueServer } from './src/config/queue'
 import { Worker } from 'bullmq'
 import { connect } from './src/config/database'
@@ -34,10 +33,12 @@ queuesWithWorkerEnabled.forEach((queue) => {
         }
       }
     },
-    { connection: redisConnection },
+    {
+      connection: {
+        url: process.env.REDIS_URL,
+      },
+    },
   )
-
-  redisConnection.setMaxListeners(redisConnection.getMaxListeners() + 1)
 
   worker.on('failed', (job, failedReason) => {
     console.error(`Fail process job ${JSON.stringify(job)} `, failedReason)
