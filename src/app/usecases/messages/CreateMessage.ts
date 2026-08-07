@@ -1,3 +1,6 @@
+import { IRepository } from '@repositories/repository'
+import { IMessage, IContact } from '../../../types'
+
 const CREATE_MESSAGE_FIELDS = [
   'licensee',
   'contact',
@@ -16,8 +19,22 @@ const CREATE_MESSAGE_FIELDS = [
 
 const SEND_MESSAGE_TO_MESSENGER_JOB = 'send-message-to-messenger'
 
-function pickFields(fields: Record<string, any> = {}, keys: any[] = []) {
-  return keys.reduce((payload: Record<string, any>, key: any) => {
+interface ContactRepository extends IRepository<IContact> {
+  getContactByNumber(phone: string, licenseeId: string): Promise<IContact | null>
+}
+
+interface JobQueue {
+  addJob(name: string, payload: Record<string, any>): Promise<any>
+}
+
+interface CreateMessageDeps {
+  messageRepository: IRepository<IMessage>
+  contactRepository: ContactRepository
+  jobQueue: JobQueue
+}
+
+function pickFields(fields: Record<string, any> = {}, keys: string[] = []) {
+  return keys.reduce((payload: Record<string, any>, key: string) => {
     if (Object.prototype.hasOwnProperty.call(fields, key)) {
       payload[key] = fields[key]
     }
@@ -26,17 +43,17 @@ function pickFields(fields: Record<string, any> = {}, keys: any[] = []) {
 }
 
 class CreateMessage {
-  messageRepository: any
-  contactRepository: any
-  jobQueue: any
+  messageRepository: IRepository<IMessage>
+  contactRepository: ContactRepository
+  jobQueue: JobQueue
 
-  constructor({ messageRepository, contactRepository, jobQueue }: Record<string, any> = {}) {
+  constructor({ messageRepository, contactRepository, jobQueue }: CreateMessageDeps) {
     this.messageRepository = messageRepository
     this.contactRepository = contactRepository
     this.jobQueue = jobQueue
   }
 
-  async execute(fields = {}) {
+  async execute(fields: Record<string, any> = {}): Promise<IMessage> {
     const payload = pickFields(fields, CREATE_MESSAGE_FIELDS)
 
     if (!payload.licensee) {

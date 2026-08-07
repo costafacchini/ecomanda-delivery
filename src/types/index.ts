@@ -167,8 +167,8 @@ export interface IBody {
   content: Record<string, unknown>
   licensee: string | ILicensee
   kind: 'normal' | 'webhook'
-  department?: string
-  inbox?: string
+  department?: string | null
+  inbox?: string | null
   concluded: boolean
   createdAt: Date
   updatedAt: Date
