@@ -115,7 +115,17 @@ class Chatwoot extends ChatsBase {
 
   constructor(
     licensee: ILicensee,
-    { roomRepository, contactRepository, messageRepository, ...dependencies }: { roomRepository?: IRepository<any>; contactRepository?: IRepository<any>; messageRepository?: IRepository<any>; [key: string]: unknown } = {},
+    {
+      roomRepository,
+      contactRepository,
+      messageRepository,
+      ...dependencies
+    }: {
+      roomRepository?: IRepository<any>
+      contactRepository?: IRepository<any>
+      messageRepository?: IRepository<any>
+      [key: string]: unknown
+    } = {},
   ) {
     super(licensee, { contactRepository, messageRepository, ...dependencies })
     this._roomRepository = roomRepository!

@@ -157,7 +157,7 @@ class LicenseesController {
 
       const user = await this.userRepository.findFirst({ _id: req.userId })
       if (user?.blockedLicensees?.length) {
-        const ids = user.blockedLicensees.map((b) => (typeof b === 'string' ? b : b._id as string))
+        const ids = user.blockedLicensees.map((b) => (typeof b === 'string' ? b : (b._id as string)))
         licenseesQuery.filterExcludeLicensees(ids)
       }
 

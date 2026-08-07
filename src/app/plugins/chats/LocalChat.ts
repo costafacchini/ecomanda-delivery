@@ -6,7 +6,10 @@ import { IRepository } from '../../repositories/repository'
 class LocalChat extends ChatsBase {
   _roomRepository: IRepository<any>
 
-  constructor(licensee: ILicensee, { roomRepository, ...dependencies }: { roomRepository?: IRepository<any>; [key: string]: unknown } = {}) {
+  constructor(
+    licensee: ILicensee,
+    { roomRepository, ...dependencies }: { roomRepository?: IRepository<any>; [key: string]: unknown } = {},
+  ) {
     super(licensee, dependencies)
     this._roomRepository = roomRepository!
   }

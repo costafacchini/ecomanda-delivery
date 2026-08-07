@@ -6,7 +6,10 @@ import { ILicensee } from '../../../types'
 import { IRepository } from '../../repositories/repository'
 
 class Utalk extends MessengersBase {
-  constructor(licensee: ILicensee, { messageRepository, ...dependencies }: { messageRepository?: IRepository<any>; [key: string]: unknown } = {}) {
+  constructor(
+    licensee: ILicensee,
+    { messageRepository, ...dependencies }: { messageRepository?: IRepository<any>; [key: string]: unknown } = {},
+  ) {
     super(licensee, { messageRepository, ...dependencies })
   }
 

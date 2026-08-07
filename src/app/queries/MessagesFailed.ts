@@ -21,8 +21,7 @@ class MessagesFailedQuery {
   }
 
   async all(): Promise<IMessage[]> {
-    const docs = await this.messageRepository!
-      .model()
+    const docs = await this.messageRepository!.model()
       .find({
         sended: false,
         createdAt: {

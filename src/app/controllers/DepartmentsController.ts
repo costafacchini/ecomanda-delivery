@@ -72,7 +72,10 @@ class DepartmentsController {
 
   async show(req: Request, res: Response) {
     try {
-      const department = await this.departmentRepository.findFirst({ _id: req.params.id as string }, ['licensee', 'users'])
+      const department = await this.departmentRepository.findFirst({ _id: req.params.id as string }, [
+        'licensee',
+        'users',
+      ])
       return res.status(200).send(department)
     } catch (err: any) {
       if (err.name === 'CastError' && err.kind === 'ObjectId') {

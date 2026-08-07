@@ -6,10 +6,7 @@ import { IUser, IRoom, IContact } from '../../types'
 const EXCLUDE_SYSTEM_CLOSE = { $nor: [{ kind: 'text', text: 'Chat encerrado pelo agente' }] }
 
 interface IRoomRepository extends IQueryableRepository<IRoom> {
-  findForLicensee(
-    licenseeId: string,
-    opts?: { departmentIds?: any[]; page?: number; limit?: number },
-  ): Promise<any[]>
+  findForLicensee(licenseeId: string, opts?: { departmentIds?: any[]; page?: number; limit?: number }): Promise<any[]>
   findOpenForContact(contactId: string): Promise<IRoom | null>
 }
 
@@ -186,8 +183,7 @@ class RoomsController {
       if (user.role !== 'super') {
         const userLicenseeId = this._resolveLicenseeId(user)?.toString()
         const contact = await this.contactRepository.findFirst({ _id: room.contact })
-        const roomLicenseeId =
-          (contact?.licensee as any)?._id?.toString() ?? contact?.licensee?.toString() ?? null
+        const roomLicenseeId = (contact?.licensee as any)?._id?.toString() ?? contact?.licensee?.toString() ?? null
         if (userLicenseeId !== roomLicenseeId) {
           return res.status(403).json({ errors: { message: 'Forbidden' } })
         }

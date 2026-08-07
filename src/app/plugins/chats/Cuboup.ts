@@ -9,7 +9,14 @@ import { ILicensee } from '../../../types'
 import { IRepository } from '../../repositories/repository'
 
 class Cuboup extends ChatsBase {
-  constructor(licensee: ILicensee, { contactRepository, messageRepository, ...dependencies }: { contactRepository?: IRepository<any>; messageRepository?: IRepository<any>; [key: string]: unknown } = {}) {
+  constructor(
+    licensee: ILicensee,
+    {
+      contactRepository,
+      messageRepository,
+      ...dependencies
+    }: { contactRepository?: IRepository<any>; messageRepository?: IRepository<any>; [key: string]: unknown } = {},
+  ) {
     super(licensee, { contactRepository, messageRepository, ...dependencies })
   }
 

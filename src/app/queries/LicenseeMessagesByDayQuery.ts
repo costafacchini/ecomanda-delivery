@@ -131,10 +131,13 @@ class LicenseeMessagesByDayQuery {
 
     return licensees.map((licensee) => {
       const licenseeDays = mapDays[licensee._id.toString()] || []
-      const normalized = licenseeDays.reduce((acc: Record<string, number>, current: { date: string; count: number }) => {
-        acc[current.date] = current.count
-        return acc
-      }, {})
+      const normalized = licenseeDays.reduce(
+        (acc: Record<string, number>, current: { date: string; count: number }) => {
+          acc[current.date] = current.count
+          return acc
+        },
+        {},
+      )
 
       return {
         _id: licensee._id,

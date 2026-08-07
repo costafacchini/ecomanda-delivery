@@ -13,7 +13,10 @@ interface ITriggerRepository {
 
 interface IMessengerPlugin {
   sendMessage(messageId: string, url?: string, token?: string): Promise<void>
-  responseToMessages(responseBody: Record<string, unknown>, opts?: { departmentId?: string | null }): Promise<IMessage[]>
+  responseToMessages(
+    responseBody: Record<string, unknown>,
+    opts?: { departmentId?: string | null },
+  ): Promise<IMessage[]>
 }
 
 const createStorageProvider = (licensee: any, contact: any, fileName: any, fileBase64: any) => {
@@ -117,7 +120,10 @@ class MessengersBase implements IMessengerPlugin {
     })
   }
 
-  async responseToMessages(responseBody: Record<string, unknown>, { departmentId = null }: { departmentId?: string | null } = {}): Promise<IMessage[]> {
+  async responseToMessages(
+    responseBody: Record<string, unknown>,
+    { departmentId = null }: { departmentId?: string | null } = {},
+  ): Promise<IMessage[]> {
     this.parseMessageStatus(responseBody)
     if (this.messageStatus) {
       const message = await this.messageRepository.findFirst({
