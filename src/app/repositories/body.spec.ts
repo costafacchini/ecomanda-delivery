@@ -34,7 +34,7 @@ describe('body repository database', () => {
       expect(body).toEqual(
         expect.objectContaining({
           kind: 'normal',
-          licensee,
+          licensee: licensee._id,
           content: expect.objectContaining({ message: 'text' }),
         }),
       )
@@ -49,8 +49,7 @@ describe('body repository database', () => {
       const bodyRepository = new BodyRepositoryDatabase()
       const body = await bodyRepository.create(bodyFactory.build({ licensee }))
 
-      body.concluded = true
-      await bodyRepository.save(body)
+      await bodyRepository.update(body._id, { concluded: true })
 
       const bodySaved = await bodyRepository.findFirst({ _id: body._id }, ['licensee'])
       expect(bodySaved.concluded).toEqual(true)

@@ -1,11 +1,12 @@
 import { v4 as uuidv4 } from 'uuid'
-import Repository, { RepositoryMemory, comparableValue, sortRecords } from './repository'
+import Repository, { RepositoryMemory, comparableValue, sortRecords, stringifyObjectIds } from './repository'
 import Message from '../models/Message'
 import Trigger from '../models/Trigger'
 import { replace } from '../helpers/Emoji'
 import { requireDependency } from '../helpers/RequireDependency'
+import { IMessage, MessageKind, MessageDestination } from '../../types'
 
-class MessageRepositoryDatabase extends Repository {
+class MessageRepositoryDatabase extends Repository<IMessage> {
   parseTextDependency: any
 
   constructor({ parseText: parseTextDependency }: { parseText?: any } = {}) {
@@ -17,27 +18,8 @@ class MessageRepositoryDatabase extends Repository {
     return Message
   }
 
-  async findFirst(params: any = {}, relations: any[] = []) {
-    if (relations) {
-      const query = Message.findOne(params)
-      relations.forEach((relation: any) => query.populate(relation))
-
-      return await query
-    } else {
-      return await Message.findOne(params)
-    }
-  }
-
-  async create(fields: any = {}) {
-    return await Message.create({ number: uuidv4(), ...fields })
-  }
-
-  async update(id: any, fields: any = {}) {
-    return await Message.updateOne({ _id: id }, { $set: fields }, { runValidators: true })
-  }
-
-  async find(params: any = {}) {
-    return await Message.find(params)
+  async create(fields: Partial<IMessage> = {}): Promise<IMessage> {
+    return await super.create({ number: uuidv4(), ...fields })
   }
 
   async findByRoom(roomId: any, options: { since?: Date } = {}) {
@@ -45,11 +27,12 @@ class MessageRepositoryDatabase extends Repository {
     if (options.since) {
       query.createdAt = { $gt: options.since }
     }
-    return await Message.find(query).sort({ createdAt: 1 })
+    const docs = await Message.find(query).sort({ createdAt: 1 }).lean()
+    return docs.map((doc: any) => stringifyObjectIds(doc)) as IMessage[]
   }
 
   async createInteractiveMessages(fields: any) {
-    const messages: any[] = []
+    const messages: IMessage[] = []
 
     const text = replace(fields.text)
 
@@ -59,7 +42,7 @@ class MessageRepositoryDatabase extends Repository {
         messages.push(
           await this.create({
             ...fields,
-            kind: 'interactive',
+            kind: MessageKind.Interactive,
             text,
             trigger: trigger._id,
           }),
@@ -69,7 +52,7 @@ class MessageRepositoryDatabase extends Repository {
       messages.push(
         await this.create({
           ...fields,
-          kind: 'text',
+          kind: MessageKind.Text,
           text,
         }),
       )
@@ -81,8 +64,8 @@ class MessageRepositoryDatabase extends Repository {
   async createTextMessageInsteadInteractive(fields: any) {
     let { kind, text, contact } = fields
 
-    if (kind === 'interactive') {
-      kind = 'text'
+    if (kind === MessageKind.Interactive) {
+      kind = MessageKind.Text
       text = await requireDependency(this.parseTextDependency, 'parseText', 'MessageRepositoryDatabase')(text, contact)
     }
 
@@ -92,10 +75,10 @@ class MessageRepositoryDatabase extends Repository {
   async createMessageToWarnAboutWindowOfWhatsassHasExpired(contact: any, licensee: any) {
     return await this.create({
       number: uuidv4(),
-      kind: 'text',
+      kind: MessageKind.Text,
       contact,
       licensee,
-      destination: 'to-chat',
+      destination: MessageDestination.ToChat,
       text: '🚨 ATENÇÃO\nO período de 24h para manter conversas expirou. Envie um Template para voltar a interagir com esse contato.',
     })
   }
@@ -103,16 +86,16 @@ class MessageRepositoryDatabase extends Repository {
   async createMessageToWarnAboutWindowOfWhatsassIsEnding(contact: any, licensee: any) {
     return await this.create({
       number: uuidv4(),
-      kind: 'text',
+      kind: MessageKind.Text,
       contact,
       licensee,
-      destination: 'to-chat',
+      destination: MessageDestination.ToChat,
       text: '🚨 ATENÇÃO\nO período de 24h para manter conversas está quase expirando. Faltam apenas 10 minutos para encerrar.',
     })
   }
 }
 
-class MessageRepositoryMemory extends RepositoryMemory {
+class MessageRepositoryMemory extends RepositoryMemory<IMessage> {
   triggerRepository: any
   parseTextDependency: any
 
@@ -126,7 +109,7 @@ class MessageRepositoryMemory extends RepositoryMemory {
     this.parseTextDependency = parseTextDependency
   }
 
-  async create(fields: any = {}) {
+  async create(fields: Partial<IMessage> = {}): Promise<IMessage> {
     return await super.create({ number: uuidv4(), ...(fields ?? {}) })
   }
 
@@ -144,7 +127,7 @@ class MessageRepositoryMemory extends RepositoryMemory {
 
   async createInteractiveMessages(fields: any) {
     const triggerRepository = requireDependency(this.triggerRepository, 'triggerRepository', 'MessageRepositoryMemory')
-    const messages: any[] = []
+    const messages: IMessage[] = []
 
     const text = replace(fields.text)
     const triggers = await triggerRepository.find({ expression: text, licensee: fields.licensee }, { order: 'asc' })
@@ -154,7 +137,7 @@ class MessageRepositoryMemory extends RepositoryMemory {
         messages.push(
           await this.create({
             ...fields,
-            kind: 'interactive',
+            kind: MessageKind.Interactive,
             text,
             trigger: trigger._id,
           }),
@@ -164,7 +147,7 @@ class MessageRepositoryMemory extends RepositoryMemory {
       messages.push(
         await this.create({
           ...fields,
-          kind: 'text',
+          kind: MessageKind.Text,
           text,
         }),
       )
@@ -176,8 +159,8 @@ class MessageRepositoryMemory extends RepositoryMemory {
   async createTextMessageInsteadInteractive(fields: any) {
     let { kind, text, contact } = fields
 
-    if (kind === 'interactive') {
-      kind = 'text'
+    if (kind === MessageKind.Interactive) {
+      kind = MessageKind.Text
       text = await requireDependency(this.parseTextDependency, 'parseText', 'MessageRepositoryMemory')(text, contact)
     }
 
@@ -187,10 +170,10 @@ class MessageRepositoryMemory extends RepositoryMemory {
   async createMessageToWarnAboutWindowOfWhatsassHasExpired(contact: any, licensee: any) {
     return await this.create({
       number: uuidv4(),
-      kind: 'text',
+      kind: MessageKind.Text,
       contact,
       licensee,
-      destination: 'to-chat',
+      destination: MessageDestination.ToChat,
       text: '🚨 ATENÇÃO\nO período de 24h para manter conversas expirou. Envie um Template para voltar a interagir com esse contato.',
     })
   }
@@ -198,10 +181,10 @@ class MessageRepositoryMemory extends RepositoryMemory {
   async createMessageToWarnAboutWindowOfWhatsassIsEnding(contact: any, licensee: any) {
     return await this.create({
       number: uuidv4(),
-      kind: 'text',
+      kind: MessageKind.Text,
       contact,
       licensee,
-      destination: 'to-chat',
+      destination: MessageDestination.ToChat,
       text: '🚨 ATENÇÃO\nO período de 24h para manter conversas está quase expirando. Faltam apenas 10 minutos para encerrar.',
     })
   }

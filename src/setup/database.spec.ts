@@ -53,9 +53,13 @@ describe('#createDefaultUser', () => {
   })
 
   it('ignores duplicate key races and returns the created default user', async () => {
-    jest.spyOn(User, 'findOne').mockResolvedValueOnce(null).mockResolvedValueOnce({ email: process.env.DEFAULT_USER })
+    const makeLeanQuery = (value: any) => ({ lean: jest.fn().mockResolvedValue(value) })
+    jest
+      .spyOn(User, 'findOne')
+      .mockReturnValueOnce(makeLeanQuery(null) as any)
+      .mockReturnValueOnce(makeLeanQuery({ email: process.env.DEFAULT_USER }) as any)
     jest.spyOn(User.prototype, 'save').mockRejectedValueOnce({ code: 11000 })
 
-    await expect(createDefaultUser()).resolves.toEqual({ email: process.env.DEFAULT_USER })
+    await expect(createDefaultUser()).resolves.toEqual(expect.objectContaining({ email: process.env.DEFAULT_USER }))
   })
 })

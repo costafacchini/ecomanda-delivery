@@ -1,7 +1,8 @@
 import Repository, { RepositoryMemory } from './repository'
 import Room from '../models/Room'
+import { IRoom } from '../../types'
 
-class RoomRepositoryDatabase extends Repository {
+class RoomRepositoryDatabase extends Repository<IRoom> {
   model() {
     return Room
   }
@@ -45,7 +46,7 @@ class RoomRepositoryDatabase extends Repository {
   }
 }
 
-class RoomRepositoryMemory extends RepositoryMemory {
+class RoomRepositoryMemory extends RepositoryMemory<IRoom> {
   async create(fields: any = {}) {
     return await super.create({
       closed: false,

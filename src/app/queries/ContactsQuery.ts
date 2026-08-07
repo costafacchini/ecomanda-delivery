@@ -1,4 +1,5 @@
 import { QueryBuilder } from './QueryBuilder'
+import { stringifyObjectIds } from '@repositories/repository'
 
 class ContactsQuery {
   contactRepository: any
@@ -95,7 +96,8 @@ class ContactsQuery {
     if (!this.updatedAtStartClause && this.updatedAtEndClause)
       query.filterByLessThan('updatedAt', this.updatedAtEndClause)
 
-    return await query.getQuery().exec()
+    const docs = await query.getQuery().lean().exec()
+    return docs.map(stringifyObjectIds)
   }
 }
 

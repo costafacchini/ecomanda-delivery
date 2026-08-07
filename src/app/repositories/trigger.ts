@@ -1,9 +1,10 @@
-import Repository, { RepositoryMemory, sortRecords } from './repository'
+import Repository, { RepositoryMemory, sortRecords, stringifyObjectIds } from './repository'
 import _ from 'lodash'
 import Trigger from '../models/Trigger'
 import { requireDependency } from '../helpers/RequireDependency'
+import { ITrigger } from '../../types'
 
-class TriggerRepositoryDatabase extends Repository {
+class TriggerRepositoryDatabase extends Repository<ITrigger> {
   model() {
     return Trigger
   }
@@ -12,30 +13,31 @@ class TriggerRepositoryDatabase extends Repository {
     const onlyIdFilter = Object.keys(params ?? {}).length === 1 && '_id' in (params ?? {})
 
     if (onlyIdFilter && relations.length === 0) {
-      return await Trigger.findById(params._id)
+      const doc = await Trigger.findById(params._id).lean()
+      return doc ? (stringifyObjectIds(doc) as ITrigger) : null
     }
 
     return await super.findFirst(params, relations)
   }
 
-  async create(fields: any = {}) {
-    const trigger = new Trigger({ ...(fields ?? {}) })
-
-    return await this.save(trigger)
+  async create(fields: any = {}): Promise<ITrigger> {
+    const doc = await this.save(new Trigger({ ...(fields ?? {}) }))
+    return stringifyObjectIds(doc.toObject()) as ITrigger
   }
 
   async find(params = {}, order = {}) {
-    const query = Trigger.find(params ?? {})
+    const query = Trigger.find(params ?? {}).lean()
 
     if (!_.isEmpty(order)) {
       query.sort(order)
     }
 
-    return await query
+    const docs = await query
+    return docs.map((doc: any) => stringifyObjectIds(doc)) as ITrigger[]
   }
 }
 
-class TriggerRepositoryMemory extends RepositoryMemory {
+class TriggerRepositoryMemory extends RepositoryMemory<ITrigger> {
   async find(params = {}, orderOrRelations = {}) {
     if (Array.isArray(orderOrRelations)) {
       return await super.find(params, orderOrRelations)

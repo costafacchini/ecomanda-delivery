@@ -1,3 +1,5 @@
+import { stringifyObjectIds } from '@repositories/repository'
+
 class MessagesFailedQuery {
   startDate: any
   endDate: any
@@ -12,17 +14,21 @@ class MessagesFailedQuery {
   }
 
   async all() {
-    return await this.messageRepository.model().find({
-      sended: false,
-      createdAt: {
-        $gte: this.startDate,
-        $lt: this.endDate,
-      },
-      licensee: this.licenseeId,
-      text: {
-        $ne: 'Chat encerrado pelo agente',
-      },
-    })
+    const docs = await this.messageRepository
+      .model()
+      .find({
+        sended: false,
+        createdAt: {
+          $gte: this.startDate,
+          $lt: this.endDate,
+        },
+        licensee: this.licenseeId,
+        text: {
+          $ne: 'Chat encerrado pelo agente',
+        },
+      })
+      .lean()
+    return docs.map(stringifyObjectIds)
   }
 }
 

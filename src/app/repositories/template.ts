@@ -1,16 +1,16 @@
-import Repository, { RepositoryMemory, matchesFilter } from './repository'
+import Repository, { RepositoryMemory, matchesFilter, stringifyObjectIds } from './repository'
 import Template from '../models/Template'
 import { requireDependency } from '../helpers/RequireDependency'
+import { ITemplate } from '../../types'
 
-class TemplateRepositoryDatabase extends Repository {
+class TemplateRepositoryDatabase extends Repository<ITemplate> {
   model() {
     return Template
   }
 
-  async create(fields: any = {}) {
-    const template = new Template({ ...(fields ?? {}) })
-
-    return await this.save(template)
+  async create(fields: any = {}): Promise<ITemplate> {
+    const doc = await this.save(new Template({ ...(fields ?? {}) }))
+    return stringifyObjectIds(doc.toObject()) as ITemplate
   }
 
   async delete(params: any = {}) {
@@ -18,7 +18,7 @@ class TemplateRepositoryDatabase extends Repository {
   }
 }
 
-class TemplateRepositoryMemory extends RepositoryMemory {
+class TemplateRepositoryMemory extends RepositoryMemory<ITemplate> {
   async delete(params: any = {}) {
     const recordsToKeep = this.items.filter((item) => !matchesFilter(item, params ?? {}))
     this.items.splice(0, this.items.length, ...recordsToKeep)

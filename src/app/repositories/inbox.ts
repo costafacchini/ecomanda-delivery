@@ -1,7 +1,8 @@
 import Repository, { RepositoryMemory } from './repository'
 import Inbox from '../models/Inbox'
+import { IInbox } from '../../types'
 
-class InboxRepositoryDatabase extends Repository {
+class InboxRepositoryDatabase extends Repository<IInbox> {
   model() {
     return Inbox
   }
@@ -13,6 +14,6 @@ class InboxRepositoryDatabase extends Repository {
   }
 }
 
-class InboxRepositoryMemory extends RepositoryMemory {}
+class InboxRepositoryMemory extends RepositoryMemory<IInbox> {}
 
 export { InboxRepositoryDatabase, InboxRepositoryMemory }

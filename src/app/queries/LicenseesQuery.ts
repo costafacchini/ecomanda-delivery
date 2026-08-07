@@ -1,4 +1,5 @@
 import { QueryBuilder } from './QueryBuilder'
+import { stringifyObjectIds } from '@repositories/repository'
 
 class LicenseesQuery {
   licenseeRepository: any
@@ -69,7 +70,8 @@ class LicenseesQuery {
       mongooseQuery.where('_id').nin(this.excludedIdsClause)
     }
 
-    return await mongooseQuery.exec()
+    const docs = await mongooseQuery.lean().exec()
+    return docs.map(stringifyObjectIds)
   }
 }
 

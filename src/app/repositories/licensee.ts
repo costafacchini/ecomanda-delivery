@@ -1,30 +1,15 @@
 import Repository, { RepositoryMemory } from './repository'
 import Licensee from '../models/Licensee'
+import { ILicensee } from '../../types'
 
-class LicenseeRepositoryDatabase extends Repository {
+class LicenseeRepositoryDatabase extends Repository<ILicensee> {
   model() {
     return Licensee
   }
-
-  async findFirst(params: any = {}) {
-    return await Licensee.findOne(params)
-  }
-
-  async create(fields: any = {}) {
-    return await Licensee.create({ ...fields })
-  }
-
-  async update(id: any, fields: any = {}) {
-    return await Licensee.updateOne({ _id: id }, { $set: fields }, { runValidators: true })
-  }
-
-  async find(params: any = {}) {
-    return await Licensee.find(params)
-  }
 }
 
-class LicenseeRepositoryMemory extends RepositoryMemory {
-  async create(fields: any = {}) {
+class LicenseeRepositoryMemory extends RepositoryMemory<ILicensee> {
+  async create(fields: Partial<ILicensee> = {}): Promise<ILicensee> {
     return await super.create(this.normalizeLicenseeFields(fields))
   }
 

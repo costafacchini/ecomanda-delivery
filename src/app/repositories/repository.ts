@@ -1,34 +1,51 @@
 import mongoose from 'mongoose'
 
-class Repository {
+export interface IRepository<T> {
+  findFirst(params?: Record<string, unknown>, relations?: string[]): Promise<T | null>
+  find(params?: Record<string, unknown>, relations?: string[]): Promise<T[]>
+  create(fields: Partial<T>): Promise<T>
+  update(id: string, fields: Partial<T>): Promise<{ acknowledged: boolean }>
+  updateMany(params: Record<string, unknown>, fields: Partial<T>): Promise<{ acknowledged: boolean }>
+  delete(params: Record<string, unknown>): Promise<{ acknowledged: boolean }>
+}
+
+class Repository<T> implements IRepository<T> {
   model(): any {}
 
-  async findFirst(params: any = {}, relations: any[] = []) {
-    const query = this.model().findOne(params ?? {})
-
-    relations.forEach((relation) => query.populate(relation))
-
-    return await query
+  async findFirst(params: Record<string, unknown> = {}, relations: string[] = []): Promise<T | null> {
+    const query = this.model()
+      .findOne(params ?? {})
+      .lean()
+    relations.forEach((r) => query.populate(r))
+    const doc = await query
+    if (!doc) return null
+    return stringifyObjectIds(doc) as T
   }
 
-  async create(fields: any = {}) {
-    return await this.model().create({ ...(fields ?? {}) })
+  async find(params: Record<string, unknown> = {}, relations: string[] = []): Promise<T[]> {
+    const query = this.model()
+      .find(params ?? {})
+      .lean()
+    relations.forEach((r) => query.populate(r))
+    const docs = await query
+    return docs.map((doc: any) => stringifyObjectIds(doc)) as T[]
   }
 
-  async update(id: any, fields: any = {}) {
+  async create(fields: Partial<T> = {}): Promise<T> {
+    const doc = await this.model().create(fields ?? {})
+    return stringifyObjectIds(doc.toObject()) as T
+  }
+
+  async update(id: string, fields: Partial<T> = {}): Promise<{ acknowledged: boolean }> {
     return await this.model().updateOne({ _id: id }, { $set: fields ?? {} }, { runValidators: true })
   }
 
-  async updateMany(params: any = {}, fields: any = {}) {
-    return await this.model().updateMany(params ?? {}, { $set: fields ?? {} }, { runValidators: true })
+  async updateMany(params: Record<string, unknown> = {}, fields: Partial<T> = {}): Promise<{ acknowledged: boolean }> {
+    return await this.model().updateMany(params, { $set: fields }, { runValidators: true })
   }
 
-  async find(params: any = {}) {
-    return await this.model().find(params ?? {})
-  }
-
-  async delete(params: any = {}) {
-    return await this.model().deleteOne(params ?? {})
+  async delete(params: Record<string, unknown> = {}): Promise<{ acknowledged: boolean }> {
+    return await this.model().deleteOne(params)
   }
 
   async save(document: any) {
@@ -42,6 +59,21 @@ function isObject(value: any) {
 
 function isObjectIdLike(value: any) {
   return value instanceof mongoose.Types.ObjectId || value?._bsontype === 'ObjectId'
+}
+
+function stringifyObjectIds(value: any): any {
+  if (value === null || value === undefined) return value
+  if (isObjectIdLike(value)) return value.toString()
+  if (value instanceof Date) return value
+  if (Array.isArray(value)) return value.map(stringifyObjectIds)
+  if (typeof value === 'object') {
+    const result: Record<string, any> = {}
+    for (const [k, v] of Object.entries(value)) {
+      result[k] = stringifyObjectIds(v)
+    }
+    return result
+  }
+  return value
 }
 
 function comparableValue(value: any): any {
@@ -185,7 +217,7 @@ function buildMemoryRecord(fields: Record<string, any> = {}) {
   return record
 }
 
-class RepositoryMemory extends Repository {
+class RepositoryMemory<T> extends Repository<T> implements IRepository<T> {
   items: any[]
   modelClass: any
   relationLoaders: Record<string, any>
@@ -212,18 +244,18 @@ class RepositoryMemory extends Repository {
     return record
   }
 
-  async findFirst(params: any = {}, relations: any[] = []) {
+  async findFirst(params: Record<string, unknown> = {}, relations: string[] = []): Promise<T | null> {
     return (await this.find(params, relations))[0] ?? null
   }
 
-  async create(fields: any = {}) {
+  async create(fields: Partial<T> = {}): Promise<T> {
     const record = await this.prepareRecord(fields)
     this.items.push(record)
 
     return await Promise.resolve(this.hydrate(record))
   }
 
-  async update(id: any, fields: any = {}) {
+  async update(id: string, fields: Partial<T> = {}): Promise<{ acknowledged: boolean }> {
     const record = this.items.find((item) => matchValue(item?._id, id))
 
     if (record) {
@@ -234,7 +266,7 @@ class RepositoryMemory extends Repository {
     return await Promise.resolve({ acknowledged: true })
   }
 
-  async updateMany(params: any = {}, fields: any = {}) {
+  async updateMany(params: Record<string, unknown> = {}, fields: Partial<T> = {}): Promise<{ acknowledged: boolean }> {
     for (const item of this.items.filter((item) => matchesFilter(item, params ?? {}))) {
       const nextRecord = await this.prepareRecord({ ...item, ...(fields ?? {}) }, { existingRecord: item })
       Object.assign(item, nextRecord)
@@ -243,7 +275,7 @@ class RepositoryMemory extends Repository {
     return await Promise.resolve({ acknowledged: true })
   }
 
-  async find(params: any = {}, relations: any[] = []) {
+  async find(params: Record<string, unknown> = {}, relations: string[] = []): Promise<T[]> {
     this.assertValidParams(params)
 
     const records = this.items.filter((item) => matchesFilter(item, params ?? {}))
@@ -252,7 +284,7 @@ class RepositoryMemory extends Repository {
     return await Promise.resolve(populatedRecords.map((item) => this.hydrate(item)))
   }
 
-  async delete(params: any = {}) {
+  async delete(params: Record<string, unknown> = {}): Promise<{ acknowledged: boolean }> {
     const index = this.items.findIndex((item) => matchesFilter(item, params ?? {}))
 
     if (index >= 0) {
@@ -416,4 +448,4 @@ class RepositoryMemory extends Repository {
 }
 
 export default Repository
-export { RepositoryMemory, buildMemoryRecord, comparableValue, matchesFilter, sortRecords }
+export { RepositoryMemory, buildMemoryRecord, comparableValue, matchesFilter, sortRecords, stringifyObjectIds }

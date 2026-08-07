@@ -1,4 +1,5 @@
 import { QueryBuilder } from './QueryBuilder'
+import { stringifyObjectIds } from '@repositories/repository'
 
 class MessagesQuery {
   messageRepository: any
@@ -87,7 +88,14 @@ class MessagesQuery {
     }
     this.applyFilters(query)
 
-    return await query.getQuery().populate('contact').populate('trigger').populate('department', 'name').exec()
+    const docs = await query
+      .getQuery()
+      .populate('contact')
+      .populate('trigger')
+      .populate('department', 'name')
+      .lean()
+      .exec()
+    return docs.map(stringifyObjectIds)
   }
 
   async count() {

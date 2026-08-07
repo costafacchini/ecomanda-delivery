@@ -1,18 +1,22 @@
 import bcrypt from 'bcrypt'
-import Repository, { RepositoryMemory } from './repository'
+import Repository, { RepositoryMemory, stringifyObjectIds } from './repository'
 import User from '../models/User'
+import { IUser } from '../../types'
 
 const saltRounds = 14
 
-class UserRepositoryDatabase extends Repository {
+class UserRepositoryDatabase extends Repository<IUser> {
   model() {
     return User
   }
 
-  async create(fields: any = {}) {
-    const user = new User({ ...(fields ?? {}) })
-
-    return await this.save(user)
+  async create(fields: any = {}): Promise<IUser> {
+    const doc = await this.save(new User({ ...(fields ?? {}) }))
+    const record = stringifyObjectIds(doc.toObject()) as any
+    record.validPassword = async function (password: any) {
+      return await bcrypt.compare(password, this.password as string)
+    }
+    return record as IUser
   }
 
   async find(params = {}, projection = {}) {
@@ -20,7 +24,7 @@ class UserRepositoryDatabase extends Repository {
   }
 }
 
-class UserRepositoryMemory extends RepositoryMemory {
+class UserRepositoryMemory extends RepositoryMemory<IUser> {
   async create(fields: Record<string, any> = {}) {
     await this.validateUserFields(fields)
 
