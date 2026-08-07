@@ -1,65 +1,75 @@
-import { QueryBuilder } from './QueryBuilder'
+import { QueryBuilder, IQueryableRepository } from './QueryBuilder'
 import { stringifyObjectIds } from '@repositories/repository'
+import { IMessage } from '../../types'
+
+interface MessagesQueryDeps {
+  messageRepository?: IQueryableRepository<IMessage>
+}
+
+interface SortClause {
+  field: string
+  order: number
+}
 
 class MessagesQuery {
-  messageRepository: any
-  pageClause: any
-  limitClause: any
-  startDateClause: any
-  endDateClause: any
-  licenseeClause: any
-  contactClause: any
-  kindClause: any
-  destinationClause: any
-  sendedClause: any
-  sortByClause: any
+  messageRepository: IQueryableRepository<IMessage> | undefined
+  pageClause: number | undefined
+  limitClause: number | undefined
+  startDateClause: Date | string | undefined
+  endDateClause: Date | string | undefined
+  licenseeClause: string | undefined
+  contactClause: string | undefined
+  kindClause: string | undefined
+  destinationClause: string | undefined
+  sendedClause: boolean | undefined
+  sortByClause: SortClause | undefined
 
-  constructor({ messageRepository }: { messageRepository?: any } = {}) {
+  constructor({ messageRepository }: MessagesQueryDeps = {}) {
     this.messageRepository = messageRepository
   }
 
-  page(value: any) {
+  page(value: number) {
     this.pageClause = value
   }
 
-  limit(value: any) {
+  limit(value: number) {
     this.limitClause = value
   }
 
-  filterByCreatedAt(startDate: any, endDate: any) {
+  filterByCreatedAt(startDate: Date | string, endDate: Date | string) {
     this.startDateClause = startDate
     this.endDateClause = endDate
   }
 
-  filterByLicensee(value: any) {
+  filterByLicensee(value: string) {
     this.licenseeClause = value
   }
 
-  filterByContact(value: any) {
+  filterByContact(value: string) {
     this.contactClause = value
   }
 
-  filterByKind(value: any) {
+  filterByKind(value: string) {
     this.kindClause = value
   }
 
-  filterByDestination(value: any) {
+  filterByDestination(value: string) {
     this.destinationClause = value
   }
 
-  filterBySended(value: any) {
+  filterBySended(value: boolean) {
     this.sendedClause = value
   }
 
-  sortBy(field: any, order: any) {
+  sortBy(field: string, order: number) {
     this.sortByClause = {
       field,
       order,
     }
   }
 
-  applyFilters(query: any) {
-    if (this.pageClause) query.page(this.pageClause, this.limitClause)
+  applyFilters(query: QueryBuilder) {
+    if (this.pageClause) query.page(this.pageClause, this.limitClause!)
 
     if (this.startDateClause && this.endDateClause)
       query.filterByInterval('createdAt', this.startDateClause, this.endDateClause)
@@ -79,8 +89,8 @@ class MessagesQuery {
     }
   }
 
-  async all() {
-    const query = new QueryBuilder(this.messageRepository.model())
+  async all(): Promise<IMessage[]> {
+    const query = new QueryBuilder(this.messageRepository!.model())
     if (this.sortByClause) {
       query.sortBy(this.sortByClause.field, this.sortByClause.order)
     } else {
@@ -98,8 +108,8 @@ class MessagesQuery {
     return docs.map(stringifyObjectIds)
   }
 
-  async count() {
-    const query = new QueryBuilder(this.messageRepository.model())
+  async count(): Promise<number> {
+    const query = new QueryBuilder(this.messageRepository!.model())
     this.applyFilters(query)
 
     return await query.getQuery().countDocuments()

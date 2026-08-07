@@ -1,75 +1,76 @@
-import { QueryBuilder } from './QueryBuilder'
+import { QueryBuilder, IQueryableRepository } from './QueryBuilder'
 import { stringifyObjectIds } from '@repositories/repository'
+import { IContact } from '../../types'
 
 class ContactsQuery {
-  contactRepository: any
-  pageClause: any
-  limitClause: any
-  typeClause: any
-  talkingWithChatbotClause: any
-  licenseeClause: any
-  expressionClause: any
-  startDateClause: any
-  endDateClause: any
-  isGroupClause: any
-  updatedAtStartClause: any
-  updatedAtEndClause: any
+  contactRepository: IQueryableRepository<IContact> | undefined
+  pageClause: number | undefined
+  limitClause: number | undefined
+  typeClause: string | undefined
+  talkingWithChatbotClause: boolean | undefined
+  licenseeClause: string | undefined
+  expressionClause: string | undefined
+  startDateClause: Date | string | undefined
+  endDateClause: Date | string | undefined
+  isGroupClause: boolean | undefined
+  updatedAtStartClause: Date | string | undefined
+  updatedAtEndClause: Date | string | undefined
 
-  constructor({ contactRepository }: { contactRepository?: any } = {}) {
+  constructor({ contactRepository }: { contactRepository?: IQueryableRepository<IContact> } = {}) {
     this.contactRepository = contactRepository
   }
 
-  page(value: any) {
+  page(value: number) {
     this.pageClause = value
   }
 
-  limit(value: any) {
+  limit(value: number) {
     this.limitClause = value
   }
 
-  filterByType(value: any) {
+  filterByType(value: string) {
     this.typeClause = value
   }
 
-  filterByTalkingWithChatbot(value: any) {
+  filterByTalkingWithChatbot(value: boolean) {
     this.talkingWithChatbotClause = value
   }
 
-  filterByLicensee(value: any) {
+  filterByLicensee(value: string) {
     this.licenseeClause = value
   }
 
-  filterByExpression(value: any) {
+  filterByExpression(value: string) {
     this.expressionClause = value
   }
 
-  filterIntervalWaStartChat(startDate: any, endDate: any) {
+  filterIntervalWaStartChat(startDate: Date | string, endDate: Date | string) {
     this.startDateClause = startDate
     this.endDateClause = endDate
   }
 
-  filterWaStartChatLessThan(endDate: any) {
+  filterWaStartChatLessThan(endDate: Date | string) {
     this.endDateClause = endDate
   }
 
-  filterByIsGroup(value: any) {
+  filterByIsGroup(value: boolean) {
     this.isGroupClause = value
   }
 
-  filterByUpdatedAtStart(value: any) {
+  filterByUpdatedAtStart(value: Date | string) {
     this.updatedAtStartClause = value
   }
 
-  filterByUpdatedAtEnd(value: any) {
+  filterByUpdatedAtEnd(value: Date | string) {
     this.updatedAtEndClause = value
   }
 
-  async all() {
-    const query = new QueryBuilder(this.contactRepository.model())
+  async all(): Promise<IContact[]> {
+    const query = new QueryBuilder(this.contactRepository!.model())
     query.sortBy('createdAt', 1)
     query.filterNotEqual('active', false)
 
-    if (this.pageClause) query.page(this.pageClause, this.limitClause)
+    if (this.pageClause) query.page(this.pageClause, this.limitClause!)
 
     if (this.typeClause) query.filterBy('type', this.typeClause)
 

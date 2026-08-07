@@ -1,18 +1,26 @@
-class MessagesSendedQuery {
-  startDate: any
-  endDate: any
-  licenseeId: any
-  messageRepository: any
+import { IRepository } from '@repositories/repository'
+import { IMessage } from '../../types'
 
-  constructor(startDate: any, endDate: any, licenseeId: any, { messageRepository }: { messageRepository?: any } = {}) {
+class MessagesSendedQuery {
+  startDate: Date | string
+  endDate: Date | string
+  licenseeId: string
+  messageRepository: IRepository<IMessage> | undefined
+
+  constructor(
+    startDate: Date | string,
+    endDate: Date | string,
+    licenseeId: string,
+    { messageRepository }: { messageRepository?: IRepository<IMessage> } = {},
+  ) {
     this.startDate = startDate
     this.endDate = endDate
     this.licenseeId = licenseeId
     this.messageRepository = messageRepository
   }
 
-  async all() {
-    return await this.messageRepository.find({
+  async all(): Promise<IMessage[]> {
+    return await this.messageRepository!.find({
       sended: true,
       createdAt: {
         $gte: this.startDate,

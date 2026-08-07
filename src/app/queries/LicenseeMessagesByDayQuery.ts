@@ -1,17 +1,32 @@
 import moment from 'moment-timezone'
 import mongoose from 'mongoose'
+import { IQueryableRepository } from './QueryBuilder'
+import { IRepository } from '@repositories/repository'
+import { ILicensee, IMessage } from '../../types'
+
+interface LicenseeMessagesByDayResult {
+  _id: string
+  name: string
+  days: Array<{ date: string; count: number }>
+}
 
 class LicenseeMessagesByDayQuery {
-  startDate: any
-  endDate: any
-  messageRepository: any
-  licenseeRepository: any
-  licenseeClause: any
+  startDate: Date | string
+  endDate: Date | string
+  messageRepository: IQueryableRepository<IMessage> | undefined
+  licenseeRepository: IRepository<ILicensee> | undefined
+  licenseeClause: string | undefined
 
   constructor(
-    startDate: any,
-    endDate: any,
-    { messageRepository, licenseeRepository }: { messageRepository?: any; licenseeRepository?: any } = {},
+    startDate: Date | string,
+    endDate: Date | string,
+    {
+      messageRepository,
+      licenseeRepository,
+    }: {
+      messageRepository?: IQueryableRepository<IMessage>
+      licenseeRepository?: IRepository<ILicensee>
+    } = {},
   ) {
     this.startDate = startDate
     this.endDate = endDate
@@ -19,7 +34,7 @@ class LicenseeMessagesByDayQuery {
     this.licenseeRepository = licenseeRepository
   }
 
-  filterByLicensee(value: any) {
+  filterByLicensee(value: string) {
     this.licenseeClause = value
   }
 
@@ -97,26 +112,26 @@ class LicenseeMessagesByDayQuery {
     ]
   }
 
-  async all() {
+  async all(): Promise<LicenseeMessagesByDayResult[]> {
     this.validateDates()
 
     const aggregation = this.buildAggregation()
-    const rawCounts = await this.messageRepository.model().aggregate(aggregation)
+    const rawCounts = await this.messageRepository!.model().aggregate(aggregation)
 
-    const mapDays = rawCounts.reduce((acc: any, current: any) => {
+    const mapDays = rawCounts.reduce((acc: Record<string, Array<{ date: string; count: number }>>, current: any) => {
       acc[current._id.toString()] = current.days
       return acc
     }, {})
 
     const licenseeFilter = this.licenseeClause ? { _id: this.licenseeClause } : {}
-    const licensees = await this.licenseeRepository.find(licenseeFilter)
-    licensees.sort((left: any, right: any) => left.name.localeCompare(right.name))
+    const licensees = await this.licenseeRepository!.find(licenseeFilter)
+    licensees.sort((left, right) => left.name.localeCompare(right.name))
 
     const range = this.buildRange()
 
-    return licensees.map((licensee: any) => {
+    return licensees.map((licensee) => {
       const licenseeDays = mapDays[licensee._id.toString()] || []
-      const normalized = licenseeDays.reduce((acc: any, current: any) => {
+      const normalized = licenseeDays.reduce((acc: Record<string, number>, current: { date: string; count: number }) => {
         acc[current.date] = current.count
         return acc
       }, {})
