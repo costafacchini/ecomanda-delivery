@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { ITrigger } from '../../types'
 
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
@@ -96,6 +97,6 @@ triggerSchema.set('toJSON', {
   virtuals: true,
 })
 
-const Trigger = mongoose.model('Trigger', triggerSchema)
+const Trigger = mongoose.model<ITrigger>('Trigger', triggerSchema)
 
 export default Trigger

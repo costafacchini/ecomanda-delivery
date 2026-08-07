@@ -173,3 +173,33 @@ export interface IBody {
   createdAt: Date
   updatedAt: Date
 }
+
+export interface IDepartment {
+  _id: string
+  name: string
+  licensee: string | ILicensee
+  users: string[]
+  active: boolean
+  departmentToken: string
+  inbox?: string | IInbox
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface IInbox {
+  _id: string
+  name: string
+  licensee: string | ILicensee
+  kind: 'messenger' | 'chat'
+  whatsappDefault?: string
+  whatsappToken?: string
+  whatsappUrl?: string
+  chatDefault?: string
+  chatUrl?: string
+  chatKey?: string
+  chatIdentifier?: string
+  inboxToken?: string
+  active: boolean
+  createdAt: Date
+  updatedAt: Date
+}
