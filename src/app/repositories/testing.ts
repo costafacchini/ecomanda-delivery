@@ -347,7 +347,7 @@ function installMemoryRepositories() {
 
   repositories.messageRepository.find = async (params = {}) => {
     return (await originalMessageFind(params)).map((message: any) =>
-      serializeRelations(message, ['contact', 'licensee', 'room', 'trigger', 'cart', 'department']),
+      serializeRelations(message, ['contact', 'licensee', 'room', 'trigger', 'department']),
     )
   }
 
@@ -359,7 +359,7 @@ function installMemoryRepositories() {
     }
 
     if (!relations || relations.length === 0) {
-      return serializeRelations(message, ['contact', 'licensee', 'room', 'trigger', 'cart', 'department'])
+      return serializeRelations(message, ['contact', 'licensee', 'room', 'trigger', 'department'])
     }
 
     const [populatedMessage] = await repositories.messageRepository.populateRecords([message], relations)

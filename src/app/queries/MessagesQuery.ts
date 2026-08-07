@@ -90,7 +90,6 @@ class MessagesQuery {
     return await query
       .getQuery()
       .populate('contact')
-      .populate('cart')
       .populate('trigger')
       .populate('department', 'name')
       .exec()
