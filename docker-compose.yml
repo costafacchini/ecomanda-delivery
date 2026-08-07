@@ -7,7 +7,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: pwk372ew
       MONGO_INITDB_DATABASE: ecomanda-delivery
     ports:
-      - 27017:27017
+      - 27018:27017
     volumes:
       - mongo_data:/var/lib/mongodb/data
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
@@ -15,7 +15,7 @@ services:
   mongo-express:
     image: mongo-express
     ports:
-      - 8081:8081
+      - 8181:8081
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: pwk372ew
@@ -35,7 +35,7 @@ services:
   app:
     build: .
     ports:
-      - "5000:5000"
+      - "5100:5000"
     depends_on:
       - mongo
       - redis
@@ -46,7 +46,7 @@ services:
       REDIS_URL: redis://redis:6379
       STORAGE_PROVIDER: local
       LOCAL_STORAGE_PATH: /app/uploads
-      APP_URL: http://localhost:5000
+      APP_URL: http://localhost:5100
       ENABLE_BAILEYS_SOCKET: "false"
     env_file:
       - .env
