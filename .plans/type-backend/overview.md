@@ -1,8 +1,8 @@
 # Plan: Backend Type Narrowing
 
-**Status**: in-progress
+**Status**: complete
 **Created**: 2026-05-31
-**Last Updated**: 2026-08-07 (phase-3 complete — all tasks done; PR pending)
+**Last Updated**: 2026-08-07 (all phases merged; plan complete)
 **Estimated Demo Date**: N/A
 **Assigned Dev**: Alan Costa Facchini
 **Assigned QA**: unassigned
@@ -127,7 +127,7 @@ One branch per phase — tasks within a phase are committed sequentially to the 
 | `plan/type-backend/phase-1` | task-01, task-02, task-03 | PR #3094 (merged) |
 | `plan/type-backend/phase-2` | task-04 | PR #3096 (merged) |
 | `plan/type-backend/phase-2-remaining` | task-05, task-06, task-07 | PR #3097 (merged) |
-| `plan/type-backend/phase-3` | task-08, task-09, task-10, task-11 | pending |
+| `plan/type-backend/phase-3` | task-08, task-09, task-10, task-11 | PR #3099 (merged) |
 
 Base branch: `main`
 
@@ -156,15 +156,15 @@ Each phase branch is created from `main` after the previous phase PR is merged. 
 
 ## Success Criteria
 
-- [ ] All 12 Mongoose models have a corresponding `I{Model}` interface exported from `src/types/`
-- [ ] All repository `findFirst`, `findAll`, `create`, `update` methods return typed results (no `any` in return type positions)
-- [ ] All use case `execute()` methods have typed inputs and outputs
-- [ ] All controller handlers have typed `req`, `res` parameters (no `Request<any, any, any>`)
-- [ ] Query classes have typed `filter`, `sort`, and result methods
-- [ ] Plugin `sendMessage`, `responseToMessages` methods have typed signatures
-- [ ] `npx tsc --noEmit` passes with no new errors
-- [ ] All existing tests pass
-- [ ] No regressions in existing functionality
+- [x] All 12 Mongoose models have a corresponding `I{Model}` interface exported from `src/types/`
+- [x] All repository `findFirst`, `findAll`, `create`, `update` methods return typed results (no `any` in return type positions)
+- [x] All use case `execute()` methods have typed inputs and outputs
+- [x] All controller handlers have typed `req`, `res` parameters (no `Request<any, any, any>`)
+- [x] Query classes have typed `filter`, `sort`, and result methods
+- [x] Plugin `sendMessage`, `responseToMessages` methods have typed signatures
+- [x] `npx tsc --noEmit` passes with no new errors
+- [x] All existing tests pass
+- [x] No regressions in existing functionality
 
 ## References
 
