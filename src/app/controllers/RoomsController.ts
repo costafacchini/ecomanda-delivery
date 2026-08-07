@@ -1,11 +1,24 @@
+import { Request, Response } from 'express'
+import { IRepository } from '@repositories/repository'
+import { IQueryableRepository } from '../queries/QueryBuilder'
+import { IUser, IRoom, IContact } from '../../types'
+
 const EXCLUDE_SYSTEM_CLOSE = { $nor: [{ kind: 'text', text: 'Chat encerrado pelo agente' }] }
 
+interface IRoomRepository extends IQueryableRepository<IRoom> {
+  findForLicensee(
+    licenseeId: string,
+    opts?: { departmentIds?: any[]; page?: number; limit?: number },
+  ): Promise<any[]>
+  findOpenForContact(contactId: string): Promise<IRoom | null>
+}
+
 class RoomsController {
-  userRepository: any
-  roomRepository: any
-  messageRepository: any
-  departmentRepository: any
-  contactRepository: any
+  userRepository: IRepository<IUser>
+  roomRepository: IRoomRepository
+  messageRepository: IQueryableRepository<IRoom>
+  departmentRepository: IQueryableRepository<IRoom>
+  contactRepository: IRepository<IContact>
 
   constructor({
     userRepository,
@@ -13,12 +26,18 @@ class RoomsController {
     messageRepository,
     departmentRepository,
     contactRepository,
-  }: Record<string, any> = {}) {
-    this.userRepository = userRepository
-    this.roomRepository = roomRepository
-    this.messageRepository = messageRepository
-    this.departmentRepository = departmentRepository
-    this.contactRepository = contactRepository
+  }: {
+    userRepository?: IRepository<IUser>
+    roomRepository?: IRoomRepository
+    messageRepository?: IQueryableRepository<IRoom>
+    departmentRepository?: IQueryableRepository<IRoom>
+    contactRepository?: IRepository<IContact>
+  } = {}) {
+    this.userRepository = userRepository!
+    this.roomRepository = roomRepository!
+    this.messageRepository = messageRepository!
+    this.departmentRepository = departmentRepository!
+    this.contactRepository = contactRepository!
 
     this.index = this.index.bind(this)
     this.create = this.create.bind(this)
@@ -26,15 +45,15 @@ class RoomsController {
     this.closeRoom = this.closeRoom.bind(this)
   }
 
-  async _resolveUser(req: any) {
+  async _resolveUser(req: Request) {
     return await this.userRepository.findFirst({ _id: req.userId }, ['licensee'])
   }
 
-  _resolveLicenseeId(user: any) {
-    return user.licensee?._id ?? user.licensee
+  _resolveLicenseeId(user: IUser) {
+    return (user.licensee as any)?._id ?? user.licensee
   }
 
-  async index(req: any, res: any) {
+  async index(req: Request, res: Response) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
@@ -87,7 +106,7 @@ class RoomsController {
     }
   }
 
-  async create(req: any, res: any) {
+  async create(req: Request, res: Response) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
@@ -97,37 +116,38 @@ class RoomsController {
       const contact = await this.contactRepository.findFirst({ _id: req.body.contactId })
       if (!contact) return res.status(404).json({ errors: { message: 'Contact not found' } })
 
-      const contactLicenseeId = contact.licensee?._id?.toString() ?? contact.licensee?.toString()
+      const contactLicenseeId = (contact.licensee as any)?._id?.toString() ?? contact.licensee?.toString()
       const resolvedLicenseeId = licenseeId?.toString()
 
       if (user.role !== 'super' && contactLicenseeId !== resolvedLicenseeId) {
         return res.status(403).json({ errors: { message: 'Forbidden' } })
       }
 
-      const existingRoom = await this.roomRepository.findOpenForContact(contact._id)
+      const existingRoom = await this.roomRepository.findOpenForContact(contact._id as string)
       if (existingRoom) {
         return res.status(200).json({ room: existingRoom })
       }
 
-      await this.roomRepository.create({ contact: contact._id, status: 'pending' })
-      const room = await this.roomRepository.findOpenForContact(contact._id)
+      await this.roomRepository.create({ contact: contact._id as string, status: 'pending' })
+      const room = await this.roomRepository.findOpenForContact(contact._id as string)
       return res.status(201).json({ room })
     } catch (err: any) {
       return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
-  async messages(req: any, res: any) {
+  async messages(req: Request, res: Response) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
 
-      const room = await this.roomRepository.findFirst({ _id: req.params.roomId }, ['contact'])
+      const room = await this.roomRepository.findFirst({ _id: req.params.roomId as string }, ['contact'])
       if (!room) return res.status(404).json({ errors: { message: 'Room not found' } })
 
       if (user.role !== 'super') {
         const userLicenseeId = this._resolveLicenseeId(user)?.toString()
-        const roomLicenseeId = room.contact?.licensee?._id?.toString() ?? room.contact?.licensee?.toString() ?? null
+        const roomLicenseeId =
+          (room.contact as any)?.licensee?._id?.toString() ?? (room.contact as any)?.licensee?.toString() ?? null
 
         if (userLicenseeId !== roomLicenseeId) {
           return res.status(403).json({ errors: { message: 'Forbidden' } })
@@ -155,18 +175,19 @@ class RoomsController {
     }
   }
 
-  async closeRoom(req: any, res: any) {
+  async closeRoom(req: Request, res: Response) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
 
-      const room = await this.roomRepository.model().findById(req.params.roomId)
+      const room = await this.roomRepository.model().findById(req.params.roomId as string)
       if (!room) return res.status(404).json({ errors: { message: 'Room not found' } })
 
       if (user.role !== 'super') {
         const userLicenseeId = this._resolveLicenseeId(user)?.toString()
         const contact = await this.contactRepository.findFirst({ _id: room.contact })
-        const roomLicenseeId = contact?.licensee?._id?.toString() ?? contact?.licensee?.toString() ?? null
+        const roomLicenseeId =
+          (contact?.licensee as any)?._id?.toString() ?? contact?.licensee?.toString() ?? null
         if (userLicenseeId !== roomLicenseeId) {
           return res.status(403).json({ errors: { message: 'Forbidden' } })
         }

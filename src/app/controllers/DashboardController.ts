@@ -1,14 +1,23 @@
+import { Request, Response } from 'express'
 import mongoose from 'mongoose'
+import { IRepository } from '@repositories/repository'
+import { IQueryableRepository } from '../queries/QueryBuilder'
+import { IUser, ILicensee, IContact, IMessage, IRoom } from '../../types'
 
 const EXCLUDE_SYSTEM_CLOSE = { $nor: [{ kind: 'text', text: 'Chat encerrado pelo agente' }] }
 
+interface RedisClient {
+  get(key: string): Promise<string | null>
+  setex(key: string, seconds: number, value: string): Promise<unknown>
+}
+
 class DashboardController {
-  userRepository: any
-  licenseeRepository: any
-  contactRepository: any
-  messageRepository: any
-  roomRepository: any
-  redisConnection: any
+  userRepository: IRepository<IUser>
+  licenseeRepository: IQueryableRepository<ILicensee>
+  contactRepository: IQueryableRepository<IContact>
+  messageRepository: IQueryableRepository<IMessage>
+  roomRepository: IQueryableRepository<IRoom>
+  redisConnection: RedisClient
 
   constructor({
     userRepository,
@@ -17,13 +26,20 @@ class DashboardController {
     messageRepository,
     roomRepository,
     redisConnection,
-  }: Record<string, any> = {}) {
-    this.userRepository = userRepository
-    this.licenseeRepository = licenseeRepository
-    this.contactRepository = contactRepository
-    this.messageRepository = messageRepository
-    this.roomRepository = roomRepository
-    this.redisConnection = redisConnection
+  }: {
+    userRepository?: IRepository<IUser>
+    licenseeRepository?: IQueryableRepository<ILicensee>
+    contactRepository?: IQueryableRepository<IContact>
+    messageRepository?: IQueryableRepository<IMessage>
+    roomRepository?: IQueryableRepository<IRoom>
+    redisConnection?: RedisClient
+  } = {}) {
+    this.userRepository = userRepository!
+    this.licenseeRepository = licenseeRepository!
+    this.contactRepository = contactRepository!
+    this.messageRepository = messageRepository!
+    this.roomRepository = roomRepository!
+    this.redisConnection = redisConnection!
 
     this.licensees = this.licensees.bind(this)
     this.messageVolume = this.messageVolume.bind(this)
@@ -37,11 +53,11 @@ class DashboardController {
     this.closeRoom = this.closeRoom.bind(this)
   }
 
-  async _resolveUser(req: any) {
+  async _resolveUser(req: Request) {
     return await this.userRepository.findFirst({ _id: req.userId })
   }
 
-  async _cached(key: any, fn: any) {
+  async _cached(key: string, fn: () => Promise<unknown>) {
     const cached = await this.redisConnection.get(key)
     if (cached) return JSON.parse(cached)
     const data = await fn()
@@ -49,17 +65,17 @@ class DashboardController {
     return data
   }
 
-  _parseDateRange(query: any) {
+  _parseDateRange(query: Record<string, unknown>) {
     const now = new Date()
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
     const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000)
     return {
-      startDate: query.startDate ? new Date(query.startDate) : startOfDay,
-      endDate: query.endDate ? new Date(query.endDate) : endOfDay,
+      startDate: query.startDate ? new Date(query.startDate as string) : startOfDay,
+      endDate: query.endDate ? new Date(query.endDate as string) : endOfDay,
     }
   }
 
-  async licensees(req: any, res: any) {
+  async licensees(req: Request, res: Response) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
@@ -83,7 +99,7 @@ class DashboardController {
     }
   }
 
-  async messageVolume(req: any, res: any) {
+  async messageVolume(req: Request, res: Response) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
@@ -147,7 +163,7 @@ class DashboardController {
     }
   }
 
-  async deliveryRate(req: any, res: any) {
+  async deliveryRate(req: Request, res: Response) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
@@ -204,7 +220,7 @@ class DashboardController {
     }
   }
 
-  async queue(req: any, res: any) {
+  async queue(req: Request, res: Response) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
@@ -247,7 +263,7 @@ class DashboardController {
     }
   }
 
-  async conversations(req: any, res: any) {
+  async conversations(req: Request, res: Response) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
@@ -315,7 +331,7 @@ class DashboardController {
     }
   }
 
-  async contacts(req: any, res: any) {
+  async contacts(req: Request, res: Response) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
@@ -337,7 +353,7 @@ class DashboardController {
     }
   }
 
-  async messagesToday(req: any, res: any) {
+  async messagesToday(req: Request, res: Response) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
@@ -382,7 +398,7 @@ class DashboardController {
     }
   }
 
-  async messagesPerDay(req: any, res: any) {
+  async messagesPerDay(req: Request, res: Response) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
@@ -414,7 +430,8 @@ class DashboardController {
       return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
-  async openRooms(req: any, res: any) {
+
+  async openRooms(req: Request, res: Response) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
@@ -465,13 +482,13 @@ class DashboardController {
     }
   }
 
-  async closeRoom(req: any, res: any) {
+  async closeRoom(req: Request, res: Response) {
     try {
       const user = await this._resolveUser(req)
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
       if (!['super', 'admin'].includes(user.role)) return res.status(403).json({ errors: { message: 'Forbidden' } })
 
-      const room = await this.roomRepository.model().findById(req.params.roomId)
+      const room = await this.roomRepository.model().findById(req.params.roomId as string)
       if (!room) return res.status(404).json({ errors: { message: 'Room not found' } })
       if (room.closed) return res.status(200).json({ message: 'Already closed' })
 

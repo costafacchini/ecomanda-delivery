@@ -1,11 +1,20 @@
+import { Request, Response } from 'express'
 import { sanitizeModelErrors } from '../helpers/SanitizeErrors'
+import { IRepository } from '@repositories/repository'
+import { IUser, IMessage } from '../../types'
+import { CreateMessage } from '../usecases/messages/CreateMessage'
+import { MessagesQuery } from '../queries/MessagesQuery'
+
+interface QueueServer {
+  addJob(name: string, data: Record<string, unknown>): Promise<unknown>
+}
 
 class MessagesController {
-  createMessagesQuery: any
-  userRepository: any
-  messageRepository: any
-  queueServer: any
-  createMessage: any
+  createMessagesQuery: () => MessagesQuery
+  userRepository: IRepository<IUser>
+  messageRepository: IRepository<IMessage>
+  queueServer: QueueServer
+  createMessage: CreateMessage
 
   constructor({
     createMessagesQuery,
@@ -13,12 +22,18 @@ class MessagesController {
     messageRepository,
     queueServer,
     createMessage,
-  }: Record<string, any> = {}) {
-    this.createMessagesQuery = createMessagesQuery
-    this.userRepository = userRepository
-    this.messageRepository = messageRepository
-    this.queueServer = queueServer
-    this.createMessage = createMessage
+  }: {
+    createMessagesQuery?: () => MessagesQuery
+    userRepository?: IRepository<IUser>
+    messageRepository?: IRepository<IMessage>
+    queueServer?: QueueServer
+    createMessage?: CreateMessage
+  } = {}) {
+    this.createMessagesQuery = createMessagesQuery!
+    this.userRepository = userRepository!
+    this.messageRepository = messageRepository!
+    this.queueServer = queueServer!
+    this.createMessage = createMessage!
 
     this.index = this.index.bind(this)
     this.create = this.create.bind(this)
@@ -26,7 +41,7 @@ class MessagesController {
     this.ignore = this.ignore.bind(this)
   }
 
-  async index(req: any, res: any) {
+  async index(req: Request, res: Response) {
     const page = req.query.page || 1
     const limit = req.query.limit || 30
 
@@ -38,31 +53,31 @@ class MessagesController {
 
     const messagesQuery = this.createMessagesQuery()
 
-    messagesQuery.page(page)
-    messagesQuery.limit(limit)
+    messagesQuery.page(page as number)
+    messagesQuery.limit(limit as number)
 
     if (req.query.startDate && req.query.endDate) {
-      messagesQuery.filterByCreatedAt(new Date(req.query.startDate), new Date(req.query.endDate))
+      messagesQuery.filterByCreatedAt(new Date(req.query.startDate as string), new Date(req.query.endDate as string))
     }
 
     if (req.query.licensee) {
-      messagesQuery.filterByLicensee(req.query.licensee)
+      messagesQuery.filterByLicensee(req.query.licensee as string)
     }
 
     if (req.query.contact) {
-      messagesQuery.filterByContact(req.query.contact)
+      messagesQuery.filterByContact(req.query.contact as string)
     }
 
     if (req.query.kind) {
-      messagesQuery.filterByKind(req.query.kind)
+      messagesQuery.filterByKind(req.query.kind as string)
     }
 
     if (req.query.destination) {
-      messagesQuery.filterByDestination(req.query.destination)
+      messagesQuery.filterByDestination(req.query.destination as string)
     }
 
     if (req.query.sended) {
-      messagesQuery.filterBySended(req.query.sended)
+      messagesQuery.filterBySended(req.query.sended === 'true')
     }
 
     const messages = await messagesQuery.all()
@@ -70,7 +85,7 @@ class MessagesController {
     res.status(200).send(messages)
   }
 
-  async create(req: any, res: any) {
+  async create(req: Request, res: Response) {
     try {
       const message = await this.createMessage.execute(req.body)
       return res.status(201).send(message)
@@ -82,11 +97,11 @@ class MessagesController {
     }
   }
 
-  async resend(req: any, res: any) {
+  async resend(req: Request, res: Response) {
     try {
       const [user, message] = await Promise.all([
         this.userRepository.findFirst({ _id: req.userId }),
-        this.messageRepository.findFirst({ _id: req.params.id }),
+        this.messageRepository.findFirst({ _id: req.params.id as string }),
       ])
 
       if (!message) return res.status(404).json({ errors: { message: 'Message not found' } })
@@ -94,7 +109,7 @@ class MessagesController {
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
 
       if (user.role !== 'super') {
-        if (message.licensee.toString() !== user.licensee.toString()) {
+        if (message.licensee.toString() !== user.licensee!.toString()) {
           return res.status(403).json({ errors: { message: 'Forbidden' } })
         }
       }
@@ -116,18 +131,19 @@ class MessagesController {
       return res.status(500).json({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
-  async ignore(req: any, res: any) {
+
+  async ignore(req: Request, res: Response) {
     try {
       const [user, message] = await Promise.all([
         this.userRepository.findFirst({ _id: req.userId }),
-        this.messageRepository.findFirst({ _id: req.params.id }),
+        this.messageRepository.findFirst({ _id: req.params.id as string }),
       ])
 
       if (!message) return res.status(404).json({ errors: { message: 'Message not found' } })
       if (!user) return res.status(404).json({ errors: { message: 'User not found' } })
 
       if (user.role !== 'super') {
-        if (message.licensee.toString() !== user.licensee.toString()) {
+        if (message.licensee.toString() !== user.licensee!.toString()) {
           return res.status(403).json({ errors: { message: 'Forbidden' } })
         }
       }

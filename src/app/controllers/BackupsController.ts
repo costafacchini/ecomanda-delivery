@@ -1,16 +1,21 @@
+import { Request, Response } from 'express'
 import { logger } from '../helpers/logger'
 
-class BackupsController {
-  queueServer: any
+interface QueueServer {
+  addJob(name: string, data: Record<string, unknown>): Promise<unknown>
+}
 
-  constructor({ queueServer }: Record<string, any> = {}) {
-    this.queueServer = queueServer
+class BackupsController {
+  queueServer: QueueServer
+
+  constructor({ queueServer }: { queueServer?: QueueServer } = {}) {
+    this.queueServer = queueServer!
 
     this.schedule = this.schedule.bind(this)
     this.clear = this.clear.bind(this)
   }
 
-  async schedule(_: any, res: any) {
+  async schedule(_req: Request, res: Response) {
     logger.info('Agendando backup')
 
     await this.queueServer.addJob('backup', {})
@@ -18,7 +23,7 @@ class BackupsController {
     res.status(200).send({ body: 'Backup agendado' })
   }
 
-  async clear(_: any, res: any) {
+  async clear(_req: Request, res: Response) {
     logger.info('Agendar limpeza de backups antigos')
 
     await this.queueServer.addJob('clear-backups', {})

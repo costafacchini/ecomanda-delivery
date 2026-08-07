@@ -1,18 +1,20 @@
+import { Request, Response } from 'express'
 import {
+  AuthenticateUser,
   AuthenticateUserInvalidCredentialsError,
   AuthenticateUserValidationError,
 } from '../usecases/auth/AuthenticateUser'
 
 class LoginController {
-  authenticateUser: any
+  authenticateUser: AuthenticateUser
 
-  constructor({ authenticateUser }: Record<string, any> = {}) {
-    this.authenticateUser = authenticateUser
+  constructor({ authenticateUser }: { authenticateUser?: AuthenticateUser } = {}) {
+    this.authenticateUser = authenticateUser!
 
     this.login = this.login.bind(this)
   }
 
-  async login(req: any, res: any) {
+  async login(req: Request, res: Response) {
     try {
       const token = await this.authenticateUser.execute(req.body)
 
@@ -20,7 +22,7 @@ class LoginController {
       res.cookie('access_token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'Strict',
+        sameSite: 'strict',
         maxAge: SEVEN_DAYS_MS,
       })
 

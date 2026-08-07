@@ -53,7 +53,7 @@ describe('MessagesController delegation', () => {
     expect(messagesQueryInstance.limit).toHaveBeenCalledWith('10')
     expect(messagesQueryInstance.filterByDestination).toHaveBeenCalledWith('to-chat')
     expect(messagesQueryInstance.filterByKind).toHaveBeenCalledWith('text')
-    expect(messagesQueryInstance.filterBySended).toHaveBeenCalledWith('true')
+    expect(messagesQueryInstance.filterBySended).toHaveBeenCalledWith(true)
     expect(res.status).toHaveBeenCalledWith(200)
     expect(res.send).toHaveBeenCalledWith(messages)
   })

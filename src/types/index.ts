@@ -119,15 +119,16 @@ export interface IMessage {
   departament?: string
   senderName?: string
   sended: boolean
+  ignored?: boolean
   licensee: string | ILicensee
   contact: string | IContact
   room?: string | IRoom
   messageWaId?: string
   attachmentWaId?: string
-  sendedAt?: Date
+  sendedAt?: Date | null
   readAt?: Date
   deliveredAt?: Date
-  error?: string
+  error?: string | null
   payload?: string
   replyMessageId?: string
   createdAt: Date
@@ -138,6 +139,7 @@ export interface IRoom {
   _id: string
   roomId?: string
   token?: string
+  status?: string
   closed: boolean
   closedAt?: Date
   contact: string | IContact
