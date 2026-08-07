@@ -3,7 +3,11 @@ import { ILicensee, IInbox, IWhatsappSession } from '../../../types'
 import { logger } from '../../helpers/logger'
 
 interface SocketManager {
-  start(session: IWhatsappSession, licensee: ILicensee, callbacks: Record<string, (...args: any[]) => any>): Promise<void>
+  start(
+    session: IWhatsappSession,
+    licensee: ILicensee,
+    callbacks: Record<string, (...args: any[]) => any>,
+  ): Promise<void>
 }
 
 interface IngestMessengerMessageUseCase {

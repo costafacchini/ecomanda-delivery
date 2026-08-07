@@ -25,7 +25,12 @@ class IngestMessengerMessage {
     this.jobQueue = jobQueue
   }
 
-  async execute({ body, licenseeId, departmentId = null, inboxId = null }: IngestMessengerMessageInput): Promise<IBody> {
+  async execute({
+    body,
+    licenseeId,
+    departmentId = null,
+    inboxId = null,
+  }: IngestMessengerMessageInput): Promise<IBody> {
     const bodySaved = await this.messengerRepository.create({
       content: body,
       licensee: licenseeId,

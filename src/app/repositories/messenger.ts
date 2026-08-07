@@ -8,7 +8,13 @@ interface SendMessageToMessengerPayload {
   licenseeId: string
 }
 
-async function scheduleSendMessageToMessenger({ messageId, url, token, contactId, licenseeId }: SendMessageToMessengerPayload) {
+async function scheduleSendMessageToMessenger({
+  messageId,
+  url,
+  token,
+  contactId,
+  licenseeId,
+}: SendMessageToMessengerPayload) {
   await queueServer.addJob('send-message-to-messenger', { messageId, url, token, contactId, licenseeId })
 }
 
