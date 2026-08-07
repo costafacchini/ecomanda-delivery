@@ -1,24 +1,34 @@
+import { IRepository } from '@repositories/repository'
+import { ILicensee, IInbox } from '../../../types'
+
 const WHATSAPP_DEFAULT_BAILEYS = 'baileys'
 
+interface GetBaileysQrForInboxDeps {
+  inboxRepository: IRepository<IInbox>
+  licenseeRepository: IRepository<ILicensee>
+  createMessengerPlugin: (licensee: ILicensee, extras: Record<string, any>) => any
+  startBaileysSocket?: (licensee: ILicensee, inbox: IInbox) => Promise<void>
+}
+
 class GetBaileysQrForInbox {
-  inboxRepository: any
-  licenseeRepository: any
-  createMessengerPlugin: any
-  startBaileysSocket: any
+  inboxRepository: IRepository<IInbox>
+  licenseeRepository: IRepository<ILicensee>
+  createMessengerPlugin: GetBaileysQrForInboxDeps['createMessengerPlugin']
+  startBaileysSocket?: GetBaileysQrForInboxDeps['startBaileysSocket']
 
   constructor({
     inboxRepository,
     licenseeRepository,
     createMessengerPlugin,
     startBaileysSocket,
-  }: Record<string, any> = {}) {
+  }: GetBaileysQrForInboxDeps) {
     this.inboxRepository = inboxRepository
     this.licenseeRepository = licenseeRepository
     this.createMessengerPlugin = createMessengerPlugin
     this.startBaileysSocket = startBaileysSocket
   }
 
-  async execute(inboxId: any) {
+  async execute(inboxId: string) {
     const inbox = await this.inboxRepository.findFirst({ _id: inboxId })
     if (!inbox) {
       return { message: 'Inbox não encontrado' }

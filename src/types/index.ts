@@ -249,7 +249,7 @@ export interface ITrafficlight {
 export interface IWhatsappSession {
   _id: string
   licensee: string | ILicensee
-  inbox?: string | IInbox
+  inbox?: string | IInbox | null
   creds?: Record<string, unknown>
   keys?: Record<string, unknown>
   createdAt: Date

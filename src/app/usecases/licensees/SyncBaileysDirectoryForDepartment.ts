@@ -1,12 +1,27 @@
+import { IRepository } from '@repositories/repository'
+import { ILicensee, IDepartment, IContact } from '../../../types'
+
 const WHATSAPP_DEFAULT_BAILEYS = 'baileys'
 const NOT_BAILEYS_MESSAGE = 'Licensee não usa Baileys'
 
+interface ContactRepositoryWithGroups extends IRepository<IContact> {
+  deactivateGroupsForLicensee(licenseeId: string): Promise<void>
+}
+
+interface SyncBaileysDirectoryForDepartmentDeps {
+  departmentRepository: IRepository<IDepartment>
+  licenseeRepository: IRepository<ILicensee>
+  contactRepository: ContactRepositoryWithGroups
+  createMessengerPlugin: (licensee: ILicensee, extras: Record<string, any>) => any
+  syncBaileysDirectoryForInbox: { execute(inboxId: string): Promise<Record<string, any>> }
+}
+
 class SyncBaileysDirectoryForDepartment {
-  departmentRepository: any
-  licenseeRepository: any
-  contactRepository: any
-  createMessengerPlugin: any
-  syncBaileysDirectoryForInbox: any
+  departmentRepository: IRepository<IDepartment>
+  licenseeRepository: IRepository<ILicensee>
+  contactRepository: ContactRepositoryWithGroups
+  createMessengerPlugin: SyncBaileysDirectoryForDepartmentDeps['createMessengerPlugin']
+  syncBaileysDirectoryForInbox: SyncBaileysDirectoryForDepartmentDeps['syncBaileysDirectoryForInbox']
 
   constructor({
     departmentRepository,
@@ -14,7 +29,7 @@ class SyncBaileysDirectoryForDepartment {
     contactRepository,
     createMessengerPlugin,
     syncBaileysDirectoryForInbox,
-  }: Record<string, any> = {}) {
+  }: SyncBaileysDirectoryForDepartmentDeps) {
     this.departmentRepository = departmentRepository
     this.licenseeRepository = licenseeRepository
     this.contactRepository = contactRepository
@@ -22,14 +37,14 @@ class SyncBaileysDirectoryForDepartment {
     this.syncBaileysDirectoryForInbox = syncBaileysDirectoryForInbox
   }
 
-  async execute(departmentId: any) {
+  async execute(departmentId: string) {
     const department = await this.departmentRepository.findFirst({ _id: departmentId })
     if (!department) {
       return { message: 'Departamento não encontrado' }
     }
 
     if (department.inbox) {
-      return this.syncBaileysDirectoryForInbox.execute(department.inbox)
+      return this.syncBaileysDirectoryForInbox.execute(department.inbox as string)
     }
 
     const licensee = await this.licenseeRepository.findFirst({ _id: department.licensee })

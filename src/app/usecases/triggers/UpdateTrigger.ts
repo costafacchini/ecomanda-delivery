@@ -11,8 +11,15 @@ const UPDATE_TRIGGER_FIELDS = [
   'catalogId',
 ]
 
-function pickFields(fields: Record<string, any> = {}, keys: any[] = []) {
-  return keys.reduce((payload: Record<string, any>, key: any) => {
+import { IRepository } from '@repositories/repository'
+import { ITrigger } from '../../../types'
+
+interface UpdateTriggerDeps {
+  triggerRepository: IRepository<ITrigger>
+}
+
+function pickFields(fields: Record<string, any> = {}, keys: string[] = []) {
+  return keys.reduce((payload: Record<string, any>, key: string) => {
     if (Object.prototype.hasOwnProperty.call(fields, key)) {
       payload[key] = fields[key]
     }
@@ -22,13 +29,13 @@ function pickFields(fields: Record<string, any> = {}, keys: any[] = []) {
 }
 
 class UpdateTrigger {
-  triggerRepository: any
+  triggerRepository: IRepository<ITrigger>
 
-  constructor({ triggerRepository }: Record<string, any> = {}) {
+  constructor({ triggerRepository }: UpdateTriggerDeps) {
     this.triggerRepository = triggerRepository
   }
 
-  async execute(id: any, fields = {}) {
+  async execute(id: string, fields: Record<string, any> = {}): Promise<ITrigger | null> {
     await this.triggerRepository.update(id, pickFields(fields, UPDATE_TRIGGER_FIELDS))
 
     return await this.triggerRepository.findFirst({ _id: id })

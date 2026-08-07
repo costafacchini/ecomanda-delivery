@@ -1,25 +1,39 @@
+import { IRepository } from '@repositories/repository'
+import { ILicensee, IInbox, IContact } from '../../../types'
+
 const WHATSAPP_DEFAULT_BAILEYS = 'baileys'
 const NOT_BAILEYS_MESSAGE = 'Inbox não usa Baileys'
 
+interface ContactRepositoryWithGroups extends IRepository<IContact> {
+  deactivateGroupsForLicensee(licenseeId: string): Promise<void>
+}
+
+interface SyncBaileysDirectoryForInboxDeps {
+  inboxRepository: IRepository<IInbox>
+  licenseeRepository: IRepository<ILicensee>
+  contactRepository: ContactRepositoryWithGroups
+  createMessengerPlugin: (licensee: ILicensee, extras: Record<string, any>) => any
+}
+
 class SyncBaileysDirectoryForInbox {
-  inboxRepository: any
-  licenseeRepository: any
-  contactRepository: any
-  createMessengerPlugin: any
+  inboxRepository: IRepository<IInbox>
+  licenseeRepository: IRepository<ILicensee>
+  contactRepository: ContactRepositoryWithGroups
+  createMessengerPlugin: SyncBaileysDirectoryForInboxDeps['createMessengerPlugin']
 
   constructor({
     inboxRepository,
     licenseeRepository,
     contactRepository,
     createMessengerPlugin,
-  }: Record<string, any> = {}) {
+  }: SyncBaileysDirectoryForInboxDeps) {
     this.inboxRepository = inboxRepository
     this.licenseeRepository = licenseeRepository
     this.contactRepository = contactRepository
     this.createMessengerPlugin = createMessengerPlugin
   }
 
-  async execute(inboxId: any) {
+  async execute(inboxId: string) {
     const inbox = await this.inboxRepository.findFirst({ _id: inboxId })
     if (!inbox) {
       return { message: 'Inbox não encontrado' }

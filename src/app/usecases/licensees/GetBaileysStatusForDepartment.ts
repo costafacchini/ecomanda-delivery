@@ -1,10 +1,22 @@
+import { IRepository } from '@repositories/repository'
+import { ILicensee, IDepartment, IWhatsappSession } from '../../../types'
+
+interface GetBaileysStatusForDepartmentDeps {
+  departmentRepository: IRepository<IDepartment>
+  licenseeRepository: IRepository<ILicensee>
+  whatsappSessionRepository: IRepository<IWhatsappSession>
+  startBaileysSocket?: (licensee: ILicensee, department: IDepartment) => Promise<void>
+  socketManager?: { isConnectedForLicensee(licenseeId: string, entityId: string): boolean }
+  getBaileysStatusForInbox: { execute(inboxId: string): Promise<{ connected: boolean }> }
+}
+
 class GetBaileysStatusForDepartment {
-  departmentRepository: any
-  licenseeRepository: any
-  whatsappSessionRepository: any
-  startBaileysSocket: any
-  socketManager: any
-  getBaileysStatusForInbox: any
+  departmentRepository: IRepository<IDepartment>
+  licenseeRepository: IRepository<ILicensee>
+  whatsappSessionRepository: IRepository<IWhatsappSession>
+  startBaileysSocket?: GetBaileysStatusForDepartmentDeps['startBaileysSocket']
+  socketManager?: GetBaileysStatusForDepartmentDeps['socketManager']
+  getBaileysStatusForInbox: GetBaileysStatusForDepartmentDeps['getBaileysStatusForInbox']
 
   constructor({
     departmentRepository,
@@ -13,7 +25,7 @@ class GetBaileysStatusForDepartment {
     startBaileysSocket,
     socketManager,
     getBaileysStatusForInbox,
-  }: Record<string, any> = {}) {
+  }: GetBaileysStatusForDepartmentDeps) {
     this.departmentRepository = departmentRepository
     this.licenseeRepository = licenseeRepository
     this.whatsappSessionRepository = whatsappSessionRepository
@@ -22,14 +34,14 @@ class GetBaileysStatusForDepartment {
     this.getBaileysStatusForInbox = getBaileysStatusForInbox
   }
 
-  async execute(departmentId: any) {
+  async execute(departmentId: string) {
     const department = await this.departmentRepository.findFirst({ _id: departmentId })
     if (!department) {
       return { connected: false }
     }
 
     if (department.inbox) {
-      return this.getBaileysStatusForInbox.execute(department.inbox)
+      return this.getBaileysStatusForInbox.execute(department.inbox as string)
     }
 
     const licensee = await this.licenseeRepository.findFirst({ _id: department.licensee })

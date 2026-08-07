@@ -36,8 +36,15 @@ const UPDATE_LICENSEE_FIELDS = [
   'useFileIDYcloud',
 ]
 
-function pickFields(fields: Record<string, any> = {}, keys: any[] = []) {
-  return keys.reduce((payload: Record<string, any>, key: any) => {
+import { IRepository } from '@repositories/repository'
+import { ILicensee } from '../../../types'
+
+interface UpdateLicenseeDeps {
+  licenseeRepository: IRepository<ILicensee>
+}
+
+function pickFields(fields: Record<string, any> = {}, keys: string[] = []) {
+  return keys.reduce((payload: Record<string, any>, key: string) => {
     if (Object.prototype.hasOwnProperty.call(fields, key)) {
       payload[key] = fields[key]
     }
@@ -47,13 +54,13 @@ function pickFields(fields: Record<string, any> = {}, keys: any[] = []) {
 }
 
 class UpdateLicensee {
-  licenseeRepository: any
+  licenseeRepository: IRepository<ILicensee>
 
-  constructor({ licenseeRepository }: Record<string, any> = {}) {
+  constructor({ licenseeRepository }: UpdateLicenseeDeps) {
     this.licenseeRepository = licenseeRepository
   }
 
-  async execute(id: any, fields = {}) {
+  async execute(id: string, fields: Record<string, any> = {}): Promise<ILicensee | null> {
     const payload = pickFields(fields, UPDATE_LICENSEE_FIELDS)
 
     await this.licenseeRepository.update(id, payload)
