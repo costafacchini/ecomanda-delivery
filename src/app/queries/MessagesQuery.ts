@@ -87,12 +87,7 @@ class MessagesQuery {
     }
     this.applyFilters(query)
 
-    return await query
-      .getQuery()
-      .populate('contact')
-      .populate('trigger')
-      .populate('department', 'name')
-      .exec()
+    return await query.getQuery().populate('contact').populate('trigger').populate('department', 'name').exec()
   }
 
   async count() {
