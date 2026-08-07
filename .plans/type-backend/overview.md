@@ -2,7 +2,7 @@
 
 **Status**: not-started
 **Created**: 2026-05-31
-**Last Updated**: 2026-08-07 (revised: remove-pdv complete; setores models added; Wevo→Utalk)
+**Last Updated**: 2026-08-07 (revised: remove-pdv complete; setores models added; Wevo→Utalk; repository anti-corruption layer pattern added)
 **Estimated Demo Date**: N/A
 **Assigned Dev**: Alan Costa Facchini
 **Assigned QA**: unassigned
@@ -28,6 +28,59 @@ Replace the `any` types introduced during the JS→TS migration with specific in
 - **Client-side typing** — covered by the companion `type-client` plan.
 - **Third-party package type augmentations** — no `@types/*` packages will be installed; `src/declarations.d.ts` stubs remain.
 - **Test files** — spec files retain `any` freely; only production code is in scope.
+
+## Architectural Pattern: Repository as Anti-Corruption Layer
+
+**This constraint applies to every task in the plan.**
+
+The repository layer must be the only place in the codebase that knows about Mongoose. Everything above it (use cases, controllers, plugins, helpers) must receive and operate on plain domain objects — not Mongoose Documents.
+
+### Domain interfaces must be database-agnostic
+
+`src/types/index.ts` must NOT import from `mongoose`. Use `string` for `_id` and FK reference fields:
+
+```ts
+// WRONG — couples interfaces to Mongoose
+import { Types } from 'mongoose'
+export interface ILicensee {
+  _id: Types.ObjectId
+  contact: Types.ObjectId | IContact
+}
+
+// CORRECT — plain domain interface
+export interface ILicensee {
+  _id: string
+  contact: string | IContact
+}
+```
+
+### Repositories must return plain objects, not Mongoose Documents
+
+Database repository methods must convert results before returning:
+- **Read** (`findFirst`, `find`): use `.lean()` on Mongoose queries — returns POJO directly
+- **Create**: call `.toObject()` on the created document before returning
+- **Update**: return `{ acknowledged: true }` — no document needed
+
+```ts
+async findFirst(params = {}): Promise<ILicensee | null> {
+  return await Licensee.findOne(params).lean()
+}
+
+async create(fields = {}): Promise<ILicensee> {
+  const doc = await Licensee.create(fields)
+  return doc.toObject()
+}
+```
+
+### Remove `save()` from the public repository contract
+
+`IRepository<T>` must NOT expose `save(document)`. This method couples callers to Mongoose Document lifecycle. Use cases that currently call `document.save()` must be refactored to call `repo.update(id, fields)` instead.
+
+The `RepositoryMemory` already implements this pattern via `serializeInput()` — the Database implementation needs to match.
+
+### Why this matters
+
+When `mongo-to-postgres` executes, only the repository implementations change. Use cases, controllers, and plugins remain untouched because they never held a Mongoose Document — they always had plain `ILicensee`, `IMessage`, etc.
 
 ## Prerequisite State
 

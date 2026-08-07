@@ -22,6 +22,13 @@ Outstanding work:
 
 All interfaces live in `src/types/index.ts` (single-file barrel convention). Do not split into per-model files.
 
+**Critical constraint: interfaces must be database-agnostic.** `src/types/index.ts` currently imports `Types` from `mongoose` and uses `Types.ObjectId` — this couples domain interfaces to Mongoose. This task must fix that:
+
+- Remove the `import { Types } from 'mongoose'` from `src/types/index.ts`
+- Change all `_id: Types.ObjectId` to `_id: string`
+- Change all FK reference fields from `Types.ObjectId | IRelated` to `string | IRelated`
+- Mongoose model files (`src/app/models/`) may still use `mongoose.Types.ObjectId` internally — that is correct. Only `src/types/index.ts` must be clean of Mongoose imports.
+
 Read `docs/kb/architecture/typescript-conventions.md` before starting.
 
 ## Before You Start
@@ -92,6 +99,7 @@ Run `npx tsc --noEmit` and fix any errors introduced. Do not fix errors in files
 ## Completion Criteria
 
 - [ ] `IBody` interface defined and exported from `src/types/index.ts`
+- [ ] `src/types/index.ts` has NO import from `mongoose` — all `_id` and FK fields use `string`
 - [ ] Licensee, Contact, Message, Body schemas use `Schema<I{Model}>` generic
 - [ ] Stale `cart` field removed from `Message.ts`
 - [ ] No `any` in return type positions of the 4 modified model files
