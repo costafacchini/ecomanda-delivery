@@ -2,7 +2,7 @@
 
 **Status**: in-progress
 **Created**: 2026-05-31
-**Last Updated**: 2026-08-07 (phase-2 complete — PR #3097 open; phase-3 not started)
+**Last Updated**: 2026-08-07 (phase-3 complete — all tasks done; PR pending)
 **Estimated Demo Date**: N/A
 **Assigned Dev**: Alan Costa Facchini
 **Assigned QA**: unassigned
@@ -113,10 +113,10 @@ When `mongo-to-postgres` executes, only the repository implementations change. U
 | phase-2/task-05-remaining-repositories | Remaining Repository Types | 2 | complete | phase-1/task-02-setores-session-model-interfaces, phase-1/task-03-system-model-interfaces |
 | phase-2/task-06-message-contact-usecases | Message & Contact Use Case Types | 2 | complete | phase-2/task-04-core-repositories |
 | phase-2/task-07-remaining-usecases | Remaining Use Case Types | 2 | complete | phase-2/task-04-core-repositories, phase-2/task-05-remaining-repositories |
-| phase-3/task-08-queries | Query Class Types | 3 | not-started | phase-2/task-04-core-repositories, phase-2/task-05-remaining-repositories |
-| phase-3/task-09-controllers | Controller Types | 3 | not-started | phase-2/task-06-message-contact-usecases, phase-2/task-07-remaining-usecases |
-| phase-3/task-10-messenger-plugins | Messenger Plugin Types | 3 | not-started | phase-2/task-04-core-repositories |
-| phase-3/task-11-chat-plugins-helpers | Chat Plugin & Helper Types | 3 | not-started | phase-2/task-04-core-repositories |
+| phase-3/task-08-queries | Query Class Types | 3 | complete | phase-2/task-04-core-repositories, phase-2/task-05-remaining-repositories |
+| phase-3/task-09-controllers | Controller Types | 3 | complete | phase-2/task-06-message-contact-usecases, phase-2/task-07-remaining-usecases |
+| phase-3/task-10-messenger-plugins | Messenger Plugin Types | 3 | complete | phase-2/task-04-core-repositories |
+| phase-3/task-11-chat-plugins-helpers | Chat Plugin & Helper Types | 3 | complete | phase-2/task-04-core-repositories |
 
 ## Branch Convention
 
@@ -124,10 +124,10 @@ One branch per phase — tasks within a phase are committed sequentially to the 
 
 | Branch | Tasks | PR |
 |--------|-------|----|
-| `plan/type-backend/phase-1` | task-01, task-02, task-03 | PR #3095 (merged) |
+| `plan/type-backend/phase-1` | task-01, task-02, task-03 | PR #3094 (merged) |
 | `plan/type-backend/phase-2` | task-04 | PR #3096 (merged) |
-| `plan/type-backend/phase-2-remaining` | task-05, task-06, task-07 | PR #3097 (open) |
-| `plan/type-backend/phase-3` | task-08, task-09, task-10, task-11 | — |
+| `plan/type-backend/phase-2-remaining` | task-05, task-06, task-07 | PR #3097 (merged) |
+| `plan/type-backend/phase-3` | task-08, task-09, task-10, task-11 | pending |
 
 Base branch: `main`
 
