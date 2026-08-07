@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { logger } from '../helpers/logger'
 
 export interface IRepository<T> {
   findFirst(params?: Record<string, unknown>, relations?: string[]): Promise<T | null>
@@ -448,5 +449,135 @@ class RepositoryMemory<T> extends Repository<T> implements IRepository<T> {
   }
 }
 
+class PrismaRepository<T> implements IRepository<T> {
+  delegate(): any {
+    throw new Error('PrismaRepository.delegate() must be implemented by subclass')
+  }
+
+  async findFirst(params: Record<string, unknown> = {}): Promise<T | null> {
+    return await this.delegate().findFirst({ where: this.toWhere(params) })
+  }
+
+  async find(params: Record<string, unknown> = {}): Promise<T[]> {
+    return await this.delegate().findMany({ where: this.toWhere(params) })
+  }
+
+  async create(fields: Partial<T> = {}): Promise<T> {
+    return await this.delegate().create({ data: this.toData(fields) })
+  }
+
+  async update(id: string, fields: Partial<T> = {}): Promise<{ acknowledged: boolean }> {
+    await this.delegate().updateMany({ where: { mongo_id: id.toString() }, data: fields ?? {} })
+    return { acknowledged: true }
+  }
+
+  async updateMany(params: Record<string, unknown> = {}, fields: Partial<T> = {}): Promise<{ acknowledged: boolean }> {
+    await this.delegate().updateMany({ where: this.toWhere(params), data: fields ?? {} })
+    return { acknowledged: true }
+  }
+
+  async delete(params: Record<string, unknown> = {}): Promise<{ acknowledged: boolean }> {
+    await this.delegate().deleteMany({ where: this.toWhere(params) })
+    return { acknowledged: true }
+  }
+
+  async save(document: T): Promise<T> {
+    const doc = document as any
+    const mongoId = (doc._id ?? doc.mongo_id)?.toString()
+    const data = this.toData(doc)
+    return await this.delegate().upsert({ where: { mongo_id: mongoId }, create: data, update: data })
+  }
+
+  // Maps _id → mongo_id for Prisma where clauses
+  protected toWhere(params: Record<string, unknown> = {}): Record<string, unknown> {
+    const result: Record<string, unknown> = {}
+    for (const [key, value] of Object.entries(params ?? {})) {
+      result[key === '_id' ? 'mongo_id' : key] = key === '_id' ? ((value as any)?.toString?.() ?? value) : value
+    }
+    return result
+  }
+
+  // Strips Mongoose internals and maps _id → mongo_id for Prisma data payloads
+  protected toData(fields: any = {}): Record<string, unknown> {
+    const plain = fields?.toObject
+      ? fields.toObject({ depopulate: true, versionKey: false, virtuals: false })
+      : { ...(fields ?? {}) }
+    const result: Record<string, unknown> = { ...plain }
+    const mongoId = (plain._id ?? fields.mongo_id)?.toString()
+    delete result._id
+    delete result.__v
+    delete result.id
+    result.mongo_id = mongoId
+    return result
+  }
+}
+
+class DualWriteRepository<T> implements IRepository<T> {
+  private primary: IRepository<T>
+  private secondary: PrismaRepository<T>
+  private asyncSecondary: boolean
+
+  constructor(primary: IRepository<T>, secondary: PrismaRepository<T>, { asyncSecondary = true } = {}) {
+    this.primary = primary
+    this.secondary = secondary
+    this.asyncSecondary = asyncSecondary
+  }
+
+  private writeSecondary(fn: () => Promise<unknown>): void | Promise<void> {
+    if (this.asyncSecondary) {
+      fn().catch((err: any) => logger.error(`[DualWrite] Secondary write failed: ${err.message}`))
+    } else {
+      return fn() as Promise<void>
+    }
+  }
+
+  async findFirst(params: Record<string, unknown> = {}, relations: string[] = []): Promise<T | null> {
+    return await this.primary.findFirst(params, relations)
+  }
+
+  async find(params: Record<string, unknown> = {}, relations: string[] = []): Promise<T[]> {
+    return await this.primary.find(params, relations)
+  }
+
+  async create(fields: Partial<T> = {}): Promise<T> {
+    const result = await this.primary.create(fields)
+    await this.writeSecondary(() => this.secondary.save(result))
+    return result
+  }
+
+  async update(id: string, fields: Partial<T> = {}): Promise<{ acknowledged: boolean }> {
+    const result = await this.primary.update(id, fields)
+    await this.writeSecondary(() => this.secondary.update(id, fields))
+    return result
+  }
+
+  async updateMany(params: Record<string, unknown> = {}, fields: Partial<T> = {}): Promise<{ acknowledged: boolean }> {
+    const result = await this.primary.updateMany(params, fields)
+    await this.writeSecondary(() => this.secondary.updateMany(params, fields))
+    return result
+  }
+
+  async delete(params: Record<string, unknown> = {}): Promise<{ acknowledged: boolean }> {
+    const result = await this.primary.delete(params)
+    await this.writeSecondary(() => this.secondary.delete(params))
+    return result
+  }
+
+  async save(document: T): Promise<T> {
+    const result = await this.primary.save(document)
+    await this.writeSecondary(() => this.secondary.save(result))
+    return result
+  }
+}
+
 export default Repository
-export { RepositoryMemory, buildMemoryRecord, comparableValue, matchesFilter, sortRecords, stringifyObjectIds }
+export {
+  RepositoryMemory,
+  PrismaRepository,
+  DualWriteRepository,
+  buildMemoryRecord,
+  comparableValue,
+  matchesFilter,
+  sortRecords,
+  stringifyObjectIds,
+}
