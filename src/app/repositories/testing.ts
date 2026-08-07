@@ -23,6 +23,7 @@ import { DepartmentRepositoryDatabase, DepartmentRepositoryMemory } from './depa
 import { InboxRepositoryDatabase, InboxRepositoryMemory } from './inbox'
 import { RepositoryMemory, matchesFilter, sortRecords, comparableValue } from './repository'
 import { parseText as parseTextHelper } from '../helpers/ParseTriggerText'
+import { MessageKind } from '../../types'
 
 let activeRestore: any = null
 
@@ -339,7 +340,7 @@ function installMemoryRepositories() {
 
   repositories.messageRepository.create = async (fields = {}) => {
     return await originalMessageCreate({
-      kind: 'text',
+      kind: MessageKind.Text,
       sended: false,
       ...(fields ?? {}),
     })

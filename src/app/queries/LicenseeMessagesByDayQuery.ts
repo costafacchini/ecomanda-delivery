@@ -1,4 +1,5 @@
 import moment from 'moment-timezone'
+import mongoose from 'mongoose'
 
 class LicenseeMessagesByDayQuery {
   startDate: any
@@ -54,7 +55,7 @@ class LicenseeMessagesByDayQuery {
     }
 
     if (this.licenseeClause) {
-      match.licensee = this.licenseeClause
+      match.licensee = new mongoose.Types.ObjectId(this.licenseeClause.toString())
     }
 
     return [

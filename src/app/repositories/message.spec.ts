@@ -57,8 +57,8 @@ describe('message repository', () => {
           kind: 'text',
           text: 'Hello World',
           destination: 'to-chatbot',
-          licensee,
-          contact,
+          licensee: licensee._id,
+          contact: contact._id,
         }),
       )
     })
@@ -349,9 +349,9 @@ describe('message repository', () => {
             kind: 'interactive',
             text: 'hello_world',
             destination: 'to-chatbot',
-            licensee,
-            contact,
-            trigger: trigger1._id,
+            licensee: licensee._id,
+            contact: contact._id,
+            trigger: trigger1._id.toString(),
           }),
         )
         expect(messages[1]).toEqual(
@@ -360,9 +360,9 @@ describe('message repository', () => {
             kind: 'interactive',
             text: 'hello_world',
             destination: 'to-chatbot',
-            licensee,
-            contact,
-            trigger: trigger2._id,
+            licensee: licensee._id,
+            contact: contact._id,
+            trigger: trigger2._id.toString(),
           }),
         )
       })
@@ -392,8 +392,8 @@ describe('message repository', () => {
             kind: 'text',
             text: 'hello_world',
             destination: 'to-chatbot',
-            licensee,
-            contact,
+            licensee: licensee._id,
+            contact: contact._id,
           }),
         )
       })
@@ -423,8 +423,8 @@ describe('message repository', () => {
           kind: 'text',
           text: 'Hello World',
           destination: 'to-chatbot',
-          licensee,
-          contact,
+          licensee: licensee._id,
+          contact: contact._id,
         }),
       )
     })
@@ -472,8 +472,8 @@ describe('message repository', () => {
           kind: 'text',
           text: '🚨 ATENÇÃO\nO período de 24h para manter conversas expirou. Envie um Template para voltar a interagir com esse contato.',
           destination: 'to-chat',
-          licensee,
-          contact,
+          licensee: licensee._id,
+          contact: contact._id,
         }),
       )
     })
@@ -496,8 +496,8 @@ describe('message repository', () => {
           kind: 'text',
           text: '🚨 ATENÇÃO\nO período de 24h para manter conversas está quase expirando. Faltam apenas 10 minutos para encerrar.',
           destination: 'to-chat',
-          licensee,
-          contact,
+          licensee: licensee._id,
+          contact: contact._id,
         }),
       )
     })

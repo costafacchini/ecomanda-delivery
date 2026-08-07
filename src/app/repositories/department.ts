@@ -1,7 +1,8 @@
 import Repository, { RepositoryMemory } from './repository'
 import Department from '../models/Department'
+import { IDepartment } from '../../types'
 
-class DepartmentRepositoryDatabase extends Repository {
+class DepartmentRepositoryDatabase extends Repository<IDepartment> {
   model() {
     return Department
   }
@@ -13,6 +14,6 @@ class DepartmentRepositoryDatabase extends Repository {
   }
 }
 
-class DepartmentRepositoryMemory extends RepositoryMemory {}
+class DepartmentRepositoryMemory extends RepositoryMemory<IDepartment> {}
 
 export { DepartmentRepositoryDatabase, DepartmentRepositoryMemory }

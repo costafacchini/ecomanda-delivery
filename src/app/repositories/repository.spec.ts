@@ -20,8 +20,9 @@ describe('repository base class', () => {
 
   it('finds the first record and populates requested relations', async () => {
     const result = { id: 'record-1' }
-    const query = Promise.resolve(result)
-    query.populate = jest.fn().mockReturnValue(query)
+    const leanQuery = Promise.resolve(result)
+    leanQuery.populate = jest.fn().mockReturnValue(leanQuery)
+    const query = { lean: jest.fn().mockReturnValue(leanQuery) }
 
     const model = {
       findOne: jest.fn().mockReturnValue(query),
@@ -31,15 +32,15 @@ describe('repository base class', () => {
     const record = await repository.findFirst(null, ['contact', 'licensee'])
 
     expect(model.findOne).toHaveBeenCalledWith({})
-    expect(query.populate).toHaveBeenNthCalledWith(1, 'contact')
-    expect(query.populate).toHaveBeenNthCalledWith(2, 'licensee')
+    expect(leanQuery.populate).toHaveBeenNthCalledWith(1, 'contact')
+    expect(leanQuery.populate).toHaveBeenNthCalledWith(2, 'licensee')
     expect(record).toEqual(result)
   })
 
   it('creates a record with explicit fields', async () => {
     const created = { id: 'record-2' }
     const model = {
-      create: jest.fn().mockResolvedValue(created),
+      create: jest.fn().mockResolvedValue({ ...created, toObject: () => created }),
     }
 
     const repository = new FakeRepository(model)
@@ -52,7 +53,7 @@ describe('repository base class', () => {
   it('creates an empty record when null fields are provided', async () => {
     const created = { id: 'record-2-null' }
     const model = {
-      create: jest.fn().mockResolvedValue(created),
+      create: jest.fn().mockResolvedValue({ ...created, toObject: () => created }),
     }
 
     const repository = new FakeRepository(model)
@@ -94,8 +95,10 @@ describe('repository base class', () => {
 
   it('finds records with explicit filters', async () => {
     const found = [{ id: 'record-4' }]
+    const leanResult = Promise.resolve(found)
+    leanResult.populate = jest.fn().mockReturnValue(leanResult)
     const model = {
-      find: jest.fn().mockResolvedValue(found),
+      find: jest.fn().mockReturnValue({ lean: jest.fn().mockReturnValue(leanResult) }),
     }
 
     const repository = new FakeRepository(model)
@@ -124,8 +127,10 @@ describe('repository base class', () => {
 
   it('finds records with empty filters when null is provided', async () => {
     const found = [{ id: 'record-4-null' }]
+    const leanResult = Promise.resolve(found)
+    leanResult.populate = jest.fn().mockReturnValue(leanResult)
     const model = {
-      find: jest.fn().mockResolvedValue(found),
+      find: jest.fn().mockReturnValue({ lean: jest.fn().mockReturnValue(leanResult) }),
     }
 
     const repository = new FakeRepository(model)

@@ -1,4 +1,5 @@
 import { QueryBuilder } from './QueryBuilder'
+import { stringifyObjectIds } from '@repositories/repository'
 
 class TemplatesQuery {
   templateRepository: any
@@ -37,7 +38,8 @@ class TemplatesQuery {
 
     if (this.expressionClause) query.filterByExpression(['name', 'namespace'], this.expressionClause)
 
-    return await query.getQuery().exec()
+    const docs = await query.getQuery().lean().exec()
+    return docs.map(stringifyObjectIds)
   }
 }
 

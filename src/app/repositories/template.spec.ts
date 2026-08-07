@@ -32,7 +32,7 @@ describe('#createTemplate', () => {
 
     expect(template).toEqual(
       expect.objectContaining({
-        licensee,
+        licensee: licensee._id,
         name: 'template',
         namespace: 'Namespace',
       }),

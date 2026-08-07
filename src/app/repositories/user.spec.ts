@@ -37,7 +37,7 @@ describe('user repository database', () => {
           email: 'raymond@reddington.com',
           active: true,
           role: 'agent',
-          licensee,
+          licensee: licensee._id,
         }),
       )
       expect(await user.validPassword('12345678')).toEqual(true)
@@ -52,8 +52,7 @@ describe('user repository database', () => {
       const userRepository = new UserRepositoryDatabase()
       const user = await userRepository.create(userFactory.build({ licensee }))
 
-      user.active = false
-      await userRepository.save(user)
+      await userRepository.update(user._id, { active: false })
 
       const userSaved = await userRepository.findFirst({ _id: user._id }, ['licensee'])
       expect(userSaved.active).toEqual(false)

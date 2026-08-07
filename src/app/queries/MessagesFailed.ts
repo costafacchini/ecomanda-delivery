@@ -1,3 +1,5 @@
+import { stringifyObjectIds } from '@repositories/repository'
+
 class MessagesFailedQuery {
   startDate: any
   endDate: any
@@ -12,7 +14,7 @@ class MessagesFailedQuery {
   }
 
   async all() {
-    return await this.messageRepository.model().find({
+    const docs = await this.messageRepository.model().find({
       sended: false,
       createdAt: {
         $gte: this.startDate,
@@ -22,7 +24,8 @@ class MessagesFailedQuery {
       text: {
         $ne: 'Chat encerrado pelo agente',
       },
-    })
+    }).lean()
+    return docs.map(stringifyObjectIds)
   }
 }
 

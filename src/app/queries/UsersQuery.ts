@@ -1,4 +1,5 @@
 import { QueryBuilder } from './QueryBuilder'
+import { stringifyObjectIds } from '@repositories/repository'
 
 class UsersQuery {
   userRepository: any
@@ -38,7 +39,8 @@ class UsersQuery {
 
     if (this.expressionClause) query.filterByExpression(['name', 'email'], this.expressionClause)
 
-    return await query.getQuery().exec()
+    const docs = await query.getQuery().lean().exec()
+    return docs.map(stringifyObjectIds)
   }
 }
 

@@ -34,8 +34,8 @@ describe('TemplatesQuery', () => {
     const records = await templatesQuery.all()
 
     expect(records.length).toEqual(2)
-    expect(records[0]).toEqual(expect.objectContaining({ _id: template1._id }))
-    expect(records[1]).toEqual(expect.objectContaining({ _id: template2._id }))
+    expect(records[0]).toEqual(expect.objectContaining({ _id: template1._id.toString() }))
+    expect(records[1]).toEqual(expect.objectContaining({ _id: template2._id.toString() }))
   })
 
   describe('about pagination', () => {
@@ -66,14 +66,14 @@ describe('TemplatesQuery', () => {
       let records = await templatesQuery.all()
 
       expect(records.length).toEqual(2)
-      expect(records[0]).toEqual(expect.objectContaining({ _id: template1._id }))
-      expect(records[1]).toEqual(expect.objectContaining({ _id: template2._id }))
+      expect(records[0]).toEqual(expect.objectContaining({ _id: template1._id.toString() }))
+      expect(records[1]).toEqual(expect.objectContaining({ _id: template2._id.toString() }))
 
       templatesQuery.page(2)
       records = await templatesQuery.all()
 
       expect(records.length).toEqual(1)
-      expect(records[0]).toEqual(expect.objectContaining({ _id: template3._id }))
+      expect(records[0]).toEqual(expect.objectContaining({ _id: template3._id.toString() }))
 
       templatesQuery.page(1)
       templatesQuery.limit(1)
@@ -81,7 +81,7 @@ describe('TemplatesQuery', () => {
       records = await templatesQuery.all()
 
       expect(records.length).toEqual(1)
-      expect(records[0]).toEqual(expect.objectContaining({ _id: template1._id }))
+      expect(records[0]).toEqual(expect.objectContaining({ _id: template1._id.toString() }))
     })
   })
 
@@ -103,8 +103,8 @@ describe('TemplatesQuery', () => {
       const records = await templatesQuery.all()
 
       expect(records.length).toEqual(1)
-      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: template1._id })]))
-      expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: template2._id })]))
+      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: template1._id.toString() })]))
+      expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: template2._id.toString() })]))
     })
   })
 
@@ -118,22 +118,22 @@ describe('TemplatesQuery', () => {
       let records = await templatesQuery.all()
 
       expect(records.length).toEqual(2)
-      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: template1._id })]))
-      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: template2._id })]))
+      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: template1._id.toString() })]))
+      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: template2._id.toString() })]))
 
       templatesQuery.filterByExpression('template1')
       records = await templatesQuery.all()
 
       expect(records.length).toEqual(1)
-      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: template1._id })]))
-      expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: template2._id })]))
+      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: template1._id.toString() })]))
+      expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: template2._id.toString() })]))
 
       templatesQuery.filterByExpression('template2')
       records = await templatesQuery.all()
 
       expect(records.length).toEqual(1)
-      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: template2._id })]))
-      expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: template1._id })]))
+      expect(records).toEqual(expect.arrayContaining([expect.objectContaining({ _id: template2._id.toString() })]))
+      expect(records).not.toEqual(expect.arrayContaining([expect.objectContaining({ _id: template1._id.toString() })]))
     })
   })
 })

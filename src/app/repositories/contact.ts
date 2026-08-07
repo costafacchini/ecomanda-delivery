@@ -4,8 +4,9 @@ import { MessagesQuery } from '../queries/MessagesQuery'
 import moment from 'moment-timezone'
 import { NormalizePhone } from '../helpers/NormalizePhone'
 import { requireDependency } from '../helpers/RequireDependency'
+import { IContact } from '../../types'
 
-class ContactRepositoryDatabase extends Repository {
+class ContactRepositoryDatabase extends Repository<IContact> {
   messageRepository: any
 
   constructor({ messageRepository }: { messageRepository?: any } = {}) {
@@ -15,29 +16,6 @@ class ContactRepositoryDatabase extends Repository {
 
   model() {
     return Contact
-  }
-
-  async findFirst(params: any = {}, relations?: any[]) {
-    if (relations) {
-      const query = Contact.findOne(params)
-      relations.forEach((relation: any) => query.populate(relation))
-
-      return await query
-    } else {
-      return await Contact.findOne(params)
-    }
-  }
-
-  async create(fields: any = {}) {
-    return await Contact.create({ ...fields })
-  }
-
-  async update(id: any, fields: any = {}) {
-    return await Contact.updateOne({ _id: id }, { $set: fields }, { runValidators: true })
-  }
-
-  async find(params: any = {}) {
-    return await Contact.find(params)
   }
 
   async contactWithWhatsappWindowClosed(contactId: any) {
@@ -77,7 +55,7 @@ class ContactRepositoryDatabase extends Repository {
   }
 }
 
-class ContactRepositoryMemory extends RepositoryMemory {
+class ContactRepositoryMemory extends RepositoryMemory<IContact> {
   messageRepository: any
 
   constructor({ items = [], messageRepository }: { items?: any[]; messageRepository?: any } = {}) {
@@ -85,7 +63,7 @@ class ContactRepositoryMemory extends RepositoryMemory {
     this.messageRepository = messageRepository
   }
 
-  async create(fields: any = {}) {
+  async create(fields: Partial<IContact> = {}): Promise<IContact> {
     return await super.create(this.normalizeContactFields(fields))
   }
 
@@ -93,7 +71,7 @@ class ContactRepositoryMemory extends RepositoryMemory {
     const messageRepository = requireDependency(this.messageRepository, 'messageRepository', 'ContactRepositoryMemory')
     const messages = sortRecords(await messageRepository.find({ destination: 'to-chat' }), {
       createdAt: 'desc',
-    }).filter((message) => comparableValue(message.contact) === comparableValue(contactId))
+    }).filter((message: any) => comparableValue(message.contact) === comparableValue(contactId))
 
     if (messages.length === 0) {
       return true

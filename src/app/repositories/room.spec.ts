@@ -43,7 +43,7 @@ describe('room repository', () => {
 
       expect(room).toEqual(
         expect.objectContaining({
-          contact,
+          contact: contact._id,
         }),
       )
     })
@@ -104,8 +104,7 @@ describe('room repository', () => {
         contact,
       })
 
-      room.closed = true
-      await roomRepository.save(room)
+      await roomRepository.update(room._id, { closed: true })
 
       const roomSaved = await roomRepository.findFirst({ _id: room._id })
       expect(roomSaved.closed).toEqual(true)

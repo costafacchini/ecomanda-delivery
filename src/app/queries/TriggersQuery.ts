@@ -1,4 +1,5 @@
 import { QueryBuilder } from './QueryBuilder'
+import { stringifyObjectIds } from '@repositories/repository'
 
 class TriggersQuery {
   triggerRepository: any
@@ -48,7 +49,8 @@ class TriggersQuery {
         this.expressionClause,
       )
 
-    return await query.getQuery().exec()
+    const docs = await query.getQuery().lean().exec()
+    return docs.map(stringifyObjectIds)
   }
 }
 

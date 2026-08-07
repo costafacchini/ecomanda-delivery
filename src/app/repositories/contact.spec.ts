@@ -43,7 +43,7 @@ describe('contact repository database', () => {
       expect(contactSaved._id).toBeDefined()
       expect(contactSaved.number).toEqual('5511990283745')
       expect(contactSaved.talkingWithChatBot).toEqual(false)
-      expect(contactSaved.licensee).toEqual(licensee)
+      expect(contactSaved.licensee).toEqual(licensee._id)
     })
 
     describe('when is invalid contact', () => {

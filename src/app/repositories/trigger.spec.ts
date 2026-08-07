@@ -44,7 +44,7 @@ describe('trigger repository', () => {
           catalogMulti: 'catalog',
           catalogId: 'id',
           order: 1,
-          licensee,
+          licensee: licensee._id,
         }),
       )
     })
