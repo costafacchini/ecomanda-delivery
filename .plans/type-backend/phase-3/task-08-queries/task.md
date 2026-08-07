@@ -86,4 +86,4 @@ Run `npx tsc --noEmit`. Fix only files in the ownership table.
 - [ ] All query classes have typed filter methods and typed `all()` return
 - [ ] All query tests pass
 - [ ] Status updated in `status.md`
-- [ ] Changes committed to `plan/type-backend/phase-3/task-08-queries`
+- [ ] Changes committed to `plan/type-backend/phase-3`

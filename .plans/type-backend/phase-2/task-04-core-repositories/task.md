@@ -143,4 +143,4 @@ Run `npx tsc --noEmit`. Expect errors in use cases/controllers that call `docume
 - [ ] licensee, contact, message, body repos typed with their interfaces
 - [ ] All relevant repository tests pass
 - [ ] Status updated in `status.md`
-- [ ] Changes committed to `plan/type-backend/phase-2/task-04-core-repositories`
+- [ ] Changes committed to `plan/type-backend/phase-2`

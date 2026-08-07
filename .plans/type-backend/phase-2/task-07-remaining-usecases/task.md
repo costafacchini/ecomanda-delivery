@@ -66,4 +66,4 @@ Apply the same pattern established in task-06: type constructor dependency param
 - [ ] All in-scope use case classes typed (noting skipped PDV ones)
 - [ ] All use case tests pass
 - [ ] Status updated in `status.md`
-- [ ] Changes committed to `plan/type-backend/phase-2/task-07-remaining-usecases`
+- [ ] Changes committed to `plan/type-backend/phase-2`

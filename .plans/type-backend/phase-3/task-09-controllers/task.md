@@ -74,4 +74,4 @@ Local variables that previously needed `as any` to call model methods should now
 - [ ] All constructor dependency params typed
 - [ ] All controller tests pass
 - [ ] Status updated in `status.md`
-- [ ] Changes committed to `plan/type-backend/phase-3/task-09-controllers`
+- [ ] Changes committed to `plan/type-backend/phase-3`

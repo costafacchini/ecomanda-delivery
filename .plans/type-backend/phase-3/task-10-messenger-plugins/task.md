@@ -87,4 +87,4 @@ For each plugin file, apply the payload interfaces to `responseToMessages()` and
 - [ ] All messenger plugin methods typed
 - [ ] All messenger tests pass
 - [ ] Status updated in `status.md`
-- [ ] Changes committed to `plan/type-backend/phase-3/task-10-messenger-plugins`
+- [ ] Changes committed to `plan/type-backend/phase-3`
