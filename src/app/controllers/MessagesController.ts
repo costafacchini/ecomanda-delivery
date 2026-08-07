@@ -4,7 +4,7 @@ import { IRepository } from '@repositories/repository'
 import { IUser, IMessage } from '../../types'
 import { CreateMessage } from '../usecases/messages/CreateMessage'
 import { MessagesQuery } from '../queries/MessagesQuery'
-import { IIQueueServer } from '@config/queue'
+import { IQueueServer } from '@config/queue'
 
 class MessagesController {
   createMessagesQuery: () => MessagesQuery

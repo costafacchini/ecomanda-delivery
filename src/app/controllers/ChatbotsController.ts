@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { logger } from '../helpers/logger'
 import { IRepository } from '@repositories/repository'
 import { IBody } from '../../types'
-import { IIQueueServer } from '@config/queue'
+import { IQueueServer } from '@config/queue'
 
 class ChatbotsController {
   bodyRepository: IRepository<IBody>

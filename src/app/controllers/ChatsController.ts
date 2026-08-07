@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { logger } from '../helpers/logger'
 import { IngestChatMessage } from '../usecases/webhooks/IngestChatMessage'
-import { IIQueueServer } from '@config/queue'
+import { IQueueServer } from '@config/queue'
 
 class ChatsController {
   ingestChatMessage: IngestChatMessage

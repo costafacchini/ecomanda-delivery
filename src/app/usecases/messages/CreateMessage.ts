@@ -42,7 +42,7 @@ function pickFields(fields: Record<string, any> = {}, keys: string[] = []) {
 class CreateMessage {
   messageRepository: IRepository<IMessage>
   contactRepository: ContactRepository
-  jobQueue: JobQueue
+  jobQueue: IQueueServer
 
   constructor({ messageRepository, contactRepository, jobQueue }: CreateMessageDeps) {
     this.messageRepository = messageRepository
