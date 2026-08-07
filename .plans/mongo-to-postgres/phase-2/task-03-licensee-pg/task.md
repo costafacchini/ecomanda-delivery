@@ -9,7 +9,7 @@
 
 ## Objective
 
-Add the `Licensee` table to `prisma/schema.prisma`, run the migration, implement `PrismaLicenseeDatabaseRepository`, wire it through `DualWriteRepository` in `dependencies.js`, and validate the full dual-write cycle in production. This is the pilot migration — it proves the pattern works end-to-end before scaling to all other models.
+Add the `Licensee` table to `prisma/schema.prisma`, run the migration, implement `PrismaLicenseeDatabaseRepository`, wire it through `DualWriteRepository` in `dependencies.ts`, and validate the full dual-write cycle in production. This is the pilot migration — it proves the pattern works end-to-end before scaling to all other models.
 
 ## Context
 
@@ -18,9 +18,9 @@ Licensee is the root entity. Every other model holds a foreign key reference to 
 - Pre-save hook that sets `whatsappUrl` defaults based on `whatsappDefault` enum — this logic moves into `PrismaLicenseeDatabaseRepository.create()` and `update()`
 - Virtual fields (`urlChatWebhook`, `urlWhatsappWebhook`, `urlChatbotWebhook`, `urlChatbotTransfer`) — NOT stored; computed in the repository's `toViewModel()` helper
 
-Current repo: `src/app/repositories/licensee.js` (Mongoose `DatabaseLicenseeRepository`)
-Current model: `src/app/models/Licensee.js`
-DI wiring: `src/runtime/dependencies.js`
+Current repo: `src/app/repositories/licensee.ts` (Mongoose `DatabaseLicenseeRepository`)
+Current model: `src/app/models/Licensee.ts`
+DI wiring: `src/app/runtime/dependencies.ts`
 
 Architecture docs:
 - `docs/kb/architecture/dependency-injection-runtime-wiring.md`
@@ -32,8 +32,8 @@ Architecture docs:
 - [ ] Verify `phase-1/task-01-prisma-setup/status.md` is `complete`
 - [ ] Verify `phase-1/task-02-dual-write-pattern/status.md` is `complete`
 - [ ] Check this task's `status.md` — if `in-progress` or `complete`, stop and investigate
-- [ ] Read `src/app/models/Licensee.js` and `src/app/repositories/licensee.js` in full
-- [ ] Read `src/runtime/dependencies.js` to understand current wiring
+- [ ] Read `src/app/models/Licensee.ts` and `src/app/repositories/licensee.ts` in full
+- [ ] Read `src/app/runtime/dependencies.ts` to understand current wiring
 - [ ] Read `docs/kb/architecture/dependency-injection-runtime-wiring.md`
 - [ ] Mark this task `in-progress` in `status.md` before proceeding
 
@@ -43,15 +43,15 @@ Architecture docs:
 |------|--------|-------|
 | `prisma/schema.prisma` | modify | Add Licensee model |
 | `prisma/migrations/` | modify | New migration file for Licensee table |
-| `src/app/repositories/licensee.js` | modify | Add `PrismaLicenseeDatabaseRepository` class at bottom; do NOT change `DatabaseLicenseeRepository` |
-| `src/runtime/dependencies.js` | modify | Wrap `DatabaseLicenseeRepository` with `DualWriteRepository` |
-| `src/app/repositories/index.js` | modify | Export `PrismaLicenseeDatabaseRepository` |
-| `src/scripts/sync-licensee.js` | create | One-off bulk sync script (Mongo → Postgres) |
+| `src/app/repositories/licensee.ts` | modify | Add `PrismaLicenseeDatabaseRepository` class at bottom; do NOT change `DatabaseLicenseeRepository` |
+| `src/app/runtime/dependencies.ts` | modify | Wrap `DatabaseLicenseeRepository` with `DualWriteRepository` |
+| `src/app/repositories/index.ts` | modify | Export `PrismaLicenseeDatabaseRepository` |
+| `src/scripts/sync-licensee.ts` | create | One-off bulk sync script (Mongo → Postgres) |
 
 ### Do NOT Modify
 
-- `src/app/models/Licensee.js` — Mongoose model remains unchanged
-- `src/app/repositories/repository.js` — owned by phase-1/task-02
+- `src/app/models/Licensee.ts` — Mongoose model remains unchanged
+- `src/app/repositories/repository.ts` — owned by phase-1/task-02
 
 ## Implementation Steps
 
@@ -137,11 +137,11 @@ Commit the generated migration file.
 
 The base `PrismaRepository.save()` handles `_id` → `mongo_id` mapping already. The subclass only needs to override `create()`/`update()` to apply the pre-save business logic that was previously in the Mongoose hook.
 
-Add to `src/app/repositories/licensee.js`:
+Add to `src/app/repositories/licensee.ts`:
 
 ```js
-import { PrismaRepository } from './repository.js'
-import { getPrismaClient } from '../../config/postgres.js'
+import { PrismaRepository } from './repository.ts'
+import { getPrismaClient } from '../../config/postgres.ts'
 
 class PrismaLicenseeDatabaseRepository extends PrismaRepository {
   delegate() {
@@ -183,12 +183,12 @@ export { PrismaLicenseeDatabaseRepository }
 
 ### Step 4: Wire DualWriteRepository in dependencies.js
 
-In `src/runtime/dependencies.js`, replace the current `DatabaseLicenseeRepository` instantiation:
+In `src/app/runtime/dependencies.ts`, replace the current `DatabaseLicenseeRepository` instantiation:
 
 ```js
-import { DatabaseLicenseeRepository } from '../app/repositories/licensee.js'
-import { PrismaLicenseeDatabaseRepository } from '../app/repositories/licensee.js'
-import { DualWriteRepository } from '../app/repositories/repository.js'
+import { DatabaseLicenseeRepository } from '../app/repositories/licensee.ts'
+import { PrismaLicenseeDatabaseRepository } from '../app/repositories/licensee.ts'
+import { DualWriteRepository } from '../app/repositories/repository.ts'
 
 // Replace:
 //   const licenseeRepository = new DatabaseLicenseeRepository()
@@ -202,13 +202,13 @@ const licenseeRepository = new DualWriteRepository(
 
 ### Step 5: Create bulk sync script
 
-Create `src/scripts/sync-licensee.js`:
+Create `src/scripts/sync-licensee.ts`:
 ```js
 // One-off sync: copies all Licensee documents from MongoDB to PostgreSQL
 // Run with: node src/scripts/sync-licensee.js
-import { connect } from '../config/database.js'
-import Licensee from '../app/models/Licensee.js'
-import { PrismaLicenseeDatabaseRepository } from '../app/repositories/licensee.js'
+import { connect } from '../config/database.ts'
+import Licensee from '../app/models/Licensee.ts'
+import { PrismaLicenseeDatabaseRepository } from '../app/repositories/licensee.ts'
 
 async function sync() {
   await connect()
@@ -235,8 +235,8 @@ sync().catch((err) => { console.error(err); process.exit(1) })
 
 ## Testing
 
-- [ ] `src/app/repositories/licensee.spec.js` still passes (tests use `RepositoryMemory`, unaffected)
-- [ ] Write a new integration test `src/app/repositories/licensee.prisma.spec.js` that:
+- [ ] `src/app/repositories/licensee.spec.ts` still passes (tests use `RepositoryMemory`, unaffected)
+- [ ] Write a new integration test `src/app/repositories/licensee.prisma.spec.ts` that:
   - Creates a licensee via `PrismaLicenseeDatabaseRepository`
   - Reads it back and asserts fields match
   - Tests that `#applyDefaults` sets `whatsappUrl` when `whatsappDefault = 'dialog'`
@@ -255,8 +255,8 @@ sync().catch((err) => { console.error(err); process.exit(1) })
 - [ ] `prisma/schema.prisma` has Licensee model
 - [ ] Migration file committed
 - [ ] `PrismaLicenseeDatabaseRepository` implemented and exported
-- [ ] `dependencies.js` wires `DualWriteRepository` for Licensee
-- [ ] `sync-licensee.js` script committed
+- [ ] `dependencies.ts` wires `DualWriteRepository` for Licensee
+- [ ] `sync-licensee.ts` script committed
 - [ ] All tests pass
 - [ ] Changes committed to `plan/mongo-to-postgres/phase-2/task-03-licensee-pg` branch
 - [ ] Status updated in `status.md`

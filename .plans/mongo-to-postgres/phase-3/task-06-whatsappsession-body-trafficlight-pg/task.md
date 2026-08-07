@@ -25,9 +25,9 @@ BullMQ already depends on `ioredis`, which is available in the project. Trafficl
 
 - [ ] Switch to base branch and pull: `git switch main && git pull --rebase origin main`
 - [ ] Verify `phase-2/task-03-licensee-pg/status.md` is `complete`
-- [ ] Read `src/app/models/WhatsappSession.js`, `src/app/models/Body.js`, `src/app/models/Trafficlight.js`
-- [ ] Read `src/app/repositories/whatsappsession.js`, `src/app/repositories/trafficlight.js`
-- [ ] Check if `src/config/redis.js` (or similar) already exports a shared Redis client; if so, reuse it
+- [ ] Read `src/app/models/WhatsappSession.ts`, `src/app/models/Body.ts`, `src/app/models/Trafficlight.ts`
+- [ ] Read `src/app/repositories/whatsappsession.ts`, `src/app/repositories/trafficlight.ts`
+- [ ] Check if `src/config/redis.ts` (or similar) already exports a shared Redis client; if so, reuse it
 - [ ] Confirm `REDIS_URL` env var is set (same one used by BullMQ)
 - [ ] Mark this task `in-progress` in `status.md`
 
@@ -37,20 +37,20 @@ BullMQ already depends on `ioredis`, which is available in the project. Trafficl
 |------|--------|-------|
 | `prisma/schema.prisma` | modify | Add WhatsappSession and Body models only — Trafficlight is NOT added |
 | `prisma/migrations/` | modify | New migration for WhatsappSession + Body |
-| `src/app/repositories/whatsappsession.js` | modify | Add PrismaWhatsappSessionDatabaseRepository |
-| `src/app/repositories/body.js` | modify | Add PrismaBodyDatabaseRepository |
-| `src/app/repositories/trafficlight.js` | modify | Add RedisTrafficlightRepository; keep DatabaseTrafficlightRepository for dual-write in dependencies.js until task-09 |
-| `src/app/repositories/index.js` | modify | Export new repos |
-| `src/runtime/dependencies.js` | modify | Wrap WhatsappSession + Body with DualWriteRepository; replace Trafficlight with RedisTrafficlightRepository directly |
-| `src/config/redis.js` | create (if absent) | Shared ioredis client singleton |
-| `src/scripts/sync-whatsappsession.js` | create | Bulk sync |
-| `src/scripts/sync-body.js` | create | Bulk sync |
+| `src/app/repositories/whatsappsession.ts` | modify | Add PrismaWhatsappSessionDatabaseRepository |
+| `src/app/repositories/body.ts` | modify | Add PrismaBodyDatabaseRepository |
+| `src/app/repositories/trafficlight.ts` | modify | Add RedisTrafficlightRepository; keep DatabaseTrafficlightRepository for dual-write in dependencies.js until task-09 |
+| `src/app/repositories/index.ts` | modify | Export new repos |
+| `src/app/runtime/dependencies.ts` | modify | Wrap WhatsappSession + Body with DualWriteRepository; replace Trafficlight with RedisTrafficlightRepository directly |
+| `src/config/redis.ts` | create (if absent) | Shared ioredis client singleton |
+| `src/scripts/sync-whatsappsession.ts` | create | Bulk sync |
+| `src/scripts/sync-body.ts` | create | Bulk sync |
 
 ### Do NOT Modify
 
 - Files owned by task-04, task-05, task-07
-- `src/app/models/WhatsappSession.js`, `Body.js`, `Trafficlight.js`
-- No `CleanExpiredTrafficlights.js` job needed — Redis handles TTL natively
+- `src/app/models/WhatsappSession.ts`, `Body.ts`, `Trafficlight.ts`
+- No `CleanExpiredTrafficlights.ts` job needed — Redis handles TTL natively
 
 ## Implementation Steps
 
@@ -103,7 +103,7 @@ For `PrismaWhatsappSessionDatabaseRepository`, expose a `findByLicensee(licensee
 
 ### Step 4: Create shared Redis client (if not already present)
 
-Check whether `src/config/redis.js` (or the BullMQ queue config) already exports an `ioredis` instance. If not, create it:
+Check whether `src/config/redis.ts` (or the BullMQ queue config) already exports an `ioredis` instance. If not, create it:
 
 ```js
 import Redis from 'ioredis'
@@ -128,7 +128,7 @@ Redis key schema: `trafficlight:{key}` → JSON blob `{ key, token, expiresAt }`
 TTL is set with `EXAT` (Unix timestamp in seconds), which auto-deletes the key at `expiresAt` — exactly replicating the MongoDB TTL index.
 
 ```js
-import { getRedisClient } from '../../config/redis.js'
+import { getRedisClient } from '../../config/redis.ts'
 
 const PREFIX = 'trafficlight:'
 
@@ -192,9 +192,9 @@ Follow the established pattern from task-03. No sync script for Trafficlight —
 ## Testing
 
 - [ ] Existing specs for whatsappsession and body pass
-- [ ] New `whatsappsession.prisma.spec.js`: create + read + assert fields, skip if no DATABASE_URL
-- [ ] New `body.prisma.spec.js`: create + read + assert fields, skip if no DATABASE_URL
-- [ ] New `trafficlight.redis.spec.js`: save a record with a future `expiresAt`, assert `findFirst` returns it; advance time or use a past `expiresAt`, assert `findFirst` returns null (use `ioredis-mock` or a real Redis with a 1-second TTL)
+- [ ] New `whatsappsession.prisma.spec.ts`: create + read + assert fields, skip if no DATABASE_URL
+- [ ] New `body.prisma.spec.ts`: create + read + assert fields, skip if no DATABASE_URL
+- [ ] New `trafficlight.redis.spec.ts`: save a record with a future `expiresAt`, assert `findFirst` returns it; advance time or use a past `expiresAt`, assert `findFirst` returns null (use `ioredis-mock` or a real Redis with a 1-second TTL)
 - [ ] `npx jest` exits 0
 - [ ] `pre-commit-check` passes
 
@@ -215,11 +215,11 @@ Follow the established pattern from task-03. No sync script for Trafficlight —
 
 ## Impact on Downstream Tasks
 
-- **task-08 (bulk-sync-validate)**: Trafficlight is excluded from the sync + validation report. Note this explicitly when running `sync-all.js` — it syncs 9 models, not 10.
-- **task-09 (flip-reads-remove-mongo)**: Delete `DatabaseTrafficlightRepository` from `trafficlight.js` as part of the Mongoose cleanup. `RedisTrafficlightRepository` is already the live implementation by then.
+- **task-08 (bulk-sync-validate)**: Trafficlight is excluded from the sync + validation report. Note this explicitly when running `sync-all.ts` — it syncs 9 models, not 10.
+- **task-09 (flip-reads-remove-mongo)**: Delete `DatabaseTrafficlightRepository` from `trafficlight.ts` as part of the Mongoose cleanup. `RedisTrafficlightRepository` is already the live implementation by then.
 - **task-10 (normalize)**: Trafficlight has no Prisma model — no `@map()` directives needed.
 - **task-11 (resync-native-ids)**: Trafficlight has no Postgres table and no `mongo_id` column — excluded from all resync SQL.
 
 ## Conflict Avoidance Notes
 
-Same Phase 3 parallel conflict warning as task-04 and task-05 — `prisma/schema.prisma` and `dependencies.js` will have merge conflicts. Resolve by keeping all model blocks and all DualWriteRepository wiring. Note that Trafficlight is intentionally absent from `schema.prisma`.
+Same Phase 3 parallel conflict warning as task-04 and task-05 — `prisma/schema.prisma` and `dependencies.ts` will have merge conflicts. Resolve by keeping all model blocks and all DualWriteRepository wiring. Note that Trafficlight is intentionally absent from `schema.prisma`.

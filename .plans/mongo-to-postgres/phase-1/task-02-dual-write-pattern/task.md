@@ -9,11 +9,11 @@
 
 ## Objective
 
-Create the `PrismaRepository` base class and the `DualWriteRepository` adapter in `src/app/repositories/repository.js`. These are the reusable building blocks all Phase 2 and Phase 3 tasks will extend. Add test utilities that let specs assert against both stores simultaneously.
+Create the `PrismaRepository` base class and the `DualWriteRepository` adapter in `src/app/repositories/repository.ts`. These are the reusable building blocks all Phase 2 and Phase 3 tasks will extend. Add test utilities that let specs assert against both stores simultaneously.
 
 ## Context
 
-The existing `Repository` base class in `src/app/repositories/repository.js` is Mongoose-backed. `RepositoryMemory` is an in-memory stub for tests and must remain unchanged — it is used by every existing spec.
+The existing `Repository` base class in `src/app/repositories/repository.ts` is Mongoose-backed. `RepositoryMemory` is an in-memory stub for tests and must remain unchanged — it is used by every existing spec.
 
 The dual-write strategy:
 - **Writes**: sent to both Mongoose (primary) and Prisma (secondary, async fire-and-forget during pilot; upgraded to sync in Phase 3+)
@@ -30,25 +30,25 @@ Architecture doc: `docs/kb/architecture/dependency-injection-runtime-wiring.md`
 ## Before You Start
 
 - [ ] Switch to base branch and pull: `git switch main && git pull --rebase origin main`
-- [ ] Check that `phase-1/task-01-prisma-setup` is complete or at least has `src/config/postgres.js` stubbed so `getPrismaClient` is importable. If not, stub the import yourself.
+- [ ] Check that `phase-1/task-01-prisma-setup` is complete or at least has `src/config/postgres.ts` stubbed so `getPrismaClient` is importable. If not, stub the import yourself.
 - [ ] Check this task's `status.md` — if already `in-progress` or `complete`, stop and investigate
 - [ ] Read `docs/kb/architecture/dependency-injection-runtime-wiring.md`
-- [ ] Read `src/app/repositories/repository.js` in full before writing any code
+- [ ] Read `src/app/repositories/repository.ts` in full before writing any code
 - [ ] Mark this task `in-progress` in `status.md` before proceeding
 
 ## File Ownership
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/app/repositories/repository.js` | modify | Add `PrismaRepository` class and `DualWriteRepository` wrapper at the bottom; do NOT touch existing `Repository` or `RepositoryMemory` |
-| `src/app/repositories/testing.js` | modify | Add `DualWriteRepositoryMemory` test helper if needed |
+| `src/app/repositories/repository.ts` | modify | Add `PrismaRepository` class and `DualWriteRepository` wrapper at the bottom; do NOT touch existing `Repository` or `RepositoryMemory` |
+| `src/app/repositories/testing.ts` | modify | Add `DualWriteRepositoryMemory` test helper if needed |
 
 ### Do NOT Modify
 
-- `src/config/postgres.js` — owned by task-01
+- `src/config/postgres.ts` — owned by task-01
 - `prisma/schema.prisma` — owned by task-01
-- `src/config/database.js` — owned by task-01
-- `src/app/repositories/index.js` — not touched in Phase 1; each model task owns its entry
+- `src/config/database.ts` — owned by task-01
+- `src/app/repositories/index.ts` — not touched in Phase 1; each model task owns its entry
 
 ## Implementation Steps
 
@@ -60,7 +60,7 @@ Each Postgres table has:
 
 The `PrismaRepository` base class uses `mongo_id` as the lookup key for upsert operations during the dual-write window (since Mongo is the source of truth and all incoming operations carry `_id`).
 
-Append to `src/app/repositories/repository.js`:
+Append to `src/app/repositories/repository.ts`:
 
 ```js
 class PrismaRepository {
@@ -207,7 +207,7 @@ class DualWriteRepository {
 
 ### Step 3: Export new classes
 
-Update the `export` line at the bottom of `repository.js`:
+Update the `export` line at the bottom of `repository.ts`:
 ```js
 export default Repository
 export { RepositoryMemory, DualWriteRepository, PrismaRepository, buildMemoryRecord, comparableValue, matchesFilter, sortRecords }
@@ -215,7 +215,7 @@ export { RepositoryMemory, DualWriteRepository, PrismaRepository, buildMemoryRec
 
 ### Step 4: Add tests for DualWriteRepository
 
-Create or update a test file `src/app/repositories/dual-write.spec.js`:
+Create or update a test file `src/app/repositories/dual-write.spec.ts`:
 - Test that `create` calls both primary and secondary
 - Test that when `asyncSecondary = true`, a secondary failure does NOT throw (fire-and-forget)
 - Test that `findFirst` and `find` only hit the primary
@@ -224,7 +224,7 @@ Create or update a test file `src/app/repositories/dual-write.spec.js`:
 
 ## Testing
 
-- [ ] `src/app/repositories/dual-write.spec.js` passes
+- [ ] `src/app/repositories/dual-write.spec.ts` passes
 - [ ] All existing repository specs still pass (RepositoryMemory is unchanged)
 - [ ] `npx jest src/app/repositories/` exits 0
 - [ ] `pre-commit-check` passes
@@ -236,15 +236,15 @@ Create or update a test file `src/app/repositories/dual-write.spec.js`:
 
 ## Completion Criteria
 
-- [ ] `PrismaRepository` class added to `repository.js`
-- [ ] `DualWriteRepository` class added to `repository.js`
-- [ ] Both exported from `repository.js`
-- [ ] `dual-write.spec.js` written and passing
+- [ ] `PrismaRepository` class added to `repository.ts`
+- [ ] `DualWriteRepository` class added to `repository.ts`
+- [ ] Both exported from `repository.ts`
+- [ ] `dual-write.spec.ts` written and passing
 - [ ] No regressions in existing repository specs
 - [ ] Changes committed to `plan/mongo-to-postgres/phase-1/task-02-dual-write-pattern` branch
 - [ ] Status updated in `status.md`
 
 ## Conflict Avoidance Notes
 
-- task-01 owns `src/config/postgres.js`. Import `getPrismaClient` from that file; if task-01 is not yet merged, add a TODO comment and stub the import.
-- Do not touch `src/app/repositories/index.js` — model tasks in Phase 2/3 own their own index entries.
+- task-01 owns `src/config/postgres.ts`. Import `getPrismaClient` from that file; if task-01 is not yet merged, add a TODO comment and stub the import.
+- Do not touch `src/app/repositories/index.ts` — model tasks in Phase 2/3 own their own index entries.

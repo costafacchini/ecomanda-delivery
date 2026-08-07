@@ -1,4 +1,4 @@
-# Task: Migrate User + Contact to PostgreSQL
+# Task: Migrate User + Contact + Inbox to PostgreSQL
 
 **Plan**: MongoDB → PostgreSQL Migration
 **Phase**: 3
@@ -9,7 +9,7 @@
 
 ## Objective
 
-Add User and Contact Prisma models to `schema.prisma`, run migrations, implement `PrismaUserDatabaseRepository` and `PrismaContactDatabaseRepository`, wire both through `DualWriteRepository` in `dependencies.js`, and add sync scripts.
+Add User, Contact, and Inbox Prisma models to `schema.prisma`, run migrations, implement their `Prisma*DatabaseRepository` classes, wire through `DualWriteRepository` in `dependencies.ts`, and add sync scripts.
 
 ## Context
 
@@ -21,39 +21,46 @@ Add User and Contact Prisma models to `schema.prisma`, run migrations, implement
 - Fields: id, name, number, type, talkingWithChatBot, email, licensee (FK → Licensee), waId, isGroup, active, landbotId, chatwootId, chatwootSourceId, address fields, delivery_tax, plugin_cart_id, wa_start_chat, document, customer_id, address_id, credit_card_id, credit_cards[] → JSONB
 - Pre-save hook normalises phone number (`NormalizePhone`) and strips non-numeric from CEP — this logic moves to the Prisma repo's `create()`
 
-Both models reference Licensee (`licensee` field). During the dual-write window, this is stored as a plain `VARCHAR(24)` column with **no FK constraint enforced**. FK constraint is added in task-08.
+**Inbox** model:
+- Fields: id, name, licensee (FK → Licensee), kind (enum: messenger|chat), whatsappDefault, whatsappToken, whatsappUrl, chatDefault, chatUrl, chatKey, chatIdentifier, inboxToken (uuid, unique), active
+- Pre-validate hook generates `inboxToken = uuidv4()` if missing — this moves to `PrismaInboxDatabaseRepository.create()`
+- `webhookUrl` is a computed virtual field — **NOT stored in Postgres**; computed in the application layer as it was in Mongoose
 
-The `NormalizePhone` helper lives at `src/app/helpers/NormalizePhone.js`. Re-use it as-is in the Prisma repo.
+All FK columns (licensee) are `VARCHAR(24)` with no constraint during Phase 3. FK constraint added in task-08.
 
-Existing repos: `src/app/repositories/user.js`, `src/app/repositories/contact.js`
+The `NormalizePhone` helper lives at `src/app/helpers/NormalizePhone.ts`. Re-use it as-is in the Prisma repo.
+
+Existing repos: `src/app/repositories/user.ts`, `src/app/repositories/contact.ts`, `src/app/repositories/inbox.ts`
 
 ## Before You Start
 
 - [ ] Switch to base branch and pull: `git switch main && git pull --rebase origin main`
 - [ ] Verify `phase-2/task-03-licensee-pg/status.md` is `complete`
 - [ ] Check sibling tasks task-05, task-06, task-07 status — they also run in Phase 3 but own different files
-- [ ] Read `src/app/models/User.js` and `src/app/models/Contact.js` in full
-- [ ] Read `src/app/repositories/user.js` and `src/app/repositories/contact.js`
+- [ ] Read `src/app/models/User.ts`, `src/app/models/Contact.ts`, `src/app/models/Inbox.ts` in full
+- [ ] Read `src/app/repositories/user.ts`, `src/app/repositories/contact.ts`, `src/app/repositories/inbox.ts`
 - [ ] Mark this task `in-progress` in `status.md` before proceeding
 
 ## File Ownership
 
 | File | Action | Notes |
 |------|--------|-------|
-| `prisma/schema.prisma` | modify | Add User + Contact models |
-| `prisma/migrations/` | modify | New migration for user + contact tables |
-| `src/app/repositories/user.js` | modify | Add `PrismaUserDatabaseRepository` |
-| `src/app/repositories/contact.js` | modify | Add `PrismaContactDatabaseRepository` |
-| `src/app/repositories/index.js` | modify | Export both new Prisma repos |
-| `src/runtime/dependencies.js` | modify | Wrap User + Contact repos with DualWriteRepository |
-| `src/scripts/sync-user.js` | create | Bulk sync script |
-| `src/scripts/sync-contact.js` | create | Bulk sync script |
+| `prisma/schema.prisma` | modify | Add User, Contact, Inbox models |
+| `prisma/migrations/` | modify | New migration for user + contact + inbox tables |
+| `src/app/repositories/user.ts` | modify | Add `PrismaUserDatabaseRepository` |
+| `src/app/repositories/contact.ts` | modify | Add `PrismaContactDatabaseRepository` |
+| `src/app/repositories/inbox.ts` | modify | Add `PrismaInboxDatabaseRepository` |
+| `src/app/repositories/index.ts` | modify | Export all three new Prisma repos |
+| `src/app/runtime/dependencies.ts` | modify | Wrap User, Contact, Inbox repos with DualWriteRepository |
+| `src/scripts/sync-user.ts` | create | Bulk sync script |
+| `src/scripts/sync-contact.ts` | create | Bulk sync script |
+| `src/scripts/sync-inbox.ts` | create | Bulk sync script |
 
 ### Do NOT Modify
 
-- `src/app/repositories/licensee.js` — owned by task-03
-- `src/app/models/User.js`, `src/app/models/Contact.js` — unchanged
-- Files owned by task-05, task-06, task-07 (Room, Template, Trigger, WhatsappSession, Body, Trafficlight, Message repos)
+- `src/app/repositories/licensee.ts` — owned by task-03
+- `src/app/models/User.ts`, `src/app/models/Contact.ts`, `src/app/models/Inbox.ts` — unchanged
+- Files owned by task-05, task-06, task-07 (Room, Template, Trigger, Department, WhatsappSession, Body, Trafficlight, Message repos)
 
 ## Implementation Steps
 
@@ -119,39 +126,73 @@ model Contact {
 }
 ```
 
-### Step 3: Run migration
+### Step 3: Add Inbox to schema.prisma
 
-```bash
-npx prisma migrate dev --name add-user-contact
+`webhookUrl` is a computed virtual — do NOT store it.
+
+```prisma
+model Inbox {
+  id              Int      @id @default(autoincrement())
+  mongo_id        String   @unique @db.VarChar(24)
+  name            String
+  licensee        String   @db.VarChar(24)
+  kind            String
+  whatsappDefault String   @default("")
+  whatsappToken   String?
+  whatsappUrl     String?
+  chatDefault     String   @default("")
+  chatUrl         String?
+  chatKey         String?
+  chatIdentifier  String?
+  inboxToken      String   @unique
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("inboxes")
+}
 ```
 
-### Step 4: Implement PrismaUserDatabaseRepository
+### Step 4: Run migration
 
-In `src/app/repositories/user.js`, add:
-- Override `create()` to bcrypt-hash the password if provided (check `src/app/models/User.js` for saltRounds = 14)
+```bash
+npx prisma migrate dev --name add-user-contact-inbox
+```
+
+### Step 5: Implement PrismaUserDatabaseRepository
+
+In `src/app/repositories/user.ts`, add:
+- Override `create()` to bcrypt-hash the password if provided (check `src/app/models/User.ts` for saltRounds = 14)
 - Override `update()` to only hash password if `fields.password` is present
 - Map `_id` → `id` in create/save
 
-### Step 5: Implement PrismaContactDatabaseRepository
+### Step 6: Implement PrismaContactDatabaseRepository
 
-In `src/app/repositories/contact.js`, add:
+In `src/app/repositories/contact.ts`, add:
 - Override `create()` to run `NormalizePhone` on number and strip non-numeric from CEP
 - Override `update()` to run normalisation if number or CEP is in the update payload
 - Store `credit_cards` as-is (JSONB)
 
-### Step 6: Wire both in dependencies.js
+### Step 7: Implement PrismaInboxDatabaseRepository
 
-Wrap `DatabaseUserRepository` and `DatabaseContactRepository` each with `DualWriteRepository` (asyncSecondary: true).
+In `src/app/repositories/inbox.ts`, add:
+- Override `create()` to generate `inboxToken = uuidv4()` if not provided (mirrors pre-validate hook)
+- Do NOT compute or store `webhookUrl` — it is computed in the application layer
 
-### Step 7: Write sync scripts
+### Step 8: Wire all three in dependencies.ts
 
-Follow the same pattern as `sync-licensee.js` for both User and Contact.
+Wrap `DatabaseUserRepository`, `DatabaseContactRepository`, and `DatabaseInboxRepository` each with `DualWriteRepository` (asyncSecondary: true).
+
+### Step 9: Write sync scripts
+
+Follow the same pattern as `sync-licensee.ts` for User, Contact, and Inbox.
 
 ## Testing
 
-- [ ] Existing `user.spec.js` and `contact.spec.js` pass (RepositoryMemory unaffected)
-- [ ] New `user.prisma.spec.js`: creates user, verifies password is hashed in PG, skips if no DATABASE_URL
-- [ ] New `contact.prisma.spec.js`: creates contact with phone normalisation, verifies number is normalised in PG
+- [ ] Existing `user.spec.ts` and `contact.spec.ts` pass (RepositoryMemory unaffected)
+- [ ] New `user.prisma.spec.ts`: creates user, verifies password is hashed in PG, skips if no DATABASE_URL
+- [ ] New `contact.prisma.spec.ts`: creates contact with phone normalisation, verifies number is normalised in PG
+- [ ] New `inbox.prisma.spec.ts`: creates inbox, verifies `inboxToken` is generated, skips if no DATABASE_URL
 - [ ] `npx jest` exits 0
 - [ ] `pre-commit-check` passes
 
@@ -162,8 +203,8 @@ Follow the same pattern as `sync-licensee.js` for both User and Contact.
 
 ## Completion Criteria
 
-- [ ] User + Contact in schema.prisma, migration committed
-- [ ] Both Prisma repos implemented and dual-write wired
+- [ ] User + Contact + Inbox in schema.prisma, migration committed
+- [ ] All three Prisma repos implemented and dual-write wired
 - [ ] Sync scripts committed
 - [ ] All tests pass
 - [ ] Changes committed to `plan/mongo-to-postgres/phase-3/task-04-user-contact-pg` branch
@@ -171,5 +212,5 @@ Follow the same pattern as `sync-licensee.js` for both User and Contact.
 
 ## Conflict Avoidance Notes
 
-- task-05, task-06, task-07 run in parallel. They also modify `prisma/schema.prisma`, `dependencies.js`, and `index.js`. Each task appends its own model block; do not overwrite other tasks' additions. If merge conflicts arise in these files, resolve by keeping all blocks.
+- task-05, task-06, task-07 run in parallel. They also modify `prisma/schema.prisma`, `dependencies.ts`, and `index.ts`. Each task appends its own model block; do not overwrite other tasks' additions. If merge conflicts arise in these files, resolve by keeping all blocks.
 - Coordinate with task-05 on `prisma/schema.prisma` — if both run at the same time, run `npx prisma migrate dev` only after all Phase 3 schema additions are merged, or run them on separate branches and merge before migrating.

@@ -1,4 +1,4 @@
-# Task: Migrate Room + Template + Trigger to PostgreSQL
+# Task: Migrate Room + Template + Trigger + Department to PostgreSQL
 
 **Plan**: MongoDB → PostgreSQL Migration
 **Phase**: 3
@@ -9,7 +9,7 @@
 
 ## Objective
 
-Add Room, Template, and Trigger Prisma models to `schema.prisma`, run migrations, implement their `Prisma*DatabaseRepository` classes, wire through `DualWriteRepository`, and add sync scripts.
+Add Room, Template, Trigger, and Department Prisma models to `schema.prisma`, run migrations, implement their `Prisma*DatabaseRepository` classes, wire through `DualWriteRepository`, and add sync scripts.
 
 ## Context
 
@@ -19,14 +19,20 @@ Add Room, Template, and Trigger Prisma models to `schema.prisma`, run migrations
 
 **Trigger** — Fields: id, name, triggerKind (enum: multi_product | single_product | reply_button | list_message | text), expression, catalogId, catalogSingle, catalogMulti, textReplyButton, messagesList, licensee (FK → Licensee), and more — read the full model file. Conditional required fields on enums stay as application-layer validation (not Postgres constraints during dual-write window).
 
-All FK columns (contact, licensee) are `VARCHAR(24)` with no constraint during Phase 3. Constraints added in task-08.
+**Department** — Fields: id, name, licensee (FK → Licensee), users (array of FK → User), active, departmentToken (uuid, unique), inbox (optional FK → Inbox).
+- `users` is a Mongo array of ObjectId refs. During Phase 3 it is stored as **JSONB** (array of VARCHAR(24) mongo_ids). In task-11 (FK resync), this will need special handling: convert to a `department_users` junction table or a Postgres array of integers.
+- Pre-save hook generates `_id` if missing (already handled by PrismaRepository via autoincrement).
+- `webhookUrl` is a computed virtual — **NOT stored in Postgres**; computed in the application layer.
+- `departmentToken` = `uuidv4()` default — generate in `PrismaDepartmentDatabaseRepository.create()` if not provided.
+
+All FK columns (contact, licensee, inbox) are `VARCHAR(24)` with no constraint during Phase 3. Constraints added in task-08.
 
 ## Before You Start
 
 - [ ] Switch to base branch and pull: `git switch main && git pull --rebase origin main`
 - [ ] Verify `phase-2/task-03-licensee-pg/status.md` is `complete`
-- [ ] Read `src/app/models/Room.js`, `src/app/models/Template.js`, `src/app/models/Trigger.js` in full
-- [ ] Read `src/app/repositories/room.js`, `src/app/repositories/template.js`, `src/app/repositories/trigger.js`
+- [ ] Read `src/app/models/Room.ts`, `src/app/models/Template.ts`, `src/app/models/Trigger.ts`, `src/app/models/Department.ts` in full
+- [ ] Read `src/app/repositories/room.ts`, `src/app/repositories/template.ts`, `src/app/repositories/trigger.ts`, `src/app/repositories/department.ts`
 - [ ] Check this task's `status.md` before proceeding
 - [ ] Mark this task `in-progress` in `status.md`
 
@@ -34,21 +40,23 @@ All FK columns (contact, licensee) are `VARCHAR(24)` with no constraint during P
 
 | File | Action | Notes |
 |------|--------|-------|
-| `prisma/schema.prisma` | modify | Add Room, Template, Trigger models |
+| `prisma/schema.prisma` | modify | Add Room, Template, Trigger, Department models |
 | `prisma/migrations/` | modify | New migration |
-| `src/app/repositories/room.js` | modify | Add PrismaRoomDatabaseRepository |
-| `src/app/repositories/template.js` | modify | Add PrismaTemplateDatabaseRepository |
-| `src/app/repositories/trigger.js` | modify | Add PrismaTriggerDatabaseRepository |
-| `src/app/repositories/index.js` | modify | Export new Prisma repos |
-| `src/runtime/dependencies.js` | modify | Wrap Room, Template, Trigger with DualWriteRepository |
-| `src/scripts/sync-room.js` | create | Bulk sync |
-| `src/scripts/sync-template.js` | create | Bulk sync |
-| `src/scripts/sync-trigger.js` | create | Bulk sync |
+| `src/app/repositories/room.ts` | modify | Add PrismaRoomDatabaseRepository |
+| `src/app/repositories/template.ts` | modify | Add PrismaTemplateDatabaseRepository |
+| `src/app/repositories/trigger.ts` | modify | Add PrismaTriggerDatabaseRepository |
+| `src/app/repositories/department.ts` | modify | Add PrismaDepartmentDatabaseRepository |
+| `src/app/repositories/index.ts` | modify | Export new Prisma repos |
+| `src/app/runtime/dependencies.ts` | modify | Wrap Room, Template, Trigger, Department with DualWriteRepository |
+| `src/scripts/sync-room.ts` | create | Bulk sync |
+| `src/scripts/sync-template.ts` | create | Bulk sync |
+| `src/scripts/sync-trigger.ts` | create | Bulk sync |
+| `src/scripts/sync-department.ts` | create | Bulk sync |
 
 ### Do NOT Modify
 
-- `src/app/repositories/licensee.js`, `user.js`, `contact.js`, `message.js`, `whatsappsession.js`, `body.js`, `trafficlight.js`
-- `src/app/models/Room.js`, `Template.js`, `Trigger.js`
+- `src/app/repositories/licensee.ts`, `user.ts`, `contact.ts`, `inbox.ts`, `message.ts`, `whatsappsession.ts`, `body.ts`, `trafficlight.ts`
+- `src/app/models/Room.ts`, `Template.ts`, `Trigger.ts`, `Department.ts`
 
 ## Implementation Steps
 
@@ -97,7 +105,7 @@ model Template {
 
 ### Step 3: Add Trigger to schema.prisma
 
-Read `src/app/models/Trigger.js` in full before writing this model. Add all fields as nullable Strings where Mongoose uses conditional required.
+Read `src/app/models/Trigger.ts` in full before writing this model. Add all fields as nullable Strings where Mongoose uses conditional required.
 
 ```prisma
 model Trigger {
@@ -112,7 +120,7 @@ model Trigger {
   textReplyButton String?
   messagesList    String?
   licensee        String   @db.VarChar(24)
-  // ... add all remaining fields from Trigger.js
+  // ... add all remaining fields from Trigger.ts
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -120,39 +128,59 @@ model Trigger {
 }
 ```
 
-### Step 4: Run migration
+### Step 4: Add Department to schema.prisma
 
-```bash
-npx prisma migrate dev --name add-room-template-trigger
+`users` is stored as JSONB (array of VARCHAR(24) mongo_ids) during migration. Task-11 will convert this to a proper `department_users` junction table when FK resync runs.
+
+```prisma
+model Department {
+  id              Int      @id @default(autoincrement())
+  mongo_id        String   @unique @db.VarChar(24)
+  name            String
+  licensee        String   @db.VarChar(24)
+  users           Json
+  active          Boolean  @default(true)
+  departmentToken String   @unique
+  inbox           String?  @db.VarChar(24)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("departments")
+}
 ```
 
-### Step 5: Implement Prisma repos
+### Step 5: Run migration
 
-For each model, follow the same pattern as `PrismaLicenseeDatabaseRepository`:
-- Extend `PrismaRepository`
-- Override `delegate()` to return the correct Prisma model delegate
-- No special pre-save logic for Room or Template
-- Trigger: no pre-save business logic beyond ID — no override needed
+```bash
+npx prisma migrate dev --name add-room-template-trigger-department
+```
 
-### Step 6: Wire DualWriteRepository and write sync scripts
+### Step 6: Implement Prisma repos
 
-Follow the same pattern established in task-03 for all three repositories.
+For Room, Template, Trigger: follow the same pattern as `PrismaLicenseeDatabaseRepository` — extend `PrismaRepository`, override `delegate()`. No special pre-save logic.
+
+For Department: override `create()` to generate `departmentToken = uuidv4()` if not provided. Do NOT compute or store `webhookUrl`.
+
+### Step 7: Wire DualWriteRepository and write sync scripts
+
+Follow the pattern established in task-03 for all four repositories. For the Department sync script, store `users` as a JSON array of mongo_id strings.
 
 ## Testing
 
-- [ ] Existing specs for room, template, trigger pass
-- [ ] New `*.prisma.spec.js` for each: create record, read back, assert fields match (skip if no DATABASE_URL)
+- [ ] Existing specs for room, template, trigger, department pass
+- [ ] New `*.prisma.spec.ts` for each: create record, read back, assert fields match (skip if no DATABASE_URL)
 - [ ] `npx jest` exits 0
 - [ ] `pre-commit-check` passes
 
 ## Documentation / KB Updates
 
 - [ ] No new KB doc required — pattern is established
+- [ ] If Department's `users` JSONB approach requires a note for task-11, append to the existing KB migration doc
 
 ## Completion Criteria
 
-- [ ] Room, Template, Trigger in schema.prisma, migration committed
-- [ ] All three Prisma repos implemented and dual-write wired
+- [ ] Room, Template, Trigger, Department in schema.prisma, migration committed
+- [ ] All four Prisma repos implemented and dual-write wired
 - [ ] Sync scripts committed
 - [ ] Tests pass
 - [ ] Branch `plan/mongo-to-postgres/phase-3/task-05-room-template-trigger-pg` committed
@@ -160,5 +188,5 @@ Follow the same pattern established in task-03 for all three repositories.
 
 ## Conflict Avoidance Notes
 
-- Phase 3 tasks run in parallel and all touch `prisma/schema.prisma` and `dependencies.js`. Each task appends its own model blocks. Merge conflicts in these files are resolved by keeping all blocks.
-- `dependencies.js` is edited by task-04, task-05, task-06, task-07 simultaneously. If editing on separate branches, expect a merge conflict — resolve by keeping all DualWriteRepository wiring.
+- Phase 3 tasks run in parallel and all touch `prisma/schema.prisma` and `dependencies.ts`. Each task appends its own model blocks. Merge conflicts in these files are resolved by keeping all blocks.
+- `dependencies.ts` is edited by task-04, task-05, task-06, task-07 simultaneously. If editing on separate branches, expect a merge conflict — resolve by keeping all DualWriteRepository wiring.

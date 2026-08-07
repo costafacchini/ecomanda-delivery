@@ -29,21 +29,21 @@ This task does NOT flip reads to Postgres — that is task-09. This task only en
 - [ ] Verify all Phase 3 task statuses are `complete`
 - [ ] Confirm `DATABASE_URL` is set in the production Heroku environment
 - [ ] Check this task's `status.md`; mark `in-progress`
-- [ ] Read `src/scripts/sync-*.js` files written in Phase 2 and 3 to understand the sync pattern
+- [ ] Read `src/scripts/sync-*.ts` files written in Phase 2 and 3 to understand the sync pattern
 
 ## File Ownership
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/scripts/sync-all.js` | create | Orchestrates all sync scripts in dependency order |
-| `src/scripts/validate-pg.js` | create | Validation report: count comparisons + spot-checks |
+| `src/scripts/sync-all.ts` | create | Orchestrates all sync scripts in dependency order |
+| `src/scripts/validate-pg.ts` | create | Validation report: count comparisons + spot-checks |
 | `prisma/migrations/` | modify | Add FK constraint migration (after validation passes) |
-| `src/runtime/dependencies.js` | modify | Change asyncSecondary: true → false for all DualWriteRepository instances |
+| `src/app/runtime/dependencies.ts` | modify | Change asyncSecondary: true → false for all DualWriteRepository instances |
 
 ### Do NOT Modify
 
-- Individual `sync-*.js` scripts — call them as-is
-- `src/app/repositories/repository.js` — DualWriteRepository is already implemented
+- Individual `sync-*.ts` scripts — call them as-is
+- `src/app/repositories/repository.ts` — DualWriteRepository is already implemented
 
 ## Implementation Steps
 
@@ -52,19 +52,19 @@ This task does NOT flip reads to Postgres — that is task-09. This task only en
 ```js
 // Run: node src/scripts/sync-all.js
 // Syncs all models in dependency order: Licensee first, then others, Message last
-import './sync-licensee.js'
-import './sync-user.js'
-import './sync-contact.js'
-import './sync-room.js'
-import './sync-template.js'
-import './sync-trigger.js'
-import './sync-whatsappsession.js'
-import './sync-body.js'
-import './sync-trafficlight.js'
-import './sync-message.js'
+import './sync-licensee.ts'
+import './sync-user.ts'
+import './sync-contact.ts'
+import './sync-room.ts'
+import './sync-template.ts'
+import './sync-trigger.ts'
+import './sync-whatsappsession.ts'
+import './sync-body.ts'
+import './sync-trafficlight.ts'
+import './sync-message.ts'
 ```
 
-Actually, since each script calls `process.exit()`, run them sequentially via shell or refactor each to be importable without auto-exit. Prefer refactoring sync scripts to export a `sync()` function and call `process.exit()` only in the CLI entrypoint. Then `sync-all.js` can `await` each in order.
+Actually, since each script calls `process.exit()`, run them sequentially via shell or refactor each to be importable without auto-exit. Prefer refactoring sync scripts to export a `sync()` function and call `process.exit()` only in the CLI entrypoint. Then `sync-all.ts` can `await` each in order.
 
 ### Step 2: Create validate-pg.js
 
@@ -103,7 +103,7 @@ Run similar queries for all FK columns. Results should be 0 — if not, the bulk
 
 ### Step 5: Promote dual-write to synchronous
 
-In `src/runtime/dependencies.js`, change every `DualWriteRepository` instantiation from:
+In `src/app/runtime/dependencies.ts`, change every `DualWriteRepository` instantiation from:
 ```js
 { asyncSecondary: true }
 ```
@@ -122,7 +122,7 @@ Deploy the synchronous dual-write changes. Monitor logs for any `[DualWrite] Sec
 
 ## Testing
 
-- [ ] `validate-pg.js` exits 0 with OK status for all 10 models
+- [ ] `validate-pg.ts` exits 0 with OK status for all 10 models
 - [ ] FK constraint migration runs without error on staging and production
 - [ ] Synchronous dual-write: add a smoke test that creates a record via the dual-write repo and immediately asserts it exists in both stores
 - [ ] `npx jest` exits 0
@@ -135,7 +135,7 @@ Deploy the synchronous dual-write changes. Monitor logs for any `[DualWrite] Sec
 
 ## Completion Criteria
 
-- [ ] `sync-all.js` and `validate-pg.js` committed
+- [ ] `sync-all.ts` and `validate-pg.ts` committed
 - [ ] Validation report shows 0 FAIL, ≤ acceptable WARN
 - [ ] FK constraint migration committed and deployed
 - [ ] All DualWriteRepository instances set to `asyncSecondary: false`

@@ -50,8 +50,8 @@ FK dependency order for the migration:
 |------|--------|-------|
 | `prisma/schema.prisma` | modify | Replace VARCHAR FK columns with Int + add relations; remove mongo_id from all models |
 | `prisma/migrations/` | modify | New migration with the resync SQL |
-| `src/app/repositories/*.js` | modify | Remove any `mongo_id` references; update `findFirst`/`find` params to use integer ids |
-| `src/app/repositories/repository.js` | modify | Remove `#toWhere` mongo_id translation; simplify to standard Prisma id lookups |
+| `src/app/repositories/*.ts` | modify | Remove any `mongo_id` references; update `findFirst`/`find` params to use integer ids |
+| `src/app/repositories/repository.ts` | modify | Remove `#toWhere` mongo_id translation; simplify to standard Prisma id lookups |
 
 ### Do NOT Modify
 
@@ -144,7 +144,7 @@ Use Prisma's standard relation syntax. Run `npx prisma generate` after updating 
 
 ### Step 4: Simplify PrismaRepository base class
 
-Now that `mongo_id` is gone, the `#toWhere` Mongo ObjectId translation is no longer needed. Update `PrismaRepository` in `src/app/repositories/repository.js`:
+Now that `mongo_id` is gone, the `#toWhere` Mongo ObjectId translation is no longer needed. Update `PrismaRepository` in `src/app/repositories/repository.ts`:
 - Remove the `#toWhere` helper that mapped `_id` → `mongo_id`
 - `findFirst`, `find`, `update`, `delete` now use the standard integer `id`
 - `save` upserts on `id` (not `mongo_id`)

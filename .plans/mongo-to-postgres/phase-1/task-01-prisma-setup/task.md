@@ -13,14 +13,14 @@ Install Prisma ORM and the PostgreSQL client driver, wire a PostgreSQL connectio
 
 ## Context
 
-The application currently connects to MongoDB via `src/config/database.js` + `src/config/mongo.js` using the `mongoose` package. We need to add PostgreSQL support **without removing Mongoose** — both databases will run in parallel until Phase 4.
+The application currently connects to MongoDB via `src/config/database.ts` + `src/config/mongo.ts` using the `mongoose` package. We need to add PostgreSQL support **without removing Mongoose** — both databases will run in parallel until Phase 4.
 
 Relevant files:
-- `src/config/database.js` — current connect(); will be extended
-- `src/config/mongo.js` — MongoServer class
+- `src/config/database.ts` — current connect(); will be extended
+- `src/config/mongo.ts` — MongoServer class
 - `.env.example` — environment variable template
 - `package.json` — add `prisma`, `@prisma/client`, `pg` deps
-- `src/app.js` or server entry point — check if health-check endpoint exists
+- `src/app.ts` or server entry point — check if health-check endpoint exists
 
 Architecture doc: `docs/kb/architecture/project-overview.md`
 
@@ -41,15 +41,15 @@ Architecture doc: `docs/kb/architecture/project-overview.md`
 | `yarn.lock` | modify | Updated by yarn install |
 | `prisma/schema.prisma` | create | Initial empty schema with datasource + generator |
 | `prisma/migrations/` | create | Directory created by first migration |
-| `src/config/postgres.js` | create | PrismaClient singleton |
-| `src/config/database.js` | modify | Call both `connectMongo()` and `connectPostgres()` |
+| `src/config/postgres.ts` | create | PrismaClient singleton |
+| `src/config/database.ts` | modify | Call both `connectMongo()` and `connectPostgres()` |
 | `.env.example` | modify | Add `DATABASE_URL` |
 | `jest.config.mjs` or test setup | modify | If tests need DATABASE_URL set to a test PG instance |
 
 ### Do NOT Modify
 
-- `src/app/repositories/repository.js` — owned by task-02
-- `src/runtime/dependencies.js` — owned by task-02 (for DualWrite wiring)
+- `src/app/repositories/repository.ts` — owned by task-02
+- `src/app/runtime/dependencies.ts` — owned by task-02 (for DualWrite wiring)
 
 ## Implementation Steps
 
@@ -99,7 +99,7 @@ No models yet — they are added per-task in Phases 2 and 3.
 
 ### Step 5: Create PrismaClient singleton
 
-Create `src/config/postgres.js`:
+Create `src/config/postgres.ts`:
 ```js
 import { PrismaClient } from '@prisma/client'
 
@@ -123,7 +123,7 @@ export { getPrismaClient, connectPostgres }
 
 ### Step 6: Wire connectPostgres into database.js
 
-In `src/config/database.js`, import and call `connectPostgres()` alongside the existing `MongoServer.connect()`. The call should be non-blocking for now (log error, don't crash) so the app still starts if Postgres is not provisioned in a given environment:
+In `src/config/database.ts`, import and call `connectPostgres()` alongside the existing `MongoServer.connect()`. The call should be non-blocking for now (log error, don't crash) so the app still starts if Postgres is not provisioned in a given environment:
 ```js
 try {
   await connectPostgres()
@@ -193,7 +193,7 @@ Add `prisma generate` to the CI `build` or `postinstall` step so the generated c
 
 ## Testing
 
-- [ ] `yarn start` (or `node src/server.js`) boots without error when `DATABASE_URL` is set
+- [ ] `yarn start` (or `node src/server.ts`) boots without error when `DATABASE_URL` is set
 - [ ] `yarn start` logs "PostgreSQL connection failed (non-fatal)" and continues when `DATABASE_URL` is absent
 - [ ] `npx jest` passes all existing tests (Mongo-based tests should be unaffected)
 - [ ] CI backend workflow passes with the Postgres service added
@@ -210,8 +210,8 @@ Add `prisma generate` to the CI `build` or `postinstall` step so the generated c
 
 - [ ] `prisma/schema.prisma` committed with datasource + generator (no models yet)
 - [ ] `prisma/migrations/<timestamp>_init/migration.sql` committed
-- [ ] `src/config/postgres.js` committed with PrismaClient singleton
-- [ ] `src/config/database.js` calls `connectPostgres()` (non-fatal)
+- [ ] `src/config/postgres.ts` committed with PrismaClient singleton
+- [ ] `src/config/database.ts` calls `connectPostgres()` (non-fatal)
 - [ ] `.env.example` has `DATABASE_URL`
 - [ ] CI config has Postgres service and `DATABASE_URL` env var
 - [ ] All existing tests pass
@@ -220,5 +220,5 @@ Add `prisma generate` to the CI `build` or `postinstall` step so the generated c
 
 ## Conflict Avoidance Notes
 
-- task-02 owns `src/app/repositories/repository.js`. Do not add `PrismaRepository` there — wait for task-02.
-- Both tasks run in parallel. If task-02 needs the `getPrismaClient` export from `src/config/postgres.js` before this task merges, task-02 should stub an import and note the dependency in its status.md.
+- task-02 owns `src/app/repositories/repository.ts`. Do not add `PrismaRepository` there — wait for task-02.
+- Both tasks run in parallel. If task-02 needs the `getPrismaClient` export from `src/config/postgres.ts` before this task merges, task-02 should stub an import and note the dependency in its status.md.

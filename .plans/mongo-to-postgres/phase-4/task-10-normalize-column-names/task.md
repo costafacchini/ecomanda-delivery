@@ -36,7 +36,7 @@ The `@@map("table_name")` table-level mapping is already present on all models (
 ### Do NOT Modify
 
 - Any file in `src/app/` — `@map()` is transparent to application code
-- `src/app/repositories/repository.js` — no changes needed
+- `src/app/repositories/repository.ts` — no changes needed
 
 ## Implementation Steps
 

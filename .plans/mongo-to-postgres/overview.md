@@ -2,7 +2,7 @@
 
 **Status**: not-started
 **Created**: 2026-05-29
-**Last Updated**: 2026-05-29 (revised: native PG id + mongo_id strategy)
+**Last Updated**: 2026-08-07 (refined: +Inbox +Department, prerequisites updated, .js→.ts paths)
 **Estimated Demo Date**: TBD
 **Assigned Dev**: Alan
 **Assigned QA**: unassigned
@@ -16,12 +16,19 @@ Migrate all persistent data from MongoDB (Mongoose) to PostgreSQL (Prisma) using
 **`remove-pdv` plan must be complete before executing Phase 3+.**
 Remove-pdv deletes Cart, Order, Product, Integrationlog, and Backgroundjob — migrating those models would waste effort. Phase 1–2 (infra + Licensee pilot) can start once remove-pdv Phase 1 is merged, but Phase 3+ task execution must wait until remove-pdv is fully complete.
 
+### Prerequisite State
+
+- `remove-pdv` — complete (2026-06-05); Cart, Order, Product, Integrationlog, Backgroundjob deleted
+- `js-to-ts` — complete (2026-05-31); all source files are `.ts`
+- `setores` — complete (2026-07-17); Inbox and Department models, repos, and routes added
+- `type-backend` — complete (2026-08-07); all domain interfaces in `src/types/index.ts`; `IRepository<T>` typed in `repository.ts` — PrismaRepository must implement it
+
 ## Scope
 
 ### In Scope
 - Install Prisma ORM + PostgreSQL driver
 - Provision and wire PostgreSQL connection (dev + production env vars)
-- Migrate 9 models to PostgreSQL via Prisma: Licensee, User, Contact, Message, Room, Template, Trigger, WhatsappSession, Body
+- Migrate 11 models to PostgreSQL via Prisma: Licensee, User, Contact, Message, Room, Template, Trigger, WhatsappSession, Body, Inbox, Department
 - Migrate Trafficlight to **Redis** (native TTL via `EXPIREAT`; reuses existing BullMQ Redis connection)
 - Dual-write adapter at the repository layer (writes to Mongo + Postgres simultaneously; reads from Mongo during migration window)
 - Bulk data sync scripts per model (Mongo → Postgres)
@@ -48,7 +55,7 @@ Remove-pdv deletes Cart, Order, Product, Integrationlog, and Backgroundjob — m
 |-------|------|-------|--------------|-------------|
 | 1 | Infrastructure | task-01, task-02 | Prerequisite: remove-pdv Phase 1 merged | Install Prisma, configure PG connection, establish dual-write pattern and base classes |
 | 2 | Pilot Migration — Licensee | task-03 | Phase 1 complete | Migrate the root entity (Licensee) as a live pilot to validate the full dual-write → sync → validate cycle |
-| 3 | Domain Table Migrations | task-04, task-05, task-06, task-07 | Phase 2 complete; remove-pdv fully complete | Parallel migration of all remaining 9 models using the established pattern |
+| 3 | Domain Table Migrations | task-04, task-05, task-06, task-07 | Phase 2 complete; remove-pdv fully complete | Parallel migration of all remaining 11 models using the established pattern |
 | 4 | Cutover & Cleanup | task-08, task-09, task-10, task-11 | Phase 3 complete | Bulk-sync production data, validate integrity, flip reads to Postgres, remove Mongoose, normalize column names to snake_case, resync FKs to native PG IDs |
 
 ## Task Summary
@@ -58,8 +65,8 @@ Remove-pdv deletes Cart, Order, Product, Integrationlog, and Backgroundjob — m
 | phase-1/task-01-prisma-setup | Install & configure Prisma + PostgreSQL | 1 | not-started | — |
 | phase-1/task-02-dual-write-pattern | DualWriteRepository pattern + PrismaRepository base | 1 | not-started | — |
 | phase-2/task-03-licensee-pg | Migrate Licensee to PostgreSQL (pilot) | 2 | not-started | phase-1/task-01-prisma-setup, phase-1/task-02-dual-write-pattern |
-| phase-3/task-04-user-contact-pg | Migrate User + Contact to PostgreSQL | 3 | not-started | phase-2/task-03-licensee-pg |
-| phase-3/task-05-room-template-trigger-pg | Migrate Room + Template + Trigger to PostgreSQL | 3 | not-started | phase-2/task-03-licensee-pg |
+| phase-3/task-04-user-contact-pg | Migrate User + Contact + Inbox to PostgreSQL | 3 | not-started | phase-2/task-03-licensee-pg |
+| phase-3/task-05-room-template-trigger-pg | Migrate Room + Template + Trigger + Department to PostgreSQL | 3 | not-started | phase-2/task-03-licensee-pg |
 | phase-3/task-06-whatsappsession-body-trafficlight-pg | Migrate WhatsappSession + Body + Trafficlight to PostgreSQL | 3 | not-started | phase-2/task-03-licensee-pg |
 | phase-3/task-07-message-pg | Migrate Message to PostgreSQL | 3 | not-started | phase-2/task-03-licensee-pg |
 | phase-4/task-08-bulk-sync-validate | Bulk-sync all models Mongo→PG + integrity validation | 4 | not-started | phase-3/task-04-user-contact-pg, phase-3/task-05-room-template-trigger-pg, phase-3/task-06-whatsappsession-body-trafficlight-pg, phase-3/task-07-message-pg |
@@ -81,16 +88,16 @@ Base branch: `main`
 
 | File/Directory | Relevance |
 |----------------|-----------|
-| `src/config/database.js` | Current Mongo connect; will add Prisma connect alongside |
-| `src/config/mongo.js` | Mongo server class; removed in Phase 4 |
-| `src/app/repositories/repository.js` | Base Repository + RepositoryMemory; add PrismaRepository here |
-| `src/app/repositories/index.js` | Registry of all concrete repos; updated per phase |
-| `src/runtime/dependencies.js` | Wires concrete repos into use cases; updated per phase |
-| `src/app/models/*.js` | Mongoose models; all removed in Phase 4 |
-| `src/app/repositories/licensee.js` | Pilot repository — first dual-write target |
+| `src/config/database.ts` | Current Mongo connect; will add Prisma connect alongside |
+| `src/config/mongo.ts` | Mongo server class; removed in Phase 4 |
+| `src/app/repositories/repository.ts` | Base Repository + RepositoryMemory + `IRepository<T>`; add PrismaRepository here |
+| `src/app/repositories/index.ts` | Registry of all concrete repos; updated per phase |
+| `src/app/runtime/dependencies.ts` | Wires concrete repos into use cases; updated per phase |
+| `src/app/models/*.ts` | Mongoose models; all removed in Phase 4 |
+| `src/app/repositories/licensee.ts` | Pilot repository — first dual-write target |
 | `prisma/schema.prisma` | Created in task-01; grown through every Phase 3 task |
 | `prisma/migrations/` | Auto-generated migration files |
-| `src/scripts/sync-mongo-to-pg.js` | Bulk sync script written in task-08 |
+| `src/scripts/sync-mongo-to-pg.ts` | Bulk sync script written in task-08 |
 | `.env.example` | Updated in task-01 with DATABASE_URL |
 
 ## Architectural Decisions
@@ -138,9 +145,9 @@ Trafficlight records are short-lived TTL tokens with no FK references. They are 
 
 ## Success Criteria
 
-- [ ] All 9 Prisma models have a schema definition and migration (`id SERIAL`, `mongo_id VARCHAR(24)`); Trafficlight is in Redis
-- [ ] Dual-write is active for all 9 Prisma models in the production deploy; Trafficlight wired directly to Redis
-- [ ] Bulk sync script runs without errors; counts match between Mongo and Postgres for the 9 Prisma models (Trafficlight excluded — ephemeral)
+- [ ] All 11 Prisma models have a schema definition and migration (`id SERIAL`, `mongo_id VARCHAR(24)`); Trafficlight is in Redis
+- [ ] Dual-write is active for all 11 Prisma models in the production deploy; Trafficlight wired directly to Redis
+- [ ] Bulk sync script runs without errors; counts match between Mongo and Postgres for the 11 Prisma models (Trafficlight excluded — ephemeral)
 - [ ] All reads have been flipped to Postgres with no regression in existing tests
 - [ ] Mongoose and mongoose package are fully removed from `package.json` and all source files
 - [ ] `npx jest` passes with 0 failures after Mongoose removal

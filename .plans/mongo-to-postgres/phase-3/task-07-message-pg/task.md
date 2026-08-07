@@ -13,7 +13,7 @@ Add the Message Prisma model to `schema.prisma`, implement `PrismaMessageDatabas
 
 ## Context
 
-**Message** model (`src/app/models/Message.js`):
+**Message** model (`src/app/models/Message.ts`):
 - References: licensee (req), contact (req), room (opt), trigger (opt)
 - Note: `cart` reference in Mongoose model points to Cart — Cart is removed by `remove-pdv`. Do NOT add a `cart` column to the Postgres schema; strip it from sync and dual-write.
 - `payload` field is String in Mongoose (JSON stored as string) — map to `Text` or `String` in Prisma
@@ -22,15 +22,15 @@ Add the Message Prisma model to `schema.prisma`, implement `PrismaMessageDatabas
 
 All FK columns are `VARCHAR(24)` with no constraints enforced during Phase 3.
 
-Existing repo: `src/app/repositories/message.js`
+Existing repo: `src/app/repositories/message.ts`
 
 ## Before You Start
 
 - [ ] Switch to base branch and pull: `git switch main && git pull --rebase origin main`
 - [ ] Verify `phase-2/task-03-licensee-pg/status.md` is `complete`
 - [ ] Confirm `remove-pdv` plan has removed the Cart model/repo (or at minimum that Cart fields should not be added to Postgres schema)
-- [ ] Read `src/app/models/Message.js` in full
-- [ ] Read `src/app/repositories/message.js`
+- [ ] Read `src/app/models/Message.ts` in full
+- [ ] Read `src/app/repositories/message.ts`
 - [ ] Check this task's `status.md`; mark `in-progress`
 
 ## File Ownership
@@ -39,15 +39,15 @@ Existing repo: `src/app/repositories/message.js`
 |------|--------|-------|
 | `prisma/schema.prisma` | modify | Add Message model |
 | `prisma/migrations/` | modify | New migration |
-| `src/app/repositories/message.js` | modify | Add PrismaMessageDatabaseRepository |
-| `src/app/repositories/index.js` | modify | Export new Prisma repo |
-| `src/runtime/dependencies.js` | modify | Wrap Message repo with DualWriteRepository |
-| `src/scripts/sync-message.js` | create | Bulk sync (skip cart field) |
+| `src/app/repositories/message.ts` | modify | Add PrismaMessageDatabaseRepository |
+| `src/app/repositories/index.ts` | modify | Export new Prisma repo |
+| `src/app/runtime/dependencies.ts` | modify | Wrap Message repo with DualWriteRepository |
+| `src/scripts/sync-message.ts` | create | Bulk sync (skip cart field) |
 
 ### Do NOT Modify
 
 - Files owned by task-04, task-05, task-06
-- `src/app/models/Message.js`
+- `src/app/models/Message.ts`
 
 ## Implementation Steps
 
@@ -119,15 +119,15 @@ Wrap `DatabaseMessageRepository` in dependencies.js. Use `asyncSecondary: true`.
 
 ### Step 5: Sync script
 
-In `sync-message.js`, exclude the `cart` field when inserting into Postgres:
+In `sync-message.ts`, exclude the `cart` field when inserting into Postgres:
 ```js
 const { _id, __v, cart, ...rest } = plain
 ```
 
 ## Testing
 
-- [ ] Existing `message.spec.js` passes
-- [ ] New `message.prisma.spec.js`: create message, read back, verify all fields match (skip `cart`), skip if no DATABASE_URL
+- [ ] Existing `message.spec.ts` passes
+- [ ] New `message.prisma.spec.ts`: create message, read back, verify all fields match (skip `cart`), skip if no DATABASE_URL
 - [ ] `npx jest` exits 0
 - [ ] `pre-commit-check` passes
 
@@ -146,4 +146,4 @@ const { _id, __v, cart, ...rest } = plain
 
 ## Conflict Avoidance Notes
 
-Same as other Phase 3 tasks — `prisma/schema.prisma`, `index.js`, and `dependencies.js` will have conflicts. Resolve by keeping all model blocks.
+Same as other Phase 3 tasks — `prisma/schema.prisma`, `index.ts`, and `dependencies.ts` will have conflicts. Resolve by keeping all model blocks.
