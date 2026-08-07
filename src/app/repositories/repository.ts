@@ -13,7 +13,9 @@ class Repository<T> implements IRepository<T> {
   model(): any {}
 
   async findFirst(params: Record<string, unknown> = {}, relations: string[] = []): Promise<T | null> {
-    const query = this.model().findOne(params ?? {}).lean()
+    const query = this.model()
+      .findOne(params ?? {})
+      .lean()
     relations.forEach((r) => query.populate(r))
     const doc = await query
     if (!doc) return null
@@ -21,7 +23,9 @@ class Repository<T> implements IRepository<T> {
   }
 
   async find(params: Record<string, unknown> = {}, relations: string[] = []): Promise<T[]> {
-    const query = this.model().find(params ?? {}).lean()
+    const query = this.model()
+      .find(params ?? {})
+      .lean()
     relations.forEach((r) => query.populate(r))
     const docs = await query
     return docs.map((doc: any) => stringifyObjectIds(doc)) as T[]

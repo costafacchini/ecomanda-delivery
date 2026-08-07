@@ -88,7 +88,13 @@ class MessagesQuery {
     }
     this.applyFilters(query)
 
-    const docs = await query.getQuery().populate('contact').populate('trigger').populate('department', 'name').lean().exec()
+    const docs = await query
+      .getQuery()
+      .populate('contact')
+      .populate('trigger')
+      .populate('department', 'name')
+      .lean()
+      .exec()
     return docs.map(stringifyObjectIds)
   }
 

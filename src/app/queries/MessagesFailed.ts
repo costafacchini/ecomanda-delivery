@@ -14,17 +14,20 @@ class MessagesFailedQuery {
   }
 
   async all() {
-    const docs = await this.messageRepository.model().find({
-      sended: false,
-      createdAt: {
-        $gte: this.startDate,
-        $lt: this.endDate,
-      },
-      licensee: this.licenseeId,
-      text: {
-        $ne: 'Chat encerrado pelo agente',
-      },
-    }).lean()
+    const docs = await this.messageRepository
+      .model()
+      .find({
+        sended: false,
+        createdAt: {
+          $gte: this.startDate,
+          $lt: this.endDate,
+        },
+        licensee: this.licenseeId,
+        text: {
+          $ne: 'Chat encerrado pelo agente',
+        },
+      })
+      .lean()
     return docs.map(stringifyObjectIds)
   }
 }
