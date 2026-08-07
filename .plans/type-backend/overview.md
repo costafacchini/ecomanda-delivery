@@ -2,7 +2,7 @@
 
 **Status**: not-started
 **Created**: 2026-05-31
-**Last Updated**: 2026-05-31
+**Last Updated**: 2026-08-07 (revised: remove-pdv complete; setores models added; Wevo→Utalk)
 **Estimated Demo Date**: N/A
 **Assigned Dev**: Alan Costa Facchini
 **Assigned QA**: unassigned
@@ -24,15 +24,17 @@ Replace the `any` types introduced during the JS→TS migration with specific in
 - Helper and service utility types in `src/app/helpers/` and `src/app/services/`
 
 ### Out of Scope
-- **PDV-related types (Cart, Order, Product, PagarMe)** — the `remove-pdv` plan will delete these entirely; typing them now creates wasted work. Stub with `any` and note the dependency.
+- **PDV-related types (Cart, Order, Product, PagarMe)** — deleted by `remove-pdv` plan (complete). Do not create these types.
 - **Client-side typing** — covered by the companion `type-client` plan.
 - **Third-party package type augmentations** — no `@types/*` packages will be installed; `src/declarations.d.ts` stubs remain.
 - **Test files** — spec files retain `any` freely; only production code is in scope.
 
-## Kill Criteria
+## Prerequisite State
 
-- If `remove-pdv` executes before this plan completes, reassess task-02 (transactional models) to avoid typing code slated for deletion.
-- If `mongo-to-postgres` begins before Phase 1 completes, Mongoose interfaces should be designed compatible with the Prisma migration path.
+- `js-to-ts` — complete (2026-05-31)
+- `remove-pdv` — complete (2026-06-05); Cart, Order, Product, Integrationlog, Backgroundjob deleted
+- `setores` — complete (2026-07-17); Department and Inbox models/repos added
+- `src/types/index.ts` — already exists with partial content: `ILicensee`, `IContact`, `IMessage`, `IRoom`, `ITrigger` and 7 enums defined. Tasks extend this file, not create from scratch.
 
 ## Phases
 
@@ -47,10 +49,10 @@ Replace the `any` types introduced during the JS→TS migration with specific in
 | Task Path | Title | Phase | Status | Depends On |
 |-----------|-------|-------|--------|------------|
 | phase-1/task-01-core-model-interfaces | Core Model Interfaces | 1 | not-started | — |
-| phase-1/task-02-transactional-model-interfaces | Transactional Model Interfaces | 1 | not-started | — |
+| phase-1/task-02-setores-session-model-interfaces | Setores & Session Model Interfaces | 1 | not-started | — |
 | phase-1/task-03-system-model-interfaces | System Model Interfaces | 1 | not-started | — |
 | phase-2/task-04-core-repositories | Core Repository Types | 2 | not-started | phase-1/task-01-core-model-interfaces |
-| phase-2/task-05-remaining-repositories | Remaining Repository Types | 2 | not-started | phase-1/task-02-transactional-model-interfaces, phase-1/task-03-system-model-interfaces |
+| phase-2/task-05-remaining-repositories | Remaining Repository Types | 2 | not-started | phase-1/task-02-setores-session-model-interfaces, phase-1/task-03-system-model-interfaces |
 | phase-2/task-06-message-contact-usecases | Message & Contact Use Case Types | 2 | not-started | phase-2/task-04-core-repositories |
 | phase-2/task-07-remaining-usecases | Remaining Use Case Types | 2 | not-started | phase-2/task-04-core-repositories, phase-2/task-05-remaining-repositories |
 | phase-3/task-08-queries | Query Class Types | 3 | not-started | phase-2/task-04-core-repositories, phase-2/task-05-remaining-repositories |
@@ -73,26 +75,26 @@ Base branch: `main`
 
 | File/Directory | Relevance |
 |----------------|-----------|
-| `src/app/models/` | 15 Mongoose models — source of truth for domain shapes; Phase 1 defines interfaces here |
+| `src/types/index.ts` | Already exists with partial interfaces — extend, do not recreate |
+| `src/app/models/` | 12 Mongoose models — source of truth for domain shapes; Phase 1 defines interfaces here |
 | `src/app/repositories/repository.ts` | Base repository class — Phase 2 types its generic signatures |
 | `src/app/repositories/*.ts` | One file per entity — Phase 2 narrows return types |
-| `src/app/usecases/` | 10 domain subdirectories — Phase 2 types inputs and outputs |
-| `src/app/queries/` | QueryBuilder, MessagesQuery, BillingQuery, etc. — Phase 3 |
+| `src/app/usecases/` | 9 domain subdirectories — Phase 2 types inputs and outputs |
+| `src/app/queries/` | QueryBuilder, MessagesQuery, LicenseeMessagesByDayQuery, and 7 other query classes — Phase 3 |
 | `src/app/controllers/` | All Express controllers — Phase 3 |
-| `src/app/plugins/messengers/` | Baileys, Dialog, YCloud, Pabbly, Wevo — Phase 3 |
-| `src/app/plugins/chats/` | Chatwoot, Crisp — Phase 3 |
-| `src/app/helpers/` | Files.ts, SanitizeErrors.ts, NormalizePhone.ts, etc. — Phase 3 |
-| `src/types/` | New directory for shared backend interfaces (created in Phase 1) |
+| `src/app/plugins/messengers/` | Baileys, Dialog, YCloud, Pabbly, Utalk — Phase 3 |
+| `src/app/plugins/chats/` | Chatwoot, Crisp, Cuboup, LocalChat, Rocketchat — Phase 3 |
+| `src/app/helpers/` | Files.ts, SanitizeErrors.ts, NormalizePhone.ts, Emoji.ts, etc. — Phase 3 |
 
 ## Risks
 
-- **remove-pdv overlap** — Task-02 types Cart/Order/Product; if `remove-pdv` runs first these types become dead code. Mitigation: track `remove-pdv` status before starting task-02.
-- **mongo-to-postgres timeline** — Mongoose interfaces defined here will need to be replaced with Prisma types. Mitigation: keep interfaces in a separate `src/types/` directory for easier migration.
-- **Scope creep per task** — Each layer has 100–180 `any` occurrences. Mitigation: tasks own specific files; don't fix adjacent files not in the ownership table.
+- **mongo-to-postgres timeline** — Mongoose interfaces defined here will need to be replaced with Prisma types. Mitigation: keep interfaces in `src/types/` for easier migration; interface names (`ILicensee`, etc.) can be reused by Prisma counterparts.
+- **Scope creep per task** — Tasks own specific files; don't fix adjacent files not in the ownership table.
+- **Partial `src/types/index.ts`** — 5 interfaces already exist. Task-01 must not overwrite them; extend only.
 
 ## Success Criteria
 
-- [ ] All Mongoose models have a corresponding `I{Model}` interface exported from `src/types/`
+- [ ] All 12 Mongoose models have a corresponding `I{Model}` interface exported from `src/types/`
 - [ ] All repository `findFirst`, `findAll`, `create`, `update` methods return typed results (no `any` in return type positions)
 - [ ] All use case `execute()` methods have typed inputs and outputs
 - [ ] All controller handlers have typed `req`, `res` parameters (no `Request<any, any, any>`)
@@ -106,4 +108,4 @@ Base branch: `main`
 
 - **JIRA Epic**: N/A
 - **Weekly Plan Brief**: N/A
-- **Related Plans**: [JS → TypeScript](../js-to-ts/overview.md) (prerequisite, complete), [Remove PDV](../remove-pdv/overview.md) (affects task-02 scope), [MongoDB → PostgreSQL](../mongo-to-postgres/overview.md) (downstream consumer of these interfaces)
+- **Related Plans**: [JS → TypeScript](../js-to-ts/overview.md) (prerequisite, complete), [Remove PDV](../remove-pdv/overview.md) (complete — PDV models gone), [MongoDB → PostgreSQL](../mongo-to-postgres/overview.md) (downstream consumer of these interfaces)

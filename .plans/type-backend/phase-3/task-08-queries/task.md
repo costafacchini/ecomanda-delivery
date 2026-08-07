@@ -9,18 +9,25 @@
 
 ## Objective
 
-Type all query classes in `src/app/queries/` — QueryBuilder, MessagesQuery, BillingQuery, LicenseeMessagesByDayQuery, and any others — replacing `any` in filter, sort, and result methods.
+Type all query classes in `src/app/queries/` — QueryBuilder and all concrete query classes — replacing `any` in filter, sort, and result methods.
 
 ## Context
 
-The query layer sits between repositories and controllers, building Mongoose query chains. `QueryBuilder` is the base class. Key `any` hotspots: filter method params (150 occurrences across queries directory), the `all()` return type, and builder method chaining.
+The query layer sits between repositories and controllers, building Mongoose query chains. `QueryBuilder` is the base class. Key `any` hotspots: filter method params, the `all()` return type, and builder method chaining.
 
-Files in scope:
+Files in scope (verified against current codebase):
 - `src/app/queries/QueryBuilder.ts`
 - `src/app/queries/MessagesQuery.ts`
-- `src/app/queries/BillingQuery.ts`
 - `src/app/queries/LicenseeMessagesByDayQuery.ts`
-- any other `*Query.ts` files in the directory
+- `src/app/queries/ContactsQuery.ts`
+- `src/app/queries/LicenseesQuery.ts`
+- `src/app/queries/MessagesFailed.ts`
+- `src/app/queries/MessagesSended.ts`
+- `src/app/queries/TemplatesQuery.ts`
+- `src/app/queries/TriggersQuery.ts`
+- `src/app/queries/UsersQuery.ts`
+
+Note: `BillingQuery.ts` does NOT exist — do not reference it.
 
 ## Before You Start
 
@@ -35,9 +42,14 @@ Files in scope:
 |------|--------|-------|
 | `src/app/queries/QueryBuilder.ts` | modify | Make generic; define `IQueryBuilder<T>` |
 | `src/app/queries/MessagesQuery.ts` | modify | Type filters and `all()` return |
-| `src/app/queries/BillingQuery.ts` | modify | Type date params and result shape |
 | `src/app/queries/LicenseeMessagesByDayQuery.ts` | modify | Type result shape |
-| `src/app/queries/*.ts` (remaining) | modify | Same pattern |
+| `src/app/queries/ContactsQuery.ts` | modify | Type filters and `all()` return |
+| `src/app/queries/LicenseesQuery.ts` | modify | Type filters and `all()` return |
+| `src/app/queries/MessagesFailed.ts` | modify | Type filters and `all()` return |
+| `src/app/queries/MessagesSended.ts` | modify | Type filters and `all()` return |
+| `src/app/queries/TemplatesQuery.ts` | modify | Type filters and `all()` return |
+| `src/app/queries/TriggersQuery.ts` | modify | Type filters and `all()` return |
+| `src/app/queries/UsersQuery.ts` | modify | Type filters and `all()` return |
 
 ### Do NOT Modify
 

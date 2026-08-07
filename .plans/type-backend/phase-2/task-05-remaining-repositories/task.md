@@ -9,20 +9,19 @@
 
 ## Objective
 
-Type the remaining repositories (room, trigger, template, cart, order, product, user, backgroundjob, integrationlog, whatsappsession, messenger) using the interfaces from Phase 1 tasks 02 and 03.
+Type the remaining repositories — room, trigger, template, department, inbox, trafficlight, user, whatsappsession, messenger — using the interfaces from Phase 1 tasks 02 and 03.
 
 ## Context
 
 Depends on task-04 for the generic base `IRepository<T>` and `Repository<T>` class. Once task-04 is merged, these repos just need the appropriate type parameter applied.
 
-**Note on PDV repos**: Check `remove-pdv` plan status. If it is `in-progress` or `complete`, skip cart, order, product repositories.
+Note: cart, order, product, backgroundjob, and integrationlog repositories were deleted by the `remove-pdv` plan (complete 2026-06-05). department and inbox repositories were added by the `setores` plan (merged 2026-07-17).
 
 ## Before You Start
 
 - [ ] Switch to main and pull: `git switch main && git pull --rebase origin main`
-- [ ] Verify `phase-1/task-02-transactional-model-interfaces` and `phase-1/task-03-system-model-interfaces` are `complete`
+- [ ] Verify `phase-1/task-02-setores-session-model-interfaces` and `phase-1/task-03-system-model-interfaces` are `complete`
 - [ ] Verify `phase-2/task-04-core-repositories` is `complete` — the generic base must exist
-- [ ] **Check `remove-pdv` status** — if in-progress/complete, skip cart/order/product repos
 - [ ] Check this task's `status.md` and mark `in-progress` before proceeding
 
 ## File Ownership
@@ -32,14 +31,12 @@ Depends on task-04 for the generic base `IRepository<T>` and `Repository<T>` cla
 | `src/app/repositories/room.ts` | modify | Type with `IRoom` |
 | `src/app/repositories/trigger.ts` | modify | Type with `ITrigger` |
 | `src/app/repositories/template.ts` | modify | Type with `ITemplate` |
+| `src/app/repositories/department.ts` | modify | Type with `IDepartment` |
+| `src/app/repositories/inbox.ts` | modify | Type with `IInbox` |
+| `src/app/repositories/trafficlight.ts` | modify | Type with `ITrafficlight` |
 | `src/app/repositories/user.ts` | modify | Type with `IUser` |
-| `src/app/repositories/backgroundjob.ts` | modify | Type with `IBackgroundjob` |
-| `src/app/repositories/integrationlog.ts` | modify | Type with `IIntegrationlog` |
 | `src/app/repositories/whatsappsession.ts` | modify | Type with `IWhatsappSession` |
-| `src/app/repositories/messenger.ts` | modify | Type with appropriate interface |
-| `src/app/repositories/cart.ts` | modify | Type with `ICart` (skip if remove-pdv active) |
-| `src/app/repositories/order.ts` | modify | Type with `IOrder` (skip if remove-pdv active) |
-| `src/app/repositories/product.ts` | modify | Type with `IProduct` (skip if remove-pdv active) |
+| `src/app/repositories/messenger.ts` | modify | Type with appropriate interface — read file first to determine shape |
 
 ### Do NOT Modify
 
@@ -52,7 +49,7 @@ Apply the generic `Repository<T>` base class pattern from task-04 to each remain
 ## Testing
 
 - [ ] `npx tsc --noEmit` passes
-- [ ] `NODE_ENV=test npx jest --testPathPattern="repositories/(room|trigger|template|user)" --no-coverage` — all pass
+- [ ] `NODE_ENV=test npx jest --testPathPattern="repositories/(room|trigger|template|user|department|inbox)" --no-coverage` — all pass
 - [ ] `pre-commit-check` passes
 
 ## Documentation / KB Updates
