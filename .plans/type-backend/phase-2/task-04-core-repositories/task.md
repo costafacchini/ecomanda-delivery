@@ -19,6 +19,7 @@ Make the repository layer the anti-corruption boundary between Mongoose and the 
 2. **Mongoose leak** — `Repository.save(document)` exposes Mongoose Document lifecycle to callers; it must be removed from the public `IRepository<T>` contract
 3. **`.lean()` for reads** — `findFirst` and `find` on the Database class must use `.lean()` to get POJOs
 4. **`.toObject()` for creates** — `create` on the Database class must call `.toObject()` before returning
+5. **`_id` must be `string` at runtime** — `.lean()` and `.toObject()` return `_id` as `mongodb.ObjectId`, not `string`. The repository must explicitly convert: `_id: doc._id.toString()`. Without this, any `===` comparison between an ID from the DB and a string will silently return `false`.
 
 `RepositoryMemory` already implements the POJO pattern via `serializeInput()` and `toObject()` — the Database class needs to match.
 
@@ -78,21 +79,27 @@ class Repository<T> implements IRepository<T> {
   async findFirst(params = {}, relations: string[] = []): Promise<T | null> {
     const query = this.model().findOne(params).lean()
     relations.forEach((r) => query.populate(r))
-    return await query as T | null
+    const doc = await query
+    if (!doc) return null
+    return { ...doc, _id: doc._id.toString() } as T
   }
 
   async find(params = {}, relations: string[] = []): Promise<T[]> {
     const query = this.model().find(params).lean()
     relations.forEach((r) => query.populate(r))
-    return await query as T[]
+    const docs = await query
+    return docs.map((doc) => ({ ...doc, _id: doc._id.toString() })) as T[]
   }
 
   async create(fields = {}): Promise<T> {
     const doc = await this.model().create(fields)
-    return doc.toObject() as T
+    const obj = doc.toObject()
+    return { ...obj, _id: obj._id.toString() } as T
   }
 }
 ```
+
+**Why the explicit `_id.toString()`**: `.lean()` and `.toObject()` return `_id` as a `mongodb.ObjectId` at runtime even though the interface declares `_id: string`. Without this conversion, comparisons like `contact._id === someStringId` silently return `false`, causing subtle lookup bugs that unit tests with `RepositoryMemory` will not catch (since memory repos already generate string IDs).
 
 Keep `save(document)` on the `Repository` class as an internal/protected method if `RepositoryMemory` needs it — but do NOT include it in `IRepository<T>`.
 
@@ -131,6 +138,7 @@ Run `npx tsc --noEmit`. Expect errors in use cases/controllers that call `docume
 
 - [ ] `IRepository<T>` exported from `repository.ts` with no `save()` method
 - [ ] `Repository<T>` base class returns POJOs — `findFirst`/`find` use `.lean()`, `create` uses `.toObject()`
+- [ ] `_id` is explicitly converted to `string` via `.toString()` in `findFirst`, `find`, and `create` — never rely on TypeScript cast alone
 - [ ] `RepositoryMemory<T>` implements `IRepository<T>`
 - [ ] licensee, contact, message, body repos typed with their interfaces
 - [ ] All relevant repository tests pass

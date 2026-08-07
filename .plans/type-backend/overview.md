@@ -57,18 +57,23 @@ export interface ILicensee {
 ### Repositories must return plain objects, not Mongoose Documents
 
 Database repository methods must convert results before returning:
-- **Read** (`findFirst`, `find`): use `.lean()` on Mongoose queries — returns POJO directly
-- **Create**: call `.toObject()` on the created document before returning
+- **Read** (`findFirst`, `find`): use `.lean()` on Mongoose queries, then explicitly convert `_id` to string
+- **Create**: call `.toObject()` on the created document, then explicitly convert `_id` to string
 - **Update**: return `{ acknowledged: true }` — no document needed
+
+**Critical**: `.lean()` and `.toObject()` return `_id` as `mongodb.ObjectId` at runtime, not `string`. A TypeScript cast (`as ILicensee`) silently lies. Always call `_id.toString()` explicitly — otherwise `contact._id === someStringId` will always be `false` in production.
 
 ```ts
 async findFirst(params = {}): Promise<ILicensee | null> {
-  return await Licensee.findOne(params).lean()
+  const doc = await Licensee.findOne(params).lean()
+  if (!doc) return null
+  return { ...doc, _id: doc._id.toString() }
 }
 
 async create(fields = {}): Promise<ILicensee> {
   const doc = await Licensee.create(fields)
-  return doc.toObject()
+  const obj = doc.toObject()
+  return { ...obj, _id: obj._id.toString() }
 }
 ```
 
