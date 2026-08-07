@@ -7,6 +7,7 @@ export interface IRepository<T> {
   update(id: string, fields: Partial<T>): Promise<{ acknowledged: boolean }>
   updateMany(params: Record<string, unknown>, fields: Partial<T>): Promise<{ acknowledged: boolean }>
   delete(params: Record<string, unknown>): Promise<{ acknowledged: boolean }>
+  save(document: T): Promise<T>
 }
 
 class Repository<T> implements IRepository<T> {

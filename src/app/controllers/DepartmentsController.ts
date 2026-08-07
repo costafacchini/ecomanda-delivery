@@ -1,13 +1,16 @@
+import { Request, Response } from 'express'
 import { sanitizeModelErrors } from '../helpers/SanitizeErrors'
+import { IRepository } from '@repositories/repository'
+import { IDepartment } from '../../types'
 import { GetBaileysQrForDepartment } from '../usecases/licensees/GetBaileysQrForDepartment'
 import { GetBaileysStatusForDepartment } from '../usecases/licensees/GetBaileysStatusForDepartment'
 import { SyncBaileysDirectoryForDepartment } from '../usecases/licensees/SyncBaileysDirectoryForDepartment'
 
 class DepartmentsController {
-  departmentRepository: any
-  getBaileysQrUseCase: any
-  getBaileysStatusUseCase: any
-  syncBaileysDirectoryUseCase: any
+  departmentRepository: IRepository<IDepartment>
+  getBaileysQrUseCase: GetBaileysQrForDepartment
+  getBaileysStatusUseCase: GetBaileysStatusForDepartment
+  syncBaileysDirectoryUseCase: SyncBaileysDirectoryForDepartment
 
   constructor({
     departmentRepository,
@@ -21,7 +24,7 @@ class DepartmentsController {
     getBaileysStatusForInbox,
     syncBaileysDirectoryForInbox,
   }: Record<string, any> = {}) {
-    this.departmentRepository = departmentRepository
+    this.departmentRepository = departmentRepository!
     this.getBaileysQrUseCase = new GetBaileysQrForDepartment({
       departmentRepository,
       licenseeRepository,
@@ -55,10 +58,10 @@ class DepartmentsController {
     this.baileysSync = this.baileysSync.bind(this)
   }
 
-  async index(req: any, res: any) {
+  async index(req: Request, res: Response) {
     try {
-      const params: any = {}
-      if (req.query.licensee) params.licensee = req.query.licensee
+      const params: Record<string, string> = {}
+      if (req.query.licensee) params.licensee = req.query.licensee as string
 
       const departments = await this.departmentRepository.find(params, ['licensee', 'users'])
       return res.status(200).send(departments)
@@ -67,19 +70,22 @@ class DepartmentsController {
     }
   }
 
-  async show(req: any, res: any) {
+  async show(req: Request, res: Response) {
     try {
-      const department = await this.departmentRepository.findFirst({ _id: req.params.id }, ['licensee', 'users'])
+      const department = await this.departmentRepository.findFirst({ _id: req.params.id as string }, [
+        'licensee',
+        'users',
+      ])
       return res.status(200).send(department)
     } catch (err: any) {
       if (err.name === 'CastError' && err.kind === 'ObjectId') {
-        return res.status(404).send({ errors: { message: `Departamento ${req.params.id} não encontrado` } })
+        return res.status(404).send({ errors: { message: `Departamento ${req.params.id as string} não encontrado` } })
       }
       return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
-  async create(req: any, res: any) {
+  async create(req: Request, res: Response) {
     try {
       const department = await this.departmentRepository.create(req.body)
       return res.status(201).send(department)
@@ -91,10 +97,10 @@ class DepartmentsController {
     }
   }
 
-  async update(req: any, res: any) {
+  async update(req: Request, res: Response) {
     try {
-      await this.departmentRepository.update(req.params.id, req.body)
-      const department = await this.departmentRepository.findFirst({ _id: req.params.id })
+      await this.departmentRepository.update(req.params.id as string, req.body)
+      const department = await this.departmentRepository.findFirst({ _id: req.params.id as string })
       return res.status(200).send(department)
     } catch (err: any) {
       if (err?.errors) {
@@ -104,18 +110,18 @@ class DepartmentsController {
     }
   }
 
-  async destroy(req: any, res: any) {
+  async destroy(req: Request, res: Response) {
     try {
-      await this.departmentRepository.delete({ _id: req.params.id })
+      await this.departmentRepository.delete({ _id: req.params.id as string })
       return res.status(204).send()
     } catch (err: any) {
       return res.status(500).send({ errors: { message: `Erro interno do servidor: ${err.message}` } })
     }
   }
 
-  async getBaileysQr(req: any, res: any) {
+  async getBaileysQr(req: Request, res: Response) {
     try {
-      const response = await this.getBaileysQrUseCase.execute(req.params.id)
+      const response = await this.getBaileysQrUseCase.execute(req.params.id as string)
 
       return res.status(200).send(response)
     } catch (err: any) {
@@ -123,9 +129,9 @@ class DepartmentsController {
     }
   }
 
-  async getBaileysStatus(req: any, res: any) {
+  async getBaileysStatus(req: Request, res: Response) {
     try {
-      const response = await this.getBaileysStatusUseCase.execute(req.params.id)
+      const response = await this.getBaileysStatusUseCase.execute(req.params.id as string)
 
       return res.status(200).send(response)
     } catch (err: any) {
@@ -133,9 +139,9 @@ class DepartmentsController {
     }
   }
 
-  async baileysSync(req: any, res: any) {
+  async baileysSync(req: Request, res: Response) {
     try {
-      const response = await this.syncBaileysDirectoryUseCase.execute(req.params.id)
+      const response = await this.syncBaileysDirectoryUseCase.execute(req.params.id as string)
 
       return res.status(200).send(response)
     } catch (err: any) {

@@ -5,9 +5,18 @@ import { NormalizePhone } from '../../helpers/NormalizePhone'
 import { v4 as uuidv4 } from 'uuid'
 import request from '../../services/request'
 import { ChatsBase } from './Base'
+import { ILicensee } from '../../../types'
+import { IRepository } from '../../repositories/repository'
 
 class Cuboup extends ChatsBase {
-  constructor(licensee: any, { contactRepository, messageRepository, ...dependencies }: Record<string, any> = {}) {
+  constructor(
+    licensee: ILicensee,
+    {
+      contactRepository,
+      messageRepository,
+      ...dependencies
+    }: { contactRepository?: IRepository<any>; messageRepository?: IRepository<any>; [key: string]: unknown } = {},
+  ) {
     super(licensee, { contactRepository, messageRepository, ...dependencies })
   }
 
@@ -100,7 +109,7 @@ class Cuboup extends ChatsBase {
     await this.sendMessage(messageId, url)
   }
 
-  async sendMessage(messageId: any, url: any) {
+  async sendMessage(messageId: string, url: string): Promise<void> {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact', 'licensee'])
 
     const sender: Record<string, any> = {

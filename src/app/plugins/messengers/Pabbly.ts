@@ -4,6 +4,8 @@ import { logger } from '../../helpers/logger'
 import { isPhoto, isVideo, isMidia, isVoice } from '../../helpers/Files'
 import { MessengersBase } from './Base'
 import { requireDependency } from '../../helpers/RequireDependency'
+import { ILicensee, IContact, ITemplate } from '../../../types'
+import { IRepository } from '../../repositories/repository'
 
 const getTemplates = async (url: any, token: any) => {
   const headers = {
@@ -127,16 +129,26 @@ const parseComponentParam = (param: any, value: any) => {
 }
 
 class Pabbly extends MessengersBase {
-  _templateRepository: any
-  _parseText: any
+  _templateRepository: IRepository<ITemplate>
+  _parseText: (text: string, contact: IContact) => string
 
   constructor(
-    licensee: any,
-    { templateRepository, messageRepository, parseText, ...dependencies }: Record<string, any> = {},
+    licensee: ILicensee,
+    {
+      templateRepository,
+      messageRepository,
+      parseText,
+      ...dependencies
+    }: {
+      templateRepository?: IRepository<ITemplate>
+      messageRepository?: IRepository<any>
+      parseText?: (text: string, contact: IContact) => string
+      [key: string]: unknown
+    } = {},
   ) {
     super(licensee, { messageRepository, ...dependencies })
-    this._templateRepository = templateRepository
-    this._parseText = parseText
+    this._templateRepository = templateRepository!
+    this._parseText = parseText!
   }
 
   get templateRepository() {
@@ -298,7 +310,7 @@ class Pabbly extends MessengersBase {
     return !contact.wa_start_chat
   }
 
-  async sendMessage(messageId: any, url: any, token: any) {
+  async sendMessage(messageId: string, url: string, token: string): Promise<void> {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
 
     const headers = {

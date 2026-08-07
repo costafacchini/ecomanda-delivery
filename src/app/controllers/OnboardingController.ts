@@ -1,11 +1,13 @@
+import { Request, Response } from 'express'
 import { check, validationResult } from 'express-validator'
 import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors'
+import { OnboardAccount } from '../usecases/onboarding/OnboardAccount'
 
 class OnboardingController {
-  onboardAccount: any
+  onboardAccount: OnboardAccount
 
-  constructor({ onboardAccount }: Record<string, any> = {}) {
-    this.onboardAccount = onboardAccount
+  constructor({ onboardAccount }: { onboardAccount?: OnboardAccount } = {}) {
+    this.onboardAccount = onboardAccount!
     this.onboard = this.onboard.bind(this)
   }
 
@@ -23,7 +25,7 @@ class OnboardingController {
     ]
   }
 
-  async onboard(req: any, res: any) {
+  async onboard(req: Request, res: Response) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })

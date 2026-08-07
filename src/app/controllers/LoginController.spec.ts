@@ -40,7 +40,7 @@ describe('LoginController', () => {
     expect(res.cookie).toHaveBeenCalledWith('access_token', 'signed-token', {
       httpOnly: true,
       secure: expect.any(Boolean),
-      sameSite: 'Strict',
+      sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     })
     expect(res.status).toHaveBeenCalledWith(200)

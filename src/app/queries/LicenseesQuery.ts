@@ -1,42 +1,43 @@
-import { QueryBuilder } from './QueryBuilder'
+import { QueryBuilder, IQueryableRepository } from './QueryBuilder'
 import { stringifyObjectIds } from '@repositories/repository'
+import { ILicensee } from '../../types'
 
 class LicenseesQuery {
-  licenseeRepository: any
-  pageClause: any
-  limitClause: any
-  chatClause: any
-  chatbotClause: any
-  whatsappClause: any
-  expressionClause: any
-  expressionActive: any
-  excludedIdsClause: any[] | undefined
+  licenseeRepository: IQueryableRepository<ILicensee> | undefined
+  pageClause: number | undefined
+  limitClause: number | undefined
+  chatClause: string | undefined
+  chatbotClause: string | undefined
+  whatsappClause: string | undefined
+  expressionClause: string | undefined
+  expressionActive: boolean | undefined
+  excludedIdsClause: string[] | undefined
 
-  constructor({ licenseeRepository }: { licenseeRepository?: any } = {}) {
+  constructor({ licenseeRepository }: { licenseeRepository?: IQueryableRepository<ILicensee> } = {}) {
     this.licenseeRepository = licenseeRepository
   }
 
-  page(value: any) {
+  page(value: number) {
     this.pageClause = value
   }
 
-  limit(value: any) {
+  limit(value: number) {
     this.limitClause = value
   }
 
-  filterByChatDefault(value: any) {
+  filterByChatDefault(value: string) {
     this.chatClause = value
   }
 
-  filterByChatbotDefault(value: any) {
+  filterByChatbotDefault(value: string) {
     this.chatbotClause = value
   }
 
-  filterByWhatsappDefault(value: any) {
+  filterByWhatsappDefault(value: string) {
     this.whatsappClause = value
   }
 
-  filterByExpression(value: any) {
+  filterByExpression(value: string) {
     this.expressionClause = value
   }
 
@@ -44,15 +45,15 @@ class LicenseesQuery {
     this.expressionActive = true
   }
 
-  filterExcludeLicensees(ids: any[]) {
+  filterExcludeLicensees(ids: string[]) {
     this.excludedIdsClause = ids
   }
 
-  async all() {
-    const query = new QueryBuilder(this.licenseeRepository.model())
+  async all(): Promise<ILicensee[]> {
+    const query = new QueryBuilder(this.licenseeRepository!.model())
     query.sortBy('createdAt', 1)
 
-    if (this.pageClause) query.page(this.pageClause, this.limitClause)
+    if (this.pageClause) query.page(this.pageClause, this.limitClause!)
 
     if (this.chatClause) query.filterBy('chatDefault', this.chatClause)
 

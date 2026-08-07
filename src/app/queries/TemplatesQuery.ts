@@ -1,38 +1,39 @@
-import { QueryBuilder } from './QueryBuilder'
+import { QueryBuilder, IQueryableRepository } from './QueryBuilder'
 import { stringifyObjectIds } from '@repositories/repository'
+import { ITemplate } from '../../types'
 
 class TemplatesQuery {
-  templateRepository: any
-  pageClause: any
-  limitClause: any
-  licenseeClause: any
-  expressionClause: any
+  templateRepository: IQueryableRepository<ITemplate> | undefined
+  pageClause: number | undefined
+  limitClause: number | undefined
+  licenseeClause: string | undefined
+  expressionClause: string | undefined
 
-  constructor({ templateRepository }: { templateRepository?: any } = {}) {
+  constructor({ templateRepository }: { templateRepository?: IQueryableRepository<ITemplate> } = {}) {
     this.templateRepository = templateRepository
   }
 
-  page(value: any) {
+  page(value: number) {
     this.pageClause = value
   }
 
-  limit(value: any) {
+  limit(value: number) {
     this.limitClause = value
   }
 
-  filterByLicensee(value: any) {
+  filterByLicensee(value: string) {
     this.licenseeClause = value
   }
 
-  filterByExpression(value: any) {
+  filterByExpression(value: string) {
     this.expressionClause = value
   }
 
-  async all() {
-    const query = new QueryBuilder(this.templateRepository.model())
+  async all(): Promise<ITemplate[]> {
+    const query = new QueryBuilder(this.templateRepository!.model())
     query.sortBy('createdAt', 1)
 
-    if (this.pageClause) query.page(this.pageClause, this.limitClause)
+    if (this.pageClause) query.page(this.pageClause, this.limitClause!)
 
     if (this.licenseeClause) query.filterBy('licensee', this.licenseeClause)
 

@@ -5,6 +5,8 @@ import path from 'path'
 
 import mime from 'mime-types'
 import { requireDependency } from '../../helpers/RequireDependency'
+import { ILicensee } from '../../../types'
+import { IRepository } from '../../repositories/repository'
 
 const searchContact = async (url: any, headers: any, contact: any, licensee: any, contactRepository: any) => {
   const response = await request.get(`${url}contacts/search?q=+${contact.number}`, { headers })
@@ -109,14 +111,24 @@ const formatMessage = (message: any, contact: any) => {
 }
 
 class Chatwoot extends ChatsBase {
-  _roomRepository: any
+  _roomRepository: IRepository<any>
 
   constructor(
-    licensee: any,
-    { roomRepository, contactRepository, messageRepository, ...dependencies }: Record<string, any> = {},
+    licensee: ILicensee,
+    {
+      roomRepository,
+      contactRepository,
+      messageRepository,
+      ...dependencies
+    }: {
+      roomRepository?: IRepository<any>
+      contactRepository?: IRepository<any>
+      messageRepository?: IRepository<any>
+      [key: string]: unknown
+    } = {},
   ) {
     super(licensee, { contactRepository, messageRepository, ...dependencies })
-    this._roomRepository = roomRepository
+    this._roomRepository = roomRepository!
   }
 
   get roomRepository() {
@@ -257,7 +269,7 @@ class Chatwoot extends ChatsBase {
     await this.sendMessage(messageId, url)
   }
 
-  async sendMessage(messageId: any, url: any) {
+  async sendMessage(messageId: string, url: string): Promise<void> {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
     const headers = { api_access_token: this.licensee.chatKey, 'Content-Type': 'application/json' }
 

@@ -1,13 +1,24 @@
-import Repository from '../../repositories/repository'
+import Repository, { IRepository } from '../../repositories/repository'
 import { replace } from '../../helpers/Emoji'
 import { v4 as uuidv4 } from 'uuid'
 import { requireDependency } from '../../helpers/RequireDependency'
+import { ILicensee, IContact, IMessage, ITrigger } from '../../../types'
 
-class ChatsBase {
-  licensee: any
-  _contactRepository: any
-  _messageRepository: any
-  _triggerRepository: any
+interface ITriggerRepository {
+  findFirst(params?: Record<string, unknown>): Promise<ITrigger | null>
+  find(params?: Record<string, unknown>, order?: Record<string, unknown>): Promise<ITrigger[]>
+}
+
+interface IChatPlugin {
+  sendMessage(messageId: string, url?: string): Promise<void>
+  responseToMessages(responseBody: Record<string, unknown>): Promise<IMessage[]>
+}
+
+class ChatsBase implements IChatPlugin {
+  licensee: ILicensee
+  _contactRepository: IRepository<IContact>
+  _messageRepository: IRepository<IMessage>
+  _triggerRepository: ITriggerRepository
   messageParsed: any
 
   // Implemented by subclasses
@@ -15,11 +26,27 @@ class ChatsBase {
     return
   }
 
-  constructor(licensee: any, { contactRepository, messageRepository, triggerRepository }: Record<string, any> = {}) {
+  // Implemented by subclasses
+  sendMessage(_messageId: string, _url?: string): Promise<void> {
+    return Promise.resolve()
+  }
+
+  constructor(
+    licensee: ILicensee,
+    {
+      contactRepository,
+      messageRepository,
+      triggerRepository,
+    }: {
+      contactRepository?: IRepository<IContact>
+      messageRepository?: IRepository<IMessage>
+      triggerRepository?: ITriggerRepository
+    } = {},
+  ) {
     this.licensee = licensee
-    this._contactRepository = contactRepository
-    this._messageRepository = messageRepository
-    this._triggerRepository = triggerRepository
+    this._contactRepository = contactRepository!
+    this._messageRepository = messageRepository!
+    this._triggerRepository = triggerRepository!
   }
 
   get contactRepository() {
@@ -46,7 +73,7 @@ class ChatsBase {
     return await this.contactRepository.findFirst(filters)
   }
 
-  async responseToMessages(responseBody: any) {
+  async responseToMessages(responseBody: Record<string, unknown>): Promise<IMessage[]> {
     await this.parseMessage(responseBody)
     if (!this.messageParsed) return []
 
@@ -150,4 +177,4 @@ class ChatsBase {
   }
 }
 
-export { ChatsBase }
+export { ChatsBase, IChatPlugin }

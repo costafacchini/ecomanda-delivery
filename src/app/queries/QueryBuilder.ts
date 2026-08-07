@@ -1,14 +1,36 @@
+import { IRepository } from '@repositories/repository'
+
+export interface IQueryableRepository<T> extends IRepository<T> {
+  model(): any
+}
+
+interface FilterClause {
+  field: string
+  value: unknown
+}
+
+interface IntervalClause {
+  field: string
+  start: unknown
+  end: unknown
+}
+
+interface ExpressionClause {
+  fields: string | string[]
+  value: string
+}
+
 class QueryBuilder {
   query: any
-  filterByClause: any[]
-  filterDifferent: any[]
-  filterByIntervalClause: any[]
-  filterByExpressionClause: any
-  filterByLessThanClause: any
-  filterByGreaterThanClause: any
-  sortByClause: any
-  pageClause: any
-  limitClause: any
+  filterByClause: FilterClause[]
+  filterDifferent: FilterClause[]
+  filterByIntervalClause: IntervalClause[]
+  filterByExpressionClause?: ExpressionClause
+  filterByLessThanClause?: { field: string; end: unknown }
+  filterByGreaterThanClause?: { field: string; start: unknown }
+  sortByClause?: Record<string, number>
+  pageClause?: number
+  limitClause?: number
 
   constructor(model: any) {
     this.query = model
@@ -17,40 +39,40 @@ class QueryBuilder {
     this.filterByIntervalClause = []
   }
 
-  sortBy(field: any, direction: any) {
+  sortBy(field: string, direction: number) {
     this.sortByClause = { [field]: direction }
   }
 
-  page(page: any, limit: any) {
+  page(page: number, limit: number) {
     this.pageClause = page
     this.limitClause = limit
   }
 
-  filterBy(field: any, value: any) {
+  filterBy(field: string, value: unknown) {
     this.filterByClause.push({ field, value })
   }
 
-  filterNotEqual(field: any, value: any) {
+  filterNotEqual(field: string, value: unknown) {
     this.filterDifferent.push({ field, value })
   }
 
-  filterByInterval(field: any, start: any, end: any) {
+  filterByInterval(field: string, start: unknown, end: unknown) {
     this.filterByIntervalClause.push({ field, start, end })
   }
 
-  filterByExpression(fields: any, value: any) {
+  filterByExpression(fields: string | string[], value: string) {
     this.filterByExpressionClause = { fields, value }
   }
 
-  filterByLessThan(field: any, end: any) {
+  filterByLessThan(field: string, end: unknown) {
     this.filterByLessThanClause = { field, end }
   }
 
-  filterByGreaterThan(field: any, start: any) {
+  filterByGreaterThan(field: string, start: unknown) {
     this.filterByGreaterThanClause = { field, start }
   }
 
-  getQuery() {
+  getQuery(): any {
     this.query = this.query.find({})
 
     if (this.sortByClause) {
@@ -80,9 +102,9 @@ class QueryBuilder {
     }
 
     if (this.filterByExpressionClause) {
-      const fields = []
+      const fields: string[] = []
       if (this.filterByExpressionClause.fields instanceof Array) {
-        this.filterByExpressionClause.fields.forEach((field: any) => fields.push(field))
+        this.filterByExpressionClause.fields.forEach((field: string) => fields.push(field))
       } else {
         fields.push(this.filterByExpressionClause.fields)
       }
@@ -91,9 +113,9 @@ class QueryBuilder {
       if (fields.length === 1 && values.length === 1) {
         this.query.where({ [fields[0]]: new RegExp(values[0], 'i') })
       } else {
-        const expressionClauses: any[] = []
-        fields.forEach((field: any) => {
-          values.forEach((value: any) => {
+        const expressionClauses: Record<string, RegExp>[] = []
+        fields.forEach((field: string) => {
+          values.forEach((value: string) => {
             expressionClauses.push({ [field]: new RegExp(value, 'i') })
           })
         })

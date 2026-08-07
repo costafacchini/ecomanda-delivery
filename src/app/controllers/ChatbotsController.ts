@@ -1,37 +1,44 @@
+import { Request, Response } from 'express'
 import { logger } from '../helpers/logger'
+import { IRepository } from '@repositories/repository'
+import { IBody } from '../../types'
+import { IQueueServer } from '@config/queue'
 
 class ChatbotsController {
-  bodyRepository: any
-  queueServer: any
+  bodyRepository: IRepository<IBody>
+  queueServer: IQueueServer
 
-  constructor({ bodyRepository, queueServer }: Record<string, any> = {}) {
-    this.bodyRepository = bodyRepository
-    this.queueServer = queueServer
+  constructor({
+    bodyRepository,
+    queueServer,
+  }: { bodyRepository?: IRepository<IBody>; queueServer?: IQueueServer } = {}) {
+    this.bodyRepository = bodyRepository!
+    this.queueServer = queueServer!
 
     this.message = this.message.bind(this)
     this.transfer = this.transfer.bind(this)
     this.reset = this.reset.bind(this)
   }
 
-  async message(req: any, res: any) {
+  async message(req: Request, res: Response) {
     logger.info('Mensagem chegando do plugin de chatbot', req.body)
-    const body = await this.bodyRepository.create({ content: req.body, licensee: req.licensee._id, kind: 'normal' })
+    const body = await this.bodyRepository.create({ content: req.body, licensee: req.licensee!._id, kind: 'normal' })
 
-    await this.queueServer.addJob('chatbot-message', { bodyId: body._id, licenseeId: req.licensee._id })
+    await this.queueServer.addJob('chatbot-message', { bodyId: body._id, licenseeId: req.licensee!._id })
 
     res.status(200).send({ body: 'Solicitação de mensagem para a plataforma de chatbot agendado' })
   }
 
-  async transfer(req: any, res: any) {
+  async transfer(req: Request, res: Response) {
     logger.info('Transferencia solicitada', req.body)
-    const body = await this.bodyRepository.create({ content: req.body, licensee: req.licensee._id, kind: 'normal' })
+    const body = await this.bodyRepository.create({ content: req.body, licensee: req.licensee!._id, kind: 'normal' })
 
-    await this.queueServer.addJob('chatbot-transfer-to-chat', { bodyId: body._id, licenseeId: req.licensee._id })
+    await this.queueServer.addJob('chatbot-transfer-to-chat', { bodyId: body._id, licenseeId: req.licensee!._id })
 
     res.status(200).send({ body: 'Solicitação de transferência do chatbot para a plataforma de chat agendado' })
   }
 
-  async reset(_: any, res: any) {
+  async reset(_req: Request, res: Response) {
     logger.info('Agendando para resetar chatbots abandonados')
 
     await this.queueServer.addJob('reset-chatbots', {})

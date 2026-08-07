@@ -1,17 +1,33 @@
+import { Request, Response } from 'express'
 import { check, validationResult } from 'express-validator'
 import { sanitizeExpressErrors, sanitizeModelErrors } from '../helpers/SanitizeErrors'
+import { IRepository } from '@repositories/repository'
+import { IUser } from '../../types'
+import { CreateUser } from '../usecases/users/CreateUser'
+import { UpdateUser } from '../usecases/users/UpdateUser'
+import { UsersQuery } from '../queries/UsersQuery'
 
 class UsersController {
-  userRepository: any
-  createUser: any
-  updateUser: any
-  createUsersQuery: any
+  userRepository: IRepository<IUser>
+  createUser: CreateUser
+  updateUser: UpdateUser
+  createUsersQuery: () => UsersQuery
 
-  constructor({ userRepository, createUser, updateUser, createUsersQuery }: Record<string, any> = {}) {
-    this.userRepository = userRepository
-    this.createUser = createUser
-    this.updateUser = updateUser
-    this.createUsersQuery = createUsersQuery
+  constructor({
+    userRepository,
+    createUser,
+    updateUser,
+    createUsersQuery,
+  }: {
+    userRepository?: IRepository<IUser>
+    createUser?: CreateUser
+    updateUser?: UpdateUser
+    createUsersQuery?: () => UsersQuery
+  } = {}) {
+    this.userRepository = userRepository!
+    this.createUser = createUser!
+    this.updateUser = updateUser!
+    this.createUsersQuery = createUsersQuery!
 
     this.create = this.create.bind(this)
     this.update = this.update.bind(this)
@@ -23,7 +39,7 @@ class UsersController {
     return [check('email', 'Email deve ser preenchido com um valor válido').optional().isEmail()]
   }
 
-  async create(req: any, res: any) {
+  async create(req: Request, res: Response) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
@@ -43,15 +59,15 @@ class UsersController {
     }
   }
 
-  async update(req: any, res: any) {
+  async update(req: Request, res: Response) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: sanitizeExpressErrors(errors.array()) })
     }
 
     try {
-      const user = await this.updateUser.execute(req.params.id, req.body)
-      const { _id, name, email, active } = user
+      const user = await this.updateUser.execute(req.params.id as string, req.body)
+      const { _id, name, email, active } = user!
 
       res.status(200).send({ _id, name, email, active })
     } catch (err: any) {
@@ -63,11 +79,11 @@ class UsersController {
     }
   }
 
-  async show(req: any, res: any) {
+  async show(req: Request, res: Response) {
     try {
-      const user = req.params.id.includes('@')
-        ? await this.userRepository.findFirst({ email: req.params.id }, ['licensee'])
-        : await this.userRepository.findFirst({ _id: req.params.id }, ['licensee'])
+      const user = (req.params.id as string).includes('@')
+        ? await this.userRepository.findFirst({ email: req.params.id as string }, ['licensee'])
+        : await this.userRepository.findFirst({ _id: req.params.id as string }, ['licensee'])
 
       res.status(200).send(user)
     } catch (err: any) {
@@ -79,26 +95,26 @@ class UsersController {
     }
   }
 
-  async index(req: any, res: any) {
+  async index(req: Request, res: Response) {
     try {
       const page = req.query.page || 1
       const limit = req.query.limit || 30
 
       const usersQuery = this.createUsersQuery()
 
-      usersQuery.page(page)
-      usersQuery.limit(limit)
+      usersQuery.page(page as number)
+      usersQuery.limit(limit as number)
 
       if (req.query.expression) {
-        usersQuery.filterByExpression(req.query.expression)
+        usersQuery.filterByExpression(req.query.expression as string)
       }
 
       if (req.query.licensee) {
-        usersQuery.filterByLicensee(req.query.licensee)
+        usersQuery.filterByLicensee(req.query.licensee as string)
       }
 
       if (req.query.active) {
-        usersQuery.filterByActive()
+        ;(usersQuery as any).filterByActive()
       }
 
       const users = await usersQuery.all()

@@ -3,9 +3,15 @@ import { Dialog } from './Dialog'
 import { YCloud } from './YCloud'
 import { Pabbly } from './Pabbly'
 import { Baileys } from './Baileys'
+import { IMessengerPlugin } from './Base'
+import { ILicensee, IInbox } from '../../../types'
 
-function createMessengerPlugin(licensee: any, dependencies = {}, inbox: any = null) {
-  const plugin = (inbox as any)?.whatsappDefault || licensee.whatsappDefault
+function createMessengerPlugin(
+  licensee: ILicensee,
+  dependencies: Record<string, unknown> = {},
+  inbox: IInbox | null = null,
+): IMessengerPlugin {
+  const plugin = inbox?.whatsappDefault || licensee.whatsappDefault
   switch (plugin) {
     case 'utalk':
       return new Utalk(licensee, dependencies)
@@ -16,7 +22,7 @@ function createMessengerPlugin(licensee: any, dependencies = {}, inbox: any = nu
     case 'pabbly':
       return new Pabbly(licensee, dependencies)
     case 'baileys':
-      return new Baileys(licensee, { ...(dependencies as Record<string, any>), inbox })
+      return new Baileys(licensee, { ...dependencies, inbox })
     default:
       throw `Plugin de messenger não configurado: ${plugin}`
   }

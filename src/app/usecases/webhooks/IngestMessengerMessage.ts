@@ -1,12 +1,13 @@
 import { IRepository } from '@repositories/repository'
 import { IBody } from '../../../types'
+import { IQueueServer } from '@config/queue'
 
 const MESSENGER_MESSAGE_KIND = 'normal'
 const MESSENGER_MESSAGE_JOB = 'messenger-message'
 
 interface IngestMessengerMessageDeps {
   messengerRepository: IRepository<IBody>
-  jobQueue: { addJob(name: string, payload: Record<string, any>): Promise<any> }
+  jobQueue: IQueueServer
 }
 
 interface IngestMessengerMessageInput {

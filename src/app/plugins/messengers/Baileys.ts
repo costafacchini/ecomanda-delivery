@@ -3,16 +3,29 @@ import { MessengersBase } from './Base'
 import { logger } from '../../helpers/logger'
 import { requireDependency } from '../../helpers/RequireDependency'
 import { isPhoto, isVideo } from '../../helpers/Files'
+import { ILicensee, IInbox, IWhatsappSession } from '../../../types'
+import { IRepository } from '../../repositories/repository'
 
 const JID_GROUP_SUFFIX = '@g.us'
 
 class Baileys extends MessengersBase {
-  _whatsappSessionRepository: any
-  _inbox: any
+  _whatsappSessionRepository: IRepository<IWhatsappSession>
+  _inbox: IInbox | null
 
-  constructor(licensee: any, { whatsappSessionRepository, inbox, ...dependencies }: Record<string, any> = {}) {
+  constructor(
+    licensee: ILicensee,
+    {
+      whatsappSessionRepository,
+      inbox,
+      ...dependencies
+    }: {
+      whatsappSessionRepository?: IRepository<IWhatsappSession>
+      inbox?: IInbox | null
+      [key: string]: unknown
+    } = {},
+  ) {
     super(licensee, dependencies)
-    this._whatsappSessionRepository = whatsappSessionRepository
+    this._whatsappSessionRepository = whatsappSessionRepository!
     this._inbox = inbox ?? null
   }
 
@@ -205,7 +218,7 @@ class Baileys extends MessengersBase {
     })
   }
 
-  async sendMessage(messageId: any) {
+  async sendMessage(messageId: string): Promise<void> {
     const { initAuthCreds, BufferJSON } = await import('@whiskeysockets/baileys')
 
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])

@@ -1,5 +1,6 @@
 import { IRepository } from '@repositories/repository'
 import { IMessage, IContact } from '../../../types'
+import { IQueueServer } from '@config/queue'
 
 const CREATE_MESSAGE_FIELDS = [
   'licensee',
@@ -23,14 +24,10 @@ interface ContactRepository extends IRepository<IContact> {
   getContactByNumber(phone: string, licenseeId: string): Promise<IContact | null>
 }
 
-interface JobQueue {
-  addJob(name: string, payload: Record<string, any>): Promise<any>
-}
-
 interface CreateMessageDeps {
   messageRepository: IRepository<IMessage>
   contactRepository: ContactRepository
-  jobQueue: JobQueue
+  jobQueue: IQueueServer
 }
 
 function pickFields(fields: Record<string, any> = {}, keys: string[] = []) {
@@ -45,7 +42,7 @@ function pickFields(fields: Record<string, any> = {}, keys: string[] = []) {
 class CreateMessage {
   messageRepository: IRepository<IMessage>
   contactRepository: ContactRepository
-  jobQueue: JobQueue
+  jobQueue: IQueueServer
 
   constructor({ messageRepository, contactRepository, jobQueue }: CreateMessageDeps) {
     this.messageRepository = messageRepository

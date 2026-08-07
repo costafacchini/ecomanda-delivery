@@ -1,17 +1,30 @@
-class ChatRoomsController {
-  userRepository: any
-  roomRepository: any
-  ingestChatMessage: any
+import { Request, Response } from 'express'
+import { IRepository } from '@repositories/repository'
+import { IUser, IRoom } from '../../types'
+import { IngestChatMessage } from '../usecases/webhooks/IngestChatMessage'
 
-  constructor({ userRepository, roomRepository, ingestChatMessage }: Record<string, any> = {}) {
-    this.userRepository = userRepository
-    this.roomRepository = roomRepository
-    this.ingestChatMessage = ingestChatMessage
+class ChatRoomsController {
+  userRepository: IRepository<IUser>
+  roomRepository: IRepository<IRoom>
+  ingestChatMessage: IngestChatMessage
+
+  constructor({
+    userRepository,
+    roomRepository,
+    ingestChatMessage,
+  }: {
+    userRepository?: IRepository<IUser>
+    roomRepository?: IRepository<IRoom>
+    ingestChatMessage?: IngestChatMessage
+  } = {}) {
+    this.userRepository = userRepository!
+    this.roomRepository = roomRepository!
+    this.ingestChatMessage = ingestChatMessage!
 
     this.replyToRoom = this.replyToRoom.bind(this)
   }
 
-  async replyToRoom(req: any, res: any) {
+  async replyToRoom(req: Request, res: Response) {
     try {
       const { roomId } = req.params
       const { text } = req.body
@@ -27,7 +40,7 @@ class ChatRoomsController {
       }
 
       const body = { roomId, text, agentId, agentName: user?.name ?? null }
-      await this.ingestChatMessage.execute({ body, licenseeId: room.contact.licensee })
+      await this.ingestChatMessage.execute({ body, licenseeId: (room.contact as any).licensee })
 
       return res.status(200).json({ message: 'Mensagem enviada.' })
     } catch {

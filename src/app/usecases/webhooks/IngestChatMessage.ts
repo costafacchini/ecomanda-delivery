@@ -1,12 +1,13 @@
 import { IRepository } from '@repositories/repository'
 import { IBody } from '../../../types'
+import { IQueueServer } from '@config/queue'
 
 const CHAT_MESSAGE_KIND = 'normal'
 const CHAT_MESSAGE_JOB = 'chat-message'
 
 interface IngestChatMessageDeps {
   chatRepository: IRepository<IBody>
-  jobQueue: { addJob(name: string, payload: Record<string, any>): Promise<any> }
+  jobQueue: IQueueServer
 }
 
 interface IngestChatMessageInput {

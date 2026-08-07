@@ -1,21 +1,27 @@
 import { stringifyObjectIds } from '@repositories/repository'
+import { IQueryableRepository } from './QueryBuilder'
+import { IMessage } from '../../types'
 
 class MessagesFailedQuery {
-  startDate: any
-  endDate: any
-  licenseeId: any
-  messageRepository: any
+  startDate: Date | string
+  endDate: Date | string
+  licenseeId: string
+  messageRepository: IQueryableRepository<IMessage> | undefined
 
-  constructor(startDate: any, endDate: any, licenseeId: any, { messageRepository }: { messageRepository?: any } = {}) {
+  constructor(
+    startDate: Date | string,
+    endDate: Date | string,
+    licenseeId: string,
+    { messageRepository }: { messageRepository?: IQueryableRepository<IMessage> } = {},
+  ) {
     this.startDate = startDate
     this.endDate = endDate
     this.licenseeId = licenseeId
     this.messageRepository = messageRepository
   }
 
-  async all() {
-    const docs = await this.messageRepository
-      .model()
+  async all(): Promise<IMessage[]> {
+    const docs = await this.messageRepository!.model()
       .find({
         sended: false,
         createdAt: {
