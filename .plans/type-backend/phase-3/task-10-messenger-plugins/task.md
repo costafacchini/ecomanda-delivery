@@ -9,23 +9,26 @@
 
 ## Objective
 
-Type the messenger plugin classes in `src/app/plugins/messengers/` — Baileys, Dialog, YCloud, Pabbly, Wevo — replacing `any` in method signatures, webhook payload types, and internal processing methods.
+Type the messenger plugin classes in `src/app/plugins/messengers/` — Baileys, Dialog, YCloud, Pabbly, Utalk — replacing `any` in method signatures, webhook payload types, and internal processing methods.
 
 ## Context
 
-Messenger plugins receive inbound webhook payloads and convert them to `IMessage` objects, and send outbound messages given an `IMessage`. The 140 `any` occurrences here are split between payload parsing and method signatures.
+Messenger plugins receive inbound webhook payloads and convert them to `IMessage` objects, and send outbound messages given an `IMessage`. The `any` occurrences here are split between payload parsing and method signatures.
 
 Key pattern: define interfaces for each provider's webhook payload shape (e.g., `IDialogWebhookPayload`, `IYCloudWebhookPayload`) and use them as input types for `responseToMessages()`. The `sendMessage()` method takes `(messageId: string, url: string)` or similar — make the signature concrete.
 
 Read `docs/kb/features/baileys-whatsapp-guide.md` before touching Baileys.ts.
+
+Note: `Wevo.ts` does NOT exist — it was replaced by `Utalk.ts`.
 
 Files:
 - `src/app/plugins/messengers/Baileys.ts`
 - `src/app/plugins/messengers/Dialog.ts`
 - `src/app/plugins/messengers/YCloud.ts`
 - `src/app/plugins/messengers/Pabbly.ts`
-- `src/app/plugins/messengers/Wevo.ts` (if exists)
-- `src/app/plugins/messengers/Base.ts` (if exists)
+- `src/app/plugins/messengers/Utalk.ts`
+- `src/app/plugins/messengers/Base.ts`
+- `src/app/plugins/messengers/factory.ts`
 
 ## Before You Start
 
@@ -44,8 +47,8 @@ Files:
 | `src/app/plugins/messengers/Dialog.ts` | modify | Type webhook payload and send params |
 | `src/app/plugins/messengers/YCloud.ts` | modify | Type webhook payload and send params |
 | `src/app/plugins/messengers/Pabbly.ts` | modify | Type webhook payload and send params |
-| `src/app/plugins/messengers/Wevo.ts` | modify | Type webhook payload and send params |
-| `src/types/messenger-payloads.ts` | create | Webhook payload interfaces per provider |
+| `src/app/plugins/messengers/Utalk.ts` | modify | Type webhook payload and send params |
+| `src/app/plugins/messengers/factory.ts` | modify | Type factory return and registration map |
 | `src/types/index.ts` | modify | Export messenger payload interfaces |
 
 ### Do NOT Modify

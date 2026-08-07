@@ -9,17 +9,17 @@
 
 ## Objective
 
-Define TypeScript interfaces for the infrastructure/system models — User, Template, Backgroundjob, Integrationlog, Trafficlight, and WhatsappSession — and add them to `src/types/index.ts`.
+Define TypeScript interfaces for the infrastructure/system models — User, Template, Trafficlight, and WhatsappSession — and add them to `src/types/index.ts`.
 
 ## Context
 
-These models support the application infrastructure rather than the business domain. WhatsappSession is used by the Baileys plugin for QR code authentication persistence. Backgroundjob tracks async job state. Integrationlog records third-party API call history. Trafficlight manages chatbot flow control. Template stores WhatsApp message templates.
+These models support the application infrastructure rather than the business domain. WhatsappSession is used by the Baileys plugin for QR code authentication persistence. Trafficlight manages chatbot flow control. Template stores WhatsApp message templates.
+
+Note: Backgroundjob and Integrationlog were deleted by the `remove-pdv` plan (complete 2026-06-05). Do not create types for them.
 
 Reference models:
 - `src/app/models/User.ts`
 - `src/app/models/Template.ts`
-- `src/app/models/Backgroundjob.ts`
-- `src/app/models/Integrationlog.ts`
 - `src/app/models/Trafficlight.ts`
 - `src/app/models/WhatsappSession.ts`
 
@@ -35,25 +35,17 @@ Reference models:
 
 | File | Action | Notes |
 |------|--------|-------|
-| `src/types/user.ts` | create | `IUser` interface |
-| `src/types/template.ts` | create | `ITemplate` interface |
-| `src/types/backgroundjob.ts` | create | `IBackgroundjob` interface |
-| `src/types/integrationlog.ts` | create | `IIntegrationlog` interface |
-| `src/types/trafficlight.ts` | create | `ITrafficlight` interface |
-| `src/types/whatsappsession.ts` | create | `IWhatsappSession` interface |
-| `src/types/index.ts` | modify | Add exports for new interfaces |
-| `src/app/models/User.ts` | modify | Apply `IUser` |
-| `src/app/models/Template.ts` | modify | Apply `ITemplate` |
-| `src/app/models/Backgroundjob.ts` | modify | Apply `IBackgroundjob` |
-| `src/app/models/Integrationlog.ts` | modify | Apply `IIntegrationlog` |
-| `src/app/models/Trafficlight.ts` | modify | Apply `ITrafficlight` |
-| `src/app/models/WhatsappSession.ts` | modify | Apply `IWhatsappSession` |
+| `src/types/index.ts` | modify | Add `IUser`, `ITemplate`, `ITrafficlight`, `IWhatsappSession` |
+| `src/app/models/User.ts` | modify | Apply `Schema<IUser>` and `model<IUser>` generics |
+| `src/app/models/Template.ts` | modify | Apply `Schema<ITemplate>` and `model<ITemplate>` generics |
+| `src/app/models/Trafficlight.ts` | modify | Apply `Schema<ITrafficlight>` and `model<ITrafficlight>` generics |
+| `src/app/models/WhatsappSession.ts` | modify | Apply `Schema<IWhatsappSession>` and `model<IWhatsappSession>` generics |
 
 ### Do NOT Modify
 
-- `src/types/licensee.ts`, `src/types/contact.ts`, `src/types/message.ts`, `src/types/body.ts` — owned by phase-1/task-01
-- `src/types/cart.ts`, `src/types/order.ts`, `src/types/product.ts`, `src/types/room.ts`, `src/types/trigger.ts` — owned by phase-1/task-02
+- Existing entries in `src/types/index.ts` — owned by task-01 and task-02
 - `src/app/models/Licensee.ts`, `src/app/models/Contact.ts`, `src/app/models/Message.ts`, `src/app/models/Body.ts` — owned by phase-1/task-01
+- `src/app/models/Room.ts`, `src/app/models/Trigger.ts`, `src/app/models/Department.ts`, `src/app/models/Inbox.ts` — owned by phase-1/task-02
 
 ## Implementation Steps
 
@@ -79,7 +71,7 @@ Run `npx tsc --noEmit` and fix errors only within owned files.
 ## Testing
 
 - [ ] `npx tsc --noEmit` passes with no new errors
-- [ ] `NODE_ENV=test npx jest --testPathPattern="models/(User|Template|Backgroundjob|Integrationlog)" --no-coverage` — all pass
+- [ ] `NODE_ENV=test npx jest --testPathPattern="models/(User|Template|Trafficlight|WhatsappSession)" --no-coverage` — all pass
 - [ ] `pre-commit-check` passes
 
 ## Documentation / KB Updates
@@ -88,7 +80,7 @@ Run `npx tsc --noEmit` and fix errors only within owned files.
 
 ## Completion Criteria
 
-- [ ] All 6 system model interfaces defined and exported from `src/types/`
+- [ ] All 4 system model interfaces defined and exported from `src/types/index.ts`
 - [ ] Mongoose models typed with their interfaces
 - [ ] `npx tsc --noEmit` clean
 - [ ] All relevant model tests pass

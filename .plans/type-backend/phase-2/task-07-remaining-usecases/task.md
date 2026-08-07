@@ -9,26 +9,26 @@
 
 ## Objective
 
-Type the remaining use case classes — licensees, users, auth, triggers, backgroundjobs, orders, and carts — using the typed repositories from Phase 2.
+Type the remaining use case classes — licensees, users, auth, triggers, onboarding, and widget — using the typed repositories from Phase 2.
 
 ## Context
 
-Same pattern as task-06. Constructor dependency injection params and `execute()` signatures replace `any` with typed interfaces. PDV use cases (orders, carts) should be skipped if `remove-pdv` is active.
+Same pattern as task-06. Constructor dependency injection params and `execute()` signatures replace `any` with typed interfaces.
+
+Note: backgroundjobs, orders, and carts use case directories were deleted by the `remove-pdv` plan (complete 2026-06-05). onboarding and widget were added subsequently.
 
 Directories in scope:
 - `src/app/usecases/licensees/`
 - `src/app/usecases/users/`
 - `src/app/usecases/auth/`
 - `src/app/usecases/triggers/`
-- `src/app/usecases/backgroundjobs/`
-- `src/app/usecases/orders/` (skip if remove-pdv active)
-- `src/app/usecases/carts/` (skip if remove-pdv active)
+- `src/app/usecases/onboarding/`
+- `src/app/usecases/widget/`
 
 ## Before You Start
 
 - [ ] Switch to main and pull: `git switch main && git pull --rebase origin main`
 - [ ] Verify `phase-2/task-04-core-repositories` and `phase-2/task-05-remaining-repositories` are `complete`
-- [ ] **Check `remove-pdv` status** — skip orders/carts if in-progress or complete
 - [ ] Read task-06 implementation for the use case typing pattern before starting
 - [ ] Check this task's `status.md` and mark `in-progress` before proceeding
 
@@ -40,9 +40,8 @@ Directories in scope:
 | `src/app/usecases/users/` | modify all | All user use cases |
 | `src/app/usecases/auth/` | modify all | Auth use cases |
 | `src/app/usecases/triggers/` | modify all | Trigger use cases |
-| `src/app/usecases/backgroundjobs/` | modify all | Background job use cases |
-| `src/app/usecases/orders/` | modify all | Skip if remove-pdv active |
-| `src/app/usecases/carts/` | modify all | Skip if remove-pdv active |
+| `src/app/usecases/onboarding/` | modify all | Onboarding use cases |
+| `src/app/usecases/widget/` | modify all | Widget use cases |
 
 ### Do NOT Modify
 
@@ -55,7 +54,7 @@ Apply the same pattern established in task-06: type constructor dependency param
 ## Testing
 
 - [ ] `npx tsc --noEmit` passes
-- [ ] `NODE_ENV=test npx jest --testPathPattern="usecases/(licensees|users|auth|triggers)" --no-coverage` — all pass
+- [ ] `NODE_ENV=test npx jest --testPathPattern="usecases/(licensees|users|auth|triggers|onboarding|widget)" --no-coverage` — all pass
 - [ ] `pre-commit-check` passes
 
 ## Documentation / KB Updates

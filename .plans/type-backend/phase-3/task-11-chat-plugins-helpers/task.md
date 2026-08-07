@@ -9,20 +9,27 @@
 
 ## Objective
 
-Type the chat plugin classes (Chatwoot, Crisp) and backend helper utilities, replacing remaining `any` in method signatures and utility functions.
+Type the chat plugin classes and backend helper utilities, replacing remaining `any` in method signatures and utility functions.
 
 ## Context
 
 Chat plugins (`src/app/plugins/chats/`) integrate with external customer service platforms. They have similar `sendMessage` / `responseToMessages` patterns to messenger plugins. Helpers (`src/app/helpers/`) contain utility functions with typed inputs.
 
 Files in scope:
+- `src/app/plugins/chats/Base.ts`
 - `src/app/plugins/chats/Chatwoot.ts`
 - `src/app/plugins/chats/Crisp.ts`
-- `src/app/plugins/chats/Base.ts` (if exists)
+- `src/app/plugins/chats/Cuboup.ts`
+- `src/app/plugins/chats/LocalChat.ts`
+- `src/app/plugins/chats/Rocketchat.ts`
+- `src/app/plugins/chats/factory.ts`
 - `src/app/helpers/Files.ts`
 - `src/app/helpers/SanitizeErrors.ts`
 - `src/app/helpers/NormalizePhone.ts`
 - `src/app/helpers/RequireDependency.ts`
+- `src/app/helpers/Emoji.ts`
+- `src/app/helpers/EmojiList.ts`
+- `src/app/helpers/ParseTriggerText.ts`
 - `src/app/helpers/logger.ts`
 - `src/app/services/Backup.ts`
 - `src/app/services/request.ts`
@@ -42,11 +49,19 @@ Files in scope:
 | `src/app/plugins/chats/Base.ts` | modify | Define `IChatPlugin` interface mirroring `IMessengerPlugin` |
 | `src/app/plugins/chats/Chatwoot.ts` | modify | Type webhook payload and send params |
 | `src/app/plugins/chats/Crisp.ts` | modify | Type webhook payload and send params |
+| `src/app/plugins/chats/Cuboup.ts` | modify | Type webhook payload and send params |
+| `src/app/plugins/chats/LocalChat.ts` | modify | Type webhook payload and send params |
+| `src/app/plugins/chats/Rocketchat.ts` | modify | Type webhook payload and send params |
+| `src/app/plugins/chats/factory.ts` | modify | Type factory return and registration map |
 | `src/app/helpers/Files.ts` | modify | Type file detection function params and returns |
 | `src/app/helpers/SanitizeErrors.ts` | modify | Type error list params (already uses lodash) |
 | `src/app/helpers/NormalizePhone.ts` | modify | Type phone string params |
 | `src/app/helpers/RequireDependency.ts` | modify | Type dependency param |
+| `src/app/helpers/Emoji.ts` | modify | Type emoji lookup params and returns |
+| `src/app/helpers/EmojiList.ts` | modify | Type emoji list structure |
+| `src/app/helpers/ParseTriggerText.ts` | modify | Type trigger text parsing params |
 | `src/app/helpers/logger.ts` | modify | Type log method params |
+| `src/app/services/Backup.ts` | modify | Type internal function params |
 | `src/app/services/request.ts` | modify | Type axios wrapper params and returns |
 
 ### Do NOT Modify
