@@ -1,5 +1,3 @@
-import { Types } from 'mongoose'
-
 // --- Enums ---
 
 export enum LicenseKind {
@@ -56,7 +54,7 @@ export enum TriggerKind {
 // --- Interfaces ---
 
 export interface ILicensee {
-  _id: Types.ObjectId
+  _id: string
   name: string
   email?: string
   phone?: string
@@ -88,13 +86,13 @@ export interface ILicensee {
 }
 
 export interface IContact {
-  _id: Types.ObjectId
+  _id: string
   name?: string
   number: string
   type?: string
   talkingWithChatBot: boolean
   email?: string
-  licensee: Types.ObjectId | ILicensee
+  licensee: string | ILicensee
   waId?: string
   isGroup: boolean
   active: boolean
@@ -108,7 +106,7 @@ export interface IContact {
 }
 
 export interface IMessage {
-  _id: Types.ObjectId
+  _id: string
   number: string
   fromMe: boolean
   text?: string
@@ -121,9 +119,9 @@ export interface IMessage {
   departament?: string
   senderName?: string
   sended: boolean
-  licensee: Types.ObjectId | ILicensee
-  contact: Types.ObjectId | IContact
-  room?: Types.ObjectId | IRoom
+  licensee: string | ILicensee
+  contact: string | IContact
+  room?: string | IRoom
   messageWaId?: string
   attachmentWaId?: string
   sendedAt?: Date
@@ -137,18 +135,18 @@ export interface IMessage {
 }
 
 export interface IRoom {
-  _id: Types.ObjectId
+  _id: string
   roomId?: string
   token?: string
   closed: boolean
   closedAt?: Date
-  contact: Types.ObjectId | IContact
+  contact: string | IContact
   createdAt: Date
   updatedAt: Date
 }
 
 export interface ITrigger {
-  _id: Types.ObjectId
+  _id: string
   name?: string
   triggerKind: TriggerKind
   expression: string
@@ -158,8 +156,20 @@ export interface ITrigger {
   textReplyButton?: string
   messagesList?: string
   text?: string
-  licensee: Types.ObjectId | ILicensee
+  licensee: string | ILicensee
   order: number
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface IBody {
+  _id: string
+  content: Record<string, unknown>
+  licensee: string | ILicensee
+  kind: 'normal' | 'webhook'
+  department?: string
+  inbox?: string
+  concluded: boolean
   createdAt: Date
   updatedAt: Date
 }

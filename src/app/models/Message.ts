@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { IMessage } from '../../types'
 
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
@@ -83,10 +84,6 @@ const messageSchema = new Schema(
       type: ObjectId,
       ref: 'Trigger',
     },
-    cart: {
-      type: ObjectId,
-      ref: 'Cart',
-    },
     messageWaId: String,
     attachmentWaId: String,
     sendedAt: Date,
@@ -113,6 +110,6 @@ messageSchema.set('toJSON', {
   virtuals: true,
 })
 
-const Message = mongoose.model('Message', messageSchema)
+const Message = mongoose.model<IMessage>('Message', messageSchema)
 
 export default Message

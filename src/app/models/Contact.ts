@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { NormalizePhone } from '../helpers/NormalizePhone'
+import { IContact } from '../../types'
 
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
@@ -75,6 +76,6 @@ contactSchema.set('toJSON', {
   virtuals: true,
 })
 
-const Contact = mongoose.model('Contact', contactSchema)
+const Contact = mongoose.model<IContact>('Contact', contactSchema)
 
 export default Contact
