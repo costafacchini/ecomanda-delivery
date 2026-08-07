@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import bcrypt from 'bcrypt'
+import { IUser } from '../../types'
 
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
@@ -79,6 +80,6 @@ userSchema.set('toJSON', {
   virtuals: true,
 })
 
-const User = mongoose.model('User', userSchema)
+const User = mongoose.model<IUser>('User', userSchema)
 
 export default User

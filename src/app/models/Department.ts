@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
+import { IDepartment, ILicensee } from '../../types'
 
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
@@ -19,7 +20,7 @@ const departmentSchema = new Schema(
     users: {
       type: [{ type: ObjectId, ref: 'User' }],
       validate: {
-        validator: (arr: any[]) => arr.length >= 1,
+        validator: (arr: unknown[]) => arr.length >= 1,
         message: 'Usuários: Informe ao menos um usuário',
       },
     },
@@ -38,13 +39,13 @@ departmentSchema.pre('save', function () {
 
 departmentSchema.virtual('webhookUrl').get(function () {
   if (!this.populated('licensee')) return null
-  return `https://clave-digital.herokuapp.com/api/v1/messenger/message/?token=${(this.licensee as any).apiToken}&department=${this.departmentToken}`
+  return `https://clave-digital.herokuapp.com/api/v1/messenger/message/?token=${(this.licensee as unknown as ILicensee).apiToken}&department=${this.departmentToken}`
 })
 
 departmentSchema.set('toJSON', {
   virtuals: true,
 })
 
-const Department = mongoose.model('Department', departmentSchema)
+const Department = mongoose.model<IDepartment>('Department', departmentSchema)
 
 export default Department

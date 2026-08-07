@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { ITrafficlight } from '../../types'
 
 const { Schema } = mongoose
 const ObjectId = Schema.ObjectId
@@ -27,6 +28,6 @@ trafficlightSchema.set('toJSON', {
   virtuals: true,
 })
 
-const Trafficlight = mongoose.model('Trafficlight', trafficlightSchema)
+const Trafficlight = mongoose.model<ITrafficlight>('Trafficlight', trafficlightSchema)
 
 export default Trafficlight

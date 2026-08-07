@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
+import { IInbox, ILicensee } from '../../types'
 
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
@@ -61,13 +62,13 @@ inboxSchema.pre('validate', function () {
 inboxSchema.virtual('webhookUrl').get(function () {
   if (this.kind !== 'messenger') return null
   if (!this.populated('licensee')) return null
-  return `/api/v1/messenger/message/?token=${(this.licensee as any).apiToken}&inbox=${this.inboxToken}`
+  return `/api/v1/messenger/message/?token=${(this.licensee as unknown as ILicensee).apiToken}&inbox=${this.inboxToken}`
 })
 
 inboxSchema.set('toJSON', {
   virtuals: true,
 })
 
-const Inbox = mongoose.model('Inbox', inboxSchema)
+const Inbox = mongoose.model<IInbox>('Inbox', inboxSchema)
 
 export default Inbox

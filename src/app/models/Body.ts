@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { IBody } from '../../types'
 
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
@@ -47,6 +48,6 @@ bodySchema.set('toJSON', {
   virtuals: true,
 })
 
-const Body = mongoose.model('Body', bodySchema)
+const Body = mongoose.model<IBody>('Body', bodySchema)
 
 export default Body

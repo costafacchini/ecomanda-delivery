@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
+import { ILicensee } from '../../types'
 
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
@@ -220,6 +221,6 @@ licenseeSchema.virtual('urlWhatsappWebhook').get(function () {
   return `https://clave-digital.herokuapp.com/api/v1/messenger/message/?token=${this.apiToken}`
 })
 
-const Licensee = mongoose.model('Licensee', licenseeSchema)
+const Licensee = mongoose.model<ILicensee>('Licensee', licenseeSchema)
 
 export default Licensee

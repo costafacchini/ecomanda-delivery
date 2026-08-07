@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { IRoom } from '../../types'
 
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
@@ -65,6 +66,6 @@ roomSchema.set('toJSON', {
   virtuals: true,
 })
 
-const Room = mongoose.model('Room', roomSchema)
+const Room = mongoose.model<IRoom>('Room', roomSchema)
 
 export default Room

@@ -1,5 +1,3 @@
-import { Types } from 'mongoose'
-
 // --- Enums ---
 
 export enum LicenseKind {
@@ -56,7 +54,7 @@ export enum TriggerKind {
 // --- Interfaces ---
 
 export interface ILicensee {
-  _id: Types.ObjectId
+  _id: string
   name: string
   email?: string
   phone?: string
@@ -88,13 +86,13 @@ export interface ILicensee {
 }
 
 export interface IContact {
-  _id: Types.ObjectId
+  _id: string
   name?: string
   number: string
   type?: string
   talkingWithChatBot: boolean
   email?: string
-  licensee: Types.ObjectId | ILicensee
+  licensee: string | ILicensee
   waId?: string
   isGroup: boolean
   active: boolean
@@ -108,7 +106,7 @@ export interface IContact {
 }
 
 export interface IMessage {
-  _id: Types.ObjectId
+  _id: string
   number: string
   fromMe: boolean
   text?: string
@@ -121,9 +119,9 @@ export interface IMessage {
   departament?: string
   senderName?: string
   sended: boolean
-  licensee: Types.ObjectId | ILicensee
-  contact: Types.ObjectId | IContact
-  room?: Types.ObjectId | IRoom
+  licensee: string | ILicensee
+  contact: string | IContact
+  room?: string | IRoom
   messageWaId?: string
   attachmentWaId?: string
   sendedAt?: Date
@@ -137,18 +135,18 @@ export interface IMessage {
 }
 
 export interface IRoom {
-  _id: Types.ObjectId
+  _id: string
   roomId?: string
   token?: string
   closed: boolean
   closedAt?: Date
-  contact: Types.ObjectId | IContact
+  contact: string | IContact
   createdAt: Date
   updatedAt: Date
 }
 
 export interface ITrigger {
-  _id: Types.ObjectId
+  _id: string
   name?: string
   triggerKind: TriggerKind
   expression: string
@@ -158,8 +156,102 @@ export interface ITrigger {
   textReplyButton?: string
   messagesList?: string
   text?: string
-  licensee: Types.ObjectId | ILicensee
+  licensee: string | ILicensee
   order: number
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface IBody {
+  _id: string
+  content: Record<string, unknown>
+  licensee: string | ILicensee
+  kind: 'normal' | 'webhook'
+  department?: string
+  inbox?: string
+  concluded: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface IDepartment {
+  _id: string
+  name: string
+  licensee: string | ILicensee
+  users: string[]
+  active: boolean
+  departmentToken: string
+  inbox?: string | IInbox
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface IInbox {
+  _id: string
+  name: string
+  licensee: string | ILicensee
+  kind: 'messenger' | 'chat'
+  whatsappDefault?: string
+  whatsappToken?: string
+  whatsappUrl?: string
+  chatDefault?: string
+  chatUrl?: string
+  chatKey?: string
+  chatIdentifier?: string
+  inboxToken?: string
+  active: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface IUser {
+  _id: string
+  name: string
+  email: string
+  password?: string
+  active: boolean
+  role: 'agent' | 'supervisor' | 'admin' | 'super'
+  language: 'pt' | 'en'
+  licensee?: string | ILicensee
+  blockedLicensees: (string | ILicensee)[]
+  createdAt: Date
+  updatedAt: Date
+}
+
+interface ITemplateParam {
+  number?: string
+  format?: string
+}
+
+export interface ITemplate {
+  _id: string
+  name: string
+  namespace?: string
+  language?: string
+  category?: string
+  waId?: string
+  licensee: string | ILicensee
+  headerParams?: ITemplateParam[]
+  bodyParams?: ITemplateParam[]
+  footerParams?: ITemplateParam[]
+  active: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface ITrafficlight {
+  _id: string
+  key: string
+  token: string
+  expiresAt: Date
+}
+
+export interface IWhatsappSession {
+  _id: string
+  licensee: string | ILicensee
+  inbox?: string | IInbox
+  creds?: Record<string, unknown>
+  keys?: Record<string, unknown>
   createdAt: Date
   updatedAt: Date
 }
