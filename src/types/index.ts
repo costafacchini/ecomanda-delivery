@@ -203,3 +203,55 @@ export interface IInbox {
   createdAt: Date
   updatedAt: Date
 }
+
+export interface IUser {
+  _id: string
+  name: string
+  email: string
+  password?: string
+  active: boolean
+  role: 'agent' | 'supervisor' | 'admin' | 'super'
+  language: 'pt' | 'en'
+  licensee?: string | ILicensee
+  blockedLicensees: (string | ILicensee)[]
+  createdAt: Date
+  updatedAt: Date
+}
+
+interface ITemplateParam {
+  number?: string
+  format?: string
+}
+
+export interface ITemplate {
+  _id: string
+  name: string
+  namespace?: string
+  language?: string
+  category?: string
+  waId?: string
+  licensee: string | ILicensee
+  headerParams?: ITemplateParam[]
+  bodyParams?: ITemplateParam[]
+  footerParams?: ITemplateParam[]
+  active: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface ITrafficlight {
+  _id: string
+  key: string
+  token: string
+  expiresAt: Date
+}
+
+export interface IWhatsappSession {
+  _id: string
+  licensee: string | ILicensee
+  inbox?: string | IInbox
+  creds?: Record<string, unknown>
+  keys?: Record<string, unknown>
+  createdAt: Date
+  updatedAt: Date
+}

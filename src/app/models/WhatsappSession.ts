@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { IWhatsappSession } from '../../types'
 
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
@@ -32,6 +33,6 @@ whatsappSessionSchema.pre('save', function () {
 
 whatsappSessionSchema.set('toJSON', { virtuals: true })
 
-const WhatsappSession = mongoose.model('WhatsappSession', whatsappSessionSchema)
+const WhatsappSession = mongoose.model<IWhatsappSession>('WhatsappSession', whatsappSessionSchema)
 
 export default WhatsappSession

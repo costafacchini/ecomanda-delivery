@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { ITemplate } from '../../types'
 
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
@@ -43,6 +44,6 @@ templateSchema.set('toJSON', {
   virtuals: true,
 })
 
-const Template = mongoose.model('Template', templateSchema)
+const Template = mongoose.model<ITemplate>('Template', templateSchema)
 
 export default Template
