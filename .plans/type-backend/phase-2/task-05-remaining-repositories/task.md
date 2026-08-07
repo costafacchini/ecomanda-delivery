@@ -62,4 +62,4 @@ Apply the generic `Repository<T>` base class pattern from task-04 to each remain
 - [ ] All relevant repository tests pass
 - [ ] `npx tsc --noEmit` clean
 - [ ] Status updated in `status.md`
-- [ ] Changes committed to `plan/type-backend/phase-2/task-05-remaining-repositories`
+- [ ] Changes committed to `plan/type-backend/phase-2`

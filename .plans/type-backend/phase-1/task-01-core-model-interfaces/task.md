@@ -106,7 +106,7 @@ Run `npx tsc --noEmit` and fix any errors introduced. Do not fix errors in files
 - [ ] All model tests pass
 - [ ] `npx tsc --noEmit` clean
 - [ ] Status updated in `status.md`
-- [ ] Changes committed to `plan/type-backend/phase-1/task-01-core-model-interfaces`
+- [ ] Changes committed to `plan/type-backend/phase-1`
 
 ## Conflict Avoidance Notes
 

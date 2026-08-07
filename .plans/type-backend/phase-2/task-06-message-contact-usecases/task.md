@@ -72,4 +72,4 @@ Where local variables are typed as `any` via assignment from repo calls, the typ
 - [ ] No `any` in constructor dependency params or `execute()` signatures
 - [ ] All use case tests pass
 - [ ] Status updated in `status.md`
-- [ ] Changes committed to `plan/type-backend/phase-2/task-06-message-contact-usecases`
+- [ ] Changes committed to `plan/type-backend/phase-2`

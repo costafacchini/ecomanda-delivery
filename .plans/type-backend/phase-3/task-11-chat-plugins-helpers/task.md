@@ -110,4 +110,4 @@ In `request.ts`, type the axios wrapper methods. In `Backup.ts`, type the intern
 - [ ] All chat plugin and helper tests pass
 - [ ] `npx tsc --noEmit` clean
 - [ ] Status updated in `status.md`
-- [ ] Changes committed to `plan/type-backend/phase-3/task-11-chat-plugins-helpers`
+- [ ] Changes committed to `plan/type-backend/phase-3`

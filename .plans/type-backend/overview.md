@@ -57,18 +57,23 @@ export interface ILicensee {
 ### Repositories must return plain objects, not Mongoose Documents
 
 Database repository methods must convert results before returning:
-- **Read** (`findFirst`, `find`): use `.lean()` on Mongoose queries — returns POJO directly
-- **Create**: call `.toObject()` on the created document before returning
+- **Read** (`findFirst`, `find`): use `.lean()` on Mongoose queries, then explicitly convert `_id` to string
+- **Create**: call `.toObject()` on the created document, then explicitly convert `_id` to string
 - **Update**: return `{ acknowledged: true }` — no document needed
+
+**Critical**: `.lean()` and `.toObject()` return `_id` as `mongodb.ObjectId` at runtime, not `string`. A TypeScript cast (`as ILicensee`) silently lies. Always call `_id.toString()` explicitly — otherwise `contact._id === someStringId` will always be `false` in production.
 
 ```ts
 async findFirst(params = {}): Promise<ILicensee | null> {
-  return await Licensee.findOne(params).lean()
+  const doc = await Licensee.findOne(params).lean()
+  if (!doc) return null
+  return { ...doc, _id: doc._id.toString() }
 }
 
 async create(fields = {}): Promise<ILicensee> {
   const doc = await Licensee.create(fields)
-  return doc.toObject()
+  const obj = doc.toObject()
+  return { ...obj, _id: obj._id.toString() }
 }
 ```
 
@@ -115,14 +120,17 @@ When `mongo-to-postgres` executes, only the repository implementations change. U
 
 ## Branch Convention
 
-Pattern: `plan/type-backend/{task-path}`
+One branch per phase — tasks within a phase are committed sequentially to the same branch. Each phase produces one PR to `main`.
 
-Example branches:
-- `plan/type-backend/phase-1/task-01-core-model-interfaces`
-- `plan/type-backend/phase-2/task-04-core-repositories`
-- `plan/type-backend/phase-3/task-09-controllers`
+| Branch | Tasks | PR |
+|--------|-------|----|
+| `plan/type-backend/phase-1` | task-01, task-02, task-03 | PR 1 |
+| `plan/type-backend/phase-2` | task-04, task-05, task-06, task-07 | PR 2 |
+| `plan/type-backend/phase-3` | task-08, task-09, task-10, task-11 | PR 3 |
 
 Base branch: `main`
+
+Each phase branch is created from `main` after the previous phase PR is merged. Tasks within a phase are worked sequentially, each committed to the phase branch. The PR is opened after all tasks in the phase are complete.
 
 ## Key Files
 

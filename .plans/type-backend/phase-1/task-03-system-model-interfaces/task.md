@@ -85,7 +85,7 @@ Run `npx tsc --noEmit` and fix errors only within owned files.
 - [ ] `npx tsc --noEmit` clean
 - [ ] All relevant model tests pass
 - [ ] Status updated in `status.md`
-- [ ] Changes committed to `plan/type-backend/phase-1/task-03-system-model-interfaces`
+- [ ] Changes committed to `plan/type-backend/phase-1`
 
 ## Conflict Avoidance Notes
 
