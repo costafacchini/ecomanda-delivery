@@ -81,6 +81,7 @@ export interface ILicensee {
   document?: string
   useSenderName: boolean
   useFileIDYcloud: boolean
+  urlWhatsappWebhook?: string
   createdAt: Date
   updatedAt: Date
 }

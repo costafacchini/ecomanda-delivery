@@ -3,6 +3,8 @@ import request from '../../services/request'
 import { ChatsBase } from './Base'
 import { logger } from '../../helpers/logger'
 import { requireDependency } from '../../helpers/RequireDependency'
+import { ILicensee } from '../../../types'
+import { IRepository } from '../../repositories/repository'
 
 const createVisitor = async (contact: any, token: any, url: any) => {
   const body = {
@@ -69,14 +71,14 @@ const formatMessage = (message: any, contact: any) => {
 }
 
 class Rocketchat extends ChatsBase {
-  _roomRepository: any
+  _roomRepository: IRepository<any>
 
   constructor(
-    licensee: any,
-    { roomRepository, contactRepository, messageRepository, ...dependencies }: Record<string, any> = {},
+    licensee: ILicensee,
+    { roomRepository, contactRepository, messageRepository, ...dependencies }: { roomRepository?: IRepository<any>; contactRepository?: IRepository<any>; messageRepository?: IRepository<any>; [key: string]: unknown } = {},
   ) {
     super(licensee, { contactRepository, messageRepository, ...dependencies })
-    this._roomRepository = roomRepository
+    this._roomRepository = roomRepository!
   }
 
   get roomRepository() {
@@ -144,7 +146,7 @@ class Rocketchat extends ChatsBase {
     await this.sendMessage(messageId, url)
   }
 
-  async sendMessage(messageId: any, url: any) {
+  async sendMessage(messageId: string, url: string): Promise<void> {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
     const openRoom = await this.roomRepository.findFirst({ contact: messageToSend.contact, closed: false })
     let room = openRoom

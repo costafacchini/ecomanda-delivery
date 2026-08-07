@@ -2,7 +2,7 @@ import { emojiList } from './EmojiList'
 
 export const replace = (message: string): string => {
   const regex = /(:[^:]*:)/gm
-  const rocketEmojis: any[] = []
+  const rocketEmojis: string[] = []
 
   let match
   while ((match = regex.exec(message)) !== null) {

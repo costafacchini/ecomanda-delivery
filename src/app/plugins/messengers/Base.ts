@@ -1,9 +1,20 @@
-import Repository from '../../repositories/repository'
+import Repository, { IRepository } from '../../repositories/repository'
 import { logger } from '../../helpers/logger'
 import { v4 as uuidv4 } from 'uuid'
 import { S3 } from '../storage/S3'
 import { LocalStorage } from '../storage/Local'
 import { requireDependency } from '../../helpers/RequireDependency'
+import { ILicensee, IContact, IMessage, ITrigger } from '../../../types'
+
+interface ITriggerRepository {
+  findFirst(params?: Record<string, unknown>): Promise<ITrigger | null>
+  find(params?: Record<string, unknown>, order?: Record<string, unknown>): Promise<ITrigger[]>
+}
+
+interface IMessengerPlugin {
+  sendMessage(messageId: string, url?: string, token?: string): Promise<void>
+  responseToMessages(responseBody: Record<string, unknown>, opts?: { departmentId?: string | null }): Promise<IMessage[]>
+}
 
 const createStorageProvider = (licensee: any, contact: any, fileName: any, fileBase64: any) => {
   if (process.env.STORAGE_PROVIDER === 'local') {
@@ -18,11 +29,11 @@ const uploadFile = (licensee: any, contact: any, fileName: any, fileBase64: any)
   return storage.presignedUrl()
 }
 
-class MessengersBase {
-  licensee: any
-  _contactRepository: any
-  _messageRepository: any
-  _triggerRepository: any
+class MessengersBase implements IMessengerPlugin {
+  licensee: ILicensee
+  _contactRepository: IRepository<IContact>
+  _messageRepository: IRepository<IMessage>
+  _triggerRepository: ITriggerRepository
   _productRepository: any
   messageParsed: any
   messageStatus: any
@@ -30,13 +41,23 @@ class MessengersBase {
   contactData: any
 
   constructor(
-    licensee: any,
-    { contactRepository, messageRepository, triggerRepository, productRepository }: Record<string, any> = {},
+    licensee: ILicensee,
+    {
+      contactRepository,
+      messageRepository,
+      triggerRepository,
+      productRepository,
+    }: {
+      contactRepository?: IRepository<IContact>
+      messageRepository?: IRepository<IMessage>
+      triggerRepository?: ITriggerRepository
+      productRepository?: any
+    } = {},
   ) {
     this.licensee = licensee
-    this._contactRepository = contactRepository
-    this._messageRepository = messageRepository
-    this._triggerRepository = triggerRepository
+    this._contactRepository = contactRepository!
+    this._messageRepository = messageRepository!
+    this._triggerRepository = triggerRepository!
     this._productRepository = productRepository
   }
 
@@ -96,7 +117,7 @@ class MessengersBase {
     })
   }
 
-  async responseToMessages(responseBody: any, { departmentId = null }: { departmentId?: any } = {}) {
+  async responseToMessages(responseBody: Record<string, unknown>, { departmentId = null }: { departmentId?: string | null } = {}): Promise<IMessage[]> {
     this.parseMessageStatus(responseBody)
     if (this.messageStatus) {
       const message = await this.messageRepository.findFirst({
@@ -237,4 +258,4 @@ class MessengersBase {
   }
 }
 
-export { MessengersBase }
+export { MessengersBase, IMessengerPlugin }

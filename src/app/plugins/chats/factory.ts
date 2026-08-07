@@ -3,9 +3,15 @@ import { Crisp } from './Crisp'
 import { Cuboup } from './Cuboup'
 import { Chatwoot } from './Chatwoot'
 import { LocalChat } from './LocalChat'
+import { IChatPlugin } from './Base'
+import { ILicensee, IInbox } from '../../../types'
 
-function createChatPlugin(licensee: any, dependencies = {}, inbox: any = null) {
-  const plugin = (inbox as any)?.chatDefault || licensee.chatDefault
+function createChatPlugin(
+  licensee: ILicensee,
+  dependencies: Record<string, unknown> = {},
+  inbox: IInbox | null = null,
+): IChatPlugin {
+  const plugin = inbox?.chatDefault || licensee.chatDefault
   switch (plugin) {
     case 'rocketchat':
       return new Rocketchat(licensee, dependencies)

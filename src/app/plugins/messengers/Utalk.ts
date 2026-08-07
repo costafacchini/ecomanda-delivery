@@ -2,9 +2,11 @@ import { NormalizePhone } from '../../helpers/NormalizePhone'
 import request from '../../services/request'
 import { MessengersBase } from './Base'
 import { logger } from '../../helpers/logger'
+import { ILicensee } from '../../../types'
+import { IRepository } from '../../repositories/repository'
 
 class Utalk extends MessengersBase {
-  constructor(licensee: any, { messageRepository, ...dependencies }: Record<string, any> = {}) {
+  constructor(licensee: ILicensee, { messageRepository, ...dependencies }: { messageRepository?: IRepository<any>; [key: string]: unknown } = {}) {
     super(licensee, { messageRepository, ...dependencies })
   }
 
@@ -149,7 +151,7 @@ class Utalk extends MessengersBase {
     return false
   }
 
-  async sendMessage(messageId: any, url: any, token: any) {
+  async sendMessage(messageId: string, url: string, token: string): Promise<void> {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
 
     const body: Record<string, any> = {

@@ -6,6 +6,8 @@ import { MessengersBase } from './Base'
 import { S3 } from '../storage/S3'
 import mime from 'mime-types'
 import { requireDependency } from '../../helpers/RequireDependency'
+import { ILicensee, IContact, ITemplate } from '../../../types'
+import { IRepository } from '../../repositories/repository'
 
 const getWaIdContact = async (number: any, url: any, token: any) => {
   const headers = { 'D360-API-KEY': token }
@@ -146,16 +148,26 @@ const uploadFile = (licensee: any, contact: any, fileName: any, fileBase64: any)
 }
 
 class Dialog extends MessengersBase {
-  _templateRepository: any
-  _parseText: any
+  _templateRepository: IRepository<ITemplate>
+  _parseText: (text: string, contact: IContact) => string
 
   constructor(
-    licensee: any,
-    { templateRepository, messageRepository, parseText, ...dependencies }: Record<string, any> = {},
+    licensee: ILicensee,
+    {
+      templateRepository,
+      messageRepository,
+      parseText,
+      ...dependencies
+    }: {
+      templateRepository?: IRepository<ITemplate>
+      messageRepository?: IRepository<any>
+      parseText?: (text: string, contact: IContact) => string
+      [key: string]: unknown
+    } = {},
   ) {
     super(licensee, { messageRepository, ...dependencies })
-    this._templateRepository = templateRepository
-    this._parseText = parseText
+    this._templateRepository = templateRepository!
+    this._parseText = parseText!
   }
 
   get templateRepository() {
@@ -276,7 +288,7 @@ class Dialog extends MessengersBase {
     return !contact.wa_start_chat
   }
 
-  async sendMessage(messageId: any, url: any, token: any) {
+  async sendMessage(messageId: string, url: string, token: string): Promise<void> {
     const messageToSend = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
 
     let waId = messageToSend.contact.waId

@@ -1,19 +1,21 @@
 import { ChatsBase } from './Base'
 import { emitToLicensee } from '../../services/socketEmitter'
+import { ILicensee } from '../../../types'
+import { IRepository } from '../../repositories/repository'
 
 class LocalChat extends ChatsBase {
-  _roomRepository: any
+  _roomRepository: IRepository<any>
 
-  constructor(licensee: any, { roomRepository, ...dependencies }: Record<string, any> = {}) {
+  constructor(licensee: ILicensee, { roomRepository, ...dependencies }: { roomRepository?: IRepository<any>; [key: string]: unknown } = {}) {
     super(licensee, dependencies)
-    this._roomRepository = roomRepository
+    this._roomRepository = roomRepository!
   }
 
   action(_responseBody?: any) {
     return 'send-message-to-messenger'
   }
 
-  async sendMessage(messageId: any) {
+  async sendMessage(messageId: string): Promise<void> {
     const message = await this.messageRepository.findFirst({ _id: messageId }, ['contact'])
     if (!message) return
 
