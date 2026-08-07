@@ -1,4 +1,6 @@
 import { MongoServer } from './mongo'
+import { connectPostgres } from './postgres'
+import { logger } from '../app/helpers/logger'
 
 async function connect() {
   const config = {
@@ -16,6 +18,14 @@ async function connect() {
 
   const mongoServer = new MongoServer(uri || `mongodb://${username}:${password}@${host}/${db}`)
   await mongoServer.connect()
+
+  // Non-fatal during migration window — app still starts without Postgres.
+  // Made fatal in task-09 (flip reads).
+  try {
+    await connectPostgres()
+  } catch (err: any) {
+    logger.error(`PostgreSQL connection failed (non-fatal during migration): ${err.message}`)
+  }
 }
 
 export { connect }
