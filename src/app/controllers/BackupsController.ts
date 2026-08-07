@@ -1,14 +1,11 @@
 import { Request, Response } from 'express'
 import { logger } from '../helpers/logger'
-
-interface QueueServer {
-  addJob(name: string, data: Record<string, unknown>): Promise<unknown>
-}
+import { IQueueServer } from '@config/queue'
 
 class BackupsController {
-  queueServer: QueueServer
+  queueServer: IQueueServer
 
-  constructor({ queueServer }: { queueServer?: QueueServer } = {}) {
+  constructor({ queueServer }: { queueServer?: IQueueServer } = {}) {
     this.queueServer = queueServer!
 
     this.schedule = this.schedule.bind(this)

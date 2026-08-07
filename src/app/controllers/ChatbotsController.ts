@@ -2,19 +2,16 @@ import { Request, Response } from 'express'
 import { logger } from '../helpers/logger'
 import { IRepository } from '@repositories/repository'
 import { IBody } from '../../types'
-
-interface QueueServer {
-  addJob(name: string, data: Record<string, unknown>): Promise<unknown>
-}
+import { IIQueueServer } from '@config/queue'
 
 class ChatbotsController {
   bodyRepository: IRepository<IBody>
-  queueServer: QueueServer
+  queueServer: IQueueServer
 
   constructor({
     bodyRepository,
     queueServer,
-  }: { bodyRepository?: IRepository<IBody>; queueServer?: QueueServer } = {}) {
+  }: { bodyRepository?: IRepository<IBody>; queueServer?: IQueueServer } = {}) {
     this.bodyRepository = bodyRepository!
     this.queueServer = queueServer!
 

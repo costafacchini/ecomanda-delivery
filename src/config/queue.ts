@@ -3,6 +3,10 @@ import { redisConnection } from './redis'
 
 import jobs from '../app/jobs/index'
 
+export interface IQueueServer {
+  addJob(name: string, data: Record<string, unknown>): Promise<unknown>
+}
+
 const queueOptions = {
   defaultJobOptions: {
     backoff: {
@@ -20,7 +24,7 @@ function createQueue(name: any) {
   return new Queue(name, queueOptions)
 }
 
-class QueueServer {
+class QueueServer implements IQueueServer {
   queues: { bull: Queue; name: string; workerEnabled: boolean; handle: (...args: any[]) => any }[]
 
   constructor() {
@@ -32,7 +36,7 @@ class QueueServer {
     }))
   }
 
-  async addJob(name: any, body: any) {
+  async addJob(name: string, body: Record<string, unknown>) {
     const queue = this.queues.find((queue) => queue.name === name)
 
     if (!queue) return null

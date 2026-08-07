@@ -4,16 +4,13 @@ import { IRepository } from '@repositories/repository'
 import { IUser, IMessage } from '../../types'
 import { CreateMessage } from '../usecases/messages/CreateMessage'
 import { MessagesQuery } from '../queries/MessagesQuery'
-
-interface QueueServer {
-  addJob(name: string, data: Record<string, unknown>): Promise<unknown>
-}
+import { IIQueueServer } from '@config/queue'
 
 class MessagesController {
   createMessagesQuery: () => MessagesQuery
   userRepository: IRepository<IUser>
   messageRepository: IRepository<IMessage>
-  queueServer: QueueServer
+  queueServer: IQueueServer
   createMessage: CreateMessage
 
   constructor({
@@ -26,7 +23,7 @@ class MessagesController {
     createMessagesQuery?: () => MessagesQuery
     userRepository?: IRepository<IUser>
     messageRepository?: IRepository<IMessage>
-    queueServer?: QueueServer
+    queueServer?: IQueueServer
     createMessage?: CreateMessage
   } = {}) {
     this.createMessagesQuery = createMessagesQuery!

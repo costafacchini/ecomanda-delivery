@@ -1,19 +1,16 @@
 import { Request, Response } from 'express'
 import { logger } from '../helpers/logger'
 import { IngestChatMessage } from '../usecases/webhooks/IngestChatMessage'
-
-interface QueueServer {
-  addJob(name: string, data: Record<string, unknown>): Promise<unknown>
-}
+import { IIQueueServer } from '@config/queue'
 
 class ChatsController {
   ingestChatMessage: IngestChatMessage
-  queueServer: QueueServer
+  queueServer: IQueueServer
 
   constructor({
     ingestChatMessage,
     queueServer,
-  }: { ingestChatMessage?: IngestChatMessage; queueServer?: QueueServer } = {}) {
+  }: { ingestChatMessage?: IngestChatMessage; queueServer?: IQueueServer } = {}) {
     this.ingestChatMessage = ingestChatMessage!
     this.queueServer = queueServer!
 
