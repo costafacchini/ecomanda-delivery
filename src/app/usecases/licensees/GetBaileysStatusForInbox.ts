@@ -1,11 +1,22 @@
+import { IRepository } from '@repositories/repository'
+import { ILicensee, IInbox, IWhatsappSession } from '../../../types'
+
 const WHATSAPP_DEFAULT_BAILEYS = 'baileys'
 
+interface GetBaileysStatusForInboxDeps {
+  inboxRepository: IRepository<IInbox>
+  licenseeRepository: IRepository<ILicensee>
+  whatsappSessionRepository: IRepository<IWhatsappSession>
+  startBaileysSocket?: (licensee: ILicensee, inbox: IInbox) => Promise<void>
+  socketManager?: { isConnectedForLicensee(licenseeId: string, entityId: string): boolean }
+}
+
 class GetBaileysStatusForInbox {
-  inboxRepository: any
-  licenseeRepository: any
-  whatsappSessionRepository: any
-  startBaileysSocket: any
-  socketManager: any
+  inboxRepository: IRepository<IInbox>
+  licenseeRepository: IRepository<ILicensee>
+  whatsappSessionRepository: IRepository<IWhatsappSession>
+  startBaileysSocket?: GetBaileysStatusForInboxDeps['startBaileysSocket']
+  socketManager?: GetBaileysStatusForInboxDeps['socketManager']
 
   constructor({
     inboxRepository,
@@ -13,7 +24,7 @@ class GetBaileysStatusForInbox {
     whatsappSessionRepository,
     startBaileysSocket,
     socketManager,
-  }: Record<string, any> = {}) {
+  }: GetBaileysStatusForInboxDeps) {
     this.inboxRepository = inboxRepository
     this.licenseeRepository = licenseeRepository
     this.whatsappSessionRepository = whatsappSessionRepository
@@ -21,7 +32,7 @@ class GetBaileysStatusForInbox {
     this.socketManager = socketManager
   }
 
-  async execute(inboxId: any) {
+  async execute(inboxId: string) {
     const inbox = await this.inboxRepository.findFirst({ _id: inboxId })
     if (!inbox) {
       return { connected: false }

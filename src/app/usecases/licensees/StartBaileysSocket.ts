@@ -1,25 +1,46 @@
+import { IRepository } from '@repositories/repository'
+import { ILicensee, IInbox, IWhatsappSession } from '../../../types'
 import { logger } from '../../helpers/logger'
 
+interface SocketManager {
+  start(
+    session: IWhatsappSession,
+    licensee: ILicensee,
+    callbacks: Record<string, (...args: any[]) => any>,
+  ): Promise<void>
+}
+
+interface IngestMessengerMessageUseCase {
+  execute(input: { body: Record<string, any>; licenseeId: string; inboxId: string | null }): Promise<any>
+}
+
+interface StartBaileysSocketDeps {
+  socketManager: SocketManager
+  whatsappSessionRepository: IRepository<IWhatsappSession>
+  createMessengerPlugin: (licensee: ILicensee, extras?: Record<string, any>) => any
+  ingestMessengerMessage: IngestMessengerMessageUseCase
+}
+
 class StartBaileysSocket {
-  socketManager: any
-  whatsappSessionRepository: any
-  createMessengerPlugin: any
-  ingestMessengerMessage: any
+  socketManager: SocketManager
+  whatsappSessionRepository: IRepository<IWhatsappSession>
+  createMessengerPlugin: (licensee: ILicensee, extras?: Record<string, any>) => any
+  ingestMessengerMessage: IngestMessengerMessageUseCase
 
   constructor({
     socketManager,
     whatsappSessionRepository,
     createMessengerPlugin,
     ingestMessengerMessage,
-  }: Record<string, any> = {}) {
+  }: StartBaileysSocketDeps) {
     this.socketManager = socketManager
     this.whatsappSessionRepository = whatsappSessionRepository
     this.createMessengerPlugin = createMessengerPlugin
     this.ingestMessengerMessage = ingestMessengerMessage
   }
 
-  async execute(licensee: any, inbox: any = null) {
-    const extras: any = {}
+  async execute(licensee: ILicensee, inbox: IInbox | null = null) {
+    const extras: Record<string, any> = {}
     if (inbox) {
       extras.inbox = inbox
     }

@@ -167,8 +167,8 @@ export interface IBody {
   content: Record<string, unknown>
   licensee: string | ILicensee
   kind: 'normal' | 'webhook'
-  department?: string
-  inbox?: string
+  department?: string | null
+  inbox?: string | null
   concluded: boolean
   createdAt: Date
   updatedAt: Date
@@ -249,7 +249,7 @@ export interface ITrafficlight {
 export interface IWhatsappSession {
   _id: string
   licensee: string | ILicensee
-  inbox?: string | IInbox
+  inbox?: string | IInbox | null
   creds?: Record<string, unknown>
   keys?: Record<string, unknown>
   createdAt: Date

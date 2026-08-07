@@ -1,7 +1,14 @@
+import { IRepository } from '@repositories/repository'
+import { IUser } from '../../../types'
+
 const CREATE_USER_FIELDS = ['name', 'active', 'password', 'role', 'email', 'licensee']
 
-function pickFields(fields: Record<string, any> = {}, keys: any[] = []) {
-  return keys.reduce((payload: Record<string, any>, key: any) => {
+interface CreateUserDeps {
+  userRepository: IRepository<IUser>
+}
+
+function pickFields(fields: Record<string, any> = {}, keys: string[] = []) {
+  return keys.reduce((payload: Record<string, any>, key: string) => {
     if (Object.prototype.hasOwnProperty.call(fields, key)) {
       payload[key] = fields[key]
     }
@@ -11,13 +18,13 @@ function pickFields(fields: Record<string, any> = {}, keys: any[] = []) {
 }
 
 class CreateUser {
-  userRepository: any
+  userRepository: IRepository<IUser>
 
-  constructor({ userRepository }: Record<string, any> = {}) {
+  constructor({ userRepository }: CreateUserDeps) {
     this.userRepository = userRepository
   }
 
-  async execute(fields = {}) {
+  async execute(fields: Record<string, any> = {}): Promise<IUser> {
     return await this.userRepository.create(pickFields(fields, CREATE_USER_FIELDS))
   }
 }

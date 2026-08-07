@@ -1,18 +1,26 @@
+import { IRepository } from '@repositories/repository'
+import { ILicensee } from '../../../types'
+
 const WEBHOOK_CONFIGURED_MESSAGE = 'Webhook configurado!'
 
-class SetDialogWebhook {
-  licenseeRepository: any
-  createMessengerPlugin: any
+interface SetDialogWebhookDeps {
+  licenseeRepository: IRepository<ILicensee>
+  createMessengerPlugin: (licensee: ILicensee) => any
+}
 
-  constructor({ licenseeRepository, createMessengerPlugin }: Record<string, any> = {}) {
+class SetDialogWebhook {
+  licenseeRepository: IRepository<ILicensee>
+  createMessengerPlugin: SetDialogWebhookDeps['createMessengerPlugin']
+
+  constructor({ licenseeRepository, createMessengerPlugin }: SetDialogWebhookDeps) {
     this.licenseeRepository = licenseeRepository
     this.createMessengerPlugin = createMessengerPlugin
   }
 
-  async execute(id: any) {
+  async execute(id: string): Promise<{ message: string }> {
     const licensee = await this.licenseeRepository.findFirst({ _id: id })
 
-    if (licensee.whatsappDefault === 'dialog') {
+    if (licensee && licensee.whatsappDefault === 'dialog') {
       const messengerPlugin = this.createMessengerPlugin(licensee)
       await messengerPlugin.setWebhook(licensee.whatsappUrl, licensee.whatsappToken)
     }

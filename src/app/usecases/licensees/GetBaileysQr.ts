@@ -1,18 +1,27 @@
-class GetBaileysQr {
-  licenseeRepository: any
-  createMessengerPlugin: any
-  startBaileysSocket: any
+import { IRepository } from '@repositories/repository'
+import { ILicensee } from '../../../types'
 
-  constructor({ licenseeRepository, createMessengerPlugin, startBaileysSocket }: Record<string, any> = {}) {
+interface GetBaileysQrDeps {
+  licenseeRepository: IRepository<ILicensee>
+  createMessengerPlugin: (licensee: ILicensee) => any
+  startBaileysSocket?: (licensee: ILicensee) => Promise<void>
+}
+
+class GetBaileysQr {
+  licenseeRepository: IRepository<ILicensee>
+  createMessengerPlugin: GetBaileysQrDeps['createMessengerPlugin']
+  startBaileysSocket?: GetBaileysQrDeps['startBaileysSocket']
+
+  constructor({ licenseeRepository, createMessengerPlugin, startBaileysSocket }: GetBaileysQrDeps) {
     this.licenseeRepository = licenseeRepository
     this.createMessengerPlugin = createMessengerPlugin
     this.startBaileysSocket = startBaileysSocket
   }
 
-  async execute(id: any) {
+  async execute(id: string): Promise<{ qr: string } | { message: string }> {
     const licensee = await this.licenseeRepository.findFirst({ _id: id })
 
-    if (licensee.whatsappDefault !== 'baileys') {
+    if (!licensee || licensee.whatsappDefault !== 'baileys') {
       return { message: 'Licensee não usa Baileys' }
     }
 

@@ -1,22 +1,32 @@
+import { IRepository } from '@repositories/repository'
+import { ILicensee, IWhatsappSession } from '../../../types'
+
+interface GetBaileysStatusDeps {
+  licenseeRepository: IRepository<ILicensee>
+  whatsappSessionRepository: IRepository<IWhatsappSession>
+  startBaileysSocket?: (licensee: ILicensee) => Promise<void>
+  socketManager?: { isConnected(id: string): boolean }
+}
+
 class GetBaileysStatus {
-  licenseeRepository: any
-  whatsappSessionRepository: any
-  startBaileysSocket: any
-  socketManager: any
+  licenseeRepository: IRepository<ILicensee>
+  whatsappSessionRepository: IRepository<IWhatsappSession>
+  startBaileysSocket?: GetBaileysStatusDeps['startBaileysSocket']
+  socketManager?: GetBaileysStatusDeps['socketManager']
 
   constructor({
     licenseeRepository,
     whatsappSessionRepository,
     startBaileysSocket,
     socketManager,
-  }: Record<string, any> = {}) {
+  }: GetBaileysStatusDeps) {
     this.licenseeRepository = licenseeRepository
     this.whatsappSessionRepository = whatsappSessionRepository
     this.startBaileysSocket = startBaileysSocket
     this.socketManager = socketManager
   }
 
-  async execute(id: any) {
+  async execute(id: string): Promise<{ connected: boolean }> {
     const licensee = await this.licenseeRepository.findFirst({ _id: id })
 
     if (!licensee || licensee.whatsappDefault !== 'baileys') {

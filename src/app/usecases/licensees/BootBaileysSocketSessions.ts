@@ -1,17 +1,28 @@
+import { IRepository } from '@repositories/repository'
+import { ILicensee, IInbox, IWhatsappSession } from '../../../types'
 import { logger } from '../../helpers/logger'
 
+type StartBaileysSocketFn = (licensee: ILicensee, inbox: IInbox | null) => Promise<void>
+
+interface BootBaileysSocketSessionsDeps {
+  licenseeRepository: IRepository<ILicensee>
+  inboxRepository: IRepository<IInbox>
+  whatsappSessionRepository: IRepository<IWhatsappSession>
+  startBaileysSocket: StartBaileysSocketFn
+}
+
 class BootBaileysSocketSessions {
-  licenseeRepository: any
-  inboxRepository: any
-  whatsappSessionRepository: any
-  startBaileysSocket: any
+  licenseeRepository: IRepository<ILicensee>
+  inboxRepository: IRepository<IInbox>
+  whatsappSessionRepository: IRepository<IWhatsappSession>
+  startBaileysSocket: StartBaileysSocketFn
 
   constructor({
     licenseeRepository,
     inboxRepository,
     whatsappSessionRepository,
     startBaileysSocket,
-  }: Record<string, any> = {}) {
+  }: BootBaileysSocketSessionsDeps) {
     this.licenseeRepository = licenseeRepository
     this.inboxRepository = inboxRepository
     this.whatsappSessionRepository = whatsappSessionRepository

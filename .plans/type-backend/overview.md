@@ -1,8 +1,8 @@
 # Plan: Backend Type Narrowing
 
-**Status**: not-started
+**Status**: in-progress
 **Created**: 2026-05-31
-**Last Updated**: 2026-08-07 (revised: remove-pdv complete; setores models added; Wevo→Utalk; repository anti-corruption layer pattern added)
+**Last Updated**: 2026-08-07 (phase-2 complete — PR #3097 open; phase-3 not started)
 **Estimated Demo Date**: N/A
 **Assigned Dev**: Alan Costa Facchini
 **Assigned QA**: unassigned
@@ -106,13 +106,13 @@ When `mongo-to-postgres` executes, only the repository implementations change. U
 
 | Task Path | Title | Phase | Status | Depends On |
 |-----------|-------|-------|--------|------------|
-| phase-1/task-01-core-model-interfaces | Core Model Interfaces | 1 | not-started | — |
-| phase-1/task-02-setores-session-model-interfaces | Setores & Session Model Interfaces | 1 | not-started | — |
-| phase-1/task-03-system-model-interfaces | System Model Interfaces | 1 | not-started | — |
-| phase-2/task-04-core-repositories | Core Repository Types | 2 | not-started | phase-1/task-01-core-model-interfaces |
-| phase-2/task-05-remaining-repositories | Remaining Repository Types | 2 | not-started | phase-1/task-02-setores-session-model-interfaces, phase-1/task-03-system-model-interfaces |
-| phase-2/task-06-message-contact-usecases | Message & Contact Use Case Types | 2 | not-started | phase-2/task-04-core-repositories |
-| phase-2/task-07-remaining-usecases | Remaining Use Case Types | 2 | not-started | phase-2/task-04-core-repositories, phase-2/task-05-remaining-repositories |
+| phase-1/task-01-core-model-interfaces | Core Model Interfaces | 1 | complete | — |
+| phase-1/task-02-setores-session-model-interfaces | Setores & Session Model Interfaces | 1 | complete | — |
+| phase-1/task-03-system-model-interfaces | System Model Interfaces | 1 | complete | — |
+| phase-2/task-04-core-repositories | Core Repository Types | 2 | complete | phase-1/task-01-core-model-interfaces |
+| phase-2/task-05-remaining-repositories | Remaining Repository Types | 2 | complete | phase-1/task-02-setores-session-model-interfaces, phase-1/task-03-system-model-interfaces |
+| phase-2/task-06-message-contact-usecases | Message & Contact Use Case Types | 2 | complete | phase-2/task-04-core-repositories |
+| phase-2/task-07-remaining-usecases | Remaining Use Case Types | 2 | complete | phase-2/task-04-core-repositories, phase-2/task-05-remaining-repositories |
 | phase-3/task-08-queries | Query Class Types | 3 | not-started | phase-2/task-04-core-repositories, phase-2/task-05-remaining-repositories |
 | phase-3/task-09-controllers | Controller Types | 3 | not-started | phase-2/task-06-message-contact-usecases, phase-2/task-07-remaining-usecases |
 | phase-3/task-10-messenger-plugins | Messenger Plugin Types | 3 | not-started | phase-2/task-04-core-repositories |
@@ -124,9 +124,10 @@ One branch per phase — tasks within a phase are committed sequentially to the 
 
 | Branch | Tasks | PR |
 |--------|-------|----|
-| `plan/type-backend/phase-1` | task-01, task-02, task-03 | PR 1 |
-| `plan/type-backend/phase-2` | task-04, task-05, task-06, task-07 | PR 2 |
-| `plan/type-backend/phase-3` | task-08, task-09, task-10, task-11 | PR 3 |
+| `plan/type-backend/phase-1` | task-01, task-02, task-03 | PR #3095 (merged) |
+| `plan/type-backend/phase-2` | task-04 | PR #3096 (merged) |
+| `plan/type-backend/phase-2-remaining` | task-05, task-06, task-07 | PR #3097 (open) |
+| `plan/type-backend/phase-3` | task-08, task-09, task-10, task-11 | — |
 
 Base branch: `main`
 

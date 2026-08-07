@@ -1,16 +1,30 @@
+import { IRepository } from '@repositories/repository'
+import { IBody } from '../../../types'
+
 const CHAT_MESSAGE_KIND = 'normal'
 const CHAT_MESSAGE_JOB = 'chat-message'
 
-class IngestChatMessage {
-  chatRepository: any
-  jobQueue: any
+interface IngestChatMessageDeps {
+  chatRepository: IRepository<IBody>
+  jobQueue: { addJob(name: string, payload: Record<string, any>): Promise<any> }
+}
 
-  constructor({ chatRepository, jobQueue }: Record<string, any> = {}) {
+interface IngestChatMessageInput {
+  body: Record<string, any>
+  licenseeId: string
+  inboxId?: string | null
+}
+
+class IngestChatMessage {
+  chatRepository: IRepository<IBody>
+  jobQueue: IngestChatMessageDeps['jobQueue']
+
+  constructor({ chatRepository, jobQueue }: IngestChatMessageDeps) {
     this.chatRepository = chatRepository
     this.jobQueue = jobQueue
   }
 
-  async execute({ body, licenseeId, inboxId = null }: Record<string, any> = {}) {
+  async execute({ body, licenseeId, inboxId = null }: IngestChatMessageInput): Promise<IBody> {
     // Remove crmData because of Rocketchat sending a higher history inside the body
     delete body['crmData']
 

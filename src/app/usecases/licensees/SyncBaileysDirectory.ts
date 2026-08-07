@@ -1,18 +1,31 @@
+import { IRepository } from '@repositories/repository'
+import { ILicensee, IContact } from '../../../types'
+
 const WHATSAPP_DEFAULT_BAILEYS = 'baileys'
 const NOT_BAILEYS_MESSAGE = 'Licensee não usa Baileys'
 
-class SyncBaileysDirectory {
-  licenseeRepository: any
-  contactRepository: any
-  createMessengerPlugin: any
+interface ContactRepositoryWithGroups extends IRepository<IContact> {
+  deactivateGroupsForLicensee(licenseeId: string): Promise<void>
+}
 
-  constructor({ licenseeRepository, contactRepository, createMessengerPlugin }: Record<string, any> = {}) {
+interface SyncBaileysDirectoryDeps {
+  licenseeRepository: IRepository<ILicensee>
+  contactRepository: ContactRepositoryWithGroups
+  createMessengerPlugin: (licensee: ILicensee) => any
+}
+
+class SyncBaileysDirectory {
+  licenseeRepository: IRepository<ILicensee>
+  contactRepository: ContactRepositoryWithGroups
+  createMessengerPlugin: SyncBaileysDirectoryDeps['createMessengerPlugin']
+
+  constructor({ licenseeRepository, contactRepository, createMessengerPlugin }: SyncBaileysDirectoryDeps) {
     this.licenseeRepository = licenseeRepository
     this.contactRepository = contactRepository
     this.createMessengerPlugin = createMessengerPlugin
   }
 
-  async execute(id: any) {
+  async execute(id: string) {
     const licensee = await this.licenseeRepository.findFirst({ _id: id })
 
     if (!licensee || licensee.whatsappDefault !== WHATSAPP_DEFAULT_BAILEYS) {

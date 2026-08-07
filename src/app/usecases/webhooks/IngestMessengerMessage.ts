@@ -1,16 +1,36 @@
+import { IRepository } from '@repositories/repository'
+import { IBody } from '../../../types'
+
 const MESSENGER_MESSAGE_KIND = 'normal'
 const MESSENGER_MESSAGE_JOB = 'messenger-message'
 
-class IngestMessengerMessage {
-  messengerRepository: any
-  jobQueue: any
+interface IngestMessengerMessageDeps {
+  messengerRepository: IRepository<IBody>
+  jobQueue: { addJob(name: string, payload: Record<string, any>): Promise<any> }
+}
 
-  constructor({ messengerRepository, jobQueue }: Record<string, any> = {}) {
+interface IngestMessengerMessageInput {
+  body: Record<string, any>
+  licenseeId: string
+  departmentId?: string | null
+  inboxId?: string | null
+}
+
+class IngestMessengerMessage {
+  messengerRepository: IRepository<IBody>
+  jobQueue: IngestMessengerMessageDeps['jobQueue']
+
+  constructor({ messengerRepository, jobQueue }: IngestMessengerMessageDeps) {
     this.messengerRepository = messengerRepository
     this.jobQueue = jobQueue
   }
 
-  async execute({ body, licenseeId, departmentId = null, inboxId = null }: Record<string, any> = {}) {
+  async execute({
+    body,
+    licenseeId,
+    departmentId = null,
+    inboxId = null,
+  }: IngestMessengerMessageInput): Promise<IBody> {
     const bodySaved = await this.messengerRepository.create({
       content: body,
       licensee: licenseeId,

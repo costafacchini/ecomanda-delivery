@@ -1,9 +1,20 @@
+import { IRepository } from '@repositories/repository'
+import { ILicensee, IDepartment } from '../../../types'
+
+interface GetBaileysQrForDepartmentDeps {
+  departmentRepository: IRepository<IDepartment>
+  licenseeRepository: IRepository<ILicensee>
+  createMessengerPlugin: (licensee: ILicensee, extras: Record<string, any>) => any
+  startBaileysSocket?: (licensee: ILicensee, department: IDepartment) => Promise<void>
+  getBaileysQrForInbox: { execute(inboxId: string): Promise<Record<string, any>> }
+}
+
 class GetBaileysQrForDepartment {
-  departmentRepository: any
-  licenseeRepository: any
-  createMessengerPlugin: any
-  startBaileysSocket: any
-  getBaileysQrForInbox: any
+  departmentRepository: IRepository<IDepartment>
+  licenseeRepository: IRepository<ILicensee>
+  createMessengerPlugin: GetBaileysQrForDepartmentDeps['createMessengerPlugin']
+  startBaileysSocket?: GetBaileysQrForDepartmentDeps['startBaileysSocket']
+  getBaileysQrForInbox: GetBaileysQrForDepartmentDeps['getBaileysQrForInbox']
 
   constructor({
     departmentRepository,
@@ -11,7 +22,7 @@ class GetBaileysQrForDepartment {
     createMessengerPlugin,
     startBaileysSocket,
     getBaileysQrForInbox,
-  }: Record<string, any> = {}) {
+  }: GetBaileysQrForDepartmentDeps) {
     this.departmentRepository = departmentRepository
     this.licenseeRepository = licenseeRepository
     this.createMessengerPlugin = createMessengerPlugin
@@ -19,14 +30,14 @@ class GetBaileysQrForDepartment {
     this.getBaileysQrForInbox = getBaileysQrForInbox
   }
 
-  async execute(departmentId: any) {
+  async execute(departmentId: string) {
     const department = await this.departmentRepository.findFirst({ _id: departmentId })
     if (!department) {
       return { message: 'Departamento não encontrado' }
     }
 
     if (department.inbox) {
-      return this.getBaileysQrForInbox.execute(department.inbox)
+      return this.getBaileysQrForInbox.execute(department.inbox as string)
     }
 
     const licensee = await this.licenseeRepository.findFirst({ _id: department.licensee })
