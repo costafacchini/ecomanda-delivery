@@ -1385,29 +1385,30 @@
   resolved "https://registry.yarnpkg.com/@borewit/text-codec/-/text-codec-0.2.2.tgz#75025f735c0983b3a871668804a57387e3649375"
   integrity sha512-DDaRehssg1aNrH4+2hnj1B7vnUGEjU6OIlyRdkMd0aUdIUvKXrJfXsy8LVtXAy7DRvYVluWbMspsRhz2lcW0mQ==
 
-"@bull-board/api@9.9.0", "@bull-board/api@^9.0.0":
-  version "9.9.0"
-  resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-9.9.0.tgz#446d27d11468002f5e88c2c4f5ba26e7a80a9210"
-  integrity sha512-tL6rSqBjLkL5MbOwuf8/6W2jLDw+ZZpnqjzHAoerdQ2P8gkbgzhdZJHn48EvDWB/VtqAKLJdlCYafxiYy+NHNg==
+"@bull-board/api@9.10.0", "@bull-board/api@^9.0.0":
+  version "9.10.0"
+  resolved "https://registry.yarnpkg.com/@bull-board/api/-/api-9.10.0.tgz#bc17ed1d7610e5bd178c5e3d8c074c623843d1fe"
+  integrity sha512-BbW7ZleJ+QAR3Ayu+u2VlgwSYoFcteY6BhS4iPsHMOw9Laohfx29lPEgdrGNZNHS7ORgxcMqcfMeq+hjqxgx5g==
   dependencies:
     redis-info "^3.1.0"
+    valibot "^1.5.0"
 
 "@bull-board/express@^9.0.0":
-  version "9.9.0"
-  resolved "https://registry.yarnpkg.com/@bull-board/express/-/express-9.9.0.tgz#6c1f0f8109a8a19b82154ffab31917f796a782c3"
-  integrity sha512-DRxm9IjpvVunKTaEYTputoM+qMUYZpptei0f0y5MuaA4mh8tbRRZjJKx53DJ98cw10SgJ3hDDbjmZ4u9ycHlJQ==
+  version "9.10.0"
+  resolved "https://registry.yarnpkg.com/@bull-board/express/-/express-9.10.0.tgz#5b0f4e32cf1964f26626cb66f9376c58a66db878"
+  integrity sha512-xm8TEBpEa4IL9m/51nHEDt8iKTVGhn+DLWiU+fGJeCVYDH4q8IXh7olodAxkTTCcSg0DmpIUYjmhYdqTcjrNEA==
   dependencies:
-    "@bull-board/api" "9.9.0"
-    "@bull-board/ui" "9.9.0"
+    "@bull-board/api" "9.10.0"
+    "@bull-board/ui" "9.10.0"
     ejs "^6.0.1"
     express "^5.2.1"
 
-"@bull-board/ui@9.9.0", "@bull-board/ui@^9.0.0":
-  version "9.9.0"
-  resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-9.9.0.tgz#3385a452115e2f573168820f166909e24ff9f916"
-  integrity sha512-kgq/xBw+UEf/QUpqwjt3846qU0LCJQgzxNKy4+hhr3WPYZcpcd7V4By45fXbueBLJm3NKBEpskymRJS6HuVLjA==
+"@bull-board/ui@9.10.0", "@bull-board/ui@^9.0.0":
+  version "9.10.0"
+  resolved "https://registry.yarnpkg.com/@bull-board/ui/-/ui-9.10.0.tgz#9d1d16e5f30f8bb3b371116f1f5b13411a2baf6b"
+  integrity sha512-yKZ1o0wIxfGzywgEiLtvYMNLiAmtGDSJTZqdyV7a4fWkKQ5Ke+wCs//o69oaZLQHYNlwYF3e83wIeF+Pikurkg==
   dependencies:
-    "@bull-board/api" "9.9.0"
+    "@bull-board/api" "9.10.0"
 
 "@cacheable/memory@^2.2.0":
   version "2.2.0"
@@ -10094,6 +10095,11 @@ valibot@1.4.2:
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/valibot/-/valibot-1.4.2.tgz#da857781187f170aeaf4498d463d25028615b0d6"
   integrity sha512-gjdCvJ6d3RyHAneqxMYMW9QMCwYMb3jpOO0IyHZV1bnRHFBHrX3VkIILt5XYR0WhwHiH7Mty8ovuPZ/O3gamrg==
+
+valibot@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/valibot/-/valibot-1.5.0.tgz#c05adda6b2823807bb0248e2952c35e1a50046fd"
+  integrity sha512-nil6AkP2TChWL43Z5uJ6GTxX01CUA+g8LWUM+N/rB9NBbkUMaUsi9PUNzlUPgoKASgmx9f7eGOYpJ04/fSa6FQ==
 
 validator@~13.15.23:
   version "13.15.35"
